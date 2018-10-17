@@ -12,7 +12,7 @@ const HeaderLogo = styled.img`
 
 const HeaderWrapper = styled.div`
   width: 195px;
-  @media (max-width: 991px) and (min-width: 768px) {
+  @media (max-width: 991px) {
     display: none !important;
   }
 `;

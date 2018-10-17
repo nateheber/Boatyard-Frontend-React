@@ -110,8 +110,8 @@ const SideBarContainer = styled.div`
   }
   @media (max-width: 991px) {
     display: block !important;
-    width: 150px !important;
-    margin-left: -150px;
+    width: 110px !important;
+    margin-left: -110px;
     &.show {
       margin-left: 0px;
     }
@@ -123,8 +123,8 @@ const SideBarContainer = styled.div`
   transition-delay: 0s;
 `;
 
-const SideBar = () => (
-  <SideBarContainer>
+const SideBar = ({ showSidebar }) => (
+  <SideBarContainer className={showSidebar ? 'show' : 'hide'}>
     <SideBarWrapper>
       {navItems.map((item, idx) => (
         <SideBarItem {...item} key={`nav_item_${idx}`} />

@@ -79,6 +79,13 @@ const SubMenuItem = styled.a`
   align-items: center;
   padding: 15px 0px !important;
   text-decoration: none !important;
+  cursor: pointer;
+  &:hover {
+    background-color: #00485e !important;
+  }
+  @media (max-width: 991px) {
+    font-size: 10px !important;
+  }
 `;
 
 export const SideBarItem = ({

@@ -12,6 +12,8 @@ const Wrapper = styled.div`
   justify-contents: space-between;
   align-items: center;
   z-index: 9999;
+  padding: 0px 15px 0 15px;
+  box-sizing: border-box;
 `;
 
 export const HeaderWrapper = props => <Wrapper>{props.children}</Wrapper>;

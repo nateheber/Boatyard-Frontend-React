@@ -35,12 +35,19 @@ export default class PageTemplate extends React.Component {
   state = {
     showSidebar: false
   };
+  toggleMenu = () => {
+    const { showSidebar } = this.state;
+    this.setState({
+      showSidebar: !showSidebar
+    });
+  };
   render() {
+    const { showSidebar } = this.state;
     return (
       <Wrapper>
-        <Header />
+        <Header onMenuToggle={this.toggleMenu} />
         <PageContent>
-          <SideBar />
+          <SideBar showSidebar={showSidebar} />
           <ContentWrapper>{this.props.children}</ContentWrapper>
         </PageContent>
       </Wrapper>

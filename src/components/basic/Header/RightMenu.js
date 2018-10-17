@@ -1,10 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Bell from '../../../resources/notification-bell.svg';
 import Message from '../../../resources/messages-icon.png';
+import ChevronIcon from '../../../resources/down-chevron.svg';
 
 const Wrapper = styled.div`
   display: flex;
@@ -110,6 +109,11 @@ const IconItem = styled.li`
     background-color: #e17614;
     cursor: pointer;
   }
+  @media (max-width: 843px) {
+    &.hide-on-mobile {
+      display: none !important;
+    }
+  }
 `;
 
 const Icon = styled.img``;
@@ -118,10 +122,31 @@ const UsernameWrapper = styled.a`
   color: #fff;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
-const Username = styled.span`
+const Username = styled.div`
+  display: inline-block;
   margin-right: 5px;
+  @media (max-width: 843px) {
+    display: none !important;
+  }
+`;
+
+const Chevron = styled.div`
+  display: inline-block;
+  width: 15px;
+  height: 20px;
+  background-image: url(${ChevronIcon});
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: 15px 15px;
+  content: ' ';
+  @media (max-width: 843px) {
+    margin: 0px 10px;
+  }
 `;
 
 export const RightMenu = () => (
@@ -130,7 +155,7 @@ export const RightMenu = () => (
       <DropdownItem>
         <UsernameWrapper>
           <Username>Daniel Zheng</Username>
-          <FontAwesomeIcon icon={faAngleDown} size="lg" />
+          <Chevron />
         </UsernameWrapper>
         <DropdownMenu>
           <MenuItemLi>
@@ -144,7 +169,7 @@ export const RightMenu = () => (
       <IconItem>
         <Icon width={20} height={20} src={Bell} alt="bell" />
       </IconItem>
-      <IconItem>
+      <IconItem className="hide-on-mobile">
         <Icon width={32} height={20} src={Message} alt="bell" />
       </IconItem>
     </MenuWrapper>
