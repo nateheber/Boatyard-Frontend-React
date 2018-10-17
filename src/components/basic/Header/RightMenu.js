@@ -1,0 +1,152 @@
+import React from 'react';
+import styled from 'styled-components';
+import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import Bell from '../../../resources/notification-bell.svg';
+import Message from '../../../resources/messages-icon.png';
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  flex-grow: 1;
+`;
+
+const MenuWrapper = styled.ul`
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+  border-radius: 0 !important;
+  list-style: none;
+  margin: 0;
+  display: block;
+`;
+
+const DropdownItem = styled.li`
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  height: 68px;
+  padding: 20px 10px !important;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: #e17614;
+    cursor: pointer;
+  }
+  float: left;
+`;
+
+const DropdownMenu = styled.ul`
+  ${DropdownItem}:hover & {
+    display: block;
+  }
+  position: absolute;
+  font-family: 'Source Sans Pro', sans-serif;
+  display: none;
+  border: 1px solid #eaeaea;
+  background-color: white;
+  position: absolute;
+  top: 68px;
+  width: 200px;
+  right: 0;
+  min-height: 70px;
+  padding: 0;
+  &::before {
+    height: 100%;
+    display: block;
+    width: 5px;
+    background: rgba(151, 151, 151, 0.2);
+    content: '';
+    bottom: -6px;
+    right: -5px;
+    position: absolute;
+  }
+  &::after {
+    height: 5px;
+    display: block;
+    width: 100.5%;
+    background: rgba(151, 151, 151, 0.2);
+    content: '';
+    bottom: -6px;
+    left: -1px;
+    position: absolute;
+  }
+`;
+
+const MenuItemLi = styled.div`
+  padding: 8px 0;
+  &:hover {
+    background-color: #f6f6f7;
+  }
+`;
+
+const MenuItem = styled.button`
+  border: none;
+  width: 100%;
+  padding: 0 15px;
+  text-align: left;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
+  background: transparent;
+`;
+
+const IconItem = styled.li`
+  float: left;
+  position: relative;
+  display: flex;
+  width: 68px;
+  height: 68px;
+  box-sizing: border-box;
+  padding: 20px 10px !important;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: #e17614;
+    cursor: pointer;
+  }
+`;
+
+const Icon = styled.img``;
+
+const UsernameWrapper = styled.a`
+  color: #fff;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
+`;
+
+const Username = styled.span`
+  margin-right: 5px;
+`;
+
+export const RightMenu = () => (
+  <Wrapper>
+    <MenuWrapper>
+      <DropdownItem>
+        <UsernameWrapper>
+          <Username>Daniel Zheng</Username>
+          <FontAwesomeIcon icon={faAngleDown} size="lg" />
+        </UsernameWrapper>
+        <DropdownMenu>
+          <MenuItemLi>
+            <MenuItem>Settings</MenuItem>
+          </MenuItemLi>
+          <MenuItemLi>
+            <MenuItem>Logout</MenuItem>
+          </MenuItemLi>
+        </DropdownMenu>
+      </DropdownItem>
+      <IconItem>
+        <Icon width={20} height={20} src={Bell} alt="bell" />
+      </IconItem>
+      <IconItem>
+        <Icon width={32} height={20} src={Message} alt="bell" />
+      </IconItem>
+    </MenuWrapper>
+  </Wrapper>
+);

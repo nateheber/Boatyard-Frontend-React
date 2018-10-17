@@ -1,25 +1,24 @@
 import React, { Component } from 'react';
+import WebFont from 'webfontloader';
+
+import Header from './components/compound/Header';
 import logo from './logo.svg';
 import './App.css';
+
+WebFont.load({
+  google: {
+    families: [
+      'Source+Sans+Pro:300,400,600,700',
+      'Montserrat:300,400,500,600,700'
+    ]
+  }
+});
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <Header />
       </div>
     );
   }

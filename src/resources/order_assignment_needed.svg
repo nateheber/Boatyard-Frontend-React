@@ -1,0 +1,15 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <title>order assignment needed</title>
+  <g>
+    <path class="cls-1" d="M108.9,318.73h-4.17v6.74l6.74-6.74Zm0,0" transform="translate(-92 -306)"/>
+    <path class="cls-1" d="M111.09,307.82h-5.15v-.91a.91.91,0,0,0-1.82,0v.91H99.88v-.91a.91.91,0,0,0-1.82,0v.91H92.91a.91.91,0,0,0-.91.91v2.73h20v-2.73a.91.91,0,0,0-.91-.91Zm0,0" transform="translate(-92 -306)"/>
+    <path class="cls-1" d="M93.82,313.27H92v11.82a.91.91,0,0,0,.91.91h10v-8.18a.91.91,0,0,1,.91-.91H112v-3.64Zm6.67,8.64H98.4V324H96.51v-2.08H94.42V320h2.08v-2.08H98.4V320h2.08Z" transform="translate(-92 -306)"/>
+  </g>
+</svg>
