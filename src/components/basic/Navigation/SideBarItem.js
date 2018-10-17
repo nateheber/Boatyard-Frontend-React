@@ -23,6 +23,9 @@ const Link = styled.a`
     background-color: #00485e !important;
     cursor: pointer;
   }
+  @media (max-width: 1091px) {
+    transition: 0.3s;
+  }
 `;
 
 const NavIcon = styled.div`
@@ -46,6 +49,9 @@ const Title = styled.span`
   font-size: 13px;
   font-weight: 300;
   font-family: 'Montserrat', sans-serif;
+  @media (max-width: 991px) {
+    font-size: 10px !important;
+  }
 `;
 
 const SubHeader = styled.ul`

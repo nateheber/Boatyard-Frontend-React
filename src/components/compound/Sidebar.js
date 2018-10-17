@@ -89,12 +89,48 @@ const navItems = [
   }
 ];
 
+const SideBarContainer = styled.div`
+  display: block;
+  background-color: #01556d;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 195px !important;
+  height: calc(100vh - 68px) !important;
+  &::-webkit-scrollbar {
+    width: 10px !important;
+    margin-left: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  }
+  @media (max-width: 991px) {
+    display: block !important;
+    width: 150px !important;
+    margin-left: -150px;
+    &.show {
+      margin-left: 0px;
+    }
+  }
+  transition: all 0.3s ease;
+  transition-property: all;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+  transition-delay: 0s;
+`;
+
 const SideBar = () => (
-  <SideBarWrapper>
-    {navItems.map((item, idx) => (
-      <SideBarItem {...item} key={`nav_item_${idx}`} />
-    ))}
-  </SideBarWrapper>
+  <SideBarContainer>
+    <SideBarWrapper>
+      {navItems.map((item, idx) => (
+        <SideBarItem {...item} key={`nav_item_${idx}`} />
+      ))}
+    </SideBarWrapper>
+  </SideBarContainer>
 );
 
 export default SideBar;

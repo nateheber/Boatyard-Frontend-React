@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import WebFont from 'webfontloader';
 
-import Header from './components/compound/Header';
-import logo from './logo.svg';
-import './App.css';
+import PageTemplate from './components/template/PageTemplate';
+import Dashboard from './components/template/Dashboard';
 
 WebFont.load({
   google: {
@@ -17,9 +16,9 @@ WebFont.load({
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <Header />
-      </div>
+      <PageTemplate>
+        <Dashboard />
+      </PageTemplate>
     );
   }
 }

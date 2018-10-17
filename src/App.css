@@ -31,3 +31,9 @@
     transform: rotate(360deg);
   }
 }
+
+.clearfix:after,
+.clearfix:before {
+  content: ' ';
+  display: table;
+}

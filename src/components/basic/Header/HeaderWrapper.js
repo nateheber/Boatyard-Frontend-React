@@ -11,6 +11,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-contents: space-between;
   align-items: center;
+  z-index: 9999;
 `;
 
 export const HeaderWrapper = props => <Wrapper>{props.children}</Wrapper>;
