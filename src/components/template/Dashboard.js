@@ -17,14 +17,23 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  @media (max-width: 991px) {
+    flex-direction: column;
+  }
 `;
 
 const LeftPart = styled.div`
   flex-grow: 2;
+  @media (max-width: 991px) {
+    flex-grow: none;
+  }
 `;
 
 const RightPart = styled.div`
   flex-grow: 1;
+  @media (max-width: 991px) {
+    flex-grow: none;
+  }
 `;
 
 const Dashboard = () => (
