@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { Provider } from 'react-redux';
 import WebFont from 'webfontloader';
 
-import PageTemplate from './components/template/PageTemplate';
-import Dashboard from './components/template/Dashboard';
+import Route from './navigation/routes';
+
+import store from './store';
 
 WebFont.load({
   google: {
@@ -16,9 +18,9 @@ WebFont.load({
 class App extends Component {
   render() {
     return (
-      <PageTemplate>
-        <Dashboard />
-      </PageTemplate>
+      <Provider store={store}>
+        <Route />
+      </Provider>
     );
   }
 }

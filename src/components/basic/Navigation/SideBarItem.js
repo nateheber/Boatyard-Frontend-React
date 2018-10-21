@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 
 const NavItem = styled.li`
   display: block;
@@ -86,18 +87,27 @@ const SubMenuItem = styled.a`
   @media (max-width: 991px) {
     font-size: 10px !important;
   }
+  &.active {
+    color: #f7941e;
+  }
 `;
 
-export const SideBarItem = ({
+const NavComp = ({
   mainImage,
   activeImage,
   isActive,
   title,
   link,
-  subItems
+  subItems,
+  history,
+  location: { pathname }
 }) => (
   <NavItem>
-    <Link>
+    <Link
+      onClick={() => {
+        if (link) history.push(link);
+      }}
+    >
       <NavIcon
         className={isActive ? 'active' : 'deactive'}
         mainImage={mainImage}
@@ -108,9 +118,19 @@ export const SideBarItem = ({
     {subItems && (
       <SubHeader>
         {subItems.map((item, idx) => (
-          <SubMenuItem key={`sub_item_${idx}`}>{item.title}</SubMenuItem>
+          <SubMenuItem
+            className={item.link === pathname ? 'active' : 'deactive'}
+            key={`sub_item_${idx}`}
+            onClick={() => {
+              history.push(item.link);
+            }}
+          >
+            {item.title}
+          </SubMenuItem>
         ))}
       </SubHeader>
     )}
   </NavItem>
 );
+
+export const SideBarItem = withRouter(NavComp);

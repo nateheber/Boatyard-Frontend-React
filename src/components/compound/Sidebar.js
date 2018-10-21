@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { reduce, findIndex } from 'lodash';
+import { withRouter } from 'react-router-dom';
 
 import { SideBarWrapper, SideBarItem } from '../basic/Navigation';
 
@@ -34,22 +36,26 @@ const navItems = [
   {
     activeImage: DashboardActiveIcon,
     mainImage: DashboardIcon,
-    title: 'DASHBOARD'
+    title: 'DASHBOARD',
+    link: '/dashboard/'
   },
   {
     activeImage: OrdersActiveIcon,
     mainImage: OrdersIcon,
-    title: 'ORDERS'
+    title: 'ORDERS',
+    link: '/orders/'
   },
   {
     activeImage: CalendarActiveIcon,
     mainImage: CalendarIcon,
-    title: 'CALENDAR'
+    title: 'CALENDAR',
+    link: '/calendar/'
   },
   {
     activeImage: InvoicesActiveIcon,
     mainImage: InvoicesIcon,
-    title: 'INVOICES'
+    title: 'INVOICES',
+    link: '/invoices/'
   },
   {
     activeImage: MessageActiveIcon,
@@ -57,35 +63,42 @@ const navItems = [
     title: 'MESSAGES',
     subItems: [
       {
-        title: 'Inbox'
+        title: 'Inbox',
+        link: '/inbox/'
       },
       {
-        title: 'Quick Replies'
+        title: 'Quick Replies',
+        link: '/quick-replies/'
       },
       {
-        title: 'Templates'
+        title: 'Templates',
+        link: '/templates/'
       }
     ]
   },
   {
     activeImage: AnalyticsActiveIcon,
     mainImage: AnalyticsIcon,
-    title: 'ANALYTICS'
+    title: 'ANALYTICS',
+    link: '/analytics/'
   },
   {
     activeImage: ServicesActiveIcon,
     mainImage: ServicesIcon,
-    title: 'SERVICES'
+    title: 'SERVICES',
+    link: '/services/'
   },
   {
     activeImage: TeamActiveIcon,
     mainImage: TeamIcon,
-    title: 'TEAM'
+    title: 'TEAM',
+    link: '/team/'
   },
   {
     activeImage: CustomersActiveIcon,
     mainImage: CustomersIcon,
-    title: 'CUSTOMERS'
+    title: 'CUSTOMERS',
+    link: '/customers/'
   }
 ];
 
@@ -123,14 +136,37 @@ const SideBarContainer = styled.div`
   transition-delay: 0s;
 `;
 
-const SideBar = ({ showSidebar }) => (
-  <SideBarContainer className={showSidebar ? 'show' : 'hide'}>
-    <SideBarWrapper>
-      {navItems.map((item, idx) => (
-        <SideBarItem {...item} key={`nav_item_${idx}`} />
-      ))}
-    </SideBarWrapper>
-  </SideBarContainer>
-);
+const SideBar = ({ showSidebar, activePage, location }) => {
+  const pathname =
+    location.pathname === '/' ? '/dashboard/' : location.pathname;
+  const activeParent = reduce(
+    navItems,
+    (result, item) => {
+      if (item.link === pathname) {
+        return item.title;
+      }
+      if (item.subItems) {
+        const idx = findIndex(item.subItems, item => item.link === pathname);
+        if (idx >= 0) return item.title;
+      }
+      return result;
+    },
+    ''
+  );
+  return (
+    <SideBarContainer className={showSidebar ? 'show' : 'hide'}>
+      <SideBarWrapper>
+        {navItems.map((item, idx) => (
+          <SideBarItem
+            activePage={activePage}
+            isActive={item.title === activeParent}
+            {...item}
+            key={`nav_item_${idx}`}
+          />
+        ))}
+      </SideBarWrapper>
+    </SideBarContainer>
+  );
+};
 
-export default SideBar;
+export default withRouter(SideBar);
