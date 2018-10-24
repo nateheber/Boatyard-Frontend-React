@@ -19,6 +19,10 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  &.secondary {
+    border: 1px solid rgb(223, 223, 223);
+    background-color: transparent;
+  }
 `;
 
 const Input = styled.input`
@@ -39,6 +43,9 @@ const Input = styled.input`
   }
   &:focus {
     outline: none;
+  }
+  &.secondary {
+    color: rgb(51, 51, 51);
   }
 `;
 
@@ -61,7 +68,7 @@ export class SearchBox extends React.Component {
     this.setState({
       value: evt.target.value
     });
-    // this.props.onChange(evt.target.value);
+    this.props.onChange(evt.target.value);
   };
   onClick = () => {
     const { value } = this.state;
@@ -69,16 +76,17 @@ export class SearchBox extends React.Component {
       this.setState({
         value: ''
       });
-      // this.props.onClear();
+      this.props.onChange('');
     }
-    // this.props.onSearch();
   };
   render() {
     const { value } = this.state;
+    const { secondary } = this.props;
     return (
       <Wrapper>
-        <InputWrapper>
+        <InputWrapper className={secondary ? 'secondary' : 'primary'}>
           <Input
+            className={secondary ? 'secondary' : 'primary'}
             {...this.props}
             value={value}
             onChange={this.onChangeInput}
@@ -89,11 +97,22 @@ export class SearchBox extends React.Component {
               this.setState({ focused: false });
             }}
           />
-          <SearchButton onClick={this.onClick}>
+          <SearchButton
+            className={secondary ? 'secondary' : 'primary'}
+            onClick={this.onClick}
+          >
             {!isEmpty(value) ? (
-              <EvilIcon name="ei-close-o" size="s" className="searchIcon" />
+              <EvilIcon
+                name="ei-close-o"
+                size="s"
+                className="searchIcon secondary"
+              />
             ) : (
-              <EvilIcon name="ei-search" size="s" className="searchIcon" />
+              <EvilIcon
+                name="ei-search"
+                size="s"
+                className="searchIcon secondary"
+              />
             )}
           </SearchButton>
         </InputWrapper>

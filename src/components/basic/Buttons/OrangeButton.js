@@ -16,6 +16,7 @@ export const OrangeButton = styled.button`
   text-align: center;
   border-radius: 6px !important;
   text-transform: uppercase;
+  outline: none;
   @media (min-width: 991px) {
     &.desktop {
       display: block;
