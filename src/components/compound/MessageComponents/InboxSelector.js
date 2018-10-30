@@ -94,7 +94,13 @@ export class InboxSelector extends React.Component {
         <FilterWrapper>
           <CheckBox checked={checkAll} onClick={this.selectAll} />
           {selected.length > 0 ? (
-            <HollowButton onClick={onDelete}>DELETE MESSAGES</HollowButton>
+            <HollowButton
+              onClick={() => {
+                onDelete(selected);
+              }}
+            >
+              DELETE MESSAGES
+            </HollowButton>
           ) : (
             <SearchBox secondary onChange={this.setFilter} />
           )}

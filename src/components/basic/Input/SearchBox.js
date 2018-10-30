@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
 import { isEmpty } from 'lodash';
 
-import './style.css';
-
 const Wrapper = styled.div`
   flex-grow: 1;
   justify-content: center;

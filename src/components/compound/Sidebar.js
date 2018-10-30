@@ -51,12 +51,12 @@ const navItems = [
     title: 'CALENDAR',
     link: '/calendar/'
   },
-  {
-    activeImage: InvoicesActiveIcon,
-    mainImage: InvoicesIcon,
-    title: 'INVOICES',
-    link: '/invoices/'
-  },
+  // {
+  //   activeImage: InvoicesActiveIcon,
+  //   mainImage: InvoicesIcon,
+  //   title: 'INVOICES',
+  //   link: '/invoices/'
+  // },
   {
     activeImage: MessageActiveIcon,
     mainImage: MessageIcon,
@@ -77,16 +77,16 @@ const navItems = [
     ]
   },
   {
+    activeImage: CustomersActiveIcon,
+    mainImage: CustomersIcon,
+    title: 'CUSTOMERS',
+    link: '/customers/'
+  },
+  {
     activeImage: AnalyticsActiveIcon,
     mainImage: AnalyticsIcon,
     title: 'ANALYTICS',
     link: '/analytics/'
-  },
-  {
-    activeImage: ServicesActiveIcon,
-    mainImage: ServicesIcon,
-    title: 'SERVICES',
-    link: '/services/'
   },
   {
     activeImage: TeamActiveIcon,
@@ -95,10 +95,10 @@ const navItems = [
     link: '/team/'
   },
   {
-    activeImage: CustomersActiveIcon,
-    mainImage: CustomersIcon,
-    title: 'CUSTOMERS',
-    link: '/customers/'
+    activeImage: ServicesActiveIcon,
+    mainImage: ServicesIcon,
+    title: 'SERVICES',
+    link: '/services/'
   }
 ];
 

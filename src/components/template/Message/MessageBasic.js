@@ -5,6 +5,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  background-color: white;
 `;
 
 const Section = styled.div`
@@ -12,20 +13,20 @@ const Section = styled.div`
   overflow: auto;
   border-right: 1px solid #e6e6e6;
   &.left {
-    flex-grow: 1;
+    flex: 1;
   }
   &.right {
-    flex-grow: 2;
+    flex: 2;
   }
 `;
 
 export default class MessageBasicTemplate extends React.Component {
   render() {
-    const { showContent } = this.props;
+    const { showContent, left, right } = this.props;
     return (
       <Wrapper>
-        <Section className="left" />
-        <Section className="right" />
+        <Section className="left">{left}</Section>
+        <Section className="right">{right}</Section>
       </Wrapper>
     );
   }

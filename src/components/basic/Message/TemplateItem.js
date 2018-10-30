@@ -1,7 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  margin-left: 8.33333%;
+  width: 91.66667%;
+`;
 
 const TypeText = styled.div`
   font-family: 'Source Sans Pro', sans-serif;

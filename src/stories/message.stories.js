@@ -15,7 +15,17 @@ import {
   QRSelector,
   InboxSelector
 } from '../components/compound/MessageComponents';
-import { QRItem } from '../components/basic/Message';
+import {
+  QRItem,
+  MessageEmptyState,
+  ChatItem
+} from '../components/basic/Message';
+
+import { Inbox } from '../components/template/Message/Inbox';
+import InboxLeft from '../components/template/Message/InboxLeft';
+import QRLeft from '../components/template/Message/QR/QRLeft';
+import TemplateLeft from '../components/template/Message/TemplateLeft';
+import InboxContent from '../components/template/Message/InboxContent';
 
 storiesOf('Message', module)
   .add('Inbox Header with items', () => (
@@ -47,6 +57,14 @@ storiesOf('Message', module)
   .add('Template Selector', () => (
     <TemplateSelector
       provider="Brock's Boat Detailing"
+      onSelect={type => {
+        action(type);
+      }}
+    />
+  ))
+  .add('Template Left Part', () => (
+    <TemplateLeft
+      provider="Boatyard Test"
       onSelect={type => {
         action(type);
       }}
@@ -86,6 +104,27 @@ storiesOf('Message', module)
       />
     );
   })
+  .add('QR Left Part', () => {
+    const items = [
+      { id: 1, title: 'test', textBody: 'test test test test' },
+      { id: 2, title: 'test1', textBody: 'test test test test' },
+      { id: 3, title: 'test2', textBody: 'test test test test' }
+    ];
+    return (
+      <QRLeft
+        items={items}
+        onAdd={() => {
+          action('add QR');
+        }}
+        onShowItem={id => {
+          action(`show item ${id}`);
+        }}
+        onDeleteItem={id => {
+          action(`delete item ${id}`);
+        }}
+      />
+    );
+  })
   .add('Inbox Selector', () => {
     const items = [
       {
@@ -97,7 +136,7 @@ storiesOf('Message', module)
         dateTime: new Date('2018/10/1')
       },
       {
-        id: 1,
+        id: 2,
         subject: 'test',
         sender: 'Test Sender',
         textBody: 'test',
@@ -105,7 +144,7 @@ storiesOf('Message', module)
         dateTime: new Date('2018/10/2')
       },
       {
-        id: 1,
+        id: 3,
         subject: 'test',
         sender: 'Test Sender',
         textBody: 'test',
@@ -127,4 +166,125 @@ storiesOf('Message', module)
         }}
       />
     );
-  });
+  })
+  .add('Inbox Left Part', () => {
+    const items = [
+      {
+        id: 1,
+        subject: 'test',
+        sender: 'Test Sender',
+        textBody: 'test',
+        unread: 0,
+        dateTime: new Date('2018/10/1')
+      },
+      {
+        id: 2,
+        subject: 'test',
+        sender: 'Test Sender',
+        textBody: 'test',
+        unread: 1,
+        dateTime: new Date('2018/10/2')
+      },
+      {
+        id: 3,
+        subject: 'test',
+        sender: 'Test Sender',
+        textBody: 'test',
+        unread: 0,
+        dateTime: new Date('2018/10/21')
+      }
+    ];
+    return (
+      <InboxLeft
+        items={items}
+        onShowItem={id => {
+          action(`show item ${id}`);
+        }}
+        onDeleteItem={id => {
+          action(`delete item ${id}`);
+        }}
+      />
+    );
+  })
+  .add('Message Empty State', () => (
+    <MessageEmptyState text="No Message Selected" />
+  ))
+  .add('Message Chat (own)', () => (
+    <ChatItem name="Daniel" time="2018/10/21 23:20:10" body="Test" own />
+  ))
+  .add('Message Chat (opponent)', () => (
+    <ChatItem name="Tester" time="2018/10/21 23:20:10" body="Test" />
+  ))
+  .add('Message History', () => {
+    const data = {
+      opponent: 'Brock Prod Test 9',
+      opponentType: 'test',
+      history: [
+        {
+          name: 'Daniel',
+          time: '2018/10/21 23:20:10',
+          body: 'test',
+          own: true
+        },
+        {
+          name: 'Daniel',
+          time: '2018/10/21 23:20:10',
+          body:
+            'test test test test test test test stest teste set set set set',
+          own: true
+        },
+        {
+          name: 'Brock Prod Test 9 Donnelly',
+          time: '2018/10/21 23:20:10',
+          body: 'test',
+          own: false
+        },
+        {
+          name: 'Daniel',
+          time: '2018/10/21 23:20:10',
+          body: 'test',
+          own: true
+        },
+        {
+          name: 'Daniel',
+          time: '2018/10/21 23:20:10',
+          body: 'test',
+          own: true
+        },
+        {
+          name: 'Brock Prod Test 9 Donnelly',
+          time: '2018/10/21 23:20:10',
+          body:
+            'test test test test test test test stest teste set set set set',
+          own: false
+        },
+        {
+          name: 'Daniel',
+          time: '2018/10/21 23:20:10',
+          body: 'test',
+          own: true
+        },
+        {
+          name: 'Daniel',
+          time: '2018/10/21 23:20:10',
+          body: 'test',
+          own: true
+        },
+        {
+          name: 'Daniel',
+          time: '2018/10/21 23:20:10',
+          body: 'test',
+          own: true
+        },
+        {
+          name: 'Brock Prod Test 9 Donnelly',
+          time: '2018/10/21 23:20:10',
+          body: 'test',
+          own: false
+        },
+        { name: 'Daniel', time: '2018/10/21 23:20:10', body: 'test', own: true }
+      ]
+    };
+    return <InboxContent data={data} />;
+  })
+  .add('Inbox Template', () => <Inbox />);
