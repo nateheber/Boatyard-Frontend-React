@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
 import { isEmpty } from 'lodash';
+import className from 'classnames';
 
 const Wrapper = styled.div`
   flex-grow: 1;
@@ -103,13 +104,13 @@ export class SearchBox extends React.Component {
               <EvilIcon
                 name="ei-close-o"
                 size="s"
-                className="searchIcon secondary"
+                className={className('searchIcon', { secondary: secondary })}
               />
             ) : (
               <EvilIcon
                 name="ei-search"
                 size="s"
-                className="searchIcon secondary"
+                className={className('searchIcon', { secondary: secondary })}
               />
             )}
           </SearchButton>
