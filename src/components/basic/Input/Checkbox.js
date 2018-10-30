@@ -1,9 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import className from 'classnames';
 
-const Check = styled.div`
+const Check = styled.button`
   width: 20px;
   height: 20px;
+  &.small {
+    width: 15px;
+    height: 15px;
+  }
   border-width: 1px;
   border-style: solid;
   border-color: rgb(199, 199, 199);
@@ -31,8 +36,23 @@ const Check = styled.div`
     border-image: initial;
     border-width: 0px 2px 2px 0px;
   }
+  &.small {
+    &.checked::after {
+      top: 1px;
+      left: 5px;
+      width: 3px;
+      height: 7px;
+    }
+  }
+  outline: none;
 `;
 
-export const CheckBox = ({ checked, onClick }) => (
-  <Check className={checked ? 'checked' : 'unchecked'} onClick={onClick} />
+export const CheckBox = ({ small, checked, onClick }) => (
+  <Check
+    className={className({
+      checked: checked,
+      small: small
+    })}
+    onClick={onClick}
+  />
 );

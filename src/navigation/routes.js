@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import PageTemplate from '../components/template/PageTemplate';
 import Dashboard from '../components/template/Dashboard';
+import Order from '../components/template/Order';
+import Services from '../components/template/Services';
+import Team from '../components/template/Team';
+import Customers from '../components/template/Customers';
 import { Inbox, QRBox, TemplateBox } from '../components/template/Message';
 
 const MainRouter = () => (
@@ -13,6 +17,10 @@ const MainRouter = () => (
       <Route exact path="/inbox/" component={Inbox} />
       <Route exact path="/quick-replies/" component={QRBox} />
       <Route exact path="/templates/" component={TemplateBox} />
+      <Route exact path="/orders/" component={Order} />
+      <Route exact path="/services/" component={Services} />
+      <Route exact path="/team/" component={Team} />
+      <Route exact path="/customers/" component={Customers} />
     </PageTemplate>
   </Router>
 );

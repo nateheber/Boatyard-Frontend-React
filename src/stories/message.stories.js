@@ -22,10 +22,10 @@ import {
 } from '../components/basic/Message';
 
 import { Inbox } from '../components/template/Message/Inbox';
-import InboxLeft from '../components/template/Message/InboxLeft';
+import InboxLeft from '../components/template/Message/Inbox/InboxLeft';
 import QRLeft from '../components/template/Message/QR/QRLeft';
-import TemplateLeft from '../components/template/Message/TemplateLeft';
-import InboxContent from '../components/template/Message/InboxContent';
+import TemplateLeft from '../components/template/Message/Template/TemplateLeft';
+import InboxContent from '../components/template/Message/Inbox/InboxContent';
 
 storiesOf('Message', module)
   .add('Inbox Header with items', () => (
