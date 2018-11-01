@@ -10,7 +10,8 @@ import Table from '../components/basic/Table';
 import {
   FilterOptions,
   ActionDropdown,
-  ColumnFilter
+  ColumnFilter,
+  CalendarDropdown
 } from '../components/basic/Dropdown';
 
 storiesOf('Common Components', module)
@@ -64,6 +65,7 @@ storiesOf('Common Components', module)
       />
     );
   })
+
   .add('Tabs', () => {
     const items = [
       { title: 'ALL', value: 'all', counts: 2 },

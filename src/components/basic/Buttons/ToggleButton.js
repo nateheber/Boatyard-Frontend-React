@@ -22,11 +22,33 @@ const ArrBlue = styled.span`
   background-position: center;
 `;
 
-export const ToggleButton = ({ title, onClick }) => (
-  <HollowButton onClick={onClick}>
-    <Content>
-      <Label>{title}</Label>
-      <ArrBlue />
-    </Content>
-  </HollowButton>
-);
+const PlainButton = styled.button`
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 600;
+  font-size: 24px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 15px;
+  height: 75px;
+  box-sizing: border-box;
+`;
+
+export const ToggleButton = ({ title, type, onClick }) => {
+  return type === 'plain' ? (
+    <PlainButton onClick={onClick}>
+      <Content>
+        <Label>{title}</Label>
+        <ArrBlue />
+      </Content>
+    </PlainButton>
+  ) : (
+    <HollowButton onClick={onClick}>
+      <Content>
+        <Label>{title}</Label>
+        <ArrBlue />
+      </Content>
+    </HollowButton>
+  );
+};
