@@ -106,7 +106,8 @@ export class CalendarDropdown extends React.Component {
             <MenuItem
               onClick={() => {
                 this.setState({
-                  showMenu: false
+                  showMenu: false,
+                  selected: selected === 'calendar' ? 'list' : 'calendar'
                 });
                 onChange(selected === 'calendar' ? 'list' : 'calendar');
               }}

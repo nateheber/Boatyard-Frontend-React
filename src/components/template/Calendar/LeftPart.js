@@ -20,9 +20,10 @@ export default class LeftPart extends React.Component {
       { name: 'Detailer Brock Boatyard', color: 'rgb(254, 195, 80)' },
       { name: 'Daniel Zheng', color: 'rgb(247, 154, 67)' }
     ];
+    const { onChange } = this.props;
     return (
       <Wrapper>
-        <CalendarDropdown />
+        <CalendarDropdown onChange={onChange} />
         <DatePicker />
         <TeamMembers members={members} />
       </Wrapper>

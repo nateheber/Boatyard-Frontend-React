@@ -7,6 +7,7 @@ import Order from '../components/template/Order';
 import Services from '../components/template/Services';
 import Team from '../components/template/Team';
 import Customers from '../components/template/Customers';
+import Calendar from '../components/template/Calendar';
 import { Inbox, QRBox, TemplateBox } from '../components/template/Message';
 
 const MainRouter = () => (
@@ -21,6 +22,7 @@ const MainRouter = () => (
       <Route exact path="/services/" component={Services} />
       <Route exact path="/team/" component={Team} />
       <Route exact path="/customers/" component={Customers} />
+      <Route exact path="/calendar/" component={Calendar} />
     </PageTemplate>
   </Router>
 );

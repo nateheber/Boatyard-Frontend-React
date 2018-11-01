@@ -4,6 +4,7 @@ import { times } from 'lodash';
 import moment from 'moment';
 
 const Wrapper = styled.div`
+  position: relative;
   flex: 1;
   border-right: 1px solid #ddd;
 `;
@@ -16,6 +17,7 @@ const DateContainer = styled.div`
   text-transform: uppercase;
   font-size: 12px !important;
   text-align: center;
+  z-index: 3;
 `;
 
 const FirstHalf = styled.div`
@@ -29,7 +31,15 @@ const SecondHalf = styled.div`
   background-color: #f7f7f7;
 `;
 
-export const DateColumn = ({ date }) => (
+const Overlay = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 249, 244, 0.5);
+  top: 0px;
+`;
+
+export const DateColumn = ({ date, active }) => (
   <Wrapper>
     <DateContainer>
       <div>{moment(date).format('dddd')}</div>
@@ -43,5 +53,6 @@ export const DateColumn = ({ date }) => (
         </div>
       );
     })}
+    {active && <Overlay />}
   </Wrapper>
 );

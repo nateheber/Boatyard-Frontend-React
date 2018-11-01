@@ -13,13 +13,20 @@ const Wrapper = styled.div`
 export class CalendarList extends React.Component {
   render() {
     const { date } = this.props;
-    const mDate = moment(date);
+    const columns = [];
+    for (let i = 0; i < 7; i += 1) {
+      const mDate = moment(date).startOf('week');
+      columns.push(
+        <DateColumn
+          date={mDate.add(i, 'days')}
+          active={mDate.isSame(moment(date), 'day')}
+        />
+      );
+    }
     return (
       <Wrapper>
         <TimeColumn />
-        {times(7, dt => {
-          return <DateColumn date={mDate.add(dt)} />;
-        })}
+        {columns}
       </Wrapper>
     );
   }
