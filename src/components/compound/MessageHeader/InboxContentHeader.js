@@ -18,6 +18,7 @@ const Wrapper = styled.div`
 
 const BackButton = styled.button`
   border: none;
+  outline: none;
   background-color: transparent;
   z-index: 9999;
   padding: 1px 7px 2px;

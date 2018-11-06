@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import className from 'classnames';
 
 const Wrapper = styled.div`
   display: flex;
@@ -18,15 +19,31 @@ const Section = styled.div`
   &.right {
     flex: 2;
   }
+  @media (max-width: 992px) {
+    &.left {
+      display: none;
+    }
+    &.left.show {
+      display: block;
+    }
+    &.right {
+      display: none;
+    }
+    &.right.show {
+      display: block;
+    }
+  }
 `;
 
 export default class MessageBasicTemplate extends React.Component {
   render() {
     const { showContent, left, right } = this.props;
+    const leftClassName = className('left', { show: !showContent });
+    const rightClassName = className('right', { show: showContent });
     return (
       <Wrapper>
-        <Section className="left">{left}</Section>
-        <Section className="right">{right}</Section>
+        <Section className={leftClassName}>{left}</Section>
+        <Section className={rightClassName}>{right}</Section>
       </Wrapper>
     );
   }

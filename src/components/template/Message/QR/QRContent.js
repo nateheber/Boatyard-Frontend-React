@@ -15,10 +15,10 @@ const Wrapper = styled.div`
 
 export default class QRContent extends React.Component {
   render() {
-    const { empty, createNew, showItem, onCancel, onSave } = this.props;
+    const { empty, createNew, showItem, onCancel, onSave, onBack } = this.props;
     return createNew ? (
       <Wrapper>
-        <InboxContentHeader name="New Quick Reply" />
+        <InboxContentHeader name="New Quick Reply" onBack={onBack} />
         <QRGenerator onCancel={onCancel} onSave={onSave} />
       </Wrapper>
     ) : empty ? (
@@ -27,7 +27,7 @@ export default class QRContent extends React.Component {
       </Wrapper>
     ) : (
       <Wrapper>
-        <InboxContentHeader name="Edit Quick Reply" />
+        <InboxContentHeader name="Edit Quick Reply" onBack={onBack} />
         <QRGenerator showItem={showItem} onCancel={onCancel} onSave={onSave} />
       </Wrapper>
     );

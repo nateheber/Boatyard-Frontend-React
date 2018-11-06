@@ -121,6 +121,7 @@ export class Inbox extends React.Component {
             onShowItem={id => {
               this.setState({
                 createNew: false,
+                showContent: true,
                 showing: id
               });
             }}
@@ -136,6 +137,11 @@ export class Inbox extends React.Component {
             createNew={createNew}
             data={chatHistory}
             empty={!(showing >= 0)}
+            onBack={() => {
+              this.setState({
+                showContent: false
+              });
+            }}
           />
         }
         showContent={showContent}

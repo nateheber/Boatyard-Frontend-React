@@ -14,15 +14,16 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-export default class QRContent extends React.Component {
+export default class TemplateContent extends React.Component {
   render() {
-    const { selected, onCancel, onSave } = this.props;
+    const { selected, onCancel, onSave, onBack } = this.props;
     return isEmpty(selected) ? (
       false
     ) : (
       <Wrapper>
         <InboxContentHeader
           name={`Edit ${changeCase.ucFirst(selected)} Reply`}
+          onBack={onBack}
         />
         <TemplateEditor
           selected={selected}

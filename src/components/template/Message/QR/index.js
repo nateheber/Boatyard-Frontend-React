@@ -10,7 +10,8 @@ export class QRBox extends React.Component {
     createNew: false,
     empty: true,
     selected: [],
-    showItem: -1
+    showItem: -1,
+    showContent: false
   };
   render() {
     const items = [
@@ -18,7 +19,7 @@ export class QRBox extends React.Component {
       { id: 2, title: 'test1', textBody: 'test test test test' },
       { id: 3, title: 'test2', textBody: 'test test test test' }
     ];
-    const { createNew, empty, showItem } = this.state;
+    const { createNew, empty, showItem, showContent } = this.state;
     const idx = findIndex(items, o => o.id === showItem);
     return (
       <MessageBasic
@@ -27,7 +28,9 @@ export class QRBox extends React.Component {
             items={items}
             onAdd={() => {
               this.setState({
-                empty: true
+                empty: true,
+                createNew: true,
+                showContent: true
               });
             }}
             onSelect={selected => {
@@ -36,7 +39,8 @@ export class QRBox extends React.Component {
             onShowItem={id => {
               this.setState({
                 empty: false,
-                showItem: id
+                showItem: id,
+                showContent: true
               });
             }}
             onDeleteItems={() => {}}
@@ -48,7 +52,8 @@ export class QRBox extends React.Component {
             empty={empty}
             onCancel={() => {
               this.setState({
-                empty: true
+                empty: true,
+                showContent: false
               });
             }}
             onSave={() => {
@@ -56,9 +61,15 @@ export class QRBox extends React.Component {
                 empty: true
               });
             }}
+            onBack={() => {
+              this.setState({
+                showContent: false
+              });
+            }}
             showItem={items[idx]}
           />
         }
+        showContent={showContent}
       />
     );
   }
