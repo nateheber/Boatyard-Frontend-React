@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const TextInput = styled.input`
+export const Input = styled.input`
   background: #fff;
   padding: 0 15px;
   margin-bottom: 15px;

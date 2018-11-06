@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 
 import Table from '../basic/Table';
 import Tab from '../basic/Tab';
@@ -12,7 +13,10 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-export default class Order extends React.Component {
+class Order extends React.Component {
+  toDetails = orderId => {
+    this.props.history.push(`/order-details/${orderId}/`);
+  };
   render() {
     const columns = [
       { label: 'order', value: 'order' },
@@ -62,8 +66,15 @@ export default class Order extends React.Component {
       <Wrapper>
         <OrderHeader />
         <Tab tabs={tabs} selected="all" />
-        <Table columns={columns} records={records} sortColumn="order" />
+        <Table
+          columns={columns}
+          records={records}
+          sortColumn="order"
+          toDetails={this.toDetails}
+        />
       </Wrapper>
     );
   }
 }
+
+export default withRouter(Order);

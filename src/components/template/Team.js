@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 
 import Table from '../basic/Table';
 import { TeamMemberHeader } from '../compound/SectionHeader';
@@ -9,7 +10,10 @@ const Wrapper = styled.div`
   background-color: white;
 `;
 
-export default class Team extends React.Component {
+class Team extends React.Component {
+  toDetails = memberId => {
+    this.props.history.push(`/member-details/${memberId}/`);
+  };
   render() {
     const columns = [
       { label: 'name', value: 'name' },
@@ -34,8 +38,15 @@ export default class Team extends React.Component {
     return (
       <Wrapper>
         <TeamMemberHeader />
-        <Table columns={columns} records={records} sortColumn="order" />
+        <Table
+          columns={columns}
+          records={records}
+          sortColumn="order"
+          toDetails={this.toDetails}
+        />
       </Wrapper>
     );
   }
 }
+
+export default withRouter(Team);

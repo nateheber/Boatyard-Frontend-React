@@ -10,8 +10,7 @@ import Table from '../components/basic/Table';
 import {
   FilterOptions,
   ActionDropdown,
-  ColumnFilter,
-  CalendarDropdown
+  ColumnFilter
 } from '../components/basic/Dropdown';
 
 storiesOf('Common Components', module)

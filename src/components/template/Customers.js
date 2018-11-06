@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 
 import Table from '../basic/Table';
 import { CustomersHeader } from '../compound/SectionHeader';
@@ -9,7 +10,10 @@ const Wrapper = styled.div`
   background-color: white;
 `;
 
-export default class Customers extends React.Component {
+class Customers extends React.Component {
+  toDetails = customerId => {
+    this.props.history.push(`/customer-details/${customerId}/`);
+  };
   render() {
     const columns = [
       { label: 'name', value: 'name' },
@@ -43,8 +47,15 @@ export default class Customers extends React.Component {
     return (
       <Wrapper>
         <CustomersHeader />
-        <Table columns={columns} records={records} sortColumn="order" />
+        <Table
+          columns={columns}
+          records={records}
+          sortColumn="order"
+          toDetails={this.toDetails}
+        />
       </Wrapper>
     );
   }
 }
+
+export default withRouter(Customers);

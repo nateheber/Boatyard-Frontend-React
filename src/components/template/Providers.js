@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 
 import Table from '../basic/Table';
 import { ProviderHeader } from '../compound/SectionHeader';
@@ -9,7 +10,10 @@ const Wrapper = styled.div`
   background-color: white;
 `;
 
-export default class Providers extends React.Component {
+class Providers extends React.Component {
+  toDetails = providerId => {
+    this.props.history.push(`/provider-details/${providerId}/`);
+  };
   render() {
     const columns = [
       { label: 'provider name', value: 'provider_name' },
@@ -51,8 +55,15 @@ export default class Providers extends React.Component {
     return (
       <Wrapper>
         <ProviderHeader />
-        <Table columns={columns} records={records} sortColumn="order" />
+        <Table
+          columns={columns}
+          records={records}
+          sortColumn="order"
+          toDetails={this.toDetails}
+        />
       </Wrapper>
     );
   }
 }
+
+export default withRouter(Providers);

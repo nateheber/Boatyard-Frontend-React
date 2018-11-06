@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { TextInput, TextArea } from '../../basic/Input';
+import { Input, TextArea } from '../../basic/Input';
 import { HollowButton, OrangeButton } from '../../basic/Buttons';
 
 const Wrapper = styled.div`
@@ -26,7 +26,7 @@ export class QRGenerator extends React.Component {
     const { onCancel, onSave } = this.props;
     return (
       <Wrapper>
-        <TextInput placeholder="Quick Reply Name" />
+        <Input type="text" placeholder="Quick Reply Name" />
         <TextArea />
         <ActionWrapper>
           <HollowButton onClick={onCancel}>CANCEL</HollowButton>

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import changeCase from 'change-case';
 
-import { TextInput, TextArea } from '../../basic/Input';
+import { Input, TextArea } from '../../basic/Input';
 import { HollowButton, OrangeButton, PurpleButton } from '../../basic/Buttons';
 
 const Wrapper = styled.div`
@@ -42,7 +42,7 @@ export class TemplateEditor extends React.Component {
       <Wrapper>
         <Field>
           <FieldName>Greeting</FieldName>
-          <TextInput value="Hi [[CUSTOMER_FIRST_NAME]]" disabled />
+          <Input type="text" value="Hi [[CUSTOMER_FIRST_NAME]]" disabled />
         </Field>
         <Field>
           <FieldName>Email Body Section 1</FieldName>
