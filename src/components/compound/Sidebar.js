@@ -17,6 +17,9 @@ import CalendarIcon from '../../resources/calendar.svg';
 import InvoicesActiveIcon from '../../resources/money_bag_active.svg';
 import InvoicesIcon from '../../resources/money_bag.svg';
 
+import ProviderActiveIcon from '../../resources/provider_icon_active.svg';
+import ProviderIcon from '../../resources/provider_icon.svg';
+
 import MessageActiveIcon from '../../resources/read_message_active.svg';
 import MessageIcon from '../../resources/read_message.svg';
 
@@ -57,6 +60,12 @@ const navItems = [
   //   title: 'INVOICES',
   //   link: '/invoices/'
   // },
+  {
+    activeImage: ProviderActiveIcon,
+    mainImage: ProviderIcon,
+    title: 'PROVIDERS',
+    link: '/providers/'
+  },
   {
     activeImage: MessageActiveIcon,
     mainImage: MessageIcon,

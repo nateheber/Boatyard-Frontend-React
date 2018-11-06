@@ -8,6 +8,7 @@ import Services from '../components/template/Services';
 import Team from '../components/template/Team';
 import Customers from '../components/template/Customers';
 import Calendar from '../components/template/Calendar';
+import Providers from '../components/template/Providers';
 import { Inbox, QRBox, TemplateBox } from '../components/template/Message';
 
 const MainRouter = () => (
@@ -19,6 +20,7 @@ const MainRouter = () => (
       <Route exact path="/quick-replies/" component={QRBox} />
       <Route exact path="/templates/" component={TemplateBox} />
       <Route exact path="/orders/" component={Order} />
+      <Route exact path="/providers/" component={Providers} />
       <Route exact path="/services/" component={Services} />
       <Route exact path="/team/" component={Team} />
       <Route exact path="/customers/" component={Customers} />

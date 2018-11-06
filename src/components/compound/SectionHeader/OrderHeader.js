@@ -40,6 +40,9 @@ export const OrderHeader = ({ onAction }) => (
           { title: 'Scheduling Status', value: 'scheduling_status' },
           { title: 'Order Status', value: 'order_status' }
         ]}
+        onChangeSelection={columns => {
+          console.log(columns);
+        }}
       />
     </RightPart>
   </SectionHeaderWrapper>
