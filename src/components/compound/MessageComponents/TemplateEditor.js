@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import changeCase from 'change-case';
 
-import { Input, TextArea } from '../../basic/Input';
+import { Input, TextArea, InputWrapper, InputLabel } from '../../basic/Input';
 import { HollowButton, OrangeButton, PurpleButton } from '../../basic/Buttons';
 
 const Wrapper = styled.div`
@@ -22,15 +22,6 @@ const ActionWrapper = styled.div`
   margin-top: 30px;
 `;
 
-const Field = styled.div``;
-const FieldName = styled.div`
-  color: #666;
-  font-size: 14px;
-  font-weight: 500;
-  font-family: 'Montserrat', sans-serif;
-  margin-bottom: 5px;
-`;
-
 const ViewTemplateButtonWrapper = styled.div`
   margin-bottom: 10px;
 `;
@@ -40,24 +31,24 @@ export class TemplateEditor extends React.Component {
     const { selected, onCancel, onSave } = this.props;
     return (
       <Wrapper>
-        <Field>
-          <FieldName>Greeting</FieldName>
+        <InputWrapper className="primary">
+          <InputLabel>Greeting</InputLabel>
           <Input type="text" value="Hi [[CUSTOMER_FIRST_NAME]]" disabled />
-        </Field>
-        <Field>
-          <FieldName>Email Body Section 1</FieldName>
+        </InputWrapper>
+        <InputWrapper className="primary">
+          <InputLabel>Email Body Section 1</InputLabel>
           <TextArea value="Thank you for choosing Brock's Boat Detailing. To view your invoice, please click here:" />
-        </Field>
+        </InputWrapper>
         <ViewTemplateButtonWrapper>
           <PurpleButton>VIEW {changeCase.upperCase(selected)}</PurpleButton>
         </ViewTemplateButtonWrapper>
-        <Field>
-          <FieldName>Email Body Section 2</FieldName>
+        <InputWrapper className="primary">
+          <InputLabel>Email Body Section 2</InputLabel>
           <TextArea
             value="We appreciate your business and look forward to serving you again
             soon.&#13;&#10;Thank you,"
           />
-        </Field>
+        </InputWrapper>
         <TextArea
           value="[[PROVIDER_USER_NAME]]&#13;&#10;Brock's Boat Detailing"
           disabled

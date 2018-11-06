@@ -4,7 +4,7 @@ export const OrangeButton = styled.button`
   margin: 0;
   padding: 5px 15px;
   position: relative;
-  height: 30px;
+  height: 33px;
   color: white !important;
   background-color: #f7941e;
   border: 1.5px solid #f7941e;
