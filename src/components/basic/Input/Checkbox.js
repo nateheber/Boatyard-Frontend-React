@@ -26,8 +26,8 @@ const Check = styled.button`
   &.checked::after {
     content: ' ';
     position: absolute;
-    top: 2px;
-    left: 7px;
+    top: 1px;
+    left: 6px;
     width: 5px;
     height: 10px;
     transform: rotate(45deg);
@@ -47,6 +47,15 @@ const Check = styled.button`
   outline: none;
 `;
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
+  color: #333;
+`;
+
 export const CheckBox = ({ small, checked, onClick }) => (
   <Check
     className={className({
@@ -55,4 +64,17 @@ export const CheckBox = ({ small, checked, onClick }) => (
     })}
     onClick={onClick}
   />
+);
+
+export const CheckField = ({ title, small, checked, onClick }) => (
+  <Wrapper>
+    <Check
+      className={className({
+        checked: checked,
+        small: small
+      })}
+      onClick={onClick}
+    />
+    {title}
+  </Wrapper>
 );

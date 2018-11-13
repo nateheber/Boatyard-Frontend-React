@@ -1,9 +1,16 @@
 import React from 'react';
 
 import { storiesOf } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
-import { linkTo } from '@storybook/addon-links';
 
-import { MemberEditor } from '../components/template/Editors';
+import {
+  MemberEditor,
+  ServiceEditor,
+  NewCustomerEditor,
+  ProviderAccountEditor
+} from '../components/template/Editors';
 
-storiesOf('Editors', module).add('Team Member Editor', () => <MemberEditor />);
+storiesOf('Editors', module)
+  .add('Team Member Editor', () => <MemberEditor />)
+  .add('Service Editor', () => <ServiceEditor />)
+  .add('New Customer Editor', () => <NewCustomerEditor />)
+  .add('Provider Account', () => <ProviderAccountEditor />);

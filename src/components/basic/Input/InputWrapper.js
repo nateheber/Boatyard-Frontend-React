@@ -40,6 +40,6 @@ export const InputWrapper = styled.div`
 export const InputRow = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 `;
