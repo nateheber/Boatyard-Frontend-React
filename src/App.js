@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import WebFont from 'webfontloader';
 
-import Route from './navigation/routes';
+import AppRoutes from './navigation';
 
 import store from './store';
 
@@ -19,7 +19,7 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <Route />
+        <AppRoutes />
       </Provider>
     );
   }

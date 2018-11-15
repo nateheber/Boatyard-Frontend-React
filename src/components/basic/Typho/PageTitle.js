@@ -7,4 +7,7 @@ export const PageTitle = styled.h2`
   margin: 0;
   padding: 25px 25px 25px 0;
   font-family: 'Montserrat', sans-serif !important;
+  &.centered {
+    text-align: center;
+  }
 `;
