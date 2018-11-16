@@ -4,7 +4,7 @@ import { apiBaseUrl } from './config';
 
 export const login = (email, password) =>
   axios
-    .post(`${apiBaseUrl}/users/session`, {
+    .post(`${apiBaseUrl}/users/sessions`, {
       session: {
         email,
         password

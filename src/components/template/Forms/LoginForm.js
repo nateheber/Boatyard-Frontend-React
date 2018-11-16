@@ -72,10 +72,7 @@ class LoginForm extends React.Component {
       emailError: '',
       passwordError: ''
     });
-    this.props.onLogin({
-      email,
-      password
-    });
+    this.props.onLogin(email, password);
   };
   render() {
     const { email, password, emailError, passwordError } = this.state;
@@ -92,7 +89,7 @@ class LoginForm extends React.Component {
           <InputWrapper className="primary">
             <InputLabel>Password</InputLabel>
             <Input
-              type="text"
+              type="password"
               onChange={this.changePassword}
               value={password}
             />

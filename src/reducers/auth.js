@@ -14,17 +14,32 @@ export const logout = createAction(actions.logout);
 const initialState = {
   authToken: '',
   errorMessage: '',
-  loading: false
+  loading: false,
+  email: '',
+  firstName: '',
+  lastName: ''
 };
 
 export default handleActions(
   {
     [actions.setAuthState]: (
       state,
-      { payload: { authToken, errorMessage, loading } }
+      {
+        payload: {
+          authToken,
+          errorMessage,
+          loading,
+          email,
+          firstName,
+          lastName
+        }
+      }
     ) => ({
       ...state,
       authToken,
+      email,
+      firstName,
+      lastName,
       errorMessage,
       loading
     })
