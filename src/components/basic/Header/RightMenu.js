@@ -1,9 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Bell from '../../../resources/notification-bell.svg';
 import Message from '../../../resources/messages-icon.png';
 import ChevronIcon from '../../../resources/down-chevron.svg';
+
+import { logout } from '../../../reducers/auth';
 
 const Wrapper = styled.div`
   display: flex;
@@ -92,6 +96,7 @@ const MenuItem = styled.button`
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
   background: transparent;
+  outline: none;
 `;
 
 const IconItem = styled.li`
@@ -149,20 +154,22 @@ const Chevron = styled.div`
   }
 `;
 
-export const RightMenu = () => (
+const MenuUI = ({ firstName, lastName, logout, history }) => (
   <Wrapper>
     <MenuWrapper>
       <DropdownItem>
         <UsernameWrapper>
-          <Username>Daniel Zheng</Username>
+          <Username>{`${firstName} ${lastName}`}</Username>
           <Chevron />
         </UsernameWrapper>
         <DropdownMenu>
           <MenuItemLi>
-            <MenuItem>Settings</MenuItem>
+            <MenuItem onClick={() => history.push('/update-profile/')}>
+              Settings
+            </MenuItem>
           </MenuItemLi>
           <MenuItemLi>
-            <MenuItem>Logout</MenuItem>
+            <MenuItem onClick={() => logout(history.push)}>Logout</MenuItem>
           </MenuItemLi>
         </DropdownMenu>
       </DropdownItem>
@@ -174,4 +181,20 @@ export const RightMenu = () => (
       </IconItem>
     </MenuWrapper>
   </Wrapper>
+);
+
+const mapStateToProps = ({ profile: { firstName, lastName } }) => ({
+  firstName,
+  lastName
+});
+
+const mapDispatchToProps = {
+  logout
+};
+
+export const RightMenu = withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(MenuUI)
 );

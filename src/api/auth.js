@@ -1,9 +1,11 @@
-import axios from 'axios';
+import { createAuthClient } from './core';
 
 import { apiBaseUrl } from './config';
 
+const authClient = createAuthClient();
+
 export const login = (email, password) =>
-  axios
+  authClient
     .post(`${apiBaseUrl}/users/sessions`, {
       session: {
         email,
@@ -14,7 +16,7 @@ export const login = (email, password) =>
     .catch(err => err);
 
 export const signup = (email, password) =>
-  axios
+  authClient
     .post(`${apiBaseUrl}/users/registrations`, {
       user: {
         email,

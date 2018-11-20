@@ -1,6 +1,7 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
 
 import { actions } from '../auth';
+import { actions as ProfileActions } from '../profile';
 
 import { login, signup } from '../../api/auth';
 
@@ -9,18 +10,31 @@ function* loginRequest(action) {
   try {
     const result = yield call(login, email, password);
     const {
-      email: userEmail,
-      first_name,
-      last_name,
-      authorization_token
-    } = result.data.attributes;
+      id,
+      type,
+      attributes: {
+        firstName,
+        lastName,
+        email: userEmail,
+        phoneNumber,
+        authorizationToken
+      }
+    } = result;
     yield put({
       type: actions.setAuthState,
       payload: {
-        email: userEmail,
-        firstName: first_name,
-        lastName: last_name,
-        authToken: authorization_token
+        authToken: authorizationToken
+      }
+    });
+    yield put({
+      type: ProfileActions.setProfile,
+      payload: {
+        id,
+        email: userEmail || '',
+        firstName: firstName || '',
+        lastName: lastName || '',
+        phoneNumber: phoneNumber || '',
+        type
       }
     });
   } catch {
@@ -34,7 +48,12 @@ function* signupRequest(action) {
   console.log(result);
 }
 
+function* logoutRequest(action) {
+  yield call(action.payload);
+}
+
 export default function* Auth() {
   yield takeEvery(actions.login, loginRequest);
   yield takeEvery(actions.signup, signupRequest);
+  yield takeEvery(actions.logout, logoutRequest);
 }

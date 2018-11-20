@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import WebFont from 'webfontloader';
 
 import AppRoutes from './navigation';
 
-import store from './store';
+import store, { persistor } from './store';
 
 WebFont.load({
   google: {
@@ -19,7 +20,9 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <AppRoutes />
+        <PersistGate persistor={persistor}>
+          <AppRoutes />
+        </PersistGate>
       </Provider>
     );
   }

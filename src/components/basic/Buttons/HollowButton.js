@@ -19,5 +19,5 @@ export const HollowButton = styled.button`
   margin: 5px;
   padding: 5px 15px;
   outline: none;
-  width: 100%;
+  display: inline-block;
 `;

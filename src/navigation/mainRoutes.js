@@ -9,12 +9,14 @@ import Team from '../components/template/Team';
 import Customers from '../components/template/Customers';
 import Calendar from '../components/template/Calendar';
 import Providers from '../components/template/Providers';
+import UpdateProfile from '../components/template/UpdateProfile';
 import { Inbox, QRBox, TemplateBox } from '../components/template/Message';
 
 const MainRouter = () => (
   <Router>
     <PageTemplate>
       <Route exact path="/" component={Dashboard} />
+      <Route exact path="/update-profile" component={UpdateProfile} />
       <Route exact path="/dashboard/" component={Dashboard} />
       <Route exact path="/inbox/" component={Inbox} />
       <Route exact path="/quick-replies/" component={QRBox} />
