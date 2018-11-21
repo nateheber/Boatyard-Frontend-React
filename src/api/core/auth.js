@@ -2,14 +2,29 @@ import { get } from 'lodash';
 
 import store from '../../store';
 
-export default client => {
+export const authInterceptor = (client, authType) => {
   client.interceptors.request.use(
     config => {
       const {
-        auth: { authToken }
+        auth: { authToken, adminToken, providerToken }
       } = store.getState();
-      if (authToken) {
-        config.headers.Authorization = authToken;
+      let token = undefined;
+      switch (authType) {
+        case 'basic':
+          token = authToken;
+          break;
+        case 'admin':
+          token = adminToken;
+          break;
+        case 'provider':
+          token = providerToken;
+          break;
+        default:
+          token = authToken;
+          break;
+      }
+      if (token) {
+        config.headers.Authorization = token;
       }
       return config;
     },

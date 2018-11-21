@@ -1,4 +1,5 @@
 import { createAction, handleActions } from 'redux-actions';
+import { produce } from 'immer';
 
 export const actions = {
   setCurrentScreen: 'NAVIGATION/SET_CURRENT_SCREEN'
@@ -12,10 +13,10 @@ const initialState = {
 
 export default handleActions(
   {
-    [actions.setKeyword]: (state, action) => ({
-      ...state,
-      currentScreen: action.payload
-    })
+    [actions.setKeyword]: (state, action) =>
+      produce(state, draft => {
+        draft.currentScreen = action.payload;
+      })
   },
   initialState
 );

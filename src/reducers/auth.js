@@ -1,4 +1,5 @@
 import { createAction, handleActions } from 'redux-actions';
+import { produce } from 'immer';
 
 export const actions = {
   signup: 'AUTH/SIGNUP',
@@ -22,12 +23,12 @@ export default handleActions(
     [actions.setAuthState]: (
       state,
       { payload: { authToken, errorMessage, loading } }
-    ) => ({
-      ...state,
-      authToken,
-      errorMessage,
-      loading
-    }),
+    ) =>
+      produce(state, draftState => {
+        draftState.authToken = authToken;
+        draftState.errorMessage = errorMessage;
+        draftState.loading = loading;
+      }),
     [actions.logout]: () => ({
       ...initialState
     })

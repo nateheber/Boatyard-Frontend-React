@@ -23,7 +23,9 @@ function* loginRequest(action) {
     yield put({
       type: actions.setAuthState,
       payload: {
-        authToken: authorizationToken
+        authToken: authorizationToken,
+        errorMessage: '',
+        loading: false
       }
     });
     yield put({
@@ -38,7 +40,14 @@ function* loginRequest(action) {
       }
     });
   } catch {
-    yield put;
+    yield put({
+      type: actions.setAuthState,
+      payload: {
+        authToken: '',
+        errorMessage: 'Invalid username or password',
+        loading: false
+      }
+    });
   }
 }
 

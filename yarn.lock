@@ -5296,6 +5296,10 @@ ignore@^4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
 
+immer@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-1.8.0.tgz#afa8393996a1f3f5255019e7d10c29d42dd95225"
+
 immutable@^3.8.1:
   version "3.8.2"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"

@@ -111,6 +111,64 @@ const navItems = [
   }
 ];
 
+const adminNavItems = [
+  {
+    activeImage: DashboardActiveIcon,
+    mainImage: DashboardIcon,
+    title: 'DASHBOARD',
+    link: '/dashboard/'
+  },
+  {
+    activeImage: OrdersActiveIcon,
+    mainImage: OrdersIcon,
+    title: 'ORDERS',
+    link: '/orders/'
+  },
+  {
+    activeImage: CalendarActiveIcon,
+    mainImage: CalendarIcon,
+    title: 'CALENDAR',
+    link: '/calendar/'
+  },
+  {
+    activeImage: MessageActiveIcon,
+    mainImage: MessageIcon,
+    title: 'MESSAGES',
+    subItems: [
+      {
+        title: 'Inbox',
+        link: '/inbox/'
+      },
+      {
+        title: 'Quick Replies',
+        link: '/quick-replies/'
+      },
+      {
+        title: 'Templates',
+        link: '/templates/'
+      }
+    ]
+  },
+  {
+    activeImage: AnalyticsActiveIcon,
+    mainImage: AnalyticsIcon,
+    title: 'ANALYTICS',
+    link: '/analytics/'
+  },
+  {
+    activeImage: TeamActiveIcon,
+    mainImage: TeamIcon,
+    title: 'TEAM',
+    link: '/team/'
+  },
+  {
+    activeImage: CustomersActiveIcon,
+    mainImage: CustomersIcon,
+    title: 'USERS',
+    link: '/users/'
+  }
+];
+
 const SideBarContainer = styled.div`
   display: block;
   background-color: #01556d;

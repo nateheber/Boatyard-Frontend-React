@@ -64,7 +64,7 @@ class Order extends React.Component {
     ];
     return (
       <Wrapper>
-        <OrderHeader />
+        <OrderHeader onNewOrder={this.newOrder} />
         <Tab tabs={tabs} selected="all" />
         <Table
           columns={columns}

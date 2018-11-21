@@ -169,7 +169,9 @@ const MenuUI = ({ firstName, lastName, logout, history }) => (
             </MenuItem>
           </MenuItemLi>
           <MenuItemLi>
-            <MenuItem onClick={() => logout(history.push)}>Logout</MenuItem>
+            <MenuItem onClick={() => logout(() => history.push('/'))}>
+              Logout
+            </MenuItem>
           </MenuItemLi>
         </DropdownMenu>
       </DropdownItem>

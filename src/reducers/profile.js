@@ -1,4 +1,5 @@
 import { createAction, handleActions } from 'redux-actions';
+import { produce } from 'immer';
 
 export const actions = {
   fetchProfile: 'PROFILE/FETCH',
@@ -17,15 +18,24 @@ const initialState = {
   lastName: '',
   email: '',
   phoneNumber: '',
-  type: ''
+  type: '',
+  isAdmin: false
 };
 
 export default handleActions(
   {
-    [actions.setProfile]: (state, { payload }) => ({
-      ...state,
-      ...payload
-    })
+    [actions.setProfile]: (
+      state,
+      { payload: { id, firstName, lastName, email, phoneNumber, type } }
+    ) =>
+      produce(state, draft => {
+        draft.id = id;
+        draft.firstName = firstName;
+        draft.lastName = lastName;
+        draft.email = email;
+        draft.phoneNumber = phoneNumber;
+        draft.type = type;
+      })
   },
   initialState
 );

@@ -1,49 +1,46 @@
 import React from 'react';
 
-import {
-  InputRow,
-  InputWrapper,
-  InputLabel,
-  Input,
-  Select
-} from '../../basic/Input';
+import { InputRow, InputWrapper, InputLabel, Input } from '../../basic/Input';
 import { OrangeButton, HollowButton } from '../../basic/Buttons';
 import { EditorSection } from '../../compound/SubSections';
 
-export class MemberEditor extends React.Component {
+export class NewBoatEditor extends React.Component {
   render() {
     const fields = (
       <div>
         <InputRow>
           <InputWrapper className="secondary">
-            <InputLabel>First Name</InputLabel>
+            <InputLabel>NAME</InputLabel>
             <Input type="text" />
           </InputWrapper>
           <InputWrapper className="secondary">
-            <InputLabel>Last Name</InputLabel>
-            <Input type="text" />
-          </InputWrapper>
-        </InputRow>
-        <InputRow>
-          <InputWrapper className="secondary">
-            <InputLabel>Email</InputLabel>
+            <InputLabel>MAKE</InputLabel>
             <Input type="text" />
           </InputWrapper>
           <InputWrapper className="secondary">
-            <InputLabel>Phone</InputLabel>
+            <InputLabel>BOAT MODEL</InputLabel>
             <Input type="text" />
           </InputWrapper>
         </InputRow>
         <InputRow>
           <InputWrapper className="secondary">
-            <InputLabel>Permissions</InputLabel>
-            <Select>
-              <option value="employee">Employee</option>
-              <option value="provider">Provider</option>
-              <option value="provider_admin">Provider Admin</option>
-            </Select>
+            <InputLabel>YEAR</InputLabel>
+            <Input type="text" />
           </InputWrapper>
-          <InputWrapper />
+          <InputWrapper className="secondary">
+            <InputLabel>BOAT LENGTH</InputLabel>
+            <Input type="text" />
+          </InputWrapper>
+        </InputRow>
+        <InputRow>
+          <InputWrapper className="secondary">
+            <InputLabel>BOAT LOCATION</InputLabel>
+            <Input type="text" />
+          </InputWrapper>
+          <InputWrapper className="secondary">
+            <InputLabel>BOAT LENGTH</InputLabel>
+            <Input type="text" />
+          </InputWrapper>
         </InputRow>
       </div>
     );

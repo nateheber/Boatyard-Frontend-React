@@ -2,14 +2,13 @@ import { put, takeEvery, call } from 'redux-saga/effects';
 
 import { actions } from '../profile';
 
-import {
-  getUserProfile,
-  updateUserProfile,
-  deleteUser
-} from '../../api/profile';
+import { createUserClient } from '../../api';
+
+const apiClient = createUserClient('basic');
 
 function* fetchRequest(action) {
-  const result = yield call(getUserProfile, action.payload);
+  console.log(apiClient);
+  const result = yield call(apiClient.read, action.payload);
   yield put({
     type: actions.setProfile,
     payload: result
@@ -18,7 +17,7 @@ function* fetchRequest(action) {
 
 function* updateRequest(action) {
   const { id, data } = action.payload;
-  const result = yield call(updateUserProfile, id, data);
+  const result = yield call(apiClient.update, id, data);
   const {
     type,
     attributes: { firstName, lastName, email, phoneNumber }
@@ -30,13 +29,14 @@ function* updateRequest(action) {
       firstName: firstName || '',
       lastName: lastName || '',
       phoneNumber: phoneNumber || '',
-      type
+      type,
+      id
     }
   });
 }
 
 function* deleteRequest(action) {
-  yield call(deleteUser, action.payload);
+  yield call(apiClient.delete, action.payload);
 }
 
 export default function* Auth() {

@@ -36,21 +36,25 @@ const RightPart = styled.div`
   }
 `;
 
-const Dashboard = () => (
-  <Container>
-    <DashboardHeader />
-    <Wrapper>
-      <LeftPart>
-        <NewOrders />
-        <ScheduledOrders />
-        <AssignedOrders />
-      </LeftPart>
-      <RightPart>
-        <MonthlyRevenue />
-        <OverdueInvoices />
-      </RightPart>
-    </Wrapper>
-  </Container>
-);
+class Dashboard extends React.Component {
+  render() {
+    return (
+      <Container>
+        <DashboardHeader onNewOrder={this.newOrder} />
+        <Wrapper>
+          <LeftPart>
+            <NewOrders />
+            <ScheduledOrders />
+            <AssignedOrders />
+          </LeftPart>
+          <RightPart>
+            <MonthlyRevenue />
+            <OverdueInvoices />
+          </RightPart>
+        </Wrapper>
+      </Container>
+    );
+  }
+}
 
 export default Dashboard;
