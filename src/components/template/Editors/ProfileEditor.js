@@ -1,9 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import Modal from 'react-responsive-modal';
 
 import { InputRow, InputWrapper, InputLabel, Input } from '../../basic/Input';
 import { OrangeButton, HollowButton } from '../../basic/Buttons';
 import { EditorSection } from '../../compound/SubSections';
+
+import { PasswordEditor } from './PasswordEditor';
 
 const Wrapper = styled.div`
   background-color: white;
@@ -23,6 +26,15 @@ const PermissionText = styled.div`
   text-transform: capitalize;
 `;
 
+const modalStyles = {
+  overlay: {
+    background: 'transparent'
+  },
+  modal: {
+    padding: '0px'
+  }
+};
+
 export class ProfileEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -31,12 +43,26 @@ export class ProfileEditor extends React.Component {
       firstName,
       lastName,
       phoneNumber,
-      email
+      email,
+      showModal: false
     };
   }
   onSave = () => {
     const { id } = this.props.profile;
     this.props.updateProfile({ id, data: this.state });
+  };
+  onUpdatePassword = password => {
+    const { id } = this.props.profile;
+    this.props.updateProfile({
+      id,
+      data: {
+        password,
+        passwordConfirmation: password
+      }
+    });
+    this.setState({
+      showModal: false
+    });
   };
   onChangeFN = evt => {
     this.setState({
@@ -58,8 +84,18 @@ export class ProfileEditor extends React.Component {
       phoneNumber: evt.target.value
     });
   };
+  showModal = () => {
+    this.setState({
+      showModal: true
+    });
+  };
+  closeModal = () => {
+    this.setState({
+      showModal: false
+    });
+  };
   render() {
-    const { firstName, lastName, phoneNumber, email } = this.state;
+    const { firstName, lastName, phoneNumber, email, showModal } = this.state;
     const { history } = this.props;
     const { type } = this.props.profile;
     const actions = (
@@ -116,7 +152,9 @@ export class ProfileEditor extends React.Component {
         <InputRow style={{ flex: '12' }}>
           <InputWrapper style={{ flex: '3' }} className="secondary">
             <InputLabel>Security Settings</InputLabel>
-            <HollowButton>Change Password</HollowButton>
+            <HollowButton onClick={this.showModal}>
+              Change Password
+            </HollowButton>
           </InputWrapper>
           {/* <InputWrapper style={{ flex: '2' }} className="secondary">
             <InputLabel>IOS App Version</InputLabel>
@@ -132,6 +170,12 @@ export class ProfileEditor extends React.Component {
     return (
       <Wrapper>
         <EditorSection actions={actions} content={editSection} />
+        <Modal styles={modalStyles} open={showModal} onClose={this.closeModal}>
+          <PasswordEditor
+            onCancel={this.closeModal}
+            onSave={this.onUpdatePassword}
+          />
+        </Modal>
       </Wrapper>
     );
   }

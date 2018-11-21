@@ -11,6 +11,6 @@ applyCaseConverter(applyResponseInterceptor(applyAuthInterceptor(axios)));
 export const getUserProfile = id => axios.get(`${apiBaseUrl}/users/${id}`);
 
 export const updateUserProfile = (id, data) =>
-  axios.patch(`${apiBaseUrl}/users/${id}`, data);
+  axios.patch(`${apiBaseUrl}/users/${id}`, { user: data });
 
 export const deleteUser = id => axios.delete(`${apiBaseUrl}/users/${id}`);
