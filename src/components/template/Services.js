@@ -1,9 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 import Table from '../basic/Table';
 import { ServiceHeader } from '../compound/SectionHeader';
+
+import { fetchServices } from '../../reducers/services';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -11,8 +14,14 @@ const Wrapper = styled.div`
 `;
 
 class Services extends React.Component {
+  componentDidMount() {
+    this.props.fetchServices();
+  }
   toDetails = serviceId => {
-    this.props.history.push(`/service-details/${serviceId}`);
+    this.props.history.push(`/service-details/?service=${serviceId}`);
+  };
+  createService = () => {
+    this.props.history.push(`/service-details/`);
   };
   render() {
     const columns = [
@@ -49,7 +58,7 @@ class Services extends React.Component {
     ];
     return (
       <Wrapper>
-        <ServiceHeader />
+        <ServiceHeader onAdd={this.createService} />
         <Table
           columns={columns}
           records={records}
@@ -61,4 +70,17 @@ class Services extends React.Component {
   }
 }
 
-export default withRouter(Services);
+const mapStateToProps = ({ service: { services } }) => ({
+  services
+});
+
+const mapDispatchToProps = {
+  fetchServices
+};
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Services)
+);

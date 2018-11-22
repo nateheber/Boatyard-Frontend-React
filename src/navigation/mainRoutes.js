@@ -9,7 +9,11 @@ import Team from '../components/template/Team';
 import Customers from '../components/template/Customers';
 import Calendar from '../components/template/Calendar';
 import Providers from '../components/template/Providers';
+import CreateProvider from '../components/template/EditFlow/CreateProvider';
 import UpdateProfile from '../components/template/UpdateProfile';
+import Users from '../components/template/Users';
+import UserDetails from '../components/template/UserDetails';
+import { ServiceEditor } from '../components/template/Editors';
 import { Inbox, QRBox, TemplateBox } from '../components/template/Message';
 
 const MainRouter = () => (
@@ -24,9 +28,13 @@ const MainRouter = () => (
       <Route exact path="/orders/" component={Order} />
       <Route exact path="/providers/" component={Providers} />
       <Route exact path="/services/" component={Services} />
+      <Route exact path="/service-details/" component={ServiceEditor} />
       <Route exact path="/team/" component={Team} />
       <Route exact path="/customers/" component={Customers} />
       <Route exact path="/calendar/" component={Calendar} />
+      <Route exact path="/users/" component={Users} />
+      <Route exact path="/user-details/" component={UserDetails} />
+      <Route exact path="/create-provider/" component={CreateProvider} />
     </PageTemplate>
   </Router>
 );

@@ -1,6 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { reduce, findIndex } from 'lodash';
+import { reduce, findIndex, isEmpty } from 'lodash';
 import { withRouter } from 'react-router-dom';
 
 import { SideBarWrapper, SideBarItem } from '../basic/Navigation';
@@ -60,12 +61,6 @@ const navItems = [
   //   title: 'INVOICES',
   //   link: '/invoices/'
   // },
-  {
-    activeImage: ProviderActiveIcon,
-    mainImage: ProviderIcon,
-    title: 'PROVIDERS',
-    link: '/providers/'
-  },
   {
     activeImage: MessageActiveIcon,
     mainImage: MessageIcon,
@@ -129,6 +124,12 @@ const adminNavItems = [
     mainImage: CalendarIcon,
     title: 'CALENDAR',
     link: '/calendar/'
+  },
+  {
+    activeImage: ProviderActiveIcon,
+    mainImage: ProviderIcon,
+    title: 'PROVIDERS',
+    link: '/providers/'
   },
   {
     activeImage: MessageActiveIcon,
@@ -203,11 +204,12 @@ const SideBarContainer = styled.div`
   transition-delay: 0s;
 `;
 
-const SideBar = ({ showSidebar, activePage, location }) => {
+const SideBar = ({ adminToken, showSidebar, activePage, location }) => {
   const pathname =
     location.pathname === '/' ? '/dashboard/' : location.pathname;
+  const navigation = isEmpty(adminToken) ? navItems : adminNavItems;
   const activeParent = reduce(
-    navItems,
+    navigation,
     (result, item) => {
       if (item.link === pathname) {
         return item.title;
@@ -223,7 +225,7 @@ const SideBar = ({ showSidebar, activePage, location }) => {
   return (
     <SideBarContainer className={showSidebar ? 'show' : 'hide'}>
       <SideBarWrapper>
-        {navItems.map((item, idx) => (
+        {navigation.map((item, idx) => (
           <SideBarItem
             activePage={activePage}
             isActive={item.title === activeParent}
@@ -236,4 +238,8 @@ const SideBar = ({ showSidebar, activePage, location }) => {
   );
 };
 
-export default withRouter(SideBar);
+const mapStateToProps = ({ auth: { adminToken } }) => ({
+  adminToken
+});
+
+export default withRouter(connect(mapStateToProps)(SideBar));

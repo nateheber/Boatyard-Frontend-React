@@ -5,12 +5,18 @@ import { OrangeButton } from '../../basic/Buttons';
 import { ActionDropdown } from '../../basic/Dropdown';
 import { PageTitle } from '../../basic/Typho';
 
-export const ServiceHeader = ({ onAction, onAdd }) => (
+export const UsersHeader = ({ onAction, onAdd }) => (
   <SectionHeaderWrapper>
     <LeftPart>
-      <PageTitle>Services</PageTitle>
+      <PageTitle>Users</PageTitle>
       <ActionDropdown
         items={[
+          {
+            title: 'Import',
+            action: () => {
+              onAction('import');
+            }
+          },
           {
             title: 'Export',
             action: () => {
@@ -20,10 +26,10 @@ export const ServiceHeader = ({ onAction, onAdd }) => (
         ]}
       />
     </LeftPart>
-    <RightPart>
+    {/* <RightPart>
       <OrangeButton className="desktop" onClick={onAdd}>
-        ADD SERVICE
+        ADD NEW USER
       </OrangeButton>
-    </RightPart>
+    </RightPart> */}
   </SectionHeaderWrapper>
 );

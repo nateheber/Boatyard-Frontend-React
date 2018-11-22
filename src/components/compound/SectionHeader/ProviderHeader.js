@@ -7,7 +7,7 @@ import { PageTitle } from '../../basic/Typho';
 export const ProviderHeader = ({ onAction }) => (
   <SectionHeaderWrapper>
     <LeftPart>
-      <PageTitle>Orders</PageTitle>
+      <PageTitle>Providers</PageTitle>
     </LeftPart>
     <RightPart>
       <ColumnFilter

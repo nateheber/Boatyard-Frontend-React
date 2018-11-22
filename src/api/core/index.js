@@ -36,6 +36,25 @@ export const createMainClient = authType => {
   return client;
 };
 
+export class NormalClient {
+  client = undefined;
+  constructor(authType = 'basic') {
+    this.client = createMainClient(authType);
+  }
+  get = url => {
+    return this.client.get(`${apiBaseUrl}${url}`);
+  };
+  post = (url, data) => {
+    return this.client.post(`${apiBaseUrl}${url}`, data);
+  };
+  patch = (url, data) => {
+    return this.client.patch(`${apiBaseUrl}${url}`, data);
+  };
+  delete = (url, data) => {
+    return this.client.delete(`${apiBaseUrl}${url}`, data);
+  };
+}
+
 export class CRUDClient {
   apiUrl = '';
   client = undefined;

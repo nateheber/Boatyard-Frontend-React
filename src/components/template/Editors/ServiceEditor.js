@@ -13,13 +13,25 @@ import { OrangeButton, HollowButton } from '../../basic/Buttons';
 import { EditorSection } from '../../compound/SubSections';
 
 export class ServiceEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...props
+    };
+  }
+  onChangeType = evt => {
+    this.setState({
+      type: evt.target.value
+    });
+  };
+
   render() {
     const fields = (
       <div>
         <InputRow>
           <InputWrapper className="primary">
             <InputLabel>Service Type</InputLabel>
-            <Select>
+            <Select onChange={this.onChangeType}>
               <option value="service">Service</option>
               <option value="part">Part</option>
               <option value="product">Product</option>

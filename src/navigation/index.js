@@ -7,16 +7,17 @@ import MainRoutes from './mainRoutes';
 
 class ApplicationRoutes extends React.Component {
   render() {
-    const { authToken } = this.props;
-    if (isEmpty(authToken)) {
+    const { adminToken, providerToken } = this.props;
+    if (isEmpty(adminToken) && isEmpty(providerToken)) {
       return <AuthRoutes />;
     }
     return <MainRoutes />;
   }
 }
 
-const mapStateToProps = ({ auth: { authToken } }) => ({
-  authToken
+const mapStateToProps = ({ auth: { adminToken, providerToken } }) => ({
+  adminToken,
+  providerToken
 });
 
 export default connect(mapStateToProps)(ApplicationRoutes);

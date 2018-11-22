@@ -40,7 +40,12 @@ export default class Table extends React.Component {
           onSort={this.sort}
         />
         {records.map((rec, idx) => (
-          <Record columns={columns} record={rec} key={`rec_${idx}`} />
+          <Record
+            toDetails={() => this.props.toDetails(rec.id)}
+            columns={columns}
+            record={rec}
+            key={`rec_${idx}`}
+          />
         ))}
       </Wrapper>
     );

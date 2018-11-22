@@ -43,6 +43,7 @@ const FirstField = styled.div`
       background-color: #f6f6f7;
     }
   }
+  cursor: pointer;
 `;
 
 const Field = styled.div`
@@ -91,13 +92,14 @@ export class Record extends React.Component {
             this.setState({ show: !show });
           }}
           className={show ? 'active' : 'deactive'}
+          onClick={this.props.toDetails}
         >
-          {get(record, firstField, '_')}
+          {get(record, firstField) || '_'}
         </FirstField>
         {hidingCols.map((col, idx) => (
           <Field className={show ? 'show' : 'hide'}>
             <FieldLabel>{changeCase.upperCaseFirst(col.label)}</FieldLabel>
-            <FieldValue>{get(record, col.value, '_')}</FieldValue>
+            <FieldValue>{get(record, col.value) || '_'}</FieldValue>
           </Field>
         ))}
       </Wrapper>

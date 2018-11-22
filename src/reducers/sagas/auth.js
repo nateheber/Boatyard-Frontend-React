@@ -1,9 +1,14 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
+import { isEmpty } from 'lodash';
 
 import { actions } from '../auth';
 import { actions as ProfileActions } from '../profile';
 
 import { login, signup } from '../../api/auth';
+
+import { customApiClient } from '../../api';
+
+const escalationClient = customApiClient('basic');
 
 function* loginRequest(action) {
   const { email, password } = action.payload;
@@ -29,6 +34,9 @@ function* loginRequest(action) {
       }
     });
     yield put({
+      type: actions.getUserPermission
+    });
+    yield put({
       type: ProfileActions.setProfile,
       payload: {
         id,
@@ -51,6 +59,18 @@ function* loginRequest(action) {
   }
 }
 
+function* userPermissionRequest() {
+  const result = yield call(escalationClient.post, '/users/escalations', {
+    escalation: { admin: true }
+  });
+  if (!isEmpty(result)) {
+    yield put({
+      type: actions.setAdminToken,
+      payload: result.data.attributes.authorizationToken
+    });
+  }
+}
+
 function* signupRequest(action) {
   const { email, password } = action.payload;
   const result = yield call(signup, email, password);
@@ -65,4 +85,5 @@ export default function* Auth() {
   yield takeEvery(actions.login, loginRequest);
   yield takeEvery(actions.signup, signupRequest);
   yield takeEvery(actions.logout, logoutRequest);
+  yield takeEvery(actions.getUserPermission, userPermissionRequest);
 }

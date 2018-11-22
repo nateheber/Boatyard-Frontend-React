@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  margin: 30px 20px;
-  padding: 30px 15px;
+  padding: 60px 35px;
   display: flex;
   flex-direction: column;
+  background-color: #fff;
 `;
 
 const FieldsContainer = styled.div`

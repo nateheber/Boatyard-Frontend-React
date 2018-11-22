@@ -7,7 +7,6 @@ import { createUserClient } from '../../api';
 const apiClient = createUserClient('basic');
 
 function* fetchRequest(action) {
-  console.log(apiClient);
   const result = yield call(apiClient.read, action.payload);
   yield put({
     type: actions.setProfile,
@@ -35,12 +34,7 @@ function* updateRequest(action) {
   });
 }
 
-function* deleteRequest(action) {
-  yield call(apiClient.delete, action.payload);
-}
-
-export default function* Auth() {
+export default function* Profile() {
   yield takeEvery(actions.fetchProfile, fetchRequest);
   yield takeEvery(actions.updateProfile, updateRequest);
-  yield takeEvery(actions.deleteProfile, deleteRequest);
 }

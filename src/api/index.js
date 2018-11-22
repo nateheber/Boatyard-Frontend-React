@@ -1,4 +1,4 @@
-import { CRUDClient, MultiLayerCRUDClient } from './core';
+import { CRUDClient, MultiLayerCRUDClient, NormalClient } from './core';
 
 export const createCategoryClient = authType => {
   return new CRUDClient('categories', authType);
@@ -54,4 +54,8 @@ export const createOrderClient = authType => {
 
 export const createUserClient = authType => {
   return new CRUDClient('users', authType);
+};
+
+export const customApiClient = authType => {
+  return new NormalClient(authType);
 };

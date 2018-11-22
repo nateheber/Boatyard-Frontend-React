@@ -1,9 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 import Table from '../basic/Table';
 import { ProviderHeader } from '../compound/SectionHeader';
+import { ProviderFilter } from '../compound/Filters';
+
+import { fetchProviders } from '../../reducers/providers';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -11,8 +15,14 @@ const Wrapper = styled.div`
 `;
 
 class Providers extends React.Component {
+  componentDidMount() {
+    this.props.fetchProviders();
+  }
   toDetails = providerId => {
     this.props.history.push(`/provider-details/${providerId}/`);
+  };
+  createNew = () => {
+    this.props.history.push('/create-provider/');
   };
   render() {
     const columns = [
@@ -55,6 +65,7 @@ class Providers extends React.Component {
     return (
       <Wrapper>
         <ProviderHeader />
+        <ProviderFilter onNewItem={this.createNew} />
         <Table
           columns={columns}
           records={records}
@@ -66,4 +77,17 @@ class Providers extends React.Component {
   }
 }
 
-export default withRouter(Providers);
+const mapStateToProps = ({ provider: { providers } }) => ({
+  providers
+});
+
+const mapDispatchToProps = {
+  fetchProviders
+};
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Providers)
+);

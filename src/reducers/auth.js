@@ -5,7 +5,10 @@ export const actions = {
   signup: 'AUTH/SIGNUP',
   login: 'AUTH/LOGIN',
   logout: 'AUTH/LOGOUT',
-  setAuthState: 'AUTH/SET_AUTH_STATE'
+  setAuthState: 'AUTH/SET_AUTH_STATE',
+  getUserPermission: 'AUTH/GET_USER_PERMISSION',
+  setAdminToken: 'AUTH/SET_ADMIN_TOKEN',
+  setProviderToken: 'AUTH/SET_PROVIDER_TOKEN'
 };
 
 export const signup = createAction(actions.signup);
@@ -14,6 +17,8 @@ export const logout = createAction(actions.logout);
 
 const initialState = {
   authToken: '',
+  adminToken: '',
+  providerToken: '',
   errorMessage: '',
   loading: false
 };
@@ -28,6 +33,14 @@ export default handleActions(
         draftState.authToken = authToken;
         draftState.errorMessage = errorMessage;
         draftState.loading = loading;
+      }),
+    [actions.setAdminToken]: (state, { payload }) =>
+      produce(state, draftState => {
+        draftState.adminToken = payload;
+      }),
+    [actions.setProviderToken]: (state, { payload }) =>
+      produce(state, draftState => {
+        draftState.providerToken = payload;
       }),
     [actions.logout]: () => ({
       ...initialState
