@@ -6,6 +6,7 @@ import ProviderSaga from './providers';
 import ServicesSaga from './services';
 import UsersSaga from './users';
 import ManagementSaga from './managements';
+import CategorySaga from './categories';
 
 export default function* mainSaga() {
   yield all([
@@ -13,6 +14,8 @@ export default function* mainSaga() {
     fork(ProfileSaga),
     fork(ProviderSaga),
     fork(ServicesSaga),
-    fork(UsersSaga)
+    fork(UsersSaga),
+    fork(ManagementSaga),
+    fork(CategorySaga)
   ]);
 }

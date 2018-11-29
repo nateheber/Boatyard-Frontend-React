@@ -4,3 +4,4 @@ export * from './NewCustomerEditor';
 export * from './ProviderAccountEditor';
 export * from './ProfileEditor';
 export * from './UserEditor';
+export * from './CategoryEditor';

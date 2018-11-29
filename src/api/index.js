@@ -1,7 +1,7 @@
 import { CRUDClient, MultiLayerCRUDClient, NormalClient } from './core';
 
 export const createCategoryClient = authType => {
-  return new CRUDClient('categories', authType);
+  return new CRUDClient('services/categories', authType);
 };
 
 export const createServiceClient = authType => {

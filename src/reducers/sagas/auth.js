@@ -3,6 +3,7 @@ import { isEmpty } from 'lodash';
 
 import { actions } from '../auth';
 import { actions as ProfileActions } from '../profile';
+import { actions as ProviderActions } from '../providers';
 
 import { login, signup } from '../../api/auth';
 
@@ -67,6 +68,10 @@ function* userPermissionRequest() {
     yield put({
       type: actions.setAdminToken,
       payload: result.data.attributes.authorizationToken
+    });
+  } else {
+    yield put({
+      type: ProviderActions.selectProvider
     });
   }
 }

@@ -80,6 +80,11 @@ export class Record extends React.Component {
   state = {
     show: false
   };
+  onClickFirstRow = () => {
+    const { show } = this.state;
+    this.setState({ show: !show });
+    this.props.toDetails();
+  };
   render() {
     const { record, columns } = this.props;
     const { show } = this.state;
@@ -88,16 +93,13 @@ export class Record extends React.Component {
     return (
       <Wrapper className={show ? 'active' : 'deactive'}>
         <FirstField
-          onClick={() => {
-            this.setState({ show: !show });
-          }}
+          onClick={this.onClickFirstRow}
           className={show ? 'active' : 'deactive'}
-          onClick={this.props.toDetails}
         >
           {get(record, firstField) || '_'}
         </FirstField>
         {hidingCols.map((col, idx) => (
-          <Field className={show ? 'show' : 'hide'}>
+          <Field className={show ? 'show' : 'hide'} key={`col_${idx}`}>
             <FieldLabel>{changeCase.upperCaseFirst(col.label)}</FieldLabel>
             <FieldValue>{get(record, col.value) || '_'}</FieldValue>
           </Field>

@@ -167,6 +167,13 @@ const adminNavItems = [
     mainImage: CustomersIcon,
     title: 'USERS',
     link: '/users/'
+  },
+  // will be removed
+  {
+    activeImage: ServicesActiveIcon,
+    mainImage: ServicesIcon,
+    title: 'SERVICES',
+    link: '/services/'
   }
 ];
 

@@ -4,7 +4,11 @@ import { get } from 'lodash';
 import { actions } from '../providers';
 import { actions as authActions } from '../auth';
 
-import { customApiClient, createProviderClient } from '../../api';
+import {
+  customApiClient,
+  createProviderClient,
+  createUserClient
+} from '../../api';
 
 import { getProviders } from './sagaSelectors';
 
@@ -12,22 +16,21 @@ const adminApiClient = createProviderClient('admin');
 const basicProviderClient = createProviderClient('basic');
 const customManagement = customApiClient('admin');
 const escalationApiClient = customApiClient('basic');
+const userClient = createUserClient('admin');
 
 function* createRequest(action) {
   const result = yield call(adminApiClient.create, action.payload);
   const id = get(result, 'data.id', false);
   if (id) {
-    const userInvitation = yield call(
-      customManagement.post,
-      '/users/managements/',
-      {
-        management: {
-          email: action.payload.email,
-          providerId: id
-        }
+    const data = yield call(customManagement.post, '/managements/', {
+      management: {
+        email: action.payload.email,
+        providerId: id
       }
-    );
-    console.log(userInvitation);
+    });
+    const userId = get(data, 'included[0].id');
+    const { firstName, lastName } = this.payload;
+    yield call(userClient.update, userId, { firstName, lastName });
   }
 }
 
@@ -55,7 +58,7 @@ function* selectRequest(action) {
       providerId: id
     }
   });
-  console.log(result);
+  console.log('Providers', result);
 }
 
 function* deleteRequest(action) {

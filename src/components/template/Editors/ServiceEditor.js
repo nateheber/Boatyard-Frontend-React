@@ -6,8 +6,7 @@ import {
   InputLabel,
   Input,
   Select,
-  TextArea,
-  CheckField
+  TextArea
 } from '../../basic/Input';
 import { OrangeButton, HollowButton } from '../../basic/Buttons';
 import { EditorSection } from '../../compound/SubSections';
@@ -16,74 +15,136 @@ export class ServiceEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      ...props
+      ...props.data
     };
   }
-  onChangeType = evt => {
-    this.setState({
-      type: evt.target.value
-    });
+
+  onChangeValue = (field, val) => {
+    const obj = {};
+    obj[field] = val;
+    this.setState({ ...obj });
+  };
+
+  onSave = () => {
+    this.props.onSave(this.state);
   };
 
   render() {
+    const { categoryOptions, onCancel } = this.props;
+    const {
+      categoryId,
+      name,
+      subtitle,
+      label,
+      description,
+      secondaryDescription,
+      additionalDetails,
+      serviceDetails,
+      actionType
+    } = this.state;
     const fields = (
       <div>
         <InputRow>
           <InputWrapper className="primary">
-            <InputLabel>Service Type</InputLabel>
-            <Select onChange={this.onChangeType}>
-              <option value="service">Service</option>
-              <option value="part">Part</option>
-              <option value="product">Product</option>
-              <option value="other">Other</option>
+            <InputLabel>Service Category</InputLabel>
+            <Select
+              onChange={evt =>
+                this.onChangeValue('categoryId', evt.target.value)
+              }
+              defaultValue={categoryId}
+            >
+              {categoryOptions.map((val, idx) => (
+                <option value={val.id} key={`categoryOption_${idx}`}>
+                  {val.name}
+                </option>
+              ))}
             </Select>
           </InputWrapper>
           <InputWrapper className="primary">
             <InputLabel>Service Name</InputLabel>
-            <Input type="text" />
+            <Input
+              type="text"
+              defaultValue={name}
+              onChange={evt => this.onChangeValue('name', evt.target.value)}
+            />
           </InputWrapper>
         </InputRow>
         <InputRow>
           <InputWrapper className="primary">
-            <InputLabel>Price</InputLabel>
-            <Input type="text" placeholder="e.g, 23.00" />
+            <InputLabel>Subtitle</InputLabel>
+            <Input
+              type="text"
+              defaultValue={subtitle}
+              onChange={evt => this.onChangeValue('subtitle', evt.target.value)}
+            />
           </InputWrapper>
           <InputWrapper className="primary">
-            <InputLabel>Price Type</InputLabel>
-            <Select>
-              <option value="none">None</option>
-              <option value="length">Length</option>
-              <option value="gallons">Gallons</option>
-              <option value="hour">Hour</option>
-              <option value="quality">Quality</option>
-            </Select>
+            <InputLabel>Label</InputLabel>
+            <Input
+              type="text"
+              defaultValue={label}
+              onChange={evt => this.onChangeValue('label', evt.target.value)}
+            />
           </InputWrapper>
           <InputWrapper className="primary">
-            <InputLabel>Price Unit</InputLabel>
-            <Input type="text" placeholder="i.e /gal /hr" />
+            <InputLabel>Action Type</InputLabel>
+            <Input
+              type="text"
+              defaultValue={actionType}
+              onChange={evt =>
+                this.onChangeValue('actionType', evt.target.value)
+              }
+            />
           </InputWrapper>
         </InputRow>
         <InputRow>
           <InputWrapper className="primary">
             <InputLabel>Description</InputLabel>
-            <TextArea />
+            <TextArea
+              defaultValue={description}
+              onChange={evt =>
+                this.onChangeValue('description', evt.target.value)
+              }
+            />
           </InputWrapper>
-          <InputWrapper>
-            <CheckField
-              title="Is taxable"
-              checked
-              onClick={() => {
-                console.log('Check clicked');
-              }}
+          <InputWrapper className="primary">
+            <InputLabel>Secondary Description</InputLabel>
+            <TextArea
+              defaultValue={secondaryDescription}
+              onChange={evt =>
+                this.onChangeValue('secondaryDescription', evt.target.value)
+              }
+            />
+          </InputWrapper>
+        </InputRow>
+        <InputRow>
+          <InputWrapper className="primary">
+            <InputLabel>Additional Details</InputLabel>
+            <TextArea
+              defaultValue={additionalDetails}
+              onChange={evt =>
+                this.onChangeValue('additionalDetails', evt.target.value)
+              }
+            />
+          </InputWrapper>
+          <InputWrapper className="primary">
+            <InputLabel>Service Details</InputLabel>
+            <TextArea
+              defaultValue={serviceDetails}
+              onChange={evt =>
+                this.onChangeValue('serviceDetails', evt.target.value)
+              }
             />
           </InputWrapper>
         </InputRow>
       </div>
     );
-    const actions = [
-      <HollowButton>Cancel</HollowButton>,
-      <OrangeButton>Save</OrangeButton>
-    ];
+    const actions = (
+      <React.Fragment>
+        <HollowButton onClick={onCancel}>Cancel</HollowButton>,
+        <OrangeButton onClick={this.onSave}>Save</OrangeButton>
+      </React.Fragment>
+    );
     return <EditorSection content={fields} actions={actions} />;
   }
 }

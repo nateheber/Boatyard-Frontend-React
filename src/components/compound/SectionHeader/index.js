@@ -5,3 +5,4 @@ export * from './ServiceHeader';
 export * from './UsersHeader';
 export * from './TeamMemberHeader';
 export * from './ProviderHeader';
+export * from './CategoryHeader';

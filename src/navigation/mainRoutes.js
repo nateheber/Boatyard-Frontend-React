@@ -5,6 +5,9 @@ import PageTemplate from '../components/template/PageTemplate';
 import Dashboard from '../components/template/Dashboard';
 import Order from '../components/template/Order';
 import Services from '../components/template/Services';
+import ServiceDetails from '../components/template/ServiceDetails';
+import Categories from '../components/template/Categories';
+import CategoryDetails from '../components/template/CategoryDetails';
 import Team from '../components/template/Team';
 import Customers from '../components/template/Customers';
 import Calendar from '../components/template/Calendar';
@@ -13,7 +16,6 @@ import CreateProvider from '../components/template/EditFlow/CreateProvider';
 import UpdateProfile from '../components/template/UpdateProfile';
 import Users from '../components/template/Users';
 import UserDetails from '../components/template/UserDetails';
-import { ServiceEditor } from '../components/template/Editors';
 import { Inbox, QRBox, TemplateBox } from '../components/template/Message';
 
 const MainRouter = () => (
@@ -28,7 +30,9 @@ const MainRouter = () => (
       <Route exact path="/orders/" component={Order} />
       <Route exact path="/providers/" component={Providers} />
       <Route exact path="/services/" component={Services} />
-      <Route exact path="/service-details/" component={ServiceEditor} />
+      <Route exact path="/service-details/" component={ServiceDetails} />
+      <Route exact path="/categories/" component={Categories} />
+      <Route exact path="/category-details/" component={CategoryDetails} />
       <Route exact path="/team/" component={Team} />
       <Route exact path="/customers/" component={Customers} />
       <Route exact path="/calendar/" component={Calendar} />

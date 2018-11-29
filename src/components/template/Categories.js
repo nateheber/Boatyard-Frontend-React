@@ -4,9 +4,8 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 import Table from '../basic/Table';
-import { ServiceHeader } from '../compound/SectionHeader';
+import { CategoryHeader } from '../compound/SectionHeader';
 
-import { fetchServices } from '../../reducers/services';
 import { fetchCategories } from '../../reducers/categories';
 
 const Wrapper = styled.div`
@@ -14,30 +13,30 @@ const Wrapper = styled.div`
   background-color: white;
 `;
 
-class Services extends React.Component {
+class Categories extends React.Component {
   componentDidMount() {
-    this.props.fetchServices();
     this.props.fetchCategories();
   }
-  toDetails = serviceId => {
-    this.props.history.push(`/service-details/?service=${serviceId}`);
+  toDetails = categoryId => {
+    this.props.history.push(`/category-details/?category=${categoryId}`);
   };
-  createService = () => {
-    this.props.history.push(`/service-details/`);
+  createCategory = () => {
+    this.props.history.push(`/category-details/`);
   };
   render() {
+    const { categories } = this.props;
     const columns = [
-      { label: 'serivce name', value: 'name' },
-      { label: 'label', value: 'label' },
-      { label: 'description', value: 'description' }
+      { label: 'name', value: 'name' },
+      { label: 'subtitle', value: 'subtitle' },
+      { label: 'description', value: 'description' },
+      { label: 'app identifier', value: 'app identifier' }
     ];
-    const { services } = this.props;
     return (
       <Wrapper>
-        <ServiceHeader onAdd={this.createService} />
+        <CategoryHeader onAdd={this.createCategory} />
         <Table
           columns={columns}
-          records={services}
+          records={categories}
           sortColumn="order"
           toDetails={this.toDetails}
         />
@@ -46,12 +45,11 @@ class Services extends React.Component {
   }
 }
 
-const mapStateToProps = ({ service: { services } }) => ({
-  services
+const mapStateToProps = ({ category: { categories } }) => ({
+  categories
 });
 
 const mapDispatchToProps = {
-  fetchServices,
   fetchCategories
 };
 
@@ -59,5 +57,5 @@ export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(Services)
+  )(Categories)
 );

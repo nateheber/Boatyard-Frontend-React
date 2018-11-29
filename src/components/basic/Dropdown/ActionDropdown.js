@@ -101,7 +101,7 @@ export class ActionDropdown extends React.Component {
         />
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
           {items.map((val, idx) => (
-            <MenuItemLi>
+            <MenuItemLi key={`menu_item_${idx}`}>
               <MenuItem
                 onClick={() => {
                   this.setState({
