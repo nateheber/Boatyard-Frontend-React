@@ -1,13 +1,11 @@
-import { put, takeEvery, call } from 'redux-saga/effects';
+import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
 import { actions } from '../categories';
-
-import { createCategoryClient } from '../../api';
-
-const categoryClient = createCategoryClient('admin');
+import { getCategoryClient } from './sagaSelectors';
 
 function* createRequest(action) {
+  const categoryClient = yield select(getCategoryClient);
   yield call(categoryClient.create, action.payload);
   yield put({
     type: actions.fetchCategories
@@ -15,6 +13,7 @@ function* createRequest(action) {
 }
 
 function* fetchRequest(action) {
+  const categoryClient = yield select(getCategoryClient);
   const result = yield call(categoryClient.list);
   const categories = get(result, 'data', []);
   yield put({
@@ -27,11 +26,13 @@ function* fetchRequest(action) {
 }
 
 function* deleteRequest(action) {
+  const categoryClient = yield select(getCategoryClient);
   yield call(categoryClient.delete, action.payload);
 }
 
 function* updateRequest(action) {
   const { id, data } = action.payload;
+  const categoryClient = yield select(getCategoryClient);
   yield call(categoryClient.update, id, data);
   yield put({
     type: actions.fetchCategories

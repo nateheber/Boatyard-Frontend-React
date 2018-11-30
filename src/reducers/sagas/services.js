@@ -1,13 +1,11 @@
-import { put, takeEvery, call } from 'redux-saga/effects';
+import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
 import { actions } from '../services';
-
-import { createServiceClient } from '../../api';
-
-const serviceClient = createServiceClient('admin');
+import { getServiceClient } from './sagaSelectors';
 
 function* createRequest(action) {
+  const serviceClient = yield select(getServiceClient);
   yield call(serviceClient.create, action.payload);
   yield put({
     type: actions.fetchServices
@@ -15,6 +13,7 @@ function* createRequest(action) {
 }
 
 function* fetchRequest(action) {
+  const serviceClient = yield select(getServiceClient);
   const result = yield call(serviceClient.list);
   const services = get(result, 'data', []);
   yield put({
@@ -27,10 +26,12 @@ function* fetchRequest(action) {
 }
 
 function* deleteRequest(action) {
+  const serviceClient = yield select(getServiceClient);
   yield call(serviceClient.delete, action.payload);
 }
 
 function* updateRequest(action) {
+  const serviceClient = yield select(getServiceClient);
   const { id, data } = action.payload;
   yield call(serviceClient.update, id, data);
   yield put({

@@ -22,7 +22,6 @@ class ServiceDetails extends React.Component {
       };
     } else {
       this.state = {
-        id: '',
         name: '',
         subtitle: '',
         description: '',

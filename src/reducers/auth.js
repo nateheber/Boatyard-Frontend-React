@@ -8,7 +8,8 @@ export const actions = {
   setAuthState: 'AUTH/SET_AUTH_STATE',
   getUserPermission: 'AUTH/GET_USER_PERMISSION',
   setAdminToken: 'AUTH/SET_ADMIN_TOKEN',
-  setProviderToken: 'AUTH/SET_PROVIDER_TOKEN'
+  setProviderToken: 'AUTH/SET_PROVIDER_TOKEN',
+  setPrevilage: 'AUTH/SET_PREVILAGE'
 };
 
 export const signup = createAction(actions.signup);
@@ -20,6 +21,7 @@ const initialState = {
   adminToken: '',
   providerToken: '',
   errorMessage: '',
+  previlage: '',
   loading: false
 };
 
@@ -41,6 +43,10 @@ export default handleActions(
     [actions.setProviderToken]: (state, { payload }) =>
       produce(state, draftState => {
         draftState.providerToken = payload;
+      }),
+    [actions.setPrevilage]: (state, { payload }) =>
+      produce(state, draftState => {
+        draftState.previlage = payload;
       }),
     [actions.logout]: () => ({
       ...initialState

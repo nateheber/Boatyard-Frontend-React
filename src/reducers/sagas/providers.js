@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { actions } from '../providers';
 import { actions as authActions } from '../auth';
@@ -52,13 +52,23 @@ function* selectRequest(action) {
     });
   }
   const providers = yield select(getProviders);
-  const id = providers[action.payload].id;
-  const result = yield call(escalationApiClient.post, '/users/escalations/', {
+  const providerIdx = get(action, 'payload', 0);
+  const id = providers[providerIdx].id;
+  const result = yield call(escalationApiClient.post, '/users/escalations', {
     escalation: {
-      providerId: id
+      providerId: parseInt(id)
     }
   });
-  console.log('Providers', result);
+  if (!isEmpty(result)) {
+    const authorizationToken = get(
+      result,
+      'data.attributes.authorizationToken'
+    );
+    yield put({
+      type: authActions.setProviderToken,
+      payload: authorizationToken
+    });
+  }
 }
 
 function* deleteRequest(action) {

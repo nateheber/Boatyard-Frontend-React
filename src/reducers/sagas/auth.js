@@ -48,7 +48,7 @@ function* loginRequest(action) {
         type
       }
     });
-  } catch {
+  } catch (err) {
     yield put({
       type: actions.setAuthState,
       payload: {

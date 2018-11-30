@@ -38,9 +38,6 @@ export class ServiceEditor extends React.Component {
       label,
       description,
       secondaryDescription,
-      additionalDetails,
-      serviceDetails,
-      actionType
     } = this.state;
     const fields = (
       <div>
@@ -86,16 +83,6 @@ export class ServiceEditor extends React.Component {
               onChange={evt => this.onChangeValue('label', evt.target.value)}
             />
           </InputWrapper>
-          <InputWrapper className="primary">
-            <InputLabel>Action Type</InputLabel>
-            <Input
-              type="text"
-              defaultValue={actionType}
-              onChange={evt =>
-                this.onChangeValue('actionType', evt.target.value)
-              }
-            />
-          </InputWrapper>
         </InputRow>
         <InputRow>
           <InputWrapper className="primary">
@@ -113,26 +100,6 @@ export class ServiceEditor extends React.Component {
               defaultValue={secondaryDescription}
               onChange={evt =>
                 this.onChangeValue('secondaryDescription', evt.target.value)
-              }
-            />
-          </InputWrapper>
-        </InputRow>
-        <InputRow>
-          <InputWrapper className="primary">
-            <InputLabel>Additional Details</InputLabel>
-            <TextArea
-              defaultValue={additionalDetails}
-              onChange={evt =>
-                this.onChangeValue('additionalDetails', evt.target.value)
-              }
-            />
-          </InputWrapper>
-          <InputWrapper className="primary">
-            <InputLabel>Service Details</InputLabel>
-            <TextArea
-              defaultValue={serviceDetails}
-              onChange={evt =>
-                this.onChangeValue('serviceDetails', evt.target.value)
               }
             />
           </InputWrapper>
