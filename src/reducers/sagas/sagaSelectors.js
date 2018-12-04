@@ -2,6 +2,8 @@ import * as APIGenerator from '../../api';
 
 export const getAuthToken = state => state.auth.authToken;
 export const getProviders = state => state.provider.providers;
+export const getManagements = state => state.management.managements;
+export const getUsers = state => state.user.users;
 
 export const getCategoryClient = state => {
   switch (state.auth.previlage) {

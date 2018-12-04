@@ -24,14 +24,10 @@ const ActionWrapper = styled.div`
 `;
 
 export default class ProfileSetup extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      name: '',
-      firstName: '',
-      lastName: '',
-      phoneNumber: '',
-      email: ''
+      ...props
     };
   }
   onChangeValue = (value, field) => {
@@ -50,20 +46,6 @@ export default class ProfileSetup extends React.Component {
             <InputLabel>Provider Name</InputLabel>
             <Input
               onChange={evt => this.onChangeValue(evt.target.value, 'name')}
-            />
-          </InputWrapper>
-          <InputWrapper className="secondary" style={{ flex: 1 }}>
-            <InputLabel>Contact First Name</InputLabel>
-            <Input
-              onChange={evt =>
-                this.onChangeValue(evt.target.value, 'firstName')
-              }
-            />
-          </InputWrapper>
-          <InputWrapper className="secondary" style={{ flex: 1 }}>
-            <InputLabel>Contact Last Name</InputLabel>
-            <Input
-              onChange={evt => this.onChangeValue(evt.target.value, 'lastName')}
             />
           </InputWrapper>
         </InputRow>

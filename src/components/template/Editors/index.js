@@ -5,3 +5,4 @@ export * from './ProviderAccountEditor';
 export * from './ProfileEditor';
 export * from './UserEditor';
 export * from './CategoryEditor';
+export * from './ProviderEditor';

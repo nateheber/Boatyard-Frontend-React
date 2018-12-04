@@ -12,7 +12,8 @@ import Team from '../components/template/Team';
 import Customers from '../components/template/Customers';
 import Calendar from '../components/template/Calendar';
 import Providers from '../components/template/Providers';
-import CreateProvider from '../components/template/EditFlow/CreateProvider';
+import ProviderDetails from '../components/template/ProviderDetails';
+import ProviderFlow from '../components/template/ProviderFlow';
 import UpdateProfile from '../components/template/UpdateProfile';
 import Users from '../components/template/Users';
 import UserDetails from '../components/template/UserDetails';
@@ -29,6 +30,8 @@ const MainRouter = () => (
       <Route exact path="/templates/" component={TemplateBox} />
       <Route exact path="/orders/" component={Order} />
       <Route exact path="/providers/" component={Providers} />
+      <Route exact path="/providers/:providerId/" component={ProviderDetails} />
+      <Route exact path="/provider-details/" component={ProviderFlow} />
       <Route exact path="/services/" component={Services} />
       <Route exact path="/service-details/" component={ServiceDetails} />
       <Route exact path="/categories/" component={Categories} />
@@ -38,7 +41,6 @@ const MainRouter = () => (
       <Route exact path="/calendar/" component={Calendar} />
       <Route exact path="/users/" component={Users} />
       <Route exact path="/user-details/" component={UserDetails} />
-      <Route exact path="/create-provider/" component={CreateProvider} />
     </PageTemplate>
   </Router>
 );

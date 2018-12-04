@@ -26,7 +26,7 @@ class ServiceDetails extends React.Component {
         subtitle: '',
         description: '',
         secondaryDescription: '',
-        categoryId: '',
+        categoryId: -1,
         label: '',
         additionalDetails: '',
         serviceDetails: ''

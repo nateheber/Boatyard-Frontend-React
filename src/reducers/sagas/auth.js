@@ -69,6 +69,10 @@ function* userPermissionRequest() {
       type: actions.setAdminToken,
       payload: result.data.attributes.authorizationToken
     });
+    yield put({
+      type: actions.setPrevilage,
+      payload: 'admin'
+    });
   } else {
     yield put({
       type: ProviderActions.selectProvider

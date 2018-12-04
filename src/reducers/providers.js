@@ -6,15 +6,19 @@ export const actions = {
   createProvider: 'PROVIDER/CREATE',
   selectProvider: 'PROVIDER/SELECT',
   fetchProviders: 'PROVIDER/FETCH',
+  fetchProvider: 'PROVIDER/FETCH_ONE',
   setProviders: 'PROVIDER/SET',
+  setProvider: 'PROVIDER/SET_ONE',
   updateProvider: 'PROVIDER/UPDATE',
   setUpdatedProfile: 'PROVIDER/SET_UPDATED',
   deleteProvider: 'PROVIDER/DELETE'
 };
 
 export const createProvider = createAction(actions.createProvider);
+export const updateProvider = createAction(actions.updateProvider);
 export const selectProvider = createAction(actions.selectProvider);
 export const fetchProviders = createAction(actions.fetchProviders);
+export const fetchProvider = createAction(actions.fetchProvider);
 export const setProviders = createAction(actions.setProviders);
 export const deleteProvider = createAction(actions.deleteProvider);
 
@@ -27,6 +31,10 @@ export default handleActions(
     [actions.setProviders]: (state, { payload }) =>
       produce(state, draft => {
         draft.providers = payload;
+      }),
+    [actions.setProvider]: (state, { payload }) =>
+      produce(state, draft => {
+        draft.providers = [...draft.providers, payload];
       }),
     [actions.deleteProvider]: (state, { payload }) =>
       produce(state, draft => {

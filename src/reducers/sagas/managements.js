@@ -1,39 +1,59 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get } from 'lodash';
+import { get, findIndex } from 'lodash';
 
-import { actions } from '../management';
-import { getManagementClient } from './sagaSelectors';
+import management, { actions } from '../management';
+import { actions as providerActions } from '../providers';
+import { actions as userActions } from '../users';
+import { getManagementClient, getManagements } from './sagaSelectors';
 
 function* createRequest(action) {
-  const serviceClient = yield select(getManagementClient);
-  yield call(serviceClient.create, action.payload);
+  const managementClient = yield select(getManagementClient);
+  yield call(managementClient.create, action.payload);
   yield put({
     type: actions.fetchManagements
   });
 }
 
 function* fetchRequest(action) {
-  const serviceClient = yield select(getManagementClient);
-  const result = yield call(serviceClient.list);
-  const services = get(result, 'data', []);
-  yield put({
-    type: actions.setManagements,
-    payload: services.map(service => ({
-      id: service.id,
-      ...service.attributes
-    }))
-  });
+  const managementClient = yield select(getManagementClient);
+  const result = yield call(managementClient.list);
+  const managements = get(result, 'data', []);
+  const currentMngs = yield select(getManagements);
+  for (let i = 0; i < managements.length; i += 1) {
+    const {
+      id: mngId,
+      attributes: { providerId, userId }
+    } = managements[i];
+    const idx = findIndex(currentMngs, mng => mng.id === mngId);
+    if (idx === -1) {
+      yield put({
+        type: actions.appendManagement,
+        payload: {
+          id: mngId,
+          ...managements[i].attributes
+        }
+      });
+      yield put({
+        type: providerActions.fetchProvider,
+        payload: providerId
+      });
+      yield put({
+        type: userActions.fetchUser,
+        payload: userId
+      });
+    }
+  }
 }
 
 function* deleteRequest(action) {
-  const serviceClient = yield select(getManagementClient);
-  yield call(serviceClient.delete, action.payload);
+  const managementClient = yield select(getManagementClient);
+  yield call(managementClient.delete, action.payload);
 }
 
 function* updateRequest(action) {
-  const serviceClient = yield select(getManagementClient);
+  const managementClient = yield select(getManagementClient);
   const { id, data } = action.payload;
-  yield call(serviceClient.update, id, data);
+  yield call(managementClient.update, id, data);
   yield put({
     type: actions.fetchManagements
   });

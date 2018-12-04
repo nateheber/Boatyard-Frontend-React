@@ -37,7 +37,7 @@ export class ServiceEditor extends React.Component {
       subtitle,
       label,
       description,
-      secondaryDescription,
+      secondaryDescription
     } = this.state;
     const fields = (
       <div>
@@ -46,7 +46,7 @@ export class ServiceEditor extends React.Component {
             <InputLabel>Service Category</InputLabel>
             <Select
               onChange={evt =>
-                this.onChangeValue('categoryId', evt.target.value)
+                this.onChangeValue('categoryId', parseInt(evt.target.value))
               }
               defaultValue={categoryId}
             >

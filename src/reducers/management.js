@@ -6,7 +6,8 @@ export const actions = {
   fetchManagements: 'MANAGEMENTS/FETCH',
   updateManagements: 'MANAGEMENTS/UPDATE',
   deleteManagements: 'MANAGEMENTS/DELETE',
-  setManagements: 'MANAGEMENTS/SET'
+  setManagements: 'MANAGEMENTS/SET',
+  appendManagement: 'MANAGEMENTS/APPEND'
 };
 
 export const createManagements = createAction(actions.createManagements);
@@ -22,7 +23,11 @@ export default handleActions(
   {
     [actions.setManagements]: (state, { payload }) =>
       produce(state, draft => {
-        draft.managements = payload;
+        draft.managements = [...draft.managements, ...payload];
+      }),
+    [actions.appendManagement]: (state, { payload }) =>
+      produce(state, draft => {
+        draft.managements = [...draft.managements, payload];
       })
   },
   initialState

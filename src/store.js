@@ -9,7 +9,8 @@ import reducer from './reducers';
 
 const persistConfig = {
   key: 'root',
-  storage
+  storage,
+  blacklist: ['managements']
 };
 
 const persistedReducer = persistReducer(persistConfig, reducer);

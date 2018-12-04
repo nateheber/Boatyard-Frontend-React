@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, findIndex } from 'lodash';
 
 import { actions } from '../providers';
 import { actions as authActions } from '../auth';
@@ -39,7 +39,10 @@ function* fetchRequest(action) {
   const providers = get(result, 'data', []);
   yield put({
     type: actions.setProviders,
-    payload: providers
+    payload: providers.map(provider => ({
+      id: provider.id,
+      ...provider.attributes
+    }))
   });
 }
 
@@ -68,6 +71,10 @@ function* selectRequest(action) {
       type: authActions.setProviderToken,
       payload: authorizationToken
     });
+    yield put({
+      type: authActions.setPrevilage,
+      payload: 'provider'
+    });
   }
 }
 
@@ -80,9 +87,22 @@ function* updateRequest(action) {
   yield call(adminApiClient.update, id, data);
 }
 
+function* fetchOneRequest(action) {
+  const providers = yield select(getProviders);
+  const idx = findIndex(providers, provider => provider.id === action.payload);
+  if (idx === -1) {
+    const { data: provider } = yield call(adminApiClient.read, action.payload);
+    yield put({
+      type: actions.setProvider,
+      payload: { id: provider.id, ...provider.attributes }
+    });
+  }
+}
+
 export default function* Profile() {
   yield takeEvery(actions.createProvider, createRequest);
   yield takeEvery(actions.fetchProviders, fetchRequest);
+  yield takeEvery(actions.fetchProvider, fetchOneRequest);
   yield takeEvery(actions.selectProvider, selectRequest);
   yield takeEvery(actions.deleteProvider, deleteRequest);
   yield takeEvery(actions.updateProvider, updateRequest);
