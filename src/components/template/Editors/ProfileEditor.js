@@ -2,9 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import Modal from 'react-responsive-modal';
 
-import { InputRow, InputWrapper, InputLabel, Input } from '../../basic/Input';
-import { OrangeButton, HollowButton } from '../../basic/Buttons';
-import { EditorSection } from '../../compound/SubSections';
+import {
+  InputRow,
+  InputWrapper,
+  InputLabel,
+  Input
+} from 'components/basic/Input';
+import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import { EditorSection } from 'components/compound/SubSections';
 
 import { PasswordEditor } from './PasswordEditor';
 

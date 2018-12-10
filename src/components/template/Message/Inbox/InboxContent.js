@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { MessageEmptyState } from '../../../basic/Message';
+import { MessageEmptyState } from 'components/basic/Message';
 import {
   MessageBox,
   ChatBox,
   NewMessageInfo
-} from '../../../compound/MessageComponents';
-import { InboxContentHeader } from '../../../compound/MessageHeader';
+} from 'components/compound/MessageComponents';
+import { InboxContentHeader } from 'components/compound/MessageHeader';
 
 const Wrapper = styled.div`
   display: flex;

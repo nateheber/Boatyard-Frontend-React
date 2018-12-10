@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
-import { times } from 'lodash';
 
-import { TimeColumn, DateColumn } from '../../basic/CalendarList';
+import { TimeColumn, DateColumn } from 'components/basic/CalendarList';
 
 const Wrapper = styled.div`
   display: flex;

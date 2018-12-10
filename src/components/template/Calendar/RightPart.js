@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Table from '../../basic/Table';
-import { CalendarList } from '../../compound/Calendar';
-import { ColumnFilter } from '../../basic/Dropdown';
+import Table from 'components/basic/Table';
+import { CalendarList } from 'components/compound/Calendar';
+import { ColumnFilter } from 'components/basic/Dropdown';
 
 const Wrapper = styled.div`
   flex: 4;

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { CalendarDropdown } from '../../basic/Dropdown';
-import { DatePicker, TeamMembers } from '../../compound/Calendar';
+import { CalendarDropdown } from 'components/basic/Dropdown';
+import { DatePicker, TeamMembers } from 'components/compound/Calendar';
 
 const Wrapper = styled.div`
   display: flex;

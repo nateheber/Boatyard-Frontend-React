@@ -1,9 +1,13 @@
 import React from 'react';
 
-import { SectionHeaderWrapper, LeftPart, RightPart } from '../../basic/Header';
-import { OrangeButton } from '../../basic/Buttons';
-import { ActionDropdown } from '../../basic/Dropdown';
-import { PageTitle } from '../../basic/Typho';
+import {
+  SectionHeaderWrapper,
+  LeftPart,
+  RightPart
+} from 'components/basic/Header';
+import { OrangeButton } from 'components/basic/Buttons';
+import { ActionDropdown } from 'components/basic/Dropdown';
+import { PageTitle } from 'components/basic/Typho';
 
 export const ServiceHeader = ({ onAction, onAdd }) => (
   <SectionHeaderWrapper>

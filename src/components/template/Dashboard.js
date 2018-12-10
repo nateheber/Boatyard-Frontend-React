@@ -7,9 +7,9 @@ import {
   ScheduledOrders,
   OverdueInvoices,
   MonthlyRevenue
-} from '../compound/SubSections';
+} from 'components/compound/SubSections';
 
-import { DashboardHeader } from '../compound/SectionHeader';
+import { DashboardHeader } from 'components/compound/SectionHeader';
 
 const Container = styled.div``;
 

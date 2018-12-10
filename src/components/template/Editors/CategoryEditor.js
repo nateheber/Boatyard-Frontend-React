@@ -8,8 +8,8 @@ import {
   TextArea,
   CheckField
 } from '../../basic/Input';
-import { OrangeButton, HollowButton } from '../../basic/Buttons';
-import { EditorSection } from '../../compound/SubSections';
+import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import { EditorSection } from 'components/compound/SubSections';
 
 export class CategoryEditor extends React.Component {
   constructor(props) {

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Logo, HeaderWrapper, RightMenu } from '../basic/Header';
-import { HamburgerButton } from '../basic/Buttons';
-import { SearchBox } from '../basic/Input';
+import { Logo, HeaderWrapper, RightMenu } from 'components/basic/Header';
+import { HamburgerButton } from 'components/basic/Buttons';
+import { SearchBox } from 'components/basic/Input';
 
 const Header = ({ onMenuToggle }) => (
   <HeaderWrapper>

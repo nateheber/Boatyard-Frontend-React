@@ -3,10 +3,15 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { InputRow, InputWrapper, InputLabel, Input } from '../../basic/Input';
-import { OrangeButton } from '../../basic/Buttons';
+import {
+  InputRow,
+  InputWrapper,
+  InputLabel,
+  Input
+} from 'components/basic/Input';
+import { OrangeButton } from 'components/basic/Buttons';
 
-import { login } from '../../../reducers/auth';
+import { login } from 'reducers/auth';
 
 const Wrapper = styled.div`
   padding: 0px 15px;

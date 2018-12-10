@@ -9,18 +9,12 @@ import { OrangeButton } from 'components/basic/Buttons';
 import { ActionDropdown } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
-export const TeamMemberHeader = ({ onAction }) => (
+export const BoatHeader = ({ onAction, onAdd }) => (
   <SectionHeaderWrapper>
     <LeftPart>
-      <PageTitle>Team</PageTitle>
+      <PageTitle>Boats</PageTitle>
       <ActionDropdown
         items={[
-          {
-            title: 'Import',
-            action: () => {
-              onAction('import');
-            }
-          },
           {
             title: 'Export',
             action: () => {
@@ -31,7 +25,9 @@ export const TeamMemberHeader = ({ onAction }) => (
       />
     </LeftPart>
     <RightPart>
-      <OrangeButton className="desktop">ADD TEAM MEMBER</OrangeButton>
+      <OrangeButton className="desktop" onClick={onAdd}>
+        ADD SERVICE
+      </OrangeButton>
     </RightPart>
   </SectionHeaderWrapper>
 );

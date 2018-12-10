@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import { PageTitle } from '../basic/Typho';
+import { PageTitle } from 'components/basic/Typho';
 import LoginForm from './Forms/LoginForm';
 
-import { login } from '../../reducers/auth';
+import { login } from 'reducers/auth';
 
 const Wrapper = styled.div`
   display: flex;

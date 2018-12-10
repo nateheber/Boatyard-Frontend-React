@@ -4,43 +4,44 @@ import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
 
-import { CategoryEditor } from './Editors';
+import { BoatEditor } from 'components/template/Editors';
 
-import { updateCategories, createCategories } from 'reducers/categories';
+import { updateBoats, createBoats } from 'reducers/boats';
 
-class CategoryDetails extends React.Component {
+class BoatDetails extends React.Component {
   constructor(props) {
     super(props);
-    const { categories } = props;
+    const { boats } = props;
     const query = queryString.parse(props.location.search);
-    const categoryId = query.category;
-    if (categoryId) {
-      const idx = findIndex(categories, category => category.id === categoryId);
-      const categoryDetail = categories[idx];
+    const boatId = query.boat;
+    if (boatId) {
+      const idx = findIndex(boats, boat => boat.id === boatId);
+      const boatDetail = boats[idx];
       this.state = {
-        ...categoryDetail
+        ...boatDetail
       };
     } else {
       this.state = {
-        id: '',
         name: '',
-        subtitle: '',
-        appIdentifier: '',
-        description: '',
-        isHidden: false,
-        primary: false
+        location: {
+          attributes: {}
+        },
+        year: '',
+        make: '',
+        model: '',
+        length: 0
       };
     }
   }
   onSave = data => {
     if (this.state.id) {
-      this.props.updateCategories({
+      this.props.updateBoats({
         id: this.state.id,
         data
       });
       this.props.history.goBack();
     } else {
-      this.props.createCategories(data);
+      this.props.createBoats(data);
     }
   };
   onCancel = () => {
@@ -48,8 +49,8 @@ class CategoryDetails extends React.Component {
   };
   render() {
     return (
-      <CategoryEditor
-        {...this.state}
+      <BoatEditor
+        data={this.state}
         onCancel={this.onCancel}
         onSave={this.onSave}
       />
@@ -57,18 +58,18 @@ class CategoryDetails extends React.Component {
   }
 }
 
-const mapStateToProps = ({ category: { categories } }) => ({
-  categories
+const mapStateToProps = ({ boat: { boats }, category: { categories } }) => ({
+  boats
 });
 
 const mapDispatchToProps = {
-  updateCategories,
-  createCategories
+  updateBoats,
+  createBoats
 };
 
 export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(CategoryDetails)
+  )(BoatDetails)
 );

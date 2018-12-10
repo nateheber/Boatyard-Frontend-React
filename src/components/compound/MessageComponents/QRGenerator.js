@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Input, TextArea } from '../../basic/Input';
-import { HollowButton, OrangeButton } from '../../basic/Buttons';
+import { Input, TextArea } from 'components/basic/Input';
+import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 
 const Wrapper = styled.div`
   padding-left: 30px;

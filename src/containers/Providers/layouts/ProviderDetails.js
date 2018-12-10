@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
 
-import { ProviderDetailsEditor } from './Editors';
+import { ProviderDetailsEditor } from 'components/template/Editors';
 
 class ServiceDetails extends React.Component {
   onCancel = () => {

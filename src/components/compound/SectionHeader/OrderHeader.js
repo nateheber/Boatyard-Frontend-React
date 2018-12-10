@@ -1,13 +1,17 @@
 import React from 'react';
 
-import { SectionHeaderWrapper, LeftPart, RightPart } from '../../basic/Header';
-import { OrangeButton } from '../../basic/Buttons';
+import {
+  SectionHeaderWrapper,
+  LeftPart,
+  RightPart
+} from 'components/basic/Header';
+import { OrangeButton } from 'components/basic/Buttons';
 import {
   FilterOptions,
   ColumnFilter,
   ActionDropdown
-} from '../../basic/Dropdown';
-import { PageTitle } from '../../basic/Typho';
+} from 'components/basic/Dropdown';
+import { PageTitle } from 'components/basic/Typho';
 
 export const OrderHeader = ({ onAction }) => (
   <SectionHeaderWrapper>

@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { TemplatesHeader } from '../../../compound/MessageHeader';
-import { TemplateSelector } from '../../../compound/MessageComponents';
+import { TemplatesHeader } from 'components/compound/MessageHeader';
+import { TemplateSelector } from 'components/compound/MessageComponents';
 
 const Wrapper = styled.div``;
 

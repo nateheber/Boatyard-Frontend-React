@@ -2,8 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import changeCase from 'change-case';
 
-import { Input, TextArea, InputWrapper, InputLabel } from '../../basic/Input';
-import { HollowButton, OrangeButton, PurpleButton } from '../../basic/Buttons';
+import {
+  Input,
+  TextArea,
+  InputWrapper,
+  InputLabel
+} from 'components/basic/Input';
+import {
+  HollowButton,
+  OrangeButton,
+  PurpleButton
+} from 'components/basic/Buttons';
 
 const Wrapper = styled.div`
   padding-left: 30px;

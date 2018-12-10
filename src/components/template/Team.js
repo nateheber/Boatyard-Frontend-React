@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import Table from '../basic/Table';
-import { TeamMemberHeader } from '../compound/SectionHeader';
+import Table from 'components/basic/Table';
+import { TeamMemberHeader } from 'components/compound/SectionHeader';
 
 const Wrapper = styled.div`
   height: 100%;

@@ -1,8 +1,12 @@
 import React from 'react';
 
-import { SectionHeaderWrapper, LeftPart, RightPart } from '../../basic/Header';
-import { ColumnFilter } from '../../basic/Dropdown';
-import { PageTitle } from '../../basic/Typho';
+import {
+  SectionHeaderWrapper,
+  LeftPart,
+  RightPart
+} from 'components/basic/Header';
+import { ColumnFilter } from 'components/basic/Dropdown';
+import { PageTitle } from 'components/basic/Typho';
 
 export const ProviderHeader = ({ onAction }) => (
   <SectionHeaderWrapper>

@@ -6,7 +6,7 @@ import { findIndex } from 'lodash';
 
 import { ServiceEditor } from './Editors';
 
-import { updateServices, createServices } from '../../reducers/services';
+import { updateServices, createServices } from 'reducers/services';
 
 class ServiceDetails extends React.Component {
   constructor(props) {

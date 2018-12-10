@@ -7,7 +7,7 @@ import {
   InputRow,
   InputWrapper
 } from '../../../basic/Input';
-import { HollowButton, OrangeButton } from '../../../basic/Buttons';
+import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 
 const Wrapper = styled.div`
   padding: 30px;

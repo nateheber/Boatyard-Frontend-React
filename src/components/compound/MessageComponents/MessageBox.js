@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ChatItem } from '../../basic/Message';
+import { ChatItem } from 'components/basic/Message';
 
 const Wrapper = styled.div`
   display: flex;

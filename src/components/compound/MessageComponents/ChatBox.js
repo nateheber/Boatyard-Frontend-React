@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
 
-import { OrangeButton } from '../../basic/Buttons';
+import { OrangeButton } from 'components/basic/Buttons';
 
 import QuickReply from '../../../resources/quick-reply.svg';
 import Attach from '../../../resources/attach.svg';

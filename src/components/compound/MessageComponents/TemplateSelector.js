@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { MessageItem, TemplateItem } from '../../basic/Message';
+import { MessageItem, TemplateItem } from 'components/basic/Message';
 
 const Wrapper = styled.div``;
 

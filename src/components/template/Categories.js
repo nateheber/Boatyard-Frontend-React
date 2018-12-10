@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import Table from '../basic/Table';
-import { CategoryHeader } from '../compound/SectionHeader';
+import Table from 'components/basic/Table';
+import { CategoryHeader } from 'components/compound/SectionHeader';
 
-import { fetchCategories } from '../../reducers/categories';
+import { fetchCategories } from 'reducers/categories';
 
 const Wrapper = styled.div`
   height: 100%;

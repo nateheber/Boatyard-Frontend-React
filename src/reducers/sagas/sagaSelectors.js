@@ -31,6 +31,19 @@ export const getServiceClient = state => {
   }
 };
 
+export const getBoatClient = state => {
+  switch (state.auth.previlage) {
+    case 'basic':
+      return APIGenerator.createServiceClient('basic');
+    case 'admin':
+      return APIGenerator.createServiceClient('admin');
+    case 'provider':
+      return APIGenerator.createServiceClient('provider');
+    default:
+      return APIGenerator.createServiceClient('basic');
+  }
+};
+
 export const getManagementClient = state => {
   switch (state.auth.previlage) {
     case 'basic':

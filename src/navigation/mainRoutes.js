@@ -1,23 +1,23 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import PageTemplate from '../components/template/PageTemplate';
-import Dashboard from '../components/template/Dashboard';
-import Order from '../components/template/Order';
-import Services from '../components/template/Services';
-import ServiceDetails from '../components/template/ServiceDetails';
-import Categories from '../components/template/Categories';
-import CategoryDetails from '../components/template/CategoryDetails';
-import Team from '../components/template/Team';
-import Customers from '../components/template/Customers';
-import Calendar from '../components/template/Calendar';
-import Providers from '../components/template/Providers';
-import ProviderDetails from '../components/template/ProviderDetails';
-import ProviderFlow from '../components/template/ProviderFlow';
-import UpdateProfile from '../components/template/UpdateProfile';
-import Users from '../components/template/Users';
-import UserDetails from '../components/template/UserDetails';
-import { Inbox, QRBox, TemplateBox } from '../components/template/Message';
+import PageTemplate from 'components/template/PageTemplate';
+import Dashboard from 'components/template/Dashboard';
+import Order from 'containers/Orders/OrderList';
+import Services from 'components/template/Services';
+import ServiceDetails from 'components/template/ServiceDetails';
+import Categories from 'components/template/Categories';
+import CategoryDetails from 'components/template/CategoryDetails';
+import Team from 'components/template/Team';
+import Customers from 'components/template/Customers';
+import Calendar from 'components/template/Calendar';
+import Providers from 'containers/Providers/layouts/Providers';
+import ProviderDetails from 'containers/Providers/layouts/ProviderDetails';
+import ProviderFlow from 'containers/Providers/layouts/ProviderFlow';
+import UpdateProfile from 'containers/Providers/layouts/UpdateProfile';
+import Users from 'components/template/Users';
+import UserDetails from 'components/template/UserDetails';
+import { Inbox, QRBox, TemplateBox } from 'components/template/Message';
 
 const MainRouter = () => (
   <Router>

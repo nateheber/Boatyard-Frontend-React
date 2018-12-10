@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import Table from '../basic/Table';
-import Tab from '../basic/Tab';
-import { OrderHeader } from '../compound/SectionHeader';
+import Table from 'components/basic/Table';
+import Tab from 'components/basic/Tab';
+import { OrderHeader } from 'components/compound/SectionHeader';
 
 const Wrapper = styled.div`
   display: flex;
@@ -13,11 +13,16 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-class Order extends React.Component {
+class OrderList extends React.Component {
+  state = {
+    showCustomerModal: false
+  };
+  onClose = () => {};
   toDetails = orderId => {
     this.props.history.push(`/order-details/${orderId}/`);
   };
   render() {
+    const { showCustomerModal } = this.state;
     const columns = [
       { label: 'order', value: 'order' },
       { label: 'order placed', value: 'order_placed' },
@@ -77,4 +82,4 @@ class Order extends React.Component {
   }
 }
 
-export default withRouter(Order);
+export default withRouter(OrderList);

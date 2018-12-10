@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { MonthlyRevenueSection } from '../../basic/SubSection';
+import { MonthlyRevenueSection } from 'components/basic/SubSection';
 
 const Wrapper = styled.div`
   background-color: #fff;

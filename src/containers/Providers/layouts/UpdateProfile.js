@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import { ProfileEditor } from './Editors';
+import { ProfileEditor } from 'components/template/Editors';
 
-import { updateProfile } from '../../reducers/profile';
+import { updateProfile } from 'reducers/profile';
 
 const Wrapper = styled.div`
   height: 100%;

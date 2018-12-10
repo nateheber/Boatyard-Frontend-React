@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Header from '../compound/Header';
-import SideBar from '../compound/Sidebar';
+import Header from 'components/compound/Header';
+import SideBar from 'components/compound/Sidebar';
 
 const Wrapper = styled.div`
   display: flex;

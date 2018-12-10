@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import Table from '../basic/Table';
-import { ProviderHeader } from '../compound/SectionHeader';
-import { ProviderFilter } from '../compound/Filters';
+import Table from 'components/basic/Table';
+import { ProviderHeader } from 'components/compound/SectionHeader';
+import { ProviderFilter } from 'components/compound/Filters';
 
-import { fetchProviders } from '../../reducers/providers';
+import { fetchProviders } from 'reducers/providers';
 
 const Wrapper = styled.div`
   height: 100%;

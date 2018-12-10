@@ -28,15 +28,8 @@ const modalStyles = {
 };
 
 export default class CustomModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      title: props.title
-    };
-  }
   render() {
-    const { open, onClose, children } = this.props;
-    const { title } = this.state;
+    const { open, onClose, children, title } = this.props;
     return (
       <Modal styles={modalStyles} open={open} onClose={onClose}>
         <Header>{title}</Header>

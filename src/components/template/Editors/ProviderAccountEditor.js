@@ -7,9 +7,9 @@ import {
   Input,
   TextArea,
   CheckBox
-} from '../../basic/Input';
-import { OrangeButton, HollowButton } from '../../basic/Buttons';
-import { EditorSection } from '../../compound/SubSections';
+} from 'components/basic/Input';
+import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import { EditorSection } from 'components/compound/SubSections';
 
 export class ProviderAccountEditor extends React.Component {
   render() {

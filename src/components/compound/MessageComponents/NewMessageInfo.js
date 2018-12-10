@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Selector, InputWrapper, InputLabel } from '../../basic/Input';
+import { Selector, InputWrapper, InputLabel } from 'components/basic/Input';
 
 const Wrapper = styled.div`
   padding: 35px 30px;

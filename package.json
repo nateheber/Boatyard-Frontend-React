@@ -13,6 +13,7 @@
     "env-cmd": "^8.0.2",
     "evil-icons": "^1.10.1",
     "immer": "^1.8.0",
+    "json-api-normalizer": "^0.4.14",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "prop-types": "^15.6.2",
@@ -33,6 +34,7 @@
     "react-tabs": "^2.3.0",
     "redux": "^4.0.1",
     "redux-actions": "^2.6.1",
+    "redux-object": "^0.5.7",
     "redux-persist": "^5.10.0",
     "redux-saga": "^0.16.2",
     "styled-components": "^4.0.0",
@@ -63,5 +65,8 @@
     "@storybook/react": "^4.0.0-alpha.24",
     "babel-loader": "^8.0.4",
     "redux-devtools-extension": "^2.13.7"
+  },
+  "resolutions": {
+    "**/event-stream": "^4.0.1"
   }
 }

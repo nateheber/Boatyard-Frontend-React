@@ -4,9 +4,9 @@ import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { findIndex } from 'lodash';
 
-import { createProvider, updateProvider } from '../../reducers/providers';
+import { createProvider, updateProvider } from 'reducers/providers';
 
-import ProfileStep from './EditFlow/Provider/ProfileStep';
+import ProfileStep from 'components/template/EditFlow/Provider/ProfileStep';
 
 class ProviderEditFlow extends React.Component {
   constructor(props) {

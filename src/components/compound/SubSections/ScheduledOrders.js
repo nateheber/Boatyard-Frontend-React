@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ScheduledSection } from '../../basic/SubSection';
-import { OrderTable } from '../../basic/Order';
+import { ScheduledSection } from 'components/basic/SubSection';
+import { OrderTable } from 'components/basic/Order';
 
 const Wrapper = styled.div`
   background-color: #fff;

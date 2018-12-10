@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { OrangeButton } from '../../basic/Buttons';
+import { OrangeButton } from 'components/basic/Buttons';
 
 const Wrapper = styled.div`
   display: flex;

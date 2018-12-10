@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { findIndex, filter, startsWith } from 'lodash';
 
-import { HollowButton } from '../../basic/Buttons';
-import { CheckBox, SearchBox } from '../../basic/Input';
-import { MessageItem, InboxItem } from '../../basic/Message';
+import { HollowButton } from 'components/basic/Buttons';
+import { CheckBox, SearchBox } from 'components/basic/Input';
+import { MessageItem, InboxItem } from 'components/basic/Message';
 
 const Wrapper = styled.div``;
 

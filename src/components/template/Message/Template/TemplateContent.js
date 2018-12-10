@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { isEmpty } from 'lodash';
 import changeCase from 'change-case';
 
-import { InboxContentHeader } from '../../../compound/MessageHeader';
-import { TemplateEditor } from '../../../compound/MessageComponents';
+import { InboxContentHeader } from 'components/compound/MessageHeader';
+import { TemplateEditor } from 'components/compound/MessageComponents';
 
 const Wrapper = styled.div`
   display: flex;
