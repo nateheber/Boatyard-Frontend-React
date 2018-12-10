@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
 
-import { ProviderDetailsEditor } from 'components/template/Editors';
+import { ProviderDetails } from '../components';
 
 class ServiceDetails extends React.Component {
   onCancel = () => {
@@ -13,7 +13,7 @@ class ServiceDetails extends React.Component {
     const {
       params: { providerId }
     } = this.props.match;
-    this.props.history.push(`/provider-details/${providerId}/`);
+    this.props.history.push(`/provider-details?provider=${providerId}`);
   };
   getProvider = () => {
     const {
@@ -26,7 +26,7 @@ class ServiceDetails extends React.Component {
   render() {
     const provider = this.getProvider();
     return (
-      <ProviderDetailsEditor
+      <ProviderDetails
         {...provider}
         onCancel={this.onCancel}
         onEdit={this.onEdit}

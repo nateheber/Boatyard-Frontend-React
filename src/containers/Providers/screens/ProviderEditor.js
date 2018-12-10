@@ -3,22 +3,26 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { findIndex } from 'lodash';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import { createProvider, updateProvider } from 'reducers/providers';
 
-import ProfileStep from 'components/template/EditFlow/Provider/ProfileStep';
+import { AccountEditor, HeaderEditor } from '../components';
+
+import './style.css';
 
 class ProviderEditFlow extends React.Component {
   constructor(props) {
     super(props);
     const { providers } = props;
     const query = queryString.parse(props.location.search);
-    const providerId = query.category;
+    const providerId = query.provider;
     if (providerId) {
-      const idx = findIndex(providers, category => category.id === providerId);
+      const idx = findIndex(providers, provider => provider.id === providerId);
       const providerDetail = providers[idx];
       this.state = {
-        ...providerDetail
+        ...providerDetail,
+        step: 0
       };
     } else {
       this.state = {
@@ -36,21 +40,36 @@ class ProviderEditFlow extends React.Component {
         invoicePrefix: '',
         taxRate: 0,
         subscriptionFee: 0,
-        transactionFee: 0
+        transactionFee: 0,
+        step: 0
       };
     }
   }
 
   onSave = data => {
-    console.log(data);
+    const { id } = this.state;
+    this.props.updateProvider({ id, data });
   };
 
   render() {
-    return <ProfileStep data={this.state} onSave={this.onSave} />;
+    return (
+      <Tabs>
+        <TabList>
+          <Tab>Account</Tab>
+          <Tab>Header</Tab>
+        </TabList>
+        <TabPanel>
+          <AccountEditor {...this.state} save={this.onSave} />
+        </TabPanel>
+        <TabPanel>
+          <HeaderEditor {...this.state} save={this.onSave} />
+        </TabPanel>
+      </Tabs>
+    );
   }
 }
 
-const mapStateToProps = ({ provider: providers }) => ({
+const mapStateToProps = ({ provider: { providers } }) => ({
   providers
 });
 

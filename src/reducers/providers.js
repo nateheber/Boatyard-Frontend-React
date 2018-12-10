@@ -10,7 +10,7 @@ export const actions = {
   setProviders: 'PROVIDER/SET',
   setProvider: 'PROVIDER/SET_ONE',
   updateProvider: 'PROVIDER/UPDATE',
-  setUpdatedProfile: 'PROVIDER/SET_UPDATED',
+  setUpdatedProvider: 'PROVIDER/SET_UPDATED',
   deleteProvider: 'PROVIDER/DELETE'
 };
 
@@ -44,7 +44,7 @@ export default handleActions(
         );
         draft.providers = providers;
       }),
-    [actions.setUpdatedProfile]: (state, { payload }) =>
+    [actions.setUpdatedProvider]: (state, { payload }) =>
       produce(state, draft => {
         const idx = findIndex(
           draft.providers,

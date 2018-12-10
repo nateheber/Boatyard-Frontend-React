@@ -84,7 +84,11 @@ function* deleteRequest(action) {
 
 function* updateRequest(action) {
   const { id, data } = action.payload;
-  yield call(adminApiClient.update, id, data);
+  const provider = yield call(adminApiClient.update, id, data);
+  yield put({
+    type: actions.setUpdatedProvider,
+    payload: { id: provider.id, ...provider.attributes }
+  });
 }
 
 function* fetchOneRequest(action) {

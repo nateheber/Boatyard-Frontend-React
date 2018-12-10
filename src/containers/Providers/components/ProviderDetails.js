@@ -9,7 +9,7 @@ import {
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 
-export class ProviderDetailsEditor extends React.Component {
+export class ProviderDetails extends React.Component {
   render() {
     const {
       name,
@@ -32,10 +32,6 @@ export class ProviderDetailsEditor extends React.Component {
             <InputLabel>Phone</InputLabel>
             <Input type="text" value={phoneNumber} disabled />
           </InputWrapper>
-          <InputWrapper style={{ flex: 6 }} className="secondary">
-            <InputLabel>Website Url</InputLabel>
-            <Input type="text" value={websiteUrl} disabled />
-          </InputWrapper>
         </InputRow>
         <InputRow>
           <InputWrapper className="secondary">
@@ -52,6 +48,13 @@ export class ProviderDetailsEditor extends React.Component {
             <InputLabel>Transaction Fee</InputLabel>
             <Input type="text" value={transactionFee} disabled />
           </InputWrapper>
+        </InputRow>
+        <InputRow>
+          <InputWrapper className="secondary">
+            <InputLabel>Website</InputLabel>
+            <Input type="text" value={websiteUrl} disabled />
+          </InputWrapper>
+          <InputWrapper />
         </InputRow>
       </div>
     );

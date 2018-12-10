@@ -11,10 +11,10 @@ import CategoryDetails from 'components/template/CategoryDetails';
 import Team from 'components/template/Team';
 import Customers from 'components/template/Customers';
 import Calendar from 'components/template/Calendar';
-import Providers from 'containers/Providers/layouts/Providers';
-import ProviderDetails from 'containers/Providers/layouts/ProviderDetails';
-import ProviderFlow from 'containers/Providers/layouts/ProviderFlow';
-import UpdateProfile from 'containers/Providers/layouts/UpdateProfile';
+import Providers from 'containers/Providers/screens/Providers';
+import ProviderDetails from 'containers/Providers/screens/ProviderDetails';
+import ProviderEditor from 'containers/Providers/screens/ProviderEditor';
+import UpdateProfile from 'containers/Profiles/screens/UpdateProfile';
 import Users from 'components/template/Users';
 import UserDetails from 'components/template/UserDetails';
 import { Inbox, QRBox, TemplateBox } from 'components/template/Message';
@@ -31,7 +31,7 @@ const MainRouter = () => (
       <Route exact path="/orders/" component={Order} />
       <Route exact path="/providers/" component={Providers} />
       <Route exact path="/providers/:providerId/" component={ProviderDetails} />
-      <Route exact path="/provider-details/" component={ProviderFlow} />
+      <Route exact path="/provider-details/" component={ProviderEditor} />
       <Route exact path="/services/" component={Services} />
       <Route exact path="/service-details/" component={ServiceDetails} />
       <Route exact path="/categories/" component={Categories} />
