@@ -1,6 +1,25 @@
+import React from 'react';
 import styled from 'styled-components';
+import InputMask from 'react-input-mask';
+import className from 'classnames';
 
-export const Input = styled.input`
+const ErrorMessage = styled.div`
+  color: #f7941e !important;
+  display: block;
+  font-weight: 400;
+  font-size: 12px;
+  margin: 0 0 5px;
+  margin-bottom: 15px;
+  line-height: 1.125;
+  opacity: 0;
+  transition: opacity 0.5s;
+  &.show {
+    opacity: 1;
+  }
+`;
+
+const MaskInput = styled(InputMask)`
+  position: relative;
   background: #fff;
   padding: 0 15px;
   margin-bottom: 15px;
@@ -17,7 +36,21 @@ export const Input = styled.input`
   }
 `;
 
-export const Select = styled.select`
+export class Input extends React.Component {
+  render() {
+    const { hasError, errorMessage, ...rest } = this.props;
+    return (
+      <React.Fragment>
+        <MaskInput {...rest} />
+        <ErrorMessage className={className({ show: hasError })}>
+          {errorMessage}
+        </ErrorMessage>
+      </React.Fragment>
+    );
+  }
+}
+
+const Selector = styled.select`
   background: #fff;
   padding: 0 15px;
   margin-bottom: 15px;
@@ -33,3 +66,17 @@ export const Select = styled.select`
     background: #f1f1f1;
   }
 `;
+
+export class Select extends React.Component {
+  render() {
+    const { hasError, errorMessage, ...rest } = this.props;
+    return (
+      <React.Fragment>
+        <Selector {...rest} />
+        <ErrorMessage className={className({ show: hasError })}>
+          {errorMessage}
+        </ErrorMessage>
+      </React.Fragment>
+    );
+  }
+}

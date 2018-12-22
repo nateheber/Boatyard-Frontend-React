@@ -62,6 +62,8 @@ export class UserEditor extends React.Component {
               defaultValue={phoneNumber}
               onChange={evt => this.onChange(evt.target.value, 'phoneNumber')}
               type="text"
+              mask={'(999) 999-9999'}
+              maskChar="_"
             />
           </InputWrapper>
         </InputRow>

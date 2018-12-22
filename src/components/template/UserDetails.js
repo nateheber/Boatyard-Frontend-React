@@ -7,6 +7,7 @@ import { findIndex } from 'lodash';
 import { UserEditor } from './Editors';
 
 import { updateUsers, createUsers } from 'reducers/users';
+import { setErrorState, resetErrorState } from 'reducers/appstate';
 
 class UserDetails extends React.Component {
   constructor(props) {
@@ -31,16 +32,28 @@ class UserDetails extends React.Component {
     }
   }
   onSave = data => {
-    if (this.state.userId) {
-      this.props.updateUsers({
-        id: this.state.userId,
-        data: {
-          user: data
-        }
-      });
-      this.props.history.goBack();
+    const { firstName, lastName, email, phoneNumber } = this.state;
+    const { setErrorState, resetErrorState } = this.props;
+    if (
+      firstName === '' ||
+      lastName === '' ||
+      email === '' ||
+      phoneNumber === ''
+    ) {
+      setErrorState('Please fill out all the required fields');
+      setTimeout(resetErrorState, 3000);
     } else {
-      this.props.createUsers(data);
+      if (this.state.userId) {
+        this.props.updateUsers({
+          id: this.state.userId,
+          data: {
+            user: data
+          }
+        });
+        this.props.history.goBack();
+      } else {
+        this.props.createUsers(data);
+      }
     }
   };
   onCancel = () => {
@@ -63,7 +76,9 @@ const mapStateToProps = ({ user: { users } }) => ({
 
 const mapDispatchToProps = {
   updateUsers,
-  createUsers
+  createUsers,
+  setErrorState,
+  resetErrorState
 };
 
 export default withRouter(

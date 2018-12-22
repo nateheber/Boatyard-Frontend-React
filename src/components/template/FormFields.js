@@ -1,0 +1,145 @@
+import React from 'react';
+import { Row, Col } from 'react-flexbox-grid';
+import { isEmpty, set, get, findIndex } from 'lodash';
+
+import {
+  InputWrapper,
+  InputLabel,
+  Input,
+  CheckBox,
+  TextArea,
+  Select
+} from 'components/basic/Input';
+
+export default class FormFields extends React.Component {
+  constructor(props) {
+    super(props);
+    const { fields } = props;
+    const value = {};
+    for (let i = 0; i < fields.length; i += 1) {
+      set(value, fields[i].field, get(fields[i], 'defaultValue', ''));
+    }
+    this.state = {
+      value,
+      errors: []
+    };
+  }
+
+  onChangeValue = (field, val) => {
+    const value = { ...this.state.value };
+    set(value, field, val);
+    this.setState({
+      value
+    });
+    if (this.props.onChange) {
+      this.props.onChange(value, field);
+    }
+  };
+
+  validateFields = () => {
+    const { value } = this.state;
+    const errors = [];
+    const { fields } = this.props;
+    for (let i = 0; i < fields.length; i += 1) {
+      if (fields[i].required && isEmpty(get(value, fields[i].field))) {
+        errors.push(fields[i].field);
+      }
+    }
+    this.setState({
+      errors
+    });
+    if (errors.length > 0) {
+      return false;
+    }
+    return true;
+  };
+
+  getFieldValues = () => this.state.value;
+
+  renderInputField = (field, type, mask, maskChar, errorMessage, options) => {
+    const { value, errors } = this.state;
+    const fieldValue = get(value, field) || '';
+    const errorIdx = findIndex(errors, errorField => errorField === field);
+    switch (type) {
+      case 'check_box':
+        return (
+          <CheckBox
+            checked={fieldValue}
+            onClick={() => this.onChangeValue(field, !fieldValue)}
+          />
+        );
+      case 'text_area':
+        return (
+          <TextArea
+            value={fieldValue}
+            onChange={evt => this.onChangeValue(field, evt.target.value)}
+            hasError={errorIdx >= 0}
+            errorMessage={errorMessage}
+          />
+        );
+      case 'select_box':
+        return (
+          <Select
+            value={fieldValue}
+            onChange={evt => this.onChangeValue(field, evt.target.value)}
+            hasError={errorIdx >= 0}
+            errorMessage={errorMessage}
+          >
+            <React.Fragment>
+              {options.map(val => (
+                <option value={val.value}>{val.label}</option>
+              ))}
+            </React.Fragment>
+          </Select>
+        );
+      case 'text_input':
+      default:
+        return (
+          <Input
+            mask={mask}
+            maskChar={maskChar}
+            value={fieldValue}
+            onChange={evt => this.onChangeValue(field, evt.target.value)}
+            hasError={errorIdx >= 0}
+            errorMessage={errorMessage}
+          />
+        );
+    }
+  };
+
+  render() {
+    const { fields } = this.props;
+    return (
+      <Row>
+        <React.Fragment>
+          {fields.map(
+            ({
+              field,
+              label,
+              mask,
+              maskChar,
+              errorMessage,
+              type,
+              options,
+              ...posInfo
+            }) => (
+              <Col {...posInfo}>
+                <InputWrapper className="secondary">
+                  <InputLabel>{label}</InputLabel>
+                  {this.renderInputField(
+                    field,
+                    type,
+                    mask,
+                    maskChar,
+                    errorMessage,
+                    options
+                  )}
+                </InputWrapper>
+              </Col>
+            )
+          )}
+        </React.Fragment>
+      </Row>
+    );
+  }
+}

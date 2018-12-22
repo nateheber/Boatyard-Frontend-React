@@ -1,7 +1,7 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, findIndex } from 'lodash';
 
-import management, { actions } from '../management';
+import { actions } from '../management';
 import { actions as providerActions } from '../providers';
 import { actions as userActions } from '../users';
 import { getManagementClient, getManagements } from './sagaSelectors';

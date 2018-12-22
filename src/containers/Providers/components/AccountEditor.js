@@ -1,17 +1,34 @@
 import React from 'react';
 
-import {
-  InputRow,
-  InputWrapper,
-  InputLabel,
-  Input
-} from 'components/basic/Input';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
+import FormFields from 'components/template/FormFields';
 
 export class AccountEditor extends React.Component {
-  constructor(props) {
-    super(props);
+  save = () => {
+    if (this.fields.validateFields()) {
+      const {
+        name,
+        phoneNumber,
+        websiteUrl,
+        taxRate,
+        subscriptionFee,
+        transactionFee
+      } = this.fields.getFieldValues();
+      this.props.save({
+        name,
+        phoneNumber,
+        websiteUrl,
+        taxRate: parseFloat(taxRate),
+        subscriptionFee: parseFloat(subscriptionFee),
+        transactionFee: parseFloat(transactionFee)
+      });
+    } else {
+      this.props.setErrorState('Please fill out all required fields');
+      setTimeout(this.props.resetErrorState, 3000);
+    }
+  };
+  getFormFieldsInfo = () => {
     const {
       name,
       phoneNumber,
@@ -19,97 +36,100 @@ export class AccountEditor extends React.Component {
       taxRate,
       subscriptionFee,
       transactionFee
-    } = props;
-    this.state = {
-      name,
-      phoneNumber,
-      websiteUrl,
-      taxRate,
-      subscriptionFee,
-      transactionFee
-    };
-  }
-  onChangeField = (field, evt) => {
-    const updateObj = {};
-    updateObj[field] = evt.target.value;
-    this.setState(updateObj);
+    } = this.props;
+    return [
+      {
+        field: 'name',
+        label: 'Name',
+        type: 'text_input',
+        errorMessage: 'Enter the company name',
+        required: true,
+        defaultValue: name,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'phoneNumber',
+        label: 'Phone',
+        type: 'text_input',
+        mask: '(999) 999-9999',
+        maskChar: '_',
+        required: true,
+        errorMessage: 'Enter a phone number',
+        defaultValue: phoneNumber,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'websiteUrl',
+        label: 'Website URL',
+        type: 'text_input',
+        defaultValue: websiteUrl,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'subscriptionFee',
+        label: 'Monthly Subscription Fee',
+        type: 'text_input',
+        required: true,
+        errorMessage: 'Subscription Fee Must have at least 1 digit',
+        defaultValue: subscriptionFee,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'transactionFee',
+        label: 'Transaction Fee',
+        type: 'text_input',
+        required: true,
+        errorMessage: 'Transaction Fee Must have at least 1 digit',
+        defaultValue: transactionFee,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'taxRate',
+        label: 'Tax Rate',
+        type: 'text_input',
+        required: true,
+        errorMessage: 'Tax Rate Must have at least 1 digit',
+        defaultValue: taxRate,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      }
+    ];
+  };
+  setFormFieldsRef = ref => {
+    this.fields = ref;
   };
   renderFields = () => {
-    const {
-      name,
-      phoneNumber,
-      websiteUrl,
-      taxRate,
-      subscriptionFee,
-      transactionFee
-    } = this.state;
-    return (
-      <React.Fragment>
-        <InputRow>
-          <InputWrapper className="secondary">
-            <InputLabel>Provider Name</InputLabel>
-            <Input
-              type="text"
-              value={name}
-              onChange={evt => this.onChangeField('name', evt)}
-            />
-          </InputWrapper>
-          <InputWrapper className="secondary">
-            <InputLabel>Phone</InputLabel>
-            <Input
-              type="text"
-              value={phoneNumber}
-              onChange={evt => this.onChangeField('phoneNumber', evt)}
-            />
-          </InputWrapper>
-        </InputRow>
-        <InputRow>
-          <InputWrapper className="secondary">
-            <InputLabel>Tax Rate</InputLabel>
-            <Input
-              type="text"
-              value={taxRate}
-              onChange={evt => this.onChangeField('taxRate', evt)}
-            />
-          </InputWrapper>
-        </InputRow>
-        <InputRow>
-          <InputWrapper className="secondary">
-            <InputLabel>Subscription Fee</InputLabel>
-            <Input
-              type="text"
-              value={subscriptionFee}
-              onChange={evt => this.onChangeField('subscriptionFee', evt)}
-            />
-          </InputWrapper>
-          <InputWrapper className="secondary">
-            <InputLabel>Transaction Fee</InputLabel>
-            <Input
-              type="text"
-              value={transactionFee}
-              onChange={evt => this.onChangeField('transactionFee', evt)}
-            />
-          </InputWrapper>
-        </InputRow>
-        <InputRow>
-          <InputWrapper className="secondary">
-            <InputLabel>Website</InputLabel>
-            <Input
-              type="text"
-              value={websiteUrl}
-              onChange={evt => this.onChangeField('websiteUrl', evt)}
-            />
-          </InputWrapper>
-          <InputWrapper />
-        </InputRow>
-      </React.Fragment>
-    );
+    const formFieldInfo = this.getFormFieldsInfo();
+    return <FormFields ref={this.setFormFieldsRef} fields={formFieldInfo} />;
   };
   renderActions = () => {
-    const { save, next } = this.props;
+    const { next } = this.props;
     return (
       <React.Fragment>
-        <HollowButton onClick={() => save(this.state)}>SAVE</HollowButton>
+        <HollowButton onClick={this.save}>SAVE</HollowButton>
         <OrangeButton onClick={next}>NEXT</OrangeButton>
       </React.Fragment>
     );

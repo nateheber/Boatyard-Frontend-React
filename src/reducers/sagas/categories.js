@@ -39,9 +39,23 @@ function* updateRequest(action) {
   });
 }
 
+function* selectRequest(action) {
+  const { categoryId, callback } = action.payload;
+  const categoryClient = yield select(getCategoryClient);
+  const result = yield call(categoryClient.read, categoryId);
+  yield put({
+    type: actions.setCategory,
+    payload: result
+  });
+  if (callback) {
+    yield callback(result);
+  }
+}
+
 export default function* Profile() {
   yield takeEvery(actions.createCategories, createRequest);
   yield takeEvery(actions.fetchCategories, fetchRequest);
   yield takeEvery(actions.deleteCategories, deleteRequest);
   yield takeEvery(actions.updateCategories, updateRequest);
+  yield takeEvery(actions.selectCategory, selectRequest);
 }

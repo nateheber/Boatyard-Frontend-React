@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Row, Col } from 'react-flexbox-grid';
 
 const Wrapper = styled.div`
   border: 1px solid #dfdfdf;
@@ -12,21 +13,29 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 
-const Item = styled.img`
+const Item = styled.div`
   box-sizing: border-box;
-  width: 50%;
+  width: 100%;
   height: 140px;
   margin: 10px;
   cursor: pointer;
   object-fit: center;
+  background-image: url(${props => props.bgImage});
+  background-repeat: none;
+  background-position: center center;
+  background-resize: cover;
 `;
 
 export const ImageSelector = ({ images, onSelect }) => (
   <Wrapper>
-    <React.Fragment>
-      {images.map((image, idx) => (
-        <Item src={image} onClick={() => onSelect(image)} key={`img_${idx}`} />
-      ))}
-    </React.Fragment>
+    <Row style={{ width: '100%' }}>
+      <React.Fragment>
+        {images.map((image, idx) => (
+          <Col xs={6} key={`img_${idx}`}>
+            <Item bgImage={image} onClick={() => onSelect(image)} />
+          </Col>
+        ))}
+      </React.Fragment>
+    </Row>
   </Wrapper>
 );

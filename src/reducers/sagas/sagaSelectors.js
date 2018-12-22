@@ -56,3 +56,29 @@ export const getManagementClient = state => {
       return APIGenerator.createManagementClient('basic');
   }
 };
+
+export const getProviderClient = state => {
+  switch (state.auth.previlage) {
+    case 'basic':
+      return APIGenerator.createProviderClient('basic');
+    case 'admin':
+      return APIGenerator.createProviderClient('admin');
+    case 'provider':
+      return APIGenerator.createProviderClient('provider');
+    default:
+      return APIGenerator.createProviderClient('basic');
+  }
+};
+
+export const getCustomApiClient = state => {
+  switch (state.auth.previlage) {
+    case 'basic':
+      return APIGenerator.customApiClient('basic');
+    case 'admin':
+      return APIGenerator.customApiClient('admin');
+    case 'provider':
+      return APIGenerator.customApiClient('provider');
+    default:
+      return APIGenerator.customApiClient('basic');
+  }
+};

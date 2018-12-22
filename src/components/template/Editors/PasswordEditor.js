@@ -27,6 +27,12 @@ const Header = styled.div`
   line-height: 28px;
 `;
 
+const Content = styled.div`
+  padding: 30px;
+  min-height: 160px;
+  overflow: auto;
+`;
+
 export class PasswordEditor extends React.Component {
   state = {
     password: '',
@@ -51,7 +57,7 @@ export class PasswordEditor extends React.Component {
   render() {
     const { password, confirmPassword } = this.state;
     const fields = (
-      <div style={{ paddingTop: '30px' }}>
+      <Content>
         <Header>Change Password</Header>
         <InputRow>
           <InputWrapper className="primary">
@@ -71,7 +77,7 @@ export class PasswordEditor extends React.Component {
             />
           </InputWrapper>
         </InputRow>
-      </div>
+      </Content>
     );
     const actions = (
       <React.Fragment>

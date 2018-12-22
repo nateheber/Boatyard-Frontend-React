@@ -6,8 +6,9 @@ import { findIndex } from 'lodash';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import { createProvider, updateProvider } from 'reducers/providers';
+import { setErrorState, resetErrorState } from 'reducers/appstate';
 
-import { AccountEditor, HeaderEditor } from '../components';
+import { AccountEditor, AccountCreator, HeaderEditor } from '../components';
 
 import './style.css';
 
@@ -26,6 +27,7 @@ class ProviderEditFlow extends React.Component {
       };
     } else {
       this.state = {
+        id: -1,
         name: '',
         icon: null,
         logo: null,
@@ -48,18 +50,52 @@ class ProviderEditFlow extends React.Component {
 
   onSave = data => {
     const { id } = this.state;
-    this.props.updateProvider({ id, data });
+    if (id !== -1) {
+      this.props.updateProvider({
+        id,
+        data
+      });
+      this.setState({
+        ...data
+      });
+    } else {
+      this.props.createProvider({
+        data,
+        callback: providerId => {
+          this.setState({
+            id: providerId,
+            ...data
+          });
+        }
+      });
+    }
   };
 
   render() {
+    const { id } = this.state;
+    const { setErrorState, resetErrorState } = this.props;
     return (
       <Tabs>
         <TabList>
           <Tab>Account</Tab>
-          <Tab>Header</Tab>
+          <Tab disabled={id === -1}>Header</Tab>
         </TabList>
         <TabPanel>
-          <AccountEditor {...this.state} save={this.onSave} />
+          {id === -1 ? (
+            <AccountCreator
+              {...this.state}
+              save={this.onSave}
+              setErrorState={setErrorState}
+              resetErrorState={resetErrorState}
+            />
+          ) : (
+            <AccountEditor
+              {...this.state}
+              save={this.onSave}
+              setErrorState={setErrorState}
+              resetErrorState={resetErrorState}
+            />
+          )}
         </TabPanel>
         <TabPanel>
           <HeaderEditor {...this.state} save={this.onSave} />
@@ -75,7 +111,9 @@ const mapStateToProps = ({ provider: { providers } }) => ({
 
 const mapDispatchToProps = {
   createProvider,
-  updateProvider
+  updateProvider,
+  setErrorState,
+  resetErrorState
 };
 
 export default withRouter(

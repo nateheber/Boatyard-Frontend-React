@@ -4,33 +4,26 @@ import { get, isEmpty, findIndex } from 'lodash';
 import { actions } from '../providers';
 import { actions as authActions } from '../auth';
 
-import {
-  customApiClient,
-  createProviderClient,
-  createUserClient
-} from '../../api';
+import { customApiClient, createProviderClient } from '../../api';
 
-import { getProviders } from './sagaSelectors';
+import { getProviders, getCustomApiClient } from './sagaSelectors';
 
 const adminApiClient = createProviderClient('admin');
 const basicProviderClient = createProviderClient('basic');
 const customManagement = customApiClient('admin');
-const escalationApiClient = customApiClient('basic');
-const userClient = createUserClient('admin');
 
 function* createRequest(action) {
-  const result = yield call(adminApiClient.create, action.payload);
+  const { callback, data } = action.payload;
+  const result = yield call(adminApiClient.create, data);
   const id = get(result, 'data.id', false);
   if (id) {
-    const data = yield call(customManagement.post, '/managements/', {
+    yield call(customManagement.post, '/managements/', {
       management: {
-        email: action.payload.email,
+        email: data.email,
         providerId: id
       }
     });
-    const userId = get(data, 'included[0].id');
-    const { firstName, lastName } = this.payload;
-    yield call(userClient.update, userId, { firstName, lastName });
+    yield call(callback, id);
   }
 }
 
@@ -47,6 +40,7 @@ function* fetchRequest(action) {
 }
 
 function* selectRequest(action) {
+  const escalationApiClient = yield select(getCustomApiClient);
   if (!action.payload) {
     const providersData = yield call(basicProviderClient.list);
     yield put({
@@ -55,11 +49,13 @@ function* selectRequest(action) {
     });
   }
   const providers = yield select(getProviders);
-  const providerIdx = get(action, 'payload', 0);
-  const id = providers[providerIdx].id;
+  let providerId = get(action, 'payload', -1);
+  if (providerId === -1) {
+    providerId = providers[0].id;
+  }
   const result = yield call(escalationApiClient.post, '/users/escalations', {
     escalation: {
-      providerId: parseInt(id)
+      providerId: parseInt(providerId)
     }
   });
   if (!isEmpty(result)) {

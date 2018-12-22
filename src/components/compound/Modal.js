@@ -18,22 +18,42 @@ const Header = styled.div`
   line-height: 28px;
 `;
 
+const Content = styled.div`
+  box-sizing: border-box;
+  padding: 30px;
+  padding-top: 105px;
+  min-height: 265px;
+  overflow: auto;
+`;
+
+const ActionWrapper = styled.div`
+  display: flex;
+  padding: 15px 30px;
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1px solid #e5e5e5;
+`;
+
 const modalStyles = {
   overlay: {
     background: 'transparent'
   },
   modal: {
-    padding: '0px'
+    padding: '0px',
+    width: '50%'
   }
 };
 
 export default class CustomModal extends React.Component {
   render() {
-    const { open, onClose, children, title } = this.props;
+    const { open, onClose, children, title, actions } = this.props;
     return (
       <Modal styles={modalStyles} open={open} onClose={onClose}>
-        <Header>{title}</Header>
-        {children}
+        <Content>
+          <Header>{title}</Header>
+          {children}
+        </Content>
+        {actions && <ActionWrapper>{actions}</ActionWrapper>}
       </Modal>
     );
   }

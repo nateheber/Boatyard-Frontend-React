@@ -1,7 +1,8 @@
 import React from 'react';
 
+import { Row, Col } from 'react-flexbox-grid';
+
 import {
-  InputRow,
   InputWrapper,
   InputLabel,
   ImageUploader,
@@ -51,26 +52,30 @@ export class HeaderEditor extends React.Component {
     console.log(homeImages);
     return (
       <React.Fragment>
-        <InputRow>
-          <InputWrapper className="secondary">
-            <InputLabel>Choose Home Image</InputLabel>
-            <ImageSelector images={homeImages} />
-            <ImageUploader
-              title="UPLOAD HOME IMAGE"
-              onChange={val => this.onChangeField('homeImage', val)}
-            />
-            <ImageUploader
-              title="UPLOAD CUSTOME HEADER IMAGE"
-              onChange={val => this.onChangeField('banner', val)}
-            />
-          </InputWrapper>
-          <InputWrapper className="secondary">
-            <InputLabel>Home Image Preview (1500px x 1182px)</InputLabel>
-            <HomeImagePreview image={homeImage} title={name} />
-            <InputLabel>Banner Image Preview (1500px x 473px)</InputLabel>
-            <BannerImagePreview image={banner} onClick={this.removeBanner} />
-          </InputWrapper>
-        </InputRow>
+        <Row>
+          <Col xs={12} md={6}>
+            <InputWrapper className="secondary">
+              <InputLabel>Choose Home Image</InputLabel>
+              <ImageSelector images={homeImages} />
+              <ImageUploader
+                title="UPLOAD HOME IMAGE"
+                onChange={val => this.onChangeField('homeImage', val)}
+              />
+              <ImageUploader
+                title="UPLOAD CUSTOME HEADER IMAGE"
+                onChange={val => this.onChangeField('banner', val)}
+              />
+            </InputWrapper>
+          </Col>
+          <Col xs={12} md={5} mdOffset={1}>
+            <InputWrapper className="secondary">
+              <InputLabel>Home Image Preview (1500px x 1182px)</InputLabel>
+              <HomeImagePreview image={homeImage} title={name} />
+              <InputLabel>Banner Image Preview (1500px x 473px)</InputLabel>
+              <BannerImagePreview image={banner} onClick={this.removeBanner} />
+            </InputWrapper>
+          </Col>
+        </Row>
       </React.Fragment>
     );
   };

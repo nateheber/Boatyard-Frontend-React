@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import {
   InputRow,
@@ -8,6 +9,10 @@ import {
 } from 'components/basic/Input';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
+
+const Wrapper = styled.div`
+  margin: 30px;
+`;
 
 export class ProviderDetails extends React.Component {
   render() {
@@ -64,6 +69,10 @@ export class ProviderDetails extends React.Component {
         <OrangeButton onClick={onEdit}>Edit</OrangeButton>
       </React.Fragment>
     );
-    return <EditorSection content={fields} actions={actions} />;
+    return (
+      <Wrapper>
+        <EditorSection content={fields} actions={actions} />
+      </Wrapper>
+    );
   }
 }
