@@ -43,7 +43,7 @@ export class AccountCreator extends React.Component {
       {
         field: 'name',
         label: 'Name',
-        type: 'text_input',
+        type: 'text_field',
         errorMessage: 'Enter the company name',
         required: true,
         defaultValue: name,
@@ -56,7 +56,7 @@ export class AccountCreator extends React.Component {
       {
         field: 'email',
         label: 'Email',
-        type: 'text_input',
+        type: 'text_field',
         errorMessage: 'Enter the Email',
         required: true,
         defaultValue: email,
@@ -69,7 +69,7 @@ export class AccountCreator extends React.Component {
       {
         field: 'phoneNumber',
         label: 'Phone',
-        type: 'text_input',
+        type: 'text_field',
         mask: '(999) 999-9999',
         maskChar: '_',
         required: true,
@@ -84,7 +84,7 @@ export class AccountCreator extends React.Component {
       {
         field: 'websiteUrl',
         label: 'Website URL',
-        type: 'text_input',
+        type: 'text_field',
         defaultValue: websiteUrl,
         xs: 12,
         sm: 12,
@@ -95,7 +95,7 @@ export class AccountCreator extends React.Component {
       {
         field: 'subscriptionFee',
         label: 'Monthly Subscription Fee',
-        type: 'text_input',
+        type: 'text_field',
         required: true,
         errorMessage: 'Subscription Fee Must have at least 1 digit',
         defaultValue: subscriptionFee,
@@ -108,7 +108,7 @@ export class AccountCreator extends React.Component {
       {
         field: 'transactionFee',
         label: 'Transaction Fee',
-        type: 'text_input',
+        type: 'text_field',
         required: true,
         errorMessage: 'Transaction Fee Must have at least 1 digit',
         defaultValue: transactionFee,
@@ -121,7 +121,7 @@ export class AccountCreator extends React.Component {
       {
         field: 'taxRate',
         label: 'Tax Rate',
-        type: 'text_input',
+        type: 'text_field',
         required: true,
         errorMessage: 'Tax Rate Must have at least 1 digit',
         defaultValue: taxRate,

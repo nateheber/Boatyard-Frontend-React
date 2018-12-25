@@ -1,17 +1,79 @@
 import React from 'react';
-import { hasIn } from 'lodash';
+import { get } from 'lodash';
+import deepEqual from 'deep-equal';
 
 import FormFields from 'components/template/FormFields';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 
 export class CategoryEditor extends React.Component {
-  state = {
-    newFields: []
-  };
+  constructor(props) {
+    super(props);
+    this.mainFieldsRef = [];
+    this.additionalFieldRef = [];
+    this.newAdditionalFieldRef = [];
+    this.state = {
+      newFields: [],
+      additionalFields: props.additionalFields
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!deepEqual(this.props.additionalFields, prevProps.additionalFields)) {
+      this.setState({
+        additionalFields: this.props.additionalFields
+      });
+    }
+  }
 
   onSave = () => {
-    this.props.onSave({ ...this.state });
+    const { additionalFields } = this.state;
+    let state = true;
+    state = this.mainFieldsRef.validateFields();
+    for (let i = 0; i < additionalFields.length; i += 1) {
+      if (!get(additionalFields[i], 'fieldInfo.Destroy', false)) {
+        if (!this.additionalFieldRef[i].validateFields()) {
+          state = false;
+        }
+      }
+    }
+    for (let i = 0; i < this.newAdditionalFieldRef.length; i += 1) {
+      if (this.newAdditionalFieldRef[i]) {
+        if (!this.newAdditionalFieldRef[i].validateFields()) {
+          state = false;
+        }
+      }
+    }
+    if (state) {
+      const mainValues = this.mainFieldsRef.getFieldValues();
+      const additionalFieldValues = additionalFields.map((val, idx) => {
+        if (get(val, 'fieldInfo.Destroy', false)) {
+          return {
+            id: val.id,
+            Destroy: true
+          };
+        }
+        return {
+          id: val.id,
+          ...this.additionalFieldRef[idx].getFieldValues()
+        };
+      });
+      const newAdditionalFieldValues = [];
+      for (let i = 0; i < this.newAdditionalFieldRef.length; i += 1) {
+        if (this.newAdditionalFieldRef[i]) {
+          newAdditionalFieldValues.push(
+            this.newAdditionalFieldRef[i].getFieldValues()
+          );
+        }
+      }
+      this.props.onSave({
+        ...mainValues,
+        fieldsAttributes: [
+          ...additionalFieldValues,
+          ...newAdditionalFieldValues
+        ]
+      });
+    }
   };
 
   setMainFieldsRef = ref => {
@@ -23,7 +85,27 @@ export class CategoryEditor extends React.Component {
   };
 
   setNewAdditionalFieldsRef = (ref, idx) => {
-    this.newAddtionalFieldRef[idx] = ref;
+    this.newAdditionalFieldRef[idx] = ref;
+  };
+
+  removeAdditionalFields = idx => {
+    const additionalFields = [...this.state.additionalFields];
+    additionalFields[idx].fieldInfo = {
+      Destroy: true
+    };
+    this.setState({
+      additionalFields
+    });
+  };
+
+  removeNewAdditionalFields = idx => {
+    const newFields = [...this.state.newFields];
+    this.setState({
+      newFields: [
+        ...newFields.slice(0, idx),
+        ...newFields.slice(idx + 1, newFields.length)
+      ]
+    });
   };
 
   addAdditionalField = (ref, idx) => {
@@ -33,7 +115,7 @@ export class CategoryEditor extends React.Component {
         {
           field: 'name',
           label: 'Name',
-          type: 'text_input',
+          type: 'text_field',
           errorMessage: 'Enter the field name',
           required: true,
           defaultValue: '',
@@ -49,7 +131,13 @@ export class CategoryEditor extends React.Component {
           type: 'select_box',
           errorMessage: 'Select Field Type',
           required: true,
-          defaultValue: 'text_input',
+          defaultValue: 'text_field',
+          options: [
+            { value: 'check_box', label: 'CheckBox' },
+            { value: 'text_area', label: 'TextArea' },
+            { value: 'select_box', label: 'SelectBox' },
+            { value: 'text_field', label: 'TextInput' }
+          ],
           xs: 6,
           sm: 6,
           md: 4,
@@ -58,7 +146,7 @@ export class CategoryEditor extends React.Component {
         },
         {
           field: 'required',
-          label: 'Field Type',
+          label: 'Required',
           type: 'check_box',
           defaultValue: false,
           xs: 6,
@@ -69,37 +157,43 @@ export class CategoryEditor extends React.Component {
         }
       ]
     });
+    this.setState({
+      newFields
+    });
   };
 
   render() {
-    const { mainFields, additionalFields } = this.props;
+    const { mainFields } = this.props;
+    const { additionalFields } = this.state;
     const { newFields } = this.state;
     const fields = (
       <React.Fragment>
         <FormFields ref={this.setMainFieldsRef} fields={mainFields} />
-        <OrangeButton title="Add Field" onClick={this.addAdditionalField} />
-        {additionalFields.map((val, idx) => (
-          <React.Fragment>
-            <FormFields
-              ref={ref => this.setAdditionalFieldsRef(ref, idx)}
-              fields={val.fieldsInfo}
-            />
-            <OrangeButton
-              title="Remove Field"
-              onClick={() => this.removeAdditionalFields(idx)}
-            />
-          </React.Fragment>
-        ))}
+        <OrangeButton onClick={this.addAdditionalField}>Add Field</OrangeButton>
+        {additionalFields.map((val, idx) => {
+          return get(val, 'fieldInfo.Destroy', false) ? (
+            false
+          ) : (
+            <React.Fragment key={`additional_fields_${idx}`}>
+              <FormFields
+                ref={ref => this.setAdditionalFieldsRef(ref, idx)}
+                fields={val.fieldInfo}
+              />
+              <OrangeButton onClick={() => this.removeAdditionalFields(idx)}>
+                Remove Field
+              </OrangeButton>
+            </React.Fragment>
+          );
+        })}
         {newFields.map((val, idx) => (
-          <React.Fragment>
+          <React.Fragment key={`new_fields_${idx}`}>
             <FormFields
               ref={ref => this.setNewAdditionalFieldsRef(ref, idx)}
-              fields={val}
+              fields={val.fieldInfo}
             />
-            <OrangeButton
-              title="Remove Field"
-              onClick={() => this.removeNewAdditionalFields(idx)}
-            />
+            <OrangeButton onClick={() => this.removeNewAdditionalFields(idx)}>
+              Remove Field
+            </OrangeButton>
           </React.Fragment>
         ))}
       </React.Fragment>

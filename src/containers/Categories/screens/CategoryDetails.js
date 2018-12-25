@@ -46,10 +46,10 @@ class CategoryDetails extends React.Component {
         {
           field: 'name',
           label: 'Name',
-          type: 'text_input',
+          type: 'text_field',
           errorMessage: 'Enter the service name',
           required: true,
-          defaultValue: name,
+          defaultValue: name || '',
           xs: 12,
           sm: 12,
           md: 6,
@@ -59,8 +59,8 @@ class CategoryDetails extends React.Component {
         {
           field: 'subtitle',
           label: 'Subtitle',
-          type: 'text_input',
-          defaultValue: subtitle,
+          type: 'text_field',
+          defaultValue: subtitle || '',
           xs: 12,
           sm: 12,
           md: 6,
@@ -70,8 +70,8 @@ class CategoryDetails extends React.Component {
         {
           field: 'appIdentifier',
           label: 'App Identifier',
-          type: 'text_input',
-          defaultValue: appIdentifier,
+          type: 'text_field',
+          defaultValue: appIdentifier || '',
           xs: 12,
           sm: 12,
           md: 6,
@@ -82,7 +82,7 @@ class CategoryDetails extends React.Component {
           field: 'description',
           label: 'Description',
           type: 'text_area',
-          defaultValue: description,
+          defaultValue: description || '',
           xs: 12,
           sm: 12,
           md: 6,
@@ -119,7 +119,7 @@ class CategoryDetails extends React.Component {
             {
               field: 'name',
               label: 'Name',
-              type: 'text_input',
+              type: 'text_field',
               errorMessage: 'Enter the field name',
               required: true,
               defaultValue: name,
@@ -136,6 +136,12 @@ class CategoryDetails extends React.Component {
               errorMessage: 'Select Field Type',
               required: true,
               defaultValue: fieldType,
+              options: [
+                { value: 'check_box', label: 'CheckBox' },
+                { value: 'text_area', label: 'TextArea' },
+                { value: 'select_box', label: 'SelectBox' },
+                { value: 'text_field', label: 'TextInput' }
+              ],
               xs: 6,
               sm: 6,
               md: 4,
@@ -144,7 +150,7 @@ class CategoryDetails extends React.Component {
             },
             {
               field: 'required',
-              label: 'Field Type',
+              label: 'Required',
               type: 'check_box',
               defaultValue: required,
               xs: 6,
@@ -173,10 +179,12 @@ class CategoryDetails extends React.Component {
         primary
       }
     } = data;
-    const fieldAttributes = included.map(({ id, attributes }) => ({
-      id,
-      ...attributes
-    }));
+    const fieldAttributes = included
+      ? included.map(({ id, attributes }) => ({
+          id,
+          ...attributes
+        }))
+      : [];
     this.setState({
       id,
       name,
@@ -189,6 +197,7 @@ class CategoryDetails extends React.Component {
     });
   };
   onSave = data => {
+    console.log(data);
     if (this.state.id) {
       this.props.updateCategories({
         id: this.state.id,
@@ -205,13 +214,12 @@ class CategoryDetails extends React.Component {
   render() {
     const { mainFields, additionalFields } = this.getFieldInfo();
     return (
-      <div />
-      // <CategoryEditor
-      //   mainFields={mainFields}
-      //   additionalFields={additionalFields}
-      //   onCancel={this.onCancel}
-      //   onSave={this.onSave}
-      // />
+      <CategoryEditor
+        mainFields={mainFields}
+        additionalFields={additionalFields}
+        onCancel={this.onCancel}
+        onSave={this.onSave}
+      />
     );
   }
 }

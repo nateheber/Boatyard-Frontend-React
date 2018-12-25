@@ -1,6 +1,7 @@
 import React from 'react';
 import { Row, Col } from 'react-flexbox-grid';
 import { isEmpty, set, get, findIndex } from 'lodash';
+import deepEqual from 'deep-equal';
 
 import {
   InputWrapper,
@@ -23,6 +24,20 @@ export default class FormFields extends React.Component {
       value,
       errors: []
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!deepEqual(this.props.fields, prevProps.fields)) {
+      const { fields } = this.props;
+      const value = {};
+      for (let i = 0; i < fields.length; i += 1) {
+        set(value, fields[i].field, get(fields[i], 'defaultValue', ''));
+      }
+      this.setState({
+        value,
+        errors: []
+      });
+    }
   }
 
   onChangeValue = (field, val) => {
@@ -86,13 +101,15 @@ export default class FormFields extends React.Component {
             errorMessage={errorMessage}
           >
             <React.Fragment>
-              {options.map(val => (
-                <option value={val.value}>{val.label}</option>
+              {options.map((val, idx) => (
+                <option value={val.value} key={`option_${idx},`}>
+                  {val.label}
+                </option>
               ))}
             </React.Fragment>
           </Select>
         );
-      case 'text_input':
+      case 'text_field':
       default:
         return (
           <Input
@@ -111,9 +128,9 @@ export default class FormFields extends React.Component {
     const { fields } = this.props;
     return (
       <Row>
-        <React.Fragment>
-          {fields.map(
-            ({
+        {fields.map(
+          (
+            {
               field,
               label,
               mask,
@@ -122,23 +139,24 @@ export default class FormFields extends React.Component {
               type,
               options,
               ...posInfo
-            }) => (
-              <Col {...posInfo}>
-                <InputWrapper className="secondary">
-                  <InputLabel>{label}</InputLabel>
-                  {this.renderInputField(
-                    field,
-                    type,
-                    mask,
-                    maskChar,
-                    errorMessage,
-                    options
-                  )}
-                </InputWrapper>
-              </Col>
-            )
-          )}
-        </React.Fragment>
+            },
+            idx
+          ) => (
+            <Col {...posInfo} key={`field_${idx}`}>
+              <InputWrapper className="secondary">
+                <InputLabel>{label}</InputLabel>
+                {this.renderInputField(
+                  field,
+                  type,
+                  mask,
+                  maskChar,
+                  errorMessage,
+                  options
+                )}
+              </InputWrapper>
+            </Col>
+          )
+        )}
       </Row>
     );
   }

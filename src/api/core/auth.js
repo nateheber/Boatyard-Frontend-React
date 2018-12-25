@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import store from '../../store';
 
 export const authInterceptor = (client, authType) => {

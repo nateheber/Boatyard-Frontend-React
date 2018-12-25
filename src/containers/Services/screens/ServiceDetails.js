@@ -15,7 +15,7 @@ const getDefaultValue = (type, field, orgProperties) => {
     return get(orgProperties, field);
   }
   switch (type) {
-    case 'text_input':
+    case 'text_field':
       return '';
     case 'check_box':
       return false;
@@ -52,10 +52,14 @@ class ServiceDetails extends React.Component {
         subtitle: '',
         description: '',
         secondaryDescription: '',
-        categoryId,
+        categoryId: `${categoryId}`,
         label: '',
         additionalDetails: '',
         serviceDetails: '',
+        costs: '0.00',
+        deliveryFee: '0.00',
+        taxRate: '0.00',
+        icon: '',
         properties: {},
         propertyFields: []
       };
@@ -82,7 +86,10 @@ class ServiceDetails extends React.Component {
       categoryId,
       label,
       additionalDetails,
-      serviceDetails
+      costs,
+      deliveryFee,
+      taxRate,
+      icon
     } = this.state;
     const { categories } = this.props;
     const categoryOptions = categories.map(val => ({
@@ -93,7 +100,7 @@ class ServiceDetails extends React.Component {
       {
         field: 'name',
         label: 'Name',
-        type: 'text_input',
+        type: 'text_field',
         errorMessage: 'Enter the service name',
         required: true,
         defaultValue: name,
@@ -110,7 +117,7 @@ class ServiceDetails extends React.Component {
         errorMessage: 'Select category',
         options: categoryOptions,
         required: true,
-        defaultValue: categoryId,
+        defaultValue: `${categoryId}`,
         xs: 12,
         sm: 12,
         md: 6,
@@ -120,7 +127,7 @@ class ServiceDetails extends React.Component {
       {
         field: 'subtitle',
         label: 'Subtitle',
-        type: 'text_input',
+        type: 'text_field',
         defaultValue: subtitle,
         xs: 12,
         sm: 12,
@@ -131,8 +138,52 @@ class ServiceDetails extends React.Component {
       {
         field: 'label',
         label: 'Label',
-        type: 'text_input',
+        type: 'text_field',
         defaultValue: label,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'costs',
+        label: 'Costs',
+        type: 'text_field',
+        defaultValue: costs,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'deliveryFee',
+        label: 'Delivery Fee',
+        type: 'text_field',
+        defaultValue: deliveryFee,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'taxRate',
+        label: 'Tax Rate',
+        type: 'text_field',
+        defaultValue: taxRate,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'icon',
+        label: 'Icon',
+        type: 'text_field',
+        defaultValue: icon,
         xs: 12,
         sm: 12,
         md: 6,
@@ -166,17 +217,6 @@ class ServiceDetails extends React.Component {
         label: 'Additional Details',
         type: 'text_area',
         defaultValue: additionalDetails,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'serviceDetails',
-        label: 'Service Details',
-        type: 'text_area',
-        defaultValue: serviceDetails,
         xs: 12,
         sm: 12,
         md: 6,
