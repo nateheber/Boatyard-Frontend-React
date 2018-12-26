@@ -59,7 +59,7 @@ export class ServiceEditor extends React.Component {
     );
     const actions = (
       <React.Fragment>
-        <HollowButton onClick={onCancel}>Cancel</HollowButton>,
+        <HollowButton onClick={onCancel}>Cancel</HollowButton>
         <OrangeButton onClick={this.onSave}>Save</OrangeButton>
       </React.Fragment>
     );

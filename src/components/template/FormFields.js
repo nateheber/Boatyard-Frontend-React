@@ -31,7 +31,18 @@ export default class FormFields extends React.Component {
       const { fields } = this.props;
       const value = {};
       for (let i = 0; i < fields.length; i += 1) {
-        set(value, fields[i].field, get(fields[i], 'defaultValue', ''));
+        if (fields[i].type === 'check_box') {
+          const fieldValue = get(fields[i], 'defaultValue');
+          if (fieldValue === 'true') {
+            set(value, fields[i].field, true);
+          } else if (fieldValue === 'false') {
+            set(value, fields[i].field, false);
+          } else {
+            set(value, fields[i].field, Boolean(fieldValue));
+          }
+        } else {
+          set(value, fields[i].field, get(fields[i], 'defaultValue', ''));
+        }
       }
       this.setState({
         value,
@@ -56,7 +67,11 @@ export default class FormFields extends React.Component {
     const errors = [];
     const { fields } = this.props;
     for (let i = 0; i < fields.length; i += 1) {
-      if (fields[i].required && isEmpty(get(value, fields[i].field))) {
+      if (
+        fields[i].type !== 'check_box' &&
+        fields[i].required &&
+        isEmpty(get(value, fields[i].field))
+      ) {
         errors.push(fields[i].field);
       }
     }
@@ -73,7 +88,10 @@ export default class FormFields extends React.Component {
 
   renderInputField = (field, type, mask, maskChar, errorMessage, options) => {
     const { value, errors } = this.state;
-    const fieldValue = get(value, field) || '';
+    const fieldValue =
+      type === 'check_box'
+        ? get(value, field) || false
+        : get(value, field) || '';
     const errorIdx = findIndex(errors, errorField => errorField === field);
     switch (type) {
       case 'check_box':

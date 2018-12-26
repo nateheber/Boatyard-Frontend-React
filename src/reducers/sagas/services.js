@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
 import { actions } from '../services';
-import { getServiceClient } from './sagaSelectors';
+import { getServiceClient, getServicesPageNumber } from './sagaSelectors';
 
 function* createRequest(action) {
   const serviceClient = yield select(getServiceClient);
@@ -14,7 +14,8 @@ function* createRequest(action) {
 
 function* fetchRequest(action) {
   const serviceClient = yield select(getServiceClient);
-  const result = yield call(serviceClient.list);
+  const nextPage = yield select(getServicesPageNumber);
+  const result = yield call(serviceClient.list, nextPage);
   const services = get(result, 'data', []);
   yield put({
     type: actions.setServices,

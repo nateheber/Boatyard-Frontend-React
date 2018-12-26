@@ -2,7 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
-import { get, set, findIndex, isEmpty, hasIn } from 'lodash';
+import {
+  get,
+  set,
+  findIndex,
+  isEmpty,
+  hasIn,
+  camelCase,
+  startCase
+} from 'lodash';
 
 import { ServiceEditor } from '../components/ServiceEditor';
 
@@ -235,12 +243,12 @@ class ServiceDetails extends React.Component {
       const properties = {};
       const propertyFields = included.map(field => {
         const { name, fieldType, required } = field.attributes;
-        const defVal = getDefaultValue(fieldType, name, orgProperties);
+        const fieldLabel = camelCase(name);
+        const defVal = getDefaultValue(fieldType, fieldLabel, orgProperties);
         set(properties, name, defVal);
-        const nameParts = name.split('_');
-        const label = nameParts.join(' ');
+        const label = startCase(name);
         return {
-          field: name,
+          field: fieldLabel,
           label: ucFirst(label),
           type: fieldType,
           required,

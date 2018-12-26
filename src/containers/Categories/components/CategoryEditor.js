@@ -200,7 +200,7 @@ export class CategoryEditor extends React.Component {
     );
     const actions = (
       <React.Fragment>
-        <HollowButton onClick={this.props.onCancel}>Cancel</HollowButton>,
+        <HollowButton onClick={this.props.onCancel}>Cancel</HollowButton>
         <OrangeButton onClick={this.onSave}>Save</OrangeButton>
       </React.Fragment>
     );

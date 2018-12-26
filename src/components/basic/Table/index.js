@@ -1,10 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { OrangeButton } from 'components/basic/Buttons';
+
 import { TableHeader } from './Header';
 import { Record } from './Record';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  background-color: white;
+`;
+
+const LoadWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const LoadButtonWrapper = styled.div`
+  width: 150px;
+`;
 
 export default class Table extends React.Component {
   constructor(props) {
@@ -28,8 +43,36 @@ export default class Table extends React.Component {
       });
     }
   };
-  render() {
+  setVisitRef = ref => {
+    this.visitRef = ref;
+  };
+  renderContent = () => {
     const { columns, records } = this.props;
+    return (
+      <React.Fragment>
+        {records.map((rec, idx) => (
+          <Record
+            toDetails={() => this.props.toDetails(rec.id)}
+            columns={columns}
+            record={rec}
+            key={`rec_${idx}`}
+          />
+        ))}
+      </React.Fragment>
+    );
+  };
+  renderLoadButton = () => (
+    <LoadWrapper>
+      <LoadButtonWrapper>
+        <OrangeButton onClick={this.props.loadMore}>Load More</OrangeButton>
+      </LoadButtonWrapper>
+    </LoadWrapper>
+  );
+  renderLoading = () => {
+    return false;
+  };
+  render() {
+    const { columns, hasMore } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
       <Wrapper>
@@ -39,14 +82,8 @@ export default class Table extends React.Component {
           isAsc={isAsc}
           onSort={this.sort}
         />
-        {records.map((rec, idx) => (
-          <Record
-            toDetails={() => this.props.toDetails(rec.id)}
-            columns={columns}
-            record={rec}
-            key={`rec_${idx}`}
-          />
-        ))}
+        {this.renderContent()}
+        {hasMore && this.renderLoadButton()}
       </Wrapper>
     );
   }
