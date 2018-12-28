@@ -32,6 +32,7 @@ export default handleActions(
     [actions.resetServices]: state =>
       produce(state, draft => {
         draft.services = [];
+        draft.hasMore = true;
         draft.nextPage = 0;
       }),
     [actions.setServices]: (state, { payload }) =>

@@ -12,9 +12,11 @@ const Wrapper = styled.div`
 
 const LoadWrapper = styled.div`
   width: 100%;
+  padding: 16px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
 `;
 
 const LoadButtonWrapper = styled.div`
