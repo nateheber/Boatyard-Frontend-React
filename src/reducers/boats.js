@@ -6,11 +6,13 @@ export const actions = {
   fetchBoats: 'SERVICES/FETCH',
   updateBoats: 'SERVICES/UPDATE',
   deleteBoats: 'SERVICES/DELETE',
-  setBoats: 'SERVICES/SET'
+  setBoats: 'SERVICES/SET',
+  getUserBoats: 'SERVICES/FETCH_USER_BOATS'
 };
 
 export const createBoats = createAction(actions.createBoats);
 export const fetchBoats = createAction(actions.fetchBoats);
+export const getUserBoats = createAction(actions.getUserBoats);
 export const updateBoats = createAction(actions.updateBoats);
 export const deleteBoats = createAction(actions.deleteBoats);
 

@@ -39,9 +39,16 @@ function* updateRequest(action) {
   });
 }
 
+function* getUserBoatRequest(action) {
+  // const boatClient = yield select(getBoatClient);
+  // const { payload: userId } = action;
+  // yield call(boatClient.list, 0, )
+}
+
 export default function* Profile() {
   yield takeEvery(actions.createBoats, createRequest);
   yield takeEvery(actions.fetchBoats, fetchRequest);
   yield takeEvery(actions.deleteBoats, deleteRequest);
   yield takeEvery(actions.updateBoats, updateRequest);
+  yield takeEvery(actions.getUserBoats, getUserBoatRequest);
 }

@@ -5,6 +5,7 @@ export const getProviders = state => state.provider.providers;
 export const getManagements = state => state.management.managements;
 export const getUsers = state => state.user.users;
 export const getServicesPageNumber = state => state.service.nextPage;
+export const getOrdersPageNumber = state => state.order.nextPage;
 
 export const getCategoryClient = state => {
   switch (state.auth.previlage) {
@@ -19,6 +20,19 @@ export const getCategoryClient = state => {
   }
 };
 
+export const getUserClient = state => {
+  switch (state.auth.previlage) {
+    case 'basic':
+      return APIGenerator.createUserClient('basic');
+    case 'admin':
+      return APIGenerator.createUserClient('admin');
+    case 'provider':
+      return APIGenerator.createUserClient('provider');
+    default:
+      return APIGenerator.createUserClient('basic');
+  }
+};
+
 export const getServiceClient = state => {
   switch (state.auth.previlage) {
     case 'basic':
@@ -29,6 +43,19 @@ export const getServiceClient = state => {
       return APIGenerator.createServiceClient('provider');
     default:
       return APIGenerator.createServiceClient('basic');
+  }
+};
+
+export const getOrderClient = state => {
+  switch (state.auth.previlage) {
+    case 'basic':
+      return APIGenerator.createOrderClient('basic');
+    case 'admin':
+      return APIGenerator.createOrderClient('admin');
+    case 'provider':
+      return APIGenerator.createOrderClient('provider');
+    default:
+      return APIGenerator.createOrderClient('basic');
   }
 };
 

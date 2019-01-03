@@ -8,6 +8,7 @@ import { Record } from './Record';
 
 const Wrapper = styled.div`
   background-color: white;
+  width: 100%;
 `;
 
 const LoadWrapper = styled.div`

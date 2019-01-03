@@ -23,7 +23,6 @@ const Content = styled.div`
   padding: 30px;
   padding-top: 105px;
   min-height: 265px;
-  overflow: auto;
 `;
 
 const ActionWrapper = styled.div`

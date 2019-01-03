@@ -8,16 +8,21 @@ export const actions = {
   updateUsers: 'USERS/UPDATE',
   deleteUsers: 'USERS/DELETE',
   setUsers: 'USERS/SET',
-  setUser: 'USERS/SET_ONE'
+  setUser: 'USERS/SET_ONE',
+  filterUsers: 'USERS/FILTER',
+  setFilteredUsers: 'USERS/SET_FILTERED_DATA'
 };
 
 export const createUsers = createAction(actions.createUsers);
 export const fetchUsers = createAction(actions.fetchUsers);
 export const updateUsers = createAction(actions.updateUsers);
 export const deleteUsers = createAction(actions.deleteUsers);
+export const filterUsers = createAction(actions.filterUsers);
 
 const initialState = {
-  users: []
+  users: [],
+  filtered: [],
+  loading: false
 };
 
 export default handleActions(
@@ -29,6 +34,16 @@ export default handleActions(
     [actions.setUser]: (state, { payload }) =>
       produce(state, draft => {
         draft.users = [...draft.users, payload];
+      }),
+    [actions.filterUsers]: (state, { payload }) =>
+      produce(state, draft => {
+        draft.filtered = [];
+        draft.loading = true;
+      }),
+    [actions.setFilteredUsers]: (state, { payload }) =>
+      produce(state, draft => {
+        draft.filtered = [...draft.filtered, ...payload];
+        draft.loading = false;
       })
   },
   initialState

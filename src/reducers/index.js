@@ -9,6 +9,7 @@ import category from './categories';
 import user from './users';
 import management from './management';
 import appstate from './appstate';
+import order from './orders';
 
 const rootReducer = combineReducers({
   navigation,
@@ -19,7 +20,8 @@ const rootReducer = combineReducers({
   category,
   user,
   management,
-  appstate
+  appstate,
+  order
 });
 
 export default rootReducer;

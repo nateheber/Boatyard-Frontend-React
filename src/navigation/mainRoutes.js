@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import PageTemplate from 'components/template/PageTemplate';
 import Dashboard from 'components/template/Dashboard';
 import Order from 'containers/Orders/OrderList';
+import OrderDetails from 'containers/Orders/OrderDetails';
 import Team from 'components/template/Team';
 import Customers from 'components/template/Customers';
 import Calendar from 'components/template/Calendar';
@@ -29,6 +30,7 @@ const MainRouter = () => (
       <Route exact path="/quick-replies/" component={QRBox} />
       <Route exact path="/templates/" component={TemplateBox} />
       <Route exact path="/orders/" component={Order} />
+      <Route exact path="/order-details/" component={OrderDetails} />
       <Route exact path="/providers/" component={Providers} />
       <Route exact path="/providers/:providerId/" component={ProviderDetails} />
       <Route exact path="/provider-details/" component={ProviderEditor} />

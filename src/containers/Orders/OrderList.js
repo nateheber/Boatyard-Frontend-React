@@ -1,10 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import moment from 'moment';
 
 import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
+
+import { fetchOrders } from 'reducers/orders';
 
 const Wrapper = styled.div`
   display: flex;
@@ -13,53 +17,31 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
+const TableWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  overflow-y: scroll;
+`;
+
 class OrderList extends React.Component {
-  state = {
-    showCustomerModal: false
-  };
-  onClose = () => {};
+  componentDidMount() {
+    this.props.fetchOrders();
+  }
   toDetails = orderId => {
-    this.props.history.push(`/order-details/${orderId}/`);
+    this.props.history.push(`/order-details/?order=${orderId}`);
   };
   render() {
-    const { showCustomerModal } = this.state;
+    const { orders } = this.props;
+    const processedOrders = orders.map(order => ({
+      ...order,
+      name: `Order #${order.id}`,
+      createdAt: `${moment(order.createdAt).format('MMM DD, YYYY')}`
+    }));
     const columns = [
-      { label: 'order', value: 'order' },
-      { label: 'order placed', value: 'order_placed' },
-      { label: 'customer', value: 'customer' },
+      { label: 'order', value: 'name' },
+      { label: 'order placed', value: 'createdAt' },
       { label: 'total', value: 'total' },
-      { label: 'payment status', value: 'payment_status' },
-      { label: 'scheduling status', value: 'scheduling_status' },
-      { label: 'order status', value: 'order_status' }
-    ];
-    const records = [
-      {
-        order: 'NEW ORDER',
-        order_placed: '2018/09/09',
-        customer: 'Test',
-        total: '$200',
-        payment_status: 'paid',
-        scheduling_status: 'scheduled',
-        order_status: 'pending'
-      },
-      {
-        order: 'NEW ORDER',
-        order_placed: '2018/10/10',
-        customer: 'Test',
-        total: '$200',
-        payment_status: 'paid',
-        scheduling_status: 'scheduled',
-        order_status: 'pending'
-      },
-      {
-        order: 'NEW ORDER',
-        order_placed: '2018/11/11',
-        customer: 'Test',
-        total: '$200',
-        payment_status: 'paid',
-        scheduling_status: 'scheduled',
-        order_status: 'pending'
-      }
+      { label: 'order status', value: 'state' }
     ];
     const tabs = [
       { title: 'ALL', value: 'all', counts: 2 },
@@ -71,15 +53,30 @@ class OrderList extends React.Component {
       <Wrapper>
         <OrderHeader onNewOrder={this.newOrder} />
         <Tab tabs={tabs} selected="all" />
-        <Table
-          columns={columns}
-          records={records}
-          sortColumn="order"
-          toDetails={this.toDetails}
-        />
+        <TableWrapper>
+          <Table
+            columns={columns}
+            records={processedOrders}
+            sortColumn="order"
+            toDetails={this.toDetails}
+          />
+        </TableWrapper>
       </Wrapper>
     );
   }
 }
 
-export default withRouter(OrderList);
+const mapStateToProps = ({ order: { orders } }) => ({
+  orders
+});
+
+const mapDispatchToProps = {
+  fetchOrders
+};
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(OrderList)
+);

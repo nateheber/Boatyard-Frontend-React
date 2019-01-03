@@ -62,8 +62,8 @@ export class CRUDClient {
     this.apiUrl = `${apiBaseUrl}/${query}/`;
     this.client = createMainClient(authType);
   }
-  list = (page = 0) => {
-    return this.client.get(`${this.apiUrl}?page=${page}`);
+  list = (page = 0, query = '') => {
+    return this.client.get(`${this.apiUrl}?page=${page}${query}`);
   };
   create = data => {
     return this.client.post(this.apiUrl, data);
