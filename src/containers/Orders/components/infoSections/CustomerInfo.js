@@ -1,12 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  margin-bottom: 15px;
+`;
 
 const Label = styled.div`
   font-family: 'Montserrat', sans-serif !important;
   font-size: 12px;
+  font-weight: bold;
   color: #004258;
+  margin-bottom: 10px;
 `;
 
 const Name = styled.div`
@@ -21,7 +25,7 @@ const FieldValue = styled.div`
   font-size: 14px;
 `;
 
-export default ({ id, firstName, lastName, email, phoneNumber }) => (
+export default ({ firstName, lastName, email, phoneNumber }) => (
   <Wrapper>
     <Label>Customer Info</Label>
     <Name>
