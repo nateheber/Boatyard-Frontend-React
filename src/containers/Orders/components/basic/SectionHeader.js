@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import EditButton from './EditButton';
+
 const Wrapper = styled.div`
   align-items: center;
   background-color: #fafafa;
@@ -11,6 +13,10 @@ const Wrapper = styled.div`
   position: relative;
   padding: 15px 20px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const Title = styled.h5`
@@ -24,8 +30,11 @@ const Title = styled.h5`
   font-family: 'Montserrat', sans-serif !important;
 `;
 
-export default ({ title }) => (
+export default ({ title, mode, onEdit }) => (
   <Wrapper>
     <Title>{title}</Title>
+    {
+      mode === 'view' && <EditButton onClick={onEdit} />
+    }
   </Wrapper>
 )

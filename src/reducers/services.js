@@ -7,7 +7,10 @@ export const actions = {
   resetServices: 'SERVICES/RESET',
   updateServices: 'SERVICES/UPDATE',
   deleteServices: 'SERVICES/DELETE',
-  setServices: 'SERVICES/SET'
+  setServices: 'SERVICES/SET',
+  fetchOne: 'SERVICES/FETCH_ONE',
+  filterServices: 'SERVICES/FILTER',
+  setFilteredServices: 'SERVICES/SET_FILTERED_DATA',
 };
 
 export const createServices = createAction(actions.createServices);
@@ -15,9 +18,11 @@ export const resetServices = createAction(actions.resetServices);
 export const fetchServices = createAction(actions.fetchServices);
 export const updateServices = createAction(actions.updateServices);
 export const deleteServices = createAction(actions.deleteServices);
+export const filterServices = createAction(actions.filterServices);
 
 const initialState = {
   services: [],
+  filtered: [],
   loading: false,
   nextPage: 0,
   hasMore: true
@@ -47,7 +52,17 @@ export default handleActions(
           draft.hasMore = false;
         }
         draft.loading = false;
-      })
+      }),
+    [actions.filterServices]: (state, { payload }) =>
+      produce(state, draft => {
+        draft.filtered = [];
+        draft.loading = true;
+      }),
+    [actions.setFilteredServices]: (state, { payload }) =>
+      produce(state, draft => {
+        draft.filtered = [...draft.filtered, ...payload];
+        draft.loading = false;
+      }),
   },
   initialState
 );

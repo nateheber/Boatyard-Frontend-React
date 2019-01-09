@@ -8,9 +8,9 @@ const Content = styled.div`
   background-color: #fff;
 `
 
-export default ({ title, children }) => (
+export default ({ title, mode, onEdit, children }) => (
   <div>
-    <SectionHeader title={title} />
+    <SectionHeader title={title} mode={mode} onEdit={onEdit} />
     <Content>
       {children}
     </Content>

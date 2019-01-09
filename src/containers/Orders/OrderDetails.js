@@ -3,18 +3,21 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
+import { get } from 'lodash';
 
 import { getOrder } from 'reducers/orders';
+import { fetchLineItems } from 'reducers/lineItems';
 
 import SectionGroup from './components/basic/SectionGroup';
 import CustomerBoat from './components/templates/CustomerBoat';
+import LineItemSection from './components/templates/LineItemSection';
 
 const Wrapper = styled.div`
   padding: 15px;
 `;
 
 const getOrderDetails = (orderInfo) => {
-  const { included } = orderInfo;
+  const included = get(orderInfo, 'included', []);
   let boatInfo = {};
   let customerInfo = {};
   for (let i = 0; i < included.length; i += 1) {
@@ -69,6 +72,7 @@ class OrderDetails extends React.Component {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
     this.props.getOrder(orderId);
+    this.props.fetchLineItems(orderId);
   }
   getOrderInfo = () => {
     const { currentOrder } = this.props;
@@ -83,7 +87,11 @@ class OrderDetails extends React.Component {
     return (
       <Wrapper>
         <Row>
-          <Col md={12} sm={12} xs={12} lg={8} xl={8} />
+          <Col md={12} sm={12} xs={12} lg={8} xl={8}>
+            <SectionGroup>
+              <LineItemSection />
+            </SectionGroup>
+          </Col>
           <Col md={12} sm={12} xs={12} lg={4} xl={4}>
             <SectionGroup>
               <CustomerBoat
@@ -91,9 +99,6 @@ class OrderDetails extends React.Component {
                 customerInfo={customerInfo}
                 onEditBoat={() => this.editBoat(boatInfo.id)}
               />
-            </SectionGroup>
-            <SectionGroup>
-
             </SectionGroup>
           </Col>
         </Row>
@@ -107,7 +112,8 @@ const mapStateToProps = ({ order: { currentOrder } }) => ({
 });
 
 const mapDispatchToProps = {
-  getOrder
+  getOrder,
+  fetchLineItems
 };
 
 export default connect(
