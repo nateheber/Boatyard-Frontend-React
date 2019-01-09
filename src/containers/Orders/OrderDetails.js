@@ -1,43 +1,38 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import queryString from 'query-string';
-import { Row, Col } from 'react-flexbox-grid';
-import styled from 'styled-components';
-import { get } from 'lodash';
+import React from 'react'
+import { connect } from 'react-redux'
+import queryString from 'query-string'
+import { Row, Col } from 'react-flexbox-grid'
+import styled from 'styled-components'
+import { get } from 'lodash'
 
-import { getOrder } from 'reducers/orders';
-import { fetchLineItems } from 'reducers/lineItems';
+import { getOrder } from 'reducers/orders'
+import { fetchLineItems } from 'reducers/lineItems'
 
-import SectionGroup from './components/basic/SectionGroup';
-import CustomerBoat from './components/templates/CustomerBoat';
-import LineItemSection from './components/templates/LineItemSection';
+import SectionGroup from './components/basic/SectionGroup'
+import CustomerBoat from './components/templates/CustomerBoat'
+import LineItemSection from './components/templates/LineItemSection'
+
+import BoatEditor from './components/modals/EditBoatModal'
 
 const Wrapper = styled.div`
   padding: 15px;
-`;
+`
 
 const getOrderDetails = (orderInfo) => {
-  const included = get(orderInfo, 'included', []);
-  let boatInfo = {};
-  let customerInfo = {};
+  const included = get(orderInfo, 'included', [])
+  let boatInfo = {}
+  let customerInfo = {}
+  let providerInfo = {}
   for (let i = 0; i < included.length; i += 1) {
     switch (included[i].type) {
       case 'boats': {
         const {
           id,
-          attributes: {
-            name,
-            make,
-            model,
-            length,
-          }
+          attributes
         } = included[i];
         boatInfo = {
           id,
-          name,
-          make,
-          model,
-          length
+          ...attributes
         };
         break;
       }
@@ -60,36 +55,72 @@ const getOrderDetails = (orderInfo) => {
         }
         break;
       }
+      case 'providers': {
+        const {
+          id,
+        } = included[i];
+        providerInfo = {
+          id,
+          ...included[i].data
+        }
+        break;
+      }
       default:
       break;
     }
   }
-  return { boatInfo, customerInfo };
+  return { boatInfo, customerInfo, providerInfo };
 }
 
 class OrderDetails extends React.Component {
+  state = {
+    orderId: -1,
+    editBoat: false,
+  }
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
     this.props.getOrder(orderId);
     this.props.fetchLineItems(orderId);
+    this.setState({
+      orderId
+    })
   }
   getOrderInfo = () => {
     const { currentOrder } = this.props;
     const { boatInfo, customerInfo } = getOrderDetails(currentOrder);
     return { boatInfo, customerInfo };
   }
-  editBoat = (id) => {
-    console.log(id);
+  getProviderId = () => {
+    const { currentOrder } = this.props;
+    const { providerInfo } = getOrderDetails(currentOrder);
+    return providerInfo.id;
+  }
+  editBoat = () => {
+    this.setState({
+      editBoat: true,
+    })
+  }
+  closeBoatEditor = () => {
+    this.setState({
+      editBoat: false,
+    })
+  }
+  saveBoat = () => {
+    this.setState({
+      editBoat: false,
+    })
   }
   render() {
-    const { boatInfo, customerInfo, } = this.getOrderInfo();
+    const { boatInfo, customerInfo } = this.getOrderInfo();
+    const { orderId, editBoat } = this.state;
+    const providerId = this.getProviderId();
     return (
       <Wrapper>
         <Row>
           <Col md={12} sm={12} xs={12} lg={8} xl={8}>
             <SectionGroup>
-              <LineItemSection />
+              <LineItemSection orderId={orderId} providerId={providerId} />
             </SectionGroup>
           </Col>
           <Col md={12} sm={12} xs={12} lg={4} xl={4}>
@@ -97,11 +128,17 @@ class OrderDetails extends React.Component {
               <CustomerBoat
                 boatInfo={boatInfo}
                 customerInfo={customerInfo}
-                onEditBoat={() => this.editBoat(boatInfo.id)}
+                onEditBoat={() => this.editBoat()}
               />
             </SectionGroup>
           </Col>
         </Row>
+        <BoatEditor
+          boatInfo={boatInfo}
+          open={editBoat}
+          onClose={this.closeBoatEditor}
+          onSave={this.saveBoat}
+        />
       </Wrapper>
     )
   }

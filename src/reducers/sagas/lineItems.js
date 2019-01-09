@@ -7,9 +7,10 @@ import { getCustomApiClient } from './sagaSelectors';
 function* createRequest(action) {
   const lineItemClient = yield select(getCustomApiClient);
   const { orderId, data } = action.payload
-  yield call(lineItemClient.post, `/orders/${orderId}/items/`, data)
+  yield call(lineItemClient.post, `/orders/${orderId}/items/`, {lineItem: data})
   yield put({
-    type: actions.fetchLineItems
+    type: actions.fetchLineItems,
+    payload: orderId
   });
 }
 
@@ -32,16 +33,18 @@ function* deleteRequest(action) {
   const { payload: { orderId, itemId } } = action;
   yield call(lineItemClient.delete, `/orders/${orderId}/items/${itemId}`);
   yield put({
-    type: actions.fetchLineItems
+    type: actions.fetchLineItems,
+    payload: orderId
   });
 }
 
 function* updateRequest(action) {
   const lineItemClient = yield select(getCustomApiClient);
   const { orderId, itemId, data } = action.payload;
-  yield call(lineItemClient.patch, `/orders/${orderId}/items/${itemId}`, data);
+  yield call(lineItemClient.patch, `/orders/${orderId}/items/${itemId}`, {lineItem: data});
   yield put({
-    type: actions.fetchLineItems
+    type: actions.fetchLineItems,
+    payload: orderId
   });
 }
 

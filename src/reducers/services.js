@@ -60,7 +60,7 @@ export default handleActions(
       }),
     [actions.setFilteredServices]: (state, { payload }) =>
       produce(state, draft => {
-        draft.filtered = [...draft.filtered, ...payload];
+        draft.filtered = [...payload];
         draft.loading = false;
       }),
   },

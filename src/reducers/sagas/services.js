@@ -59,9 +59,10 @@ function* filterRequest(action) {
       0,
       `?service[name]=${keyword}`
     );
+    const services = get(result, 'data', [])
     yield put({
       type: actions.setFilteredServices,
-      payload: result.map(service => ({
+      payload: services.map(service => ({
         id: service.id,
         ...service.attributes
       }))

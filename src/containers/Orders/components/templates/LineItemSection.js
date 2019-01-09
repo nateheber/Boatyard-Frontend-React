@@ -27,7 +27,13 @@ class LineItemSection extends React.Component {
   }
   onChange = (item, idx) => {
     const newItems = [...this.state.newItems];
-    newItems[idx] = item;
+    const { serviceId, quantity } = item;
+    const { providerId } = this.props;
+    newItems[idx] = {
+      serviceId: parseInt(serviceId),
+      providerId,
+      quantity: parseInt(quantity)
+    };
     this.setState({
       newItems
     })
@@ -37,14 +43,55 @@ class LineItemSection extends React.Component {
       mode: 'edit'
     })
   }
+  onSave = () => {
+    const { mode } = this.state;
+    if(mode === 'edit') {
+      this.updateLineItems()
+    }
+    this.saveNewItems()
+  }
+  updateLineItems = () => {
+    const { lineItems } = this.state;
+    const { orderId, updateLineItem } = this.props;
+    if (lineItems.length > 0) {
+      for (let i = 0; i < lineItems.length; i += 1) {
+        const { id, ...data } = lineItems[i]
+        updateLineItem({
+          orderId,
+          itemId: id,
+          data,
+        })
+      }
+    }
+  }
   addNewItem = () => {
-    const { newItems } = this.state;
+    const { newItems } = this.state
     this.setState({
       newItems: [...newItems, {}]
     })
   }
-  removeLineItem = (id) => {
-    this.props.deleteLineItem(id)
+  removeLineItem = (itemId) => {
+    const { orderId } = this.state;
+    this.props.deleteLineItem({
+      orderId,
+      itemId
+    })
+  }
+  removeNewItem = (idx) => {
+    const { newItems } = this.state
+    this.setState({
+      newItems: [...newItems.slice(0, idx), ...newItems.slice(idx + 1)]
+    })
+  }
+  saveNewItems = () => {
+    const { newItems } = this.state;
+    const { orderId } = this.props;
+    for (let i = 0; i < newItems.length; i += 1) {
+      this.props.createLineItem({
+        orderId,
+        data: newItems[i]
+      })
+    }
   }
   render () {
     const { newItems, lineItems, mode } = this.state;
@@ -57,7 +104,7 @@ class LineItemSection extends React.Component {
         }
         {
           newItems.map((val, idx) => (
-            <NewLineItems onChange={(item) => this.onChange(item, idx)} key={`new_item_${idx}`} />
+            <NewLineItems onChange={(item) => this.onChange(item, idx)} key={`new_item_${idx}`} remove={() => this.removeNewItem(idx)} />
           ))
         }
         <ButtonGroup onAdd={this.addNewItem} showSave={newItems.length > 0 || mode === 'edit'} onSave={this.onSave} />
