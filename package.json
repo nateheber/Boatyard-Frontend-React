@@ -46,7 +46,8 @@
     "redux-persist": "^5.10.0",
     "redux-saga": "^0.16.2",
     "styled-components": "^4.0.0",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "redux-devtools-extension": "^2.13.7",
   },
   "scripts": {
     "start": "NODE_ENV=development react-scripts start",
@@ -72,7 +73,6 @@
     "@storybook/addons": "^4.0.0-alpha.24",
     "@storybook/react": "^4.0.0-alpha.24",
     "babel-loader": "^8.0.4",
-    "redux-devtools-extension": "^2.13.7",
     "standard": "^12.0.1"
   },
   "resolutions": {
