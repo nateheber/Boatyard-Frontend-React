@@ -2,12 +2,12 @@ import { createAction, handleActions } from 'redux-actions';
 import { produce } from 'immer';
 
 export const actions = {
-  createBoats: 'SERVICES/CREATE',
-  fetchBoats: 'SERVICES/FETCH',
-  updateBoats: 'SERVICES/UPDATE',
-  deleteBoats: 'SERVICES/DELETE',
-  setBoats: 'SERVICES/SET',
-  getUserBoats: 'SERVICES/FETCH_USER_BOATS'
+  createBoats: 'BOATS/CREATE',
+  fetchBoats: 'BOATS/FETCH',
+  updateBoats: 'BOATS/UPDATE',
+  deleteBoats: 'BOATS/DELETE',
+  setBoats: 'BOATS/SET',
+  getUserBoats: 'BOATS/FETCH_USER_BOATS'
 };
 
 export const createBoats = createAction(actions.createBoats);

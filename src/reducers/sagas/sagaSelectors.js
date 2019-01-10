@@ -62,13 +62,13 @@ export const getOrderClient = state => {
 export const getBoatClient = state => {
   switch (state.auth.previlage) {
     case 'basic':
-      return APIGenerator.createServiceClient('basic');
+      return APIGenerator.createBoatClient('basic');
     case 'admin':
-      return APIGenerator.createServiceClient('admin');
+      return APIGenerator.createBoatClient('admin');
     case 'provider':
-      return APIGenerator.createServiceClient('provider');
+      return APIGenerator.createBoatClient('provider');
     default:
-      return APIGenerator.createServiceClient('basic');
+      return APIGenerator.createBoatClient('basic');
   }
 };
 

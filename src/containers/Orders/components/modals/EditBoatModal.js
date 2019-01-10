@@ -86,10 +86,15 @@ export default class EditBoatModal extends React.Component {
     ]
     return fields;
   }
+  onSave = () => {
+    if (this.mainInfoFields.validateFields()) {
+      this.props.onSave(this.mainInfoFields.getFieldValues());
+    }
+  }
   render() {
     const fields = this.getFormFieldInfo();
-    const { open, onClose, onSave } = this.props;
-    const action = [<HollowButton onClick={onClose}>Cancel</HollowButton>, <OrangeButton onClick={onSave}>Save</OrangeButton>];
+    const { open, onClose } = this.props;
+    const action = [<HollowButton onClick={onClose}>Cancel</HollowButton>, <OrangeButton onClick={this.onSave}>Save</OrangeButton>];
     return (
       <Modal
         title="Select Customer"

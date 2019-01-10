@@ -32,8 +32,11 @@ function* deleteRequest(action) {
 
 function* updateRequest(action) {
   const boatClient = yield select(getBoatClient);
-  const { id, data } = action.payload;
+  const { id, data, callback } = action.payload;
   yield call(boatClient.update, id, data);
+  if (callback) {
+    yield call(callback)
+  }
   yield put({
     type: actions.fetchBoats
   });

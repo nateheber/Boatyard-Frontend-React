@@ -7,6 +7,7 @@ import { get } from 'lodash'
 
 import { getOrder } from 'reducers/orders'
 import { fetchLineItems } from 'reducers/lineItems'
+import { updateBoats } from 'reducers/boats'
 
 import SectionGroup from './components/basic/SectionGroup'
 import CustomerBoat from './components/templates/CustomerBoat'
@@ -106,7 +107,16 @@ class OrderDetails extends React.Component {
       editBoat: false,
     })
   }
-  saveBoat = () => {
+  updateBoat = (data) => {
+    const { boatInfo: { id } } = this.getOrderInfo();
+    const { orderId } = this.state;
+    this.props.updateBoats({
+      id,
+      data,
+      callback: () => {
+        this.props.getOrder(orderId)
+      }
+    })
     this.setState({
       editBoat: false,
     })
@@ -137,7 +147,7 @@ class OrderDetails extends React.Component {
           boatInfo={boatInfo}
           open={editBoat}
           onClose={this.closeBoatEditor}
-          onSave={this.saveBoat}
+          onSave={this.updateBoat}
         />
       </Wrapper>
     )
@@ -150,7 +160,8 @@ const mapStateToProps = ({ order: { currentOrder } }) => ({
 
 const mapDispatchToProps = {
   getOrder,
-  fetchLineItems
+  fetchLineItems,
+  updateBoats
 };
 
 export default connect(
