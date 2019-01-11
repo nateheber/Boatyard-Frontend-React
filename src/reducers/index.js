@@ -11,6 +11,7 @@ import management from './management';
 import appstate from './appstate';
 import order from './orders';
 import lineItem from './lineItems';
+import boat from './boats';
 
 const rootReducer = combineReducers({
   navigation,
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   appstate,
   order,
   lineItem,
+  boat,
 });
 
 export default rootReducer;

@@ -10,6 +10,8 @@ import { OrderHeader } from 'components/compound/SectionHeader';
 
 import { fetchOrders } from 'reducers/orders';
 
+import OrderCreation from './components/templates/OrderCreation';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -25,13 +27,33 @@ const TableWrapper = styled.div`
 
 class OrderList extends React.Component {
   componentDidMount() {
-    this.props.fetchOrders();
+    this.props.fetchOrders(1);
+  }
+  setOrderCreationRef = (ref) => {
+    if (ref) {
+      this.orderCreation = ref.getWrappedInstance();
+    }
   }
   toDetails = orderId => {
     this.props.history.push(`/order-details/?order=${orderId}`);
   };
+  getPageCount = () => {
+    const { perPage, total } = this.props;
+    return Math.ceil(total/perPage);
+  }
+  changePage = (page) => {
+    this.props.fetchOrders(page);
+  }
+  newOrder = () => {
+    this.orderCreation.createOrder();
+  }
+  creationFinished = () => {
+    const { page, fetchOrders } = this.props;
+    fetchOrders(page);
+  }
   render() {
-    const { orders } = this.props;
+    const { orders, page } = this.props;
+    const pageCount = this.getPageCount();
     const processedOrders = orders.map(order => ({
       ...order,
       name: `Order #${order.id}`,
@@ -59,15 +81,22 @@ class OrderList extends React.Component {
             records={processedOrders}
             sortColumn="order"
             toDetails={this.toDetails}
+            page={page}
+            pageCount={pageCount}
+            onPageChange={this.changePage}
           />
         </TableWrapper>
+        <OrderCreation ref={this.setOrderCreationRef} onFinishCreation={this.creationFinished} />
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ order: { orders } }) => ({
-  orders
+const mapStateToProps = ({ order: { orders, page, perPage, total } }) => ({
+  orders,
+  perPage,
+  total,
+  page,
 });
 
 const mapDispatchToProps = {

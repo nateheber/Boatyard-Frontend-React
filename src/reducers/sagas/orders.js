@@ -2,27 +2,36 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
 import { actions } from '../orders';
-import { getOrderClient, getOrdersPageNumber } from './sagaSelectors';
+import { getOrderClient } from './sagaSelectors';
 
 function* createRequest(action) {
   const orderClient = yield select(getOrderClient);
-  yield call(orderClient.create, action.payload);
+  const { data, callback } = action.payload;
+  yield call(orderClient.create, data);
   yield put({
     type: actions.fetchOrders
   });
+  // yield call({
+  //   callback
+  // })
 }
 
 function* fetchRequest(action) {
   const orderClient = yield select(getOrderClient);
-  const nextPage = yield select(getOrdersPageNumber);
-  const result = yield call(orderClient.list, nextPage);
+  const page = action.payload;
+  const result = yield call(orderClient.list, page);
   const orders = get(result, 'data', []);
+  const { perPage, total } = result;
   yield put({
     type: actions.setOrders,
-    payload: orders.map(order => ({
-      id: order.id,
-      ...order.attributes
-    }))
+    payload: {
+      orders: orders.map(order => ({
+        id: order.id,
+        ...order.attributes
+      })),
+      perPage,
+      total,
+    }
   });
 }
 

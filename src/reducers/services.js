@@ -19,6 +19,7 @@ export const fetchServices = createAction(actions.fetchServices);
 export const updateServices = createAction(actions.updateServices);
 export const deleteServices = createAction(actions.deleteServices);
 export const filterServices = createAction(actions.filterServices);
+export const fetchOne = createAction(actions.fetchOne);
 
 const initialState = {
   services: [],

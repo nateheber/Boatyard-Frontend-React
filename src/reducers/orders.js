@@ -23,34 +23,31 @@ const initialState = {
   orders: [],
   currentOrder: {},
   loading: false,
-  nextPage: 0,
-  hasMore: true
+  page: 0,
+  perPage: 20,
+  total: 0,
 };
 
 export default handleActions(
   {
     [actions.fetchOrders]: (state, { payload }) =>
       produce(state, draft => {
+        draft.page = payload;
         draft.loading = true;
       }),
     [actions.resetOrders]: state =>
       produce(state, draft => {
         draft.orders = [];
-        draft.hasMore = true;
-        draft.nextPage = 0;
+        draft.page = 1;
+        draft.perPage = 20;
+        draft.total = 0;
       }),
     [actions.setOrders]: (state, { payload }) =>
       produce(state, draft => {
-        if (draft.nextPage === 0) {
-          draft.orders = [];
-        }
-        if (payload.length !== 0) {
-          draft.orders = [...draft.orders, ...payload];
-          draft.nextPage += 1;
-        } else {
-          draft.hasMore = false;
-        }
-        draft.loading = false;
+        const { total, perPage, orders } = payload;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.orders = orders;
       }),
     [actions.setOrder]: (state, { payload }) =>
       produce(state, draft => {

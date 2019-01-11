@@ -13,7 +13,7 @@ import {
 } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
-export const OrderHeader = ({ onAction }) => (
+export const OrderHeader = ({ onAction, onNewOrder }) => (
   <SectionHeaderWrapper>
     <LeftPart>
       <PageTitle>Orders</PageTitle>
@@ -30,7 +30,7 @@ export const OrderHeader = ({ onAction }) => (
       />
     </LeftPart>
     <RightPart>
-      <OrangeButton className="desktop">New Order</OrangeButton>
+      <OrangeButton className="desktop" onClick={onNewOrder}>New Order</OrangeButton>
       <ColumnFilter
         items={[
           { title: 'Order', value: 'order' },

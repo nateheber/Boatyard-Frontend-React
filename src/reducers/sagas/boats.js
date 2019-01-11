@@ -43,9 +43,18 @@ function* updateRequest(action) {
 }
 
 function* getUserBoatRequest(action) {
-  // const boatClient = yield select(getBoatClient);
-  // const { payload: userId } = action;
-  // yield call(boatClient.list, 0, )
+  const boatClient = yield select(getBoatClient);
+  const { payload: { userId, callback } } = action;
+  const result = yield call(boatClient.list, 0, `&boat[user_id]=${userId}`);
+  const boats = get(result, 'data', []);
+  yield put({
+    type: actions.setBoats,
+    payload: boats.map(boat => ({
+      id: boat.id,
+      ...boat.attributes,
+    }))
+  })
+  yield call(callback);
 }
 
 export default function* Profile() {

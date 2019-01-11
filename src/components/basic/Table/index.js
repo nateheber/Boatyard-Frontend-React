@@ -1,28 +1,22 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { OrangeButton } from 'components/basic/Buttons';
-
 import { TableHeader } from './Header';
 import { Record } from './Record';
+import Paginator from './Paginator';
 
 const Wrapper = styled.div`
   background-color: white;
   width: 100%;
 `;
 
-const LoadWrapper = styled.div`
-  width: 100%;
-  padding: 16px;
+const PaginatorWrapper = styled.div`
+  padding: 18px 50px;
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: center;
   justify-content: flex-end;
-`;
-
-const LoadButtonWrapper = styled.div`
-  width: 150px;
-`;
+`
 
 export default class Table extends React.Component {
   constructor(props) {
@@ -64,18 +58,11 @@ export default class Table extends React.Component {
       </React.Fragment>
     );
   };
-  renderLoadButton = () => (
-    <LoadWrapper>
-      <LoadButtonWrapper>
-        <OrangeButton onClick={this.props.loadMore}>Load More</OrangeButton>
-      </LoadButtonWrapper>
-    </LoadWrapper>
-  );
   renderLoading = () => {
     return false;
   };
   render() {
-    const { columns, hasMore } = this.props;
+    const { columns, page, pageCount, onPageChange } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
       <Wrapper>
@@ -86,7 +73,13 @@ export default class Table extends React.Component {
           onSort={this.sort}
         />
         {this.renderContent()}
-        {hasMore && this.renderLoadButton()}
+        {
+          page && pageCount && (
+            <PaginatorWrapper>
+              <Paginator page={page} totalPages={pageCount} onChange={onPageChange} />
+            </PaginatorWrapper>
+          )
+        }        
       </Wrapper>
     );
   }
