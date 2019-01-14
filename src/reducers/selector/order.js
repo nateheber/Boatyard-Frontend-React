@@ -11,6 +11,7 @@ const lineItemsSelector = state => {
   forEach(lineItems, (lineItem) => {
     const includedIdx = findIndex(lineItemDetail, detail => detail.id === lineItem.id && detail.type === lineItem.type);
     const attributes= get(lineItemDetail, `[${includedIdx}].attributes`);
+    console.log(attributes);
     const serviceInfo = get(lineItemDetail, `[${includedIdx}].relationships.service.data`);
     const serviceIdx = findIndex(included, info => info.type === serviceInfo.type && info.id === serviceInfo.id);
     const serviceAttributes = get(included, `[${serviceIdx}].attributes`);

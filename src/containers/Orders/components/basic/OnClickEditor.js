@@ -16,22 +16,30 @@ const Placeholder = styled.div`
 `
 
 export default class OnClickEditor extends React.Component {
-  state = {
-    edit: false,
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+      edit: false,
+      value: props.value,
+    }
+  }
   setEdit = () => {
     this.setState({
       edit: true
     })
   }
   resetEdit = () => {
+    const { value } = this.state;
     this.setState({
       edit: false,
     })
+    this.props.onChange(value);
   }
   onChange = (evt) => {
-    this.props.onChange(evt.target.value)
+    this.setState({ value: evt.target.value })
   }
+  
+
   render() {
     const { edit } = this.state;
     const { value } = this.props;
@@ -41,7 +49,7 @@ export default class OnClickEditor extends React.Component {
       )
     : (
         <Placeholder onClick={this.setEdit}>
-          {isEmpty(value) ? 'Add' : 'Value'}
+          {isEmpty(value) ? 'Add' : `$${value}`}
         </Placeholder>
       )
   }
