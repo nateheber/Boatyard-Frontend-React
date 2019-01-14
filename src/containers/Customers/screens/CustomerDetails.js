@@ -3,12 +3,13 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import queryString from 'query-string'
 import { Row, Col } from 'react-flexbox-grid'
+import { get } from 'lodash'
 
 import { fetchUser } from 'reducers/users'
 import { getUserBoats } from 'reducers/boats'
 import { getUserOrders } from 'reducers/orders'
 
-import { SectionGroup, Section } from 'components/basic/InfoSection'
+import { Section } from 'components/basic/InfoSection'
 import CustomerInfoSection from 'components/template/CustomerInfoSection'
 import BoatInfoSection from 'components/template/BoatInfoSection'
 
@@ -21,19 +22,20 @@ class CustomerDetails extends React.Component {
     this.props.getUserOrders({ userId: customerId })
     this.setState({
       customerId,
-    });
+    })
   }
   getPageCount = () => {
-    const { perPage, total } = this.props;
-    return Math.ceil(total/perPage);
+    const { perPage, total } = this.props
+    return Math.ceil(total/perPage)
   }
   parseOrders = () => {
-    const { orders } = this.props;
+    const { orders } = this.props
     console.log(orders)
   }
   render() {
-    const { currentUser: { id, attributes }, page } = this.props;
-    const pageCount = this.getPageCount()
+    const { currentUser } = this.props
+    const id = get(currentUser, 'id', '')
+    const attributes = get(currentUser, 'attributes', {})
     this.parseOrders();
     return (
       <Row>
