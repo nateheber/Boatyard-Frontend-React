@@ -8,10 +8,13 @@ import { get } from 'lodash'
 import { getOrder } from 'reducers/orders'
 import { fetchLineItems } from 'reducers/lineItems'
 import { updateBoats } from 'reducers/boats'
+import { orderSelector } from 'reducers/selector/order'
 
 import SectionGroup from './components/basic/SectionGroup'
+
 import CustomerBoat from './components/templates/CustomerBoat'
 import LineItemSection from './components/templates/LineItemSection'
+import OrderSumarySection from './components/templates/OrderSumarySection';
 
 import BoatEditor from './components/modals/EditBoatModal'
 
@@ -125,12 +128,15 @@ class OrderDetails extends React.Component {
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const { orderId, editBoat } = this.state;
     const providerId = this.getProviderId();
+    const { lineItems } = this.props;
     return (
       <Wrapper>
         <Row>
           <Col md={12} sm={12} xs={12} lg={8} xl={8}>
             <SectionGroup>
+              <OrderSumarySection lineItem={lineItems[0]} />
               <LineItemSection orderId={orderId} providerId={providerId} />
+              {/* <OrderReviewSection /> */}
             </SectionGroup>
           </Col>
           <Col md={12} sm={12} xs={12} lg={4} xl={4}>
@@ -154,9 +160,7 @@ class OrderDetails extends React.Component {
   }
 }
 
-const mapStateToProps = ({ order: { currentOrder } }) => ({
-  currentOrder
-});
+const mapStateToProps = state => ({ ...orderSelector(state) });
 
 const mapDispatchToProps = {
   getOrder,

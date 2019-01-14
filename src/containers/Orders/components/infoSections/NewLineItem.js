@@ -13,6 +13,7 @@ import RemoveButton from '../basic/RemoveButton'
 class NewLineItem extends React.Component {
   state = {
     quantity: '0',
+    cost: '0',
     serviceId: -1,
   }
   componentDidMount() {
@@ -28,6 +29,13 @@ class NewLineItem extends React.Component {
       this.props.onChange(this.state)
     })
   }
+  onChangeCost = (evt) => {
+    this.setState({
+      cost: evt.target.value,
+    }, () => {
+      this.props.onChange(this.state)
+    })
+  }
   onChangeService = (service) => {
     this.setState({
       serviceId: service.value
@@ -37,7 +45,7 @@ class NewLineItem extends React.Component {
   }
   render() {
     const { filtered } = this.props;
-    const { quantity } = this.state;
+    const { quantity, cost } = this.state;
     const options = filtered.map(option => ({
       value: option.id,
       label: option.name
@@ -57,6 +65,9 @@ class NewLineItem extends React.Component {
             </Col>
             <Col lg={3} sm={3} xs={3} md={3} xl={3}>
               <Input type="text" value={quantity} onChange={this.onChangeQuantity} />
+            </Col>
+            <Col lg={3} sm={3} xs={3} md={3} xl={3}>
+              <Input type="text" value={cost} onChange={this.onChangeCost} />
             </Col>
           </Row>
         </Col>

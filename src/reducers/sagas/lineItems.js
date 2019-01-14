@@ -5,13 +5,24 @@ import { actions } from '../lineItems';
 import { getCustomApiClient } from './sagaSelectors';
 
 function* createRequest(action) {
-  const lineItemClient = yield select(getCustomApiClient);
-  const { orderId, data } = action.payload
+  const lineItemClient = yield select(getCustomApiClient)
+  const { orderId, data, callback } = action.payload
   yield call(lineItemClient.post, `/orders/${orderId}/items/`, {lineItem: data})
   yield put({
     type: actions.fetchLineItems,
     payload: orderId
   });
+  if (callback) {
+    yield call(callback);
+  }
+}
+
+function* createBatchRequest(action) {
+  const lineItemClient = yield select(getCustomApiClient)
+  const { orderId, data } = action.payload
+  for (let i = 0; i < data.length; i += 1) {
+    yield call(lineItemClient.post, `/orders/${orderId}/items/`, {lineItem: data[i]});
+  }
 }
 
 function* fetchRequest(action) {
@@ -48,9 +59,27 @@ function* updateRequest(action) {
   });
 }
 
+function* updateBatchRequest(action) {
+  const lineItemClient = yield select(getCustomApiClient);
+  const { orderId, data, callback } = action.payload;
+  for (let i = 0; i < data.length; i += 1) {
+    const { id, lineItem } = data[i];
+    yield call(lineItemClient.patch, `/orders/${orderId}/items/${id}`, { lineItem })
+  }
+  yield put({
+    type: actions.fetchLineItems,
+    payload: orderId,
+  })
+  if (callback) {
+    yield call(callback)
+  }
+}
+
 export default function* Profile() {
   yield takeEvery(actions.createLineItem, createRequest);
+  yield takeEvery(actions.createLineItems, createBatchRequest);
   yield takeEvery(actions.fetchLineItems, fetchRequest);
   yield takeEvery(actions.deleteLineItem, deleteRequest);
   yield takeEvery(actions.updateLineItem, updateRequest);
+  yield takeEvery(actions.updateLineItems, updateBatchRequest);
 }

@@ -6,14 +6,11 @@ import { getOrderClient } from './sagaSelectors';
 
 function* createRequest(action) {
   const orderClient = yield select(getOrderClient);
-  const { data, callback } = action.payload;
+  const { data } = action.payload;
   yield call(orderClient.create, data);
   yield put({
     type: actions.fetchOrders
   });
-  // yield call({
-  //   callback
-  // })
 }
 
 function* fetchRequest(action) {

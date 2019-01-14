@@ -6,8 +6,11 @@ import NewLineItems from '../infoSections/NewLineItem'
 import LineItem from '../infoSections/LineItem'
 import Section from '../basic/Section'
 import ButtonGroup from '../basic/ButtonGroup'
+import QuoteHeader from '../basic/QuoteHeader'
 
-import { updateLineItem, deleteLineItem, createLineItem } from 'reducers/lineItems'
+import { updateLineItems, deleteLineItem, createLineItems } from 'reducers/lineItems'
+import { getOrder } from 'reducers/orders'
+import { orderSelector } from 'reducers/selector/order'
 
 class LineItemSection extends React.Component {
   constructor(props) {
@@ -27,16 +30,22 @@ class LineItemSection extends React.Component {
   }
   onChange = (item, idx) => {
     const newItems = [...this.state.newItems];
-    const { serviceId, quantity } = item;
+    const { serviceId, quantity, cost } = item;
     const { providerId } = this.props;
     newItems[idx] = {
       serviceId: parseInt(serviceId),
       providerId,
-      quantity: parseInt(quantity)
+      quantity: parseInt(quantity),
+      cost: parseFloat(cost),
     };
     this.setState({
       newItems
     })
+  }
+  onChangeLineItems = (updateInfo, idx) => {
+    const lineItems = this.state.lineItems.map((val) => ({...val}));
+    lineItems[idx].attributes.quantity = updateInfo.quantity;
+    lineItems[idx].attributes.cost = updateInfo.cost;
   }
   onEdit = () => {
     this.setState({
@@ -49,19 +58,22 @@ class LineItemSection extends React.Component {
       this.updateLineItems()
     }
     this.saveNewItems()
+    this.setState({
+      mode: 'view'
+    })
   }
   updateLineItems = () => {
     const { lineItems } = this.state;
-    const { orderId, updateLineItem } = this.props;
-    if (lineItems.length > 0) {
-      for (let i = 0; i < lineItems.length; i += 1) {
-        const { id, ...data } = lineItems[i]
-        updateLineItem({
-          orderId,
-          itemId: id,
-          data,
-        })
+    const { orderId, updateLineItems, getOrder } = this.props;
+    const updateInfo = lineItems.map(({id, attributes: { quantity, cost }}) => ({
+      id,
+      lineItem: {
+        quantity,
+        cost
       }
+    }));
+    if (lineItems.length > 0) {
+      updateLineItems({ orderId, data: updateInfo, callback: () => getOrder(orderId) });
     }
   }
   addNewItem = () => {
@@ -85,21 +97,17 @@ class LineItemSection extends React.Component {
   }
   saveNewItems = () => {
     const { newItems } = this.state;
-    const { orderId } = this.props;
-    for (let i = 0; i < newItems.length; i += 1) {
-      this.props.createLineItem({
-        orderId,
-        data: newItems[i]
-      })
-    }
+    const { orderId, getOrder } = this.props;
+    this.props.createLineItems({ orderId, data: newItems, callback: () => getOrder(orderId) })
   }
   render () {
-    const { newItems, lineItems, mode } = this.state;
+    const { newItems, mode, lineItems } = this.state;
     return (
       <Section title="Quotes" mode={mode} onEdit={this.onEdit} >
+        <QuoteHeader />
         {
           lineItems.map((val, idx) => (
-            <LineItem {...val} onRemove={() => this.removeLineItem(val.id)} mode={mode} />
+            <LineItem {...val} onRemove={() => this.removeLineItem(val.id)} mode={mode} onChange={(updateInfo) => this.onChangeLineItems(updateInfo, idx)} key={`lineItem_${idx}`} />
           ))
         }
         {
@@ -113,14 +121,15 @@ class LineItemSection extends React.Component {
   }
 }
 
-const mapStateToProps = ({ lineItem: { lineItems } }) => ({
-  lineItems
+const mapStateToProps = state => ({
+  ...orderSelector(state),
 })
 
 const mapDispatchToProps = {
-  updateLineItem,
+  updateLineItems,
   deleteLineItem,
-  createLineItem, 
+  createLineItems,
+  getOrder,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LineItemSection)
