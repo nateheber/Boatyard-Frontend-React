@@ -3,3 +3,4 @@ export * from './Hamburger';
 export * from './HollowButton';
 export * from './PurpleButton';
 export * from './ToggleButton';
+export * from './EditButton';

@@ -6,7 +6,8 @@ import Dashboard from 'components/template/Dashboard';
 import Order from 'containers/Orders/OrderList';
 import OrderDetails from 'containers/Orders/OrderDetails';
 import Team from 'components/template/Team';
-import Customers from 'components/template/Customers';
+import Customers from 'containers/Customers/screens/Customers';
+import CustomerDetails from 'containers/Customers/screens/CustomerDetails';
 import Calendar from 'components/template/Calendar';
 import Providers from 'containers/Providers/screens/Providers';
 import ProviderDetails from 'containers/Providers/screens/ProviderDetails';
@@ -40,6 +41,7 @@ const MainRouter = () => (
       <Route exact path="/category-details/" component={CategoryDetails} />
       <Route exact path="/team/" component={Team} />
       <Route exact path="/customers/" component={Customers} />
+      <Route exact path="/customer-details/" component={CustomerDetails} />
       <Route exact path="/calendar/" component={Calendar} />
       <Route exact path="/users/" component={Users} />
       <Route exact path="/user-details/" component={UserDetails} />

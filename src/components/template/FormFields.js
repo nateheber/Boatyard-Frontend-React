@@ -94,6 +94,8 @@ export default class FormFields extends React.Component {
         : get(value, field) || '';
     const errorIdx = findIndex(errors, errorField => errorField === field);
     switch (type) {
+      case 'dummy':
+        return false;
       case 'check_box':
         return (
           <CheckBox

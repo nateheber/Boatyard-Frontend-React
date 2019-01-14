@@ -2,9 +2,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 import deepEqual from 'deep-equal'
 
+import { Section } from 'components/basic/InfoSection'
+
 import NewLineItems from '../infoSections/NewLineItem'
 import LineItem from '../infoSections/LineItem'
-import Section from '../basic/Section'
 import ButtonGroup from '../basic/ButtonGroup'
 import QuoteHeader from '../basic/QuoteHeader'
 

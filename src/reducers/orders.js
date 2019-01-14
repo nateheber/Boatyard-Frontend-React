@@ -5,6 +5,7 @@ export const actions = {
   createOrders: 'ORDERS/CREATE',
   fetchOrders: 'ORDERS/FETCH',
   getOrder: 'ORDERS/FETCH_ONE',
+  getUserOrders: 'ORDERS/FETCH_USER',
   resetOrders: 'ORDERS/RESET',
   updateOrders: 'ORDERS/UPDATE',
   deleteOrders: 'ORDERS/DELETE',
@@ -14,6 +15,7 @@ export const actions = {
 
 export const createOrders = createAction(actions.createOrders);
 export const getOrder = createAction(actions.getOrder);
+export const getUserOrders = createAction(actions.getUserOrders);
 export const resetOrders = createAction(actions.resetOrders);
 export const fetchOrders = createAction(actions.fetchOrders);
 export const updateOrders = createAction(actions.updateOrders);

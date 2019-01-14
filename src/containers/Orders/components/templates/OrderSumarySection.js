@@ -1,7 +1,7 @@
 import React from 'react'
 import { isEmpty } from 'lodash';
 
-import Section from '../basic/Section'
+import { Section } from 'components/basic/InfoSection'
 import OrderSumary from '../infoSections/OrderSummary'
 
 export default class OrderSumarySection extends React.Component {

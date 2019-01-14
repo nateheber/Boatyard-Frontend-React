@@ -32,6 +32,25 @@ function* fetchRequest(action) {
   });
 }
 
+function* getUserRequest(action) {
+  const orderClient = yield select(getOrderClient)
+  const { page, userId } = action.payload
+  const result = yield call(orderClient.list, page || 1, `&order[user_id]=${userId}`)
+  const orders = get(result, 'data', []);
+  const { perPage, total } = result;
+  yield put({
+    type: actions.setOrders,
+    payload: {
+      orders: orders.map(order => ({
+        id: order.id,
+        ...order.attributes
+      })),
+      perPage,
+      total,
+    }
+  });
+}
+
 function* getRequest(action) {
   const orderClient = yield select(getOrderClient);
   const { payload: orderId } = action;
@@ -59,6 +78,7 @@ function* updateRequest(action) {
 export default function* Profile() {
   yield takeEvery(actions.createOrders, createRequest);
   yield takeEvery(actions.getOrder, getRequest);
+  yield takeEvery(actions.getUserOrders, getUserRequest);
   yield takeEvery(actions.fetchOrders, fetchRequest);
   yield takeEvery(actions.deleteOrders, deleteRequest);
   yield takeEvery(actions.updateOrders, updateRequest);

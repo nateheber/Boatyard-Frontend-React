@@ -29,15 +29,15 @@ const FieldValue = styled.div`
   font-size: 14px;
 `;
 
-export default ({ name, make, model, length, onEdit }) => (
+export default ({ name, make, model, length, location: { city, state, street, zip }, onEdit }) => (
   <Wrapper>
-    <EditWrapper>
-      <Field>
+    <Field>
+      <EditWrapper>
         <Label>BOAT NAME</Label>
-        <FieldValue>{name}</FieldValue>
-      </Field>
-      <EditButton onClick={onEdit} />
-    </EditWrapper>
+        <EditButton onClick={onEdit} />
+      </EditWrapper>
+      <FieldValue>{name}</FieldValue>
+    </Field>
     <Field>
       <Label>BOAT MAKE</Label>
       <FieldValue>{make}</FieldValue>
@@ -50,9 +50,9 @@ export default ({ name, make, model, length, onEdit }) => (
       <Label>BOAT LENGTH</Label>
       <FieldValue>{length}</FieldValue>
     </Field>
-    {/* <Field>
+    <Field>
       <Label>BOAT LOCATION</Label>
-      <FieldValue>{location}</FieldValue>
-    </Field> */}
+      <FieldValue>{street} {city} {state} {zip}</FieldValue>
+    </Field>
   </Wrapper>
 );

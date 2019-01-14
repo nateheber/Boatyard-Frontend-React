@@ -27,31 +27,30 @@ function* createRequest(action) {
 
 function* fetchRequest(action) {
   const userClient = yield select(getUserClient);
-  const result = yield call(userClient.list);
+  const page = action.payload;
+  const result = yield call(userClient.list, page);
   const users = get(result, 'data', []);
+  const { perPage, total } = result;
   yield put({
     type: actions.setUsers,
-    payload: users.map(user => ({
-      id: user.id,
-      ...user.attributes
-    }))
+    payload: {
+      users: users.map(user => ({
+        id: user.id,
+        ...user.attributes
+      })),
+      perPage,
+      total,
+    }
   });
 }
 
 function* fetchOneRequest(action) {
   const userClient = yield select(getUserClient);
-  const currentUserList = yield select(getUsers);
-  const idx = findIndex(currentUserList, info => info.id === action.payload);
-  if (idx === -1) {
-    const { data: user } = yield call(userClient.read, action.payload);
-    yield put({
-      type: actions.setUser,
-      payload: {
-        id: user.id,
-        ...user.attributes
-      }
-    });
-  }
+  const { data: user } = yield call(userClient.read, action.payload);
+  yield put({
+    type: actions.setUser,
+    payload: user
+  });
 }
 
 function* deleteRequest(action) {

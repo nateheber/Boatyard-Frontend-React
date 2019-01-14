@@ -7,7 +7,8 @@ export const responseInterceptor = client => {
       return ({
         perPage,
         total,
-        data: get(response.data, 'data', [])
+        data: get(response.data, 'data', []),
+        included: get(response.data, 'included', [])
       });
     }
     return response.data;
