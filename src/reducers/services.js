@@ -25,34 +25,33 @@ const initialState = {
   services: [],
   filtered: [],
   loading: false,
-  nextPage: 0,
-  hasMore: true
+  page: 0,
+  perPage: 20,
+  total: 0
 };
 
 export default handleActions(
   {
     [actions.fetchServices]: (state, { payload }) =>
       produce(state, draft => {
+        draft.page = payload;
         draft.loading = true;
       }),
     [actions.resetServices]: state =>
       produce(state, draft => {
+        draft.loading = false;
         draft.services = [];
-        draft.hasMore = true;
-        draft.nextPage = 0;
+        draft.page = 1;
+        draft.perPage = 20;
+        draft.total = 0;
       }),
     [actions.setServices]: (state, { payload }) =>
       produce(state, draft => {
-        if (draft.nextPage === 0) {
-          draft.services = [];
-        }
-        if (payload.length !== 0) {
-          draft.services = [...draft.services, ...payload];
-          draft.nextPage += 1;
-        } else {
-          draft.hasMore = false;
-        }
+        const { perPage, services, total } = payload;
         draft.loading = false;
+        draft.services = services;
+        draft.perPage = perPage;
+        draft.total = total;
       }),
     [actions.filterServices]: (state, { payload }) =>
       produce(state, draft => {

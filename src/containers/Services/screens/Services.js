@@ -17,25 +17,33 @@ const Wrapper = styled.div`
 class Services extends React.Component {
   componentDidMount() {
     this.props.resetServices();
-    this.props.fetchServices();
+    this.props.fetchServices(1);
     this.props.fetchCategories();
   }
-  loadMore = () => {
-    this.props.fetchServices();
+
+  loadPage = (page) => {
+    const { fetchServices } = this.props;
+    fetchServices(page);
   };
+
   toDetails = serviceId => {
     this.props.history.push(`/service-details/?service=${serviceId}`);
   };
+
   createService = () => {
     this.props.history.push(`/service-details/`);
   };
+
   render() {
     const columns = [
       { label: 'serivce name', value: 'name' },
-      { label: 'label', value: 'label' },
-      { label: 'description', value: 'description' }
+      { label: 'location', value: 'location' },
+      { label: 'price', value: 'cost', prefix: '$' },
+      { label: 'price type', value: 'cost_type' },
+      { label: 'price unit', value: 'cost_unit_text' }
     ];
-    const { services, loading, hasMore } = this.props;
+    const { services, loading, page, perPage, total } = this.props;
+    const pageCount = Math.ceil(total/perPage);
     return (
       <Wrapper>
         <ServiceHeader onAdd={this.createService} />
@@ -44,19 +52,22 @@ class Services extends React.Component {
           columns={columns}
           records={services}
           sortColumn="order"
-          hasMore={hasMore}
+          page={page}
+          pageCount={pageCount}
+          onPageChange={this.loadPage}
           toDetails={this.toDetails}
-          loadMore={this.loadMore}
         />
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ service: { services, loading, hasMore } }) => ({
+const mapStateToProps = ({ service: { services, loading, page, perPage, total } }) => ({
   services,
   loading,
-  hasMore
+  page,
+  perPage,
+  total
 });
 
 const mapDispatchToProps = {

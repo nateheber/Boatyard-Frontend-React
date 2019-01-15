@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty } from 'lodash';
 
 import { actions } from '../services';
-import { getServiceClient, getServicesPageNumber } from './sagaSelectors';
+import { getServiceClient } from './sagaSelectors';
 
 function* createRequest(action) {
   const serviceClient = yield select(getServiceClient);
@@ -14,15 +14,20 @@ function* createRequest(action) {
 
 function* fetchRequest(action) {
   const serviceClient = yield select(getServiceClient);
-  const nextPage = yield select(getServicesPageNumber);
-  const result = yield call(serviceClient.list, nextPage);
+  const page = action.payload;
+  const result = yield call(serviceClient.list, page);
   const services = get(result, 'data', []);
+  const { perPage, total } = result;
   yield put({
     type: actions.setServices,
-    payload: services.map(service => ({
-      id: service.id,
-      ...service.attributes
-    }))
+    payload: {
+      services: services.map(service => ({
+        id: service.id,
+        ...service.attributes
+      })),
+      perPage,
+      total
+    }
   });
 }
 
