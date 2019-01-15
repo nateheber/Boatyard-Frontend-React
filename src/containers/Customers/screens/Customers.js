@@ -4,9 +4,10 @@ import styled from 'styled-components'
 import { withRouter } from 'react-router-dom'
 
 import Table from 'components/basic/Table'
-import { CustomersHeader } from 'components/compound/SectionHeader'
 
 import { fetchUsers } from 'reducers/users'
+
+import { CustomersHeader } from '../components/CustomersHeader'
 
 const Wrapper = styled.div`
   height: 100%;

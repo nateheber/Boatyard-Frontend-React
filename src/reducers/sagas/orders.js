@@ -18,14 +18,17 @@ function* fetchRequest(action) {
   const page = action.payload;
   const result = yield call(orderClient.list, page);
   const orders = get(result, 'data', []);
+  const included = get(result, 'included', []);
   const { perPage, total } = result;
   yield put({
     type: actions.setOrders,
     payload: {
       orders: orders.map(order => ({
         id: order.id,
-        ...order.attributes
+        ...order.attributes,
+        relationships: order.relationships,
       })),
+      included,
       perPage,
       total,
     }
@@ -37,14 +40,17 @@ function* getUserRequest(action) {
   const { page, userId } = action.payload
   const result = yield call(orderClient.list, page || 1, `&order[user_id]=${userId}`)
   const orders = get(result, 'data', []);
+  const included = get(result, 'included', []);
   const { perPage, total } = result;
   yield put({
     type: actions.setOrders,
     payload: {
       orders: orders.map(order => ({
         id: order.id,
-        ...order.attributes
+        ...order.attributes,
+        relationships: order.relationships,
       })),
+      included,
       perPage,
       total,
     }

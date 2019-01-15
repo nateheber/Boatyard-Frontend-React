@@ -44,11 +44,12 @@ export default class Table extends React.Component {
     this.visitRef = ref;
   };
   renderContent = () => {
-    const { columns, records } = this.props;
+    const { columns, records, type } = this.props;
     return (
       <React.Fragment>
         {records.map((rec, idx) => (
           <Record
+            type={type}
             toDetails={() => this.props.toDetails(rec.id)}
             columns={columns}
             record={rec}
@@ -62,11 +63,12 @@ export default class Table extends React.Component {
     return false;
   };
   render() {
-    const { columns, page, pageCount, onPageChange } = this.props;
+    const { columns, page, pageCount, onPageChange, type } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
       <Wrapper>
         <TableHeader
+          type={type}
           columns={columns}
           sortColumn={sortColumn}
           isAsc={isAsc}

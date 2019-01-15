@@ -12,6 +12,7 @@ import appstate from './appstate';
 import order from './orders';
 import lineItem from './lineItems';
 import boat from './boats';
+import payment from './payments';
 
 const rootReducer = combineReducers({
   navigation,
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   order,
   lineItem,
   boat,
+  payment
 });
 
 export default rootReducer;

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import changeCase from 'change-case';
 import { get } from 'lodash';
+import classNames from 'classnames'
 
 const Wrapper = styled.div`
   display: flex;
@@ -86,7 +87,7 @@ export class Record extends React.Component {
     this.props.toDetails();
   };
   render() {
-    const { record, columns } = this.props;
+    const { record, columns, type } = this.props;
     const { show } = this.state;
     const firstField = columns[0].value;
     const hidingCols = columns.slice(1);
@@ -94,12 +95,12 @@ export class Record extends React.Component {
       <Wrapper className={show ? 'active' : 'deactive'}>
         <FirstField
           onClick={this.onClickFirstRow}
-          className={show ? 'active' : 'deactive'}
+          className={classNames(show ? 'active' : 'deactive', type)}
         >
           {get(record, firstField) || '_'}
         </FirstField>
         {hidingCols.map((col, idx) => (
-          <Field className={show ? 'show' : 'hide'} key={`col_${idx}`}>
+          <Field className={classNames(show ? 'show' : 'hide', type)} key={`col_${idx}`}>
             <FieldLabel>{changeCase.upperCaseFirst(col.label)}</FieldLabel>
             <FieldValue>{get(record, col.value) || '_'}</FieldValue>
           </Field>

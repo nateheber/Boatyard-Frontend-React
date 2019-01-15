@@ -98,6 +98,19 @@ export const getProviderClient = state => {
   }
 };
 
+export const getPaymentClient = state => {
+  switch (state.auth.previlage) {
+    case 'basic':
+      return APIGenerator.createPaymentClient('basic');
+    case 'admin':
+      return APIGenerator.createPaymentClient('admin');
+    case 'provider':
+      return APIGenerator.createPaymentClient('provider');
+    default:
+      return APIGenerator.createPaymentClient('basic');
+  }
+}
+
 export const getCustomApiClient = state => {
   switch (state.auth.previlage) {
     case 'basic':
