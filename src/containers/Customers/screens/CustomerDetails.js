@@ -49,7 +49,11 @@ class CustomerDetails extends React.Component {
       const { id, relationships, createdAt, total } = order
       const boatType = get(relationships, 'boat.data.type')
       const boatId = get(relationships, 'boat.data.id')
+      const lineItem = get(relationships, 'lineItems.data[0]', {})
       const boat = get(included, `${boatType}.${boatId}`, {})
+      const lineItemDetail = get(included, `${lineItem.type}.${lineItem.id}`, '')
+      const linkedServicePointer = get(lineItemDetail, `relationships.service.data`, {})
+      const serviceName = get(included, `${linkedServicePointer.type}.${linkedServicePointer.id}.attributes.name`, '-')
       const boatName = get(boat, 'attributes.name')
       const boatMake = get(boat, 'attributes.make')
       const orderCreated = moment(createdAt).format('MMM D, YYYY')
@@ -58,6 +62,7 @@ class CustomerDetails extends React.Component {
         name: `Order #${id}`,
         boatName,
         boatMake,
+        serviceName,
         orderCreated,
         total: `$${total}`
       })
@@ -74,6 +79,7 @@ class CustomerDetails extends React.Component {
       { label: 'orders', value: 'name' },
       { label: 'boat name', value: 'boatName' },
       { label: 'boat make', value: 'boatMake' },
+      { label: 'service', value: 'serviceName' },
       { label: 'order placed', value: 'orderCreated' },
       { label: 'total', value: 'total' }
     ]
