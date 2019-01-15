@@ -16,7 +16,6 @@ const Wrapper = styled.div`
 
 class Services extends React.Component {
   componentDidMount() {
-    this.props.resetServices();
     this.props.fetchServices(1);
     this.props.fetchCategories();
   }
