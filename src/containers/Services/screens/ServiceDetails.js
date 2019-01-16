@@ -57,23 +57,18 @@ class ServiceDetails extends React.Component {
     } else {
       this.state = {
         name: '',
-        subtitle: '',
-        description: '',
-        secondaryDescription: '',
         categoryId: `${categoryId}`,
-        label: '',
-        additionalDetails: '',
-        serviceDetails: '',
-        costs: '0.00',
-        deliveryFee: '0.00',
-        taxRate: '0.00',
-        icon: '',
+        cost_type: null,
+        cost_unit_text: '',
+        description: '',
+        tax_rate: '0.00',
         properties: {},
         propertyFields: []
       };
     }
     selectCategory({ categoryId, callback: this.onReceiveCategory });
   }
+
   getOriginalServiceProperties = () => {
     const { services } = this.props;
     const query = queryString.parse(this.props.location.search);
@@ -88,22 +83,41 @@ class ServiceDetails extends React.Component {
   getMainInputOptions = () => {
     const {
       name,
-      subtitle,
-      description,
-      secondaryDescription,
       categoryId,
-      label,
-      additionalDetails,
-      costs,
-      deliveryFee,
-      taxRate,
-      icon
+      cost_type,
+      cost_unit_text,
+      description,
+      tax_rate
     } = this.state;
     const { categories } = this.props;
     const categoryOptions = categories.map(val => ({
       value: val.id,
       label: val.name
     }));
+
+    const priceTypes = [
+      {
+        value: null,
+        label: 'None'
+      },
+      {
+        value: 'Length',
+        label: 'Length'
+      },
+      {
+        value: 'Gallons',
+        label: 'Gallons'
+      },
+      {
+        value: 'Hour',
+        label: 'Hour'
+      },
+      {
+        value: 'Quantity',
+        label: 'Quantity'
+      }
+    ];
+
     return [
       {
         field: 'name',
@@ -133,10 +147,11 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'subtitle',
-        label: 'Subtitle',
-        type: 'text_field',
-        defaultValue: subtitle,
+        field: 'cost_type',
+        label: 'Price Type',
+        type: 'select_box',
+        options: priceTypes,
+        defaultValue: cost_type,
         xs: 12,
         sm: 12,
         md: 6,
@@ -144,54 +159,11 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'label',
-        label: 'Label',
+        field: 'cost_unit_text',
+        label: 'Price Unit Text',
         type: 'text_field',
-        defaultValue: label,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'costs',
-        label: 'Costs',
-        type: 'text_field',
-        defaultValue: costs,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'deliveryFee',
-        label: 'Delivery Fee',
-        type: 'text_field',
-        defaultValue: deliveryFee,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'taxRate',
-        label: 'Tax Rate',
-        type: 'text_field',
-        defaultValue: taxRate,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'icon',
-        label: 'Icon',
-        type: 'text_field',
-        defaultValue: icon,
+        defaultValue: cost_unit_text,
+        placeholder: 'i.e. /gal, /hr',
         xs: 12,
         sm: 12,
         md: 6,
@@ -210,21 +182,10 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'secondaryDescription',
-        label: 'Secondary Description',
-        type: 'text_area',
-        defaultValue: secondaryDescription,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'additionalDetails',
-        label: 'Additional Details',
-        type: 'text_area',
-        defaultValue: additionalDetails,
+        field: 'tax_rate',
+        label: 'Tax Rate',
+        type: 'text_field',
+        defaultValue: tax_rate,
         xs: 12,
         sm: 12,
         md: 6,
@@ -280,13 +241,13 @@ class ServiceDetails extends React.Component {
           ...mainValues,
           properties
         }
-      });
-      this.props.history.goBack();
+      }, () => this.props.history.push('/services/'));
     } else {
       this.props.createServices({
+        provider_id: '34',
         ...mainValues,
         properties
-      });
+      }, () => this.props.history.push('/services/'));
     }
   };
   onCancel = () => {
