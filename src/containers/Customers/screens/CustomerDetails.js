@@ -90,7 +90,7 @@ class CustomerDetails extends React.Component {
   render() {
     const { currentUser, page } = this.props
     const id = get(currentUser, 'id', '')
-    const customerName = get(currentUser, 'attributes.name');
+    const customerName = `${get(currentUser, 'attributes.firstName')} ${get(currentUser, 'attributes.lastName')}`;
     const attributes = get(currentUser, 'attributes', {})
     const processedOrders = this.parseOrders()
     const columns = [
