@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
 
 import { actions } from '../boats';
 import { getBoatClient } from './sagaSelectors';
@@ -12,7 +12,7 @@ function* createRequest(action) {
 function* fetchRequest(action) {
   const boatClient = yield select(getBoatClient);
   const result = yield call(boatClient.list);
-  const boats = get(result, 'data', []);
+  const boats = sortBy(get(result, 'data', []), 'id')
   const included = get(result, 'included', []);
   yield put({
     type: actions.setBoats,
@@ -44,7 +44,7 @@ function* getUserBoatRequest(action) {
   const boatClient = yield select(getBoatClient)
   const { payload: { userId, callback } } = action
   const result = yield call(boatClient.list, 0, `&boat[user_id]=${userId}`)
-  const boats = get(result, 'data', [])
+  const boats = sortBy(get(result, 'data', []), 'id')
   const included = get(result, 'included', [])
   yield put({
     type: actions.setBoats,

@@ -11,10 +11,12 @@ class CustomerInfoSection extends React.Component {
     edit: false,
   }
   onSave = (data) => {
-    const { customerInfo: { id } } = this.props;
+    const { customerInfo: { id }, refreshInfo } = this.props;
     this.props.updateUsers({
-      id, data
+      id, data,
+      callback: refreshInfo,
     })
+    this.hideModal();
   }
   showModal = () => {
     this.setState({

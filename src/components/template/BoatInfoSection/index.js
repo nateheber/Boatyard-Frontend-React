@@ -11,6 +11,7 @@ class BoatInfoSection extends React.Component {
   state = {
     edit: false,
     editingBoatIdx: -1,
+    openedBoatIdx: -1,
   }
   editBoat = (idx) => {
     this.setState({
@@ -40,7 +41,7 @@ class BoatInfoSection extends React.Component {
     return {}
   }
   updateBoatInfo = ({ boat, location: { locationType, name, ...addressAttributes } }) => {
-    const { boats } = this.props
+    const { boats, refreshInfo } = this.props
     const { editingBoatIdx } = this.state
     const boatId = boats[editingBoatIdx].id
     this.props.updateBoats({
@@ -52,22 +53,32 @@ class BoatInfoSection extends React.Component {
           name,
           addressAttributes
         }
-      }
+      },
+      callback: refreshInfo
+    })
+    this.endEditing();
+  }
+  toggleInfoSection = (idx) => {
+    const { openedBoatIdx } = this.state;
+    this.setState({
+      openedBoatIdx: openedBoatIdx === idx ? -1 : idx,
     })
   }
   render() {
     const { boats } = this.props
-    const { edit, editingBoatIdx } = this.state
+    const { edit, editingBoatIdx, openedBoatIdx } = this.state
     const boatLocation = this.getBoatLocation(editingBoatIdx)
     return (
       <React.Fragment>
         {
           boats.map((boat, idx) => (
             <InfoSection
+              opened={openedBoatIdx === idx || boats.length === 1}
               onEdit={() => this.editBoat(idx)}
               key={`boatInfo_${boat.id}`}
               {...boat}
               location={this.getBoatLocation(idx)}
+              toggleSection={() => this.toggleInfoSection(idx)}
             />
           ))
         }

@@ -60,11 +60,14 @@ function* deleteRequest(action) {
 
 function* updateRequest(action) {
   const userClient = yield select(getUserClient);
-  const { id, data } = action.payload;
+  const { id, data, callback } = action.payload;
   yield call(userClient.update, id, data);
   yield put({
     type: actions.fetchUsers
   });
+  if (callback) {
+    yield call(callback)
+  }
 }
 
 function* filterRequest(action) {

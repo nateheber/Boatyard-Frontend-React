@@ -10,12 +10,13 @@ import styled from 'styled-components'
 import { fetchUser } from 'reducers/users'
 import { getUserBoats } from 'reducers/boats'
 import { getUserOrders } from 'reducers/orders'
-import { fetchPayments } from 'reducers/payments'
+import { fetchCreditCards } from 'reducers/creditCards'
 
-import { Section } from 'components/basic/InfoSection'
+import { Section, SectionGroup } from 'components/basic/InfoSection'
 import Table from 'components/basic/Table'
 import CustomerInfoSection from 'components/template/CustomerInfoSection'
 import BoatInfoSection from 'components/template/BoatInfoSection'
+import CreditCardSection from 'components/template/CreditCardSection'
 
 import { CustomerDetailsHeader } from '../components/CustomerDetailsHeader'
 
@@ -28,9 +29,9 @@ class CustomerDetails extends React.Component {
     const query = queryString.parse(this.props.location.search)
     const customerId = query.customer
     this.props.fetchUser(customerId)
-    this.props.fetchPayments(customerId)
     this.props.getUserBoats({userId: customerId})
     this.props.getUserOrders({ userId: customerId, page: 1 })
+    this.props.fetchCreditCards(customerId)
     this.setState({
       customerId,
     })
@@ -42,6 +43,20 @@ class CustomerDetails extends React.Component {
   getPageCount = () => {
     const { perPage, total } = this.props
     return Math.ceil(total/perPage)
+  }
+  refreshInfo = () => {
+    const { customerId } = this.state;
+    this.props.fetchUser(customerId)
+    this.props.getUserBoats({userId: customerId})
+    this.props.getUserOrders({ userId: customerId, page: 1 })
+    this.props.fetchCreditCards(customerId)
+    this.setState({
+      customerId,
+    })
+  }
+  refreshCards = () => {
+    const { customerId } = this.state;
+    this.props.fetchCreditCards(customerId);
   }
   parseOrders = () => {
     const { orders, included } = this.props
@@ -68,6 +83,9 @@ class CustomerDetails extends React.Component {
       })
     })
     return parsedOrders
+  }
+  toDetails = (orderId) => {
+    this.props.history.push(`/order-details/?order=${orderId}`);
   }
   render() {
     const { currentUser, page } = this.props
@@ -101,10 +119,15 @@ class CustomerDetails extends React.Component {
             />
           </Col>
           <Col sm={12} md={4} lg={4} xl={4}>
-            <Section title={"Customer & Boat Info"}>
-              <CustomerInfoSection customerInfo={{ id, ...attributes }} />
-              <BoatInfoSection />
-            </Section>
+            <SectionGroup>
+              <Section title={"Customer & Boat Info"}>
+                <CustomerInfoSection customerInfo={{ id, ...attributes }} refreshInfo={this.refreshInfo} />
+                <BoatInfoSection refreshInfo={this.refreshInfo} />
+              </Section>
+            </SectionGroup>
+            <SectionGroup>
+              <CreditCardSection onRefresh={this.refreshCards} />
+            </SectionGroup>
           </Col>
         </PageContent>
       </React.Fragment>
@@ -134,7 +157,7 @@ const mapDispatchToProps = {
   fetchUser,
   getUserBoats,
   getUserOrders,
-  fetchPayments,
+  fetchCreditCards,
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CustomerDetails));
