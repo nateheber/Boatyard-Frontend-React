@@ -5,11 +5,17 @@ import { actions } from '../services';
 import { getServiceClient } from './sagaSelectors';
 
 function* createRequest(action) {
-  const serviceClient = yield select(getServiceClient);
-  yield call(serviceClient.create, action.payload);
-  yield put({
-    type: actions.fetchServices
-  });
+  const { resolve, reject } = action.meta;
+  try {
+    const serviceClient = yield select(getServiceClient);
+    yield call(serviceClient.create, action.payload);
+    yield put({
+      type: actions.fetchServices
+    });
+    if (resolve) resolve('success');
+  } catch(e) {
+    if (reject) reject(e);
+  }
 }
 
 function* fetchRequest(action) {
@@ -37,12 +43,18 @@ function* deleteRequest(action) {
 }
 
 function* updateRequest(action) {
-  const serviceClient = yield select(getServiceClient);
-  const { id, data } = action.payload;
-  yield call(serviceClient.update, id, data);
-  yield put({
-    type: actions.fetchServices
-  });
+  const { resolve, reject } = action.meta;
+  try {
+    const serviceClient = yield select(getServiceClient);
+    const { id, data } = action.payload;
+    yield call(serviceClient.update, id, data);
+    yield put({
+      type: actions.fetchServices
+    });
+    if (resolve) resolve('success');
+  } catch(e) {
+    if (reject) reject(e);
+  }
 }
 
 function* filterRequest(action) {

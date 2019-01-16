@@ -13,10 +13,24 @@ export const actions = {
   setFilteredServices: 'SERVICES/SET_FILTERED_DATA',
 };
 
-export const createServices = createAction(actions.createServices);
+export const createServices = createAction(
+  actions.createServices,
+  payload => payload,
+  (payload, resolve, reject) => ({
+    resolve,
+    reject
+  })
+);
 export const resetServices = createAction(actions.resetServices);
 export const fetchServices = createAction(actions.fetchServices);
-export const updateServices = createAction(actions.updateServices);
+export const updateServices = createAction(
+  actions.updateServices,
+  payload => payload,
+  (payload, resolve, reject) => ({
+    resolve,
+    reject
+  })
+);
 export const deleteServices = createAction(actions.deleteServices);
 export const filterServices = createAction(actions.filterServices);
 export const fetchOne = createAction(actions.fetchOne);
