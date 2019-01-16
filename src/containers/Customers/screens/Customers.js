@@ -8,6 +8,7 @@ import Table from 'components/basic/Table'
 import { fetchUsers } from 'reducers/users'
 
 import { CustomersHeader } from '../components/CustomersHeader'
+import NewCustomerModal from '../components/NewCustomerModal'
 
 const Wrapper = styled.div`
   height: 100%;
@@ -15,8 +16,21 @@ const Wrapper = styled.div`
 `;
 
 class Customers extends React.Component {
+  state = {
+    showNewModal: false,
+  }
   componentDidMount() {
     this.props.fetchUsers();
+  }
+  closeNewModal = () => {
+    this.setState({
+      showNewModal: false,
+    })
+  }
+  openNewModal = () => {
+    this.setState({
+      showNewModal: true,
+    })
   }
   toDetails = customerId => {
     this.props.history.push(`/customer-details/?customer=${customerId}`)
@@ -37,6 +51,7 @@ class Customers extends React.Component {
   }
   render() {
     const { page } = this.props
+    const { showNewModal } = this.state
     const pageCount = this.getPageCount()
     const users = this.parseUser()
     const columns = [
@@ -50,7 +65,7 @@ class Customers extends React.Component {
     ]
     return (
       <Wrapper>
-        <CustomersHeader />
+        <CustomersHeader onNew={this.openNewModal} />
         <Table
           columns={columns}
           records={users}
@@ -60,6 +75,7 @@ class Customers extends React.Component {
           pageCount={pageCount}
           onPageChange={this.changePage}
         />
+        <NewCustomerModal open={showNewModal} onClose={this.closeNewModal} />
       </Wrapper>
     )
   }
