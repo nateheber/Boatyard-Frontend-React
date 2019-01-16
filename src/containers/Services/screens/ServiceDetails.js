@@ -58,10 +58,10 @@ class ServiceDetails extends React.Component {
       this.state = {
         name: '',
         categoryId: `${categoryId}`,
-        cost_type: null,
-        cost_unit_text: '',
+        costType: null,
+        costUnitText: '',
         description: '',
-        tax_rate: '0.00',
+        taxRate: '0.00',
         properties: {},
         propertyFields: []
       };
@@ -84,10 +84,10 @@ class ServiceDetails extends React.Component {
     const {
       name,
       categoryId,
-      cost_type,
-      cost_unit_text,
+      costType,
+      costUnitText,
       description,
-      tax_rate
+      taxRate
     } = this.state;
     const { categories } = this.props;
     const categoryOptions = categories.map(val => ({
@@ -151,7 +151,7 @@ class ServiceDetails extends React.Component {
         label: 'Price Type',
         type: 'select_box',
         options: priceTypes,
-        defaultValue: cost_type,
+        defaultValue: costType,
         xs: 12,
         sm: 12,
         md: 6,
@@ -162,7 +162,7 @@ class ServiceDetails extends React.Component {
         field: 'cost_unit_text',
         label: 'Price Unit Text',
         type: 'text_field',
-        defaultValue: cost_unit_text,
+        defaultValue: costUnitText,
         placeholder: 'i.e. /gal, /hr',
         xs: 12,
         sm: 12,
@@ -185,7 +185,7 @@ class ServiceDetails extends React.Component {
         field: 'tax_rate',
         label: 'Tax Rate',
         type: 'text_field',
-        defaultValue: tax_rate,
+        defaultValue: taxRate,
         xs: 12,
         sm: 12,
         md: 6,

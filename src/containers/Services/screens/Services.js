@@ -36,11 +36,10 @@ class Services extends React.Component {
   render() {
     const columns = [
       { label: 'serivce name', value: 'name' },
-      { label: 'location', value: 'location' },
-      { label: 'price', value: 'cost', prefix: '$' },
-      { label: 'price type', value: 'cost_type' },
-      { label: 'price unit', value: 'cost_unit_text' }
+      { label: 'price type', value: 'costType' },
+      { label: 'price unit', value: 'costUnitText' }
     ];
+
     const { services, loading, page, perPage, total } = this.props;
     const pageCount = Math.ceil(total/perPage);
     return (
