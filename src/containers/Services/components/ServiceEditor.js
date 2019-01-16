@@ -14,14 +14,12 @@ export class ServiceEditor extends React.Component {
   }
 
   onSave = () => {
-    if (
-      this.mainFields.validateFields() &&
-      (this.propertyFields && this.propertyFields.validateFields())
-    ) {
+    if ( this.mainFields.validateFields() &&
+      (!this.propertyFields || (this.propertyFields && this.propertyFields.validateFields()))) {
       const mainFieldValues = this.mainFields.getFieldValues();
       const propertyFieldValues = this.propertyFields
         ? this.propertyFields.getFieldValues()
-        : [];
+        : {};
       this.props.onSave(mainFieldValues, propertyFieldValues);
     } else {
       this.props.setErrorState('Please fill out all required fields');
