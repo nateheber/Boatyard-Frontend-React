@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, findIndex, isEmpty } from 'lodash';
 
 import { actions } from '../users';
-import { getUsers, getUserClient } from './sagaSelectors';
+import { getUsersPageNumber, getUserClient } from './sagaSelectors';
 
 const mergeResults = (base, secondary) => {
   const result = [...base];
@@ -27,7 +27,7 @@ function* createRequest(action) {
 
 function* fetchRequest(action) {
   const userClient = yield select(getUserClient);
-  const page = action.payload;
+  const page = yield select(getUsersPageNumber);
   const result = yield call(userClient.list, page);
   const users = get(result, 'data', []);
   const { perPage, total } = result;

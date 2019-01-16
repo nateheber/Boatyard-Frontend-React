@@ -4,6 +4,7 @@ export const getAuthToken = state => state.auth.authToken;
 export const getProviders = state => state.provider.providers;
 export const getManagements = state => state.management.managements;
 export const getUsers = state => state.user.users;
+export const getUsersPageNumber = state => state.user.page;
 export const getServicesPageNumber = state => state.service.nextPage;
 export const getOrdersPageNumber = state => state.order.nextPage;
 

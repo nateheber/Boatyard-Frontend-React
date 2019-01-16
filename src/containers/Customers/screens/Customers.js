@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 
 class Customers extends React.Component {
   componentDidMount() {
-    this.props.fetchUsers(1);
+    this.props.fetchUsers();
   }
   toDetails = customerId => {
     this.props.history.push(`/customer-details/?customer=${customerId}`)

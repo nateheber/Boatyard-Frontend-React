@@ -76,7 +76,7 @@ export default class Table extends React.Component {
         />
         {this.renderContent()}
         {
-          page && pageCount > 1 && (
+          pageCount > 1 && (
             <PaginatorWrapper>
               <Paginator page={page} totalPages={pageCount} onChange={onPageChange} />
             </PaginatorWrapper>
