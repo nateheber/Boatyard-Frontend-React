@@ -57,11 +57,13 @@ export const TableHeader = ({ columns, sortColumn, isAsc, onSort }) => (
       <ColumnHeader
         key={`col_${idx}`}
         onClick={() => {
-          onSort(col.value);
+          if (col.sort) {
+            onSort(col.sort);
+          }
         }}
       >
         {col.label}
-        {col.value === sortColumn && (
+        {col.sort === sortColumn && (
           <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
         )}
       </ColumnHeader>
