@@ -1,6 +1,6 @@
 import { createAction, handleActions } from 'redux-actions'
 import { produce } from 'immer'
-import { set } from 'lodash'
+import { set, get } from 'lodash'
 
 export const actions = {
   createOrders: 'ORDERS/CREATE',
@@ -36,7 +36,7 @@ export default handleActions(
   {
     [actions.fetchOrders]: (state, { payload }) =>
       produce(state, draft => {
-        draft.page = payload
+        draft.page = get(payload, 'page', 1)
         draft.loading = true
       }),
     [actions.getUserOrders]: (state, { payload }) =>

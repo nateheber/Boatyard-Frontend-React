@@ -43,7 +43,7 @@ function* updateRequest(action) {
 function* getUserBoatRequest(action) {
   const boatClient = yield select(getBoatClient)
   const { payload: { userId, callback } } = action
-  const result = yield call(boatClient.list, 0, `&boat[user_id]=${userId}`)
+  const result = yield call(boatClient.list, { page: 0, 'boat[user_id]': userId })
   const boats = sortBy(get(result, 'data', []), 'id')
   const included = get(result, 'included', [])
   yield put({

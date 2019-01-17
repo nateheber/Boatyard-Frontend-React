@@ -67,8 +67,9 @@ export const TableHeader = ({ columns, sortColumn, isAsc, onSort, type = 'primar
       <ColumnHeader
         key={`col_${idx}`}
         onClick={() => {
-          if (type === 'primary')
-            onSort(col.value);
+          if (type === 'primary' && col.sort) {
+            onSort(col.sort);
+          }
         }}
         className={className(type)}
       >

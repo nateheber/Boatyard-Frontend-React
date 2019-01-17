@@ -1,6 +1,6 @@
 import { createAction, handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { isEmpty } from 'lodash';
+import { get } from 'lodash';
 
 export const actions = {
   createUsers: 'USERS/CREATE',
@@ -38,7 +38,7 @@ export default handleActions(
     [actions.fetchUsers]: (state, { payload }) =>
       produce(state, draft => {
         if (payload) {
-          draft.page = payload;
+          draft.page = payload.page;
         } else {
           draft.page = draft.page === 0 ? 1 : draft.page;
         }

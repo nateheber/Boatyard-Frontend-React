@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash'
 
 import { updateCreditCard, deleteCreditCard } from 'reducers/creditCards';
 
@@ -52,8 +53,8 @@ class ListModal extends React.Component {
   }
 }
 
-const mapStateToProps = ({ creditCard: { creditCards: { creditCards } } }) => ({
-  creditCards,
+const mapStateToProps = (state) => ({
+  creditCards: get(state, 'creditCard.creditCards.creditCards', [])
 })
 
 const mapDispatchToProps = {

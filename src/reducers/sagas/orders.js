@@ -15,8 +15,7 @@ function* createRequest(action) {
 
 function* fetchRequest(action) {
   const orderClient = yield select(getOrderClient);
-  const page = action.payload;
-  const result = yield call(orderClient.list, page);
+  const result = yield call(orderClient.list, action.payload);
   const orders = get(result, 'data', []);
   const included = get(result, 'included', []);
   const { perPage, total } = result;
@@ -38,7 +37,7 @@ function* fetchRequest(action) {
 function* getUserRequest(action) {
   const orderClient = yield select(getOrderClient)
   const { page, userId } = action.payload
-  const result = yield call(orderClient.list, page || 1, `&order[user_id]=${userId}`)
+  const result = yield call(orderClient.list, { page: page || 1, 'order[user_id]': userId })
   const orders = get(result, 'data', []);
   const included = get(result, 'included', []);
   const { perPage, total } = result;

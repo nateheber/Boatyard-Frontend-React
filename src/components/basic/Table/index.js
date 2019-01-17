@@ -21,28 +21,39 @@ const PaginatorWrapper = styled.div`
 export default class Table extends React.Component {
   constructor(props) {
     super(props);
-    const { columns } = props;
+    const { sort } = props;
     this.state = {
-      sortColumn: columns[0].value,
-      isAsc: false
+      sortColumn: sort ? sort.col : null,
+      isAsc: sort ? (sort.direction === 'asc' ? true : false) : false
     };
   }
+
   sort = col => {
+    const { onSortChange } = this.props;
     const { sortColumn, isAsc } = this.state;
-    if (col === sortColumn) {
-      this.setState({
-        isAsc: !isAsc
-      });
+    let direction = isAsc, column = sortColumn;
+    if (column && col === column) {
+      direction = !direction;
     } else {
-      this.setState({
-        sortColumn: col,
-        isAsc: false
+      column = col;
+      direction = false;
+    }
+    this.setState({
+      sortColumn: column,
+      isAsc: direction
+    });
+    if (onSortChange) {
+      onSortChange({
+        col: column,
+        direction: direction ? 'asc' : 'desc'
       });
     }
   };
+
   setVisitRef = ref => {
     this.visitRef = ref;
   };
+
   renderContent = () => {
     const { columns, records, type } = this.props;
     return (
@@ -59,9 +70,11 @@ export default class Table extends React.Component {
       </React.Fragment>
     );
   };
+
   renderLoading = () => {
     return false;
   };
+
   render() {
     const { columns, page, pageCount, onPageChange, type } = this.props;
     const { sortColumn, isAsc } = this.state;

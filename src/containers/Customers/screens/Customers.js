@@ -36,7 +36,7 @@ class Customers extends React.Component {
     this.props.history.push(`/customer-details/?customer=${customerId}`)
   };
   changePage = (page) => {
-    this.props.fetchUsers(page)
+    this.props.fetchUsers({ page })
   }
   getPageCount = () => {
     const { perPage, total } = this.props

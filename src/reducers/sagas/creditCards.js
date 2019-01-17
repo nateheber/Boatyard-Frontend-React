@@ -65,7 +65,13 @@ function* createRequest(action) {
 function* fetchRequest(action) {
   const userId = action.payload
   const creditCardClient = yield select(getCreditCardClient)
-  const results = yield call(creditCardClient.list, 1, isEmpty(userId) ? '' : `&creditCard[user_id]=${userId}`)
+  const filterParam = isEmpty(userId) ? {
+    page: 1,
+  } : {
+    page: 1,
+    user_id: userId
+  }
+  const results = yield call(creditCardClient.list, filterParam)
   const creditCards = sortBy(get(results, 'data', []), 'id')
   const included = get(results, 'included', [])
   yield put({

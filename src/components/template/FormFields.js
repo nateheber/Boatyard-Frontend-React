@@ -92,7 +92,7 @@ export default class FormFields extends React.Component {
 
   getFieldValues = () => this.state.value;
 
-  renderInputField = (field, type, mask, maskChar, errorMessage, options) => {
+  renderInputField = (field, type, mask, maskChar, placeholder, errorMessage, options) => {
     const { value, errors } = this.state;
     const fieldValue =
       type === 'check_box'
@@ -115,6 +115,7 @@ export default class FormFields extends React.Component {
             value={fieldValue}
             onChange={evt => this.onChangeValue(field, evt.target.value)}
             hasError={errorIdx >= 0}
+            placeholder={placeholder}
             errorMessage={errorMessage}
           />
         );
@@ -144,6 +145,7 @@ export default class FormFields extends React.Component {
             value={fieldValue}
             onChange={evt => this.onChangeValue(field, evt.target.value)}
             hasError={errorIdx >= 0}
+            placeholder={placeholder}
             errorMessage={errorMessage}
           />
         );
@@ -161,6 +163,7 @@ export default class FormFields extends React.Component {
               label,
               mask,
               maskChar,
+              placeholder,
               errorMessage,
               type,
               options,
@@ -176,6 +179,7 @@ export default class FormFields extends React.Component {
                   type,
                   mask,
                   maskChar,
+                  placeholder,
                   errorMessage,
                   options
                 )}

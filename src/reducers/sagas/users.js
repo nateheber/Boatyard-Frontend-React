@@ -28,7 +28,7 @@ function* createRequest(action) {
 function* fetchRequest(action) {
   const userClient = yield select(getUserClient);
   const page = yield select(getUsersPageNumber);
-  const result = yield call(userClient.list, page);
+  const result = yield call(userClient.list, {page});
   const users = get(result, 'data', []);
   const { perPage, total } = result;
   yield put({

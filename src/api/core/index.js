@@ -96,8 +96,28 @@ export class CRUDClient {
     this.apiUrl = `${apiBaseUrl}/${query}/`;
     this.client = createMainClient(authType);
   }
-  list = (page = 0, query = '') => {
-    return this.client.get(`${this.apiUrl}?page=${page}${query}`);
+  list = (params = null) => {
+    let paramsString = '';
+
+    if (params) {
+      params = {
+        page: 1,
+        ...params
+      };
+    } else {
+      params = {
+        page: 1
+      };
+    }
+
+    const array = [];
+    for  (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        array.push(`${key}=${params[key]}`);
+      }
+    }
+    paramsString = array.join('&');
+    return this.client.get(`${this.apiUrl}?${paramsString}`);
   };
   create = data => {
     return this.client.post(this.apiUrl, data);
