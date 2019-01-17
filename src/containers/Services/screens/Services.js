@@ -15,15 +15,34 @@ const Wrapper = styled.div`
 `;
 
 class Services extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      sort: { col: 'name', direction: 'asc' }
+    };
+  }
+
   componentDidMount() {
-    this.props.fetchServices(1);
+    this.loadPage(1);
     this.props.fetchCategories();
   }
 
   loadPage = (page) => {
     const { fetchServices } = this.props;
-    fetchServices(page);
+    const { sort } = this.state;
+    const params = {
+      page: page,
+      'service[sort]': sort.direction,
+      'service[order]': sort.col
+    };
+    fetchServices(params);
   };
+
+  onSortChange = (sort) => {
+    this.setState({ sort: sort }, () => {
+      this.loadPage(1);
+    });
+  }
 
   toDetails = serviceId => {
     this.props.history.push(`/service-details/?service=${serviceId}`);
@@ -36,11 +55,12 @@ class Services extends React.Component {
   render() {
     const columns = [
       { label: 'serivce name', value: 'name' },
-      { label: 'price type', value: 'costType' },
-      { label: 'price unit', value: 'costUnitText' }
+      { label: 'price', value: 'cost', prefix: '$' },
+      { label: 'price type', value: 'costType' }
     ];
 
     const { services, loading, page, perPage, total } = this.props;
+    const { sort } = this.state;
     const pageCount = Math.ceil(total/perPage);
     return (
       <Wrapper>
@@ -49,7 +69,8 @@ class Services extends React.Component {
           loading={loading}
           columns={columns}
           records={services}
-          sortColumn="order"
+          sort={sort}
+          onSortChange={this.onSortChange}
           page={page}
           pageCount={pageCount}
           onPageChange={this.loadPage}

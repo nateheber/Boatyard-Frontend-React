@@ -58,10 +58,10 @@ class ServiceDetails extends React.Component {
       this.state = {
         name: '',
         categoryId: `${categoryId}`,
+        cost: '',
         costType: null,
-        costUnitText: '',
         description: '',
-        taxRate: '0.00',
+        isTaxable: false,
         properties: {},
         propertyFields: []
       };
@@ -84,10 +84,10 @@ class ServiceDetails extends React.Component {
     const {
       name,
       categoryId,
+      cost,
       costType,
-      costUnitText,
       description,
-      taxRate
+      isTaxable
     } = this.state;
     const { categories } = this.props;
     const categoryOptions = categories.map(val => ({
@@ -147,11 +147,11 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'cost_type',
-        label: 'Price Type',
-        type: 'select_box',
-        options: priceTypes,
-        defaultValue: costType,
+        field: 'cost',
+        label: 'Price',
+        type: 'text_field',
+        defaultValue: cost,
+        placeholder: 'e.g., 35.00',
         xs: 12,
         sm: 12,
         md: 6,
@@ -159,11 +159,11 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'cost_unit_text',
-        label: 'Price Unit Text',
-        type: 'text_field',
-        defaultValue: costUnitText,
-        placeholder: 'i.e. /gal, /hr',
+        field: 'cost_type',
+        label: 'Price Type',
+        type: 'select_box',
+        options: priceTypes,
+        defaultValue: costType,
         xs: 12,
         sm: 12,
         md: 6,
@@ -182,10 +182,10 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'tax_rate',
-        label: 'Tax Rate',
-        type: 'text_field',
-        defaultValue: taxRate,
+        field: 'is_taxable',
+        label: 'Taxable',
+        type: 'check_box',
+        defaultValue: isTaxable,
         xs: 12,
         sm: 12,
         md: 6,
