@@ -32,7 +32,7 @@ export default handleActions(
   {
     [actions.fetchOrders]: (state, { payload }) =>
       produce(state, draft => {
-        draft.page = payload.page;
+        draft.page = payload;
         draft.loading = true;
       }),
     [actions.resetOrders]: state =>

@@ -101,14 +101,7 @@ export class Record extends React.Component {
         {hidingCols.map((col, idx) => (
           <Field className={show ? 'show' : 'hide'} key={`col_${idx}`}>
             <FieldLabel>{changeCase.upperCaseFirst(col.label)}</FieldLabel>
-            {col.isValue ? 
-              parseInt(get(record, col.value)) > 0 ?
-              <FieldValue>{col.prefix || ''}{get(record, col.value) || '_'}{col.suffix || ''}</FieldValue>
-              :
-              <FieldValue>_</FieldValue>
-            :
-              <FieldValue>{col.prefix || ''}{get(record, col.value) || '_'}{col.suffix || ''}</FieldValue>
-            }
+            <FieldValue>{get(record, col.value) || '_'}</FieldValue>
           </Field>
         ))}
       </Wrapper>

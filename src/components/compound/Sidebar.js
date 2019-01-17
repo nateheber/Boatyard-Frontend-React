@@ -41,36 +41,25 @@ const navItems = [
     activeImage: DashboardActiveIcon,
     mainImage: DashboardIcon,
     title: 'DASHBOARD',
-    link: '/dashboard/',
-    previlages: ['admin', 'provider']
+    link: '/dashboard/'
   },
   {
     activeImage: OrdersActiveIcon,
     mainImage: OrdersIcon,
     title: 'ORDERS',
-    link: '/orders/',
-    previlages: ['admin', 'provider']
+    link: '/orders/'
   },
   {
     activeImage: CalendarActiveIcon,
     mainImage: CalendarIcon,
     title: 'CALENDAR',
-    link: '/calendar/',
-    previlages: ['admin', 'provider']
-  },
-  {
-    activeImage: ProviderActiveIcon,
-    mainImage: ProviderIcon,
-    title: 'PROVIDERS',
-    link: '/providers/',
-    previlages: ['admin']
+    link: '/calendar/'
   },
   // {
   //   activeImage: InvoicesActiveIcon,
   //   mainImage: InvoicesIcon,
   //   title: 'INVOICES',
-  //   link: '/invoices/',
-  //   previlages: ['provider']
+  //   link: '/invoices/'
   // },
   {
     activeImage: MessageActiveIcon,
@@ -89,43 +78,102 @@ const navItems = [
         title: 'Templates',
         link: '/templates/'
       }
-    ],
-    previlages: ['admin', 'provider']
-  },
-  {
-    activeImage: AnalyticsActiveIcon,
-    mainImage: AnalyticsIcon,
-    title: 'ANALYTICS',
-    link: '/analytics/',
-    previlages: ['admin', 'provider']
-  },
-  {
-    activeImage: ServicesActiveIcon,
-    mainImage: ServicesIcon,
-    title: 'SERVICES',
-    link: '/services/',
-    previlages: ['provider']
-  },
-  {
-    activeImage: TeamActiveIcon,
-    mainImage: TeamIcon,
-    title: 'TEAM',
-    link: '/team/',
-    previlages: ['admin', 'provider']
-  },
-  {
-    activeImage: CustomersActiveIcon,
-    mainImage: CustomersIcon,
-    title: 'USERS',
-    link: '/users/',
-    previlages: ['admin']
+    ]
   },
   {
     activeImage: CustomersActiveIcon,
     mainImage: CustomersIcon,
     title: 'CUSTOMERS',
-    link: '/customers/',
-    previlages: ['provider']
+    link: '/customers/'
+  },
+  {
+    activeImage: AnalyticsActiveIcon,
+    mainImage: AnalyticsIcon,
+    title: 'ANALYTICS',
+    link: '/analytics/'
+  },
+  {
+    activeImage: TeamActiveIcon,
+    mainImage: TeamIcon,
+    title: 'TEAM',
+    link: '/team/'
+  },
+  {
+    activeImage: ServicesActiveIcon,
+    mainImage: ServicesIcon,
+    title: 'SERVICES',
+    link: '/services/'
+  }
+];
+
+const adminNavItems = [
+  {
+    activeImage: DashboardActiveIcon,
+    mainImage: DashboardIcon,
+    title: 'DASHBOARD',
+    link: '/dashboard/'
+  },
+  {
+    activeImage: OrdersActiveIcon,
+    mainImage: OrdersIcon,
+    title: 'ORDERS',
+    link: '/orders/'
+  },
+  {
+    activeImage: CalendarActiveIcon,
+    mainImage: CalendarIcon,
+    title: 'CALENDAR',
+    link: '/calendar/'
+  },
+  {
+    activeImage: ProviderActiveIcon,
+    mainImage: ProviderIcon,
+    title: 'PROVIDERS',
+    link: '/providers/'
+  },
+  {
+    activeImage: MessageActiveIcon,
+    mainImage: MessageIcon,
+    title: 'MESSAGES',
+    subItems: [
+      {
+        title: 'Inbox',
+        link: '/inbox/'
+      },
+      {
+        title: 'Quick Replies',
+        link: '/quick-replies/'
+      },
+      {
+        title: 'Templates',
+        link: '/templates/'
+      }
+    ]
+  },
+  {
+    activeImage: AnalyticsActiveIcon,
+    mainImage: AnalyticsIcon,
+    title: 'ANALYTICS',
+    link: '/analytics/'
+  },
+  {
+    activeImage: TeamActiveIcon,
+    mainImage: TeamIcon,
+    title: 'TEAM',
+    link: '/team/'
+  },
+  {
+    activeImage: CustomersActiveIcon,
+    mainImage: CustomersIcon,
+    title: 'USERS',
+    link: '/users/'
+  },
+  // will be removed
+  {
+    activeImage: ServicesActiveIcon,
+    mainImage: ServicesIcon,
+    title: 'SERVICES',
+    link: '/services/'
   }
 ];
 
@@ -163,10 +211,10 @@ const SideBarContainer = styled.div`
   transition-delay: 0s;
 `;
 
-const SideBar = ({ previlage, showSidebar, activePage, location }) => {
+const SideBar = ({ adminToken, showSidebar, activePage, location }) => {
   const pathname =
     location.pathname === '/' ? '/dashboard/' : location.pathname;
-  const navigation = navItems ;
+  const navigation = isEmpty(adminToken) ? navItems : adminNavItems;
   const activeParent = reduce(
     navigation,
     (result, item) => {
@@ -184,25 +232,21 @@ const SideBar = ({ previlage, showSidebar, activePage, location }) => {
   return (
     <SideBarContainer className={showSidebar ? 'show' : 'hide'}>
       <SideBarWrapper>
-        {navigation.map((item, idx) => {
-          if (item.previlages.lastIndexOf(previlage) > -1) {
-            return (
-              <SideBarItem
-                activePage={activePage}
-                isActive={item.title === activeParent}
-                {...item}
-                key={`nav_item_${idx}`}
-              />
-            );  
-          }
-        })}
+        {navigation.map((item, idx) => (
+          <SideBarItem
+            activePage={activePage}
+            isActive={item.title === activeParent}
+            {...item}
+            key={`nav_item_${idx}`}
+          />
+        ))}
       </SideBarWrapper>
     </SideBarContainer>
   );
 };
 
-const mapStateToProps = ({ auth: { previlage } }) => ({
-  previlage
+const mapStateToProps = ({ auth: { adminToken } }) => ({
+  adminToken
 });
 
 export default withRouter(connect(mapStateToProps)(SideBar));

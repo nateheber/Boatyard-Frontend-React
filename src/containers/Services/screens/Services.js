@@ -15,53 +15,27 @@ const Wrapper = styled.div`
 `;
 
 class Services extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      sort: { col: 'name', direction: 'asc' }
-    };
-  }
-
   componentDidMount() {
-    this.loadPage(1);
+    this.props.resetServices();
+    this.props.fetchServices();
     this.props.fetchCategories();
   }
-
-  loadPage = (page) => {
-    const { fetchServices } = this.props;
-    const { sort } = this.state;
-    const params = {
-      page: page,
-      'service[sort]': sort.direction,
-      'service[order]': sort.col
-    };
-    fetchServices(params);
+  loadMore = () => {
+    this.props.fetchServices();
   };
-
-  onSortChange = (sort) => {
-    this.setState({ sort: sort }, () => {
-      this.loadPage(1);
-    });
-  }
-
   toDetails = serviceId => {
     this.props.history.push(`/service-details/?service=${serviceId}`);
   };
-
   createService = () => {
     this.props.history.push(`/service-details/`);
   };
-
   render() {
     const columns = [
-      { label: 'serivce name', value: 'name', sort: 'name' },
-      { label: 'price', value: 'cost', sort: 'cost', prefix: '$', isValue: true },
-      { label: 'price type', value: 'costType', sort: 'cost_type' }
+      { label: 'serivce name', value: 'name' },
+      { label: 'label', value: 'label' },
+      { label: 'description', value: 'description' }
     ];
-
-    const { services, loading, page, perPage, total } = this.props;
-    const { sort } = this.state;
-    const pageCount = Math.ceil(total/perPage);
+    const { services, loading, hasMore } = this.props;
     return (
       <Wrapper>
         <ServiceHeader onAdd={this.createService} />
@@ -69,24 +43,20 @@ class Services extends React.Component {
           loading={loading}
           columns={columns}
           records={services}
-          sort={sort}
-          onSortChange={this.onSortChange}
-          page={page}
-          pageCount={pageCount}
-          onPageChange={this.loadPage}
+          sortColumn="order"
+          hasMore={hasMore}
           toDetails={this.toDetails}
+          loadMore={this.loadMore}
         />
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ service: { services, loading, page, perPage, total } }) => ({
+const mapStateToProps = ({ service: { services, loading, hasMore } }) => ({
   services,
   loading,
-  page,
-  perPage,
-  total
+  hasMore
 });
 
 const mapDispatchToProps = {

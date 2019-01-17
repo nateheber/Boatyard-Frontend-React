@@ -15,6 +15,7 @@ import {
 import { ServiceEditor } from '../components/ServiceEditor';
 
 import { updateServices, createServices } from 'reducers/services';
+import { selectCategory } from 'reducers/categories';
 import { setErrorState, resetErrorState } from 'reducers/appstate';
 
 const getDefaultValue = (type, field, orgProperties) => {
@@ -35,10 +36,14 @@ const getDefaultValue = (type, field, orgProperties) => {
   }
 };
 
+const ucFirst = string => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 class ServiceDetails extends React.Component {
   constructor(props) {
     super(props);
-    const { services, categories } = props;
+    const { services, categories, selectCategory } = props;
     const query = queryString.parse(props.location.search);
     const serviceId = query.service;
     let categoryId = get(categories, '[0].id', -1);
@@ -52,53 +57,53 @@ class ServiceDetails extends React.Component {
     } else {
       this.state = {
         name: '',
-        categoryId: `${categoryId}`,
-        cost: '',
-        costType: null,
+        subtitle: '',
         description: '',
-        isTaxable: false
+        secondaryDescription: '',
+        categoryId: `${categoryId}`,
+        label: '',
+        additionalDetails: '',
+        serviceDetails: '',
+        costs: '0.00',
+        deliveryFee: '0.00',
+        taxRate: '0.00',
+        icon: '',
+        properties: {},
+        propertyFields: []
       };
     }
+    selectCategory({ categoryId, callback: this.onReceiveCategory });
   }
-
+  getOriginalServiceProperties = () => {
+    const { services } = this.props;
+    const query = queryString.parse(this.props.location.search);
+    const serviceId = query.service;
+    if (serviceId) {
+      const serviceId = query.service;
+      const idx = findIndex(services, service => service.id === serviceId);
+      return get(services, `[${idx}].properties`, {});
+    }
+    return {};
+  };
   getMainInputOptions = () => {
     const {
       name,
-      categoryId,
-      cost,
-      costType,
+      subtitle,
       description,
-      isTaxable
+      secondaryDescription,
+      categoryId,
+      label,
+      additionalDetails,
+      costs,
+      deliveryFee,
+      taxRate,
+      icon
     } = this.state;
     const { categories } = this.props;
     const categoryOptions = categories.map(val => ({
       value: val.id,
-      label: startCase(val.name)
+      label: val.name
     }));
-
-    const priceTypes = [
-      {
-        value: null,
-        label: 'None'
-      },
-      {
-        value: 'Length',
-        label: 'Length'
-      },
-      {
-        value: 'Gallons',
-        label: 'Gallons'
-      },
-      {
-        value: 'Hour',
-        label: 'Hour'
-      },
-      {
-        value: 'Quantity',
-        label: 'Quantity'
-      }
-    ];
-
     return [
       {
         field: 'name',
@@ -128,11 +133,10 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'cost',
-        label: 'Price',
+        field: 'subtitle',
+        label: 'Subtitle',
         type: 'text_field',
-        defaultValue: cost,
-        placeholder: 'e.g., 35.00',
+        defaultValue: subtitle,
         xs: 12,
         sm: 12,
         md: 6,
@@ -140,11 +144,54 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'cost_type',
-        label: 'Price Type',
-        type: 'select_box',
-        options: priceTypes,
-        defaultValue: costType,
+        field: 'label',
+        label: 'Label',
+        type: 'text_field',
+        defaultValue: label,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'costs',
+        label: 'Costs',
+        type: 'text_field',
+        defaultValue: costs,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'deliveryFee',
+        label: 'Delivery Fee',
+        type: 'text_field',
+        defaultValue: deliveryFee,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'taxRate',
+        label: 'Tax Rate',
+        type: 'text_field',
+        defaultValue: taxRate,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'icon',
+        label: 'Icon',
+        type: 'text_field',
+        defaultValue: icon,
         xs: 12,
         sm: 12,
         md: 6,
@@ -163,10 +210,21 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'is_taxable',
-        label: 'Taxable',
-        type: 'check_box',
-        defaultValue: isTaxable,
+        field: 'secondaryDescription',
+        label: 'Secondary Description',
+        type: 'text_area',
+        defaultValue: secondaryDescription,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        field: 'additionalDetails',
+        label: 'Additional Details',
+        type: 'text_area',
+        defaultValue: additionalDetails,
         xs: 12,
         sm: 12,
         md: 6,
@@ -175,17 +233,60 @@ class ServiceDetails extends React.Component {
       }
     ];
   };
-
-  onSave = (mainValues) => {
+  onChangeCategory = categoryId => {
+    this.props.selectCategory({ categoryId, callback: this.onReceiveCategory });
+  };
+  onReceiveCategory = categoryInfo => {
+    const { included } = categoryInfo;
+    if (!isEmpty(included)) {
+      const orgProperties = this.getOriginalServiceProperties();
+      const properties = {};
+      const propertyFields = included.map(field => {
+        const { name, fieldType, required } = field.attributes;
+        const fieldLabel = camelCase(name);
+        const defVal = getDefaultValue(fieldType, fieldLabel, orgProperties);
+        set(properties, name, defVal);
+        const label = startCase(name);
+        return {
+          field: fieldLabel,
+          label: ucFirst(label),
+          type: fieldType,
+          required,
+          defaultValue: defVal,
+          errorMessage: `${ucFirst(label)} is required`,
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 6,
+          xl: 6
+        };
+      });
+      this.setState({
+        properties,
+        propertyFields
+      });
+    } else {
+      this.setState({
+        properties: {},
+        propertyFields: []
+      });
+    }
+  };
+  onSave = (mainValues, properties) => {
     if (this.state.id) {
       this.props.updateServices({
         id: this.state.id,
-        data: mainValues
-      }, () => this.props.history.push('/services/'));
+        data: {
+          ...mainValues,
+          properties
+        }
+      });
+      this.props.history.goBack();
     } else {
       this.props.createServices({
-        ...mainValues
-      }, () => this.props.history.push('/services/'));
+        ...mainValues,
+        properties
+      });
     }
   };
   onCancel = () => {
@@ -199,6 +300,7 @@ class ServiceDetails extends React.Component {
       <ServiceEditor
         mainFields={mainFields}
         propertyFields={propertyFields}
+        onChangeCategory={this.onChangeCategory}
         onCancel={this.onCancel}
         onSave={this.onSave}
         setErrorState={setErrorState}
@@ -210,15 +312,17 @@ class ServiceDetails extends React.Component {
 
 const mapStateToProps = ({
   service: { services },
-  category: { categories }
+  category: { categories, currentCategory }
 }) => ({
   services,
-  categories
+  categories,
+  currentCategory
 });
 
 const mapDispatchToProps = {
   updateServices,
   createServices,
+  selectCategory,
   setErrorState,
   resetErrorState
 };

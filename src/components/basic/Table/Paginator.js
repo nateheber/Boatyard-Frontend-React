@@ -119,7 +119,7 @@ export default class Paginator extends React.Component {
             <Button
               className={classNames({ active: page === startNumber + pos, 'before-active': page - 1 === startNumber + pos })}
               onClick={() => this.onChange(startNumber + pos)}
-              key={`button_pos_${pos}`}
+              key={`button_pos`}
             >
               {startNumber + pos}
             </Button>
