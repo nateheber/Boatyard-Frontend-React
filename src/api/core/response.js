@@ -15,3 +15,10 @@ export const responseInterceptor = client => {
   }, () => []);
   return client;
 };
+
+export const spreedlyResponseInterceptor = client => {
+  client.interceptors.response.use((response) => {
+    return response.data;
+  }, () => ({ error: true }));
+  return client;
+}

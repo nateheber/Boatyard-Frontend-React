@@ -84,6 +84,12 @@ export default class FormFields extends React.Component {
     return true;
   };
 
+  setErrorField = (fields) => {
+    this.setState({
+      errors: fields,
+    })
+  }
+
   getFieldValues = () => this.state.value;
 
   renderInputField = (field, type, mask, maskChar, errorMessage, options) => {

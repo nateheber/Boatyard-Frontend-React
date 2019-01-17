@@ -3,13 +3,62 @@ import { get, isEmpty, sortBy } from 'lodash';
 
 import { actions } from '../creditCards';
 import { getCreditCardClient } from './sagaSelectors';
+import { createSpreedlyClient } from 'api';
 
 function* createRequest(action) {
   const { data, callback } = action.payload
-  const creditCardClient = yield select(getCreditCardClient)
-  yield call(creditCardClient.create, data)
-  if (callback) {
-    yield call(callback)
+  const { cardNumber, country, cvv, year, month, firstName, lastName } = data;
+  const spreedlyClient = createSpreedlyClient();
+  const creditCardClient = yield select(getCreditCardClient);
+  const result = yield call(spreedlyClient.post, '', {
+    paymentMethod: {
+      creditCard: {
+        firstName,
+        lastName,
+        number: cardNumber,
+        verificationValue: cvv,
+        month: parseInt(month),
+        year: parseInt(year) + 2000,
+        country,
+      },
+    }
+  })
+  if (result.error) {
+    yield put({ type: actions.setError })
+  } else {
+    const {
+      transaction: {
+        paymentMethod: {
+          cardType: name,
+          month: expirationMonth,
+          year: expirationYear,
+          token: response,
+          lastFourDigits: last4,
+        }
+      }
+    } = result;
+    const { userId } = data;
+    const passData = userId ? {
+      userId,
+      name,
+      expirationMonth,
+      expirationYear,
+      response,
+      last4,
+      isDefault: false,
+    }: {
+      name,
+      expirationMonth,
+      expirationYear,
+      response,
+      last4,
+      isDefault: false,
+    }
+    yield call(creditCardClient.create, { creditCard: passData });
+    yield put({ type: actions.resetError })
+    if (callback) {
+      yield call(callback)
+    }
   }
 }
 

@@ -4,8 +4,11 @@ import { findIndex } from 'lodash'
 
 import { Section } from 'components/basic/InfoSection'
 
+import { resetError } from 'reducers/creditCards'
+
 import InfoSection from './InfoSection'
 import ListModal from './ListModal'
+import CreationModal from './CreationModal'
 
 class CreditCardSection extends React.Component {
   state = {
@@ -26,6 +29,7 @@ class CreditCardSection extends React.Component {
   }
 
   showCreationModal = () => {
+    this.props.resetError();
     this.setState({
       showListModal: false,
       showNewPaymentModal: true,
@@ -49,7 +53,8 @@ class CreditCardSection extends React.Component {
 
   render() {
     const card = this.getDefaultCard();
-    const { showPaymentModal } = this.state;
+    const { showPaymentModal, showNewPaymentModal } = this.state;
+    const { userId } = this.props;
     return (
       <React.Fragment>
         <Section title="Payment Methods" mode="view" onEdit={this.showListModal} >
@@ -61,6 +66,12 @@ class CreditCardSection extends React.Component {
           onNew={this.showCreationModal}
           refreshCards={this.props.onRefresh}
         />
+        <CreationModal
+          userId={userId}
+          open={showNewPaymentModal}
+          onClose={this.closeCreationModal}
+          refreshCards={this.props.onRefresh}
+        />
       </React.Fragment>
     )
   }
@@ -70,4 +81,8 @@ const mapStateToProps = ({ creditCard: { creditCards : {creditCards} } }) => ({
   creditCards
 })
 
-export default connect(mapStateToProps)(CreditCardSection)
+const mapDispatchToProps = {
+  resetError
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreditCardSection)

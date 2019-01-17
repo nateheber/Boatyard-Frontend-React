@@ -25,6 +25,9 @@ const PageContent = styled(Row)`
 `;
 
 class CustomerDetails extends React.Component {
+  state = {
+    customerId: -1,
+  }
   componentDidMount() {
     const query = queryString.parse(this.props.location.search)
     const customerId = query.customer
@@ -89,6 +92,7 @@ class CustomerDetails extends React.Component {
   }
   render() {
     const { currentUser, page } = this.props
+    const { customerId } = this.state;
     const id = get(currentUser, 'id', '')
     const customerName = `${get(currentUser, 'attributes.firstName')} ${get(currentUser, 'attributes.lastName')}`;
     const attributes = get(currentUser, 'attributes', {})
@@ -126,7 +130,7 @@ class CustomerDetails extends React.Component {
               </Section>
             </SectionGroup>
             <SectionGroup>
-              <CreditCardSection onRefresh={this.refreshCards} />
+              <CreditCardSection userId={customerId} onRefresh={this.refreshCards} />
             </SectionGroup>
           </Col>
         </PageContent>
