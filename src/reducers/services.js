@@ -39,7 +39,7 @@ const initialState = {
   services: [],
   filtered: [],
   loading: false,
-  page: 0,
+  page: 1,
   perPage: 20,
   total: 0
 };
@@ -48,7 +48,7 @@ export default handleActions(
   {
     [actions.fetchServices]: (state, { payload }) =>
       produce(state, draft => {
-        draft.page = payload.page;
+        draft.page = payload ? payload.page : 1;
         draft.loading = true;
       }),
     [actions.resetServices]: state =>
