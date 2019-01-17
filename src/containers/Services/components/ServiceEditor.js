@@ -1,5 +1,4 @@
 import React from 'react';
-import { isEmpty } from 'lodash';
 
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
