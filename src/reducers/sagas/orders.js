@@ -15,8 +15,7 @@ function* createRequest(action) {
 
 function* fetchRequest(action) {
   const orderClient = yield select(getOrderClient);
-  const page = action.payload;
-  const result = yield call(orderClient.list, page);
+  const result = yield call(orderClient.list, action.payload);
   const orders = get(result, 'data', []);
   const { perPage, total } = result;
   yield put({

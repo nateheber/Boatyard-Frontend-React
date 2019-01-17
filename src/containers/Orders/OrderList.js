@@ -27,7 +27,7 @@ const TableWrapper = styled.div`
 
 class OrderList extends React.Component {
   componentDidMount() {
-    this.props.fetchOrders(1);
+    this.props.fetchOrders({page: 1});
   }
   setOrderCreationRef = (ref) => {
     if (ref) {
@@ -42,7 +42,7 @@ class OrderList extends React.Component {
     return Math.ceil(total/perPage);
   }
   changePage = (page) => {
-    this.props.fetchOrders(page);
+    this.props.fetchOrders({page: page });
   }
   newOrder = () => {
     this.orderCreation.createOrder();

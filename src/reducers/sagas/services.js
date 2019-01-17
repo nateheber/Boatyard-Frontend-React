@@ -2,27 +2,37 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty } from 'lodash';
 
 import { actions } from '../services';
-import { getServiceClient, getServicesPageNumber } from './sagaSelectors';
+import { getServiceClient } from './sagaSelectors';
 
 function* createRequest(action) {
-  const serviceClient = yield select(getServiceClient);
-  yield call(serviceClient.create, action.payload);
-  yield put({
-    type: actions.fetchServices
-  });
+  const { resolve, reject } = action.meta;
+  try {
+    const serviceClient = yield select(getServiceClient);
+    yield call(serviceClient.create, action.payload);
+    yield put({
+      type: actions.fetchServices
+    });
+    if (resolve) resolve('success');
+  } catch(e) {
+    if (reject) reject(e);
+  }
 }
 
 function* fetchRequest(action) {
   const serviceClient = yield select(getServiceClient);
-  const nextPage = yield select(getServicesPageNumber);
-  const result = yield call(serviceClient.list, nextPage);
+  const result = yield call(serviceClient.list, action.payload);
   const services = get(result, 'data', []);
+  const { perPage, total } = result;
   yield put({
     type: actions.setServices,
-    payload: services.map(service => ({
-      id: service.id,
-      ...service.attributes
-    }))
+    payload: {
+      services: services.map(service => ({
+        id: service.id,
+        ...service.attributes
+      })),
+      perPage,
+      total
+    }
   });
 }
 
@@ -32,12 +42,18 @@ function* deleteRequest(action) {
 }
 
 function* updateRequest(action) {
-  const serviceClient = yield select(getServiceClient);
-  const { id, data } = action.payload;
-  yield call(serviceClient.update, id, data);
-  yield put({
-    type: actions.fetchServices
-  });
+  const { resolve, reject } = action.meta;
+  try {
+    const serviceClient = yield select(getServiceClient);
+    const { id, data } = action.payload;
+    yield call(serviceClient.update, id, data);
+    yield put({
+      type: actions.fetchServices
+    });
+    if (resolve) resolve('success');
+  } catch(e) {
+    if (reject) reject(e);
+  }
 }
 
 function* filterRequest(action) {
