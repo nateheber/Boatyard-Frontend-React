@@ -17,14 +17,17 @@ export const updateBoats = createAction(actions.updateBoats);
 export const deleteBoats = createAction(actions.deleteBoats);
 
 const initialState = {
-  boats: []
+  boats: [],
+  included: []
 };
 
 export default handleActions(
   {
     [actions.setBoats]: (state, { payload }) =>
       produce(state, draft => {
-        draft.boats = payload;
+        const { boats, included } = payload
+        draft.boats = boats
+        draft.included = included
       })
   },
   initialState

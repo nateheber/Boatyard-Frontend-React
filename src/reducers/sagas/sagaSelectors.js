@@ -4,6 +4,7 @@ export const getAuthToken = state => state.auth.authToken;
 export const getProviders = state => state.provider.providers;
 export const getManagements = state => state.management.managements;
 export const getUsers = state => state.user.users;
+export const getUsersPageNumber = state => state.user.page;
 export const getServicesPageNumber = state => state.service.nextPage;
 export const getOrdersPageNumber = state => state.order.nextPage;
 
@@ -97,6 +98,32 @@ export const getProviderClient = state => {
       return APIGenerator.createProviderClient('basic');
   }
 };
+
+export const getPaymentClient = state => {
+  switch (state.auth.previlage) {
+    case 'basic':
+      return APIGenerator.createPaymentClient('basic');
+    case 'admin':
+      return APIGenerator.createPaymentClient('admin');
+    case 'provider':
+      return APIGenerator.createPaymentClient('provider');
+    default:
+      return APIGenerator.createPaymentClient('basic');
+  }
+}
+
+export const getCreditCardClient = state => {
+  switch (state.auth.previlage) {
+    case 'basic':
+      return APIGenerator.createCreditCardClient('basic');
+    case 'admin':
+      return APIGenerator.createCreditCardClient('admin');
+    case 'provider':
+      return APIGenerator.createCreditCardClient('provider');
+    default:
+      return APIGenerator.createCreditCardClient('basic');
+  }
+}
 
 export const getCustomApiClient = state => {
   switch (state.auth.previlage) {

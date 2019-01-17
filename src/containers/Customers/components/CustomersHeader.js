@@ -9,7 +9,7 @@ import { OrangeButton } from 'components/basic/Buttons';
 import { ActionDropdown } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
-export const CustomersHeader = ({ onAction }) => (
+export const CustomersHeader = ({ onAction, onNew }) => (
   <SectionHeaderWrapper>
     <LeftPart>
       <PageTitle>Customers</PageTitle>
@@ -31,7 +31,7 @@ export const CustomersHeader = ({ onAction }) => (
       />
     </LeftPart>
     <RightPart>
-      <OrangeButton className="desktop">ADD NEW CUSTOMER</OrangeButton>
+      <OrangeButton className="desktop" onClick={onNew}>ADD NEW CUSTOMER</OrangeButton>
     </RightPart>
   </SectionHeaderWrapper>
 );

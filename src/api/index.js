@@ -1,4 +1,8 @@
-import { CRUDClient, MultiLayerCRUDClient, NormalClient } from './core';
+import { CRUDClient, MultiLayerCRUDClient, NormalClient, SpreedlyClient } from './core';
+
+export const createSpreedlyClient = () => {
+  return new SpreedlyClient();
+}
 
 export const createCategoryClient = authType => {
   return new CRUDClient('services/categories', authType);

@@ -8,13 +8,14 @@ const Btn = styled.div`
   float: right;
   display: inline-block;
   margin-top: 10px;
+  cursor: pointer;
 `
 const Img = styled.img`
   width: 14px;
   object-fit: contain
 `
 
-export default ({ onClick }) => (
+export const EditButton = ({ onClick }) => (
   <Btn onClick={onClick}>
     <Img src={Edit} />
   </Btn>

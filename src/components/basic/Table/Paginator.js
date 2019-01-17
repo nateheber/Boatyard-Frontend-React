@@ -15,7 +15,7 @@ const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-radius: 5px;
+  border-radius: 3px;
   overflow: hidden;
 `
 

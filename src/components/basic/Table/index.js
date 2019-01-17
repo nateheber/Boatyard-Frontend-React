@@ -55,11 +55,12 @@ export default class Table extends React.Component {
   };
 
   renderContent = () => {
-    const { columns, records } = this.props;
+    const { columns, records, type } = this.props;
     return (
       <React.Fragment>
         {records.map((rec, idx) => (
           <Record
+            type={type}
             toDetails={() => this.props.toDetails(rec.id)}
             columns={columns}
             record={rec}
@@ -75,11 +76,12 @@ export default class Table extends React.Component {
   };
 
   render() {
-    const { columns, page, pageCount, onPageChange } = this.props;
+    const { columns, page, pageCount, onPageChange, type } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
       <Wrapper>
         <TableHeader
+          type={type}
           columns={columns}
           sortColumn={sortColumn}
           isAsc={isAsc}
@@ -87,7 +89,7 @@ export default class Table extends React.Component {
         />
         {this.renderContent()}
         {
-          page && pageCount && (
+          pageCount > 1 && (
             <PaginatorWrapper>
               <Paginator page={page} totalPages={pageCount} onChange={onPageChange} />
             </PaginatorWrapper>

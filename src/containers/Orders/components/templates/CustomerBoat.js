@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Section from '../basic/Section';
+import { Section } from 'components/basic/InfoSection';
 import CustomerInfo from '../infoSections/CustomerInfo';
 import BoatInfo from '../infoSections/BoatInfo';
 

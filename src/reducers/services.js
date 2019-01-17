@@ -1,5 +1,6 @@
 import { createAction, handleActions } from 'redux-actions';
 import { produce } from 'immer';
+import { get } from 'lodash';
 
 export const actions = {
   createServices: 'SERVICES/CREATE',
@@ -48,7 +49,7 @@ export default handleActions(
   {
     [actions.fetchServices]: (state, { payload }) =>
       produce(state, draft => {
-        draft.page = payload ? payload.page : 1;
+        draft.page = get(payload, 'page', 1);
         draft.loading = true;
       }),
     [actions.resetServices]: state =>
