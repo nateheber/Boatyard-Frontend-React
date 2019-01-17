@@ -1,4 +1,4 @@
-import { get, filter, forEach, findIndex } from 'lodash';
+import { get, filter, forEach, findIndex, sortBy } from 'lodash';
 
 const currentOrderSelector = state => state.order.currentOrder
 
@@ -11,7 +11,6 @@ const lineItemsSelector = state => {
   forEach(lineItems, (lineItem) => {
     const includedIdx = findIndex(lineItemDetail, detail => detail.id === lineItem.id && detail.type === lineItem.type);
     const attributes= get(lineItemDetail, `[${includedIdx}].attributes`);
-    console.log(attributes);
     const serviceInfo = get(lineItemDetail, `[${includedIdx}].relationships.service.data`);
     const serviceIdx = findIndex(included, info => info.type === serviceInfo.type && info.id === serviceInfo.id);
     const serviceAttributes = get(included, `[${serviceIdx}].attributes`);
@@ -21,7 +20,7 @@ const lineItemsSelector = state => {
       serviceAttributes,
     })
   })
-  return data
+  return data;
 }
 
 export const orderSelector = state => ({

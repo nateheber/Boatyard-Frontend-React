@@ -10,7 +10,7 @@ import { fetchLineItems } from 'reducers/lineItems'
 import { updateBoats } from 'reducers/boats'
 import { orderSelector } from 'reducers/selector/order'
 
-import SectionGroup from './components/basic/SectionGroup'
+import { SectionGroup } from 'components/basic/InfoSection'
 
 import CustomerBoat from './components/templates/CustomerBoat'
 import LineItemSection from './components/templates/LineItemSection'

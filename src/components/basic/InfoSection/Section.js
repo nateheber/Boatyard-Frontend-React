@@ -8,7 +8,7 @@ const Content = styled.div`
   background-color: #fff;
 `
 
-export default ({ title, mode, onEdit, children }) => (
+export const Section = ({ title, mode, onEdit, children }) => (
   <div>
     <SectionHeader title={title} mode={mode} onEdit={onEdit} />
     <Content>

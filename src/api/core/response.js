@@ -7,10 +7,18 @@ export const responseInterceptor = client => {
       return ({
         perPage,
         total,
-        data: get(response.data, 'data', [])
+        data: get(response.data, 'data', []),
+        included: get(response.data, 'included', [])
       });
     }
     return response.data;
   }, () => []);
   return client;
 };
+
+export const spreedlyResponseInterceptor = client => {
+  client.interceptors.response.use((response) => {
+    return response.data;
+  }, () => ({ error: true }));
+  return client;
+}

@@ -1,9 +1,9 @@
 import axios from 'axios';
 import applyCaseConverter from 'axios-case-converter';
 
-import { apiBaseUrl } from '../config';
+import { apiBaseUrl, spreedlyApiToken, spreedlyApiUrl } from '../config';
 import { authInterceptor } from './auth';
-import { responseInterceptor } from './response';
+import { responseInterceptor, spreedlyResponseInterceptor } from './response';
 
 export const createAuthClient = () => {
   const client = responseInterceptor(
@@ -35,6 +35,40 @@ export const createMainClient = authType => {
   );
   return client;
 };
+
+export const createSpreedlyClient = () => {
+  const client = spreedlyResponseInterceptor(
+    applyCaseConverter(
+      axios.create({
+        header: {
+          'Content-Type': 'application/json',
+          'Cache-control': 'no-cache',
+          'Authorization': `Bearer ${spreedlyApiToken}`
+        }
+      })
+    )
+  )
+  return client;
+}
+
+export class SpreedlyClient {
+  client = undefined;
+  constructor() {
+    this.client = createSpreedlyClient();
+  }
+  get = url => {
+    return this.client.get(`${spreedlyApiUrl}${url}`);
+  };
+  post = (url, data) => {
+    return this.client.post(`${spreedlyApiUrl}${url}`, data);
+  };
+  patch = (url, data) => {
+    return this.client.patch(`${spreedlyApiUrl}${url}`, data);
+  };
+  delete = (url, data) => {
+    return this.client.delete(`${spreedlyApiUrl}${url}`, data);
+  };
+}
 
 export class NormalClient {
   client = undefined;

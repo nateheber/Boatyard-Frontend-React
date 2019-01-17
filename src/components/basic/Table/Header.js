@@ -1,7 +1,8 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
+import className from 'classnames'
 
-import ArrBlueIcon from '../../../resources/arrow-blue.png';
+import ArrBlueIcon from '../../../resources/arrow-blue.png'
 
 const Wrapper = styled.div`
   display: flex;
@@ -11,7 +12,7 @@ const Wrapper = styled.div`
   @media (max-width: 843px) {
     display: none;
   }
-`;
+`
 const ColumnHeader = styled.div`
   display: flex;
   flex: 1;
@@ -37,7 +38,16 @@ const ColumnHeader = styled.div`
   }
   white-space: nowrap;
   text-transform: uppercase;
-`;
+  &.secondary {
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 20px 8px;
+    padding-left: 30px;
+    background-color: rgb(249, 249, 249);
+    height: auto;
+  }
+`
 const ArrBlue = styled.span`
   margin-left: 2px;
   background-image: url(${ArrBlueIcon});
@@ -49,24 +59,25 @@ const ArrBlue = styled.span`
   &.ascending {
     transform: rotate(180deg);
   }
-`;
+`
 
-export const TableHeader = ({ columns, sortColumn, isAsc, onSort }) => (
-  <Wrapper>
+export const TableHeader = ({ columns, sortColumn, isAsc, onSort, type = 'primary' }) => (
+  <Wrapper className={className(type)}>
     {columns.map((col, idx) => (
       <ColumnHeader
         key={`col_${idx}`}
         onClick={() => {
-          if (col.sort) {
+          if (type === 'primary' && col.sort) {
             onSort(col.sort);
           }
         }}
+        className={className(type)}
       >
         {col.label}
-        {col.sort === sortColumn && (
+        {col.value === sortColumn && type === 'primary' && (
           <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
         )}
       </ColumnHeader>
     ))}
   </Wrapper>
-);
+)

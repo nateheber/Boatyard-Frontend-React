@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import EditButton from './EditButton';
+import { EditButton } from 'components/basic/Buttons';
 
 const Wrapper = styled.div`
   align-items: center;

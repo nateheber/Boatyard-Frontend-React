@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import EditImage from '../../../../resources/edit.svg';
+import { EditButton } from 'components/basic/Buttons';
 
 const Wrapper = styled.div``;
 
@@ -12,7 +12,8 @@ const Field = styled.div`
 const EditWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
 `
 
 const Label = styled.div`
@@ -28,19 +29,6 @@ const FieldValue = styled.div`
   font-size: 14px;
 `;
 
-const EditButtonIcon = styled.img`
-  width: 17px;
-  height: 17px;
-`
-
-const EditButton = styled.a`
-  color: transparent;
-  background: transparent;
-  &:active {
-    outline: none;
-  }
-`
-
 export default ({ name, make, model, length, onEdit }) => (
   <Wrapper>
     <EditWrapper>
@@ -48,9 +36,7 @@ export default ({ name, make, model, length, onEdit }) => (
         <Label>BOAT NAME</Label>
         <FieldValue>{name}</FieldValue>
       </Field>
-      <EditButton onClick={onEdit}>
-        <EditButtonIcon src={EditImage} />
-      </EditButton>
+      <EditButton onClick={onEdit} />
     </EditWrapper>
     <Field>
       <Label>BOAT MAKE</Label>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { reduce, findIndex, isEmpty } from 'lodash';
+import { reduce, findIndex } from 'lodash';
 import { withRouter } from 'react-router-dom';
 
 import { SideBarWrapper, SideBarItem } from '../basic/Navigation';
@@ -15,8 +15,8 @@ import OrdersIcon from '../../resources/shopping_cart.svg';
 import CalendarActiveIcon from '../../resources/calendar_active.svg';
 import CalendarIcon from '../../resources/calendar.svg';
 
-import InvoicesActiveIcon from '../../resources/money_bag_active.svg';
-import InvoicesIcon from '../../resources/money_bag.svg';
+// import InvoicesActiveIcon from '../../resources/money_bag_active.svg';
+// import InvoicesIcon from '../../resources/money_bag.svg';
 
 import ProviderActiveIcon from '../../resources/provider_icon_active.svg';
 import ProviderIcon from '../../resources/provider_icon.svg';
@@ -195,6 +195,7 @@ const SideBar = ({ previlage, showSidebar, activePage, location }) => {
               />
             );  
           }
+          return null;
         })}
       </SideBarWrapper>
     </SideBarContainer>

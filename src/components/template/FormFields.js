@@ -84,6 +84,12 @@ export default class FormFields extends React.Component {
     return true;
   };
 
+  setErrorField = (fields) => {
+    this.setState({
+      errors: fields,
+    })
+  }
+
   getFieldValues = () => this.state.value;
 
   renderInputField = (field, type, mask, maskChar, placeholder, errorMessage, options) => {
@@ -94,6 +100,8 @@ export default class FormFields extends React.Component {
         : get(value, field) || '';
     const errorIdx = findIndex(errors, errorField => errorField === field);
     switch (type) {
+      case 'dummy':
+        return false;
       case 'check_box':
         return (
           <CheckBox
