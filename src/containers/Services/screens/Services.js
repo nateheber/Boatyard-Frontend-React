@@ -54,9 +54,9 @@ class Services extends React.Component {
 
   render() {
     const columns = [
-      { label: 'serivce name', value: 'name' },
-      { label: 'price', value: 'cost', prefix: '$' },
-      { label: 'price type', value: 'costType' }
+      { label: 'serivce name', value: 'name', sort: 'name' },
+      { label: 'price', value: 'cost', sort: 'cost', prefix: '$', isValue: true },
+      { label: 'price type', value: 'costType', sort: 'cost_type' }
     ];
 
     const { services, loading, page, perPage, total } = this.props;
