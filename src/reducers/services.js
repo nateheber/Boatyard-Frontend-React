@@ -48,7 +48,7 @@ export default handleActions(
   {
     [actions.fetchServices]: (state, { payload }) =>
       produce(state, draft => {
-        draft.page = payload;
+        draft.page = payload.page;
         draft.loading = true;
       }),
     [actions.resetServices]: state =>

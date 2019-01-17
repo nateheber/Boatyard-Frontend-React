@@ -20,8 +20,7 @@ function* createRequest(action) {
 
 function* fetchRequest(action) {
   const serviceClient = yield select(getServiceClient);
-  const page = action.payload;
-  const result = yield call(serviceClient.list, page);
+  const result = yield call(serviceClient.list, action.payload);
   const services = get(result, 'data', []);
   const { perPage, total } = result;
   yield put({
