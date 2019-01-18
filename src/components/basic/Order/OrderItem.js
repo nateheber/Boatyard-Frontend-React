@@ -71,6 +71,7 @@ function getValue(column, item) {
     const arr = field.split('.');
     let part = item;
     arr.map(key => {
+      if (!part) return '_';
       part = part[key];
     });
     if(part && part.length > 0) {
