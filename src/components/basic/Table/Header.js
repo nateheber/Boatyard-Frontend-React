@@ -74,7 +74,7 @@ export const TableHeader = ({ columns, sortColumn, isAsc, onSort, type = 'primar
         className={className(type)}
       >
         {col.label}
-        {col.value === sortColumn && type === 'primary' && (
+        {col.sort === sortColumn && type === 'primary' && (
           <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
         )}
       </ColumnHeader>
