@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { Row, Col } from 'react-flexbox-grid'
 
 import { Section } from 'components/basic/InfoSection'
+import { TextArea } from 'components/basic/Input'
+import { HollowButton } from 'components/basic/Buttons'
 
 import OnClickEditor from '../basic/OnClickEditor'
 import TaxEditor from '../basic/TaxEditor'
@@ -16,6 +18,14 @@ const Label = styled.div`
     font-weight: bold;
     color: #07384b;
   }
+`
+
+const FieldLabel = styled.div`
+  color: #004258;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
 `
 
 const Value = styled.div`
@@ -32,34 +42,53 @@ const Value = styled.div`
 export default class OrderReviewSection extends React.Component {
   constructor(props) {
     super(props)
-    const { subtotal, taxRate, deposit, discount, taxAmount, total } = props
-    this.state = { subtotal, taxRate, deposit, discount, taxAmount, total }
+    const { subtotal, taxRate, deposit, discount, taxAmount, total, comments } = props
+    this.state = { subtotal, taxRate, deposit, discount, taxAmount, total, comments }
+  }
+
+  updatePriceInfo = () => {
+    const { comments, ...priceInfo } = this.state;
+    this.props.updateOrder(priceInfo);
   }
 
   onChangeTax = (taxRate) => {
     const { subtotal } = this.props;
     const taxAmount = parseFloat(taxRate) * parseFloat(subtotal) / 100
-    const total = parseFloat(taxAmount) + parseFloat(subtotal)
-    this.setState({ taxRate, taxAmount, total }, () => { this.props.updateOrder(this.state) })
+    const total = taxAmount + parseFloat(subtotal)
+    this.setState({ taxRate, taxAmount, total }, this.updatePriceInfo)
   }
 
   onChangeDeposit = (deposit) => {
-    this.setState({ deposit }, () => { this.props.updateOrder(this.state) })
+    this.setState({ deposit }, this.updatePriceInfo)
   }
 
   onChangeDiscount = (discount) => {
     const { subtotal, taxAmount } = this.state;
     const total = parseFloat(subtotal) + parseFloat(taxAmount) - parseFloat(discount)
-    console.log(discount, total, subtotal, taxAmount)
-    this.setState({ discount, total }, () => { this.props.updateOrder(this.state) })
+    this.setState({ discount, total }, this.updatePriceInfo)
+  }
+
+  onChangeComment = (comments) => {
+    this.setState({ comments })
+  }
+
+  submitComments = () => {
+    const { comments } = this.state;
+    this.props.updateOrder({ comments });
   }
 
   render() {
-    const { taxRate, deposit, discount, subtotal, total, taxAmount } = this.state;
+    const { taxRate, deposit, discount, subtotal, total, taxAmount, comments } = this.state;
     return (
       <Section>
         <Row>
           <Col sm={12} md={6}>
+            <FieldLabel>ORDER NOTES</FieldLabel>
+            <TextArea
+              value={comments}
+              onChange={this.onChangeComment}
+            />
+            <HollowButton onClick={this.submitComments}>COMMENT INTERNALLY</HollowButton>
           </Col>
           <Col sm={12} md={6}>
             <Row>

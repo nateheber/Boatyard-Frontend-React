@@ -7,7 +7,7 @@ import SectionHeader from './SectionHeader';
 
 const Content = styled.div`
   padding: 30px 20px;
-  background-color: #fafafa;
+  background-color: #FFF;
   &.hasBorder {
     border-top: 1px solid #e6e6e6;
     padding-top: 10px;

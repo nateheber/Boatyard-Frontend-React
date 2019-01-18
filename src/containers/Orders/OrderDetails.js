@@ -113,8 +113,9 @@ class OrderDetails extends React.Component {
     const taxAmount = get(currentOrder, 'data.attributes.taxAmount')
     const discount = get(currentOrder, 'data.attributes.discount')
     const deposit = get(currentOrder, 'data.attributes.deposit')
+    const comments = get(currentOrder, 'data.attributes.comments')
     return ({
-      total, subtotal, taxRate, discount, deposit, taxAmount
+      total, subtotal, taxRate, discount, deposit, taxAmount, comments
     })
   }
 
@@ -147,7 +148,7 @@ class OrderDetails extends React.Component {
 
   updateOrder = (data) => {
     const { orderId } = this.state;
-    this.props.updateOrders({ id: orderId, data })
+    this.props.updateOrders({ id: orderId, data})
   }
 
   render() {
