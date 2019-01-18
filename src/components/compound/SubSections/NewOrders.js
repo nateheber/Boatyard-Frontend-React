@@ -29,10 +29,10 @@ class NewOrders extends React.Component {
     const columns = [
       { label: 'ORDER', value: 'id', isTitle: true, link: true },
       { label: 'CUSTOMER', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
-      { label: 'ORDER STATUS', value: 'status' },
+      { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' },
       { label: 'BOAT MAKE', value: 'relationships.boat.attributes.make' },
       { label: 'BOAT MODEL', value: 'relationships.boat.attributes.model' },
-      { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' }
+      { label: 'ORDER STATUS', value: 'status' }
     ];
 
     return (
