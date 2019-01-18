@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,6 +31,10 @@ const Field = styled.div`
     color: #004258;
     font-weight: bold;
   }
+  > a {
+    text-decoration: none;
+    color: #004258;  
+  }
   @media (max-width: 778px) {
     width: auto;
     display: flex;
@@ -53,34 +58,46 @@ const THeader = styled.div`
   }
 `;
 
+function getValue(column, item) {
+  if (column.value === 'id') {
+    if (item.state === 'draft') {
+      return 'New Order';
+    }
+    return `Order #${item.id}`;    
+  }
+  const fields = column.value.split('/');
+  let value = '';
+  fields.map(field => {
+    const arr = field.split('.');
+    let part = item;
+    arr.map(key => {
+      part = part[key];
+    });
+    if(part && part.length > 0) {
+      value = value.length > 0 ? `${value} ${part}` : part;
+    }
+    
+  });
+  if(column.isValue && parseInt(value) === 0) {
+    return '';
+  }
+  return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
+}
+
 export const OrderItem = props => {
-  const { title, customer, orderStatus, boatMake, boatModel, boatName } = props;
+  const { columns, item } = props;
   return (
     <Wrapper>
-      <Field className="title">
-        <THeader>ORDER</THeader>
-        {title}
-      </Field>
-      <Field>
-        <THeader>CUSTOMER</THeader>
-        {customer}
-      </Field>
-      <Field>
-        <THeader>ORDER STATUS</THeader>
-        {orderStatus}
-      </Field>
-      <Field>
-        <THeader>BOAT MAKE</THeader>
-        {boatMake}
-      </Field>
-      <Field>
-        <THeader>BOAT MODEL</THeader>
-        {boatModel}
-      </Field>
-      <Field>
-        <THeader>BOAT NAME</THeader>
-        {boatName}
-      </Field>
+      {columns.map((column, idx) => {
+        return (
+          <Field className={column.isTitle && 'title'} key={`field_${idx}`}>
+            <THeader>{column.label}</THeader>
+            {column.link && <Link to={`/order-details/?order=${item.id}`}>{getValue(column, item)}</Link>}
+            {!column.link && getValue(column, item)}
+          </Field>
+        );
+      })
+      }
     </Wrapper>
   );
 };

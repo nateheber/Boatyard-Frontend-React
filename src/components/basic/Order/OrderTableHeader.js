@@ -24,15 +24,10 @@ const THeader = styled.div`
   text-transform: uppercase;
 `;
 
-export const OrderTableHeader = props => {
-  return (
-    <Wrapper>
-      <THeader>ORDER</THeader>
-      <THeader>CUSTOMER</THeader>
-      <THeader>ORDER STATUS</THeader>
-      <THeader>BOAT MAKE</THeader>
-      <THeader>BOAT MODEL</THeader>
-      <THeader>BOAT NAME</THeader>
-    </Wrapper>
-  );
-};
+export const OrderTableHeader = ({ columns }) => (
+  <Wrapper>
+    {columns.map((column, idx) => (
+      <THeader key={`header_${idx}`}>{column.label}</THeader>
+    ))}
+  </Wrapper>
+);
