@@ -1,16 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-
+import { withRouter } from 'react-router-dom';
 
 import { fetchOrders } from 'reducers/orders';
 import { NewOrderSection } from 'components/basic/SubSection';
 import { OrderTable } from 'components/basic/Order';
 import { refinedOrdersSelector } from 'reducers/selector/order'
+import { HollowButton } from 'components/basic/Buttons'
 
 const Wrapper = styled.div`
   background-color: #fff;
   margin: 15px;
+  .btn-view-all {
+    margin: 15px;
+    color: #004258;
+  }
 `;
 
 class NewOrders extends React.Component {
@@ -20,7 +25,7 @@ class NewOrders extends React.Component {
   }
 
   render() {
-    const { orders, total } = this.props;
+    const { orders, total, history } = this.props;
     const columns = [
       { label: 'ORDER', value: 'id', isTitle: true, link: true },
       { label: 'CUSTOMER', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
@@ -37,6 +42,9 @@ class NewOrders extends React.Component {
         columns={columns}
         items={orders}
       />
+      <HollowButton className="btn-view-all" onClick={() => history.push('/orders/')}>
+        VIEW ALL
+      </HollowButton>
     </Wrapper>  
     );
   }
@@ -51,7 +59,7 @@ const mapDispatchToProps = {
   fetchOrders
 };
 
-export default connect(
+export default withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
-  )(NewOrders);
+  )(NewOrders));
