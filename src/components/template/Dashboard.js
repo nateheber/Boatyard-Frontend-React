@@ -1,13 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import {
   AssignedOrders,
-  NewOrders,
   ScheduledOrders,
   OverdueInvoices,
   MonthlyRevenue
 } from 'components/compound/SubSections';
+import NewOrders from 'components/compound/SubSections/NewOrders';
+
 
 import { DashboardHeader } from 'components/compound/SectionHeader';
 
@@ -38,12 +40,13 @@ const RightPart = styled.div`
 
 class Dashboard extends React.Component {
   render() {
+    const { previlage } = this.props;
     return (
       <Container>
         <DashboardHeader onNewOrder={this.newOrder} />
         <Wrapper>
           <LeftPart>
-            <NewOrders />
+            {previlage === 'provider' && <NewOrders />}
             <ScheduledOrders />
             <AssignedOrders />
           </LeftPart>
@@ -57,4 +60,8 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+const mapStateToProps = ({ auth: { previlage } }) => ({
+  previlage
+});
+
+export default connect(mapStateToProps)(Dashboard);
