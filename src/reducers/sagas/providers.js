@@ -39,6 +39,25 @@ function* fetchRequest(action) {
   });
 }
 
+function* filterRequest(action) {
+  const { keyword, resolve, reject } = action.payload;
+  try {
+    const result = yield call(adminApiClient.list, { page: 1, 'providers[name]': keyword });
+    const providers = get(result, 'data', []);
+    yield put({
+      type: actions.setFilteredData,
+      payload: providers
+    })
+    if (resolve) {
+      yield call(resolve, providers)
+    }
+  } catch(err) {
+    if (reject) {
+      yield call(reject)
+    }
+  }
+}
+
 function* selectRequest(action) {
   const escalationApiClient = yield select(getCustomApiClient);
   if (!action.payload) {
@@ -106,4 +125,5 @@ export default function* Profile() {
   yield takeEvery(actions.selectProvider, selectRequest);
   yield takeEvery(actions.deleteProvider, deleteRequest);
   yield takeEvery(actions.updateProvider, updateRequest);
+  yield takeEvery(actions.filterProviders, filterRequest);
 }

@@ -11,6 +11,7 @@ const DropdownMenu = styled.ul`
   &.show {
     display: block;
   }
+  z-index: 100;
   position: absolute;
   font-family: 'Source Sans Pro', sans-serif;
   display: none;

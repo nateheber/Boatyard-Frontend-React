@@ -16,6 +16,7 @@ import CustomerBoat from './components/templates/CustomerBoat'
 import LineItemSection from './components/templates/LineItemSection'
 import OrderSumarySection from './components/templates/OrderSumarySection'
 import OrderReviewSection from './components/templates/OrderReviewSection'
+import OrderDetailHeader from './components/templates/OrderDetailHeader'
 
 import BoatEditor from './components/modals/EditBoatModal'
 
@@ -158,32 +159,35 @@ class OrderDetails extends React.Component {
     const { lineItems } = this.props;
     const summaryInfo = this.getSummaryInfo();
     return (
-      <Wrapper>
-        <Row>
-          <Col md={12} sm={12} xs={12} lg={8} xl={8}>
-            <SectionGroup>
-              <OrderSumarySection lineItem={lineItems[0]} />
-              <LineItemSection orderId={orderId} providerId={providerId} />
-              <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
-            </SectionGroup>
-          </Col>
-          <Col md={12} sm={12} xs={12} lg={4} xl={4}>
-            <SectionGroup>
-              <CustomerBoat
-                boatInfo={boatInfo}
-                customerInfo={customerInfo}
-                onEditBoat={() => this.editBoat()}
-              />
-            </SectionGroup>
-          </Col>
-        </Row>
-        <BoatEditor
-          boatInfo={boatInfo}
-          open={editBoat}
-          onClose={this.closeBoatEditor}
-          onSave={this.updateBoat}
-        />
-      </Wrapper>
+      <React.Fragment>
+        <OrderDetailHeader orderId={orderId} />
+        <Wrapper>
+          <Row>
+            <Col md={12} sm={12} xs={12} lg={8} xl={8}>
+              <SectionGroup>
+                <OrderSumarySection lineItem={lineItems[0]} />
+                <LineItemSection orderId={orderId} providerId={providerId} />
+                <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
+              </SectionGroup>
+            </Col>
+            <Col md={12} sm={12} xs={12} lg={4} xl={4}>
+              <SectionGroup>
+                <CustomerBoat
+                  boatInfo={boatInfo}
+                  customerInfo={customerInfo}
+                  onEditBoat={() => this.editBoat()}
+                />
+              </SectionGroup>
+            </Col>
+          </Row>
+          <BoatEditor
+            boatInfo={boatInfo}
+            open={editBoat}
+            onClose={this.closeBoatEditor}
+            onSave={this.updateBoat}
+          />
+        </Wrapper>
+      </React.Fragment>
     )
   }
 }
