@@ -7,6 +7,7 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 8px 16px;
+  cursor: pointer;
 `;
 
 const Name = styled.span`
@@ -26,8 +27,8 @@ const Email = styled.span`
   font-family: 'Open Sans';
 `;
 
-export default ({ data: { email, firstName, lastName }, ...rest }) => (
-  <Wrapper {...rest}>
+export default ({ data: { email, firstName, lastName }, innerProps: { id, ...rest } }) => (
+  <Wrapper {...rest} key={id}>
     <Name>
       {firstName} {lastName}
     </Name>

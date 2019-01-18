@@ -1,6 +1,5 @@
 import { createAction, handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get } from 'lodash';
 
 export const actions = {
   createUsers: 'USERS/CREATE',
@@ -69,7 +68,7 @@ export default handleActions(
       }),
     [actions.setFilteredUsers]: (state, { payload }) =>
       produce(state, draft => {
-        draft.filtered = [...draft.filtered, ...payload];
+        draft.filtered = [...payload];
         draft.loading = false;
       })
   },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/lib/Async';
 import { Row, Col } from 'react-flexbox-grid';
 import { findIndex } from 'lodash';
 import styled from 'styled-components';
@@ -8,17 +8,13 @@ import styled from 'styled-components';
 import Modal from 'components/compound/Modal';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { Selector } from 'components/basic/Input';
+import CustomerOption from 'components/basic/CustomerOption';
+import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 
 import { filterUsers } from 'reducers/users';
 import { getUserBoats } from 'reducers/boats';
 
-import CustomerOption from '../basic/CustomerOption';
-import CustomerOptionValue from '../basic/CustomerOptionValue';
 import BoatInfo from '../basic/BoatInfo';
-
-const CustomOption = ({ innerProps: { id, ...rest }, data }) => {
-  return <CustomerOption key={id} {...rest} data={data} />;
-};
 
 const SubSectionTitle = styled.h5`
   text-transform: uppercase;
@@ -35,12 +31,27 @@ class SelectCustomerModal extends React.Component {
     customer: -1,
     boat: -1,
   };
-  componentDidMount() {
-    this.props.filterUsers();
+
+  loadOptions = val => {
+    return this.onChangeUserFilter(val)
+      .then((filtered) => {
+        return filtered.map(user => ({
+          value: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email
+        }));
+      }, () => {
+        return [];
+      })
   }
+
   onChangeUserFilter = val => {
-    this.props.filterUsers(val);
+    return new Promise((resolve, reject) => {
+      this.props.filterUsers({keyword: val, resolve, reject});
+    })
   };
+
   onChangeUser = val => {
     this.setState({
       customer: val.value
@@ -50,6 +61,7 @@ class SelectCustomerModal extends React.Component {
       callback: this.onFetchBoats
     });
   };
+
   onFetchBoats = () => {
     const { boats } = this.props;
     const boat = boats.reduce((prev, boatInfo) => {
@@ -61,17 +73,13 @@ class SelectCustomerModal extends React.Component {
     this.setState({
       boat,
     })
-  }
-  customOption = ({ innerProps, data }) => {
-    return <CustomOption innerProps={innerProps} data={data} />;
   };
-  customValue = ({ data }) => {
-    return <CustomerOptionValue {...data} />;
-  };
+
   next = () => {
     const { customer, boat } = this.state;
     this.props.toNext({ customer, boat })
-  }
+  };
+
   getBoats = () => {
     const { boats } = this.props;
     const { customer } = this.state;
@@ -82,7 +90,8 @@ class SelectCustomerModal extends React.Component {
       }))
     }
     return [];
-  }
+  };
+
   getBoatInfo = () => {
     const { boat } = this.state;
     const { boats } = this.props;
@@ -91,21 +100,17 @@ class SelectCustomerModal extends React.Component {
       return boats[idx];
     }
     return {};
-  }
+  };
+
   setBoat = (boat) => {
     this.setState({
       boat: boat.value
     })
-  }
+  };
+
   render() {
     const action = [<OrangeButton onClick={this.next}>Next</OrangeButton>];
-    const { open, onClose, filtered } = this.props;
-    const options = filtered.map(user => ({
-      value: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email
-    }));
+    const { open, onClose } = this.props;
     const { customer, boat } = this.state;
     const boats = this.getBoats();
     return (
@@ -117,13 +122,13 @@ class SelectCustomerModal extends React.Component {
       >
         <Row>
           <Col sm={12} md={9}>
-            <Select
-              options={options}
+            <AsyncSelect
               components={{
-                Option: this.customOption,
-                SingleValue: this.customValue
+                Option: CustomerOption,
+                SingleValue: CustomerOptionValue
               }}
-              onInputChange={this.onChangeUserFilter}
+              defaultOptions
+              loadOptions={this.loadOptions}
               onChange={this.onChangeUser}
             />
           </Col>
@@ -162,7 +167,7 @@ class SelectCustomerModal extends React.Component {
   }
 }
 
-const mapStateToProps = ({ user: { filtered }, boat: { boats } }) => ({ filtered, boats });
+const mapStateToProps = ({ boat: { boats } }) => ({ boats });
 
 const mapDispatchToProps = { filterUsers, getUserBoats };
 
