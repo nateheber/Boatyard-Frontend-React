@@ -39,10 +39,18 @@ export const refinedOrdersSelector = createSelector(
       for(const key in order.relationships) {
         let value = order.relationships[key].data;
         if(value) {
-          if (value.length > -1) {
-            order.relationships[key] = value.map(obj => {
-              return included[obj.type][obj.id];
-            });
+          if (key === 'lineItems') {
+            if (value.length > 0) {
+              order.relationships[key] = value.map(obj => {
+                return included[obj.type][obj.id];
+              });
+              for(const subKey in order.relationships[key][0].relationships) {
+                const subValue = order.relationships[key][0].relationships[subKey].data;
+                if (subValue) {
+                  order.relationships[subKey] = included[subValue.type][subValue.id];
+                }
+              }
+            }
           } else {
             order.relationships[key] = included[value.type][value.id];
           }
