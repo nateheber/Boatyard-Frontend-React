@@ -21,7 +21,13 @@ const Wrapper = styled.div`
 class NewOrders extends React.Component {
 
   componentDidMount() {
-    this.props.fetchOrders({page: 1, per_page: 5, 'order[state]': 'draft'});
+    this.props.fetchOrders({
+      page: 1,
+      per_page: 5,
+      'order[state]': 'draft',
+      'order[sort]': 'desc',
+      'order[order]': 'created_at'
+    });
   }
 
   render() {
