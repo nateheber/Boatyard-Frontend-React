@@ -59,7 +59,7 @@ const THeader = styled.div`
 
 function getValue(column, item) {
   if (column.value === 'id') {
-    if (item.state === 'draft') {
+    if (item.state === 'draft' && column.type === 'new') {
       return 'New Order';
     }
     return `Order #${item.id}`;    
