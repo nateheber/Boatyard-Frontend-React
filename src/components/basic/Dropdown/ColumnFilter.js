@@ -129,7 +129,7 @@ export class ColumnFilter extends React.Component {
         />
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
           {items.map((val, idx) => (
-            <MenuItemLi>
+            <MenuItemLi key={`menu_${idx}`}>
               <MenuItem>
                 <CheckBox
                   small
