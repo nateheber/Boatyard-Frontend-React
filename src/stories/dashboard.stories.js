@@ -28,7 +28,7 @@ import Dashboard from '../components/template/Dashboard';
 
 storiesOf('Dashboard', module)
   .add('Main Template', () => <Dashboard />)
-  .add('OrderTableHeader', () => <OrderTableHeader />)
+  // .add('OrderTableHeader', () => <OrderTableHeader />)
   .add('OrderItem', () => (
     <OrderItem
       title="New Order"
@@ -39,28 +39,28 @@ storiesOf('Dashboard', module)
       boatName="Blubes"
     />
   ))
-  .add('OrderTable', () => (
-    <OrderTable
-      items={[
-        {
-          title: 'New Order',
-          customer: 'Brock Prod Test 9 Donnelly',
-          orderStatus: 'Accepted',
-          boatMake: 'Blue',
-          boatModel: 'Berries',
-          boatName: 'Blubes'
-        },
-        {
-          title: 'New Order',
-          customer: 'Brock Prod Test 8 Donnelly',
-          orderStatus: 'Accepted',
-          boatMake: 'with',
-          boatModel: 'Butter',
-          boatName: 'Bagel'
-        }
-      ]}
-    />
-  ))
+  // .add('OrderTable', () => (
+  //   <OrderTable
+  //     items={[
+  //       {
+  //         title: 'New Order',
+  //         customer: 'Brock Prod Test 9 Donnelly',
+  //         orderStatus: 'Accepted',
+  //         boatMake: 'Blue',
+  //         boatModel: 'Berries',
+  //         boatName: 'Blubes'
+  //       },
+  //       {
+  //         title: 'New Order',
+  //         customer: 'Brock Prod Test 8 Donnelly',
+  //         orderStatus: 'Accepted',
+  //         boatMake: 'with',
+  //         boatModel: 'Butter',
+  //         boatName: 'Bagel'
+  //       }
+  //     ]}
+  //   />
+  // ))
   .add('NewOrderSection Header', () => <NewOrderSection count={2} />)
   .add('ScheduledSection Header', () => <ScheduledSection count={2} />)
   .add('AssignedToMeSection Header', () => <AssignedToMeSection count={2} />)
