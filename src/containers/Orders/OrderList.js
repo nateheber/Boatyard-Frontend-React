@@ -92,7 +92,7 @@ class OrderList extends React.Component {
   }
 }
 
-const mapStateToProps = ({ order: { orders: { orders, page, perPage, total } } }) => ({
+const mapStateToProps = ({ order: { orders : { orders, page, perPage, total } } }) => ({
   orders,
   perPage,
   total,
