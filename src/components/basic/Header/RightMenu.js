@@ -10,10 +10,9 @@ import ChevronIcon from '../../../resources/down-chevron.svg';
 import { logout } from '../../../store/reducers/auth';
 
 const Wrapper = styled.div`
-  display: flex;
+  display: inline-block;
   flex-direction: row;
   justify-content: flex-end;
-  flex-grow: 1;
 `;
 
 const MenuWrapper = styled.ul`

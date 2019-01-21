@@ -24,6 +24,9 @@ const Link = styled.a`
     background-color: #00485e !important;
     cursor: pointer;
   }
+  &.active {
+    background-color: #00485e !important;
+  }
   @media (max-width: 1091px) {
     transition: 0.3s;
   }
@@ -48,10 +51,17 @@ const Title = styled.span`
   box-sizing: border-box;
   color: #b4bcc8;
   font-size: 13px;
-  font-weight: 300;
+  line-height: 18px;
+  font-weight: 500;
   font-family: 'Montserrat', sans-serif;
   @media (max-width: 991px) {
     font-size: 10px !important;
+  }
+  &.active {
+    color: white;
+  }
+  ${Link}:hover &.active {
+    color: #b4bcc8;
   }
 `;
 
@@ -101,36 +111,31 @@ const NavComp = ({
   subItems,
   history,
   location: { pathname }
-}) => (
-  <NavItem>
-    <Link
-      onClick={() => {
-        if (link) history.push(link);
-      }}
-    >
-      <NavIcon
-        className={isActive ? 'active' : 'deactive'}
-        mainImage={mainImage}
-        activeImage={activeImage}
-      />
-      <Title>{title}</Title>
-    </Link>
-    {subItems && (
-      <SubHeader>
-        {subItems.map((item, idx) => (
-          <SubMenuItem
-            className={item.link === pathname ? 'active' : 'deactive'}
-            key={`sub_item_${idx}`}
-            onClick={() => {
-              history.push(item.link);
-            }}
-          >
-            {item.title}
-          </SubMenuItem>
-        ))}
-      </SubHeader>
-    )}
-  </NavItem>
-);
+}) => {
+  const className = isActive ? 'active' : 'deactive';
+  return (
+    <NavItem>
+      <Link onClick={() => { if (link) history.push(link); }} className={className} >
+        <NavIcon className={className} mainImage={mainImage} activeImage={activeImage} />
+        <Title className={className} >{title}</Title>
+      </Link>
+      {subItems && (
+        <SubHeader>
+          {subItems.map((item, idx) => (
+            <SubMenuItem
+              className={item.link === pathname ? 'active' : 'deactive'}
+              key={`sub_item_${idx}`}
+              onClick={() => {
+                history.push(item.link);
+              }}
+            >
+              {item.title}
+            </SubMenuItem>
+          ))}
+        </SubHeader>
+      )}
+    </NavItem>
+  );
+};
 
 export const SideBarItem = withRouter(NavComp);

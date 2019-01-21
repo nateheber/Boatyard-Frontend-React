@@ -4,19 +4,13 @@ import EvilIcon from 'react-evil-icons';
 import { isEmpty } from 'lodash';
 import className from 'classnames';
 
-const Wrapper = styled.div`
-  flex-grow: 1;
-  justify-content: center;
-`;
-
 const InputWrapper = styled.div`
+  display: inline-block;
   position: relative;
-  max-width: 280px;
+  width: 280px;
   height: 35px;
   border-radius: 6px !important;
   background-color: #ffaa5c;
-  display: flex;
-  flex-direction: row;
   align-items: center;
   &.secondary {
     border: 1px solid rgb(223, 223, 223);
@@ -31,6 +25,8 @@ const Input = styled.input`
   font-size: 14px;
   border: none;
   height: 35px;
+  width: 100%;
+  font-weight: 600;
   color: white;
   padding-top: 0px;
   padding-bottom: 0px;
@@ -49,7 +45,9 @@ const Input = styled.input`
 `;
 
 const SearchButton = styled.button`
-  display: flex;
+  position: absolute;
+  top: 4px;
+  right: 0px;
   background-color: transparent;
   color: white;
   border: none;
@@ -82,40 +80,38 @@ export class SearchBox extends React.Component {
     const { value } = this.state;
     const { secondary } = this.props;
     return (
-      <Wrapper>
-        <InputWrapper className={secondary ? 'secondary' : 'primary'}>
-          <Input
-            className={secondary ? 'secondary' : 'primary'}
-            {...this.props}
-            value={value}
-            onChange={this.onChangeInput}
-            onFocus={() => {
-              this.setState({ focused: true });
-            }}
-            onBlur={() => {
-              this.setState({ focused: false });
-            }}
-          />
-          <SearchButton
-            className={secondary ? 'secondary' : 'primary'}
-            onClick={this.onClick}
-          >
-            {!isEmpty(value) ? (
-              <EvilIcon
-                name="ei-close-o"
-                size="s"
-                className={className('searchIcon', { secondary: secondary })}
-              />
-            ) : (
-              <EvilIcon
-                name="ei-search"
-                size="s"
-                className={className('searchIcon', { secondary: secondary })}
-              />
-            )}
-          </SearchButton>
-        </InputWrapper>
-      </Wrapper>
+      <InputWrapper className={secondary ? 'secondary' : 'primary'}>
+        <Input
+          className={secondary ? 'secondary' : 'primary'}
+          {...this.props}
+          value={value}
+          onChange={this.onChangeInput}
+          onFocus={() => {
+            this.setState({ focused: true });
+          }}
+          onBlur={() => {
+            this.setState({ focused: false });
+          }}
+        />
+        <SearchButton
+          className={secondary ? 'secondary' : 'primary'}
+          onClick={this.onClick}
+        >
+          {!isEmpty(value) ? (
+            <EvilIcon
+              name="ei-close-o"
+              size="s"
+              className={className('searchIcon', { secondary: secondary })}
+            />
+          ) : (
+            <EvilIcon
+              name="ei-search"
+              size="s"
+              className={className('searchIcon', { secondary: secondary })}
+            />
+          )}
+        </SearchButton>
+      </InputWrapper>
     );
   }
 }
