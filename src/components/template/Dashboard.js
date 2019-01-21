@@ -47,7 +47,7 @@ class Dashboard extends React.Component {
         <DashboardHeader onNewOrder={this.newOrder} />
         <Wrapper>
           <LeftPart>
-            {previlage === 'admin' && <NewOrders />}
+            {previlage === 'provider' && <NewOrders />}
             <ScheduledOrders />
             <AssignedOrders />
           </LeftPart>
