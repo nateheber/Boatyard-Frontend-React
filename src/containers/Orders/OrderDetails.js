@@ -5,7 +5,7 @@ import { Row, Col } from 'react-flexbox-grid'
 import styled from 'styled-components'
 import { get } from 'lodash'
 
-import { getOrder } from 'reducers/orders'
+import { getOrder, updateOrders } from 'reducers/orders'
 import { fetchLineItems } from 'reducers/lineItems'
 import { updateBoats } from 'reducers/boats'
 import { orderSelector } from 'reducers/selector/order'
@@ -14,7 +14,9 @@ import { SectionGroup } from 'components/basic/InfoSection'
 
 import CustomerBoat from './components/templates/CustomerBoat'
 import LineItemSection from './components/templates/LineItemSection'
-import OrderSumarySection from './components/templates/OrderSumarySection';
+import OrderSumarySection from './components/templates/OrderSumarySection'
+import OrderReviewSection from './components/templates/OrderReviewSection'
+import OrderDetailHeader from './components/templates/OrderDetailHeader'
 
 import BoatEditor from './components/modals/EditBoatModal'
 
@@ -81,6 +83,7 @@ class OrderDetails extends React.Component {
     orderId: -1,
     editBoat: false,
   }
+
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
@@ -90,26 +93,45 @@ class OrderDetails extends React.Component {
       orderId
     })
   }
+
   getOrderInfo = () => {
     const { currentOrder } = this.props;
     const { boatInfo, customerInfo } = getOrderDetails(currentOrder);
     return { boatInfo, customerInfo };
   }
+
   getProviderId = () => {
     const { currentOrder } = this.props;
     const { providerInfo } = getOrderDetails(currentOrder);
     return providerInfo.id;
   }
+
+  getSummaryInfo = () => {
+    const { currentOrder } = this.props;
+    const total = get(currentOrder, 'data.attributes.total')
+    const subtotal = get(currentOrder, 'data.attributes.subTotal')
+    const taxRate = get(currentOrder, 'data.attributes.taxRate')
+    const taxAmount = get(currentOrder, 'data.attributes.taxAmount')
+    const discount = get(currentOrder, 'data.attributes.discount')
+    const deposit = get(currentOrder, 'data.attributes.deposit')
+    const comments = get(currentOrder, 'data.attributes.comments')
+    return ({
+      total, subtotal, taxRate, discount, deposit, taxAmount, comments
+    })
+  }
+
   editBoat = () => {
     this.setState({
       editBoat: true,
     })
   }
+
   closeBoatEditor = () => {
     this.setState({
       editBoat: false,
     })
   }
+
   updateBoat = (data) => {
     const { boatInfo: { id } } = this.getOrderInfo();
     const { orderId } = this.state;
@@ -124,38 +146,48 @@ class OrderDetails extends React.Component {
       editBoat: false,
     })
   }
+
+  updateOrder = (data) => {
+    const { orderId } = this.state;
+    this.props.updateOrders({ id: orderId, data})
+  }
+
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const { orderId, editBoat } = this.state;
     const providerId = this.getProviderId();
     const { lineItems } = this.props;
+    const summaryInfo = this.getSummaryInfo();
     return (
-      <Wrapper>
-        <Row>
-          <Col md={12} sm={12} xs={12} lg={8} xl={8}>
-            <SectionGroup>
-              <OrderSumarySection lineItem={lineItems[0]} />
-              <LineItemSection orderId={orderId} providerId={providerId} />
-              {/* <OrderReviewSection /> */}
-            </SectionGroup>
-          </Col>
-          <Col md={12} sm={12} xs={12} lg={4} xl={4}>
-            <SectionGroup>
-              <CustomerBoat
-                boatInfo={boatInfo}
-                customerInfo={customerInfo}
-                onEditBoat={() => this.editBoat()}
-              />
-            </SectionGroup>
-          </Col>
-        </Row>
-        <BoatEditor
-          boatInfo={boatInfo}
-          open={editBoat}
-          onClose={this.closeBoatEditor}
-          onSave={this.updateBoat}
-        />
-      </Wrapper>
+      <React.Fragment>
+        <OrderDetailHeader orderId={orderId} />
+        <Wrapper>
+          <Row>
+            <Col md={12} sm={12} xs={12} lg={8} xl={8}>
+              <SectionGroup>
+                <OrderSumarySection lineItem={lineItems[0]} />
+                <LineItemSection orderId={orderId} providerId={providerId} />
+                <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
+              </SectionGroup>
+            </Col>
+            <Col md={12} sm={12} xs={12} lg={4} xl={4}>
+              <SectionGroup>
+                <CustomerBoat
+                  boatInfo={boatInfo}
+                  customerInfo={customerInfo}
+                  onEditBoat={() => this.editBoat()}
+                />
+              </SectionGroup>
+            </Col>
+          </Row>
+          <BoatEditor
+            boatInfo={boatInfo}
+            open={editBoat}
+            onClose={this.closeBoatEditor}
+            onSave={this.updateBoat}
+          />
+        </Wrapper>
+      </React.Fragment>
     )
   }
 }
@@ -165,7 +197,8 @@ const mapStateToProps = state => ({ ...orderSelector(state) });
 const mapDispatchToProps = {
   getOrder,
   fetchLineItems,
-  updateBoats
+  updateBoats,
+  updateOrders
 };
 
 export default connect(

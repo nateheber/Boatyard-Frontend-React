@@ -72,39 +72,57 @@ function* updateRequest(action) {
 
 function* filterRequest(action) {
   const userClient = yield select(getUserClient);
-  const { payload: keyword } = action;
-  if (isEmpty(keyword)) {
-    const result = yield call(userClient.list);
-    const users = get(result, 'data', []);
-    yield put({
-      type: actions.setFilteredUsers,
-      payload: users.map(user => ({
+  const { payload: { keyword, resolve, reject } } = action;
+  try {
+    if (isEmpty(keyword)) {
+      const result = yield call(userClient.list);
+      const users = get(result, 'data', []);
+      const parsedData = users.map(user => ({
+        id: user.id,
+        ...user.attributes
+      }));
+      yield put({
+        type: actions.setFilteredUsers,
+        payload: parsedData
+      });
+      if (resolve) {
+        yield call(resolve, parsedData)
+      }
+    } else {
+      const firstFilter = yield call(
+        userClient.list,
+        {
+          page: 1,
+          'user[first_name]': keyword,
+        }
+      );
+      const secondFilter = yield call(
+        userClient.list,
+        {
+          page: 1,
+          'user[last_name]': keyword,
+        }
+      );
+      const result = mergeResults(
+        get(firstFilter, 'data', []),
+        get(secondFilter, 'data', [])
+      );
+      const parsedData = result.map(user => ({
         id: user.id,
         ...user.attributes
       }))
-    });
-  } else {
-    const firstFilter = yield call(
-      userClient.list,
-      0,
-      `?user[first_name]=${keyword}`
-    );
-    const secondFilter = yield call(
-      userClient.list,
-      0,
-      `?user[last_name]=${keyword}`
-    );
-    const result = mergeResults(
-      get(firstFilter, 'data', []),
-      get(secondFilter, 'data', [])
-    );
-    yield put({
-      type: actions.setFilteredUsers,
-      payload: result.map(user => ({
-        id: user.id,
-        ...user.attributes
-      }))
-    });
+      yield put({
+        type: actions.setFilteredUsers,
+        payload: parsedData
+      });
+      if (resolve) {
+        yield call(resolve, parsedData)
+      }
+    }
+  } catch(err) {
+    if (reject) {
+      yield call(reject, err)
+    }
   }
 }
 
