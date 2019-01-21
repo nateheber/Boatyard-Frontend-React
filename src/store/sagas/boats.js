@@ -1,7 +1,7 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, sortBy } from 'lodash';
 
-import { actions } from '../boats';
+import { actions } from '../reducers/boats';
 import { getBoatClient } from './sagaSelectors';
 
 function* createRequest(action) {

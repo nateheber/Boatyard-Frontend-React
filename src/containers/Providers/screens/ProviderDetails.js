@@ -5,7 +5,7 @@ import { findIndex } from 'lodash';
 
 import { ProviderDetails, ProviderHeader } from '../components';
 
-import { selectProvider, deleteProvider } from 'reducers/providers';
+import { selectProvider, deleteProvider } from 'store/reducers/providers';
 
 class ServiceDetails extends React.Component {
   onCancel = () => {

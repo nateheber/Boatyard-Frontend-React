@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { isEmpty } from 'lodash'
 
-import { createCreditCard } from 'reducers/creditCards';
+import { createCreditCard } from 'store/reducers/creditCards';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal'

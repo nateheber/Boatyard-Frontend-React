@@ -7,7 +7,7 @@ import Table from 'components/basic/Table';
 import { ProviderHeader } from 'components/compound/SectionHeader';
 import { ProviderFilter } from 'components/compound/Filters';
 
-import { fetchProviders } from 'reducers/providers';
+import { fetchProviders } from 'store/reducers/providers';
 
 const Wrapper = styled.div`
   height: 100%;

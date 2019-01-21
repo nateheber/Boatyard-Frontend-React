@@ -5,7 +5,7 @@ import { findIndex } from 'lodash'
 import EditModal from './EditModal'
 import InfoSection from './InfoSection'
 
-import { updateBoats, deleteBoats } from 'reducers/boats'
+import { updateBoats, deleteBoats } from 'store/reducers/boats'
 
 class BoatInfoSection extends React.Component {
   state = {

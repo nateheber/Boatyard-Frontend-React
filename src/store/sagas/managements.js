@@ -1,9 +1,9 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, findIndex } from 'lodash';
 
-import { actions } from '../management';
-import { actions as providerActions } from '../providers';
-import { actions as userActions } from '../users';
+import { actions } from '../reducers/management';
+import { actions as providerActions } from '../reducers/providers';
+import { actions as userActions } from '../reducers/users';
 import { getManagementClient, getManagements } from './sagaSelectors';
 
 function* createRequest(action) {

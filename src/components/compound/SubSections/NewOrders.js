@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { fetchOrders } from 'reducers/orders';
+import { GetNewOrders } from 'store/actions/orders';
+import { refinedOrdersSelector } from 'store/selectors/order'
 import { NewOrderSection } from 'components/basic/SubSection';
 import { OrderTable } from 'components/basic/Order';
-import { refinedOrdersSelector } from 'reducers/selector/order'
 import { HollowButton } from 'components/basic/Buttons'
 
 const Wrapper = styled.div`
@@ -21,7 +21,7 @@ const Wrapper = styled.div`
 class NewOrders extends React.Component {
 
   componentDidMount() {
-    this.props.fetchOrders({
+    this.props.GetNewOrders({
       page: 1,
       per_page: 5,
       'order[state]': 'draft',
@@ -33,7 +33,7 @@ class NewOrders extends React.Component {
   render() {
     const { orders, total, history } = this.props;
     const columns = [
-      { label: 'ORDER', value: 'id', isTitle: true, link: true },
+      { label: 'ORDER', value: 'id', isTitle: true, type: 'new', link: true },
       { label: 'CUSTOMER', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
       { label: 'SERVICE', value: 'relationships.service.attributes.name' },
       { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' },
@@ -57,12 +57,12 @@ class NewOrders extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  total: state.order.total,
-  orders: refinedOrdersSelector(state)
+  total: state.order.newOrders.total,
+  orders: refinedOrdersSelector(state, 'new')
 });
 
 const mapDispatchToProps = {
-  fetchOrders
+  GetNewOrders
 };
 
 export default withRouter(connect(

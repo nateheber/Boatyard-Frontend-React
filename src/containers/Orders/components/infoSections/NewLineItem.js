@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import {
   Input
 } from 'components/basic/Input'
-import { filterServices } from 'reducers/services'
+import { filterServices } from 'store/reducers/services'
 
 import RemoveButton from '../basic/RemoveButton'
 

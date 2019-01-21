@@ -9,9 +9,9 @@ import LineItem from '../infoSections/LineItem'
 import ButtonGroup from '../basic/ButtonGroup'
 import QuoteHeader from '../basic/QuoteHeader'
 
-import { updateLineItems, deleteLineItem, createLineItems } from 'reducers/lineItems'
-import { getOrder } from 'reducers/orders'
-import { orderSelector } from 'reducers/selector/order'
+import { updateLineItems, deleteLineItem, createLineItems } from 'store/reducers/lineItems'
+import { GetOrder } from 'store/actions/orders'
+import { orderSelector } from 'store/selectors/order'
 
 class LineItemSection extends React.Component {
   constructor(props) {
@@ -65,7 +65,7 @@ class LineItemSection extends React.Component {
   }
   updateLineItems = () => {
     const { lineItems } = this.state;
-    const { orderId, updateLineItems, getOrder } = this.props;
+    const { orderId, updateLineItems, GetOrder } = this.props;
     const updateInfo = lineItems.map(({id, attributes: { quantity, cost }}) => ({
       id,
       lineItem: {
@@ -74,7 +74,7 @@ class LineItemSection extends React.Component {
       }
     }));
     if (lineItems.length > 0) {
-      updateLineItems({ orderId, data: updateInfo, callback: () => getOrder(orderId) });
+      updateLineItems({ orderId, data: updateInfo, callback: () => GetOrder(orderId) });
     }
   }
   addNewItem = () => {
@@ -98,8 +98,8 @@ class LineItemSection extends React.Component {
   }
   saveNewItems = () => {
     const { newItems } = this.state;
-    const { orderId, getOrder } = this.props;
-    this.props.createLineItems({ orderId, data: newItems, callback: () => getOrder(orderId) })
+    const { orderId, GetOrder } = this.props;
+    this.props.createLineItems({ orderId, data: newItems, callback: () => GetOrder(orderId) })
   }
   render () {
     const { newItems, mode, lineItems } = this.state;
@@ -130,7 +130,7 @@ const mapDispatchToProps = {
   updateLineItems,
   deleteLineItem,
   createLineItems,
-  getOrder,
+  GetOrder,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LineItemSection)

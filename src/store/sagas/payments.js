@@ -1,7 +1,7 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty } from 'lodash';
 
-import { actions } from '../payments';
+import { actions } from '../reducers/payments';
 import { getPaymentClient } from './sagaSelectors';
 
 function* createRequest(action) {

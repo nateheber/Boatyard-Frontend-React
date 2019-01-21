@@ -5,10 +5,11 @@ import styled from 'styled-components';
 import {
   AssignedOrders,
   ScheduledOrders,
-  OverdueInvoices,
   MonthlyRevenue
 } from 'components/compound/SubSections';
+
 import NewOrders from 'components/compound/SubSections/NewOrders';
+import OpenInvoices from 'components/compound/SubSections/OpenInvoices';
 
 
 import { DashboardHeader } from 'components/compound/SectionHeader';
@@ -52,7 +53,7 @@ class Dashboard extends React.Component {
           </LeftPart>
           <RightPart>
             <MonthlyRevenue />
-            <OverdueInvoices />
+            {previlage === 'provider' && <OpenInvoices />}
           </RightPart>
         </Wrapper>
       </Container>

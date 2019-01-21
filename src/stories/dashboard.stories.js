@@ -20,7 +20,7 @@ import {
   AssignedOrders,
   NewOrders,
   ScheduledOrders,
-  OverdueInvoices,
+  // OverdueInvoices,
   MonthlyRevenue
 } from '../components/compound/SubSections';
 
@@ -67,5 +67,5 @@ storiesOf('Dashboard', module)
   .add('NewOrder Section', () => <NewOrders />)
   .add('ScheduledOrder Section', () => <ScheduledOrders />)
   .add('AssignedOrder Section', () => <AssignedOrders />)
-  .add('OverdueInvoices Section', () => <OverdueInvoices />)
+  // .add('OverdueInvoices Section', () => <OverdueInvoices />)
   .add('MonthlyRevenue Section', () => <MonthlyRevenue />);

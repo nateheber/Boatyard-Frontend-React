@@ -11,8 +11,8 @@ import { Selector } from 'components/basic/Input';
 import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 
-import { filterUsers } from 'reducers/users';
-import { getUserBoats } from 'reducers/boats';
+import { filterUsers } from 'store/reducers/users';
+import { getUserBoats } from 'store/reducers/boats';
 
 import BoatInfo from '../basic/BoatInfo';
 

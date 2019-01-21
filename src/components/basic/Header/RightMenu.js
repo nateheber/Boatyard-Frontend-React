@@ -7,7 +7,7 @@ import Bell from '../../../resources/notification-bell.svg';
 import Message from '../../../resources/messages-icon.png';
 import ChevronIcon from '../../../resources/down-chevron.svg';
 
-import { logout } from '../../../reducers/auth';
+import { logout } from '../../../store/reducers/auth';
 
 const Wrapper = styled.div`
   display: flex;

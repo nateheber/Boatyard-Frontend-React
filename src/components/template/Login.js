@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { PageTitle } from 'components/basic/Typho';
 import LoginForm from './Forms/LoginForm';
 
-import { login } from 'reducers/auth';
+import { login } from 'store/reducers/auth';
 
 const Wrapper = styled.div`
   display: flex;

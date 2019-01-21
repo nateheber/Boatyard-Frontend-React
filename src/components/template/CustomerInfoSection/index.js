@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import InfoSection from './InfoSection';
 import CustomerInfoModal from './CustomerInfoModal';
 
-import { updateUsers } from 'reducers/users'
+import { updateUsers } from 'store/reducers/users'
 
 class CustomerInfoSection extends React.Component {
   state = {

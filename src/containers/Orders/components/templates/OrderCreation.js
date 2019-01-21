@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { createOrders } from 'reducers/orders';
+import { CreateOrder } from 'store/actions/orders';
 
 import SelectCustomerModal from '../modals/SelectCustomerModal';
 import SelectServiceModal from '../modals/SelectServiceModal';
@@ -52,7 +52,7 @@ class OrderCreation extends React.Component {
         }
       ]
     };
-    this.props.createOrders({
+    this.props.CreateOrder({
       data,
       callback: this.props.onFinishCreation
     })
@@ -69,7 +69,7 @@ class OrderCreation extends React.Component {
 }
 
 const mapDispatchToProps = {
-  createOrders,
+  CreateOrder,
 }
 
 export default connect(

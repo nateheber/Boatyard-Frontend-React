@@ -32,9 +32,9 @@ export const AssignedToMeSection = ({ count }) => (
   />
 );
 
-export const OrverdueInvoiceSection = ({ count }) => (
+export const OpenInvoicesSection = ({ count }) => (
   <SubSectionFrame
-    title={`Invoices Overdue (${count})`}
+    title={`Open Invoices (${count})`}
     iconBg="#9f9aa4"
     icon={OverdueImage}
   />

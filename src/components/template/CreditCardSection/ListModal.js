@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash'
 
-import { updateCreditCard, deleteCreditCard } from 'reducers/creditCards';
+import { updateCreditCard, deleteCreditCard } from 'store/reducers/creditCards';
 
 import { HollowButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal'

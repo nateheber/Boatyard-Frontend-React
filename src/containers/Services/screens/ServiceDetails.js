@@ -4,36 +4,14 @@ import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import {
   get,
-  set,
   findIndex,
-  isEmpty,
-  hasIn,
-  camelCase,
   startCase
 } from 'lodash';
 
 import { ServiceEditor } from '../components/ServiceEditor';
 
-import { updateServices, createServices } from 'reducers/services';
-import { setErrorState, resetErrorState } from 'reducers/appstate';
-
-const getDefaultValue = (type, field, orgProperties) => {
-  if (hasIn(orgProperties, field)) {
-    return get(orgProperties, field);
-  }
-  switch (type) {
-    case 'text_field':
-      return '';
-    case 'check_box':
-      return false;
-    case 'text_area':
-      return '';
-    case 'select_box':
-      return 0;
-    default:
-      return '';
-  }
-};
+import { updateServices, createServices } from 'store/reducers/services';
+import { setErrorState, resetErrorState } from 'store/reducers/appstate';
 
 class ServiceDetails extends React.Component {
   constructor(props) {

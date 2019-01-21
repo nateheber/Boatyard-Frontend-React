@@ -11,8 +11,8 @@ import { PageTitle } from 'components/basic/Typho'
 import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
 
-import { filterProviders } from 'reducers/providers'
-import { updateOrders, deleteOrders } from 'reducers/orders'
+import { filterProviders } from 'store/reducers/providers'
+import { UpdateOrder, DeleteOrder } from 'store/actions/orders'
 
 import OrderStatus from './OrderStatus'
 
@@ -42,17 +42,17 @@ class OrderHeader extends React.Component {
 
   onChangeProvider = val => {
     const { orderId } = this.props
-    this.props.updateOrders({ id: orderId, data: { providerId: val.id } })
+    this.props.UpdateOrder({ id: orderId, data: { providerId: val.id } })
   }
 
   cancelOrder = () => {
     const { orderId } = this.props
-    this.props.updateOrders({ id: orderId, data: { state: 'canceled' } })
+    this.props.UpdateOrder({ id: orderId, data: { state: 'canceled' } })
   }
 
   deleteOrder = () => {
     const { orderId } = this.props
-    this.props.deleteOrders(orderId)
+    this.props.DeleteOrder(orderId)
     this.props.history.push('/orders/')
   }
 
@@ -133,8 +133,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   filterProviders,
-  updateOrders,
-  deleteOrders,
+  UpdateOrder,
+  DeleteOrder,
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderHeader));

@@ -9,7 +9,7 @@ import Table from 'components/basic/Table'
 import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 
-import { fetchUsers, filterUsers } from 'reducers/users'
+import { fetchUsers, filterUsers } from 'store/reducers/users'
 
 import { CustomersHeader } from '../components/CustomersHeader'
 import NewCustomerModal from '../components/NewCustomerModal'
