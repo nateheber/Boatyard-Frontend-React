@@ -2,8 +2,44 @@ import { get, filter, forEach, findIndex } from 'lodash';
 import { createSelector } from 'reselect';
 
 const currentOrderSelector = state => state.order.currentOrder;
-const allOrdersSelector = state => state.order.orders;
-const includedSelector = state =>state.order.included;
+const allOrdersSelector = (state, orderType) => {
+  switch (orderType) {
+    case 'new': {
+      return state.order.newOrders.orders;
+    }
+    case 'scheduled': {
+      return state.order.scheduledOrders.orders;
+    }
+    case 'assigned': {
+      return state.order.assignedOrders.orders;
+    }
+    case 'open': {
+      return state.order.openOrders.orders;
+    }
+    default: {
+      return state.order.orders.orders;
+    }
+  }
+};
+const includedSelector = (state, orderType) => {
+  switch (orderType) {
+    case 'new': {
+      return state.order.newOrders.included;
+    }
+    case 'scheduled': {
+      return state.order.scheduledOrders.included;
+    }
+    case 'assigned': {
+      return state.order.assignedOrders.included;
+    }
+    case 'open': {
+      return state.order.openOrders.included;
+    }
+    default: {
+      return state.order.orders.included;
+    }
+  }
+};
 
 const lineItemsSelector = state => {
   const currentOrder = state.order.currentOrder;

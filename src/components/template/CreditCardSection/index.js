@@ -4,7 +4,7 @@ import { findIndex } from 'lodash'
 
 import { Section } from 'components/basic/InfoSection'
 
-import { resetError } from 'reducers/creditCards'
+import { resetError } from 'store/reducers/creditCards'
 
 import InfoSection from './InfoSection'
 import ListModal from './ListModal'

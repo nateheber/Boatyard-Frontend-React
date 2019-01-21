@@ -1,7 +1,7 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
-import { actions } from '../lineItems';
+import { actions } from '../reducers/lineItems';
 import { getCustomApiClient } from './sagaSelectors';
 
 function* createRequest(action) {

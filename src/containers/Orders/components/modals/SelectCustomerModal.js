@@ -9,8 +9,8 @@ import Modal from 'components/compound/Modal';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { Selector } from 'components/basic/Input';
 
-import { filterUsers } from 'reducers/users';
-import { getUserBoats } from 'reducers/boats';
+import { filterUsers } from 'store/reducers/users';
+import { getUserBoats } from 'store/reducers/boats';
 
 import CustomerOption from '../basic/CustomerOption';
 import CustomerOptionValue from '../basic/CustomerOptionValue';

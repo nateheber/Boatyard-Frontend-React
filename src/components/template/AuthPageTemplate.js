@@ -43,7 +43,6 @@ const MainContentWrapper = styled.div`
 
 class AuthPageTemplate extends React.Component {
   render() {
-    const { auth } = this.props;
     return (
       <Wrapper>
         <Content>

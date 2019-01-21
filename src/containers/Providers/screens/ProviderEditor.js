@@ -5,8 +5,8 @@ import queryString from 'query-string';
 import { findIndex } from 'lodash';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-import { createProvider, updateProvider } from 'reducers/providers';
-import { setErrorState, resetErrorState } from 'reducers/appstate';
+import { createProvider, updateProvider } from 'store/reducers/providers';
+import { setErrorState, resetErrorState } from 'store/reducers/appstate';
 
 import { AccountEditor, AccountCreator, HeaderEditor } from '../components';
 

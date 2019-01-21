@@ -1,9 +1,9 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
 
-import { actions } from '../auth';
-import { actions as ProfileActions } from '../profile';
-import { actions as ProviderActions } from '../providers';
+import { actions } from '../reducers/auth';
+import { actions as ProfileActions } from '../reducers/profile';
+import { actions as ProviderActions } from '../reducers/providers';
 
 import { login, signup } from '../../api/auth';
 

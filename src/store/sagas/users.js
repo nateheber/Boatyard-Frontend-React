@@ -1,7 +1,7 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, findIndex, isEmpty } from 'lodash';
 
-import { actions } from '../users';
+import { actions } from '../reducers/users';
 import { getUsersPageNumber, getUserClient } from './sagaSelectors';
 
 const mergeResults = (base, secondary) => {

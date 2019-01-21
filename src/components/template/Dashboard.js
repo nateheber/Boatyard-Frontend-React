@@ -5,10 +5,11 @@ import styled from 'styled-components';
 import {
   AssignedOrders,
   ScheduledOrders,
-  OverdueInvoices,
   MonthlyRevenue
 } from 'components/compound/SubSections';
+
 import NewOrders from 'components/compound/SubSections/NewOrders';
+import OpenInvoices from 'components/compound/SubSections/OpenInvoices';
 
 
 import { DashboardHeader } from 'components/compound/SectionHeader';
@@ -46,13 +47,13 @@ class Dashboard extends React.Component {
         <DashboardHeader onNewOrder={this.newOrder} />
         <Wrapper>
           <LeftPart>
-            {previlage === 'provider' && <NewOrders />}
+            {previlage === 'admin' && <NewOrders />}
             <ScheduledOrders />
             <AssignedOrders />
           </LeftPart>
           <RightPart>
             <MonthlyRevenue />
-            <OverdueInvoices />
+            <OpenInvoices />
           </RightPart>
         </Wrapper>
       </Container>

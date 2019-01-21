@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom'
 
 import Table from 'components/basic/Table'
 
-import { fetchUsers } from 'reducers/users'
+import { fetchUsers } from 'store/reducers/users'
 
 import { CustomersHeader } from '../components/CustomersHeader'
 import NewCustomerModal from '../components/NewCustomerModal'

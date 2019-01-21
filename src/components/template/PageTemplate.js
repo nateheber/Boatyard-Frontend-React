@@ -7,7 +7,7 @@ import ErrorMessage from 'components/basic/ErrorMessage';
 import Header from 'components/compound/Header';
 import SideBar from 'components/compound/Sidebar';
 
-import { setErrorState, resetErrorState } from 'reducers/appstate';
+import { setErrorState, resetErrorState } from 'store/reducers/appstate';
 
 const Wrapper = styled.div`
   display: flex;

@@ -5,10 +5,10 @@ import { Row, Col } from 'react-flexbox-grid'
 import styled from 'styled-components'
 import { get } from 'lodash'
 
-import { getOrder } from 'reducers/orders'
-import { fetchLineItems } from 'reducers/lineItems'
-import { updateBoats } from 'reducers/boats'
-import { orderSelector } from 'reducers/selector/order'
+import { GetOrder } from 'store/actions/orders'
+import { fetchLineItems } from 'store/reducers/lineItems'
+import { updateBoats } from 'store/reducers/boats'
+import { orderSelector } from 'store/selectors/order'
 
 import { SectionGroup } from 'components/basic/InfoSection'
 
@@ -84,7 +84,7 @@ class OrderDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
-    this.props.getOrder(orderId);
+    this.props.GetOrder(orderId);
     this.props.fetchLineItems(orderId);
     this.setState({
       orderId
@@ -163,7 +163,7 @@ class OrderDetails extends React.Component {
 const mapStateToProps = state => ({ ...orderSelector(state) });
 
 const mapDispatchToProps = {
-  getOrder,
+  GetOrder,
   fetchLineItems,
   updateBoats
 };

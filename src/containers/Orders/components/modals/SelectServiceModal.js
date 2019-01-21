@@ -6,7 +6,7 @@ import Modal from 'components/compound/Modal';
 import { OrangeButton } from 'components/basic/Buttons';
 import { Selector } from 'components/basic/Input';
 
-import { filterServices, fetchOne } from 'reducers/services';
+import { filterServices, fetchOne } from 'store/reducers/services';
 
 import CustomerOption from '../basic/CustomerOption';
 import CustomerOptionValue from '../basic/CustomerOptionValue';

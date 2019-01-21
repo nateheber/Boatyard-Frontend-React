@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import Table from 'components/basic/Table';
 import { CategoryHeader } from 'components/compound/SectionHeader';
 
-import { fetchCategories } from 'reducers/categories';
+import { fetchCategories } from 'store/reducers/categories';
 
 const Wrapper = styled.div`
   height: 100%;

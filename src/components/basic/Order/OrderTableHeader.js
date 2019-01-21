@@ -11,7 +11,6 @@ const Wrapper = styled.div`
 `;
 
 const THeader = styled.div`
-  width: 16.66667%;
   font-size: 11px;
   word-wrap: break-word;
   word-break: break-word;
@@ -27,7 +26,7 @@ const THeader = styled.div`
 export const OrderTableHeader = ({ columns }) => (
   <Wrapper>
     {columns.map((column, idx) => (
-      <THeader key={`header_${idx}`}>{column.label}</THeader>
+      <THeader key={`header_${idx}`} style={{ width: column.width || `${100 / columns.length}%`}}>{column.label}</THeader>
     ))}
   </Wrapper>
 );

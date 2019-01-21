@@ -1,8 +1,8 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty, findIndex } from 'lodash';
 
-import { actions } from '../providers';
-import { actions as authActions } from '../auth';
+import { actions } from '../reducers/providers';
+import { actions as authActions } from '../reducers/auth';
 
 import { customApiClient, createProviderClient } from '../../api';
 

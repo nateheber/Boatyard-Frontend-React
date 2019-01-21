@@ -6,8 +6,8 @@ import { withRouter } from 'react-router-dom';
 import Table from 'components/basic/Table';
 import { ServiceHeader } from 'components/compound/SectionHeader';
 
-import { fetchServices, resetServices } from 'reducers/services';
-import { fetchCategories } from 'reducers/categories';
+import { fetchServices, resetServices } from 'store/reducers/services';
+import { fetchCategories } from 'store/reducers/categories';
 
 const Wrapper = styled.div`
   height: 100%;

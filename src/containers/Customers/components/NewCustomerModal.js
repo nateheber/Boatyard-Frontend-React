@@ -5,7 +5,7 @@ import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
-import { createUsers } from 'reducers/users';
+import { createUsers } from 'store/reducers/users';
 
 class NewCustomer extends React.Component {
   setFormFieldRef = (ref) => {

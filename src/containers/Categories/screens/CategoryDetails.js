@@ -9,7 +9,7 @@ import {
   updateCategories,
   createCategories,
   selectCategory
-} from 'reducers/categories';
+} from 'store/reducers/categories';
 
 class CategoryDetails extends React.Component {
   constructor(props) {

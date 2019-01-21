@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 
 import { ProfileEditor } from 'components/template/Editors';
 
-import { updateProfile } from 'reducers/profile';
+import { updateProfile } from 'store/reducers/profile';
 
 const Wrapper = styled.div`
   height: 100%;

@@ -33,7 +33,7 @@ export const TimeColumn = () => (
   <Wrapper>
     <Empty />
     {times(24, idx => {
-      const hour = idx == 0 ? 12 : idx % 12;
+      const hour = idx === 0 ? 12 : idx % 12;
       const apm = (idx + 1) / 12 > 1 ? 'pm' : 'am';
       return (
         <div>

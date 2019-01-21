@@ -1,6 +1,6 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
 
-import { actions } from '../profile';
+import { actions } from '../reducers/profile';
 
 import { createUserClient } from '../../api';
 

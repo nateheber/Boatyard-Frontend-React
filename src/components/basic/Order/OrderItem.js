@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   border-bottom: 1px solid #e6e6e6;
   @media (max-width: 778px) {
     box-sizing: border-box;
-    height: 290px;
+    // height: 290px;
     padding: 22px 15px;
     flex-direction: column;
     align-items: flex-start;
@@ -18,7 +18,6 @@ const Wrapper = styled.div`
 `;
 
 const Field = styled.div`
-  width: 16.66667%;
   font-size: 15px;
   color: #898889;
   word-wrap: break-word;
@@ -36,12 +35,12 @@ const Field = styled.div`
     color: #004258;  
   }
   @media (max-width: 778px) {
-    width: auto;
+    width: auto !important;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     margin: 0;
-    padding: 0;
+    padding: 10px 0;
   }
 `;
 
@@ -67,18 +66,19 @@ function getValue(column, item) {
   }
   const fields = column.value.split('/');
   let value = '';
-  fields.map(field => {
+  for (const idx in fields) {
+    const field = fields[idx];
     const arr = field.split('.');
     let part = item;
-    arr.map(key => {
+    for (const subIdx in arr) {
+      const key = arr[subIdx];
       if (!part) return '_';
       part = part[key];
-    });
+    }
     if(part && part.length > 0) {
       value = value.length > 0 ? `${value} ${part}` : part;
-    }
-    
-  });
+    }    
+  }
   if(column.isValue && parseInt(value) === 0) {
     return '';
   }
@@ -91,7 +91,7 @@ export const OrderItem = props => {
     <Wrapper>
       {columns.map((column, idx) => {
         return (
-          <Field className={column.isTitle && 'title'} key={`field_${idx}`}>
+          <Field className={column.isTitle && 'title'} key={`field_${idx}`} style={{ width: column.width || `${100 / columns.length}%`}}>
             <THeader>{column.label}</THeader>
             {column.link && <Link to={`/order-details/?order=${item.id}`}>{getValue(column, item)}</Link>}
             {!column.link && getValue(column, item)}

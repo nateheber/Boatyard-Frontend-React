@@ -6,8 +6,8 @@ import { findIndex } from 'lodash';
 
 import { UserEditor } from './Editors';
 
-import { updateUsers, createUsers } from 'reducers/users';
-import { setErrorState, resetErrorState } from 'reducers/appstate';
+import { updateUsers, createUsers } from 'store/reducers/users';
+import { setErrorState, resetErrorState } from 'store/reducers/appstate';
 
 class UserDetails extends React.Component {
   constructor(props) {

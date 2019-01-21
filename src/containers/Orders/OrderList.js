@@ -8,7 +8,7 @@ import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 
-import { fetchOrders } from 'reducers/orders';
+import { GetOrders } from 'store/actions/orders';
 
 import OrderCreation from './components/templates/OrderCreation';
 
@@ -27,7 +27,7 @@ const TableWrapper = styled.div`
 
 class OrderList extends React.Component {
   componentDidMount() {
-    this.props.fetchOrders({page: 1});
+    this.props.GetOrders({ page: 1 });
   }
   setOrderCreationRef = (ref) => {
     if (ref) {
@@ -100,7 +100,7 @@ const mapStateToProps = ({ order: { orders, page, perPage, total } }) => ({
 });
 
 const mapDispatchToProps = {
-  fetchOrders
+  GetOrders
 };
 
 export default withRouter(

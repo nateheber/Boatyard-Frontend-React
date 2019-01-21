@@ -1,7 +1,7 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
-import { actions } from '../categories';
+import { actions } from '../reducers/categories';
 import { getCategoryClient } from './sagaSelectors';
 
 function* createRequest(action) {

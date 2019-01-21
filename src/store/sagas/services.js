@@ -1,7 +1,7 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty } from 'lodash';
 
-import { actions } from '../services';
+import { actions } from '../reducers/services';
 import { getServiceClient } from './sagaSelectors';
 
 function* createRequest(action) {

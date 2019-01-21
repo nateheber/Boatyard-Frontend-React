@@ -7,10 +7,10 @@ import { OrderTableHeader } from './OrderTableHeader';
 const Wrapper = styled.div``;
 
 export const OrderTable = props => {
-  const { columns, items } = props;
+  const { columns, items, hiddenHeader } = props;
   return(
     <Wrapper>
-      <OrderTableHeader columns={columns} />
+      {!hiddenHeader && <OrderTableHeader columns={columns} />}
       {items.map((item, idx) => (
         <OrderItem columns={columns} item={item} key={`orderItem_${idx}`} />
       ))}

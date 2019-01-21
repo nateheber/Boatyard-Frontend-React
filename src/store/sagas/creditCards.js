@@ -1,7 +1,7 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty, sortBy } from 'lodash';
 
-import { actions } from '../creditCards';
+import { actions } from '../reducers/creditCards';
 import { getCreditCardClient } from './sagaSelectors';
 import { createSpreedlyClient } from 'api';
 

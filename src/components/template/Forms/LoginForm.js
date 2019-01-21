@@ -11,7 +11,7 @@ import {
 } from 'components/basic/Input';
 import { OrangeButton } from 'components/basic/Buttons';
 
-import { login } from 'reducers/auth';
+import { login } from 'store/reducers/auth';
 
 const Wrapper = styled.div`
   padding: 0px 15px;
