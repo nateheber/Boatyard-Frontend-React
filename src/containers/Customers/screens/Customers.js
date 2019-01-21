@@ -1,11 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import styled from 'styled-components'
 import { withRouter } from 'react-router-dom'
+import styled from 'styled-components'
+import AsyncSelect from 'react-select/lib/Async'
+import { Row, Col } from 'react-flexbox-grid'
 
 import Table from 'components/basic/Table'
+import CustomerOption from 'components/basic/CustomerOption';
+import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 
-import { fetchUsers } from 'store/reducers/users'
+import { fetchUsers, filterUsers } from 'store/reducers/users'
 
 import { CustomersHeader } from '../components/CustomersHeader'
 import NewCustomerModal from '../components/NewCustomerModal'
@@ -15,33 +19,68 @@ const Wrapper = styled.div`
   background-color: white;
 `;
 
+const SearchWrapper = styled.div`
+  padding: 30px;
+`
+
 class Customers extends React.Component {
   state = {
     showNewModal: false,
   }
+
   componentDidMount() {
     this.props.fetchUsers();
   }
+
+  loadOptions = val => {
+    return this.onChangeUserFilter(val)
+      .then((filtered) => {
+        return filtered.map(user => ({
+          value: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email
+        }));
+      }, () => {
+        return [];
+      })
+  }
+
+  onChangeUserFilter = val => {
+    return new Promise((resolve, reject) => {
+      this.props.filterUsers({keyword: val, resolve, reject});
+    })
+  };
+
+  onChangeUser = (val) => {
+    this.props.history.push(`/customer-details/?customer=${val.value}`)
+  }
+
   closeNewModal = () => {
     this.setState({
       showNewModal: false,
     })
   }
+
   openNewModal = () => {
     this.setState({
       showNewModal: true,
     })
   }
+
   toDetails = customerId => {
     this.props.history.push(`/customer-details/?customer=${customerId}`)
   };
+
   changePage = (page) => {
     this.props.fetchUsers({ page })
   }
+
   getPageCount = () => {
     const { perPage, total } = this.props
     return Math.ceil(total/perPage)
   }
+
   parseUser = () => {
     const { users } = this.props;
     return users.map(({ firstName, lastName, ...rest }) => ({
@@ -49,6 +88,7 @@ class Customers extends React.Component {
       ...rest
     }))
   }
+
   render() {
     const { page } = this.props
     const { showNewModal } = this.state
@@ -66,6 +106,21 @@ class Customers extends React.Component {
     return (
       <Wrapper>
         <CustomersHeader onNew={this.openNewModal} />
+        <Row>
+          <Col md={8} lg={4} sm={12}>
+            <SearchWrapper>
+              <AsyncSelect
+                components={{
+                  Option: CustomerOption,
+                  SingleValue: CustomerOptionValue
+                }}
+                defaultOptions
+                loadOptions={this.loadOptions}
+                onChange={this.onChangeUser}
+              />
+            </SearchWrapper>
+          </Col>
+        </Row>
         <Table
           columns={columns}
           records={users}
@@ -89,7 +144,8 @@ const mapStateToProps = ({ user: { users, page, perPage, total } }) => ({
 })
 
 const mapDispatchToProps = {
-  fetchUsers
+  fetchUsers,
+  filterUsers
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Customers))

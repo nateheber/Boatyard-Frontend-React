@@ -8,13 +8,6 @@ import { Selector } from 'components/basic/Input';
 
 import { filterServices, fetchOne } from 'store/reducers/services';
 
-import CustomerOption from '../basic/CustomerOption';
-import CustomerOptionValue from '../basic/CustomerOptionValue';
-
-const CustomOption = ({ innerProps: { id, ...rest }, data }) => {
-  return <CustomerOption key={id} {...rest} data={data} />;
-};
-
 class SelectServiceModal extends React.Component {
   state = {
     service: -1,
@@ -38,12 +31,6 @@ class SelectServiceModal extends React.Component {
   onFetchService = (service) => {
     console.log(service);
   }
-  customOption = ({ innerProps, data }) => {
-    return <CustomOption innerProps={innerProps} data={data} />;
-  };
-  customValue = ({ data }) => {
-    return <CustomerOptionValue {...data} />;
-  };
   next = () => {
     const { service } = this.state;
     this.props.toNext(service);

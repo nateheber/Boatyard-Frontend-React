@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
 
 import { actions } from '../reducers/lineItems';
 import { getCustomApiClient } from './sagaSelectors';
@@ -29,7 +29,7 @@ function* fetchRequest(action) {
   const lineItemClient = yield select(getCustomApiClient);
   const { payload: orderId } = action;
   const result = yield call(lineItemClient.get, `/orders/${orderId}/items/`);
-  const lineItems = get(result, 'data', []);
+  const lineItems = sortBy(get(result, 'data', []), ['id']);
   yield put({
     type: actions.setLineItems,
     payload: lineItems.map(lineItem => ({

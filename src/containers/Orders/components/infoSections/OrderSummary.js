@@ -6,6 +6,10 @@ const Wrapper = styled.div``;
 
 const Field = styled(Row)`
   margin-bottom: 30px;
+  padding-left: 30px;
+  &:last-child {
+    margin-bottom: 0px;
+  }
 `;
 
 const Label = styled(Col)`
@@ -18,7 +22,7 @@ const Label = styled(Col)`
 
 const FieldValue = styled(Col)`
   font-family: 'Source Sans Pro';
-  color: #898889;
+  color: #004258;
   font-size: 14px;
 `;
 
@@ -27,7 +31,7 @@ export default ({ lineItem }) => {
   return (
     <Wrapper>
       <Field>
-        <Label sm={2} md={2} lg={2}>
+        <Label>
           SERVICE
         </Label>
         <FieldValue sm={3} md={3} lg={3}>

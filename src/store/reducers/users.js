@@ -68,7 +68,7 @@ export default handleActions(
       }),
     [actions.setFilteredUsers]: (state, { payload }) =>
       produce(state, draft => {
-        draft.filtered = [...draft.filtered, ...payload];
+        draft.filtered = [...payload];
         draft.loading = false;
       })
   },

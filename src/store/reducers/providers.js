@@ -6,9 +6,11 @@ export const actions = {
   createProvider: 'PROVIDER/CREATE',
   selectProvider: 'PROVIDER/SELECT',
   fetchProviders: 'PROVIDER/FETCH',
+  filterProviders: 'PROVIDER/FITER',
   fetchProvider: 'PROVIDER/FETCH_ONE',
   setProviders: 'PROVIDER/SET',
   setProvider: 'PROVIDER/SET_ONE',
+  setFilteredData: 'PROVIDER/SET_FILTERED_DATA',
   updateProvider: 'PROVIDER/UPDATE',
   setUpdatedProvider: 'PROVIDER/SET_UPDATED',
   deleteProvider: 'PROVIDER/DELETE'
@@ -18,12 +20,14 @@ export const createProvider = createAction(actions.createProvider);
 export const updateProvider = createAction(actions.updateProvider);
 export const selectProvider = createAction(actions.selectProvider);
 export const fetchProviders = createAction(actions.fetchProviders);
+export const filterProviders = createAction(actions.filterProviders);
 export const fetchProvider = createAction(actions.fetchProvider);
 export const setProviders = createAction(actions.setProviders);
 export const deleteProvider = createAction(actions.deleteProvider);
 
 const initialState = {
-  providers: []
+  providers: [],
+  filtered: [],
 };
 
 export default handleActions(
@@ -35,6 +39,10 @@ export default handleActions(
     [actions.setProvider]: (state, { payload }) =>
       produce(state, draft => {
         draft.providers = [...draft.providers, payload];
+      }),
+    [actions.setFilteredData]: (state, { payload }) =>
+      produce(state, draft => {
+        draft.providers = payload;
       }),
     [actions.deleteProvider]: (state, { payload }) =>
       produce(state, draft => {
