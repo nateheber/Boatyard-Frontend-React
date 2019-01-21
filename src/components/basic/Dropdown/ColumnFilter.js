@@ -52,7 +52,7 @@ const MenuItemLi = styled.div`
   }
 `;
 
-const MenuItem = styled.button`
+const MenuItem = styled.div`
   border: none;
   width: 100%;
   padding: 0 15px;
