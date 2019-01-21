@@ -87,7 +87,7 @@ class OrderDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
-    this.props.GetOrder(orderId);
+    this.props.GetOrder({orderId});
     this.props.fetchLineItems(orderId);
     this.setState({
       orderId
@@ -139,7 +139,7 @@ class OrderDetails extends React.Component {
       id,
       data,
       callback: () => {
-        this.props.getOrder(orderId)
+        this.props.GetOrder({ orderId })
       }
     })
     this.setState({
