@@ -4,6 +4,9 @@ import changeCase from 'change-case';
 import classNames from 'classnames'
 import moment from 'moment';
 
+import CaretDownIcon from '../../../resources/caret-down-solid.svg';
+import CaretUpIcon from '../../../resources/caret-up-solid.svg';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -93,6 +96,34 @@ const FieldValue = styled.div`
   color: #898889;
 `;
 
+const CaretDown = styled.div`
+  display: none;
+  width: 20px;
+  height: 25px;
+  background-image: url(${CaretDownIcon});
+  background-position: center;
+  background-repeat: no-repeat;
+  content: ' ';
+  @media (max-width: 843px) {
+    margin: 0px 10px;
+    display: inline-block;
+  }
+`;
+
+const CaretUp = styled.div`
+  display: none;
+  width: 20px;
+  height: 25px;
+  background-image: url(${CaretUpIcon});
+  background-position: center;
+  background-repeat: no-repeat;
+  content: ' ';
+  @media (max-width: 843px) {
+    margin: 0px 10px;
+    display: inline-block;
+  }
+`;
+
 export class Record extends React.Component {
   state = {
     show: false
@@ -155,6 +186,8 @@ export class Record extends React.Component {
           className={classNames(show ? 'active' : 'deactive', type, 'is-mobile')}
         >
           {this.getValue(firstColumn, record)}
+          {!show && <CaretDown />}
+          {show && <CaretUp />}
         </FirstField>
         <FirstField className="is-desktop" onClick={this.onGoToDetails}>
           {this.getValue(firstColumn, record)}
