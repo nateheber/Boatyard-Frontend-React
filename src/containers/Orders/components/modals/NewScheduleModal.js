@@ -1,106 +1,41 @@
-import React from 'react';
+import React from 'react'
+import styled from 'styled-components'
+import { Row, Col } from 'react-flexbox-grid'
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons'
-import Modal from 'components/compound/Modal';
-import FormFields from 'components/template/FormFields';
+import { DateSelector, TimePicker } from 'components/basic/Input';
+import Modal from 'components/compound/Modal'
+
+const Label = styled.div`
+  margin: 15px 0;
+  font-size: 12px;
+  font-family: Montserrat, sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #07384b;
+`
 
 export default class EditBoatModal extends React.Component {
-  setFormFieldRef = (ref) => {
-    this.mainInfoFields = ref;
-  }
-  getFormFieldInfo = () => {
-    const {
-      boatInfo: {
-        name,
-        make,
-        model,
-        year,
-        length
-      }
-    } = this.props;
-    const fields = [
-      {
-        type: 'text_field',
-        field: 'name',
-        label: 'Name',
-        errorMessage: 'Enter the boat name',
-        required: true,
-        defaultValue: name,
-        xs: 6,
-        sm: 6,
-        md: 4,
-        lg: 4,
-        xl: 4
-      },
-      {
-        type: 'text_field',
-        field: 'make',
-        label: 'Make',
-        errorMessage: 'Enter the boat make',
-        required: true,
-        defaultValue: make,
-        xs: 6,
-        sm: 6,
-        md: 4,
-        lg: 4,
-        xl: 4
-      },
-      {
-        type: 'text_field',
-        field: 'model',
-        label: 'Boat Model',
-        errorMessage: 'Enter the boat model',
-        required: true,
-        defaultValue: model,
-        xs: 6,
-        sm: 6,
-        md: 4,
-        lg: 4,
-        xl: 4
-      },
-      {
-        type: 'text_field',
-        field: 'year',
-        label: 'Year',
-        errorMessage: 'Enter the boat year',
-        required: true,
-        defaultValue: year,
-        xs: 6,
-        sm: 6,
-        md: 4,
-        lg: 4,
-        xl: 4
-      },
-      {
-        type: 'text_field',
-        field: 'length',
-        label: 'Length',
-        defaultValue: length,
-        xs: 6,
-        sm: 6,
-        md: 4,
-        lg: 4,
-        xl: 4
-      },
-    ]
-    return fields;
-  }
-  onSave = () => {
-    if (this.mainInfoFields.validateFields()) {
-      this.props.onSave(this.mainInfoFields.getFieldValues());
-    }
-  }
   render() {
-    const { open, onClose, isLast } = this.props;
+    const { open, onClose, isLast, orderId } = this.props;
     const action = [<HollowButton onClick={onClose}>Cancel</HollowButton>, <OrangeButton onClick={this.onSave}>{isLast ? 'Save' : 'Save & Continue'}</OrangeButton>];
     return (
       <Modal
-        title="Select Customer"
+        title={`Order #${orderId}`}
+        small
         actions={action}
         open={open}
         onClose={onClose}
       >
-        
+        <Label>Schedule from</Label>
+        <Row>
+          <Col sm={6}>
+            <DateSelector />
+          </Col>
+          <Col sm={6}>
+            <TimePicker />
+          </Col>
+        </Row>
       </Modal>
     );
   }

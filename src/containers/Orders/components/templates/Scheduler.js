@@ -2,6 +2,7 @@ import React from 'react'
 
 import { Section } from 'components/basic/InfoSection'
 import { HollowButton } from 'components/basic/Buttons'
+import NewScheduleModal from '../modals/NewScheduleModal'
 
 export default class OrderSumarySection extends React.Component {
   render () {
@@ -9,6 +10,7 @@ export default class OrderSumarySection extends React.Component {
       <Section title="Scheduling">
         <HollowButton>SCHEDULE 1 OPTION</HollowButton>
         <HollowButton>SCHEDULE 3 OPTIONS</HollowButton>
+        <NewScheduleModal open={true} />
       </Section>
     )
   }
