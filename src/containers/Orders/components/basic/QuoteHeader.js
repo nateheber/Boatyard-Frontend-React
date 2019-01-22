@@ -4,6 +4,7 @@ import { Row, Col } from 'react-flexbox-grid'
 
 const Field = styled.div`
   color: #004258;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   margin-top: 10px;

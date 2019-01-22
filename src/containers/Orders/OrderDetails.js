@@ -17,6 +17,7 @@ import LineItemSection from './components/templates/LineItemSection'
 import OrderSumarySection from './components/templates/OrderSumarySection'
 import OrderReviewSection from './components/templates/OrderReviewSection'
 import OrderDetailHeader from './components/templates/OrderDetailHeader'
+import Scheduler from './components/templates/Scheduler'
 
 import BoatEditor from './components/modals/EditBoatModal'
 
@@ -120,6 +121,12 @@ class OrderDetails extends React.Component {
     })
   }
 
+  getUdpatedDate = () => {
+    const { currentOrder } = this.props;
+    const updatedAt = get(currentOrder, 'data.attributes.updatedAt');
+    return updatedAt;
+  }
+
   editBoat = () => {
     this.setState({
       editBoat: true,
@@ -154,6 +161,7 @@ class OrderDetails extends React.Component {
 
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
+    const updatedDate = this.getUdpatedDate();
     const { orderId, editBoat } = this.state;
     const providerId = this.getProviderId();
     const { lineItems } = this.props;
@@ -166,8 +174,11 @@ class OrderDetails extends React.Component {
             <Col md={12} sm={12} xs={12} lg={8} xl={8}>
               <SectionGroup>
                 <OrderSumarySection lineItem={lineItems[0]} />
-                <LineItemSection orderId={orderId} providerId={providerId} />
+                <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
                 <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
+              </SectionGroup>
+              <SectionGroup>
+                <Scheduler />
               </SectionGroup>
             </Col>
             <Col md={12} sm={12} xs={12} lg={4} xl={4}>
