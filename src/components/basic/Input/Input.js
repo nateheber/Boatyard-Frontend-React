@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import InputMask from 'react-input-mask';
-import className from 'classnames';
+import classNames from 'classnames';
 
 const ErrorMessage = styled.div`
   color: #f7941e !important;
@@ -34,17 +34,22 @@ const MaskInput = styled(InputMask)`
   &:disabled {
     background: #f1f1f1;
   }
+  &.hideError {
+    margin-bottom: 0px;
+  }
 `;
 
 export class Input extends React.Component {
   render() {
-    const { hasError, errorMessage, ...rest } = this.props;
+    const { hasError, errorMessage, hideError, ...rest } = this.props;
     return (
       <React.Fragment>
-        <MaskInput {...rest} />
-        <ErrorMessage className={className({ show: hasError })}>
-          {errorMessage}
-        </ErrorMessage>
+        <MaskInput className={classNames({ hideError })} {...rest} />
+        { !hideError &&
+          <ErrorMessage className={classNames({ show: hasError })}>
+            {errorMessage}
+          </ErrorMessage>
+        }
       </React.Fragment>
     );
   }
@@ -73,7 +78,7 @@ export class Select extends React.Component {
     return (
       <React.Fragment>
         <Selector {...rest} />
-        <ErrorMessage className={className({ show: hasError })}>
+        <ErrorMessage className={classNames({ show: hasError })}>
           {errorMessage}
         </ErrorMessage>
       </React.Fragment>
