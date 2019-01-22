@@ -33,16 +33,16 @@ export const OrderHeader = ({ onAction, onNewOrder }) => (
       <OrangeButton className="desktop" onClick={onNewOrder}>New Order</OrangeButton>
       <ColumnFilter
         items={[
-          { title: 'Order', value: 'order' },
-          { title: 'Order Placed', value: 'order_placed' },
-          { title: 'Customer', value: 'customer' },
-          { title: 'Customer Location', value: 'customer_location' },
-          { title: 'Boat', value: 'boat' },
-          { title: 'Length', value: 'length' },
-          { title: 'Total', value: 'total' },
-          { title: 'Payment Status', value: 'payment_status' },
-          { title: 'Scheduling Status', value: 'scheduling_status' },
-          { title: 'Order Status', value: 'order_status' }
+          { label: 'Order', value: 'order' },
+          { label: 'Order Placed', value: 'order_placed' },
+          { label: 'Customer', value: 'customer' },
+          { label: 'Customer Location', value: 'customer_location' },
+          { label: 'Boat', value: 'boat' },
+          { label: 'Length', value: 'length' },
+          { label: 'Total', value: 'total' },
+          { label: 'Payment Status', value: 'payment_status' },
+          { label: 'Scheduling Status', value: 'scheduling_status' },
+          { label: 'Order Status', value: 'order_status' }
         ]}
         onChangeSelection={columns => {
           console.log(columns);

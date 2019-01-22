@@ -16,11 +16,11 @@ export const ProviderHeader = ({ onAction }) => (
     <RightPart>
       <ColumnFilter
         items={[
-          { title: 'provider name', value: 'provider_name' },
-          { title: 'contact name', value: 'contact_name' },
-          { title: 'phone', value: 'phone' },
-          { title: 'email', value: 'email' },
-          { title: 'location', value: 'location' }
+          { label: 'provider name', value: 'provider_name' },
+          { label: 'contact name', value: 'contact_name' },
+          { label: 'phone', value: 'phone' },
+          { label: 'email', value: 'email' },
+          { label: 'location', value: 'location' }
         ]}
         onChangeSelection={columns => {
           console.log(columns);

@@ -94,27 +94,25 @@ export class ColumnFilter extends React.Component {
 
   state = {
     showMenu: false,
-    selected: []
   };
+
   isChecked = val => {
-    const { selected } = this.state;
-    const idx = findIndex(selected, sel => sel === val.value);
+    const { selected } = this.props;
+    const idx = findIndex(selected, sel => sel.value === val.value);
     return idx >= 0;
   };
+
   select = val => {
-    const { onChangeSelection } = this.props;
-    const { selected } = this.state;
-    const idx = findIndex(selected, sel => sel === val.value);
-    let newSelection = [];
+    const { onChangeSelection, selected } = this.props;
+    const idx = findIndex(selected, sel => sel.value === val.value);
+    let newSelection = selected;
     if (idx >= 0) {
-      newSelection = filter(selected, sel => sel !== val.value);
+      const selections = filter(selected, sel => sel.value !== val.value);
+      if (selections.length > 0) newSelection = selections;
     } else {
-      newSelection = [...selected, val.value];
+      newSelection = [...selected, val];
     }
     onChangeSelection(newSelection);
-    this.setState({
-      selected: newSelection
-    });
   };
   render() {
     const { showMenu } = this.state;
@@ -138,7 +136,7 @@ export class ColumnFilter extends React.Component {
                     this.select(val);
                   }}
                 />
-                {val.title}
+                {val.label}
               </MenuItem>
             </MenuItemLi>
           ))}
