@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
 const Wrapper = styled.div`
   display: flex;
@@ -81,6 +82,12 @@ function getValue(column, item) {
   }
   if(column.isValue && parseInt(value) === 0) {
     return '';
+  }
+  if (column.isDate) {
+    value = `${moment(value).format('MMM DD, YYYY')}`;
+    if (!(value instanceof Date && !isNaN(value))) {
+      value = '';
+    }
   }
   return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
 }
