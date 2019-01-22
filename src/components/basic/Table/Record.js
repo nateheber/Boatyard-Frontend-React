@@ -161,7 +161,7 @@ export class Record extends React.Component {
       }    
     }
     if (column.isValue && parseInt(value) === 0) {
-      return '';
+      return '_';
     }
     if (column.isDate) {
       const date = moment(value);

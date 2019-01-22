@@ -88,7 +88,7 @@ function getValue(column, item) {
     if (date.isValid()) {
       value = `${date.format('MMM DD, YYYY')}`;
     } else {
-      value = '';
+      value = '_';
     }
   }
 return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
