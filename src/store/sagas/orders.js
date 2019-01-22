@@ -34,6 +34,11 @@ function* getOrders(action) {
         failureType = actionTypes.GET_OPEN_ORDERS_FAILURE;
         break;
       }
+      case actionTypes.GET_PAID_ORDERS: {
+        successType = actionTypes.GET_PAID_ORDERS_SUCCESS;
+        failureType = actionTypes.GET_PAID_ORDERS_FAILURE;
+        break;
+      }
       default: {
         successType = actionTypes.GET_ORDERS_SUCCESS;
         failureType = actionTypes.GET_ORDERS_FAILURE;
@@ -113,6 +118,7 @@ export default function* Profile() {
   yield takeEvery(actionTypes.GET_SCHEDULED_ORDERS, getOrders);
   yield takeEvery(actionTypes.GET_ASSIGNED_ORDERS, getOrders);
   yield takeEvery(actionTypes.GET_OPEN_ORDERS, getOrders);
+  yield takeEvery(actionTypes.GET_PAID_ORDERS, getOrders);
   yield takeEvery(actionTypes.GET_ORDER, getOrder);
   yield takeEvery(actionTypes.CREATE_ORDER, createOrder);
   yield takeEvery(actionTypes.UPDATE_ORDER, updateOrder);

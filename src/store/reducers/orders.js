@@ -29,6 +29,7 @@ const initialState = {
   scheduledOrders: ordersState,
   assignedOrders: ordersState,
   openOrders: ordersState,
+  paidOrders: ordersState,
   error: null
 };
 
@@ -143,6 +144,29 @@ export default handleActions(
         draft.openOrders.included = refactorIncluded(included);
       }),
     [actionTypes.GET_OPEN_ORDERS_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload.error;
+      }),
+
+      [actionTypes.GET_PAID_ORDERS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.paidOrders.page = get(payload, 'page', 1);
+      }),
+    [actionTypes.GET_PAID_ORDERS_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { total, perPage, orders, included } = payload;
+        draft.currentStatus = type;
+        draft.paidOrders.total = total;
+        draft.paidOrders.perPage = perPage;
+        draft.paidOrders.orders = orders;
+        draft.paidOrders.included = refactorIncluded(included);
+      }),
+    [actionTypes.GET_PAID_ORDERS_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;

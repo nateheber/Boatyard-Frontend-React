@@ -21,6 +21,10 @@ export const actionTypes = {
   GET_OPEN_ORDERS_SUCCESS: '[ ORDERS ] - Get orders that are open invoices Success',
   GET_OPEN_ORDERS_FAILURE: '[ ORDERS ] - Get orders that are open invoices Failure',
 
+  GET_PAID_ORDERS: '[ ORDERS ] - Get orders that are paid invoices',
+  GET_PAID_ORDERS_SUCCESS: '[ ORDERS ] - Get orders that are paid invoices Success',
+  GET_PAID_ORDERS_FAILURE: '[ ORDERS ] - Get orders that are paid invoices Failure',
+
   GET_ORDER: '[ORDERS] - Get order',
   GET_ORDER_SUCCESS: '[ORDERS] - Get order Success',
   GET_ORDER_FAILURE: '[ORDERS] - Get order Failure',
@@ -57,6 +61,10 @@ export const GetAssignedOrdersFailure = createAction(actionTypes.GET_ASSIGNED_OR
 export const GetOpenOrders = createAction(actionTypes.GET_OPEN_ORDERS, payload => payload);
 export const GetOpenOrdersSuccess = createAction(actionTypes.GET_OPEN_ORDERS_SUCCESS);
 export const GetOpenOrdersFailure = createAction(actionTypes.GET_OPEN_ORDERS_FAILURE);
+
+export const GetPaidOrders = createAction(actionTypes.GET_PAID_ORDERS, payload => payload);
+export const GetPaidOrdersSuccess = createAction(actionTypes.GET_PAID_ORDERS_SUCCESS);
+export const GetPaidOrdersFailure = createAction(actionTypes.GET_PAID_ORDERS_FAILURE);
 
 export const GetOrder = createAction(actionTypes.GET_ORDER, payload => payload);
 export const GetOrderSuccess = createAction(actionTypes.GET_ORDER_SUCCESS);
