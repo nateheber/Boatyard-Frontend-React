@@ -1,8 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import changeCase from 'change-case';
-import { get } from 'lodash';
 import classNames from 'classnames'
+import moment from 'moment';
+
+import CaretDownIcon from '../../../resources/caret-down-solid.svg';
+import CaretUpIcon from '../../../resources/caret-up-solid.svg';
 
 const Wrapper = styled.div`
   display: flex;
@@ -32,6 +35,16 @@ const FirstField = styled.div`
   padding: 8px;
   padding-left: 30px;
   align-items: center;
+  > a {
+    text-decoration: none;
+    color: #004258;  
+  }
+  &.is-mobile {
+    display: none;
+  }
+  &.is-desktop {
+    display: flex;
+  }
   @media (max-width: 843px) {
     display: flex;
     height: 57px;
@@ -42,6 +55,12 @@ const FirstField = styled.div`
     border-bottom: 2px solid #e7ecf1 !important;
     &.active {
       background-color: #f6f6f7;
+    }
+    &.is-mobile {
+      display: flex;
+    }
+    &.is-desktop {
+      display: none;
     }
   }
   cursor: pointer;
@@ -77,39 +96,106 @@ const FieldValue = styled.div`
   color: #898889;
 `;
 
+const CaretDown = styled.div`
+  display: none;
+  width: 20px;
+  height: 25px;
+  background-image: url(${CaretDownIcon});
+  background-position: center;
+  background-repeat: no-repeat;
+  content: ' ';
+  @media (max-width: 843px) {
+    margin: 0px 10px;
+    display: inline-block;
+  }
+`;
+
+const CaretUp = styled.div`
+  display: none;
+  width: 20px;
+  height: 25px;
+  background-image: url(${CaretUpIcon});
+  background-position: center;
+  background-repeat: no-repeat;
+  content: ' ';
+  @media (max-width: 843px) {
+    margin: 0px 10px;
+    display: inline-block;
+  }
+`;
+
 export class Record extends React.Component {
   state = {
     show: false
   };
-  onClickFirstRow = () => {
+
+  onShowDetails = () => {
     const { show } = this.state;
     this.setState({ show: !show });
+  };
+
+  onGoToDetails = () => {
     this.props.toDetails();
   };
+
+  getValue = (column, item) => {
+    if (column.value === 'id') {
+      if (item.state === 'draft' && column.type === 'new') {
+        return 'New Order';
+      }
+      return `Order #${item.id}`;    
+    }
+    const fields = column.value.split('/');
+    let value = '';
+    for (const idx in fields) {
+      const field = fields[idx];
+      const arr = field.split('.');
+      let part = item;
+      for (const subIdx in arr) {
+        const key = arr[subIdx];
+        if (!part) return '_';
+        part = part[key];
+      }
+      if(part && part.length > 0) {
+        value = value.length > 0 ? `${value} ${part}` : part;
+      }    
+    }
+    if (column.isValue && parseInt(value) === 0) {
+      return '_';
+    }
+    if (column.isDate) {
+      const date = moment(value);
+      if (date.isValid()) {
+        value = `${date.format('MMM DD, YYYY')}`;
+      } else {
+        value = '';
+      }
+    }
+    return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
+  };
+
   render() {
     const { record, columns, type } = this.props;
     const { show } = this.state;
-    const firstField = columns[0].value;
+    const firstColumn = columns[0];
     const hidingCols = columns.slice(1);
     return (
       <Wrapper className={show ? 'active' : 'deactive'}>
         <FirstField
-          onClick={this.onClickFirstRow}
-          className={classNames(show ? 'active' : 'deactive', type)}
+          onClick={this.onShowDetails}
+          className={classNames(show ? 'active' : 'deactive', type, 'is-mobile')}
         >
-          {get(record, firstField) || '_'}
+          {this.getValue(firstColumn, record)}
+          {!show && <CaretDown />}
+          {show && <CaretUp />}
         </FirstField>
-        {hidingCols.map((col, idx) => (
+        <FirstField className="is-desktop" onClick={this.onGoToDetails}>
+          {this.getValue(firstColumn, record)}
+        </FirstField>
+        {hidingCols.map((column, idx) => (
           <Field className={classNames(show ? 'show' : 'hide', type)} key={`col_${idx}`}>
-            <FieldLabel>{changeCase.upperCaseFirst(col.label)}</FieldLabel>
-            {col.isValue ? 
-              parseInt(get(record, col.value)) > 0 ?
-              <FieldValue>{col.prefix || ''}{get(record, col.value) || '_'}{col.suffix || ''}</FieldValue>
-              :
-              <FieldValue>_</FieldValue>
-            :
-              <FieldValue>{col.prefix || ''}{get(record, col.value) || '_'}{col.suffix || ''}</FieldValue>
-            }
+            <FieldLabel>{changeCase.upperCaseFirst(column.label)}</FieldLabel>
+            <FieldValue>{this.getValue(column, record)}</FieldValue>
           </Field>
         ))}
       </Wrapper>

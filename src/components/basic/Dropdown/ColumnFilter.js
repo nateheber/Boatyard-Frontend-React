@@ -52,7 +52,7 @@ const MenuItemLi = styled.div`
   }
 `;
 
-const MenuItem = styled.button`
+const MenuItem = styled.div`
   border: none;
   width: 100%;
   padding: 0 15px;
@@ -94,27 +94,34 @@ export class ColumnFilter extends React.Component {
 
   state = {
     showMenu: false,
-    selected: []
   };
+
   isChecked = val => {
-    const { selected } = this.state;
-    const idx = findIndex(selected, sel => sel === val.value);
+    const { selected } = this.props;
+    const idx = findIndex(selected, sel => sel.value === val.value);
     return idx >= 0;
   };
+
   select = val => {
-    const { onChangeSelection } = this.props;
-    const { selected } = this.state;
-    const idx = findIndex(selected, sel => sel === val.value);
-    let newSelection = [];
+    const { onChangeSelection, selected } = this.props;
+    const idx = findIndex(selected, sel => sel.value === val.value);
+    let newSelection = selected;
     if (idx >= 0) {
-      newSelection = filter(selected, sel => sel !== val.value);
+      const selections = filter(selected, sel => sel.value !== val.value);
+      if (selections.length > 0) newSelection = selections;
     } else {
-      newSelection = [...selected, val.value];
+      const { items } = this.props;
+      const selections = [...selected, val];
+      newSelection = [];
+      for (const index in items) {
+        const item = items[index];
+        const filtered = filter(selections, selection => selection.value === item.value);
+        if (filtered.length > 0) {
+          newSelection.push(item);
+        }
+      }
     }
     onChangeSelection(newSelection);
-    this.setState({
-      selected: newSelection
-    });
   };
   render() {
     const { showMenu } = this.state;
@@ -129,7 +136,7 @@ export class ColumnFilter extends React.Component {
         />
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
           {items.map((val, idx) => (
-            <MenuItemLi>
+            <MenuItemLi key={`menu_${idx}`}>
               <MenuItem>
                 <CheckBox
                   small
@@ -138,7 +145,7 @@ export class ColumnFilter extends React.Component {
                     this.select(val);
                   }}
                 />
-                {val.title}
+                {val.label}
               </MenuItem>
             </MenuItemLi>
           ))}

@@ -109,7 +109,7 @@ class SelectCustomerModal extends React.Component {
   };
 
   render() {
-    const action = [<OrangeButton onClick={this.next}>Next</OrangeButton>];
+    const action = [<OrangeButton onClick={this.next} key="modal_action_button">Next</OrangeButton>];
     const { open, onClose } = this.props;
     const { customer, boat } = this.state;
     const boats = this.getBoats();

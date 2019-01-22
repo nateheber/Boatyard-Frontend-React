@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
 const Wrapper = styled.div`
   display: flex;
@@ -82,7 +83,15 @@ function getValue(column, item) {
   if(column.isValue && parseInt(value) === 0) {
     return '';
   }
-  return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
+  if (column.isDate) {
+    const date = moment(value);
+    if (date.isValid()) {
+      value = `${date.format('MMM DD, YYYY')}`;
+    } else {
+      value = '_';
+    }
+  }
+return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
 }
 
 export const OrderItem = props => {

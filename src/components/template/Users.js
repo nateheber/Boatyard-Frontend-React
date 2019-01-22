@@ -31,7 +31,6 @@ class Users extends React.Component {
       { label: 'contact number', value: 'phoneNumber' }
     ];
     const { users } = this.props;
-    console.log(users);
     return (
       <Wrapper>
         <UsersHeader onAdd={this.onAdd} />

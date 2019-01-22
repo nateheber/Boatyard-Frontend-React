@@ -37,7 +37,7 @@ class SelectServiceModal extends React.Component {
     this.props.onClose();
   }
   render() {
-    const action = [<OrangeButton onClick={this.next}>CREATE ORDER</OrangeButton>];
+    const action = [<OrangeButton onClick={this.next} key="modal_action_button">CREATE ORDER</OrangeButton>];
     const { open, onClose, filtered } = this.props;
     const options = filtered.map(option => ({
       value: option.id,

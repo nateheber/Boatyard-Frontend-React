@@ -16,6 +16,9 @@ const allOrdersSelector = (state, orderType) => {
     case 'open': {
       return state.order.openOrders.orders;
     }
+    case 'paid': {
+      return state.order.paidOrders.orders;
+    }
     default: {
       return state.order.orders.orders;
     }
@@ -34,6 +37,9 @@ const includedSelector = (state, orderType) => {
     }
     case 'open': {
       return state.order.openOrders.included;
+    }
+    case 'paid': {
+      return state.order.paidOrders.included;
     }
     default: {
       return state.order.orders.included;
