@@ -7,7 +7,7 @@ import Login from 'components/template/Login';
 const MainRouter = () => (
   <Router>
     <AuthPageTemplate>
-      <Route exact path="/" component={Login} />
+      <Route exact path="*" component={Login} />
     </AuthPageTemplate>
   </Router>
 );
