@@ -53,7 +53,7 @@ class Dashboard extends React.Component {
           </LeftPart>
           <RightPart>
             <MonthlyRevenue />
-            {previlage === 'provider' && <OpenInvoices />}
+            {previlage === 'admin' && <OpenInvoices />}
           </RightPart>
         </Wrapper>
       </Container>
