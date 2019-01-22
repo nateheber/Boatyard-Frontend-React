@@ -84,12 +84,14 @@ function getValue(column, item) {
     return '';
   }
   if (column.isDate) {
-    value = `${moment(value).format('MMM DD, YYYY')}`;
-    if (!(value instanceof Date && !isNaN(value))) {
+    const date = moment(value);
+    if (date.isValid()) {
+      value = `${date.format('MMM DD, YYYY')}`;
+    } else {
       value = '';
     }
   }
-  return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
+return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
 }
 
 export const OrderItem = props => {

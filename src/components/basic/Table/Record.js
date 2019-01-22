@@ -133,8 +133,10 @@ export class Record extends React.Component {
       return '';
     }
     if (column.isDate) {
-      value = `${moment(value).format('MMM DD, YYYY')}`;
-      if (!(value instanceof Date && !isNaN(value))) {
+      const date = moment(value);
+      if (date.isValid()) {
+        value = `${date.format('MMM DD, YYYY')}`;
+      } else {
         value = '';
       }
     }
