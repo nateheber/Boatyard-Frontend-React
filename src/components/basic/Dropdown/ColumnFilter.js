@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { findIndex, filter } from 'lodash';
+import { findIndex, filter, without } from 'lodash';
 
 import { ToggleButton } from '../Buttons';
 import { CheckBox } from '../Input';
+import { merge } from 'rxjs';
 
 const Wrapper = styled.div`
   position: relative;
@@ -110,7 +111,16 @@ export class ColumnFilter extends React.Component {
       const selections = filter(selected, sel => sel.value !== val.value);
       if (selections.length > 0) newSelection = selections;
     } else {
-      newSelection = [...selected, val];
+      const { items } = this.props;
+      const selections = [...selected, val];
+      newSelection = [];
+      for (const index in items) {
+        const item = items[index];
+        const filtered = filter(selections, selection => selection.value === item.value);
+        if (filtered.length > 0) {
+          newSelection.push(item);
+        }
+      }
     }
     onChangeSelection(newSelection);
   };
