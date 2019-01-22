@@ -1,10 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { findIndex, filter, without } from 'lodash';
+import { findIndex, filter } from 'lodash';
 
 import { ToggleButton } from '../Buttons';
 import { CheckBox } from '../Input';
-import { merge } from 'rxjs';
 
 const Wrapper = styled.div`
   position: relative;
