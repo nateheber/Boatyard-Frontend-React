@@ -42,14 +42,14 @@ class OrderList extends React.Component {
     return Math.ceil(total/perPage);
   }
   changePage = (page) => {
-    this.props.fetchOrders({page: page });
+    this.props.GetOrders({ page: page });
   }
   newOrder = () => {
     this.orderCreation.createOrder();
   }
   creationFinished = () => {
-    const { page, fetchOrders } = this.props;
-    fetchOrders(page);
+    const { page, GetOrders } = this.props;
+    GetOrders({ page: page });
   }
   render() {
     const { orders, page } = this.props;
