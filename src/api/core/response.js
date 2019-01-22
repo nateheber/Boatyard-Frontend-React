@@ -12,7 +12,10 @@ export const responseInterceptor = client => {
       });
     }
     return response.data;
-  }, () => []);
+  }, (err) => {
+    console.log(err);
+    return [];
+  });
   return client;
 };
 

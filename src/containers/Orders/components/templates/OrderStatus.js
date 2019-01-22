@@ -11,7 +11,7 @@ const LabelWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-end;
-  border-bottom: 1px solid #fafafa;
+  border-bottom: 1px solid #e7ecf1;
   @media (max-width: 778px) {
     display: none;
   }
@@ -45,7 +45,8 @@ const FieldLabel = styled.div`
   box-sizing: border-box;
   color: #07384b;
   text-transform: uppercase;
-  font-family: Montserrat , sans-serif;
+  font-family: 'Montserrat' , sans-serif;
+  font-weight: 600;
   font-size: 12px;
   padding: 8px 30px;
 `
@@ -55,9 +56,10 @@ const FieldValue = styled.div`
   flex: 1;
   box-sizing: border-box;
   color: #898989;
-  text-transform: uppercase;
-  font-family: Montserrat , sans-serif;
-  font-size: 12px;
+  text-transform: capitalize;
+  font-family: 'Source Sans Pro' , sans-serif;
+  font-size: 14px;
+  font-wieght: 400;
   padding: 8px 30px;
 `
 
@@ -66,7 +68,7 @@ const StatusValue = styled.div`
   flex: 1;
   box-sizing: border-box;
   color: #009DEB;
-  text-transform: uppercase;
+  text-transform: capitalize;
   font-family: Montserrat , sans-serif;
   font-size: 12px;
   padding: 8px 30px;
