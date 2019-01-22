@@ -21,7 +21,7 @@ import OrderDetailHeader from './components/templates/OrderDetailHeader'
 import BoatEditor from './components/modals/EditBoatModal'
 
 const Wrapper = styled.div`
-  padding: 15px;
+  padding: 30px;
 `
 
 const getOrderDetails = (orderInfo) => {
