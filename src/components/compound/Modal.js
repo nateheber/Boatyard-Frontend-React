@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import Modal from 'react-responsive-modal';
+import { isEmpty } from 'lodash';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
+import ModalTab from './ModalTab';
 
 const Header = styled.div`
   flex: 1 0 auto;
@@ -15,6 +17,9 @@ const Header = styled.div`
   font-family: Montserrat, sans-serif;
   box-sizing: border-box;
   width: 100%;
+  &.noBorder {
+    border-bottom: none;
+  }
 `;
 
 const Body = styled.div`
@@ -74,7 +79,7 @@ const modalStyles = {
 
 export default class CustomModal extends React.Component {
   render() {
-    const { open, onClose, children, title, actions, small, loading, spinnerOptions } = this.props;
+    const { open, onClose, children, title, actions, small, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
     return (
       <Modal
         styles={small ? modalStyles.small : modalStyles.main}
@@ -82,7 +87,8 @@ export default class CustomModal extends React.Component {
         onClose={onClose}
         style={{width: '300px'}}
       >
-        <Header>{title}</Header>
+        <Header className={!isEmpty(tabs) ? 'noBorder' : ''}>{title}</Header>
+        {!isEmpty(tabs) && <ModalTab tabs={tabs} selected={selected} onSelect={onSelect} /> }
         <Body>
           <Content>
             {children}

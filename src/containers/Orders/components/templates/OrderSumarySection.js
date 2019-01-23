@@ -8,7 +8,7 @@ export default class OrderSumarySection extends React.Component {
   render () {
     const { lineItem } = this.props;
     return isEmpty(lineItem) ? false : (
-      <Section title="Order Sumary">
+      <Section title="Order Summary">
         <OrderSumary lineItem={lineItem} />
       </Section>
     )

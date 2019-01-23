@@ -15,6 +15,7 @@ import lineItem from './lineItems';
 import boat from './boats';
 import payment from './payments';
 import creditCard from './credit-cards';
+import providerLocationServices from './providerLocationServices';
 
 const rootReducer = combineReducers({
   navigation,
@@ -31,7 +32,8 @@ const rootReducer = combineReducers({
   boat,
   payment,
   creditCard,
-  toastr: toastrReducer
+  toastr: toastrReducer,
+  providerLocationServices
 });
 
 export default rootReducer;

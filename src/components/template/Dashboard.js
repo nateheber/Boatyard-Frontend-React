@@ -47,13 +47,13 @@ class Dashboard extends React.Component {
         <DashboardHeader onNewOrder={this.newOrder} />
         <Wrapper>
           <LeftPart>
-            {privilege === 'provider' && <NewOrders />}
+            {privilege === 'admin' && <NewOrders />}
             <ScheduledOrders />
             <AssignedOrders />
           </LeftPart>
           <RightPart>
             <MonthlyRevenue />
-            {privilege === 'provider' && <OpenInvoices />}
+            {privilege === 'admin' && <OpenInvoices />}
           </RightPart>
         </Wrapper>
       </Container>

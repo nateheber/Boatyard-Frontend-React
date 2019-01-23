@@ -62,7 +62,10 @@ class NewCustomer extends React.Component {
   render() {
     const fields = this.getFormFieldInfo();
     const { open, onClose } = this.props;
-    const action = [<HollowButton onClick={onClose}>Cancel</HollowButton>, <OrangeButton onClick={this.onSave}>Save</OrangeButton>];
+    const action = [
+      <HollowButton onClick={onClose} key="modal_btn_cancel">Cancel</HollowButton>,
+      <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>
+    ];
     return (
       <Modal
         title="Edit Boat Information"

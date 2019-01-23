@@ -34,7 +34,7 @@ class CustomerDetails extends React.Component {
     this.props.getUserBoats({userId: customerId})
     this.props.GetOrders({ 'order[user_id]': customerId, page: 1 })
     this.props.GetCreditCards({
-      params: { user_id: customerId }
+      params: { 'credit_card[user_id]': customerId }
     });
     this.setState({
       customerId,
@@ -54,7 +54,7 @@ class CustomerDetails extends React.Component {
     this.props.getUserBoats({userId: customerId})
     this.props.getUserOrders({ userId: customerId, page: 1 })
     this.props.GetCreditCards({
-      params: { user_id: customerId }
+      params: { 'credit_card[user_id]': customerId }
     });
     this.setState({
       customerId,
@@ -63,7 +63,7 @@ class CustomerDetails extends React.Component {
   refreshCards = () => {
     const { customerId } = this.state;
     this.props.GetCreditCards({
-      params: { user_id: customerId }
+      params: { 'credit_card[user_id]': customerId }
     });
   }
 

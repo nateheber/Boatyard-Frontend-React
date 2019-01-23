@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import moment from 'moment'
+import { isEmpty } from 'lodash'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -91,7 +92,7 @@ export default ({ id, time, customerName, total, scheduledAt, status }) => (
       <FieldValue>{customerName}</FieldValue>
       <FieldValue>${total}</FieldValue>
       <StatusValue> </StatusValue>
-      <StatusValue>{scheduledAt ? 'Scheduling Needed' : `Scheduled At ${moment(scheduledAt).format('MMM D, YYYY')}`}</StatusValue>
+      <StatusValue>{isEmpty(scheduledAt) ? 'Scheduling Needed' : `Scheduled At ${moment(scheduledAt).format('MMM D, YYYY')}`}</StatusValue>
       <StatusValue>{status}</StatusValue>
     </ValueWrapper>
     <MobileWrapper>
