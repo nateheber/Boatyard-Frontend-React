@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { times } from 'lodash';
+import { times, filter } from 'lodash';
 import moment from 'moment';
+
+import { parsetMomentToDate } from 'utils/date'
+
+import Assignment from './Assignment'
 
 const Wrapper = styled.div`
   position: relative;
@@ -39,20 +43,36 @@ const Overlay = styled.div`
   top: 0px;
 `;
 
-export const DateColumn = ({ date, active }) => (
+const TimeWrapper = styled.div`
+  position: relative;
+`
+
+const renderAssignments = (date, assignments) => {
+  const renderingData = filter(assignments,
+    (assignment) => moment(date).isBetween(moment(assignment.from), moment(assignment.to)) ||
+      moment(date).isSame(assignment.from, 'day') ||
+      moment(date).isSame(assignment.to, 'day')
+  )
+  return renderingData.map((data, idx) => <Assignment date={date} {...data} key={`assignment_${idx}`} />)
+}
+
+export const DateColumn = ({ date, active, onClickTime, assignments }) => (
   <Wrapper>
     <DateContainer>
       <div>{moment(date).format('dddd')}</div>
       <div>{moment(date).format('M/D')}</div>
     </DateContainer>
-    {times(24, idx => {
-      return (
-        <div>
-          <FirstHalf />
-          <SecondHalf />
-        </div>
-      );
-    })}
+    <TimeWrapper>
+      {times(24, idx => {
+        return (
+          <div>
+            <FirstHalf onClick={() => {onClickTime(parsetMomentToDate(date), `${idx}:00`)}}/>
+            <SecondHalf onClick={() => {onClickTime(parsetMomentToDate(date), `${idx}:30`)}}/>
+          </div>
+        );
+      })}
+      {renderAssignments(date, assignments)}
+    </TimeWrapper>
     {active && <Overlay />}
   </Wrapper>
 );

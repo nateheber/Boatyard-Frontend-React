@@ -9,7 +9,27 @@ import RemoveIcon from 'resources/remove-icon-small.png'
 
 const Wrapper = styled(Row)`
   height: 35px;
-`
+  margin-bottom: 10px;
+  padding: 0 10px;
+  > div {
+    font-size: 14px;
+    line-height: 20px;
+    font-family: 'Source Sans', sans-serif;
+    color: #003247;
+    display: flex;
+    align-items: center;
+    &.col-sm-4 {
+      justify-content: center;
+    }
+    &.col-sm-2 {
+      padding-left: 0;
+      > div {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  }
+`;
 
 const RadioButton = styled.span`
   position: relative;
@@ -56,12 +76,22 @@ const ButtonsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 `
 
 export default ({ creditCard: { id, attributes: { name, last4, isDefault } }, onSetDefault, onRemove }) => (
   <Wrapper>
-    <Col sm={6}>{capitalize(name)} xxxxxxxx{last4}</Col>
-    <Col sm={4}><RadioButton onClick={() => onSetDefault(id)} className={classNames({ active: isDefault })}/></Col>
-    <Col sm={2}><ButtonsWrapper><MarkerImg src={CheckedMarker} /><RemoveButton src={RemoveIcon} onClick={() => onRemove(id)} /></ButtonsWrapper></Col>
+    <Col sm={6}>
+      {capitalize(name)} xxxxxxxx{last4}
+    </Col>
+    <Col sm={4}>
+      <RadioButton onClick={() => onSetDefault(id)} className={classNames({ active: isDefault })}/>
+    </Col>
+    <Col sm={2}>
+      <ButtonsWrapper>
+        <MarkerImg src={CheckedMarker} />
+        <RemoveButton src={RemoveIcon} onClick={() => onRemove(id)} />
+      </ButtonsWrapper>
+    </Col>
   </Wrapper>
-)
+);

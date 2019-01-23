@@ -10,8 +10,9 @@ const Wrapper = styled.div`
 `;
 
 export class CalendarList extends React.Component {
-  render() {
-    const { date } = this.props;
+
+  renderColumns = () => {
+    const { date, assignments } = this.props;
     const columns = [];
     for (let i = 0; i < 7; i += 1) {
       const mDate = moment(date).startOf('week');
@@ -19,13 +20,20 @@ export class CalendarList extends React.Component {
         <DateColumn
           date={mDate.add(i, 'days')}
           active={mDate.isSame(moment(date), 'day')}
+          onClickTime={this.props.onClickTime}
+          assignments={assignments}
+          key={`column_${i}`}
         />
       );
     }
+    return columns;
+  }
+
+  render() {
     return (
       <Wrapper>
         <TimeColumn />
-        {columns}
+        {this.renderColumns()}
       </Wrapper>
     );
   }

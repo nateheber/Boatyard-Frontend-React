@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { isEmpty } from 'lodash'
+import { isEmpty, padStart } from 'lodash'
 
 import { Input } from './Input'
 
@@ -11,7 +11,10 @@ const Wrapper = styled.div`
 `
 
 const TimeInput = styled(Input)`
-  width: 33px;
+  width: 35px;
+  padding: 3px;
+  text-align: center;
+  color: #8f8f8f;
 `
 
 const AMButton = styled.button`
@@ -32,6 +35,9 @@ const AMButton = styled.button`
   font-size: 14px;
   user-select: none;
   font-family: 'Source Sans Pro', sans-serif;
+  &:hover {
+    background-color: #e6e6e6;
+  }
 `
 
 const getTime = (time) => {
@@ -39,10 +45,10 @@ const getTime = (time) => {
     return { hour: 0, min: 0, part: 'AM' }
   }
   const mainParts = time.split(':');
-  const hour = parseInt(mainParts[0]) % 12;
+  const hour = parseInt(mainParts[0]) > 12 ? parseInt(mainParts[0]) - 12 : parseInt(mainParts[0]);
   const min = parseInt(mainParts[1]);
   const part = parseInt(mainParts[0]) >= 12 ? 'PM' : 'AM';
-  return { hour, min, part }
+  return { hour: padStart(`${hour}`, 2, '0'), min: padStart(`${min}`, 2, '0'), part }
 }
 
 export class TimePicker extends React.Component {
@@ -72,15 +78,15 @@ export class TimePicker extends React.Component {
     const { hour, min, part } = this.state;
     const hourVal = part === 'PM' ? parseInt(hour) + 12 : parseInt(hour);
     const minVal = parseInt(min);
-    return `${hourVal}:${minVal}`
+    this.props.onChange(`${hourVal}:${minVal}`);
   }
 
   render() {
     const { hour, min, part } = this.state;
     return (
       <Wrapper>
-        <TimeInput mask="99" value={hour} onChange={this.onChangeHour} />:
-        <TimeInput mask="99" value={min} onChange={this.onChangeMin} /> 
+        <TimeInput mask="99" value={hour} onChange={this.onChangeHour} hideError />:
+        <TimeInput mask="99" value={min} onChange={this.onChangeMin} hideError /> 
         <AMButton onClick={this.onChangePart}>{part}</AMButton>
       </Wrapper>
     )

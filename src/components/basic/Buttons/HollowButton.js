@@ -9,6 +9,7 @@ export const HollowButton = styled.button`
   border-image: initial;
   border-radius: 6px;
   cursor: pointer;
+  color: #333;
   font-size: 12px;
   font-family: Montserrat, sans-serif;
   font-weight: 700;
@@ -20,4 +21,8 @@ export const HollowButton = styled.button`
   padding: 5px 15px;
   outline: none;
   display: inline-block;
+  &:disabled {
+    background: #9e9e9e;
+    border: 1.5px solid #9e9e9e !important;
+  }
 `;
