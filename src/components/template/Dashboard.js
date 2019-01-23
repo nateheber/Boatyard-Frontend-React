@@ -19,7 +19,7 @@ const Container = styled.div``;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
-  width: 100%;
+  padding: 15px 10px 30px;
   @media (max-width: 991px) {
     flex-direction: column;
   }
