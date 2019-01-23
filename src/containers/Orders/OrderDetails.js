@@ -19,6 +19,7 @@ import OrderReviewSection from './components/templates/OrderReviewSection'
 import OrderDetailHeader from './components/templates/OrderDetailHeader'
 import Scheduler from './components/templates/Scheduler'
 import PaymentsSection from './components/templates/Payments'
+import Timeline from './components/templates/Timeline'
 
 import BoatEditor from './components/modals/EditBoatModal'
 
@@ -177,7 +178,7 @@ class OrderDetails extends React.Component {
     const updatedDate = this.getUdpatedDate();
     const { orderId, editBoat } = this.state;
     const providerId = this.getProviderId();
-    const { lineItems } = this.props;
+    const { lineItems, currentOrder } = this.props;
     const summaryInfo = this.getSummaryInfo();
     const userId = this.getUserId();
     const paymentInfo = this.getPaymentInfo();
@@ -206,6 +207,9 @@ class OrderDetails extends React.Component {
                   customerInfo={customerInfo}
                   onEditBoat={() => this.editBoat()}
                 />
+              </SectionGroup>
+              <SectionGroup>
+                <Timeline order={currentOrder} />
               </SectionGroup>
             </Col>
           </Row>

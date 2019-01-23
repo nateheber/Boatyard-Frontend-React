@@ -1,16 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { Row, Col } from 'react-flexbox-grid'
+import { get } from 'lodash'
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
 import CreditCardSelector from 'components/template/CreditCardSection/CreditCardSelector';
+import PaymentSelector from 'components/template/CreditCardSection/PaymentSelector';
 
 import { fetchCreditCards } from 'store/reducers/creditCards';
 import { createPayment } from 'store/reducers/payments';
 
 import ChargeSelector from '../basic/ChargeSelector';
 
+const tabs = ['Credit Card', 'Cash/Check'];
 
 class OrderPaymentModal extends React.Component {
   constructor(props) {
@@ -20,6 +23,8 @@ class OrderPaymentModal extends React.Component {
       cardId: -1,
       balance,
       fee: 0,
+      tab: 'Credit Card',
+      paymentMethod: '',
     }
   }
 
@@ -31,8 +36,16 @@ class OrderPaymentModal extends React.Component {
     this.setState({ cardId });
   }
 
+  onSelectPaymentMethod = (paymentMethod) => {
+    this.setState({ paymentMethod });
+  }
+
   onChangeCharge = (data) => {
     this.setState(data);
+  }
+
+  onChangeTab = (tab) => {
+    this.setState({ tab })
   }
 
   onSave = () => {
@@ -58,24 +71,37 @@ class OrderPaymentModal extends React.Component {
 
   render() {
     const { open, onClose, creditCards, userId } = this.props;
-    const { balance, fee } = this.state;
+    const { balance, fee, tab } = this.state;
     const charging = parseFloat(balance) + parseFloat(fee);
-    const action = [<HollowButton onClick={onClose}>Cancel</HollowButton>, <OrangeButton onClick={this.onSave}>Charge ${charging}</OrangeButton>];
+    const action = [
+      <HollowButton onClick={onClose}>Cancel</HollowButton>,
+      <OrangeButton onClick={this.onSave}>{tab === 'Credit Card' ? `Charge $${charging}` : 'Confirm Payment'}</OrangeButton>
+    ];
+    const cards = get(creditCards, 'creditCards', []);
     return (
       <Modal
         title="Enter Payment Info"
         actions={action}
         open={open}
         onClose={onClose}
-      >
+        tabs={tabs}
+        selected={tab}
+        onSelect={this.onChangeTab}
+      >   
         <Row>
           <Col sm={7}>
-            <CreditCardSelector
-              userId={userId}
-              creditCards={creditCards}
-              onChange={this.onSelectCard}
-              refreshCards={this.refreshCards}
-            />
+            {
+              tab === 'Credit Card' ? (
+                <CreditCardSelector
+                  userId={userId}
+                  creditCards={cards}
+                  onChange={this.onSelectCard}
+                  refreshCards={this.refreshCards}
+                />
+              ) : (
+                <PaymentSelector onChange={this.onSelectPaymentMethod} />
+              )
+            }
           </Col>
           <Col sm={5}>
             <ChargeSelector balance={balance} fee={fee} onChange={this.onChangeCharge} />
@@ -86,7 +112,7 @@ class OrderPaymentModal extends React.Component {
   }
 }
 
-const mapStateToProps = ({ creditCard: { creditCards: { creditCards } } }) => ({
+const mapStateToProps = ({ creditCard: { creditCards } }) => ({
   creditCards,
 })
 

@@ -3,12 +3,9 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { capitalize } from 'lodash';
 
-import CheckedMarker from 'resources/checked_marker.png'
-
 const Wrapper = styled.div`
   height: 35px;
   margin-bottom: 15px;
-  margin-top: 35px;
   padding: 0 10px;
   display: flex;
   flex-direction: row;
@@ -16,7 +13,7 @@ const Wrapper = styled.div`
   cursor: pointer;
 `;
 
-const CardInfo = styled.div`
+const OptionInfo = styled.div`
   font-size: 14px;
   line-height: 20px;
   font-family: 'Source Sans', sans-serif;
@@ -56,18 +53,11 @@ const RadioButton = styled.span`
   cursor: pointer;
 `
 
-const MarkerImg = styled.img`
-  width: 23px;
-  height: 20px;
-  margin-left: 20px;
-`
-
-export default ({ creditCard: { id, attributes: { name, last4, isDefault } }, isSelected, onSelect }) => (
-  <Wrapper onClick={() => onSelect(id)} >
-    <RadioButton onClick={() => onSelect(id)} className={classNames({ active: isSelected })}/>
-    <CardInfo className={classNames({ selected: isSelected })}>
-      {capitalize(name)} xxxxxxxx{last4}
-    </CardInfo>
-    {isDefault && <MarkerImg src={CheckedMarker} />}
+export default ({ option, isSelected, onSelect }) => (
+  <Wrapper onClick={() => onSelect(option)} >
+    <RadioButton onClick={() => onSelect(option)} className={classNames({ active: isSelected })}/>
+    <OptionInfo className={classNames({ selected: isSelected })}>
+      {capitalize(option)}
+    </OptionInfo>
   </Wrapper>
 )
