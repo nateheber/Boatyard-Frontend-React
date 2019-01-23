@@ -160,8 +160,8 @@ class CreateModal extends React.Component {
   render() {
     const { open, onClose } = this.props
     const actions = [
-      <HollowButton onClick={onClose}>CANCEL</HollowButton>,
-      <OrangeButton onClick={this.save}>SAVE</OrangeButton>
+      <HollowButton onClick={onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
+      <OrangeButton onClick={this.save} key="modal_btn_save">SAVE</OrangeButton>
     ]
     return (
       <Modal
