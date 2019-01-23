@@ -7,7 +7,7 @@ import { getPaymentClient } from './sagaSelectors';
 function* createRequest(action) {
   const { data, callback } = action.payload
   const paymentClient = yield select(getPaymentClient)
-  yield call(paymentClient.create, data)
+  yield call(paymentClient.create, { payment: data })
   if (callback) {
     yield call(callback)
   }

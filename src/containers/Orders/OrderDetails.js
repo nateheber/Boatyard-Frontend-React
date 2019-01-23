@@ -18,6 +18,7 @@ import OrderSumarySection from './components/templates/OrderSumarySection'
 import OrderReviewSection from './components/templates/OrderReviewSection'
 import OrderDetailHeader from './components/templates/OrderDetailHeader'
 import Scheduler from './components/templates/Scheduler'
+import PaymentsSection from './components/templates/Payments'
 
 import BoatEditor from './components/modals/EditBoatModal'
 
@@ -107,6 +108,12 @@ class OrderDetails extends React.Component {
     return providerInfo.id;
   }
 
+  getUserId = () => {
+    const { currentOrder } = this.props;
+    const userId = get(currentOrder, 'data.relationships.user.data.id');
+    return userId;
+  }
+
   getSummaryInfo = () => {
     const { currentOrder } = this.props;
     const total = get(currentOrder, 'data.attributes.total')
@@ -119,6 +126,12 @@ class OrderDetails extends React.Component {
     return ({
       total, subtotal, taxRate, discount, deposit, taxAmount, comments
     })
+  }
+
+  getPaymentInfo = () => {
+    const { currentOrder } = this.props;
+    const balance = get(currentOrder, 'data.attributes.balance');
+    return { balance }
   }
 
   getUdpatedDate = () => {
@@ -166,6 +179,8 @@ class OrderDetails extends React.Component {
     const providerId = this.getProviderId();
     const { lineItems } = this.props;
     const summaryInfo = this.getSummaryInfo();
+    const userId = this.getUserId();
+    const paymentInfo = this.getPaymentInfo();
     return (
       <React.Fragment>
         <OrderDetailHeader orderId={orderId} />
@@ -176,6 +191,9 @@ class OrderDetails extends React.Component {
                 <OrderSumarySection lineItem={lineItems[0]} />
                 <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
                 <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
+              </SectionGroup>
+              <SectionGroup>
+                <PaymentsSection orderId={orderId} userId={userId} providerId={providerId} {...paymentInfo} />
               </SectionGroup>
               <SectionGroup>
                 <Scheduler orderId={orderId} />
