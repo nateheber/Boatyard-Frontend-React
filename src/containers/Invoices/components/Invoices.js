@@ -56,18 +56,18 @@ class Invoices extends React.Component {
     });
   }
 
-  loadOrders = () => {
+  loadOrders = (page = 1) => {
     const { currentTab } = this.state;
     if (currentTab === 'open') {
       this.props.GetOpenOrders({
-        page: 1,
+        page: page,
         'order[state]': 'invoiced',
         'order[sort]': 'desc',
         'order[order]': 'created_at'
       });  
     } else {
       this.props.GetPaidOrders({
-        page: 1,
+        page: page,
         'order[state]': 'completed',
         'order[sort]': 'desc',
         'order[order]': 'created_at'
@@ -92,17 +92,7 @@ class Invoices extends React.Component {
   }
 
   changePage = (page) => {
-    const { currentTab } = this.state;
-    if (currentTab === 'open') {
-      this.props.GetOpenOrders({
-        page: page,
-        'order[state]': 'invoiced',
-        'order[sort]': 'desc',
-        'order[order]': 'created_at'
-      });
-    } else {
-      this.props.GetPaidOrders({ page: page });
-    }
+    this.loadOrders(page);
   }
 
   onChangeColumns = (columns) => {
