@@ -53,7 +53,8 @@ const Wrapper = styled.div`
   align-items: center;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
-  color: #333;
+  color: ${props => props.color || '#333'};
+  cursor: pointer;
 `;
 
 export const CheckBox = ({ small, checked, onClick }) => (
@@ -66,8 +67,8 @@ export const CheckBox = ({ small, checked, onClick }) => (
   />
 );
 
-export const CheckField = ({ title, small, checked, onClick }) => (
-  <Wrapper>
+export const CheckField = ({ title, small, checked, onClick, color }) => (
+  <Wrapper color={color} onClick={onClick}>
     <Check
       className={className({
         checked: checked,

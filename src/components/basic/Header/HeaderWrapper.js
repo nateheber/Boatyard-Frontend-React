@@ -10,7 +10,7 @@ const Wrapper = styled(Row)`
   width: 100%;
   background-color: #f7941e;
   align-items: center;
-  z-index: 9999;
+  z-index: 100;
   box-sizing: border-box;
   align-items: center;
 `;

@@ -37,6 +37,7 @@ const MaskInput = styled(InputMask)`
   &.hideError {
     margin-bottom: 0px;
   }
+  margin: 0px;
 `;
 
 export class Input extends React.Component {
