@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 import PageTemplate from 'components/template/PageTemplate';
 import Dashboard from 'components/template/Dashboard';
@@ -13,6 +13,8 @@ import Providers from 'containers/Providers/screens/Providers';
 import ProviderDetails from 'containers/Providers/screens/ProviderDetails';
 import ProviderEditor from 'containers/Providers/screens/ProviderEditor';
 import UpdateProfile from 'containers/Profiles/screens/UpdateProfile';
+import OpenedInvoices from 'containers/Invoices/OpenedInvoices';
+import PaidInvoices from 'containers/Invoices/PaidInvoices';
 import Services from 'containers/Services/screens/Services';
 import ServiceDetails from 'containers/Services/screens/ServiceDetails';
 import Categories from 'containers/Categories/screens/Categories';
@@ -35,6 +37,9 @@ const MainRouter = () => (
       <Route exact path="/providers/" component={Providers} />
       <Route exact path="/providers/:providerId/" component={ProviderDetails} />
       <Route exact path="/provider-details/" component={ProviderEditor} />
+      <Route exact path="/invoices/" render={() => <Redirect to="/invoices/open"/>}/>
+      <Route exact path="/invoices/open" component={OpenedInvoices} />
+      <Route exact path="/invoices/paid" component={PaidInvoices} />
       <Route exact path="/services/" component={Services} />
       <Route exact path="/service-details/" component={ServiceDetails} />
       <Route exact path="/categories/" component={Categories} />
