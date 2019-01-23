@@ -42,35 +42,35 @@ const navItems = [
     mainImage: DashboardIcon,
     title: 'DASHBOARD',
     link: '/dashboard/',
-    previlages: ['admin', 'provider']
+    privileges: ['admin', 'provider']
   },
   {
     activeImage: OrdersActiveIcon,
     mainImage: OrdersIcon,
     title: 'ORDERS',
     link: '/orders/',
-    previlages: ['admin', 'provider']
+    privileges: ['admin', 'provider']
   },
   {
     activeImage: CalendarActiveIcon,
     mainImage: CalendarIcon,
     title: 'CALENDAR',
     link: '/calendar/',
-    previlages: ['admin', 'provider']
+    privileges: ['admin', 'provider']
   },
   {
     activeImage: ProviderActiveIcon,
     mainImage: ProviderIcon,
     title: 'PROVIDERS',
     link: '/providers/',
-    previlages: ['admin']
+    privileges: ['admin']
   },
   {
     activeImage: InvoicesActiveIcon,
     mainImage: InvoicesIcon,
     title: 'INVOICES',
     link: '/invoices/',
-    previlages: ['provider']
+    privileges: ['provider']
   },
   {
     activeImage: MessageActiveIcon,
@@ -90,42 +90,42 @@ const navItems = [
         link: '/templates/'
       }
     ],
-    previlages: ['admin', 'provider']
+    privileges: ['admin', 'provider']
   },
   {
     activeImage: AnalyticsActiveIcon,
     mainImage: AnalyticsIcon,
     title: 'ANALYTICS',
     link: '/analytics/',
-    previlages: ['admin', 'provider']
+    privileges: ['admin', 'provider']
   },
   {
     activeImage: ServicesActiveIcon,
     mainImage: ServicesIcon,
     title: 'SERVICES',
     link: '/services/',
-    previlages: ['provider']
+    privileges: ['provider']
   },
   {
     activeImage: TeamActiveIcon,
     mainImage: TeamIcon,
     title: 'TEAM',
     link: '/team/',
-    previlages: ['admin', 'provider']
+    privileges: ['admin', 'provider']
   },
   {
     activeImage: CustomersActiveIcon,
     mainImage: CustomersIcon,
     title: 'USERS',
     link: '/users/',
-    previlages: ['admin']
+    privileges: ['admin']
   },
   {
     activeImage: CustomersActiveIcon,
     mainImage: CustomersIcon,
     title: 'CUSTOMERS',
     link: '/customers/',
-    previlages: ['provider']
+    privileges: ['provider']
   }
 ];
 
@@ -163,7 +163,7 @@ const SideBarContainer = styled.div`
   transition-delay: 0s;
 `;
 
-const SideBar = ({ previlage, showSidebar, activePage, location }) => {
+const SideBar = ({ privilege, showSidebar, activePage, location }) => {
   const pathname =
     location.pathname === '/' ? '/dashboard/' : location.pathname;
   const navigation = navItems ;
@@ -185,7 +185,7 @@ const SideBar = ({ previlage, showSidebar, activePage, location }) => {
     <SideBarContainer className={showSidebar ? 'show' : 'hide'}>
       <SideBarWrapper>
         {navigation.map((item, idx) => {
-          if (item.previlages.lastIndexOf(previlage) > -1) {
+          if (item.privileges.lastIndexOf(privilege) > -1) {
             return (
               <SideBarItem
                 activePage={activePage}
@@ -202,8 +202,8 @@ const SideBar = ({ previlage, showSidebar, activePage, location }) => {
   );
 };
 
-const mapStateToProps = ({ auth: { previlage } }) => ({
-  previlage
+const mapStateToProps = ({ auth: { privilege } }) => ({
+  privilege
 });
 
 export default withRouter(connect(mapStateToProps)(SideBar));

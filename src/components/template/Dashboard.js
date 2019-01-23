@@ -41,19 +41,19 @@ const RightPart = styled.div`
 
 class Dashboard extends React.Component {
   render() {
-    const { previlage } = this.props;
+    const { privilege } = this.props;
     return (
       <Container>
         <DashboardHeader onNewOrder={this.newOrder} />
         <Wrapper>
           <LeftPart>
-            {previlage === 'provider' && <NewOrders />}
+            {privilege === 'provider' && <NewOrders />}
             <ScheduledOrders />
             <AssignedOrders />
           </LeftPart>
           <RightPart>
             <MonthlyRevenue />
-            {previlage === 'provider' && <OpenInvoices />}
+            {privilege === 'provider' && <OpenInvoices />}
           </RightPart>
         </Wrapper>
       </Container>
@@ -61,8 +61,8 @@ class Dashboard extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth: { previlage } }) => ({
-  previlage
+const mapStateToProps = ({ auth: { privilege } }) => ({
+  privilege
 });
 
 export default connect(mapStateToProps)(Dashboard);
