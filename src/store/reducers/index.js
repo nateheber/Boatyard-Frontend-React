@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { reducer as toastrReducer } from 'react-redux-toastr'
 
 import navigation from './navigation';
 import auth from './auth';
@@ -13,7 +14,7 @@ import order from './orders';
 import lineItem from './lineItems';
 import boat from './boats';
 import payment from './payments';
-import creditCard from './creditCards';
+import creditCard from './credit-cards';
 
 const rootReducer = combineReducers({
   navigation,
@@ -29,7 +30,8 @@ const rootReducer = combineReducers({
   lineItem,
   boat,
   payment,
-  creditCard
+  creditCard,
+  toastr: toastrReducer
 });
 
 export default rootReducer;

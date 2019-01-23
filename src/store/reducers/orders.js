@@ -40,6 +40,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.orders.page = get(payload, 'page', 1);
+        draft.error = null;
       }),
     [actionTypes.GET_ORDERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -55,7 +56,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload.error;
+        draft.error = payload;
       }),
 
     [actionTypes.GET_NEW_ORDERS]: (state, action) =>
@@ -63,6 +64,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.newOrders.page = get(payload, 'page', 1);
+        draft.error = null;
       }),
     [actionTypes.GET_NEW_ORDERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -78,7 +80,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload.error;
+        draft.error = payload;
       }),
 
     [actionTypes.GET_SCHEDULED_ORDERS]: (state, action) =>
@@ -86,6 +88,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.scheduledOrders.page = get(payload, 'page', 1);
+        draft.error = null;
       }),
     [actionTypes.GET_SCHEDULED_ORDERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -101,7 +104,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload.error;
+        draft.error = payload;
       }),
 
     [actionTypes.GET_ASSIGNED_ORDERS]: (state, action) =>
@@ -109,6 +112,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.assignedOrders.page = get(payload, 'page', 1);
+        draft.error = null;
       }),
     [actionTypes.GET_ASSIGNED_ORDERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -124,7 +128,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload.error;
+        draft.error = payload;
       }),
 
     [actionTypes.GET_OPEN_ORDERS]: (state, action) =>
@@ -132,6 +136,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.openOrders.page = get(payload, 'page', 1);
+        draft.error = null;
       }),
     [actionTypes.GET_OPEN_ORDERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -147,14 +152,15 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload.error;
+        draft.error = payload;
       }),
 
-      [actionTypes.GET_PAID_ORDERS]: (state, action) =>
+    [actionTypes.GET_PAID_ORDERS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.paidOrders.page = get(payload, 'page', 1);
+        draft.error = null;
       }),
     [actionTypes.GET_PAID_ORDERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -170,26 +176,81 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload.error;
+        draft.error = payload;
       }),
 
     [actionTypes.GET_ORDER]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
+        draft.error = null;
       }),
     [actionTypes.GET_ORDER_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.currentOrder = payload
+        draft.currentOrder = payload;
       }),
     [actionTypes.GET_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload.error;
+        draft.error = payload;
       }),
-  },
+
+    [actionTypes.CREATE_ORDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.error = null;
+      }),
+    [actionTypes.CREATE_ORDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.CREATET_ORDER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload;
+      }),
+
+    [actionTypes.UPDATE_ORDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.error = null;
+      }),
+    [actionTypes.UPDATE_ORDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.UPDATE_ORDER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload;
+      }),
+
+    [actionTypes.DELETE_ORDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.error = null;
+      }),
+    [actionTypes.DELETE_ORDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.DELETE_ORDER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload;
+      })
+    },
   initialState
 )

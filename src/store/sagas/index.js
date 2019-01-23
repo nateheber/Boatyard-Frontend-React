@@ -11,7 +11,7 @@ import OrderSaga from './orders';
 import LineItemSaga from './lineItems';
 import BoatSaga from './boats';
 import PaymentSaga from './payments';
-import CreditCardSaga from './creditCards';
+import CreditCardSaga from './credit-cards';
 
 export default function* mainSaga() {
   yield all([
