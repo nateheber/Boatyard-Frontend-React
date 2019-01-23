@@ -8,7 +8,7 @@ import Modal from 'components/compound/Modal';
 import CreditCardSelector from 'components/template/CreditCardSection/CreditCardSelector';
 import PaymentSelector from 'components/template/CreditCardSection/PaymentSelector';
 
-import { fetchCreditCards } from 'store/reducers/creditCards';
+import { GetCreditCards } from 'store/actions/credit-cards';
 import { createPayment } from 'store/reducers/payments';
 
 import ChargeSelector from '../basic/ChargeSelector';
@@ -65,8 +65,12 @@ class OrderPaymentModal extends React.Component {
   }
 
   refreshCards = () => {
-    const { userId, fetchCreditCards } = this.props;
-    fetchCreditCards(userId);
+    const { userId, GetCreditCards } = this.props;
+    GetCreditCards({
+      params: {
+        'credit_card[user_id]': userId
+      }
+    });
   }
 
   render() {
@@ -117,7 +121,7 @@ const mapStateToProps = ({ creditCard: { creditCards } }) => ({
 })
 
 const mapDispatchToProps = {
-  fetchCreditCards,
+  GetCreditCards,
   createPayment
 }
 

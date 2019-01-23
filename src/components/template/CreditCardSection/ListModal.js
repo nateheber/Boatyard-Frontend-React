@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { get, capitalize } from 'lodash';
-import styled from 'styled-components'
-import { Row, Col } from 'react-flexbox-grid'
+import styled from 'styled-components';
+import { Row, Col } from 'react-flexbox-grid';
 
-import { updateCreditCard, deleteCreditCard } from 'store/reducers/creditCards';
+import { actionTypes, UpdateCreditCard, DeleteCreditCard } from 'store/actions/credit-cards';
 
 import { HollowButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
@@ -35,23 +35,24 @@ class ListModal extends React.Component {
     const data = {
       isDefault: true,
     }
-    this.props.updateCreditCard({ creditCardId: id, data, callback: this.props.refreshCards })
+    this.props.UpdateCreditCard({ creditCardId: id, data, success: this.props.refreshCards })
   };
 
   removeCard = (id) => {
-    this.props.deleteCreditCard({
+    this.props.DeleteCreditCard({
       creditCardId: id,
-      callback: this.props.refreshCards
+      success: this.props.refreshCards
     })
   };
 
   render() {
-    const { open, onClose, creditCards, onNew } = this.props;
+    const { open, onClose, creditCards, onNew, currentStatus } = this.props;
     return (
       <Modal
         title="Payment Methods"
         open={open}
         small={true}
+        loading={currentStatus === actionTypes.UPDATE_CREDIT_CARD}
         onClose={onClose}
       >
         <Wrapper>
@@ -83,12 +84,13 @@ class ListModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  creditCards: get(state, 'creditCard.creditCards.creditCards', [])
+  currentStatus: state.creditCard.currentStatus,
+  creditCards: get(state, 'creditCard.creditCards', [])
 });
 
 const mapDispatchToProps = {
-  updateCreditCard,
-  deleteCreditCard,
+  UpdateCreditCard,
+  DeleteCreditCard
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListModal);

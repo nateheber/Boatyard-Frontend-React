@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Modal from 'react-responsive-modal';
 
-import { DatePicker, TeamMembers } from 'components/compound/Calendar';
+import { DatePicker } from 'components/compound/Calendar';
 import { CalendarList, CalendarHeader } from 'components/compound/Calendar';
 
 const Wrapper = styled.div`

@@ -12,7 +12,7 @@ import QuoteHeader from '../basic/QuoteHeader'
 
 import { updateLineItems, deleteLineItem, createLineItems } from 'store/reducers/lineItems'
 import { GetOrder } from 'store/actions/orders'
-import { orderSelector } from 'store/selectors/order'
+import { orderSelector } from 'store/selectors/orders'
 
 class LineItemSection extends React.Component {
   constructor(props) {

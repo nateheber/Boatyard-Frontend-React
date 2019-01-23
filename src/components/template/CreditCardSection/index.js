@@ -4,8 +4,6 @@ import { findIndex } from 'lodash'
 
 import { Section } from 'components/basic/InfoSection'
 
-import { resetError } from 'store/reducers/creditCards'
-
 import InfoSection from './InfoSection'
 import ListModal from './ListModal'
 import CreationModal from './CreationModal'
@@ -29,7 +27,6 @@ class CreditCardSection extends React.Component {
   }
 
   showCreationModal = () => {
-    this.props.resetError();
     this.setState({
       showListModal: false,
       showNewPaymentModal: true,
@@ -77,12 +74,11 @@ class CreditCardSection extends React.Component {
   }
 }
 
-const mapStateToProps = ({ creditCard: { creditCards : {creditCards} } }) => ({
+const mapStateToProps = ({ creditCard: { creditCards } }) => ({
   creditCards
-})
+});
 
 const mapDispatchToProps = {
-  resetError
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreditCardSection)

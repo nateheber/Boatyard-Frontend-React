@@ -22,6 +22,8 @@ export const responseInterceptor = client => {
 export const spreedlyResponseInterceptor = client => {
   client.interceptors.response.use((response) => {
     return response.data;
-  }, () => ({ error: true }));
+  }, (error) => {
+    return get(error, 'response.data', []);
+  });
   return client;
 }

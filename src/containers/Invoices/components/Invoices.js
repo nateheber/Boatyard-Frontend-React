@@ -5,7 +5,7 @@ import { get } from 'lodash';
 import { withRouter } from 'react-router-dom';
 
 import { GetOpenOrders, GetPaidOrders } from 'store/actions/orders';
-import { refinedOrdersSelector } from 'store/selectors/order'
+import { refinedOrdersSelector } from 'store/selectors/orders'
 import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { InvoicesHeader } from 'components/compound/SectionHeader';

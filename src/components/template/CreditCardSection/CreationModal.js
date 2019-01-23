@@ -1,13 +1,19 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { isEmpty } from 'lodash'
+import React from 'react';
+import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
+import styled from 'styled-components';
+import { get } from 'lodash';
 
-import { createCreditCard } from 'store/reducers/creditCards';
+import { actionTypes, CreateCreditCard } from 'store/actions/credit-cards';
+import { HollowButton, OrangeButton } from 'components/basic/Buttons';
+import Modal from 'components/compound/Modal';
+import FormFields from 'components/template/FormFields';
 
-import { HollowButton, OrangeButton } from 'components/basic/Buttons'
-import Modal from 'components/compound/Modal'
-import FormFields from 'components/template/FormFields'
-
+const Divider = styled.hr`
+  margin: 0;
+  margin-bottom: 30px;
+  border-top: 1px solid #f1f1f1;
+`;
 const cardFields = [
   {
     type: 'text_field',
@@ -61,15 +67,16 @@ const cardFields = [
     lg: 2,
     xl: 2
   },
-]
+];
 
-const infoFields = [
+let infoFields = [
   {
     type: 'text_field',
     field: 'firstName',
     label: 'First Name',
     required: true,
     errorMessage: 'Required',
+    defaultValue: '',
     xs: 6,
     sm: 6,
     md: 6,
@@ -82,6 +89,7 @@ const infoFields = [
     label: 'Last Name',
     required: true,
     errorMessage: 'Required',
+    defaultValue: '',
     xs: 6,
     sm: 6,
     md: 6,
@@ -117,60 +125,73 @@ const infoFields = [
   //   lg: 5,
   //   xl: 5
   // },
-]
+];
 
 class CreateModal extends React.Component {
-  componentDidUpdate(prevProps) {
-    const { error } = this.props;
-    if (!prevProps.error && error) {
-      if (!isEmpty(this.cardFields) && !isEmpty(this.cardFields.setErrorFields)) {
-        this.cardFields.setErrorFields(['cardNumber']);
-      }
-    } else {
-      if (!isEmpty(this.cardFields) && !isEmpty(this.cardFields.setErrorFields)) {
-        this.cardFields.setErrorFields([]);
-      }
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   const { errors } = this.props;
+  //   if (!prevProps.errors && errors) {
+  //     if (!isEmpty(this.cardFields) && !isEmpty(this.cardFields.setErrorFields)) {
+  //       this.cardFields.setErrorFields(['cardNumber']);
+  //     }
+  //   } else {
+  //     if (!isEmpty(this.cardFields) && !isEmpty(this.cardFields.setErrorFields)) {
+  //       this.cardFields.setErrorFields([]);
+  //     }
+  //   }
+  // }
 
   onSuccess = () => {
     this.props.refreshCards();
     this.props.onClose();
-  }
+  };
 
   setCardFieldsRef = (ref) => {
-    this.cardFields = ref
-  }
+    this.cardFields = ref;
+  };
 
   setInfoFieldsRef = (ref) => {
-    this.infoFields = ref
-  }
+    this.infoFields = ref;
+  };
 
   save = () => {
     const cardsVailid = this.cardFields.validateFields();
     const infoValid = this.infoFields.validateFields();
-    const { userId } = this.props
+    const { userId } = this.props;
     if (cardsVailid && infoValid) {
       const cardValue = this.cardFields.getFieldValues();
       const infoValues = this.infoFields.getFieldValues();
-      this.props.createCreditCard({ data: { userId, ...cardValue, ...infoValues }, callback: this.onSuccess })
+      this.props.CreateCreditCard({
+        data: { userId, ...cardValue, ...infoValues },
+        success: this.onSuccess,
+        error: () => {
+          const { errors } = this.props;
+          if (errors && errors.length > 0) {
+            toastr.error(errors[0].message);
+          }
+        }
+      });
     }
-  }
+  };
 
   render() {
-    const { open, onClose } = this.props
+    const { open, onClose, currentStatus, currentUser } = this.props;
     const actions = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
       <OrangeButton onClick={this.save} key="modal_btn_save">SAVE</OrangeButton>
-    ]
+    ];
+    infoFields[0].defaultValue = get(currentUser, 'attributes.firstName');
+    infoFields[1].defaultValue = get(currentUser, 'attributes.lastName');
     return (
       <Modal
-        title="Edit Customer Information"
+        title="New Payment Method"
         actions={actions}
+        loading={currentStatus === actionTypes.CREATE_CREDIT_CARD}
         open={open}
         onClose={onClose}
       >
         <FormFields ref={this.setCardFieldsRef} fields={cardFields} />
+        <Divider />
         <FormFields ref={this.setInfoFieldsRef} fields={infoFields} />
       </Modal>
     );
@@ -178,11 +199,13 @@ class CreateModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  error: state.creditCard.error,
-})
+  currentUser: state.user.currentUser,
+  currentStatus: state.creditCard.currentStatus,
+  errors: state.creditCard.errors
+});
 
 const mapDispatchToProps = {
-  createCreditCard,
-}
+  CreateCreditCard
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateModal);

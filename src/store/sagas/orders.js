@@ -59,7 +59,7 @@ function* getOrders(action) {
       }
     });
   } catch (e) {
-    yield put({ type: failureType, message: e.message });
+    yield put({ type: failureType, payload: e.message });
   }
 
 }
@@ -74,7 +74,7 @@ function* getOrder(action) {
       payload: result
     });  
   } catch (e) {
-    yield put({ type: actionTypes.GET_ORDER_FAILURE, message: e.message });
+    yield put({ type: actionTypes.GET_ORDER_FAILURE, payload: e.message });
   }
 }
 
@@ -86,7 +86,7 @@ function* createOrder(action) {
     yield put({ type: actionTypes.CREATE_ORDER_SUCCESS });
   
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_ORDER_FAILURE, message: e.message });
+    yield put({ type: actionTypes.CREATE_ORDER_FAILURE, payload: e.message });
   }
 }
 
@@ -97,7 +97,7 @@ function* updateOrder(action) {
     yield call(orderClient.update, id, data);
     yield put({ type: actionTypes.UPDATE_ORDER_SUCCESS });
   } catch (e) {
-    yield put({ type: actionTypes.UPDATE_ORDER_FAILURE, message: e.message });
+    yield put({ type: actionTypes.UPDATE_ORDER_FAILURE, payload: e.message });
   }
 }
 
@@ -108,7 +108,7 @@ function* deleteOrder(action) {
     yield call(orderClient.delete, orderId);
     yield put({ type: actionTypes.DELETE_ORDER_SUCCESS });
     } catch (e) {
-    yield put({ type: actionTypes.DELETE_ORDER_FAILURE, message: e.message });
+    yield put({ type: actionTypes.DELETE_ORDER_FAILURE, payload: e.message });
   }
 }
 
