@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import { get } from 'lodash';
 
 import { actionTypes, CreateCreditCard } from 'store/actions/credit-cards';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
@@ -179,10 +180,8 @@ class CreateModal extends React.Component {
       <HollowButton onClick={onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
       <OrangeButton onClick={this.save} key="modal_btn_save">SAVE</OrangeButton>
     ];
-    if (currentUser) {
-      infoFields[0].defaultValue = currentUser.attributes.firstName;
-      infoFields[1].defaultValue = currentUser.attributes.lastName;
-    }
+    infoFields[0].defaultValue = get(currentUser, 'attributes.firstName');
+    infoFields[1].defaultValue = get(currentUser, 'attributes.lastName');
     return (
       <Modal
         title="New Payment Method"
