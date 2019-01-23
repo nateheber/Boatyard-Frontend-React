@@ -142,11 +142,13 @@ class CustomerDetails extends React.Component {
 const mapStateToProps = ({
   user: { currentUser },
   order: {
-    orders,
-    included,
-    page,
-    perPage,
-    total
+    orders: {
+      orders,
+      included,
+      page,
+      perPage,
+      total
+    }
   }
 }) => ({
   currentUser,

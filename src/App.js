@@ -10,8 +10,9 @@ import store, { persistor } from './store';
 WebFont.load({
   google: {
     families: [
-      'Source+Sans+Pro:300,400,600,700',
-      'Montserrat:300,400,500,600,700'
+      'Source+Sans+Pro:400,600,700,900',
+      'Montserrat:400,500,600,700',
+      'Open+Sans:300i,400',
     ]
   }
 });

@@ -87,7 +87,7 @@ function* selectRequest(action) {
       payload: authorizationToken
     });
     yield put({
-      type: authActions.setPrevilage,
+      type: authActions.setPrivilege,
       payload: 'provider'
     });
   }

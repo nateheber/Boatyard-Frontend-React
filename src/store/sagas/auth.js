@@ -70,7 +70,7 @@ function* userPermissionRequest() {
       payload: result.data.attributes.authorizationToken
     });
     yield put({
-      type: actions.setPrevilage,
+      type: actions.setPrivilege,
       payload: 'admin'
     });
   } else {

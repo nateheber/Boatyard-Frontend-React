@@ -68,8 +68,8 @@ export default class OrderReviewSection extends React.Component {
     this.setState({ discount, total }, this.updatePriceInfo)
   }
 
-  onChangeComment = (comments) => {
-    this.setState({ comments })
+  onChangeComment = (evt) => {
+    this.setState({ comments: evt.target.value })
   }
 
   submitComments = () => {

@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import deepEqual from 'deep-equal'
+import moment from 'moment'
 
 import { Section } from 'components/basic/InfoSection'
 
@@ -99,12 +100,18 @@ class LineItemSection extends React.Component {
   saveNewItems = () => {
     const { newItems } = this.state;
     const { orderId, GetOrder } = this.props;
-    this.props.createLineItems({ orderId, data: newItems, callback: () => GetOrder(orderId) })
+    this.props.createLineItems({ orderId, data: newItems, callback: () => {
+      this.setState({
+        newItems: []
+      })
+      GetOrder(orderId)}
+    })
   }
   render () {
     const { newItems, mode, lineItems } = this.state;
+    const { updatedAt } = this.state;
     return (
-      <Section title="Quotes" mode={mode} onEdit={this.onEdit} >
+      <Section title={`Quotes - Update ${moment(updatedAt).format('M/D H:m A')}`} mode={mode} onEdit={this.onEdit} >
         <QuoteHeader />
         {
           lineItems.map((val, idx) => (

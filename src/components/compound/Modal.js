@@ -34,20 +34,31 @@ const ActionWrapper = styled.div`
 `;
 
 const modalStyles = {
-  overlay: {
-    background: 'transparent'
+  main: {
+    overlay: {
+      background: 'transparent'
+    },
+    modal: {
+      padding: '0px',
+      width: '50%'
+    }
   },
-  modal: {
-    padding: '0px',
-    width: '50%'
+  small: {
+    overlay: {
+      background: 'transparent'
+    },
+    modal: {
+      padding: '0px',
+      width: '370px'
+    }
   }
 };
 
 export default class CustomModal extends React.Component {
   render() {
-    const { open, onClose, children, title, actions } = this.props;
+    const { open, onClose, children, title, actions, small } = this.props;
     return (
-      <Modal styles={modalStyles} open={open} onClose={onClose}>
+      <Modal styles={small ? modalStyles.small : modalStyles.main} open={open} onClose={onClose}>
         <Content>
           <Header>{title}</Header>
           {children}
