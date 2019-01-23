@@ -6,22 +6,19 @@ const Header = styled.div`
   flex: 1 0 auto;
   background-color: #fafafa;
   color: #003247;
-  padding: 25px;
-  height: 75px;
+  padding: 25px 40px 25px 25px;
   border-bottom: 1px solid #e5e5e5;
-  font-family: 'Source Sans', sans-serif;
+  font-size: 18px;
+  line-height: 1.42857;
+  font-weight: 700;
+  font-family: Montserrat, sans-serif;
   box-sizing: border-box;
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  line-height: 28px;
 `;
 
 const Content = styled.div`
   box-sizing: border-box;
   padding: 30px;
-  padding-top: 105px;
   min-height: 265px;
 `;
 
@@ -40,7 +37,15 @@ const modalStyles = {
     },
     modal: {
       padding: '0px',
-      width: '50%'
+      width: '50%',
+      maxWidth: '700px'
+    },
+    closeButton: {
+      top: '25px',
+      right: '15px'
+    },
+    closeIcon: {
+      fill: '#003247'
     }
   },
   small: {
@@ -49,7 +54,14 @@ const modalStyles = {
     },
     modal: {
       padding: '0px',
-      width: '370px'
+      width: '400px'
+    },
+    closeButton: {
+      top: '25px',
+      right: '15px'
+    },
+    closeIcon: {
+      fill: '#003247'
     }
   }
 };
@@ -58,9 +70,14 @@ export default class CustomModal extends React.Component {
   render() {
     const { open, onClose, children, title, actions, small } = this.props;
     return (
-      <Modal styles={small ? modalStyles.small : modalStyles.main} open={open} onClose={onClose}>
+      <Modal
+        styles={small ? modalStyles.small : modalStyles.main}
+        open={open}
+        onClose={onClose}
+        style={{width: '300px'}}
+      >
+        <Header>{title}</Header>
         <Content>
-          <Header>{title}</Header>
           {children}
         </Content>
         {actions && <ActionWrapper>{actions}</ActionWrapper>}

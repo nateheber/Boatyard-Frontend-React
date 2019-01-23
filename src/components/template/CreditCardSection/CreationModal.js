@@ -100,23 +100,23 @@ const infoFields = [
     lg: 4,
     xl: 4
   },
-  {
-    type: 'select_box',
-    field: 'country',
-    label: 'Country',
-    required: true,
-    errorMessage: 'Required',
-    defaultValue: 'United States',
-    options: [
-      { label: 'United States', value: 'United States' },
-      { label: 'United States Minor Outlying Islands', value: 'United States Minor Outlying Islands' }
-    ],
-    xs: 5,
-    sm: 5,
-    md: 5,
-    lg: 5,
-    xl: 5
-  },
+  // {
+  //   type: 'select_box',
+  //   field: 'country',
+  //   label: 'Country',
+  //   required: true,
+  //   errorMessage: 'Required',
+  //   defaultValue: 'United States',
+  //   options: [
+  //     { label: 'United States', value: 'United States' },
+  //     { label: 'United States Minor Outlying Islands', value: 'United States Minor Outlying Islands' }
+  //   ],
+  //   xs: 5,
+  //   sm: 5,
+  //   md: 5,
+  //   lg: 5,
+  //   xl: 5
+  // },
 ]
 
 class CreateModal extends React.Component {
