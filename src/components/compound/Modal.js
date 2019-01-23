@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Modal from 'react-responsive-modal';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 
 const Header = styled.div`
   flex: 1 0 auto;
@@ -14,6 +15,11 @@ const Header = styled.div`
   font-family: Montserrat, sans-serif;
   box-sizing: border-box;
   width: 100%;
+`;
+
+const Body = styled.div`
+  box-sizing: border-box;
+  min-height: 265px;
 `;
 
 const Content = styled.div`
@@ -68,7 +74,7 @@ const modalStyles = {
 
 export default class CustomModal extends React.Component {
   render() {
-    const { open, onClose, children, title, actions, small } = this.props;
+    const { open, onClose, children, title, actions, small, loading, spinnerOptions } = this.props;
     return (
       <Modal
         styles={small ? modalStyles.small : modalStyles.main}
@@ -77,10 +83,17 @@ export default class CustomModal extends React.Component {
         style={{width: '300px'}}
       >
         <Header>{title}</Header>
-        <Content>
-          {children}
-        </Content>
-        {actions && <ActionWrapper>{actions}</ActionWrapper>}
+        <Body>
+          <Content>
+            {children}
+          </Content>
+          {actions && <ActionWrapper>{actions}</ActionWrapper>}
+          {loading && <LoadingSpinner
+            loading={true}
+            backgroundColor={spinnerOptions && spinnerOptions.backgroundColor}
+            opacity={spinnerOptions && spinnerOptions.opacity}
+          />}
+        </Body>
       </Modal>
     );
   }
