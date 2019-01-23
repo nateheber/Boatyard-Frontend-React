@@ -6,6 +6,7 @@ import WebFont from 'webfontloader';
 import AppRoutes from './navigation';
 
 import store, { persistor } from './store';
+import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 
 WebFont.load({
   google: {

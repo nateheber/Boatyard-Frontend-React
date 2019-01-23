@@ -9,7 +9,7 @@ import styled from 'styled-components'
 import { fetchUser } from 'store/reducers/users'
 import { getUserBoats } from 'store/reducers/boats'
 import { GetOrders } from 'store/actions/orders'
-import { fetchCreditCards } from 'store/reducers/creditCards'
+import { GetCreditCards } from 'store/actions/credit-cards'
 import { refinedOrdersSelector } from 'store/selectors/orders'
 
 import { Section, SectionGroup } from 'components/basic/InfoSection'
@@ -33,7 +33,9 @@ class CustomerDetails extends React.Component {
     this.props.fetchUser(customerId)
     this.props.getUserBoats({userId: customerId})
     this.props.GetOrders({ 'order[user_id]': customerId, page: 1 })
-    this.props.fetchCreditCards(customerId)
+    this.props.GetCreditCards({
+      params: { user_id: customerId }
+    });
     this.setState({
       customerId,
     })
@@ -51,14 +53,18 @@ class CustomerDetails extends React.Component {
     this.props.fetchUser(customerId)
     this.props.getUserBoats({userId: customerId})
     this.props.getUserOrders({ userId: customerId, page: 1 })
-    this.props.fetchCreditCards(customerId)
+    this.props.GetCreditCards({
+      params: { user_id: customerId }
+    });
     this.setState({
       customerId,
     })
   }
   refreshCards = () => {
     const { customerId } = this.state;
-    this.props.fetchCreditCards(customerId);
+    this.props.GetCreditCards({
+      params: { user_id: customerId }
+    });
   }
 
   toDetails = (orderId) => {
@@ -124,7 +130,7 @@ const mapDispatchToProps = {
   fetchUser,
   getUserBoats,
   GetOrders,
-  fetchCreditCards,
+  GetCreditCards
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CustomerDetails));
