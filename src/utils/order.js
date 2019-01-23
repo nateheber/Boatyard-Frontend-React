@@ -14,13 +14,13 @@ export const getCreationInfo = (order) => {
   const userName = getUserName(order);
   const createdAt = get(order, 'data.attributes.createdAt');
   const dateString = moment(createdAt).format('MMM D, YYYY [at] hh:mm A');
-  return `Oreder placed by ${userName} ${dateString}`
+  return `Order placed by ${userName} ${dateString}`
 }
 
 export const getUpdatedStatus = (order) => {
   const updatedAt = get(order, 'data.attributes.updatedAt');
   const dateString = moment(updatedAt).format('MMM D, YYYY [at] hh:mm A');
-  return `Oreder updated ${dateString}`
+  return `Order updated ${dateString}`
 }
 
 export const generateOrderTimeline = (order) => {

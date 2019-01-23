@@ -57,8 +57,8 @@ class OrderPaymentModal extends React.Component {
         userId,
         creditCardId: cardId,
         providerId,
-        amount: balance,
-        boatyardFee: fee
+        amount: parseFloat(balance),
+        boatyardFee: parseFloat(fee)
       },
       callback: this.props.onClose
     })
