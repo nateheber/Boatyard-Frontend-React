@@ -178,7 +178,7 @@ class OrderDetails extends React.Component {
                 <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
               </SectionGroup>
               <SectionGroup>
-                <Scheduler />
+                <Scheduler orderId={orderId} />
               </SectionGroup>
             </Col>
             <Col md={12} sm={12} xs={12} lg={4} xl={4}>

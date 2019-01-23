@@ -20,4 +20,8 @@ export const HollowButton = styled.button`
   padding: 5px 15px;
   outline: none;
   display: inline-block;
+  &:disabled {
+    background: #9e9e9e;
+    border: 1.5px solid #9e9e9e !important;
+  }
 `;
