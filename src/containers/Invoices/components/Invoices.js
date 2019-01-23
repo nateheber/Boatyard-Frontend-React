@@ -42,7 +42,12 @@ class Invoices extends React.Component {
   }
 
   componentDidMount() {
-    this.props.GetPaidOrders({ page: 1 });
+    this.props.GetPaidOrders({
+      page: 1,
+      'order[state]': 'completed',
+      'order[sort]': 'desc',
+      'order[order]': 'created_at'
+    });
     this.props.GetOpenOrders({
       page: 1,
       'order[state]': 'invoiced',
@@ -61,7 +66,12 @@ class Invoices extends React.Component {
         'order[order]': 'created_at'
       });  
     } else {
-      this.props.GetPaidOrders({ page: 1 });
+      this.props.GetPaidOrders({
+        page: 1,
+        'order[state]': 'completed',
+        'order[sort]': 'desc',
+        'order[order]': 'created_at'
+      });
     }
   }
 
