@@ -10,7 +10,7 @@ import { fetchUser } from 'store/reducers/users'
 import { getUserBoats } from 'store/reducers/boats'
 import { GetOrders } from 'store/actions/orders'
 import { fetchCreditCards } from 'store/reducers/creditCards'
-import { refinedOrdersSelector } from 'store/selectors/order'
+import { refinedOrdersSelector } from 'store/selectors/orders'
 
 import { Section, SectionGroup } from 'components/basic/InfoSection'
 import Table from 'components/basic/Table'

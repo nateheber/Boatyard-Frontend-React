@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import { GetOpenOrders } from 'store/actions/orders';
-import { refinedOrdersSelector } from 'store/selectors/order'
+import { refinedOrdersSelector } from 'store/selectors/orders'
 import { OpenInvoicesSection } from 'components/basic/SubSection';
 import { OrderTable } from 'components/basic/Order';
 import { HollowButton } from 'components/basic/Buttons'

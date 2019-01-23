@@ -8,7 +8,7 @@ import { get } from 'lodash'
 import { GetOrder, UpdateOrder } from 'store/actions/orders'
 import { fetchLineItems } from 'store/reducers/lineItems'
 import { updateBoats } from 'store/reducers/boats'
-import { orderSelector } from 'store/selectors/order'
+import { orderSelector } from 'store/selectors/orders'
 
 import { SectionGroup } from 'components/basic/InfoSection'
 
