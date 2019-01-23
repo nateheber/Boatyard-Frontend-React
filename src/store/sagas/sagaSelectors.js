@@ -9,7 +9,7 @@ export const getServicesPageNumber = state => state.service.nextPage;
 export const getOrdersPageNumber = state => state.order.nextPage;
 
 export const getCategoryClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createCategoryClient('basic');
     case 'admin':
@@ -22,7 +22,7 @@ export const getCategoryClient = state => {
 };
 
 export const getUserClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createUserClient('basic');
     case 'admin':
@@ -35,7 +35,7 @@ export const getUserClient = state => {
 };
 
 export const getServiceClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createServiceClient('basic');
     case 'admin':
@@ -48,7 +48,7 @@ export const getServiceClient = state => {
 };
 
 export const getOrderClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createOrderClient('basic');
     case 'admin':
@@ -61,7 +61,7 @@ export const getOrderClient = state => {
 };
 
 export const getBoatClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createBoatClient('basic');
     case 'admin':
@@ -74,7 +74,7 @@ export const getBoatClient = state => {
 };
 
 export const getManagementClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createManagementClient('basic');
     case 'admin':
@@ -87,7 +87,7 @@ export const getManagementClient = state => {
 };
 
 export const getProviderClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createProviderClient('basic');
     case 'admin':
@@ -100,7 +100,7 @@ export const getProviderClient = state => {
 };
 
 export const getPaymentClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createPaymentClient('basic');
     case 'admin':
@@ -113,7 +113,7 @@ export const getPaymentClient = state => {
 }
 
 export const getCreditCardClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createCreditCardClient('basic');
     case 'admin':
@@ -126,7 +126,7 @@ export const getCreditCardClient = state => {
 }
 
 export const getCustomApiClient = state => {
-  switch (state.auth.previlage) {
+  switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.customApiClient('basic');
     case 'admin':
