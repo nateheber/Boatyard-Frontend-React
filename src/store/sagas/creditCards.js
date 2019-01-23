@@ -69,7 +69,7 @@ function* fetchRequest(action) {
     page: 1,
   } : {
     page: 1,
-    user_id: userId
+    'credit_card[user_id]': userId
   }
   const results = yield call(creditCardClient.list, filterParam)
   const creditCards = sortBy(get(results, 'data', []), 'id')
