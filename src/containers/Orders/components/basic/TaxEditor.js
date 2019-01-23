@@ -29,19 +29,13 @@ const Placeholder = styled.span`
   }
 `
 
-export default class OnClickEditor extends React.Component {
+export default class TaxEditor extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       edit: false,
       value: props.value
     }
-  }
-
-  getDerivedStateFromProps(props) {
-    return ({
-      value: props.value
-    })
   }
 
   setEdit = () => {
