@@ -70,7 +70,7 @@ const navItems = [
     mainImage: InvoicesIcon,
     title: 'INVOICES',
     link: '/invoices/',
-    previlages: ['admin', 'provider']
+    previlages: ['provider']
   },
   {
     activeImage: MessageActiveIcon,
