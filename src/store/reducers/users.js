@@ -21,7 +21,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.page = get(payload, 'page', 1);
+        draft.page = get(payload, 'params.page', 1);
         draft.error = null;
       }),
     [actionTypes.GET_USERS_SUCCESS]: (state, action) =>
@@ -44,7 +44,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.page = get(payload, 'page', 1);
+        draft.page = get(payload, 'params.page', 1);
         draft.error = null;
       }),
     [actionTypes.FILTER_USERS_SUCCESS]: (state, action) =>
