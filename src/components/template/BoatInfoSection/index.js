@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { findIndex } from 'lodash'
 
-import EditModal from './EditModal'
+import BoatModal from './BoatModal'
 import InfoSection from './InfoSection'
 
 import { updateBoats, deleteBoats } from 'store/reducers/boats'
@@ -83,7 +83,7 @@ class BoatInfoSection extends React.Component {
           ))
         }
         {
-          editingBoatIdx !== -1 && <EditModal open={edit} onClose={this.endEditing} onSave={this.updateBoatInfo} boatInfo={boats[editingBoatIdx]} locationInfo={boatLocation} />
+          editingBoatIdx !== -1 && <BoatModal open={edit} onClose={this.endEditing} onSave={this.updateBoatInfo} boatInfo={boats[editingBoatIdx]} locationInfo={boatLocation} />
         }
       </React.Fragment>
     )

@@ -21,7 +21,7 @@ import Scheduler from './components/templates/Scheduler'
 import PaymentsSection from './components/templates/Payments'
 import Timeline from './components/templates/Timeline'
 
-import BoatEditor from './components/modals/EditBoatModal'
+import BoatModal from 'components/template/BoatInfoSection/BoatModal'
 
 const Wrapper = styled.div`
   padding: 30px;
@@ -213,7 +213,7 @@ class OrderDetails extends React.Component {
               </SectionGroup>
             </Col>
           </Row>
-          <BoatEditor
+          <BoatModal
             boatInfo={boatInfo}
             open={editBoat}
             onClose={this.closeBoatEditor}

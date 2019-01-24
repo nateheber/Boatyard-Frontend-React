@@ -1,10 +1,11 @@
 import React from 'react';
+import { get } from 'lodash';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
-export default class EditBoatModal extends React.Component {
+export default class BoatModal extends React.Component {
   setFormFieldRef = (ref) => {
     this.mainInfoFields = ref;
   }
@@ -12,16 +13,15 @@ export default class EditBoatModal extends React.Component {
     this.locationFields = ref;
   }
   getLocationFieldInfo = () => {
+    const locationInfo = get(this.props, 'locationInfo', {});
     const {
-      locationInfo: {
-        locationType,
-        name,
-        city,
-        state,
-        street,
-        zip,
-      }
-    } = this.props;
+      locationType,
+      name,
+      city,
+      state,
+      street,
+      zip,
+    } = locationInfo;
     const fields = [
       {
         type: 'select_box',
@@ -121,15 +121,14 @@ export default class EditBoatModal extends React.Component {
     return fields
   }
   getFormFieldInfo = () => {
+    const boatInfo = get(this.props, 'boatInfo', {});
     const {
-      boatInfo: {
-        name,
-        make,
-        model,
-        year,
-        length
-      },
-    } = this.props;
+      name,
+      make,
+      model,
+      year,
+      length
+    } = boatInfo;
     const fields = [
       {
         type: 'text_field',
@@ -176,6 +175,7 @@ export default class EditBoatModal extends React.Component {
         label: 'Year',
         errorMessage: 'Enter the boat year',
         required: true,
+        mask: '9999',
         defaultValue: year,
         xs: 6,
         sm: 6,
@@ -208,11 +208,11 @@ export default class EditBoatModal extends React.Component {
   render() {
     const fields = this.getFormFieldInfo();
     const locationFields = this.getLocationFieldInfo();
-    const { open, onClose } = this.props;
+    const { title, open, onClose } = this.props;
     const action = [<HollowButton onClick={onClose}>Cancel</HollowButton>, <OrangeButton onClick={this.onSave}>Save</OrangeButton>];
     return (
       <Modal
-        title="Edit Boat Information"
+        title={title || 'Boat Information'}
         actions={action}
         open={open}
         onClose={onClose}
