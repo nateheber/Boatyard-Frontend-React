@@ -42,7 +42,7 @@ function* createCreditCard(action) {
           number: cardNumber,
           verificationValue: cvv,
           month: parseInt(month),
-          year: parseInt(year) + 2000
+          year: parseInt(year)
         },
       }
     });
