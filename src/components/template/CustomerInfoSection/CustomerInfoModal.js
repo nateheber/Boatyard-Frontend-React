@@ -4,7 +4,7 @@ import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
-export default class EditBoatModal extends React.Component {
+export default class CustomerInfoModal extends React.Component {
   setFormFieldRef = (ref) => {
     this.mainInfoFields = ref;
   }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import WebFont from 'webfontloader';
+import ReduxToastr from 'react-redux-toastr';
 
 import AppRoutes from './navigation';
 
@@ -23,7 +24,10 @@ class App extends Component {
     return (
       <Provider store={store}>
         <PersistGate persistor={persistor}>
-          <AppRoutes />
+          <div>
+            <AppRoutes />
+            <ReduxToastr />
+          </div>
         </PersistGate>
       </Provider>
     );
