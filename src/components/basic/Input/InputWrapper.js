@@ -13,6 +13,8 @@ export const InputWrapper = styled.div`
   flex: 1;
   flex-direction: row;
   align-items: center;
+  text-transform: uppercase;
+  margin-bottom: 5px;
   &.primary,
   &.secondary {
     flex-direction: column;
@@ -25,7 +27,8 @@ export const InputWrapper = styled.div`
   &.secondary > ${InputLabel} {
     color: #004258;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
+    font-size: 12px;
     font-family: Montserrat, sans-serif;
   }
   margin: 0px 10px;

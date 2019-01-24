@@ -9,8 +9,9 @@ const ErrorMessage = styled.div`
   font-weight: 400;
   font-size: 12px;
   margin: 0 0 5px;
-  margin-bottom: 15px;
+  font-family: 'Source Sans', sans-serif;
   line-height: 1.125;
+  text-transform: capitalize;
   opacity: 0;
   transition: opacity 0.5s;
   &.show {
@@ -22,7 +23,7 @@ const MaskInput = styled(InputMask)`
   position: relative;
   background: #fff;
   padding: 0 15px;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   border: 1px solid #dfdfdf;
   height: 35px;
   width: 100%;
@@ -34,10 +35,6 @@ const MaskInput = styled(InputMask)`
   &:disabled {
     background: #f1f1f1;
   }
-  &.hideError {
-    margin-bottom: 0px;
-  }
-  margin: 0px;
 `;
 
 export class Input extends React.Component {
@@ -45,8 +42,8 @@ export class Input extends React.Component {
     const { hasError, errorMessage, hideError, ...rest } = this.props;
     return (
       <React.Fragment>
-        <MaskInput className={classNames({ hideError })} {...rest} />
-        { !hideError &&
+        <MaskInput {...rest} />
+        { (!hideError && hasError) &&
           <ErrorMessage className={classNames({ show: hasError })}>
             {errorMessage}
           </ErrorMessage>
