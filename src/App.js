@@ -26,7 +26,9 @@ class App extends Component {
         <PersistGate persistor={persistor}>
           <div>
             <AppRoutes />
-            <ReduxToastr />
+            <ReduxToastr
+              timeOut={3000}
+            />
           </div>
         </PersistGate>
       </Provider>

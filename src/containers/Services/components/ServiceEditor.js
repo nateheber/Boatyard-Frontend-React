@@ -1,4 +1,5 @@
 import React from 'react';
+import { toastr } from 'react-redux-toastr';
 
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
@@ -17,8 +18,8 @@ export class ServiceEditor extends React.Component {
       const mainFieldValues = this.mainFields.getFieldValues();
       this.props.onSave(mainFieldValues);
     } else {
-      this.props.setErrorState('Please fill out all required fields');
-      setTimeout(this.props.resetErrorState, 3000);
+      toastr.clean()
+      toastr.error('Please fill out all the required fields')
     }
   };
 

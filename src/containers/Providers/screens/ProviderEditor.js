@@ -6,7 +6,6 @@ import { findIndex } from 'lodash';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import { createProvider, updateProvider } from 'store/reducers/providers';
-import { setErrorState, resetErrorState } from 'store/reducers/appstate';
 
 import { AccountEditor, AccountCreator, HeaderEditor } from '../components';
 
@@ -73,7 +72,6 @@ class ProviderEditFlow extends React.Component {
 
   render() {
     const { id } = this.state;
-    const { setErrorState, resetErrorState } = this.props;
     return (
       <Tabs>
         <TabList>
@@ -85,15 +83,11 @@ class ProviderEditFlow extends React.Component {
             <AccountCreator
               {...this.state}
               save={this.onSave}
-              setErrorState={setErrorState}
-              resetErrorState={resetErrorState}
             />
           ) : (
             <AccountEditor
               {...this.state}
               save={this.onSave}
-              setErrorState={setErrorState}
-              resetErrorState={resetErrorState}
             />
           )}
         </TabPanel>
@@ -112,8 +106,6 @@ const mapStateToProps = ({ provider: { providers } }) => ({
 const mapDispatchToProps = {
   createProvider,
   updateProvider,
-  setErrorState,
-  resetErrorState
 };
 
 export default withRouter(
