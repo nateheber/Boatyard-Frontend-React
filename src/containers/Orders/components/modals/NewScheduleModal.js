@@ -70,7 +70,7 @@ export default class NewScheduleModal extends React.Component {
 
   render() {
     const { open, onClose, isLast, orderId } = this.props;
-    const action = [<HollowButton onClick={onClose}>Cancel</HollowButton>, <OrangeButton onClick={this.onSave}>{isLast ? 'Save' : 'Save & Continue'}</OrangeButton>];
+    const action = [<HollowButton onClick={onClose} key="cancel">Cancel</HollowButton>, <OrangeButton onClick={this.onSave} key="next">{isLast ? 'Save' : 'Save & Continue'}</OrangeButton>];
     const { fromDate, fromTime, toDate, toTime, needApproval } = this.state;
     return (
       <Modal

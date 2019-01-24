@@ -1,13 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import ErrorMessage from 'components/basic/ErrorMessage';
 import Header from 'components/compound/Header';
 import SideBar from 'components/compound/Sidebar';
-
-import { setErrorState, resetErrorState } from 'store/reducers/appstate';
 
 const Wrapper = styled.div`
   display: flex;
@@ -48,18 +44,12 @@ class PageTemplate extends React.Component {
   };
   render() {
     const { showSidebar } = this.state;
-    const { error, errorMessage } = this.props;
     return (
       <Wrapper>
         <Header onMenuToggle={this.toggleMenu} />
         <PageContent>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
-            <ErrorMessage
-              error={error}
-              message={errorMessage}
-              key={this.props.location}
-            />
             {this.props.children}
           </ContentWrapper>
         </PageContent>
@@ -68,19 +58,4 @@ class PageTemplate extends React.Component {
   }
 }
 
-const mapStateToProps = ({ appstate: { error, errorMessage } }) => ({
-  error,
-  errorMessage
-});
-
-const mapDispatchToProps = {
-  resetErrorState,
-  setErrorState
-};
-
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(PageTemplate)
-);
+export default withRouter(PageTemplate);

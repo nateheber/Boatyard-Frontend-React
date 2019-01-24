@@ -13,8 +13,7 @@ export const responseInterceptor = client => {
     }
     return response.data;
   }, (err) => {
-    console.log(err);
-    return [];
+    return {error: get(err, 'response.data')};
   });
   return client;
 };

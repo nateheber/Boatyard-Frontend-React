@@ -11,7 +11,6 @@ import {
 import { ServiceEditor } from '../components/ServiceEditor';
 
 import { updateServices, createServices } from 'store/reducers/services';
-import { setErrorState, resetErrorState } from 'store/reducers/appstate';
 
 class ServiceDetails extends React.Component {
   constructor(props) {
@@ -172,15 +171,12 @@ class ServiceDetails extends React.Component {
   render() {
     const mainFields = this.getMainInputOptions();
     const { propertyFields } = this.state;
-    const { resetErrorState, setErrorState } = this.props;
     return (
       <ServiceEditor
         mainFields={mainFields}
         propertyFields={propertyFields}
         onCancel={this.onCancel}
         onSave={this.onSave}
-        setErrorState={setErrorState}
-        resetErrorState={resetErrorState}
       />
     );
   }
@@ -197,8 +193,6 @@ const mapStateToProps = ({
 const mapDispatchToProps = {
   updateServices,
   createServices,
-  setErrorState,
-  resetErrorState
 };
 
 export default withRouter(
