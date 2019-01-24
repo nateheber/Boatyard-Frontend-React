@@ -10,8 +10,7 @@ import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
 const Divider = styled.hr`
-  margin: 0;
-  margin-bottom: 30px;
+  margin: 20px 0;
   border-top: 1px solid #f1f1f1;
 `;
 const cardFields = [
