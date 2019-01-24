@@ -1,6 +1,6 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty, hasIn } from 'lodash';
-import { actions as toastrActions, toastr } from 'react-redux-toastr';
+import { actions as toastrActions } from 'react-redux-toastr';
 
 import { actions } from '../reducers/payments';
 import { getPaymentClient } from './sagaSelectors';
