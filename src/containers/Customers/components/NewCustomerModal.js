@@ -17,7 +17,7 @@ class NewCustomer extends React.Component {
         type: 'text_field',
         field: 'firstName',
         label: 'First Name',
-        errorMessage: 'Enter Lirst Name',
+        errorMessage: 'Enter First Name',
         required: true,
         xs: 12,
         sm: 12,
@@ -133,14 +133,14 @@ class NewCustomer extends React.Component {
   }
   render() {
     const fields = this.getFormFieldInfo();
-    const { open, onClose } = this.props;
+    const { title, open, onClose } = this.props;
     const action = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>
     ];
     return (
       <Modal
-        title="Add Customer"
+        title={title || 'Add Customer'}
         actions={action}
         open={open}
         onClose={onClose}
