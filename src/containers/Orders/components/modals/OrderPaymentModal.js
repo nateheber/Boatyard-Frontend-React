@@ -57,8 +57,8 @@ class OrderPaymentModal extends React.Component {
 
   onSave = () => {
     const { balance, fee, cardId } = this.state;
-    const { orderId, userId, providerId, previlage }  = this.props;
-    const data = previlage === 'admin' ? {
+    const { orderId, userId, providerId, privilege }  = this.props;
+    const data = privilege === 'admin' ? {
       orderId,
       userId,
       creditCardId: cardId,
@@ -85,7 +85,7 @@ class OrderPaymentModal extends React.Component {
   }
 
   render() {
-    const { open, onClose, creditCards, userId, previlage } = this.props;
+    const { open, onClose, creditCards, userId, privilege } = this.props;
     const { balance, fee, tab } = this.state;
     const charging = parseFloat(balance) + parseFloat(fee);
     const action = [
@@ -118,7 +118,7 @@ class OrderPaymentModal extends React.Component {
             }
           </Col>
           <Col sm={5}>
-            <ChargeSelector previlage={previlage} balance={balance} fee={fee} onChange={this.onChangeCharge} />
+            <ChargeSelector previlage={privilege} balance={balance} fee={fee} onChange={this.onChangeCharge} />
           </Col>
         </Row>
       </Modal>
@@ -126,9 +126,9 @@ class OrderPaymentModal extends React.Component {
   }
 }
 
-const mapStateToProps = ({ creditCard: { creditCards }, auth: { previlage } }) => ({
+const mapStateToProps = ({ creditCard: { creditCards }, auth: { privilege } }) => ({
   creditCards,
-  previlage
+  privilege
 })
 
 const mapDispatchToProps = {

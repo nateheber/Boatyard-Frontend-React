@@ -10,23 +10,34 @@ function* createRequest(action) {
   const paymentClient = yield select(getPaymentClient)
   const result = yield call(paymentClient.create, { payment: data })
   if (hasIn(result, 'error')) {
+    console.log(result)
     if (result.error.message === "undefined method `default_payment_gateway' for nil:NilClass") {
       const errorAction = toastrActions.add({
         type: 'error',
-        title: 'Payment is not successful',
+        title: 'Payment error',
         message: 'Payment Gateway is not set for this provider',
         position: 'top-right',
-        timeout: 4000,
+        timeOut: 4000,
+      })
+      yield put(toastrActions.clean())
+      yield put(errorAction)
+    } else if (hasIn(result, 'error.creditCard')) {
+      const errorAction = toastrActions.add({
+        type: 'error',
+        title: 'Payment error',
+        message: get(result, 'error.creditCard[0]'),
+        position: 'top-right',
+        timeOut: 4000,
       })
       yield put(toastrActions.clean())
       yield put(errorAction)
     } else {
       const errorAction = toastrActions.add({
         type: 'error',
-        title: 'Payment is not successful',
+        title: 'Payment error',
         message: 'Payment failed due to unknown error',
         position: 'top-right',
-        timeout: 4000,
+        timeOut: 4000,
       })
       yield put(toastrActions.clean())
       yield put(errorAction)
