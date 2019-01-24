@@ -16,7 +16,7 @@ export const HollowButton = styled.button`
   text-align: center;
   text-transform: uppercase;
   display: inline-block;
-  height: 33px !important;
+  height: 30px !important;
   margin: 5px;
   padding: 5px 15px;
   outline: none;
