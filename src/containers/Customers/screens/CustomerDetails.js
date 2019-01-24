@@ -30,7 +30,9 @@ class CustomerDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const customerId = query.customer;
-    this.props.GetUser(customerId);
+    this.props.GetUser({
+      userId: customerId
+    });
     this.props.getUserBoats({userId: customerId});
     this.props.GetOrders({ 'order[user_id]': customerId, page: 1 });
     this.props.GetCreditCards({

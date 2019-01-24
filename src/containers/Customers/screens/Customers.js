@@ -9,10 +9,10 @@ import Table from 'components/basic/Table'
 import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 
-import { GetUsers, FilterUsers } from 'store/actions/users'
+import { GetUsers, FilterUsers, CreateUser } from 'store/actions/users'
 
 import { CustomersHeader } from '../components/CustomersHeader'
-import NewCustomerModal from '../components/NewCustomerModal'
+import CustomerModal from 'components/template/CustomerInfoSection/CustomerModal'
 
 const Wrapper = styled.div`
   height: 100%;
@@ -27,28 +27,32 @@ class Customers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showNewModal: false,
+      showNewModal: false
     };
   }
 
   componentDidMount() {
-    this.props.GetUsers({
-      params: { page: 1 }
-    });
+    this.loadCustomers();
   }
+
+  loadCustomers = (page) => {
+    this.props.GetUsers({
+      params: { page: page || 1 }
+    });
+  };
 
   loadOptions = val => {
     return this.onChangeUserFilter(val)
-      .then((filtered) => {
-        return filtered.map(user => ({
-          value: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email
-        }));
-      }, () => {
-        return [];
-      })
+    .then((filtered) => {
+      return filtered.map(user => ({
+        value: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+      }));
+    }, () => {
+      return [];
+    });
   };
 
   onChangeUserFilter = val => {
@@ -63,6 +67,16 @@ class Customers extends React.Component {
 
   onChangeUser = (val) => {
     this.props.history.push(`/customer-details/?customer=${val.value}`);
+  };
+
+  createCustomer = (data) => {
+    CreateUser({
+      data,
+      success: () => {
+        this.hideModal();
+        this.loadCustomers();
+      }
+    });
   };
 
   closeNewModal = () => {
@@ -82,9 +96,7 @@ class Customers extends React.Component {
   };
 
   changePage = (page) => {
-    this.props.GetUsers({
-      params: { page }
-    });
+    this.loadCustomers(page);
   };
 
   getPageCount = () => {
@@ -141,7 +153,7 @@ class Customers extends React.Component {
           pageCount={pageCount}
           onPageChange={this.changePage}
         />
-        <NewCustomerModal open={showNewModal} onClose={this.closeNewModal} />
+        <CustomerModal open={showNewModal} onClose={this.closeNewModal} onSave={this.createCustomer} />
       </Wrapper>
     );
   }

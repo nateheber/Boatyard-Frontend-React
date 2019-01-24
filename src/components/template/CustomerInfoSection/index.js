@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import InfoSection from './InfoSection';
-import CustomerInfoModal from './CustomerInfoModal';
+import CustomerModal from './CustomerModal';
 
 import { UpdateUser } from 'store/actions/users'
 
@@ -34,7 +34,13 @@ class CustomerInfoSection extends React.Component {
     return (
       <React.Fragment>
         <InfoSection {...customerInfo} onEdit={this.showModal} />
-        <CustomerInfoModal open={edit} customerInfo={customerInfo} onClose={this.hideModal} onSave={this.onSave} />
+        <CustomerModal
+          title="Edit Customer"
+          open={edit}
+          customerInfo={customerInfo}
+          onClose={this.hideModal}
+          onSave={this.onSave}
+        />
       </React.Fragment>
     )
   }

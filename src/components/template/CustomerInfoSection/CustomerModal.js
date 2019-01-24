@@ -1,17 +1,29 @@
 import React from 'react';
-import { connect } from 'react-redux'
+import { get } from 'lodash';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
-import { CreateUser } from 'store/actions/users';
 
-class NewCustomer extends React.Component {
+export default class CustomerModal extends React.Component {
   setFormFieldRef = (ref) => {
     this.mainInfoFields = ref;
   }
   getFormFieldInfo = () => {
+    const customerInfo = get(this.props, 'customerInfo', {});
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      billingAddress,
+      city,
+      state,
+      zipcode,
+      email,
+      notes
+    } = customerInfo;
+
     const fields = [
       {
         type: 'text_field',
@@ -19,6 +31,7 @@ class NewCustomer extends React.Component {
         label: 'First Name',
         errorMessage: 'Enter First Name',
         required: true,
+        defaultValue: firstName,
         xs: 12,
         sm: 12,
         md: 5,
@@ -31,6 +44,7 @@ class NewCustomer extends React.Component {
         label: 'Last Name',
         errorMessage: 'Enter Last Name',
         required: true,
+        defaultValue: lastName,
         xs: 12,
         sm: 12,
         md: 4,
@@ -44,6 +58,7 @@ class NewCustomer extends React.Component {
         errorMessage: 'Enter Phone Number',
         mask: '(999)999-9999',
         required: true,
+        defaultValue: phoneNumber,
         xs: 12,
         sm: 12,
         md: 3,
@@ -56,6 +71,7 @@ class NewCustomer extends React.Component {
         label: 'Billing Address',
         errorMessage: 'Enter Billing Address',
         required: true,
+        defaultValue: billingAddress,
         xs: 12,
         sm: 12,
         md: 12,
@@ -68,6 +84,7 @@ class NewCustomer extends React.Component {
         label: 'City',
         errorMessage: 'Enter City',
         required: true,
+        defaultValue: city,
         xs: 12,
         sm: 12,
         md: 5,
@@ -80,6 +97,7 @@ class NewCustomer extends React.Component {
         label: 'State',
         errorMessage: 'Enter State',
         required: true,
+        defaultValue: state,
         xs: 12,
         sm: 12,
         md: 4,
@@ -92,6 +110,7 @@ class NewCustomer extends React.Component {
         label: 'Zip Code',
         errorMessage: 'Enter Zipcode',
         required: true,
+        defaultValue: zipcode,
         xs: 12,
         sm: 12,
         md: 3,
@@ -104,6 +123,7 @@ class NewCustomer extends React.Component {
         label: 'Email',
         errorMessage: 'Enter the email',
         required: true,
+        defaultValue: email,
         xs: 12,
         sm: 12,
         md: 5,
@@ -116,6 +136,7 @@ class NewCustomer extends React.Component {
         label: 'Customer Notes',
         errorMessage: 'Enter the notes',
         required: false,
+        defaultValue: notes,
         xs: 12,
         sm: 12,
         md: 7,
@@ -127,9 +148,8 @@ class NewCustomer extends React.Component {
   }
   onSave = () => {
     if (this.mainInfoFields.validateFields()) {
-      this.props.CreateUser(this.mainInfoFields.getFieldValues);
+      this.props.onSave(this.mainInfoFields.getFieldValues);
     }
-    // this.props.onClose();
   }
   render() {
     const fields = this.getFormFieldInfo();
@@ -153,9 +173,3 @@ class NewCustomer extends React.Component {
     );
   }
 }
-
-const mapDispatchToProps = {
-  CreateUser
-}
-
-export default connect(null, mapDispatchToProps)(NewCustomer)
