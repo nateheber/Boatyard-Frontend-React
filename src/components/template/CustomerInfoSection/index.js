@@ -4,17 +4,17 @@ import { connect } from 'react-redux';
 import InfoSection from './InfoSection';
 import CustomerInfoModal from './CustomerInfoModal';
 
-import { updateUsers } from 'store/reducers/users'
+import { UpdateUser } from 'store/actions/users'
 
 class CustomerInfoSection extends React.Component {
   state = {
     edit: false,
   }
   onSave = (data) => {
-    const { customerInfo: { id }, refreshInfo } = this.props;
-    this.props.updateUsers({
-      id, data,
-      callback: refreshInfo,
+    const { customerInfo: { id }, refreshInfo, UpdateUser } = this.props;
+    UpdateUser({
+      userId: id, data,
+      success: refreshInfo
     })
     this.hideModal();
   }
@@ -41,7 +41,7 @@ class CustomerInfoSection extends React.Component {
 }
 
 const mapDispatchToProps = {
-  updateUsers
+  UpdateUser
 }
 
 export default connect(null, mapDispatchToProps)(CustomerInfoSection)

@@ -9,7 +9,7 @@ import Table from 'components/basic/Table'
 import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 
-import { fetchUsers, filterUsers } from 'store/reducers/users'
+import { GetUsers, FilterUsers } from 'store/actions/users'
 
 import { CustomersHeader } from '../components/CustomersHeader'
 import NewCustomerModal from '../components/NewCustomerModal'
@@ -21,15 +21,20 @@ const Wrapper = styled.div`
 
 const SearchWrapper = styled.div`
   padding: 30px;
-`
+`;
 
 class Customers extends React.Component {
-  state = {
-    showNewModal: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      showNewModal: false,
+    };
   }
 
   componentDidMount() {
-    this.props.fetchUsers();
+    this.props.GetUsers({
+      params: { page: 1 }
+    });
   }
 
   loadOptions = val => {
@@ -44,56 +49,62 @@ class Customers extends React.Component {
       }, () => {
         return [];
       })
-  }
+  };
 
   onChangeUserFilter = val => {
     return new Promise((resolve, reject) => {
-      this.props.filterUsers({keyword: val, resolve, reject});
-    })
+      this.props.FilterUsers({
+        keyword: val,
+        success: resolve,
+        error: reject
+      });
+    });
   };
 
   onChangeUser = (val) => {
-    this.props.history.push(`/customer-details/?customer=${val.value}`)
-  }
+    this.props.history.push(`/customer-details/?customer=${val.value}`);
+  };
 
   closeNewModal = () => {
     this.setState({
       showNewModal: false,
-    })
-  }
+    });
+  };
 
   openNewModal = () => {
     this.setState({
       showNewModal: true,
-    })
-  }
+    });
+  };
 
   toDetails = customerId => {
-    this.props.history.push(`/customer-details/?customer=${customerId}`)
+    this.props.history.push(`/customer-details/?customer=${customerId}`);
   };
 
   changePage = (page) => {
-    this.props.fetchUsers({ page })
-  }
+    this.props.GetUsers({
+      params: { page }
+    });
+  };
 
   getPageCount = () => {
-    const { perPage, total } = this.props
-    return Math.ceil(total/perPage)
-  }
+    const { perPage, total } = this.props;
+    return Math.ceil(total/perPage);
+  };
 
   parseUser = () => {
     const { users } = this.props;
     return users.map(({ firstName, lastName, ...rest }) => ({
       name: `${firstName} ${lastName}`,
       ...rest
-    }))
-  }
+    }));
+  };
 
   render() {
-    const { page } = this.props
-    const { showNewModal } = this.state
-    const pageCount = this.getPageCount()
-    const users = this.parseUser()
+    const { page } = this.props;
+    const { showNewModal } = this.state;
+    const pageCount = this.getPageCount();
+    const users = this.parseUser();
     const columns = [
       { label: 'name', value: 'name' },
       { label: 'phone', value: 'phoneNumber' },
@@ -102,7 +113,7 @@ class Customers extends React.Component {
       { label: 'last order', value: 'last_order' },
       { label: 'orders', value: 'orders' },
       { label: 'total spent', value: 'total_spent' }
-    ]
+    ];
     return (
       <Wrapper>
         <CustomersHeader onNew={this.openNewModal} />
@@ -132,7 +143,7 @@ class Customers extends React.Component {
         />
         <NewCustomerModal open={showNewModal} onClose={this.closeNewModal} />
       </Wrapper>
-    )
+    );
   }
 }
 
@@ -141,11 +152,11 @@ const mapStateToProps = ({ user: { users, page, perPage, total } }) => ({
   page,
   perPage,
   total
-})
+});
 
 const mapDispatchToProps = {
-  fetchUsers,
-  filterUsers
-}
+  GetUsers,
+  FilterUsers
+};
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Customers))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Customers));

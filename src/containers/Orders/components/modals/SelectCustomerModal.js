@@ -11,7 +11,7 @@ import { Selector } from 'components/basic/Input';
 import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 
-import { filterUsers } from 'store/reducers/users';
+import { FilterUsers } from 'store/actions/users';
 import { getUserBoats } from 'store/reducers/boats';
 
 import BoatInfo from '../basic/BoatInfo';
@@ -24,7 +24,7 @@ const SubSectionTitle = styled.h5`
   font-family: 'Montserrat', sans-serif !important;
   margin-top: 35px;
   margin-bottom: 10px;
-`
+`;
 
 class SelectCustomerModal extends React.Component {
   state = {
@@ -43,13 +43,17 @@ class SelectCustomerModal extends React.Component {
         }));
       }, () => {
         return [];
-      })
-  }
+      });
+  };
 
   onChangeUserFilter = val => {
     return new Promise((resolve, reject) => {
-      this.props.filterUsers({keyword: val, resolve, reject});
-    })
+      this.props.FilterUsers({
+        keyword: val,
+        success: resolve,
+        error: reject
+      });
+    });
   };
 
   onChangeUser = val => {
@@ -72,12 +76,12 @@ class SelectCustomerModal extends React.Component {
     }, -1);
     this.setState({
       boat,
-    })
+    });
   };
 
   next = () => {
     const { customer, boat } = this.state;
-    this.props.toNext({ customer, boat })
+    this.props.toNext({ customer, boat });
   };
 
   getBoats = () => {
@@ -105,7 +109,7 @@ class SelectCustomerModal extends React.Component {
   setBoat = (boat) => {
     this.setState({
       boat: boat.value
-    })
+    });
   };
 
   render() {
@@ -169,7 +173,7 @@ class SelectCustomerModal extends React.Component {
 
 const mapStateToProps = ({ boat: { boats } }) => ({ boats });
 
-const mapDispatchToProps = { filterUsers, getUserBoats };
+const mapDispatchToProps = { FilterUsers, getUserBoats };
 
 export default connect(
   mapStateToProps,

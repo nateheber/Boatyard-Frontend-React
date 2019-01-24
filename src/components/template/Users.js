@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import Table from 'components/basic/Table';
 import { UsersHeader } from 'components/compound/SectionHeader';
 
-import { fetchUsers } from 'store/reducers/users';
+import { GetUsers } from 'store/actions/users';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -15,7 +15,9 @@ const Wrapper = styled.div`
 
 class Users extends React.Component {
   componentDidMount() {
-    this.props.fetchUsers();
+    this.props.GetUsers({
+      params: { page: 1 }
+    });
   }
   onAdd = () => {
     this.props.history.push(`/user-details/`);
@@ -47,7 +49,7 @@ class Users extends React.Component {
 
 const mapStateToProps = ({ user: { users } }) => ({ users });
 const mapDispatchToProps = {
-  fetchUsers
+  GetUsers
 };
 
 export default withRouter(

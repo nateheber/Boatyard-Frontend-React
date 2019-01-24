@@ -6,7 +6,7 @@ import { Row, Col } from 'react-flexbox-grid'
 import { get } from 'lodash'
 import styled from 'styled-components'
 
-import { fetchUser } from 'store/reducers/users'
+import { GetUser } from 'store/actions/users'
 import { getUserBoats } from 'store/reducers/boats'
 import { GetOrders } from 'store/actions/orders'
 import { GetCreditCards } from 'store/actions/credit-cards'
@@ -28,17 +28,17 @@ class CustomerDetails extends React.Component {
     customerId: -1,
   }
   componentDidMount() {
-    const query = queryString.parse(this.props.location.search)
-    const customerId = query.customer
-    this.props.fetchUser(customerId)
-    this.props.getUserBoats({userId: customerId})
-    this.props.GetOrders({ 'order[user_id]': customerId, page: 1 })
+    const query = queryString.parse(this.props.location.search);
+    const customerId = query.customer;
+    this.props.GetUser(customerId);
+    this.props.getUserBoats({userId: customerId});
+    this.props.GetOrders({ 'order[user_id]': customerId, page: 1 });
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': customerId }
     });
     this.setState({
       customerId,
-    })
+    });
   }
   changePage = (page) => {
     const { customerId } = this.state;
@@ -127,7 +127,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  fetchUser,
+  GetUser,
   getUserBoats,
   GetOrders,
   GetCreditCards
