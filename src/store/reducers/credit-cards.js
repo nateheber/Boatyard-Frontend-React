@@ -7,7 +7,7 @@ const initialState = {
   currentStatus: '',
   creditCards: [],
   defaultCreditCard: null,
-  errors: null,
+  errors: null
 };
 
 export default handleActions(

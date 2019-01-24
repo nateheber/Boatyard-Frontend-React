@@ -1,76 +1,137 @@
-import { createAction, handleActions } from 'redux-actions';
+import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-
-export const actions = {
-  createUsers: 'USERS/CREATE',
-  fetchUsers: 'USERS/FETCH',
-  fetchUser: 'USERS/FETCH_ONE',
-  resetUsers: 'USERS/RESET_USERS',
-  updateUsers: 'USERS/UPDATE',
-  deleteUsers: 'USERS/DELETE',
-  setUsers: 'USERS/SET',
-  setUser: 'USERS/SET_ONE',
-  filterUsers: 'USERS/FILTER',
-  setFilteredUsers: 'USERS/SET_FILTERED_DATA'
-};
-
-export const createUsers = createAction(actions.createUsers);
-export const fetchUsers = createAction(actions.fetchUsers);
-export const fetchUser = createAction(actions.fetchUser);
-export const resetusers = createAction(actions.resetUsers);
-export const updateUsers = createAction(actions.updateUsers);
-export const deleteUsers = createAction(actions.deleteUsers);
-export const filterUsers = createAction(actions.filterUsers);
+import { get } from 'lodash';
+import { actionTypes } from '../actions/users';
 
 const initialState = {
+  currentStatus: '',
   users: [],
-  filtered: [],
-  currentUser: [],
-  loading: false,
-  page: 0,
+  filteredUsers: [],
+  currentUser: {},
+  page: 1,
   perPage: 20,
   total: 0,
+  error: null
 };
+
 
 export default handleActions(
   {
-    [actions.fetchUsers]: (state, { payload }) =>
+    [actionTypes.GET_USERS]: (state, action) =>
       produce(state, draft => {
-        if (payload) {
-          draft.page = payload.page;
-        } else {
-          draft.page = draft.page === 0 ? 1 : draft.page;
-        }
-        draft.loading = true;
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'page', 1);
+        draft.error = null;
       }),
-    [actions.resetUsers]: state =>
+    [actionTypes.GET_USERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        draft.users = [];
-        draft.page = 1;
-        draft.perPage = 20;
-        draft.total = 0;
-      }),
-    [actions.setUsers]: (state, { payload }) =>
-      produce(state, draft => {
+        const { type, payload } = action;
         const { total, perPage, users } = payload;
+        draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
         draft.users = users;
       }),
-    [actions.setUser]: (state, { payload }) =>
+    [actionTypes.GET_USERS_FAILURE]: (state, action) =>
       produce(state, draft => {
-        draft.currentUser = payload
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload;
       }),
-    [actions.filterUsers]: (state, { payload }) =>
+
+    [actionTypes.FILTER_USERS]: (state, action) =>
       produce(state, draft => {
-        draft.filtered = [];
-        draft.loading = true;
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'page', 1);
+        draft.error = null;
       }),
-    [actions.setFilteredUsers]: (state, { payload }) =>
+    [actionTypes.FILTER_USERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        draft.filtered = [...payload];
-        draft.loading = false;
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.filteredUsers = payload;
+      }),
+    [actionTypes.FILTER_USERS_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload;
+      }),
+
+    [actionTypes.GET_USER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.error = null;
+      }),
+    [actionTypes.GET_USER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.currentUser = payload;
+      }),
+    [actionTypes.GET_USER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload;
+      }),
+
+    [actionTypes.CREATE_USER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.error = null;
+      }),
+    [actionTypes.CREATE_USER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.CREATET_USER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload;
+      }),
+
+    [actionTypes.UPDATE_USER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.error = null;
+      }),
+    [actionTypes.UPDATE_USER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.UPDATE_USER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload;
+      }),
+
+    [actionTypes.DELETE_USER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.error = null;
+      }),
+    [actionTypes.DELETE_USER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.DELETE_USER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.error = payload;
       })
-  },
+    },
   initialState
 );

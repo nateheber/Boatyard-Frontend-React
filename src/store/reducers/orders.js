@@ -18,7 +18,7 @@ const ordersState = {
   included: {},
   page: 1,
   perPage: 20,
-  total: 0,
+  total: 0
 };
 
 const initialState = {
@@ -253,4 +253,4 @@ export default handleActions(
       })
     },
   initialState
-)
+);
