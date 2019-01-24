@@ -2,27 +2,30 @@ import { createAction, handleActions } from 'redux-actions';
 import { produce } from 'immer';
 
 export const actions = {
-  createLocationService: 'PROVIDER_LOCATION_SERVICES/CREATE',
-  fetchLocationServices: 'PROVIDER_LOCATION_SERVICES/FETCH',
-  updateLocationService: 'PROVIDER_LOCATION_SERVICES/UPDATE',
-  deleteLocationService: 'PROVIDER_LOCATION_SERVICES/DELETE',
-  setLocationServices: 'PROVIDER_LOCATION_SERVICES/SET'
+  createProviderLocationService: 'PROVIDER_LOCATION_SERVICE/CREATE',
+  fetchProviderLocationServices: 'PROVIDER_LOCATION_SERVICE/FETCH',
+  updateProviderLocationService: 'PROVIDER_LOCATION_SERVICE/UPDATE',
+  deleteProviderLocationService: 'PROVIDER_LOCATION_SERVICE/DELETE',
+  setProviderLocationServices: 'PROVIDER_LOCATION_SERVICE/SET'
 };
 
-export const createLocationService = createAction(actions.createLocationService);
-export const fetchLocationServices = createAction(actions.fetchLocationServices);
-export const updateLocationService = createAction(actions.updateLocationService);
-export const deleteLocationService = createAction(actions.deleteLocationService);
+export const createProviderLocationService = createAction(actions.createProviderLocationService);
+export const fetchProviderLocationServices = createAction(actions.fetchProviderLocationServices);
+export const updateProviderLocationService = createAction(actions.updateProviderLocationService);
+export const deleteProviderLocationService = createAction(actions.deleteProviderLocationService);
 
 const initialState = {
-  locationServices: [],
+  providerLocationServices: [],
+  included: [],
 };
 
 export default handleActions(
   {
-    [actions.setPayments]: (state, { payload }) =>
+    [actions.setProviderLocationServices]: (state, { payload }) =>
       produce(state, draft => {
-        draft.locationServices = payload
+        const { data, included } = payload;
+        draft.providerLocationServices = data;
+        draft.included = included;
       }),
   },
   initialState

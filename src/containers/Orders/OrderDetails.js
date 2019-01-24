@@ -70,9 +70,7 @@ class OrderDetails extends React.Component {
     const orderId = query.order;
     this.props.GetOrder({orderId});
     this.props.fetchLineItems(orderId);
-    this.setState({
-      orderId
-    })
+    this.setState({ orderId })
   }
 
   getOrderInfo = () => {
@@ -120,30 +118,18 @@ class OrderDetails extends React.Component {
   }
 
   editBoat = () => {
-    this.setState({
-      editBoat: true,
-    })
+    this.setState({ editBoat: true })
   }
 
   closeBoatEditor = () => {
-    this.setState({
-      editBoat: false,
-    })
+    this.setState({ editBoat: false })
   }
 
   updateBoat = (data) => {
     const { boatInfo: { id } } = this.getOrderInfo();
     const { orderId } = this.state;
-    this.props.updateBoats({
-      id,
-      data,
-      callback: () => {
-        this.props.GetOrder({ orderId })
-      }
-    })
-    this.setState({
-      editBoat: false,
-    })
+    this.props.updateBoats({ id, data, callback: () => { this.props.GetOrder({ orderId }) } })
+    this.setState({ editBoat: false })
   }
 
   updateOrder = (data) => {
