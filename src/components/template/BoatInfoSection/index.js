@@ -83,7 +83,13 @@ class BoatInfoSection extends React.Component {
           ))
         }
         {
-          editingBoatIdx !== -1 && <BoatModal open={edit} onClose={this.endEditing} onSave={this.updateBoatInfo} boatInfo={boats[editingBoatIdx]} locationInfo={boatLocation} />
+          editingBoatIdx !== -1 && <BoatModal
+            open={edit}
+            onClose={this.endEditing}
+            onSave={this.updateBoatInfo}
+            boatInfo={boats[editingBoatIdx]}
+            locationInfo={boatLocation}
+          />
         }
       </React.Fragment>
     )
