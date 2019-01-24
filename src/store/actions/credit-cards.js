@@ -13,13 +13,13 @@ export const actionTypes = {
   CREATE_CREDIT_CARD_SUCCESS: '[CREDITCARDS] - Create new credit card Success',
   CREATE_CREDIT_CARD_FAILURE: '[CREDITCARDS] - Create new credit card Failure',
 
-  UPDATE_CREDIT_CARD: '[CREDITCARDS] - Update new credit card',
-  UPDATE_CREDIT_CARD_SUCCESS: '[CREDITCARDS] - Update new credit card Success',
-  UPDATE_CREDIT_CARD_FAILURE: '[CREDITCARDS] - Update new credit card Failure',
+  UPDATE_CREDIT_CARD: '[CREDITCARDS] - Update credit card',
+  UPDATE_CREDIT_CARD_SUCCESS: '[CREDITCARDS] - Update credit card Success',
+  UPDATE_CREDIT_CARD_FAILURE: '[CREDITCARDS] - Update credit card Failure',
 
-  DELETE_CREDIT_CARD: '[CREDITCARDS] - Delete new credit card',
-  DELETE_CREDIT_CARD_SUCCESS: '[CREDITCARDS] - Delete new credit card Success',
-  DELETE_CREDIT_CARD_FAILURE: '[CREDITCARDS] - Delete new credit card Failure'
+  DELETE_CREDIT_CARD: '[CREDITCARDS] - Delete credit card',
+  DELETE_CREDIT_CARD_SUCCESS: '[CREDITCARDS] - Delete credit card Success',
+  DELETE_CREDIT_CARD_FAILURE: '[CREDITCARDS] - Delete credit card Failure'
 };
 
 export const GetCreditCards = createAction(actionTypes.GET_CREDIT_CARDS, payload => payload);
