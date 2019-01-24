@@ -45,7 +45,7 @@ export default class ChargeSelector extends React.Component {
     this.props.onChange(data);
   }
   render() {
-    const { balance, fee } = this.props;
+    const { balance, fee, previlage } = this.props;
     return (
       <div>
         <Title>Balance: ${balance}</Title>
@@ -53,10 +53,14 @@ export default class ChargeSelector extends React.Component {
           <Label>Amount to Charge:</Label>
           <Value>$ <ValueEditor type="text" value={balance} onChange={this.onChange('balance')} /></Value>
         </FieldWrapper>
-        <FieldWrapper>
-          <Label>Boatyard Fee:</Label>
-          <Value>$ <ValueEditor type="text" value={fee} onChange={this.onChange('fee')} /></Value>
-        </FieldWrapper>
+        {
+          previlage === 'admin' && (
+            <FieldWrapper>
+              <Label>Boatyard Fee:</Label>
+              <Value>$ <ValueEditor type="text" value={fee} onChange={this.onChange('fee')} /></Value>
+            </FieldWrapper>
+          )
+        }
       </div>
     )
   }

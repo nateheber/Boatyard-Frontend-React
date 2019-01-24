@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { UserEditor } from './Editors';
 
 import { updateUsers, createUsers } from 'store/reducers/users';
-import { setErrorState, resetErrorState } from 'store/reducers/appstate';
 
 class UserDetails extends React.Component {
   constructor(props) {
@@ -33,15 +33,14 @@ class UserDetails extends React.Component {
   }
   onSave = data => {
     const { firstName, lastName, email, phoneNumber } = this.state;
-    const { setErrorState, resetErrorState } = this.props;
     if (
       firstName === '' ||
       lastName === '' ||
       email === '' ||
       phoneNumber === ''
     ) {
-      setErrorState('Please fill out all the required fields');
-      setTimeout(resetErrorState, 3000);
+      toastr.clean()
+      toastr.error('Please fill out all the required fields')
     } else {
       if (this.state.userId) {
         this.props.updateUsers({
@@ -77,8 +76,6 @@ const mapStateToProps = ({ user: { users } }) => ({
 const mapDispatchToProps = {
   updateUsers,
   createUsers,
-  setErrorState,
-  resetErrorState
 };
 
 export default withRouter(

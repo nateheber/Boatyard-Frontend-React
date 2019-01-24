@@ -1,5 +1,6 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, hasIn } from 'lodash';
+import { actions as toastrActions } from 'react-redux-toastr';
 
 import { actions } from '../reducers/payments';
 import { getPaymentClient } from './sagaSelectors';
@@ -7,7 +8,42 @@ import { getPaymentClient } from './sagaSelectors';
 function* createRequest(action) {
   const { data, callback } = action.payload
   const paymentClient = yield select(getPaymentClient)
-  yield call(paymentClient.create, { payment: data })
+  const result = yield call(paymentClient.create, { payment: data })
+  if (hasIn(result, 'error')) {
+    console.log(result)
+    if (result.error.message === "undefined method `default_payment_gateway' for nil:NilClass") {
+      const errorAction = toastrActions.add({
+        type: 'error',
+        title: 'Payment error',
+        message: 'Payment Gateway is not set for this provider',
+        position: 'top-right',
+        timeOut: 4000,
+      })
+      yield put(toastrActions.clean())
+      yield put(errorAction)
+    } else if (hasIn(result, 'error.creditCard')) {
+      const errorAction = toastrActions.add({
+        type: 'error',
+        title: 'Payment error',
+        message: get(result, 'error.creditCard[0]'),
+        position: 'top-right',
+        timeOut: 4000,
+      })
+      yield put(toastrActions.clean())
+      yield put(errorAction)
+    } else {
+      const errorAction = toastrActions.add({
+        type: 'error',
+        title: 'Payment error',
+        message: 'Payment failed due to unknown error',
+        position: 'top-right',
+        timeOut: 4000,
+      })
+      yield put(toastrActions.clean())
+      yield put(errorAction)
+    }
+  }
+
   if (callback) {
     yield call(callback)
   }

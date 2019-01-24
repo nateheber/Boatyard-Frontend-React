@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { toastr } from 'react-redux-toastr';
 
 import FormFields from 'components/template/FormFields';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
@@ -162,8 +163,8 @@ export class AccountCreator extends React.Component {
         email
       });
     } else {
-      this.props.setErrorState('Please fill out all required fields');
-      setTimeout(this.props.resetErrorState, 3000);
+      toastr.clean()
+      toastr.error('Please fill out all the required fields')
     }
   };
   renderFields = () => {
