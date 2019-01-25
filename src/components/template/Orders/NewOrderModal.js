@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 
 import { CreateOrder } from 'store/actions/orders';
 
-import SelectCustomerModal from '../modals/SelectCustomerModal';
-import SelectServiceModal from '../modals/SelectServiceModal';
+import SelectCustomerModal from './SelectCustomerModal';
+import SelectServiceModal from './SelectServiceModal';
 
-class OrderCreation extends React.Component {
+class NewOrderModal extends React.Component {
   state = {
     showCustomerModal: false,
     showServiceModal: false,
@@ -61,8 +61,12 @@ class OrderCreation extends React.Component {
     const { showCustomerModal, showServiceModal } = this.state;
     return (
       <React.Fragment>
-        <SelectCustomerModal open={showCustomerModal} onClose={this.closeCustomerModal} toNext={this.toSelectService} />
-        <SelectServiceModal open={showServiceModal} onClose={this.closeServiceModal} toNext={this.createNewOrder} />
+        {showCustomerModal &&
+          <SelectCustomerModal open={showCustomerModal} onClose={this.closeCustomerModal} toNext={this.toSelectService} />
+        }
+        {showServiceModal &&
+          <SelectServiceModal open={showServiceModal} onClose={this.closeServiceModal} toNext={this.createNewOrder} />
+        }
       </React.Fragment>
     )
   }
@@ -77,4 +81,4 @@ export default connect(
   mapDispatchToProps,
   null,
   { withRef: true }
-)(OrderCreation);
+)(NewOrderModal);

@@ -155,6 +155,7 @@ class CustomerDetails extends React.Component {
         </PageContent>
         <BoatModal
           open={visibleOfBoatModal}
+          customerId={customerId}
           onClose={this.hideBoatModal}
           onSave={this.addNewBoat}
         />

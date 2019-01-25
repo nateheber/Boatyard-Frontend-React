@@ -57,7 +57,9 @@ class Customers extends React.Component {
   onChangeUserFilter = val => {
     return new Promise((resolve, reject) => {
       this.props.FilterUsers({
-        keyword: val,
+        params: {
+          'search_by_full_name': val
+        },
         success: resolve,
         error: reject
       });
@@ -71,9 +73,14 @@ class Customers extends React.Component {
   createCustomer = (data) => {
     const { CreateUser } = this.props;
     CreateUser({
-      data,
-      success: () => {
-        this.hideModal();
+      data : {
+        user: {
+          ...data.user,
+          password: '_nHEm4?v^MJL[F5g'
+        }
+      },
+      success: (user) => {
+        this.closeNewModal();
         this.loadCustomers();
       },
       error: () => {

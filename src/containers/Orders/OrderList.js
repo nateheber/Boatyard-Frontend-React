@@ -10,7 +10,7 @@ import { OrderHeader } from 'components/compound/SectionHeader';
 
 import { GetOrders } from 'store/actions/orders';
 
-import OrderCreation from './components/templates/OrderCreation';
+import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,7 +29,7 @@ class OrderList extends React.Component {
   componentDidMount() {
     this.props.GetOrders({ params: { page: 1 } });
   }
-  setOrderCreationRef = (ref) => {
+  setNewOrderModalRef = (ref) => {
     if (ref) {
       this.orderCreation = ref.getWrappedInstance();
     }
@@ -86,7 +86,7 @@ class OrderList extends React.Component {
             onPageChange={this.changePage}
           />
         </TableWrapper>
-        <OrderCreation ref={this.setOrderCreationRef} onFinishCreation={this.creationFinished} />
+        <NewOrderModal ref={this.setNewOrderModalRef} onFinishCreation={this.creationFinished} />
       </Wrapper>
     );
   }

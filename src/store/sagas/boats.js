@@ -75,7 +75,7 @@ function* createBoat(action) {
       type: actionTypes.CREATE_BOAT_SUCCESS,
     });
     if (success) {
-      yield call(success);
+      yield call(success, get(result, 'data', {}));
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_BOAT_FAILURE, payload: result });

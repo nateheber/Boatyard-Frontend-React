@@ -1,21 +1,8 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, findIndex, isEmpty } from 'lodash';
+import { get } from 'lodash';
 
 import { actionTypes } from '../actions/users';
 import { getUserClient } from './sagaSelectors';
-
-const mergeResults = (base, secondary) => {
-  const result = [...base];
-  for (let i = 0; i < secondary.length; i += 1) {
-    const idx = findIndex(result, user => user.id === secondary[i].id);
-    if (idx === -1) {
-      result.push({
-        ...secondary[i]
-      });
-    }
-  }
-  return result;
-};
 
 const refineUsers = (users) => {
   return users.map(user => {
@@ -28,28 +15,36 @@ const refineUsers = (users) => {
 
 function* getUsers(action) {
   const userClient = yield select(getUserClient);
+  let successType = actionTypes.GET_USERS_SUCCESS;
+  let failureType = actionTypes.GET_USERS_FAILURE;
   const { params, success, error } = action.payload;
-  const keyword = get(params, 'keyword', '');
   let result = null;
   try {
-    if (isEmpty(keyword)) {
-      result = yield call(userClient.list, params);
-      }
+    result = yield call(userClient.list, params);
     const users = get(result, 'data', []);
     const { perPage, total } = result;
+    switch (action.type) {
+      case actionTypes.FILTER_USERS: {
+        successType = actionTypes.FILTER_USERS_SUCCESS;
+        failureType = actionTypes.FILTER_USERS_FAILURE;
+        break;
+      }
+      default:
+    }
+    const refinedUsers = refineUsers(users);
     yield put({
-      type: actionTypes.GET_USERS_SUCCESS,
+      type: successType,
       payload: {
-        users: refineUsers(users),
+        users: refinedUsers,
         perPage,
         total,
       }
     });
     if (success) {
-      yield call(success);
+      yield call(success, refinedUsers);
     }
   } catch (e) {
-    yield put({ type: actionTypes.GET_USERS_FAILURE, payload: result });
+    yield put({ type: failureType, payload: result });
     if (error) {
       yield call(error);
     }
@@ -88,7 +83,7 @@ function* createUser(action) {
       type: actionTypes.CREATE_USER_SUCCESS,
     });
     if (success) {
-      yield call(success);
+      yield call(success, get(result, 'data', {}));
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_USER_FAILURE, payload: result });
@@ -138,61 +133,9 @@ function* deleteUser(action) {
   }
 }
 
-function* filterUsers(action) {
-  const userClient = yield select(getUserClient);
-  const { keyword, success, error } = action.payload;
-  let result = null;
-  try {
-    if (isEmpty(keyword)) {
-      result = yield call(userClient.list);
-      const users = refineUsers(get(result, 'data', []));
-      yield put({
-        type: actionTypes.FILTER_USERS_SUCCESS,
-        payload: users
-      });
-      if (success) {
-        yield call(success, users)
-      }
-    } else {
-      result = yield call(
-        userClient.list,
-        {
-          page: 1,
-          'user[first_name]': keyword,
-        }
-      );
-      const firstFiltered = get(result, 'data', []);
-      result = yield call(
-        userClient.list,
-        {
-          page: 1,
-          'user[last_name]': keyword,
-        }
-      );
-      const secondFiltered = get(result, 'data', []);
-      const parsedData = refineUsers(mergeResults(
-        firstFiltered,
-        secondFiltered
-      ));
-      yield put({
-        type: actionTypes.FILTER_USERS_SUCCESS,
-        payload: parsedData
-      });
-      if (success) {
-        yield call(success, parsedData);
-      }
-    }
-  } catch(err) {
-    yield put({ type: actionTypes.FILTER_USERS_FAILURE, payload: result });
-    if (error) {
-      yield call(error, err);
-    }
-  }
-}
-
 export default function* UserSaga() {
   yield takeEvery(actionTypes.GET_USERS, getUsers);
-  yield takeEvery(actionTypes.FILTER_USERS, filterUsers);
+  yield takeEvery(actionTypes.FILTER_USERS, getUsers);
   yield takeEvery(actionTypes.GET_USER, getUser);
   yield takeEvery(actionTypes.CREATE_USER, createUser);
   yield takeEvery(actionTypes.UPDATE_USER, updateUser);

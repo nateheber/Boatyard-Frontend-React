@@ -75,7 +75,7 @@ class BoatInfoSection extends React.Component {
   }
 
   render() {
-    const { boats } = this.props;
+    const { boats, customerId } = this.props;
     const { visibleOfBoatModal, edtingBoatIndex, openedBoatIdx } = this.state;
 
     return (
@@ -92,6 +92,7 @@ class BoatInfoSection extends React.Component {
         ))}
         {edtingBoatIndex > -1 &&<BoatModal
           open={visibleOfBoatModal}
+          customerId={customerId}
           onClose={this.endEditing}
           onSave={this.updateBoatInfo}
           boatInfo={boats[edtingBoatIndex]}

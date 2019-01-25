@@ -274,6 +274,7 @@ class BoatModal extends React.Component {
   };
 
   onSave = () => {
+    const { customerId } = this.props;
     if (this.mainInfoFields.validateFields() &&
     this.optionalFields.validateFields() &&
     this.locationFields.validateFields()) {
@@ -303,6 +304,7 @@ class BoatModal extends React.Component {
         location_attributes: {
           ...locationAttrs,
           locatable_type: 'User',
+          locatable_id: customerId,
           address_attributes: addressAttrs
         }
       };
