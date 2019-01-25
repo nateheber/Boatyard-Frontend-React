@@ -11,7 +11,7 @@ const initialState = {
   page: 1,
   perPage: 20,
   total: 0,
-  error: null
+  errors: null
 };
 
 
@@ -22,7 +22,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.page = get(payload, 'params.page', 1);
-        draft.error = null;
+        draft.errors = null;
       }),
     [actionTypes.GET_USERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -37,7 +37,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload;
+        draft.errors = payload;
       }),
 
     [actionTypes.FILTER_USERS]: (state, action) =>
@@ -45,7 +45,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.page = get(payload, 'params.page', 1);
-        draft.error = null;
+        draft.errors = null;
       }),
     [actionTypes.FILTER_USERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -57,14 +57,14 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload;
+        draft.errors = payload;
       }),
 
     [actionTypes.GET_USER]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
-        draft.error = null;
+        draft.errors = null;
       }),
     [actionTypes.GET_USER_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -76,32 +76,32 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload;
+        draft.errors = payload;
       }),
 
     [actionTypes.CREATE_USER]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
-        draft.error = null;
+        draft.errors = null;
       }),
     [actionTypes.CREATE_USER_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
       }),
-    [actionTypes.CREATET_USER_FAILURE]: (state, action) =>
+    [actionTypes.CREATE_USER_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload;
+        draft.errors = payload;
       }),
 
     [actionTypes.UPDATE_USER]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
-        draft.error = null;
+        draft.errors = null;
       }),
     [actionTypes.UPDATE_USER_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -112,14 +112,14 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload;
+        draft.errors = payload;
       }),
 
     [actionTypes.DELETE_USER]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
-        draft.error = null;
+        draft.errors = null;
       }),
     [actionTypes.DELETE_USER_SUCCESS]: (state, action) =>
       produce(state, draft => {
@@ -130,7 +130,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.error = payload;
+        draft.errors = payload;
       })
     },
   initialState

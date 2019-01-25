@@ -5,7 +5,8 @@ import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
-
+const mainFields = ['first_name', 'last_name', 'phone_number', 'email', 'notes'];
+const locationFields = ['street', 'city', 'state', 'zip'];
 export default class CustomerModal extends React.Component {
   setFormFieldRef = (ref) => {
     this.mainInfoFields = ref;
@@ -27,7 +28,7 @@ export default class CustomerModal extends React.Component {
     const fields = [
       {
         type: 'text_field',
-        field: 'firstName',
+        field: 'first_name',
         label: 'First Name',
         errorMessage: 'Enter First Name',
         required: true,
@@ -40,7 +41,7 @@ export default class CustomerModal extends React.Component {
       },
       {
         type: 'text_field',
-        field: 'lastName',
+        field: 'last_name',
         label: 'Last Name',
         errorMessage: 'Enter Last Name',
         required: true,
@@ -53,7 +54,7 @@ export default class CustomerModal extends React.Component {
       },
       {
         type: 'text_field',
-        field: 'phoneNumber',
+        field: 'phone_number',
         label: 'Phone Number',
         errorMessage: 'Enter Phone Number',
         mask: '(999)999-9999',
@@ -67,7 +68,7 @@ export default class CustomerModal extends React.Component {
       },
       {
         type: 'text_field',
-        field: 'billingAddress',
+        field: 'street',
         label: 'Billing Address',
         errorMessage: 'Enter Billing Address',
         required: true,
@@ -106,7 +107,7 @@ export default class CustomerModal extends React.Component {
       },
       {
         type: 'text_field',
-        field: 'zipCode',
+        field: 'zip',
         label: 'Zip Code',
         errorMessage: 'Enter Zipcode',
         required: true,
@@ -146,14 +147,32 @@ export default class CustomerModal extends React.Component {
     ]
     return fields;
   }
+
   onSave = () => {
     if (this.mainInfoFields.validateFields()) {
-      this.props.onSave(this.mainInfoFields.getFieldValues);
+      const values = this.mainInfoFields.getFieldValues();
+      let user = {};
+      const address_attributes = {}
+      for (const key in values) {
+        const value = get(values, key, '');
+        if(mainFields.indexOf(key) > -1) {
+          user[key] = value;
+        } else if (locationFields.indexOf(key) > -1) {
+          address_attributes[key] = value;
+        }
+      }
+      user = {
+        ...user,
+        location_attributes: { address_attributes }
+      };
+      this.props.onSave({ user });
     }
   }
+
+  
   render() {
     const fields = this.getFormFieldInfo();
-    const { title, open, onClose } = this.props;
+    const { title, open, onClose, loading } = this.props;
     const action = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>
@@ -161,6 +180,7 @@ export default class CustomerModal extends React.Component {
     return (
       <Modal
         title={title || 'Add Customer'}
+        loading={loading}
         actions={action}
         open={open}
         onClose={onClose}

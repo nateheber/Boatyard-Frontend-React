@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
 
+import { actionTypes, UpdateUser } from 'store/actions/users'
 import InfoSection from './InfoSection';
 import CustomerModal from './CustomerModal';
-
-import { UpdateUser } from 'store/actions/users'
 
 class CustomerInfoSection extends React.Component {
   state = {
@@ -14,9 +14,17 @@ class CustomerInfoSection extends React.Component {
     const { customerInfo: { id }, refreshInfo, UpdateUser } = this.props;
     UpdateUser({
       userId: id, data,
-      success: refreshInfo
+      success: () => {
+        this.hideModal();
+        refreshInfo();
+      },
+      error: () => {
+        const { errors } = this.props;
+        if (errors && errors.length > 0) {
+          toastr.error(errors[0].message);
+        }
+      }
     })
-    this.hideModal();
   }
   showModal = () => {
     this.setState({
@@ -29,7 +37,7 @@ class CustomerInfoSection extends React.Component {
     })
   }
   render() {
-    const { customerInfo } = this.props;
+    const { customerInfo, currentStatus } = this.props;
     const { edit } = this.state;
     return (
       <React.Fragment>
@@ -37,6 +45,7 @@ class CustomerInfoSection extends React.Component {
         <CustomerModal
           title="Edit Customer"
           open={edit}
+          loading={currentStatus === actionTypes.UPDATE_USER}
           customerInfo={customerInfo}
           onClose={this.hideModal}
           onSave={this.onSave}
@@ -46,8 +55,13 @@ class CustomerInfoSection extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  currentStatus: state.user.currentStatus,
+  errors: state.user.errors
+});
+
 const mapDispatchToProps = {
   UpdateUser
-}
+};
 
-export default connect(null, mapDispatchToProps)(CustomerInfoSection)
+export default connect(mapStateToProps, mapDispatchToProps)(CustomerInfoSection);
