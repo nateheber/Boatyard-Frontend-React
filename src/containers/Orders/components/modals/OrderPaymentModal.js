@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { Row, Col } from 'react-flexbox-grid'
-import { get } from 'lodash'
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
@@ -32,6 +31,14 @@ class OrderPaymentModal extends React.Component {
     this.refreshCards();
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.balance !== this.props.balance) {
+      this.setState({
+        balance: this.props.balance,
+      })
+    }
+  }
+
   onSelectCard = (cardId) => {
     this.setState({ cardId });
   }
@@ -50,16 +57,20 @@ class OrderPaymentModal extends React.Component {
 
   onSave = () => {
     const { balance, fee, cardId } = this.state;
-    const { orderId, userId, providerId }  = this.props;
+    const { orderId, userId, providerId, privilege }  = this.props;
+    const data = privilege === 'admin' ? {
+      orderId,
+      userId,
+      creditCardId: cardId,
+      providerId,
+      amount: parseFloat(balance),
+      boatyardFee: parseFloat(fee)
+    } : {
+      orderId,
+      amount: parseFloat(balance),
+    }
     this.props.createPayment({
-      data: {
-        orderId,
-        userId,
-        creditCardId: cardId,
-        providerId,
-        amount: parseFloat(balance),
-        boatyardFee: parseFloat(fee)
-      },
+      data,
       callback: this.props.onClose
     })
   }
@@ -74,14 +85,13 @@ class OrderPaymentModal extends React.Component {
   }
 
   render() {
-    const { open, onClose, creditCards, userId } = this.props;
+    const { open, onClose, creditCards, userId, privilege } = this.props;
     const { balance, fee, tab } = this.state;
     const charging = parseFloat(balance) + parseFloat(fee);
     const action = [
-      <HollowButton onClick={onClose}>Cancel</HollowButton>,
-      <OrangeButton onClick={this.onSave}>{tab === 'Credit Card' ? `Charge $${charging}` : 'Confirm Payment'}</OrangeButton>
+      <HollowButton onClick={onClose} key="Cancel">Cancel</HollowButton>,
+      <OrangeButton onClick={this.onSave} key="Next">{tab === 'Credit Card' ? `Charge $${charging}` : 'Confirm Payment'}</OrangeButton>
     ];
-    const cards = get(creditCards, 'creditCards', []);
     return (
       <Modal
         title="Enter Payment Info"
@@ -98,7 +108,7 @@ class OrderPaymentModal extends React.Component {
               tab === 'Credit Card' ? (
                 <CreditCardSelector
                   userId={userId}
-                  creditCards={cards}
+                  creditCards={creditCards}
                   onChange={this.onSelectCard}
                   refreshCards={this.refreshCards}
                 />
@@ -108,7 +118,7 @@ class OrderPaymentModal extends React.Component {
             }
           </Col>
           <Col sm={5}>
-            <ChargeSelector balance={balance} fee={fee} onChange={this.onChangeCharge} />
+            <ChargeSelector previlage={privilege} balance={balance} fee={fee} onChange={this.onChangeCharge} />
           </Col>
         </Row>
       </Modal>
@@ -116,8 +126,9 @@ class OrderPaymentModal extends React.Component {
   }
 }
 
-const mapStateToProps = ({ creditCard: { creditCards } }) => ({
+const mapStateToProps = ({ creditCard: { creditCards }, auth: { privilege } }) => ({
   creditCards,
+  privilege
 })
 
 const mapDispatchToProps = {

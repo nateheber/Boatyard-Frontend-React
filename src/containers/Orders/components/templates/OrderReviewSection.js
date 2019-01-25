@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'react-flexbox-grid'
+import deepEqual from 'deep-equal'
 
 import { Section } from 'components/basic/InfoSection'
 import { TextArea } from 'components/basic/Input'
@@ -44,6 +45,13 @@ export default class OrderReviewSection extends React.Component {
     super(props)
     const { subtotal, taxRate, deposit, discount, taxAmount, total, comments } = props
     this.state = { subtotal, taxRate, deposit, discount, taxAmount, total, comments }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!deepEqual(prevProps, this.props)) {
+      const { subtotal, taxRate, deposit, discount, taxAmount, total, comments } = this.props
+      this.setState({ subtotal, taxRate, deposit, discount, taxAmount, total, comments })
+    }
   }
 
   updatePriceInfo = () => {

@@ -209,7 +209,7 @@ export default class EditBoatModal extends React.Component {
     const fields = this.getFormFieldInfo();
     const locationFields = this.getLocationFieldInfo();
     const { open, onClose } = this.props;
-    const action = [<HollowButton onClick={onClose}>Cancel</HollowButton>, <OrangeButton onClick={this.onSave}>Save</OrangeButton>];
+    const action = [<HollowButton onClick={onClose} key="cancel">Cancel</HollowButton>, <OrangeButton onClick={this.onSave} key="next">Save</OrangeButton>];
     return (
       <Modal
         title="Edit Boat Information"

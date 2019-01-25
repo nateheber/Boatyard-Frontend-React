@@ -14,10 +14,7 @@ export const responseInterceptor = client => {
     return response.data;
   }, (error) => {
     const msg = get(error, 'response.data.message', null);
-    if (msg) {
-      return [msg];
-    }
-    return [];
+    return msg ? [msg] : [];
   });
   return client;
 };
