@@ -26,7 +26,7 @@ export const getUpdatedStatus = (order) => {
 export const generateOrderTimeline = (order) => {
   const creationInfo = getCreationInfo(order);
   const updateInfo = getUpdatedStatus(order);
-  return [creationInfo, updateInfo]
+  return [updateInfo, creationInfo]
 }
 
 export const getProviderIdFromOrder = (order) => {
