@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 import { EditButton } from 'components/basic/Buttons';
 
@@ -43,33 +44,41 @@ const HidingPart = styled.div`
   }
   transition: height 0.5s;
 `
-
-export default ({ name, make, model, length, location: { city, state, street, zip }, onEdit, opened, toggleSection }) => (
-  <Wrapper onClick={toggleSection}>
-    <Field>
-      <EditWrapper>
-        <Label>BOAT NAME</Label>
-        <EditButton onClick={onEdit} />
-      </EditWrapper>
-      <FieldValue>{name}</FieldValue>
-    </Field>
-    <HidingPart className={classNames(opened ? 'opened' : 'closed')}>
-      <Field>
-        <Label>BOAT MAKE</Label>
-        <FieldValue>{make}</FieldValue>
-      </Field>
-      <Field>
-        <Label>BOAT MODEL</Label>
-        <FieldValue>{model}</FieldValue>
-      </Field>
-      <Field>
-        <Label>BOAT LENGTH</Label>
-        <FieldValue>{length}</FieldValue>
-      </Field>
-      <Field>
-        <Label>BOAT LOCATION</Label>
-        <FieldValue>{street} {city} {state} {zip}</FieldValue>
-      </Field>
-    </HidingPart>
-  </Wrapper>
-);
+export default class InfoSection extends React.Component {
+  render () {
+    const { boatInfo, onEdit, opened, toggleSection } = this.props;
+    const street = get(boatInfo, 'relationships.location.relationships.address.data.street', '');
+    const city = get(boatInfo, 'relationships.location.relationships.address.data.city', '');
+    const state = get(boatInfo, 'relationships.location.relationships.address.data.state', '');
+    const zip = get(boatInfo, 'relationships.location.relationships.address.data.zip', '');
+    return (
+      <Wrapper onClick={toggleSection}>
+        <Field>
+          <EditWrapper>
+            <Label>BOAT NAME</Label>
+            <EditButton onClick={onEdit} />
+          </EditWrapper>
+          <FieldValue>{get(boatInfo, 'name', '')}</FieldValue>
+        </Field>
+        <HidingPart className={classNames(opened ? 'opened' : 'closed')}>
+          <Field>
+            <Label>BOAT MAKE</Label>
+            <FieldValue>{get(boatInfo, 'make', '')}</FieldValue>
+          </Field>
+          <Field>
+            <Label>BOAT MODEL</Label>
+            <FieldValue>{get(boatInfo, 'model', '')}</FieldValue>
+          </Field>
+          <Field>
+            <Label>BOAT LENGTH</Label>
+            <FieldValue>{get(boatInfo, 'length', '')}</FieldValue>
+          </Field>
+          <Field>
+            <Label>BOAT LOCATION</Label>
+            <FieldValue>{street} {city} {state} {zip}</FieldValue>
+          </Field>
+        </HidingPart>
+      </Wrapper>
+    );
+  }
+}

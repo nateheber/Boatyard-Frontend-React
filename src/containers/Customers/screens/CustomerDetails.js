@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { Row, Col } from 'react-flexbox-grid';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import styled from 'styled-components';
 
 import { GetUser } from 'store/actions/users';
@@ -38,8 +38,8 @@ class CustomerDetails extends React.Component {
     const query = queryString.parse(this.props.location.search);
     const customerId = query.customer;
     this.props.GetUser({ userId: customerId });
-    this.props.GetBoats({ params: { 'boat[user_id]': customerId } });
     this.props.GetOrders({ params: { 'order[user_id]': customerId, page: 1 } });
+    this.props.GetBoats({ params: { 'boat[user_id]': customerId } });
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': customerId }
     });
@@ -47,10 +47,12 @@ class CustomerDetails extends React.Component {
       customerId,
     });
   }
+
   changePage = (page) => {
     const { customerId } = this.state;
     this.props.GetOrders({ params: { 'order[user_id]': customerId, page: page } });
   }
+
   getPageCount = () => {
     const { perPage, total } = this.props
     return Math.ceil(total/perPage)
@@ -58,7 +60,6 @@ class CustomerDetails extends React.Component {
   refreshInfo = () => {
     const { customerId } = this.state;
     this.props.GetUser({ userId: customerId });
-    this.props.GetBoats({userId: customerId})
     this.props.GetOrders({ params: { 'order[user_id]': customerId, page: 1 } });
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': customerId }
@@ -78,14 +79,6 @@ class CustomerDetails extends React.Component {
     this.props.history.push(`/order-details/?order=${orderId}`);
   }
 
-  saveBoat = (data) => {
-    const { selectedBoat } = this.state;
-    const boatId = get(selectedBoat, 'id', '');
-    if (isEmpty(boatId)) {
-    } else {
-    }
-  };
-
   showBoatModal = () => {
     this.setState({
       visibleOfBoatModal: true
@@ -98,9 +91,28 @@ class CustomerDetails extends React.Component {
     });
   };
 
+  addNewBoat = (data) => {
+    const { CreateBoat } = this.props;
+    const { customerId } = this.state;
+    CreateBoat({
+      data: {
+        boat: {
+          user_id: customerId,
+          ...data.boat,
+        }
+      },
+      success: () => {
+        this.hideBoatModal();
+        this.props.GetBoats({ params: { 'boat[user_id]': customerId } });
+      },
+      error: () => {
+      }
+    })
+  };
+
   render() {
     const { currentUser, page, orders } = this.props
-    const { customerId, selectedBoat,visibleOfBoatModal } = this.state;
+    const { customerId, visibleOfBoatModal } = this.state;
     const id = get(currentUser, 'id', '')
     const customerName = `${get(currentUser, 'attributes.firstName')} ${get(currentUser, 'attributes.lastName')}`;
     const attributes = get(currentUser, 'attributes', {})
@@ -132,7 +144,7 @@ class CustomerDetails extends React.Component {
             <SectionGroup>
               <Section title={"Customer & Boat Info"}>
                 <CustomerInfoSection customerInfo={{ id, ...attributes }} refreshInfo={this.refreshInfo} />
-                <BoatInfoSection refreshInfo={this.refreshInfo} />
+                <BoatInfoSection customerId={customerId} />
                 <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>
               </Section>
             </SectionGroup>
@@ -144,7 +156,7 @@ class CustomerDetails extends React.Component {
         <BoatModal
           open={visibleOfBoatModal}
           onClose={this.hideBoatModal}
-          onSave={this.saveBoat}
+          onSave={this.addNewBoat}
         />
       </React.Fragment>
     )

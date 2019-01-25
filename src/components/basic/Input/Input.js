@@ -56,7 +56,7 @@ export class Input extends React.Component {
 const Selector = styled.select`
   background: #fff;
   padding: 0 15px;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   border: 1px solid #dfdfdf;
   height: 35px;
   width: 100%;
@@ -72,13 +72,15 @@ const Selector = styled.select`
 
 export class Select extends React.Component {
   render() {
-    const { hasError, errorMessage, ...rest } = this.props;
+    const { hasError, errorMessage, hideError, ...rest } = this.props;
     return (
       <React.Fragment>
         <Selector {...rest} />
-        <ErrorMessage className={classNames({ show: hasError })}>
-          {errorMessage}
-        </ErrorMessage>
+        { (!hideError && hasError) &&
+          <ErrorMessage className={classNames({ show: hasError })}>
+            {errorMessage}
+          </ErrorMessage>
+        }
       </React.Fragment>
     );
   }

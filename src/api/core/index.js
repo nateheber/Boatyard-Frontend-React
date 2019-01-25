@@ -92,7 +92,9 @@ export class NormalClient {
 export class CRUDClient {
   apiUrl = '';
   client = undefined;
+  query = ''
   constructor(query, authType = 'basic') {
+    this.query = query;
     this.apiUrl = `${apiBaseUrl}/${query}/`;
     this.client = createMainClient(authType);
   }
@@ -120,7 +122,10 @@ export class CRUDClient {
     return this.client.get(`${this.apiUrl}?${paramsString}`);
   };
   create = data => {
-    return this.client.post(`${this.apiUrl}registrations/`, data);
+    if (this.query === 'users') {
+      return this.client.post(`${this.apiUrl}registrations/`, data);
+    }
+    return this.client.post(this.apiUrl, data);
   };
   read = id => {
     return this.client.get(`${this.apiUrl}${id}`);

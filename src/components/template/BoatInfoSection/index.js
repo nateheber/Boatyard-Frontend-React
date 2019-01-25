@@ -5,32 +5,40 @@ import { findIndex } from 'lodash'
 import BoatModal from './BoatModal'
 import InfoSection from './InfoSection'
 
-import { UpdateBoat, DeleteBoat } from 'store/actions/boats'
+import { GetBoats, UpdateBoat, DeleteBoat } from 'store/actions/boats'
 import { refinedBoatsSelector } from 'store/selectors/boats';
 
 class BoatInfoSection extends React.Component {
-  state = {
-    edit: false,
-    editingBoatIdx: -1,
-    openedBoatIdx: -1,
+  constructor(props) {
+    super(props);
+    this.state = {
+      visibleOfBoatModal: false,
+      openedBoatIdx: -1,
+      edtingBoatIndex: -1,
+      deletingBoatIndex: -1
+    };  
   }
-  editBoat = (idx) => {
+
+  editBoat = (index) => {
     this.setState({
-      edit: true,
-      editingBoatIdx: idx
+      visibleOfBoatModal: true,
+      edtingBoatIndex: index
     })
   }
+
   endEditing = () => {
     this.setState({
-      edit: false,
+      visibleOfBoatModal: false,
+      edtingBoatIndex: -1
     })
   }
-  getBoatLocation = (boatIdx) => {
+
+  getBoatLocation = (index) => {
     const { boats, included } = this.props
-    if (boatIdx === -1) {
+    if (index === -1) {
       return {}
     }
-    const locationId = boats[boatIdx].locationId
+    const locationId = boats[index].locationId
     const locationIdx = findIndex(included, location => parseInt(location.id) === locationId)
     if (locationIdx >= 0) {
       return {
@@ -41,67 +49,64 @@ class BoatInfoSection extends React.Component {
     }
     return {}
   }
-  updateBoatInfo = ({ boat, location: { locationType, name, ...addressAttributes } }) => {
-    const { boats, refreshInfo } = this.props
-    const { editingBoatIdx } = this.state
-    const boatId = boats[editingBoatIdx].id
+
+  updateBoatInfo = (data) => {
+    const { boats, customerId, refreshInfo } = this.props;
+    const { edtingBoatIndex } = this.state;
+    const boatId = boats[edtingBoatIndex].id;
     this.props.UpdateBoat({
       boatId,
-      data: {
-        ...boat,
-        location_attributes: {
-          locationType,
-          name,
-          addressAttributes
+      data,
+      success: () => {
+        this.endEditing();
+        this.props.GetBoats({ params: { 'boat[user_id]': customerId } });
+        if (refreshInfo) {
+          refreshInfo();
         }
-      },
-      success: refreshInfo
-    })
-    this.endEditing();
+      }
+    });
   }
-  toggleInfoSection = (idx) => {
+
+  toggleInfoSection = (index) => {
     const { openedBoatIdx } = this.state;
     this.setState({
-      openedBoatIdx: openedBoatIdx === idx ? -1 : idx,
+      openedBoatIdx: openedBoatIdx === index ? -1 : index,
     })
   }
+
   render() {
-    const { boats } = this.props
-    const { edit, editingBoatIdx, openedBoatIdx } = this.state
-    const boatLocation = this.getBoatLocation(editingBoatIdx)
+    const { boats } = this.props;
+    const { visibleOfBoatModal, edtingBoatIndex, openedBoatIdx } = this.state;
+
     return (
       <React.Fragment>
-        {
-          boats.map((boat, idx) => (
-            <InfoSection
-              opened={openedBoatIdx === idx || boats.length === 1}
-              onEdit={() => this.editBoat(idx)}
-              key={`boatInfo_${boat.id}`}
-              {...boat}
-              location={this.getBoatLocation(idx)}
-              toggleSection={() => this.toggleInfoSection(idx)}
-            />
-          ))
-        }
-        {
-          editingBoatIdx !== -1 && <BoatModal
-            open={edit}
-            onClose={this.endEditing}
-            onSave={this.updateBoatInfo}
-            boatInfo={boats[editingBoatIdx]}
-            locationInfo={boatLocation}
+        {boats.map((boat, index) => (
+          <InfoSection
+            opened={openedBoatIdx === index || boats.length === 1}
+            onEdit={() => this.editBoat(index)}
+            onDelete={() => this.deleteBoat(index)}
+            key={`boatInfo_${boat.id}`}
+            boatInfo={boat}
+            toggleSection={() => this.toggleInfoSection(index)}
           />
-        }
+        ))}
+        {edtingBoatIndex > -1 &&<BoatModal
+          open={visibleOfBoatModal}
+          onClose={this.endEditing}
+          onSave={this.updateBoatInfo}
+          boatInfo={boats[edtingBoatIndex]}
+        />}
       </React.Fragment>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  boats: refinedBoatsSelector(state)
+  boats: refinedBoatsSelector(state),
 })
 
 const mapDispatchToProps = {
+  GetBoats,
   UpdateBoat,
   DeleteBoat
 }
