@@ -21,8 +21,6 @@ import Scheduler from './components/templates/Scheduler'
 import PaymentsSection from './components/templates/Payments'
 import Timeline from './components/templates/Timeline'
 
-import BoatModal from 'components/template/BoatInfoSection/BoatModal'
-
 const Wrapper = styled.div`
   padding: 30px;
 `
@@ -83,8 +81,7 @@ const getOrderDetails = (orderInfo) => {
 
 class OrderDetails extends React.Component {
   state = {
-    orderId: -1,
-    editBoat: false,
+    orderId: -1
   }
 
   componentDidMount() {
@@ -141,42 +138,15 @@ class OrderDetails extends React.Component {
     return updatedAt;
   }
 
-  editBoat = () => {
-    this.setState({
-      editBoat: true,
-    })
-  }
-
-  closeBoatEditor = () => {
-    this.setState({
-      editBoat: false,
-    })
-  }
-
-  updateBoat = (data) => {
-    const { boatInfo: { id } } = this.getOrderInfo();
-    const { orderId } = this.state;
-    this.props.updateBoats({
-      id,
-      data,
-      callback: () => {
-        this.props.GetOrder({ orderId })
-      }
-    })
-    this.setState({
-      editBoat: false,
-    })
-  }
-
   updateOrder = (data) => {
     const { orderId } = this.state;
-    this.props.UpdateOrder({ id: orderId, data});
+    this.props.UpdateOrder({ orderId, data});
   }
 
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const updatedDate = this.getUdpatedDate();
-    const { orderId, editBoat } = this.state;
+    const { orderId } = this.state;
     const providerId = this.getProviderId();
     const { lineItems, currentOrder } = this.props;
     const summaryInfo = this.getSummaryInfo();
@@ -213,12 +183,6 @@ class OrderDetails extends React.Component {
               </SectionGroup>
             </Col>
           </Row>
-          <BoatModal
-            boatInfo={boatInfo}
-            open={editBoat}
-            onClose={this.closeBoatEditor}
-            onSave={this.updateBoat}
-          />
         </Wrapper>
       </React.Fragment>
     )

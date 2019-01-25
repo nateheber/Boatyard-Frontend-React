@@ -19,6 +19,7 @@ import CustomerInfoSection from 'components/template/CustomerInfoSection'
 import BoatInfoSection from 'components/template/BoatInfoSection'
 import CreditCardSection from 'components/template/CreditCardSection'
 import { CustomerDetailsHeader } from '../components/CustomerDetailsHeader'
+import BoatModal from 'components/template/BoatInfoSection/BoatModal'
 
 const PageContent = styled(Row)`
   padding: 30px 25px;
@@ -27,13 +28,15 @@ const PageContent = styled(Row)`
 class CustomerDetails extends React.Component {
   state = {
     customerId: -1,
+    selectedBoat: {},
+    visibleOfBoatModal: false
   }
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const customerId = query.customer;
     this.props.GetUser({ userId: customerId });
     this.props.getUserBoats({userId: customerId});
-    this.props.GetOrders({ 'order[user_id]': customerId, page: 1 });
+    this.props.GetOrders({ params: { 'order[user_id]': customerId, page: 1 } });
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': customerId }
     });
@@ -43,7 +46,7 @@ class CustomerDetails extends React.Component {
   }
   changePage = (page) => {
     const { customerId } = this.state;
-    this.props.GetOrders({ 'order[user_id]': customerId, page: page })
+    this.props.GetOrders({ params: { 'order[user_id]': customerId, page: page } });
   }
   getPageCount = () => {
     const { perPage, total } = this.props
@@ -53,7 +56,7 @@ class CustomerDetails extends React.Component {
     const { customerId } = this.state;
     this.props.GetUser({ userId: customerId });
     this.props.getUserBoats({userId: customerId})
-    this.props.getUserOrders({ userId: customerId, page: 1 })
+    this.props.GetOrders({ params: { 'order[user_id]': customerId, page: 1 } });
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': customerId }
     });
@@ -72,9 +75,24 @@ class CustomerDetails extends React.Component {
     this.props.history.push(`/order-details/?order=${orderId}`);
   }
 
+  updateBoat = (data) => {
+  };
+
+  showBoatModal = () => {
+    this.setState({
+      visibleOfBoatModal: true
+    });
+  };
+
+  hideBoatModal = () => {
+    this.setState({
+      visibleOfBoatModal: false
+    });
+  };
+
   render() {
     const { currentUser, page, orders } = this.props
-    const { customerId } = this.state;
+    const { customerId, selectedBoat,visibleOfBoatModal } = this.state;
     const id = get(currentUser, 'id', '')
     const customerName = `${get(currentUser, 'attributes.firstName')} ${get(currentUser, 'attributes.lastName')}`;
     const attributes = get(currentUser, 'attributes', {})
@@ -115,6 +133,12 @@ class CustomerDetails extends React.Component {
             </SectionGroup>
           </Col>
         </PageContent>
+        <BoatModal
+            boatInfo={selectedBoat}
+            open={visibleOfBoatModal}
+            onClose={this.closeBoatEditor}
+            onSave={this.updateBoat}
+          />
       </React.Fragment>
     )
   }

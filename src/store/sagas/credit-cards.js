@@ -18,12 +18,12 @@ function* getCreditCards(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: actionTypes.GET_CREDIT_CARDS_FAILURE, payload: result });
     if (error) {
       yield call(error);
-    }  
+    }
   }
 }
 
@@ -80,7 +80,7 @@ function* createCreditCard(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_CREDIT_CARD_FAILURE, payload: result });
     if (error) {

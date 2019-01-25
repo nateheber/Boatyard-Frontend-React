@@ -22,11 +22,13 @@ class NewOrders extends React.Component {
 
   componentDidMount() {
     this.props.GetNewOrders({
-      page: 1,
-      per_page: 5,
-      'order[state]': 'draft',
-      'order[sort]': 'desc',
-      'order[order]': 'created_at'
+      params: {
+        page: 1,
+        per_page: 5,
+        'order[state]': 'draft',
+        'order[sort]': 'desc',
+        'order[order]': 'created_at'
+      }
     });
   }
 
