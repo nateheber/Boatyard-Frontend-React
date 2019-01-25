@@ -8,7 +8,8 @@ const refineBoats = (boats) => {
   return boats.map(boat => {
     return {
       id: boat.id,
-      ...boat.attributes
+      ...boat.attributes,
+      relationships: boat.relationships,
     };
   });
 };

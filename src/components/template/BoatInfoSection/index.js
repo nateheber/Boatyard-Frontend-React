@@ -6,6 +6,7 @@ import BoatModal from './BoatModal'
 import InfoSection from './InfoSection'
 
 import { UpdateBoat, DeleteBoat } from 'store/actions/boats'
+import { refinedBoatsSelector } from 'store/selectors/boats';
 
 class BoatInfoSection extends React.Component {
   state = {
@@ -96,9 +97,8 @@ class BoatInfoSection extends React.Component {
   }
 }
 
-const mapStateToProps = ({ boat: { boats, included } }) => ({
-  boats,
-  included
+const mapStateToProps = (state) => ({
+  boats: refinedBoatsSelector(state)
 })
 
 const mapDispatchToProps = {
