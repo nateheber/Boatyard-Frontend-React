@@ -78,7 +78,6 @@ class Customers extends React.Component {
       },
       error: () => {
         const { errors } = this.props;
-        console.log('----------error---------', errors);
         if (errors && errors.length > 0) {
           toastr.error(errors[0].message);
         }

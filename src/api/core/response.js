@@ -13,8 +13,8 @@ export const responseInterceptor = client => {
     }
     return response.data;
   }, (error) => {
-    const msg = get(error, 'response.data.message', null);
-    return msg ? [msg] : [];
+    const message = get(error, 'response.data.message', null);
+    return message ? [{ message }] : [];
   });
   return client;
 };
