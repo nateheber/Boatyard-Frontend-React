@@ -23,6 +23,8 @@ import Timeline from './components/templates/Timeline'
 
 import BoatEditor from './components/modals/EditBoatModal'
 
+import { getProviderIdFromOrder } from 'utils/order'
+
 const Wrapper = styled.div`
   padding: 30px 25px;
 `
@@ -81,8 +83,7 @@ class OrderDetails extends React.Component {
 
   getProviderId = () => {
     const { currentOrder } = this.props;
-    const { providerInfo } = getOrderDetails(currentOrder);
-    return providerInfo.id;
+    return getProviderIdFromOrder(currentOrder);
   }
 
   getUserId = () => {

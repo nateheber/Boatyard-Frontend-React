@@ -15,24 +15,31 @@ class NewLineItem extends React.Component {
     serviceId: -1,
     comment: '',
   }
+
   componentDidMount() {
     this.props.filterServices('');
   }
+
   onChangeFilter = (val) => {
     this.props.filterServices(val)
   }
+
   onChangeQuantity = (evt) => {
     this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) })
   }
+
   onChangeCost = (evt) => {
     this.setState({ cost: evt.target.value }, () => { this.props.onChange(this.state) })
   }
+
   onChangeService = (service) => {
     this.setState({ serviceId: service.value }, () => { this.props.onChange(this.state) })
   }
+
   onChangeComment = (evt) => {
-    this.setState({ comment: evt.target.value })
+    this.setState({ comment: evt.target.value }, () => { this.props.onChange(this.state) })
   }
+
   render() {
     const { filtered } = this.props;
     const { quantity, cost, comment } = this.state;
