@@ -23,6 +23,8 @@ import Timeline from './components/templates/Timeline'
 
 import BoatEditor from './components/modals/EditBoatModal'
 
+import { getProviderIdFromOrder } from 'utils/order'
+
 const Wrapper = styled.div`
   padding: 30px 25px;
 `
@@ -70,9 +72,7 @@ class OrderDetails extends React.Component {
     const orderId = query.order;
     this.props.GetOrder({orderId});
     this.props.fetchLineItems(orderId);
-    this.setState({
-      orderId
-    })
+    this.setState({ orderId })
   }
 
   getOrderInfo = () => {
@@ -83,8 +83,7 @@ class OrderDetails extends React.Component {
 
   getProviderId = () => {
     const { currentOrder } = this.props;
-    const { providerInfo } = getOrderDetails(currentOrder);
-    return providerInfo.id;
+    return getProviderIdFromOrder(currentOrder);
   }
 
   getUserId = () => {
@@ -120,30 +119,18 @@ class OrderDetails extends React.Component {
   }
 
   editBoat = () => {
-    this.setState({
-      editBoat: true,
-    })
+    this.setState({ editBoat: true })
   }
 
   closeBoatEditor = () => {
-    this.setState({
-      editBoat: false,
-    })
+    this.setState({ editBoat: false })
   }
 
   updateBoat = (data) => {
     const { boatInfo: { id } } = this.getOrderInfo();
     const { orderId } = this.state;
-    this.props.updateBoats({
-      id,
-      data,
-      callback: () => {
-        this.props.GetOrder({ orderId })
-      }
-    })
-    this.setState({
-      editBoat: false,
-    })
+    this.props.updateBoats({ id, data, callback: () => { this.props.GetOrder({ orderId }) } })
+    this.setState({ editBoat: false })
   }
 
   updateOrder = (data) => {

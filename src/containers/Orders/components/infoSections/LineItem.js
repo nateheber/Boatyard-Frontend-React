@@ -1,9 +1,13 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { set } from 'lodash';
+import Select from 'react-select'
 import { Row, Col } from 'react-flexbox-grid'
 
 import { Input, TextArea } from 'components/basic/Input'
+
+import { filterServices } from 'store/reducers/services'
 
 import RemoveButton from '../basic/RemoveButton'
 
@@ -37,15 +41,25 @@ const Comment = styled.div`
   color: #07384b;
 `
 
-export default class LineItem extends React.Component {
+class LineItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      serviceId: props.serviceId,
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
     }
   }
+
+  componentDidMount() {
+    this.props.filterServices('');
+  }
+
+  onChangeFilter = (val) => {
+    this.props.filterServices(val)
+  }
+
   onChange = (evt, field) => {
     const changeVal = {}
     set(changeVal, field, evt.target.value)
@@ -53,19 +67,59 @@ export default class LineItem extends React.Component {
       this.props.onChange(this.state);
     });
   }
+
+  onChangeService = (service) => {
+    const serviceId = service.value;
+    this.setState({ serviceId }, () => {
+      this.props.onChange(this.state)
+    })
+  }
+
   getServiceName = () => {
     const { serviceAttributes: { name } } = this.props;
     return name;
   }
+
+  getServiceId = () => {
+    const { serviceId } = this.props;
+    return serviceId;
+  }
+
+  getCurrentOption = () => ({ value: this.getServiceId(), label: this.getServiceName() })
+
+  filterOptions = () => {
+    const { filtered } = this.props;
+    const options = filtered.map(option => ({
+      value: option.id,
+      label: option.name
+    }))
+    const currentOption = { value: this.getServiceId(), label: this.getServiceName() };
+    const result = options.filter(option => option.value !== currentOption.value);
+    return [currentOption, ...result];
+  }
+
   render() {
     const { mode, onRemove } = this.props;
     const { quantity, cost, comment } = this.state;
     const name = this.getServiceName();
+    const options = this.filterOptions();
+    const currentOption = this.getCurrentOption();
     return (
       <Record>
         <Line>
           <Col md={4} sm={4} lg={4} xl={4} xs={4}>
-            <Name>{name}</Name>
+            {mode === 'edit' ? (
+              <Select
+                className="basic-single"
+                classNamePrefix="select"
+                options={options}
+                defaultValue={currentOption}
+                onInputChange={this.onChangeFilter}
+                onChange={this.onChangeService}
+              />
+            ) : (
+              <Name>{name}</Name>
+            )}
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
             {mode === 'edit' ? <Input type="text" value={quantity} onChange={(evt) => this.onChange(evt, 'quantity')} hideError /> : <Value>{quantity}</Value>}
@@ -97,3 +151,13 @@ export default class LineItem extends React.Component {
     )
   }
 }
+
+const mapStateToProps = ({ service: { filtered } }) => ({
+  filtered
+})
+
+const mapDispatchToProps = {
+  filterServices
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LineItem);

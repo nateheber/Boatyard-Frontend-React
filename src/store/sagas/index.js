@@ -12,6 +12,8 @@ import LineItemSaga from './lineItems';
 import BoatSaga from './boats';
 import PaymentSaga from './payments';
 import CreditCardSaga from './credit-cards';
+import ProviderLocationSaga from './providerLocations';
+import ProviderLocationServiceSaga from './providerLocationServices';
 
 export default function* mainSaga() {
   yield all([
@@ -26,6 +28,8 @@ export default function* mainSaga() {
     fork(LineItemSaga),
     fork(BoatSaga),
     fork(PaymentSaga),
-    fork(CreditCardSaga)
+    fork(CreditCardSaga),
+    fork(ProviderLocationSaga),
+    fork(ProviderLocationServiceSaga),
   ]);
 }

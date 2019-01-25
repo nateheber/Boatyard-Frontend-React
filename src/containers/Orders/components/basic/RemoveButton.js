@@ -8,6 +8,7 @@ const Btn = styled.div`
   float: right;
   display: inline-block;
   margin-top: 10px;
+  cursor: pointer;
 `
 const Img = styled.img`
   width: 14px;

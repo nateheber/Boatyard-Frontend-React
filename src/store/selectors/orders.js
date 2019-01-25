@@ -1,4 +1,4 @@
-import { get, filter, forEach, findIndex } from 'lodash';
+import { get, filter, forEach, findIndex, sortBy } from 'lodash';
 import { createSelector } from 'reselect';
 
 const currentOrderSelector = state => state.order.currentOrder;
@@ -62,10 +62,11 @@ const lineItemsSelector = state => {
     return data.push({
       ...lineItem,
       attributes,
+      serviceId: serviceInfo.id,
       serviceAttributes,
     })
   })
-  return data;
+  return sortBy(data, ['id']);
 };
 
 export const orderSelector = state => ({

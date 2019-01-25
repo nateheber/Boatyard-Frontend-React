@@ -19,9 +19,12 @@ function* createRequest(action) {
 
 function* createBatchRequest(action) {
   const lineItemClient = yield select(getCustomApiClient)
-  const { orderId, data } = action.payload
+  const { orderId, data, callback } = action.payload
   for (let i = 0; i < data.length; i += 1) {
     yield call(lineItemClient.post, `/orders/${orderId}/items/`, {lineItem: data[i]});
+  }
+  if (callback) {
+    yield call(callback)
   }
 }
 
@@ -41,12 +44,15 @@ function* fetchRequest(action) {
 
 function* deleteRequest(action) {
   const lineItemClient = yield select(getCustomApiClient);
-  const { payload: { orderId, itemId } } = action;
+  const { payload: { orderId, itemId, callback } } = action;
   yield call(lineItemClient.delete, `/orders/${orderId}/items/${itemId}`);
   yield put({
     type: actions.fetchLineItems,
     payload: orderId
   });
+  if (callback) {
+    yield call(callback)
+  }
 }
 
 function* updateRequest(action) {

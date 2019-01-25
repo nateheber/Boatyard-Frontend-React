@@ -28,3 +28,15 @@ export const generateOrderTimeline = (order) => {
   const updateInfo = getUpdatedStatus(order);
   return [creationInfo, updateInfo]
 }
+
+export const getProviderIdFromOrder = (order) => {
+  const { included } = order;
+  const idx = findIndex(included, item => item.type === 'providers');
+  return get(included, `[${idx}].id`)
+}
+
+export const getLocationAddressFromOrder = (order) => {
+  const { included } = order;
+  const idx = findIndex(included, item => item.type === 'locations');
+  return get(included, `[${idx}].relationships.address`)
+}
