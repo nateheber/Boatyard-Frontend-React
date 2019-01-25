@@ -5,60 +5,108 @@ import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
+const LOCATION_TYPES = [
+  { value: 'marina', label: 'Marina' },
+  { value: 'private_dock', label: 'Private Dock' },
+  { value: 'trailer', label: 'Trailer' },
+  { value: 'dry_storage', label: 'Dry Storage' }
+];
+
 export default class BoatModal extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      mainFields: [],
+      locationFields: []
+    };
+  }
+
   setFormFieldRef = (ref) => {
     this.mainInfoFields = ref;
   }
   setLocationFieldRef = (ref) => {
     this.locationFields = ref;
   }
-  getLocationFieldInfo = () => {
-    const locationInfo = get(this.props, 'locationInfo', {});
+
+  getAdditionalFields = (locationType, defaultValues = {}) => {
+    switch (locationType) {
+      case 'marina': {
+        return [
+          {
+            type: 'text_field',
+            field: 'location_name',
+            label: 'Marina Name',
+            errorMessage: 'Set Marina Name',
+            required: true,
+            defaultValue: get(defaultValues, 'name', ''),
+            xs: 4,
+            sm: 4,
+            md: 4,
+            lg: 4,
+            xl: 4
+          },
+          {
+            type: 'text_field',
+            field: 'slip',
+            label: 'Slip',
+            errorMessage: 'Set Slip',
+            required: true,
+            defaultValue: get(defaultValues, 'slip', ''),
+            xs: 4,
+            sm: 4,
+            md: 4,
+            lg: 4,
+            xl: 4
+          },
+        ];
+      }
+      case 'dry_storage': {
+        return [
+          {
+            type: 'text_field',
+            field: 'location_name',
+            label: 'Location Name',
+            errorMessage: 'Set Location Name',
+            required: true,
+            defaultValue: get(defaultValues, 'locationName', ''),
+            xs: 4,
+            sm: 4,
+            md: 4,
+            lg: 4,
+            xl: 4
+          },
+        ];
+      }
+      default: {
+        return [];
+      }
+    }
+  };
+
+  onLocationTypeChange = (field, value) => {
+    if (value === 'locationType') {
+      console.log('-------LocationFields-----------', field, this.locationFields.getFieldValues());
+    }
+  };
+
+  getLocationFieldInfo = (locationInfo = {}) => {
     const {
       locationType,
-      name,
       city,
       state,
       street,
-      zip,
+      zip
     } = locationInfo;
     const fields = [
       {
         type: 'select_box',
         field: 'locationType',
-        label: 'Location Type',
+        label: 'Boat Location',
         errorMessage: 'Select Location Type',
         required: true,
         defaultValue: locationType,
-        options: [
-          { value: 'marina', label: 'Marina' },
-          { value: 'private_dock', label: 'Private Dock' },
-          { value: 'dry_storage', label: 'Dry Storage' },
-          { value: 'trailer', label: 'Trailer' },
-          { value: 'residential_address', label: 'Rediential Address' },
-          { value: 'business_address', label: 'Business Address' },
-        ],
-        xs: 4,
-        sm: 4,
-        md: 4,
-        lg: 4,
-        xl: 4
-      },
-      {
-        type: 'text_field',
-        field: 'name',
-        label: 'Location Name',
-        errorMessage: 'Set Location Name',
-        required: true,
-        defaultValue: name,
-        xs: 4,
-        sm: 4,
-        md: 4,
-        lg: 4,
-        xl: 4
-      },
-      {
-        type: 'dummy',
+        options: LOCATION_TYPES,
         xs: 4,
         sm: 4,
         md: 4,
@@ -117,8 +165,11 @@ export default class BoatModal extends React.Component {
         lg: 4,
         xl: 4
       },
-    ]
-    return fields
+    ];
+    this.getAdditionalFields(locationType || 'marina', locationInfo).map((field, index) => {
+      fields.splice(1 + index, 0, field);
+    });
+    return fields;
   }
   getFormFieldInfo = () => {
     const boatInfo = get(this.props, 'boatInfo', {});
@@ -186,13 +237,13 @@ export default class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'length',
-        label: 'Length',
+        label: 'Boat Length',
         defaultValue: length,
         xs: 6,
         sm: 6,
-        md: 4,
-        lg: 4,
-        xl: 4
+        md: 3,
+        lg: 3,
+        xl: 3
       },
     ]
     return fields;
@@ -227,6 +278,7 @@ export default class BoatModal extends React.Component {
         <FormFields
           ref={this.setLocationFieldRef}
           fields={locationFields}
+          onChange={this.onLocationTypeChange}
         />
       </Modal>
     );
