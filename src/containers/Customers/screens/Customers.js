@@ -1,18 +1,17 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-import styled from 'styled-components'
-import AsyncSelect from 'react-select/lib/Async'
-import { Row, Col } from 'react-flexbox-grid'
+import React from 'react';
+import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
+import { withRouter } from 'react-router-dom';
+import styled from 'styled-components';
+import AsyncSelect from 'react-select/lib/Async';
+import { Row, Col } from 'react-flexbox-grid';
 
-import Table from 'components/basic/Table'
+import { actionTypes, GetUsers, FilterUsers, CreateUser } from 'store/actions/users';
+import Table from 'components/basic/Table';
 import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
-
-import { GetUsers, FilterUsers, CreateUser } from 'store/actions/users'
-
-import { CustomersHeader } from '../components/CustomersHeader'
-import CustomerModal from 'components/template/CustomerInfoSection/CustomerModal'
+import CustomerModal from 'components/template/CustomerInfoSection/CustomerModal';
+import { CustomersHeader } from '../components/CustomersHeader';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -70,11 +69,21 @@ class Customers extends React.Component {
   };
 
   createCustomer = (data) => {
+    const { CreateUser } = this.props;
     CreateUser({
-      data,
+      data: {
+        provider_id: '3',
+        ...data.user
+      },
       success: () => {
         this.hideModal();
         this.loadCustomers();
+      },
+      error: () => {
+        const { errors } = this.props;
+        if (errors && errors.length > 0) {
+          toastr.error(errors[0].message);
+        }
       }
     });
   };
@@ -104,27 +113,18 @@ class Customers extends React.Component {
     return Math.ceil(total/perPage);
   };
 
-  parseUser = () => {
-    const { users } = this.props;
-    return users.map(({ firstName, lastName, ...rest }) => ({
-      name: `${firstName} ${lastName}`,
-      ...rest
-    }));
-  };
-
   render() {
-    const { page } = this.props;
+    const { currentStatus, page, users } = this.props;
     const { showNewModal } = this.state;
     const pageCount = this.getPageCount();
-    const users = this.parseUser();
     const columns = [
-      { label: 'name', value: 'name' },
+      { label: 'name', value: 'firstName/lastName' },
       { label: 'phone', value: 'phoneNumber' },
       { label: 'email', value: 'email' },
       { label: 'location', value: 'location' },
-      { label: 'last order', value: 'last_order' },
+      { label: 'last order', value: 'lastOrder' },
       { label: 'orders', value: 'orders' },
-      { label: 'total spent', value: 'total_spent' }
+      { label: 'total spent', value: 'totalSpent' }
     ];
     return (
       <Wrapper>
@@ -153,22 +153,30 @@ class Customers extends React.Component {
           pageCount={pageCount}
           onPageChange={this.changePage}
         />
-        <CustomerModal open={showNewModal} onClose={this.closeNewModal} onSave={this.createCustomer} />
+        <CustomerModal
+          open={showNewModal}
+          loading={currentStatus === actionTypes.CREATE_USER}
+          onClose={this.closeNewModal}
+          onSave={this.createCustomer}
+        />
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ user: { users, page, perPage, total } }) => ({
-  users,
-  page,
-  perPage,
-  total
+const mapStateToProps = (state) => ({
+  currentStatus: state.user.currentStatus,
+  users: state.user.users,
+  page: state.user.page,
+  perPage: state.user.perPage,
+  total: state.user.total,
+  errors: state.user.errors
 });
 
 const mapDispatchToProps = {
   GetUsers,
-  FilterUsers
+  FilterUsers,
+  CreateUser
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Customers));

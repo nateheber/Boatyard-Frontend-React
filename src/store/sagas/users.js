@@ -101,7 +101,6 @@ function* createUser(action) {
 
 function* updateUser(action) {
   const userClient = yield select(getUserClient);
-  yield call(userClient.create, action.payload);
   const { userId, data, success, error } = action.payload;
   let result = null;
   try {
