@@ -4,9 +4,10 @@ import { Row } from 'react-flexbox-grid';
 
 const Wrapper = styled.div``;
 
-const Field = styled(Row)`
+const Field = styled.div`
+  display: flex;
+  flex-direction: row;
   margin-bottom: 30px;
-  padding-left: 20px;
   &:last-child {
     margin-bottom: 0px;
   }
@@ -20,12 +21,14 @@ const Label = styled.div`
   text-transform: uppercase;
   font-weight: bold;
   margin-right: 15px;
+  margin-bottom: 15px;
+  margin-top: 2px;
 `;
 
-const FieldValue = styled.p`
+const FieldValue = styled.div`
   display: inline-block;
   font-family: 'Source Sans Pro';
-  color: #004258;
+  color: #07384b;
   font-size: 16px;
   font-weight: 400;
   margin: 0px;

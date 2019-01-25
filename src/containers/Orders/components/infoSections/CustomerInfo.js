@@ -10,7 +10,8 @@ const Label = styled.div`
   font-size: 12px;
   font-weight: bold;
   color: #004258;
-  margin-bottom: 10px;
+  margin: 10px 0px;
+  text-transform: uppercase;
 `;
 
 const Name = styled.div`
@@ -23,6 +24,7 @@ const FieldValue = styled.div`
   font-family: 'Source Sans Pro';
   color: #898889;
   font-size: 14px;
+  margin-top: 1px;
 `;
 
 export default ({ firstName, lastName, email, phoneNumber }) => (

@@ -7,8 +7,12 @@ import { Input, TextArea } from 'components/basic/Input'
 
 import RemoveButton from '../basic/RemoveButton'
 
-const Record = styled(Row)`
+const Record = styled.div`
   padding: 15px 0px;
+`
+
+const Line = styled(Row)`
+  padding: 10px 0px;
 `;
 
 const Name = styled.div`
@@ -16,16 +20,20 @@ const Name = styled.div`
   line-height: 20px;
   font-size: 16px;
   font-family: "Source Sans Pro";
-  font-weight: 700;
+  font-weight: 600;
 `;
 
 const Value = styled.div`
-
+  font-family: "Source Sans Pro";
+  font-size: 16px;
+  font-weight: 400px;
+  color: #07384b;
 `
 
 const Comment = styled.div`
-  font-family: 'Source Sans Pro';
+  font-family: "Source Sans Pro";
   font-size: 16px;
+  font-weight: 400px;
   color: #07384b;
 `
 
@@ -54,8 +62,8 @@ export default class LineItem extends React.Component {
     const { quantity, cost, comment } = this.state;
     const name = this.getServiceName();
     return (
-      <React.Fragment>
-        <Record>
+      <Record>
+        <Line>
           <Col md={4} sm={4} lg={4} xl={4} xs={4}>
             <Name>{name}</Name>
           </Col>
@@ -73,8 +81,8 @@ export default class LineItem extends React.Component {
               <RemoveButton onClick={onRemove} />
             </Col>
           )}
-        </Record>
-        <Record>
+        </Line>
+        <Row>
           <Col sm={8}>
             {
               mode === 'edit' ? (
@@ -84,8 +92,8 @@ export default class LineItem extends React.Component {
               )
             }
           </Col>
-        </Record>
-      </React.Fragment>
+        </Row>
+      </Record>
     )
   }
 }

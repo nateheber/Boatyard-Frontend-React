@@ -111,7 +111,7 @@ class LineItemSection extends React.Component {
     const { newItems, mode, lineItems } = this.state;
     const { updatedAt } = this.state;
     return (
-      <Section title={`Quotes - Update ${moment(updatedAt).format('M/D H:m A')}`} mode={mode} onEdit={this.onEdit} >
+      <Section title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`} mode={mode} onEdit={this.onEdit} >
         <QuoteHeader />
         {
           lineItems.map((val, idx) => (
