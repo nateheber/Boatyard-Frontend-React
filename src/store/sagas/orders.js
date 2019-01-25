@@ -145,7 +145,7 @@ function* deleteOrder(action) {
   }
 }
 
-export default function* Profile() {
+export default function* OrderSaga() {
   yield takeEvery(actionTypes.GET_ORDERS, getOrders);
   yield takeEvery(actionTypes.GET_NEW_ORDERS, getOrders);
   yield takeEvery(actionTypes.GET_SCHEDULED_ORDERS, getOrders);

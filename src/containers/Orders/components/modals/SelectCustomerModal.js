@@ -12,7 +12,7 @@ import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 
 import { FilterUsers } from 'store/actions/users';
-import { getUserBoats } from 'store/reducers/boats';
+import { GetBoats } from 'store/actions/boats';
 
 import BoatInfo from '../basic/BoatInfo';
 
@@ -60,9 +60,9 @@ class SelectCustomerModal extends React.Component {
     this.setState({
       customer: val.value
     });
-    this.props.getUserBoats({
-      userId: val.value,
-      callback: this.onFetchBoats
+    this.props.GetBoats({
+      params: { userId: val.value },
+      success: this.onFetchBoats
     });
   };
 
@@ -173,7 +173,7 @@ class SelectCustomerModal extends React.Component {
 
 const mapStateToProps = ({ boat: { boats } }) => ({ boats });
 
-const mapDispatchToProps = { FilterUsers, getUserBoats };
+const mapDispatchToProps = { FilterUsers, GetBoats };
 
 export default connect(
   mapStateToProps,

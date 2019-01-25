@@ -5,7 +5,7 @@ import { findIndex } from 'lodash'
 import BoatModal from './BoatModal'
 import InfoSection from './InfoSection'
 
-import { updateBoats, deleteBoats } from 'store/reducers/boats'
+import { UpdateBoat, DeleteBoat } from 'store/actions/boats'
 
 class BoatInfoSection extends React.Component {
   state = {
@@ -44,8 +44,8 @@ class BoatInfoSection extends React.Component {
     const { boats, refreshInfo } = this.props
     const { editingBoatIdx } = this.state
     const boatId = boats[editingBoatIdx].id
-    this.props.updateBoats({
-      id: boatId,
+    this.props.UpdateBoat({
+      boatId,
       data: {
         ...boat,
         location_attributes: {
@@ -54,7 +54,7 @@ class BoatInfoSection extends React.Component {
           addressAttributes
         }
       },
-      callback: refreshInfo
+      success: refreshInfo
     })
     this.endEditing();
   }
@@ -102,8 +102,8 @@ const mapStateToProps = ({ boat: { boats, included } }) => ({
 })
 
 const mapDispatchToProps = {
-  updateBoats,
-  deleteBoats
+  UpdateBoat,
+  DeleteBoat
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BoatInfoSection)

@@ -129,7 +129,7 @@ function* updateCreditCard(action) {
   }
 }
 
-export default function* Profile() {
+export default function* CreditCardSaga() {
   yield takeEvery(actionTypes.GET_CREDIT_CARDS, getCreditCards);
   yield takeEvery(actionTypes.CREATE_CREDIT_CARD, createCreditCard);
   yield takeEvery(actionTypes.DELETE_CREDIT_CARD, deleteCreditCard);

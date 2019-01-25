@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import Table from 'components/basic/Table';
 import { BoatHeader } from 'components/compound/SectionHeader';
 
-import { fetchBoats } from 'reducers/boats';
+import { GetBoats } from 'store/actions/boats';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 
 class Services extends React.Component {
   componentDidMount() {
-    this.props.fetchBoats();
+    this.props.GetBoats({ params: { page: 1 } });
   }
   toDetails = boatId => {
     this.props.history.push(`/boat-details/?boat=${boatId}`);
@@ -51,7 +51,7 @@ const mapStateToProps = ({ boat: { boats } }) => ({
 });
 
 const mapDispatchToProps = {
-  fetchBoats
+  GetBoats
 };
 
 export default withRouter(

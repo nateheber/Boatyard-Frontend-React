@@ -47,12 +47,12 @@ function* getUsers(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: actionTypes.GET_USERS_FAILURE, payload: result });
     if (error) {
       yield call(error);
-    }  
+    }
   }
 }
 
@@ -69,12 +69,12 @@ function* getUser(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: actionTypes.GET_USER_FAILURE, payload: result });
     if (error) {
       yield call(error);
-    }  
+    }
   }
 }
 
@@ -89,12 +89,12 @@ function* createUser(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_USER_FAILURE, payload: result });
     if (error) {
       yield call(error);
-    }  
+    }
   }
 }
 
@@ -109,12 +109,12 @@ function* updateUser(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_USER_FAILURE, payload: result });
     if (error) {
       yield call(error);
-    }  
+    }
   }
 }
 
@@ -129,12 +129,12 @@ function* deleteUser(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: actionTypes.DELETE_USER_FAILURE, payload: result });
     if (error) {
       yield call(error);
-    }  
+    }
   }
 }
 

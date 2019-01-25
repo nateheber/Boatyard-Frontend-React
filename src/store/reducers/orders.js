@@ -209,7 +209,7 @@ export default handleActions(
         const { type } = action;
         draft.currentStatus = type;
       }),
-    [actionTypes.CREATET_ORDER_FAILURE]: (state, action) =>
+    [actionTypes.CREATE_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;

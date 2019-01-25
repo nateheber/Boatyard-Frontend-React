@@ -6,7 +6,7 @@ import { findIndex } from 'lodash';
 
 import { BoatEditor } from 'components/template/Editors';
 
-import { updateBoats, createBoats } from 'reducers/boats';
+import { UpdateBoat, CreateBoat } from 'store/actions/boats';
 
 class BoatDetails extends React.Component {
   constructor(props) {
@@ -35,13 +35,13 @@ class BoatDetails extends React.Component {
   }
   onSave = data => {
     if (this.state.id) {
-      this.props.updateBoats({
-        id: this.state.id,
+      this.props.UpdateBoat({
+        boatId: this.state.id,
         data
       });
       this.props.history.goBack();
     } else {
-      this.props.createBoats(data);
+      this.props.CreateBoat({ data });
     }
   };
   onCancel = () => {
@@ -63,8 +63,8 @@ const mapStateToProps = ({ boat: { boats }, category: { categories } }) => ({
 });
 
 const mapDispatchToProps = {
-  updateBoats,
-  createBoats
+  UpdateBoat,
+  CreateBoat
 };
 
 export default withRouter(
