@@ -71,16 +71,14 @@ class Customers extends React.Component {
   createCustomer = (data) => {
     const { CreateUser } = this.props;
     CreateUser({
-      data: {
-        provider_id: '3',
-        ...data.user
-      },
+      data,
       success: () => {
         this.hideModal();
         this.loadCustomers();
       },
       error: () => {
         const { errors } = this.props;
+        console.log('----------error---------', errors);
         if (errors && errors.length > 0) {
           toastr.error(errors[0].message);
         }

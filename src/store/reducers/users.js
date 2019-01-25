@@ -90,7 +90,7 @@ export default handleActions(
         const { type } = action;
         draft.currentStatus = type;
       }),
-    [actionTypes.CREATET_USER_FAILURE]: (state, action) =>
+    [actionTypes.CREATE_USER_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;

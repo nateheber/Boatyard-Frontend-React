@@ -5,8 +5,8 @@ import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
-// const mainFields = ['first_name', 'last_name', 'phone_number', 'email', 'notes'];
-// const locationFields = ['street', 'city', 'state', 'zip'];
+const mainFields = ['first_name', 'last_name', 'phone_number', 'email', 'notes'];
+const locationFields = ['street', 'city', 'state', 'zip'];
 export default class CustomerModal extends React.Component {
   setFormFieldRef = (ref) => {
     this.mainInfoFields = ref;
@@ -150,21 +150,21 @@ export default class CustomerModal extends React.Component {
 
   onSave = () => {
     if (this.mainInfoFields.validateFields()) {
-      const user = this.mainInfoFields.getFieldValues();
-      // let user = {};
-      // const address_attributes = {}
-      // for (const key in values) {
-      //   const value = get(values, key, '');
-      //   if(mainFields.indexOf(key) > -1) {
-      //     user[key] = value;
-      //   } else if (locationFields.indexOf(key) > -1) {
-      //     address_attributes[key] = value;
-      //   }
-      // }
-      // user = {
-      //   ...user,
-      //   location_attributes: { address_attributes }
-      // };
+      const values = this.mainInfoFields.getFieldValues();
+      let user = {};
+      const address_attributes = {}
+      for (const key in values) {
+        const value = get(values, key, '');
+        if(mainFields.indexOf(key) > -1) {
+          user[key] = value;
+        } else if (locationFields.indexOf(key) > -1) {
+          address_attributes[key] = value;
+        }
+      }
+      user = {
+        ...user,
+        location_attributes: { address_attributes }
+      };
       this.props.onSave({ user });
     }
   }

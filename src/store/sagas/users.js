@@ -49,7 +49,7 @@ function* getUsers(action) {
       yield call(success);
     }  
   } catch (e) {
-    yield put({ type: actionTypes.GET_USERS_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.GET_USERS_FAILURE, payload: result });
     if (error) {
       yield call(error);
     }  
@@ -71,7 +71,7 @@ function* getUser(action) {
       yield call(success);
     }  
   } catch (e) {
-    yield put({ type: actionTypes.GET_USER_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.GET_USER_FAILURE, payload: result });
     if (error) {
       yield call(error);
     }  
@@ -80,11 +80,10 @@ function* getUser(action) {
 
 function* createUser(action) {
   const userClient = yield select(getUserClient);
-  yield call(userClient.create, action.payload);
   const { data, success, error } = action.payload;
   let result = null;
   try {
-    yield call(userClient.create, data);
+    result = yield call(userClient.create, data);
     yield put({
       type: actionTypes.CREATE_USER_SUCCESS,
     });
@@ -92,7 +91,7 @@ function* createUser(action) {
       yield call(success);
     }  
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_USER_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.CREATE_USER_FAILURE, payload: result });
     if (error) {
       yield call(error);
     }  
@@ -104,7 +103,7 @@ function* updateUser(action) {
   const { userId, data, success, error } = action.payload;
   let result = null;
   try {
-    yield call(userClient.update, userId, data);
+    result = yield call(userClient.update, userId, data);
     yield put({
       type: actionTypes.UPDATE_USER_SUCCESS,
     });
@@ -112,7 +111,7 @@ function* updateUser(action) {
       yield call(success);
     }  
   } catch (e) {
-    yield put({ type: actionTypes.UPDATE_USER_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.UPDATE_USER_FAILURE, payload: result });
     if (error) {
       yield call(error);
     }  
@@ -124,7 +123,7 @@ function* deleteUser(action) {
   const { userId, success, error } = action.payload;
   let result = null;
   try {
-    yield call(userClient.delete, userId);
+    result = yield call(userClient.delete, userId);
     yield put({
       type: actionTypes.DELETE_USER_SUCCESS,
     });
@@ -132,7 +131,7 @@ function* deleteUser(action) {
       yield call(success);
     }  
   } catch (e) {
-    yield put({ type: actionTypes.DELETE_USER_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.DELETE_USER_FAILURE, payload: result });
     if (error) {
       yield call(error);
     }  
@@ -184,7 +183,7 @@ function* filterUsers(action) {
       }
     }
   } catch(err) {
-    yield put({ type: actionTypes.FILTER_USERS_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.FILTER_USERS_FAILURE, payload: result });
     if (error) {
       yield call(error, err);
     }

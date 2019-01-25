@@ -12,8 +12,11 @@ export const responseInterceptor = client => {
       });
     }
     return response.data;
-  }, (err) => {
-    console.log(err);
+  }, (error) => {
+    const msg = get(error, 'response.data.message', null);
+    if (msg) {
+      return [msg];
+    }
     return [];
   });
   return client;
@@ -23,7 +26,7 @@ export const spreedlyResponseInterceptor = client => {
   client.interceptors.response.use((response) => {
     return response.data;
   }, (error) => {
-    return get(error, 'response.data', []);
+    return get(error, 'response.data.errors', []);
   });
   return client;
 }
