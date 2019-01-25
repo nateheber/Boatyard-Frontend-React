@@ -120,7 +120,7 @@ export class CRUDClient {
     return this.client.get(`${this.apiUrl}?${paramsString}`);
   };
   create = data => {
-    return this.client.post(`${this.apiUrl}registrations/`, data);
+    return this.client.post(`${this.apiUrl}`, data);
   };
   read = id => {
     return this.client.get(`${this.apiUrl}${id}`);

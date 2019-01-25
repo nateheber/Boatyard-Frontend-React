@@ -1,5 +1,8 @@
 import { get } from 'lodash';
 
+import store from 'store';
+import { logout } from 'store/reducers/auth';
+
 export const responseInterceptor = client => {
   client.interceptors.response.use((response) => {
     const { perPage, total } = response.headers;
@@ -13,8 +16,14 @@ export const responseInterceptor = client => {
     }
     return response.data;
   }, (error) => {
-    const message = get(error, 'response.data.message', null);
-    return message ? [{ message }] : [];
+    const errorData = get(error, 'response.data', {});
+    const message = get(error, 'response.data.message')
+    if (message === 'Signature has expired') {
+      store.dispatch(logout());
+      return false;
+    } else {
+      return {error: errorData};
+    }
   });
   return client;
 };
