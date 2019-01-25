@@ -1,8 +1,8 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, findIndex, isEmpty } from 'lodash';
 
-import { actions } from '../reducers/users';
-import { getUsersPageNumber, getUserClient } from './sagaSelectors';
+import { actionTypes } from '../actions/users';
+import { getUserClient } from './sagaSelectors';
 
 const mergeResults = (base, secondary) => {
   const result = [...base];
@@ -17,120 +17,184 @@ const mergeResults = (base, secondary) => {
   return result;
 };
 
-function* createRequest(action) {
-  const userClient = yield select(getUserClient);
-  yield call(userClient.create, action.payload);
-  yield put({
-    type: actions.fetchUsers
+const refineUsers = (users) => {
+  return users.map(user => {
+    return {
+      id: user.id,
+      ...user.attributes
+    };
   });
-}
+};
 
-function* fetchRequest(action) {
+function* getUsers(action) {
   const userClient = yield select(getUserClient);
-  const page = yield select(getUsersPageNumber);
-  const result = yield call(userClient.list, {page});
-  const users = get(result, 'data', []);
-  const { perPage, total } = result;
-  yield put({
-    type: actions.setUsers,
-    payload: {
-      users: users.map(user => ({
-        id: user.id,
-        ...user.attributes
-      })),
-      perPage,
-      total,
-    }
-  });
-}
-
-function* fetchOneRequest(action) {
-  const userClient = yield select(getUserClient);
-  const { data: user } = yield call(userClient.read, action.payload);
-  yield put({
-    type: actions.setUser,
-    payload: user
-  });
-}
-
-function* deleteRequest(action) {
-  const userClient = yield select(getUserClient);
-  yield call(userClient.delete, action.payload);
-}
-
-function* updateRequest(action) {
-  const userClient = yield select(getUserClient);
-  const { id, data, callback } = action.payload;
-  yield call(userClient.update, id, data);
-  yield put({
-    type: actions.fetchUsers
-  });
-  if (callback) {
-    yield call(callback)
+  const { params, success, error } = action.payload;
+  const keyword = get(params, 'keyword', '');
+  let result = null;
+  try {
+    if (isEmpty(keyword)) {
+      result = yield call(userClient.list, params);
+      }
+    const users = get(result, 'data', []);
+    const { perPage, total } = result;
+    yield put({
+      type: actionTypes.GET_USERS_SUCCESS,
+      payload: {
+        users: refineUsers(users),
+        perPage,
+        total,
+      }
+    });
+    if (success) {
+      yield call(success);
+    }  
+  } catch (e) {
+    yield put({ type: actionTypes.GET_USERS_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }  
   }
 }
 
-function* filterRequest(action) {
+function* getUser(action) {
   const userClient = yield select(getUserClient);
-  const { payload: { keyword, resolve, reject } } = action;
+  const { userId, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(userClient.read, userId);
+    const { data: user } = result;
+    yield put({
+      type: actionTypes.GET_USER_SUCCESS,
+      payload: user
+    });
+    if (success) {
+      yield call(success);
+    }  
+  } catch (e) {
+    yield put({ type: actionTypes.GET_USER_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }  
+  }
+}
+
+function* createUser(action) {
+  const userClient = yield select(getUserClient);
+  const { data, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(userClient.create, data);
+    yield put({
+      type: actionTypes.CREATE_USER_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }  
+  } catch (e) {
+    yield put({ type: actionTypes.CREATE_USER_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }  
+  }
+}
+
+function* updateUser(action) {
+  const userClient = yield select(getUserClient);
+  const { userId, data, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(userClient.update, userId, data);
+    yield put({
+      type: actionTypes.UPDATE_USER_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }  
+  } catch (e) {
+    yield put({ type: actionTypes.UPDATE_USER_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }  
+  }
+}
+
+function* deleteUser(action) {
+  const userClient = yield select(getUserClient);
+  const { userId, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(userClient.delete, userId);
+    yield put({
+      type: actionTypes.DELETE_USER_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }  
+  } catch (e) {
+    yield put({ type: actionTypes.DELETE_USER_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }  
+  }
+}
+
+function* filterUsers(action) {
+  const userClient = yield select(getUserClient);
+  const { keyword, success, error } = action.payload;
+  let result = null;
   try {
     if (isEmpty(keyword)) {
-      const result = yield call(userClient.list);
-      const users = get(result, 'data', []);
-      const parsedData = users.map(user => ({
-        id: user.id,
-        ...user.attributes
-      }));
+      result = yield call(userClient.list);
+      const users = refineUsers(get(result, 'data', []));
       yield put({
-        type: actions.setFilteredUsers,
-        payload: parsedData
+        type: actionTypes.FILTER_USERS_SUCCESS,
+        payload: users
       });
-      if (resolve) {
-        yield call(resolve, parsedData)
+      if (success) {
+        yield call(success, users)
       }
     } else {
-      const firstFilter = yield call(
+      result = yield call(
         userClient.list,
         {
           page: 1,
           'user[first_name]': keyword,
         }
       );
-      const secondFilter = yield call(
+      const firstFiltered = get(result, 'data', []);
+      result = yield call(
         userClient.list,
         {
           page: 1,
           'user[last_name]': keyword,
         }
       );
-      const result = mergeResults(
-        get(firstFilter, 'data', []),
-        get(secondFilter, 'data', [])
-      );
-      const parsedData = result.map(user => ({
-        id: user.id,
-        ...user.attributes
-      }))
+      const secondFiltered = get(result, 'data', []);
+      const parsedData = refineUsers(mergeResults(
+        firstFiltered,
+        secondFiltered
+      ));
       yield put({
-        type: actions.setFilteredUsers,
+        type: actionTypes.FILTER_USERS_SUCCESS,
         payload: parsedData
       });
-      if (resolve) {
-        yield call(resolve, parsedData)
+      if (success) {
+        yield call(success, parsedData);
       }
     }
   } catch(err) {
-    if (reject) {
-      yield call(reject, err)
+    yield put({ type: actionTypes.FILTER_USERS_FAILURE, payload: result });
+    if (error) {
+      yield call(error, err);
     }
   }
 }
 
 export default function* UserSaga() {
-  yield takeEvery(actions.createUsers, createRequest);
-  yield takeEvery(actions.fetchUsers, fetchRequest);
-  yield takeEvery(actions.fetchUser, fetchOneRequest);
-  yield takeEvery(actions.deleteUsers, deleteRequest);
-  yield takeEvery(actions.updateUsers, updateRequest);
-  yield takeEvery(actions.filterUsers, filterRequest);
+  yield takeEvery(actionTypes.GET_USERS, getUsers);
+  yield takeEvery(actionTypes.FILTER_USERS, filterUsers);
+  yield takeEvery(actionTypes.GET_USER, getUser);
+  yield takeEvery(actionTypes.CREATE_USER, createUser);
+  yield takeEvery(actionTypes.UPDATE_USER, updateUser);
+  yield takeEvery(actionTypes.DELETE_USER, deleteUser);
 }

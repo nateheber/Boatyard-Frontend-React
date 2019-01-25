@@ -20,7 +20,7 @@ function* getCreditCards(action) {
       yield call(success);
     }  
   } catch (e) {
-    yield put({ type: actionTypes.GET_CREDIT_CARDS_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.GET_CREDIT_CARDS_FAILURE, payload: result });
     if (error) {
       yield call(error);
     }  
@@ -82,7 +82,7 @@ function* createCreditCard(action) {
       yield call(success);
     }  
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_CREDIT_CARD_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.CREATE_CREDIT_CARD_FAILURE, payload: result });
     if (error) {
       yield call(error);
     }
@@ -102,7 +102,7 @@ function* deleteCreditCard(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.DELETE_CREDIT_CARD_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.DELETE_CREDIT_CARD_FAILURE, payload: result });
     if (error) {
       yield call(error);
     }
@@ -122,7 +122,7 @@ function* updateCreditCard(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.UPDATE_CREDIT_CARD_FAILURE, payload: get(result, 'errors', []) });
+    yield put({ type: actionTypes.UPDATE_CREDIT_CARD_FAILURE, payload: result });
     if (error) {
       yield call(error);
     }

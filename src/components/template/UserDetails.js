@@ -7,7 +7,7 @@ import { toastr } from 'react-redux-toastr';
 
 import { UserEditor } from './Editors';
 
-import { updateUsers, createUsers } from 'store/reducers/users';
+import { UpdateUser, CreateUser } from 'store/actions/users';
 
 class UserDetails extends React.Component {
   constructor(props) {
@@ -43,15 +43,15 @@ class UserDetails extends React.Component {
       toastr.error('Please fill out all the required fields')
     } else {
       if (this.state.userId) {
-        this.props.updateUsers({
-          id: this.state.userId,
+        this.props.UpdateUser({
+          userId: this.state.userId,
           data: {
             user: data
           }
         });
         this.props.history.goBack();
       } else {
-        this.props.createUsers(data);
+        this.props.CreateUser(data);
       }
     }
   };
@@ -74,8 +74,8 @@ const mapStateToProps = ({ user: { users } }) => ({
 });
 
 const mapDispatchToProps = {
-  updateUsers,
-  createUsers,
+  UpdateUser,
+  CreateUser
 };
 
 export default withRouter(

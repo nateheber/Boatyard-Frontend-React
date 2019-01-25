@@ -4,11 +4,9 @@ import { storiesOf } from '@storybook/react';
 
 import {
   MemberEditor,
-  ServiceEditor,
-  NewCustomerEditor
+  ServiceEditor
 } from '../components/template/Editors';
 
 storiesOf('Editors', module)
   .add('Team Member Editor', () => <MemberEditor />)
-  .add('Service Editor', () => <ServiceEditor />)
-  .add('New Customer Editor', () => <NewCustomerEditor />);
+  .add('Service Editor', () => <ServiceEditor />);

@@ -6,12 +6,13 @@ import { Row, Col } from 'react-flexbox-grid'
 import { get } from 'lodash'
 import styled from 'styled-components'
 
-import { fetchUser } from 'store/reducers/users'
+import { GetUser } from 'store/actions/users'
 import { getUserBoats } from 'store/reducers/boats'
 import { GetOrders } from 'store/actions/orders'
 import { GetCreditCards } from 'store/actions/credit-cards'
 import { refinedOrdersSelector } from 'store/selectors/orders'
 
+import { OrangeButton } from 'components/basic/Buttons';
 import { Section, SectionGroup } from 'components/basic/InfoSection'
 import Table from 'components/basic/Table'
 import CustomerInfoSection from 'components/template/CustomerInfoSection'
@@ -28,17 +29,17 @@ class CustomerDetails extends React.Component {
     customerId: -1,
   }
   componentDidMount() {
-    const query = queryString.parse(this.props.location.search)
-    const customerId = query.customer
-    this.props.fetchUser(customerId)
-    this.props.getUserBoats({userId: customerId})
-    this.props.GetOrders({ 'order[user_id]': customerId, page: 1 })
+    const query = queryString.parse(this.props.location.search);
+    const customerId = query.customer;
+    this.props.GetUser({ userId: customerId });
+    this.props.getUserBoats({userId: customerId});
+    this.props.GetOrders({ 'order[user_id]': customerId, page: 1 });
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': customerId }
     });
     this.setState({
       customerId,
-    })
+    });
   }
   changePage = (page) => {
     const { customerId } = this.state;
@@ -50,7 +51,7 @@ class CustomerDetails extends React.Component {
   }
   refreshInfo = () => {
     const { customerId } = this.state;
-    this.props.fetchUser(customerId)
+    this.props.GetUser({ userId: customerId });
     this.props.getUserBoats({userId: customerId})
     this.props.getUserOrders({ userId: customerId, page: 1 })
     this.props.GetCreditCards({
@@ -106,6 +107,7 @@ class CustomerDetails extends React.Component {
               <Section title={"Customer & Boat Info"}>
                 <CustomerInfoSection customerInfo={{ id, ...attributes }} refreshInfo={this.refreshInfo} />
                 <BoatInfoSection refreshInfo={this.refreshInfo} />
+                <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>
               </Section>
             </SectionGroup>
             <SectionGroup>
@@ -127,7 +129,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  fetchUser,
+  GetUser,
   getUserBoats,
   GetOrders,
   GetCreditCards

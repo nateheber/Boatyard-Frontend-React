@@ -18,6 +18,10 @@ export const OrangeButton = styled.button`
   text-transform: uppercase;
   outline: none;
   display: inline-block;
+  &.secondary {
+    height: 33px;
+    min-width: 100px;
+  }
   @media (min-width: 991px) {
     &.desktop {
       display: block;

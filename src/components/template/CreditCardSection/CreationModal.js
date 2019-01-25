@@ -10,8 +10,7 @@ import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
 const Divider = styled.hr`
-  margin: 0;
-  margin-bottom: 30px;
+  margin: 20px 0;
   border-top: 1px solid #f1f1f1;
 `;
 const cardFields = [
@@ -107,40 +106,10 @@ let infoFields = [
     md: 4,
     lg: 4,
     xl: 4
-  },
-  // {
-  //   type: 'select_box',
-  //   field: 'country',
-  //   label: 'Country',
-  //   required: true,
-  //   errorMessage: 'Required',
-  //   defaultValue: 'United States',
-  //   options: [
-  //     { label: 'United States', value: 'United States' },
-  //     { label: 'United States Minor Outlying Islands', value: 'United States Minor Outlying Islands' }
-  //   ],
-  //   xs: 5,
-  //   sm: 5,
-  //   md: 5,
-  //   lg: 5,
-  //   xl: 5
-  // },
+  }
 ];
 
 class CreateModal extends React.Component {
-  // componentDidUpdate(prevProps) {
-  //   const { errors } = this.props;
-  //   if (!prevProps.errors && errors) {
-  //     if (!isEmpty(this.cardFields) && !isEmpty(this.cardFields.setErrorFields)) {
-  //       this.cardFields.setErrorFields(['cardNumber']);
-  //     }
-  //   } else {
-  //     if (!isEmpty(this.cardFields) && !isEmpty(this.cardFields.setErrorFields)) {
-  //       this.cardFields.setErrorFields([]);
-  //     }
-  //   }
-  // }
-
   onSuccess = () => {
     this.props.refreshCards();
     this.props.onClose();

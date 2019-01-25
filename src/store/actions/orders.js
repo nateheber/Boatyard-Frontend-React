@@ -33,13 +33,13 @@ export const actionTypes = {
   CREATE_ORDER_SUCCESS: '[ORDERS] - Create new order Success',
   CREATE_ORDER_FAILURE: '[ORDERS] - Create new order Failure',
 
-  UPDATE_ORDER: '[ORDERS] - Update new order',
-  UPDATE_ORDER_SUCCESS: '[ORDERS] - Update new order Success',
-  UPDATE_ORDER_FAILURE: '[ORDERS] - Update new order Failure',
+  UPDATE_ORDER: '[ORDERS] - Update order',
+  UPDATE_ORDER_SUCCESS: '[ORDERS] - Update order Success',
+  UPDATE_ORDER_FAILURE: '[ORDERS] - Update order Failure',
 
-  DELETE_ORDER: '[ORDERS] - Delete new order',
-  DELETE_ORDER_SUCCESS: '[ORDERS] - Delete new order Success',
-  DELETE_ORDER_FAILURE: '[ORDERS] - Delete new order Failure'
+  DELETE_ORDER: '[ORDERS] - Delete order',
+  DELETE_ORDER_SUCCESS: '[ORDERS] - Delete order Success',
+  DELETE_ORDER_FAILURE: '[ORDERS] - Delete order Failure'
 };
 
 export const GetOrders = createAction(actionTypes.GET_ORDERS, payload => payload);
