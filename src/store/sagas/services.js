@@ -57,13 +57,13 @@ function* getService(action) {
   let result = null;
   try {
     result = yield call(serviceClient.read, serviceId);
-    const { data } = result;
+    const { data, included } = result;
     yield put({
       type: actionTypes.GET_SERVICE_SUCCESS,
       payload: data
     });
     if (success) {
-      yield call(success);
+      yield call(success, data, included);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_SERVICE_FAILURE, payload: result });

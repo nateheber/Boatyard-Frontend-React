@@ -2,12 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
-
-import Modal from 'components/compound/Modal';
-import { OrangeButton } from 'components/basic/Buttons';
-import { Selector } from 'components/basic/Input';
+import AsyncSelect from 'react-select/lib/Async';
 
 import { FilterServices, GetService } from 'store/actions/services';
+import Modal from 'components/compound/Modal';
+import { OrangeButton } from 'components/basic/Buttons';
+import ProviderOption from 'components/basic/ProviderOption';
+import ProviderOptionValue from 'components/basic/ProviderOptionValue';
 
 const SubSectionTitle = styled.h5`
   text-transform: uppercase;
@@ -25,38 +26,53 @@ class SelectServiceModal extends React.Component {
     value: {}
   };
   componentDidMount() {
-    this.props.FilterServices();
+    this.props.FilterServices({ params: {} });
   }
+
+  loadOptions = val => {
+    return this.onChangeServiceFilter(val)
+      .then((filtered) => {
+        return filtered;
+      }, () => {
+        return [];
+      });
+  };
+
   onChangeServiceFilter = val => {
-    console.log('------------------------fetch all-----------')
-    this.props.FilterServices({
-      param: { 'service[name]': val }
+    return new Promise((resolve, reject) => {
+      this.props.FilterServices({
+        // params: { 'service[name]': val },
+        params: {},
+        success: resolve,
+        error: reject
+      });
     });
   };
+
   onChangeService = val => {
     this.setState({
-      service: val.value
-    });
-    this.props.GetService({
-      serviceId: val.value,
-      success: this.onFetchService
+      service: val.id
+    }, () => {
+      this.props.GetService({
+        serviceId: val.id,
+        success: this.onFetchService
+      });
     });
   };
-  onFetchService = (service) => {
-    console.log(service);
-  }
+
+  onFetchService = (service, included) => {
+    console.log(service, included);
+  };
+
   next = () => {
     const { service } = this.state;
     this.props.toNext(service);
     this.props.onClose();
-  }
+  };
+
   render() {
     const action = [<OrangeButton onClick={this.next} key="modal_action_button">CREATE ORDER</OrangeButton>];
-    const { open, onClose, filteredServices } = this.props;
-    const options = filteredServices.map(option => ({
-      value: option.id,
-      label: option.name,
-    }))
+    const { open, onClose } = this.props;
     return (
       <Modal
         title="Create Order"
@@ -71,9 +87,13 @@ class SelectServiceModal extends React.Component {
             </Row>
             <Row>
               <Col sm={12}>
-                <Selector
-                  options={options}
-                  onInputChange={this.onChangeServiceFilter}
+                <AsyncSelect
+                  defaultOptions
+                  components={{
+                    Option: ProviderOption,
+                    SingleValue: ProviderOptionValue
+                  }}
+                  loadOptions={this.loadOptions}
                   onChange={this.onChangeService}
                 />
               </Col>
@@ -85,11 +105,9 @@ class SelectServiceModal extends React.Component {
   }
 }
 
-const mapStateToProps = ({ service: { filteredServices } }) => ({ filteredServices });
-
 const mapDispatchToProps = { FilterServices, GetService };
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps,
 )(SelectServiceModal);

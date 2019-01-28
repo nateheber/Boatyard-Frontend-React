@@ -1,7 +1,16 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get } from 'lodash';
+import { get, set } from 'lodash';
 import { actionTypes } from '../actions/boats';
+
+function refactorIncluded(included) {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i];
+    set(refactored, `${type}.${id}`, {...included[i]});
+  }
+  return refactored;
+}
 
 const initialState = {
   currentStatus: '',
@@ -31,7 +40,7 @@ export default handleActions(
         draft.total = total;
         draft.perPage = perPage;
         draft.boats = boats;
-        draft.included = included;
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.GET_BOATS_FAILURE]: (state, action) =>
       produce(state, draft => {

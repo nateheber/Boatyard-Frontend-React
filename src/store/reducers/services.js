@@ -21,7 +21,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.page = get(payload, 'params.page', 1);
+        draft.page = get(payload, 'params.page', 0);
         draft.errors = null;
       }),
     [actionTypes.GET_SERVICES_SUCCESS]: (state, action) =>
