@@ -22,6 +22,7 @@ function* getServices(action) {
   try {
     result = yield call(serviceClient.list, params);
     const services = get(result, 'data', []);
+    const included = get(result, 'included', []);
     const { perPage, total } = result;
     switch (action.type) {
       case actionTypes.FILTER_SERVICES: {
@@ -36,6 +37,7 @@ function* getServices(action) {
       type: successType,
       payload: {
         services: refinedServices,
+        included,
         perPage,
         total,
       }
