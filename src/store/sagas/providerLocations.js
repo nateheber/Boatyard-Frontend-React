@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import querystring from 'query-string';
 
 import { actions } from '../reducers/providerLocations';
