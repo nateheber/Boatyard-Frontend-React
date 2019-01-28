@@ -1,4 +1,4 @@
-import { findIndex, get } from 'lodash'
+import { findIndex, get, isEmpty, sortBy } from 'lodash'
 import moment from 'moment'
 
 export const getUserName = (order) => {
@@ -14,19 +14,54 @@ export const getCreationInfo = (order) => {
   const userName = getUserName(order);
   const createdAt = get(order, 'data.attributes.createdAt');
   const dateString = moment(createdAt).format('MMM D, YYYY [at] hh:mm A');
-  return `Order placed by ${userName} ${dateString}`
+  return { time: moment(createdAt).valueOf(), message: `Order placed by ${userName} ${dateString}`}
 }
 
 export const getUpdatedStatus = (order) => {
   const updatedAt = get(order, 'data.attributes.updatedAt');
   const dateString = moment(updatedAt).format('MMM D, YYYY [at] hh:mm A');
-  return `Order updated ${dateString}`
+  return { time: moment(updatedAt).valueOf(), message: `Order updated ${dateString}`}
+}
+
+export const getOrderProcessInfo = (order) => {
+  const timeStamps = get(order, 'data.attributes.historicTimestamps');
+  const keys = Object.keys(timeStamps);
+  const result = [];
+  for (let i = 0; i < keys.length; i += 1) {
+    const time = get(timeStamps, keys[i]);
+    switch(keys[i]) {
+      case 'assignedAt':
+        if (!isEmpty(time)) {
+          result.push({time: moment(time).valueOf(), message: `Order assigned at ${moment(time).format('MMM D, YYYY [at] hh:mm A')}`});
+        }
+        break;
+      case 'provisionedAt':
+        if (!isEmpty(time)) {
+          result.push({time: moment(time).valueOf(), message: `Order provisioned at ${moment(time).format('MMM D, YYYY [at] hh:mm A')}`});
+        }
+        break;
+      case 'scheduledAt':
+        if (!isEmpty(time)) {
+          result.push({time: moment(time).valueOf(), message: `Order scheduled at ${moment(time).format('MMM D, YYYY [at] hh:mm A')}`});
+        }
+        break;
+      case 'invoicedAt':
+        if (!isEmpty(time)) {
+          result.push({time: moment(time).valueOf(), message: `Order invoiced at ${moment(time).format('MMM D, YYYY [at] hh:mm A')}`});
+        }
+        break;
+      default: break;
+    }
+  }
+  return result;
 }
 
 export const generateOrderTimeline = (order) => {
   const creationInfo = getCreationInfo(order);
   const updateInfo = getUpdatedStatus(order);
-  return [creationInfo, updateInfo]
+  const timeLine = getOrderProcessInfo(order);
+  const result = [creationInfo, updateInfo, ...timeLine ];
+  return sortBy(result, ['time'])
 }
 
 export const getProviderIdFromOrder = (order) => {
