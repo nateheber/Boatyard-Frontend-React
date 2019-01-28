@@ -1,70 +1,134 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, sortBy } from 'lodash';
 
-import { actions } from '../reducers/boats';
+import { actionTypes } from '../actions/boats';
 import { getBoatClient } from './sagaSelectors';
 
-function* createRequest(action) {
-  const boatClient = yield select(getBoatClient);
-  yield call(boatClient.create, action.payload);
-}
-
-function* fetchRequest(action) {
-  const boatClient = yield select(getBoatClient);
-  const result = yield call(boatClient.list);
-  const boats = sortBy(get(result, 'data', []), 'id')
-  const included = get(result, 'included', []);
-  yield put({
-    type: actions.setBoats,
-    payload: {
-      boats: boats.map(boat => ({
-        id: boat.id,
-        ...boat.attributes
-      })),
-      included,
-    }
+const refineBoats = (boats) => {
+  return boats.map(boat => {
+    return {
+      id: boat.id,
+      ...boat.attributes,
+      relationships: boat.relationships,
+    };
   });
-}
+};
 
-function* deleteRequest(action) {
+function* getBoats(action) {
   const boatClient = yield select(getBoatClient);
-  yield call(boatClient.delete, action.payload);
-}
-
-function* updateRequest(action) {
-  const boatClient = yield select(getBoatClient);
-  const { id, data, callback } = action.payload;
-  yield call(boatClient.update, id, data);
-  if (callback) {
-    yield call(callback)
-  }
-}
-
-function* getUserBoatRequest(action) {
-  const boatClient = yield select(getBoatClient)
-  const { payload: { userId, callback } } = action
-  const result = yield call(boatClient.list, { page: 0, 'boat[user_id]': userId })
-  const boats = sortBy(get(result, 'data', []), 'id')
-  const included = get(result, 'included', [])
-  yield put({
-    type: actions.setBoats,
-    payload: {
-      boats: boats.map(boat => ({
-        id: boat.id,
-        ...boat.attributes,
-      })),
-      included,
+  const { params, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(boatClient.list, params);
+    const boats = sortBy(get(result, 'data', []), 'id');
+    const included = get(result, 'included', []);
+    const { perPage, total } = result;
+    yield put({
+      type: actionTypes.GET_BOATS_SUCCESS,
+      payload: {
+        boats: refineBoats(boats),
+        included,
+        perPage,
+        total
+      }
+    });
+    if (success) {
+      yield call(success);
     }
-  })
-  if (callback) {
-    yield call(callback, boats)
+  } catch (e) {
+    yield put({ type: actionTypes.GET_BOATS_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }
   }
 }
 
-export default function* Profile() {
-  yield takeEvery(actions.createBoats, createRequest);
-  yield takeEvery(actions.fetchBoats, fetchRequest);
-  yield takeEvery(actions.deleteBoats, deleteRequest);
-  yield takeEvery(actions.updateBoats, updateRequest);
-  yield takeEvery(actions.getUserBoats, getUserBoatRequest);
+function* getBoat(action) {
+  const boatClient = yield select(getBoatClient);
+  const { boatId, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(boatClient.read, boatId);
+    const { data: boat } = result;
+    yield put({
+      type: actionTypes.GET_BOAT_SUCCESS,
+      payload: boat
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.GET_BOAT_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+function* createBoat(action) {
+  const boatClient = yield select(getBoatClient);
+  const { data, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(boatClient.create, data);
+    yield put({
+      type: actionTypes.CREATE_BOAT_SUCCESS,
+    });
+    if (success) {
+      yield call(success, get(result, 'data', {}));
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.CREATE_BOAT_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+function* updateBoat(action) {
+  const boatClient = yield select(getBoatClient);
+  const { boatId, data, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(boatClient.update, boatId, data);
+    yield put({
+      type: actionTypes.UPDATE_BOAT_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.UPDATE_BOAT_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+function* deleteBoat(action) {
+  const boatClient = yield select(getBoatClient);
+  const { boatId, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(boatClient.delete, boatId);
+    yield put({
+      type: actionTypes.DELETE_BOAT_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.DELETE_BOAT_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+export default function* BoatSaga() {
+  yield takeEvery(actionTypes.GET_BOATS, getBoats);
+  yield takeEvery(actionTypes.GET_BOAT, getBoat);
+  yield takeEvery(actionTypes.CREATE_BOAT, createBoat);
+  yield takeEvery(actionTypes.UPDATE_BOAT, updateBoat);
+  yield takeEvery(actionTypes.DELETE_BOAT, deleteBoat);
 }

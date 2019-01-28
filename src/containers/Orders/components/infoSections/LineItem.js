@@ -7,7 +7,7 @@ import { Row, Col } from 'react-flexbox-grid'
 
 import { Input, TextArea } from 'components/basic/Input'
 
-import { filterServices } from 'store/reducers/services'
+import { FilterServices } from 'store/actions/services'
 
 import RemoveButton from '../basic/RemoveButton'
 
@@ -53,11 +53,13 @@ class LineItem extends React.Component {
   }
 
   componentDidMount() {
-    this.props.filterServices('');
+    this.props.FilterServices({ params: {} });
   }
 
   onChangeFilter = (val) => {
-    this.props.filterServices(val)
+    this.props.FilterServices({
+      params: { 'service[name]': val }
+    });
   }
 
   onChange = (evt, field) => {
@@ -88,8 +90,8 @@ class LineItem extends React.Component {
   getCurrentOption = () => ({ value: this.getServiceId(), label: this.getServiceName() })
 
   filterOptions = () => {
-    const { filtered } = this.props;
-    const options = filtered.map(option => ({
+    const { filteredServices } = this.props;
+    const options = filteredServices.map(option => ({
       value: option.id,
       label: option.name
     }))
@@ -152,12 +154,12 @@ class LineItem extends React.Component {
   }
 }
 
-const mapStateToProps = ({ service: { filtered } }) => ({
-  filtered
+const mapStateToProps = ({ service: { filteredServices } }) => ({
+  filteredServices
 })
 
 const mapDispatchToProps = {
-  filterServices
+  FilterServices
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LineItem);

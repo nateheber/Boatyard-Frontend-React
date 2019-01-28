@@ -10,7 +10,7 @@ import { OrderHeader } from 'components/compound/SectionHeader';
 
 import { GetOrders } from 'store/actions/orders';
 
-import OrderCreation from './components/templates/OrderCreation';
+import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,9 +27,9 @@ const TableWrapper = styled.div`
 
 class OrderList extends React.Component {
   componentDidMount() {
-    this.props.GetOrders({ page: 1 });
+    this.props.GetOrders({ params: { page: 1 } });
   }
-  setOrderCreationRef = (ref) => {
+  setNewOrderModalRef = (ref) => {
     if (ref) {
       this.orderCreation = ref.getWrappedInstance();
     }
@@ -42,14 +42,14 @@ class OrderList extends React.Component {
     return Math.ceil(total/perPage);
   }
   changePage = (page) => {
-    this.props.GetOrders({ page: page });
+    this.props.GetOrders({ params: { page: page } });
   }
   newOrder = () => {
     this.orderCreation.createOrder();
   }
   creationFinished = () => {
     const { page, GetOrders } = this.props;
-    GetOrders({ page: page });
+    GetOrders({ params: { page: page } });
   }
   render() {
     const { orders, page } = this.props;
@@ -86,7 +86,7 @@ class OrderList extends React.Component {
             onPageChange={this.changePage}
           />
         </TableWrapper>
-        <OrderCreation ref={this.setOrderCreationRef} onFinishCreation={this.creationFinished} />
+        <NewOrderModal ref={this.setNewOrderModalRef} onFinishCreation={this.creationFinished} />
       </Wrapper>
     );
   }

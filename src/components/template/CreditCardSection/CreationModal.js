@@ -46,7 +46,7 @@ const cardFields = [
     label: 'YEAR',
     required: true,
     errorMessage: 'Required',
-    mask: '99',
+    mask: '9999',
     xs: 2,
     sm: 2,
     md: 2,

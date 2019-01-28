@@ -42,12 +42,12 @@ class OrderHeader extends React.Component {
 
   onChangeProvider = val => {
     const { orderId } = this.props
-    this.props.UpdateOrder({ id: orderId, data: { providerId: val.id } })
+    this.props.UpdateOrder({ orderId, data: { providerId: val.id } })
   }
 
   cancelOrder = () => {
     const { orderId } = this.props
-    this.props.UpdateOrder({ id: orderId, data: { state: 'canceled' } })
+    this.props.UpdateOrder({ orderId, data: { state: 'canceled' } })
   }
 
   deleteOrder = () => {

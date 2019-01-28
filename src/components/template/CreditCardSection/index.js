@@ -1,12 +1,19 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { findIndex } from 'lodash'
+import { findIndex, isEmpty } from 'lodash'
+import styled from 'styled-components';
 
 import { Section } from 'components/basic/InfoSection'
 
 import InfoSection from './InfoSection'
 import ListModal from './ListModal'
 import CreationModal from './CreationModal'
+
+const NormalText = styled.div`
+  font-family: 'Source Sans Pro';
+  color: #898889;
+  font-size: 14px;
+`;
 
 class CreditCardSection extends React.Component {
   state = {
@@ -55,7 +62,11 @@ class CreditCardSection extends React.Component {
     return (
       <React.Fragment>
         <Section title="Payment Methods" mode="view" onEdit={this.showListModal} >
-          <InfoSection creditCard={card} />
+          {!isEmpty(card) ?
+           <InfoSection creditCard={card} />
+           :
+           <NormalText>There are no payment methods.</NormalText>
+          }
         </Section>
         <ListModal
           open={showPaymentModal}

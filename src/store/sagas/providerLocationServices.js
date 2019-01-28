@@ -1,5 +1,4 @@
-import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty } from 'lodash';
+import { takeEvery, call, select } from 'redux-saga/effects';
 
 import { actions } from '../reducers/providerLocationServices';
 import { getProviderLocationServiceClient } from './sagaSelectors';

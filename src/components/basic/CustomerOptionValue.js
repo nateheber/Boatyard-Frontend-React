@@ -6,7 +6,7 @@ const Value = styled.div`
   color: #555;
 `;
 
-export default ({ firstName, lastName }) => (
+export default ({ data: { firstName, lastName } }) => (
   <Value>
     {firstName} {lastName}
   </Value>

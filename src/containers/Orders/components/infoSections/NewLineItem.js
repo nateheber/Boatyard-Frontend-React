@@ -4,7 +4,7 @@ import Select from 'react-select'
 import { connect } from 'react-redux'
 
 import { Input, TextArea } from 'components/basic/Input'
-import { filterServices } from 'store/reducers/services'
+import { FilterServices } from 'store/actions/services'
 
 import RemoveButton from '../basic/RemoveButton'
 
@@ -17,11 +17,11 @@ class NewLineItem extends React.Component {
   }
 
   componentDidMount() {
-    this.props.filterServices('');
+    this.props.FilterServices({ param: { 'service[name]': '' } });
   }
 
   onChangeFilter = (val) => {
-    this.props.filterServices(val)
+    this.props.FilterServices({ param: { 'service[name]': 'val' } });
   }
 
   onChangeQuantity = (evt) => {
@@ -41,9 +41,9 @@ class NewLineItem extends React.Component {
   }
 
   render() {
-    const { filtered } = this.props;
+    const { filteredServices } = this.props;
     const { quantity, cost, comment } = this.state;
-    const options = filtered.map(option => ({
+    const options = filteredServices.map(option => ({
       value: option.id,
       label: option.name
     }))
@@ -86,12 +86,12 @@ class NewLineItem extends React.Component {
   }
 }
 
-const mapStateToProps = ({ service: { filtered } }) => ({
-  filtered
+const mapStateToProps = ({ service: { filteredServices } }) => ({
+  filteredServices
 })
 
 const mapDispatchToProps = {
-  filterServices
+  FilterServices
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewLineItem)

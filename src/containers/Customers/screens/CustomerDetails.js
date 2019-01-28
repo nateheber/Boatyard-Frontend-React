@@ -1,39 +1,45 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-import queryString from 'query-string'
-import { Row, Col } from 'react-flexbox-grid'
-import { get } from 'lodash'
-import styled from 'styled-components'
+import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import queryString from 'query-string';
+import { Row, Col } from 'react-flexbox-grid';
+import { get } from 'lodash';
+import styled from 'styled-components';
 
-import { GetUser } from 'store/actions/users'
-import { getUserBoats } from 'store/reducers/boats'
-import { GetOrders } from 'store/actions/orders'
-import { GetCreditCards } from 'store/actions/credit-cards'
-import { refinedOrdersSelector } from 'store/selectors/orders'
+import { GetUser } from 'store/actions/users';
+import { GetBoats, CreateBoat } from 'store/actions/boats';
+import { GetOrders } from 'store/actions/orders';
+import { GetCreditCards } from 'store/actions/credit-cards';
+import { refinedOrdersSelector } from 'store/selectors/orders';
 
 import { OrangeButton } from 'components/basic/Buttons';
-import { Section, SectionGroup } from 'components/basic/InfoSection'
-import Table from 'components/basic/Table'
-import CustomerInfoSection from 'components/template/CustomerInfoSection'
-import BoatInfoSection from 'components/template/BoatInfoSection'
-import CreditCardSection from 'components/template/CreditCardSection'
-import { CustomerDetailsHeader } from '../components/CustomerDetailsHeader'
+import { Section, SectionGroup } from 'components/basic/InfoSection';
+import Table from 'components/basic/Table';
+import CustomerInfoSection from 'components/template/CustomerInfoSection';
+import BoatInfoSection from 'components/template/BoatInfoSection';
+import CreditCardSection from 'components/template/CreditCardSection';
+import { CustomerDetailsHeader } from '../components/CustomerDetailsHeader';
+import BoatModal from 'components/template/BoatInfoSection/BoatModal';
 
 const PageContent = styled(Row)`
   padding: 30px 25px;
 `;
 
 class CustomerDetails extends React.Component {
-  state = {
-    customerId: -1,
+  constructor(props) {
+    super(props);
+    this.state = {
+      customerId: -1,
+      visibleOfBoatModal: false
+    };
   }
+
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const customerId = query.customer;
     this.props.GetUser({ userId: customerId });
-    this.props.getUserBoats({userId: customerId});
-    this.props.GetOrders({ 'order[user_id]': customerId, page: 1 });
+    this.props.GetOrders({ params: { 'order[user_id]': customerId, page: 1 } });
+    this.props.GetBoats({ params: { 'boat[user_id]': customerId } });
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': customerId }
     });
@@ -41,10 +47,12 @@ class CustomerDetails extends React.Component {
       customerId,
     });
   }
+
   changePage = (page) => {
     const { customerId } = this.state;
-    this.props.GetOrders({ 'order[user_id]': customerId, page: page })
+    this.props.GetOrders({ params: { 'order[user_id]': customerId, page: page } });
   }
+
   getPageCount = () => {
     const { perPage, total } = this.props
     return Math.ceil(total/perPage)
@@ -52,8 +60,7 @@ class CustomerDetails extends React.Component {
   refreshInfo = () => {
     const { customerId } = this.state;
     this.props.GetUser({ userId: customerId });
-    this.props.getUserBoats({userId: customerId})
-    this.props.getUserOrders({ userId: customerId, page: 1 })
+    this.props.GetOrders({ params: { 'order[user_id]': customerId, page: 1 } });
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': customerId }
     });
@@ -72,9 +79,40 @@ class CustomerDetails extends React.Component {
     this.props.history.push(`/order-details/?order=${orderId}`);
   }
 
+  showBoatModal = () => {
+    this.setState({
+      visibleOfBoatModal: true
+    });
+  };
+
+  hideBoatModal = () => {
+    this.setState({
+      visibleOfBoatModal: false
+    });
+  };
+
+  addNewBoat = (data) => {
+    const { CreateBoat } = this.props;
+    const { customerId } = this.state;
+    CreateBoat({
+      data: {
+        boat: {
+          user_id: customerId,
+          ...data.boat,
+        }
+      },
+      success: () => {
+        this.hideBoatModal();
+        this.props.GetBoats({ params: { 'boat[user_id]': customerId } });
+      },
+      error: () => {
+      }
+    })
+  };
+
   render() {
     const { currentUser, page, orders } = this.props
-    const { customerId } = this.state;
+    const { customerId, visibleOfBoatModal } = this.state;
     const id = get(currentUser, 'id', '')
     const customerName = `${get(currentUser, 'attributes.firstName')} ${get(currentUser, 'attributes.lastName')}`;
     const attributes = get(currentUser, 'attributes', {})
@@ -106,7 +144,7 @@ class CustomerDetails extends React.Component {
             <SectionGroup>
               <Section title={"Customer & Boat Info"}>
                 <CustomerInfoSection customerInfo={{ id, ...attributes }} refreshInfo={this.refreshInfo} />
-                <BoatInfoSection refreshInfo={this.refreshInfo} />
+                <BoatInfoSection customerId={customerId} />
                 <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>
               </Section>
             </SectionGroup>
@@ -115,6 +153,12 @@ class CustomerDetails extends React.Component {
             </SectionGroup>
           </Col>
         </PageContent>
+        <BoatModal
+          open={visibleOfBoatModal}
+          customerId={customerId}
+          onClose={this.hideBoatModal}
+          onSave={this.addNewBoat}
+        />
       </React.Fragment>
     )
   }
@@ -130,7 +174,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   GetUser,
-  getUserBoats,
+  GetBoats,
+  CreateBoat,
   GetOrders,
   GetCreditCards
 }

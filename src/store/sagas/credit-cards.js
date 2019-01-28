@@ -18,12 +18,12 @@ function* getCreditCards(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: actionTypes.GET_CREDIT_CARDS_FAILURE, payload: result });
     if (error) {
       yield call(error);
-    }  
+    }
   }
 }
 
@@ -42,7 +42,7 @@ function* createCreditCard(action) {
           number: cardNumber,
           verificationValue: cvv,
           month: parseInt(month),
-          year: parseInt(year) + 2000
+          year: parseInt(year)
         },
       }
     });
@@ -80,7 +80,7 @@ function* createCreditCard(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_CREDIT_CARD_FAILURE, payload: result });
     if (error) {
@@ -129,7 +129,7 @@ function* updateCreditCard(action) {
   }
 }
 
-export default function* Profile() {
+export default function* CreditCardSaga() {
   yield takeEvery(actionTypes.GET_CREDIT_CARDS, getCreditCards);
   yield takeEvery(actionTypes.CREATE_CREDIT_CARD, createCreditCard);
   yield takeEvery(actionTypes.DELETE_CREDIT_CARD, deleteCreditCard);

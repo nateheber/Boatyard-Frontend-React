@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import Table from 'components/basic/Table';
 import { ServiceHeader } from 'components/compound/SectionHeader';
 
-import { fetchServices, resetServices } from 'store/reducers/services';
+import { GetServices } from 'store/actions/services';
 import { fetchCategories } from 'store/reducers/categories';
 
 const Wrapper = styled.div`
@@ -28,14 +28,14 @@ class Services extends React.Component {
   }
 
   loadPage = (page) => {
-    const { fetchServices } = this.props;
+    const { GetServices } = this.props;
     const { sort } = this.state;
     const params = {
       page: page,
       'service[sort]': sort.direction,
       'service[order]': sort.col
     };
-    fetchServices(params);
+    GetServices({ params });
   };
 
   onSortChange = (sort) => {
@@ -90,8 +90,7 @@ const mapStateToProps = ({ service: { services, loading, page, perPage, total } 
 });
 
 const mapDispatchToProps = {
-  fetchServices,
-  resetServices,
+  GetServices,
   fetchCategories
 };
 
