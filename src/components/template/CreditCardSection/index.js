@@ -65,7 +65,7 @@ class CreditCardSection extends React.Component {
           {!isEmpty(card) ?
            <InfoSection creditCard={card} />
            :
-           <NormalText>There are no payments methods.</NormalText>
+           <NormalText>There are no payment methods.</NormalText>
           }
         </Section>
         <ListModal
