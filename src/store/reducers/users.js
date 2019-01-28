@@ -50,8 +50,11 @@ export default handleActions(
     [actionTypes.FILTER_USERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
+        const { total, perPage, users } = payload;
         draft.currentStatus = type;
-        draft.filteredUsers = payload;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.filteredUsers = users;
       }),
     [actionTypes.FILTER_USERS_FAILURE]: (state, action) =>
       produce(state, draft => {

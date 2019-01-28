@@ -43,16 +43,20 @@ class Invoices extends React.Component {
 
   componentDidMount() {
     this.props.GetPaidOrders({
-      page: 1,
-      'order[state]': 'completed',
-      'order[sort]': 'desc',
-      'order[order]': 'created_at'
+      params: {
+        page: 1,
+        'order[state]': 'completed',
+        'order[sort]': 'desc',
+        'order[order]': 'created_at'
+      }
     });
     this.props.GetOpenOrders({
-      page: 1,
-      'order[state]': 'invoiced',
-      'order[sort]': 'desc',
-      'order[order]': 'created_at'
+      params: {
+        page: 1,
+        'order[state]': 'invoiced',
+        'order[sort]': 'desc',
+        'order[order]': 'created_at'
+      }
     });
   }
 
@@ -60,17 +64,21 @@ class Invoices extends React.Component {
     const { currentTab } = this.state;
     if (currentTab === 'open') {
       this.props.GetOpenOrders({
-        page: page,
-        'order[state]': 'invoiced',
-        'order[sort]': 'desc',
-        'order[order]': 'created_at'
+        params: {
+          page: page,
+          'order[state]': 'invoiced',
+          'order[sort]': 'desc',
+          'order[order]': 'created_at'
+        }
       });  
     } else {
       this.props.GetPaidOrders({
-        page: page,
-        'order[state]': 'completed',
-        'order[sort]': 'desc',
-        'order[order]': 'created_at'
+        params: {
+          page: page,
+          'order[state]': 'completed',
+          'order[sort]': 'desc',
+          'order[order]': 'created_at'
+        }
       });
     }
   }

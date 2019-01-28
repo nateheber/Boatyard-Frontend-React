@@ -7,7 +7,6 @@ import { get, set, findIndex, forEach } from 'lodash'
 
 import { GetOrder, UpdateOrder } from 'store/actions/orders'
 import { fetchLineItems } from 'store/reducers/lineItems'
-import { updateBoats } from 'store/reducers/boats'
 import { orderSelector } from 'store/selectors/orders'
 
 import { SectionGroup } from 'components/basic/InfoSection'
@@ -20,8 +19,6 @@ import OrderDetailHeader from './components/templates/OrderDetailHeader'
 import Scheduler from './components/templates/Scheduler'
 import PaymentsSection from './components/templates/Payments'
 import Timeline from './components/templates/Timeline'
-
-import BoatEditor from './components/modals/EditBoatModal'
 
 import { getProviderIdFromOrder } from 'utils/order'
 
@@ -63,8 +60,7 @@ const getLocations = (orderInfo) => {
 
 class OrderDetails extends React.Component {
   state = {
-    orderId: -1,
-    editBoat: false,
+    orderId: -1
   }
 
   componentDidMount() {
@@ -135,7 +131,7 @@ class OrderDetails extends React.Component {
 
   updateOrder = (data) => {
     const { orderId } = this.state;
-    this.props.UpdateOrder({ id: orderId, data});
+    this.props.UpdateOrder({ orderId, data});
   }
 
   getBoatLocation = (boatInfo) => {
@@ -149,7 +145,7 @@ class OrderDetails extends React.Component {
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const boatLocation = this.getBoatLocation(boatInfo);
     const updatedDate = this.getUdpatedDate();
-    const { orderId, editBoat } = this.state;
+    const { orderId } = this.state;
     const providerId = this.getProviderId();
     const { lineItems, currentOrder } = this.props;
     const summaryInfo = this.getSummaryInfo();
@@ -187,12 +183,6 @@ class OrderDetails extends React.Component {
               </SectionGroup>
             </Column>
           </Row>
-          <BoatEditor
-            boatInfo={boatInfo}
-            open={editBoat}
-            onClose={this.closeBoatEditor}
-            onSave={this.updateBoat}
-          />
         </Wrapper>
       </React.Fragment>
     )
@@ -204,7 +194,6 @@ const mapStateToProps = state => ({ ...orderSelector(state) });
 const mapDispatchToProps = {
   GetOrder,
   fetchLineItems,
-  updateBoats,
   UpdateOrder
 };
 

@@ -93,7 +93,7 @@ export default class OrderReviewSection extends React.Component {
           <Col sm={12} md={6}>
             <FieldLabel>ORDER NOTES</FieldLabel>
             <TextArea
-              value={comments}
+              value={comments || ''}
               onChange={this.onChangeComment}
             />
             <HollowButton onClick={this.submitComments}>COMMENT INTERNALLY</HollowButton>

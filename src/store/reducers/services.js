@@ -1,83 +1,152 @@
-import { createAction, handleActions } from 'redux-actions';
+import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get } from 'lodash';
+import { get, set } from 'lodash';
+import { actionTypes } from '../actions/services';
 
-export const actions = {
-  createServices: 'SERVICES/CREATE',
-  fetchServices: 'SERVICES/FETCH',
-  resetServices: 'SERVICES/RESET',
-  updateServices: 'SERVICES/UPDATE',
-  deleteServices: 'SERVICES/DELETE',
-  setServices: 'SERVICES/SET',
-  fetchOne: 'SERVICES/FETCH_ONE',
-  filterServices: 'SERVICES/FILTER',
-  setFilteredServices: 'SERVICES/SET_FILTERED_DATA',
-};
-
-export const createServices = createAction(
-  actions.createServices,
-  payload => payload,
-  (payload, resolve, reject) => ({
-    resolve,
-    reject
-  })
-);
-export const resetServices = createAction(actions.resetServices);
-export const fetchServices = createAction(actions.fetchServices);
-export const updateServices = createAction(
-  actions.updateServices,
-  payload => payload,
-  (payload, resolve, reject) => ({
-    resolve,
-    reject
-  })
-);
-export const deleteServices = createAction(actions.deleteServices);
-export const filterServices = createAction(actions.filterServices);
-export const fetchOne = createAction(actions.fetchOne);
+function refactorIncluded(included) {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i]
+    set(refactored, `${type}.${id}`, {...included[i]})
+  }
+  return refactored;
+}
 
 const initialState = {
+  currentStatus: '',
   services: [],
-  filtered: [],
-  loading: false,
+  filteredServices: [],
+  currentService: {},
+  included: {},
   page: 1,
   perPage: 20,
-  total: 0
+  total: 0,
+  errors: null
 };
+
 
 export default handleActions(
   {
-    [actions.fetchServices]: (state, { payload }) =>
+    [actionTypes.GET_SERVICES]: (state, action) =>
       produce(state, draft => {
-        draft.page = get(payload, 'page', 1);
-        draft.loading = true;
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'params.page', 0);
+        draft.errors = null;
       }),
-    [actions.resetServices]: state =>
+    [actionTypes.GET_SERVICES_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        draft.loading = false;
-        draft.services = [];
-        draft.page = 1;
-        draft.perPage = 20;
-        draft.total = 0;
-      }),
-    [actions.setServices]: (state, { payload }) =>
-      produce(state, draft => {
-        const { perPage, services, total } = payload;
-        draft.loading = false;
-        draft.services = services;
-        draft.perPage = perPage;
+        const { type, payload } = action;
+        const { total, perPage, services, included } = payload;
+        draft.currentStatus = type;
         draft.total = total;
+        draft.perPage = perPage;
+        draft.services = services;
+        draft.included = refactorIncluded(included);
       }),
-    [actions.filterServices]: (state, { payload }) =>
+    [actionTypes.GET_SERVICES_FAILURE]: (state, action) =>
       produce(state, draft => {
-        draft.filtered = [];
-        draft.loading = true;
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
       }),
-    [actions.setFilteredServices]: (state, { payload }) =>
+
+    [actionTypes.FILTER_SERVICES]: (state, action) =>
       produce(state, draft => {
-        draft.filtered = [...payload];
-        draft.loading = false;
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'params.page', 1);
+        draft.errors = null;
       }),
-  },
+    [actionTypes.FILTER_SERVICES_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { total, perPage, services } = payload;
+        draft.currentStatus = type;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.filteredServices = services;
+      }),
+    [actionTypes.FILTER_SERVICES_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.GET_SERVICE]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.GET_SERVICE_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.currentService = payload;
+      }),
+    [actionTypes.GET_SERVICE_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.CREATE_SERVICE]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.CREATE_SERVICE_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.currentService = payload;
+      }),
+    [actionTypes.CREATE_SERVICE_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.UPDATE_SERVICE]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.UPDATE_SERVICE_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.UPDATE_SERVICE_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.DELETE_SERVICE]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.DELETE_SERVICE_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.DELETE_SERVICE_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      })
+    },
   initialState
 );

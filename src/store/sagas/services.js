@@ -1,103 +1,145 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 
-import { actions } from '../reducers/services';
+import { actionTypes } from '../actions/services';
 import { getServiceClient } from './sagaSelectors';
 
-function* createRequest(action) {
-  const { resolve, reject } = action.meta;
-  try {
-    const serviceClient = yield select(getServiceClient);
-    yield call(serviceClient.create, action.payload);
-    yield put({
-      type: actions.fetchServices
-    });
-    if (resolve) resolve('success');
-  } catch(e) {
-    if (reject) reject(e);
-  }
-}
-
-function* fetchRequest(action) {
-  const serviceClient = yield select(getServiceClient);
-  const result = yield call(serviceClient.list, action.payload);
-  const services = get(result, 'data', []);
-  const { perPage, total } = result;
-  yield put({
-    type: actions.setServices,
-    payload: {
-      services: services.map(service => ({
-        id: service.id,
-        ...service.attributes
-      })),
-      perPage,
-      total
-    }
+const refineServices = (services) => {
+  return services.map(service => {
+    return {
+      id: service.id,
+      ...service.attributes
+    };
   });
-}
+};
 
-function* deleteRequest(action) {
+function* getServices(action) {
   const serviceClient = yield select(getServiceClient);
-  yield call(serviceClient.delete, action.payload);
-}
-
-function* updateRequest(action) {
-  const { resolve, reject } = action.meta;
+  let successType = actionTypes.GET_SERVICES_SUCCESS;
+  let failureType = actionTypes.GET_SERVICES_FAILURE;
+  const { params, success, error } = action.payload;
+  let result = null;
   try {
-    const serviceClient = yield select(getServiceClient);
-    const { id, data } = action.payload;
-    yield call(serviceClient.update, id, data);
-    yield put({
-      type: actions.fetchServices
-    });
-    if (resolve) resolve('success');
-  } catch(e) {
-    if (reject) reject(e);
-  }
-}
-
-function* filterRequest(action) {
-  const serviceClient = yield select(getServiceClient);
-  const { payload: keyword } = action;
-  if (isEmpty(keyword)) {
-    const result = yield call(serviceClient.list);
+    result = yield call(serviceClient.list, params);
     const services = get(result, 'data', []);
+    const included = get(result, 'included', []);
+    const { perPage, total } = result;
+    switch (action.type) {
+      case actionTypes.FILTER_SERVICES: {
+        successType = actionTypes.FILTER_SERVICES_SUCCESS;
+        failureType = actionTypes.FILTER_SERVICES_FAILURE;
+        break;
+      }
+      default:
+    }
+    const refinedServices = refineServices(services);
     yield put({
-      type: actions.setFilteredServices,
-      payload: services.map(service => ({
-        id: service.id,
-        ...service.attributes
-      }))
+      type: successType,
+      payload: {
+        services: refinedServices,
+        included,
+        perPage,
+        total,
+      }
     });
-  } else {
-    const result = yield call(
-      serviceClient.list,
-      0,
-      `?service[name]=${keyword}`
-    );
-    const services = get(result, 'data', [])
-    yield put({
-      type: actions.setFilteredServices,
-      payload: services.map(service => ({
-        id: service.id,
-        ...service.attributes
-      }))
-    });
+    if (success) {
+      yield call(success, refinedServices);
+    }
+  } catch (e) {
+    yield put({ type: failureType, payload: result });
+    if (error) {
+      yield call(error);
+    }
   }
 }
 
-function* fetchOneRequest(action) {
+function* getService(action) {
   const serviceClient = yield select(getServiceClient);
-  const { id, callback } = action.payload
-  const { data: service } = yield call(serviceClient.read, id);
-  yield call(callback, service)
+  const { serviceId, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(serviceClient.read, serviceId);
+    const { data, included } = result;
+    yield put({
+      type: actionTypes.GET_SERVICE_SUCCESS,
+      payload: data
+    });
+    if (success) {
+      yield call(success, data, included);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.GET_SERVICE_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+function* createService(action) {
+  const serviceClient = yield select(getServiceClient);
+  const { data, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(serviceClient.create, data);
+    yield put({
+      type: actionTypes.CREATE_SERVICE_SUCCESS,
+    });
+    if (success) {
+      yield call(success, get(result, 'data', {}));
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.CREATE_SERVICE_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+function* updateService(action) {
+  const serviceClient = yield select(getServiceClient);
+  const { serviceId, data, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(serviceClient.update, serviceId, data);
+    yield put({
+      type: actionTypes.UPDATE_SERVICE_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.UPDATE_SERVICE_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+function* deleteService(action) {
+  const serviceClient = yield select(getServiceClient);
+  const { serviceId, success, error } = action.payload;
+  let result = null;
+  try {
+    result = yield call(serviceClient.delete, serviceId);
+    yield put({
+      type: actionTypes.DELETE_SERVICE_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.DELETE_SERVICE_FAILURE, payload: result });
+    if (error) {
+      yield call(error);
+    }
+  }
 }
 
 export default function* Profile() {
-  yield takeEvery(actions.createServices, createRequest);
-  yield takeEvery(actions.fetchServices, fetchRequest);
-  yield takeEvery(actions.deleteServices, deleteRequest);
-  yield takeEvery(actions.updateServices, updateRequest);
-  yield takeEvery(actions.filterServices, filterRequest);
-  yield takeEvery(actions.fetchOne, fetchOneRequest);
+  yield takeEvery(actionTypes.GET_SERVICES, getServices);
+  yield takeEvery(actionTypes.FILTER_SERVICES, getServices);
+  yield takeEvery(actionTypes.GET_SERVICE, getService);
+  yield takeEvery(actionTypes.CREATE_SERVICE, createService);
+  yield takeEvery(actionTypes.DELETE_SERVICE, deleteService);
+  yield takeEvery(actionTypes.UPDATE_SERVICE, updateService);
 }

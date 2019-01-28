@@ -39,7 +39,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.orders.page = get(payload, 'page', 1);
+        draft.orders.page = get(payload, 'params.page', 1);
         draft.errors = null;
       }),
     [actionTypes.GET_ORDERS_SUCCESS]: (state, action) =>
@@ -63,7 +63,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.newOrders.page = get(payload, 'page', 1);
+        draft.newOrders.page = get(payload, 'params.page', 1);
         draft.errors = null;
       }),
     [actionTypes.GET_NEW_ORDERS_SUCCESS]: (state, action) =>
@@ -87,7 +87,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.scheduledOrders.page = get(payload, 'page', 1);
+        draft.scheduledOrders.page = get(payload, 'params.page', 1);
         draft.errors = null;
       }),
     [actionTypes.GET_SCHEDULED_ORDERS_SUCCESS]: (state, action) =>
@@ -111,7 +111,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.assignedOrders.page = get(payload, 'page', 1);
+        draft.assignedOrders.page = get(payload, 'params.page', 1);
         draft.errors = null;
       }),
     [actionTypes.GET_ASSIGNED_ORDERS_SUCCESS]: (state, action) =>
@@ -135,7 +135,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.openOrders.page = get(payload, 'page', 1);
+        draft.openOrders.page = get(payload, 'params.page', 1);
         draft.errors = null;
       }),
     [actionTypes.GET_OPEN_ORDERS_SUCCESS]: (state, action) =>
@@ -159,7 +159,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.paidOrders.page = get(payload, 'page', 1);
+        draft.paidOrders.page = get(payload, 'params.page', 1);
         draft.errors = null;
       }),
     [actionTypes.GET_PAID_ORDERS_SUCCESS]: (state, action) =>
@@ -209,7 +209,7 @@ export default handleActions(
         const { type } = action;
         draft.currentStatus = type;
       }),
-    [actionTypes.CREATET_ORDER_FAILURE]: (state, action) =>
+    [actionTypes.CREATE_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
