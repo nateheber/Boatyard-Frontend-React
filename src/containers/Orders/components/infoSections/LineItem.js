@@ -1,14 +1,22 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { set } from 'lodash';
+import Select from 'react-select'
 import { Row, Col } from 'react-flexbox-grid'
 
 import { Input, TextArea } from 'components/basic/Input'
 
+import { FilterServices } from 'store/actions/services'
+
 import RemoveButton from '../basic/RemoveButton'
 
-const Record = styled(Row)`
+const Record = styled.div`
   padding: 15px 0px;
+`
+
+const Line = styled(Row)`
+  padding: 10px 0px;
 `;
 
 const Name = styled.div`
@@ -16,28 +24,44 @@ const Name = styled.div`
   line-height: 20px;
   font-size: 16px;
   font-family: "Source Sans Pro";
-  font-weight: 700;
+  font-weight: 600;
 `;
 
 const Value = styled.div`
-
-`
-
-const Comment = styled.div`
-  font-family: 'Source Sans Pro';
+  font-family: "Source Sans Pro";
   font-size: 16px;
+  font-weight: 400px;
   color: #07384b;
 `
 
-export default class LineItem extends React.Component {
+const Comment = styled.div`
+  font-family: "Source Sans Pro";
+  font-size: 16px;
+  font-weight: 400px;
+  color: #07384b;
+`
+
+class LineItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      serviceId: props.serviceId,
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
     }
   }
+
+  componentDidMount() {
+    this.props.FilterServices({ params: {} });
+  }
+
+  onChangeFilter = (val) => {
+    this.props.FilterServices({
+      params: { 'service[name]': val }
+    });
+  }
+
   onChange = (evt, field) => {
     const changeVal = {}
     set(changeVal, field, evt.target.value)
@@ -45,19 +69,59 @@ export default class LineItem extends React.Component {
       this.props.onChange(this.state);
     });
   }
+
+  onChangeService = (service) => {
+    const serviceId = service.value;
+    this.setState({ serviceId }, () => {
+      this.props.onChange(this.state)
+    })
+  }
+
   getServiceName = () => {
     const { serviceAttributes: { name } } = this.props;
     return name;
   }
+
+  getServiceId = () => {
+    const { serviceId } = this.props;
+    return serviceId;
+  }
+
+  getCurrentOption = () => ({ value: this.getServiceId(), label: this.getServiceName() })
+
+  filterOptions = () => {
+    const { filteredServices } = this.props;
+    const options = filteredServices.map(option => ({
+      value: option.id,
+      label: option.name
+    }))
+    const currentOption = { value: this.getServiceId(), label: this.getServiceName() };
+    const result = options.filter(option => option.value !== currentOption.value);
+    return [currentOption, ...result];
+  }
+
   render() {
     const { mode, onRemove } = this.props;
     const { quantity, cost, comment } = this.state;
     const name = this.getServiceName();
+    const options = this.filterOptions();
+    const currentOption = this.getCurrentOption();
     return (
-      <React.Fragment>
-        <Record>
+      <Record>
+        <Line>
           <Col md={4} sm={4} lg={4} xl={4} xs={4}>
-            <Name>{name}</Name>
+            {mode === 'edit' ? (
+              <Select
+                className="basic-single"
+                classNamePrefix="select"
+                options={options}
+                defaultValue={currentOption}
+                onInputChange={this.onChangeFilter}
+                onChange={this.onChangeService}
+              />
+            ) : (
+              <Name>{name}</Name>
+            )}
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
             {mode === 'edit' ? <Input type="text" value={quantity} onChange={(evt) => this.onChange(evt, 'quantity')} hideError /> : <Value>{quantity}</Value>}
@@ -73,8 +137,8 @@ export default class LineItem extends React.Component {
               <RemoveButton onClick={onRemove} />
             </Col>
           )}
-        </Record>
-        <Record>
+        </Line>
+        <Row>
           <Col sm={8}>
             {
               mode === 'edit' ? (
@@ -84,8 +148,18 @@ export default class LineItem extends React.Component {
               )
             }
           </Col>
-        </Record>
-      </React.Fragment>
+        </Row>
+      </Record>
     )
   }
 }
+
+const mapStateToProps = ({ service: { filteredServices } }) => ({
+  filteredServices
+})
+
+const mapDispatchToProps = {
+  FilterServices
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LineItem);

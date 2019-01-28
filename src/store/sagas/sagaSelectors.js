@@ -137,3 +137,29 @@ export const getCustomApiClient = state => {
       return APIGenerator.customApiClient('basic');
   }
 };
+
+export const getProviderLocationClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createProviderLocationClient('basic');
+    case 'admin':
+      return APIGenerator.createProviderLocationClient('admin');
+    case 'provider':
+      return APIGenerator.createProviderLocationClient('provider');
+    default:
+      return APIGenerator.createProviderLocationClient('basic');
+  }
+};
+
+export const getProviderLocationServiceClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createProviderLocationServiceClient('basic');
+    case 'admin':
+      return APIGenerator.createProviderLocationServiceClient('admin');
+    case 'provider':
+      return APIGenerator.createProviderLocationServiceClient('provider');
+    default:
+      return APIGenerator.createProviderLocationServiceClient('basic');
+  }
+};

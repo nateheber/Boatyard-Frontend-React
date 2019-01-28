@@ -60,6 +60,14 @@ export const createUserClient = authType => {
   return new CRUDClient('users', authType);
 };
 
+export const createProviderLocationServiceClient = authType => {
+  return new CRUDClient('provider_location_services', authType);
+}
+
+export const createProviderLocationClient = authType => {
+  return new CRUDClient('provider_locations', authType);
+}
+
 export const customApiClient = authType => {
   return new NormalClient(authType);
 };

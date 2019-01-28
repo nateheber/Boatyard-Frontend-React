@@ -23,95 +23,84 @@ class LineItemSection extends React.Component {
       mode: 'view'
     }
   }
+
   componentDidUpdate(prevProps) {
+    if (this.props.lineItems.length === 0 && prevProps.lineItems.length > 0) {
+      this.setState({ mode: 'view' })
+    }
     if (!deepEqual(this.props.lineItems, prevProps.lineItems)) {
-      this.setState({
-        lineItems: this.props.lineItems
-      })
+      this.setState({ lineItems: this.props.lineItems })
     }
   }
+
   onChange = (item, idx) => {
     const newItems = [...this.state.newItems];
-    const { serviceId, quantity, cost } = item;
+    const { serviceId, quantity, cost, comment } = item;
     const { providerId } = this.props;
     newItems[idx] = {
       serviceId: parseInt(serviceId),
       providerId,
       quantity: parseInt(quantity),
       cost: parseFloat(cost),
+      comment,
     };
-    this.setState({
-      newItems
-    })
+    this.setState({ newItems })
   }
+
   onChangeLineItems = (updateInfo, idx) => {
     const lineItems = this.state.lineItems.map((val) => ({...val}));
+    lineItems[idx].attributes.serviceId = updateInfo.serviceId;
     lineItems[idx].attributes.quantity = updateInfo.quantity;
     lineItems[idx].attributes.cost = updateInfo.cost;
+    lineItems[idx].attributes.comment = updateInfo.comment;
+    this.setState({ lineItems });
   }
+
   onEdit = () => {
-    this.setState({
-      mode: 'edit'
-    })
+    this.setState({ mode: 'edit' })
   }
+
   onSave = () => {
     const { mode } = this.state;
     if(mode === 'edit') {
       this.updateLineItems()
     }
     this.saveNewItems()
-    this.setState({
-      mode: 'view'
-    })
+    this.setState({ mode: 'view' })
   }
   updateLineItems = () => {
     const { lineItems } = this.state;
     const { orderId, updateLineItems, GetOrder } = this.props;
-    const updateInfo = lineItems.map(({id, attributes: { quantity, cost }}) => ({
-      id,
-      lineItem: {
-        quantity,
-        cost
-      }
-    }));
+    const updateInfo = lineItems.map(({id, attributes: { serviceId, quantity, cost, comment }}) => ({ id, lineItem: { serviceId, quantity, cost, comment } }));
     if (lineItems.length > 0) {
-      updateLineItems({ orderId, data: updateInfo, callback: () => GetOrder(orderId) });
+      updateLineItems({ orderId, data: updateInfo, callback: () => {GetOrder({orderId})}});
     }
   }
   addNewItem = () => {
     const { newItems } = this.state
-    this.setState({
-      newItems: [...newItems, {}]
-    })
+    this.setState({ newItems: [...newItems, {}] })
   }
   removeLineItem = (itemId) => {
-    const { orderId } = this.state;
-    this.props.deleteLineItem({
-      orderId,
-      itemId
-    })
+    const { orderId, GetOrder } = this.props;
+    this.props.deleteLineItem({ orderId, itemId, callback: () => { GetOrder({orderId}) } })
   }
   removeNewItem = (idx) => {
     const { newItems } = this.state
-    this.setState({
-      newItems: [...newItems.slice(0, idx), ...newItems.slice(idx + 1)]
-    })
+    this.setState({ newItems: [...newItems.slice(0, idx), ...newItems.slice(idx + 1)] })
   }
   saveNewItems = () => {
     const { newItems } = this.state;
     const { orderId, GetOrder } = this.props;
     this.props.createLineItems({ orderId, data: newItems, callback: () => {
-      this.setState({
-        newItems: []
-      })
-      GetOrder(orderId)}
+      this.setState({ newItems: [] })
+      GetOrder({orderId})}
     })
   }
   render () {
     const { newItems, mode, lineItems } = this.state;
-    const { updatedAt } = this.state;
+    const { updatedAt } = this.props;
     return (
-      <Section title={`Quotes - Update ${moment(updatedAt).format('M/D H:m A')}`} mode={mode} onEdit={this.onEdit} >
+      <Section title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`} mode={mode} onEdit={this.onEdit} >
         <QuoteHeader />
         {
           lineItems.map((val, idx) => (
@@ -129,9 +118,7 @@ class LineItemSection extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  ...orderSelector(state),
-})
+const mapStateToProps = state => ({ ...orderSelector(state) })
 
 const mapDispatchToProps = {
   updateLineItems,

@@ -4,14 +4,13 @@ import styled from 'styled-components'
 import Edit from 'resources/edit.svg'
 
 const Btn = styled.div`
-  width: 20px;
+  width: 17px;
   float: right;
   display: inline-block;
-  margin-top: 10px;
   cursor: pointer;
 `
 const Img = styled.img`
-  width: 20px;
+  width: 17px;
   object-fit: contain
 `
 

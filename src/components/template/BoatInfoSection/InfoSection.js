@@ -11,7 +11,7 @@ const Wrapper = styled.div`
 `;
 
 const Field = styled.div`
-  margin-bottom: 30px;
+  margin: 30px 0;
 `;
 
 const EditWrapper = styled.div`

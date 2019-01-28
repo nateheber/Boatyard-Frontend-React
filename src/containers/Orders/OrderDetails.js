@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import queryString from 'query-string'
 import { Row, Col } from 'react-flexbox-grid'
 import styled from 'styled-components'
-import { get } from 'lodash'
+import { get, set, findIndex, forEach } from 'lodash'
 
 import { GetOrder, UpdateOrder } from 'store/actions/orders'
 import { fetchLineItems } from 'store/reducers/lineItems'
@@ -20,62 +20,42 @@ import Scheduler from './components/templates/Scheduler'
 import PaymentsSection from './components/templates/Payments'
 import Timeline from './components/templates/Timeline'
 
+import { getProviderIdFromOrder } from 'utils/order'
+
 const Wrapper = styled.div`
-  padding: 30px;
+  padding: 30px 25px;
+`
+
+const Column = styled(Col)`
+  padding-right: 15px !important;
+  padding-left: 15px !important;
 `
 
 const getOrderDetails = (orderInfo) => {
   const included = get(orderInfo, 'included', [])
-  let boatInfo = {}
-  let customerInfo = {}
-  let providerInfo = {}
-  for (let i = 0; i < included.length; i += 1) {
-    switch (included[i].type) {
-      case 'boats': {
-        const {
-          id,
-          attributes
-        } = included[i];
-        boatInfo = {
-          id,
-          ...attributes
-        };
-        break;
-      }
-      case 'users': {
-        const {
-          id,
-          attributes: {
-            firstName,
-            lastName,
-            email,
-            phoneNumber,
-          }
-        } = included[i];
-        customerInfo = {
-          id,
-          firstName,
-          lastName,
-          email,
-          phoneNumber
-        }
-        break;
-      }
-      case 'providers': {
-        const {
-          id,
-        } = included[i];
-        providerInfo = {
-          id,
-          ...included[i].data
-        }
-        break;
-      }
-      default:
-      break;
-    }
+  const boatIdx = findIndex(included, item => item.type === 'boats');
+  const boatInfo = { id: get(included, `[${boatIdx}].id`), ...get(included, `[${boatIdx}].attributes`) }
+  const customerIdx = findIndex(included, item => item.type === 'users');
+  const customerInfo = {
+    id: get(included, `[${customerIdx}].id`), ...get(included, `[${customerIdx}].attributes`)
+  }
+  const providerIdx = findIndex(included, item => item.type === 'providers');
+  const providerInfo = {
+    id: get(included, `[${providerIdx}].id`), ...get(included, `[${providerIdx}].attributes`)
   }
   return { boatInfo, customerInfo, providerInfo };
+}
+
+const getLocations = (orderInfo) => {
+  const included = get(orderInfo, 'included', []);
+  const locations = {};
+  forEach(included, (item) => {
+    if (item.type === 'locations') {
+      const { id } = item;
+      set(locations, `${id}`, item);
+    }
+  })
+  return locations;
 }
 
 class OrderDetails extends React.Component {
@@ -88,9 +68,7 @@ class OrderDetails extends React.Component {
     const orderId = query.order;
     this.props.GetOrder({orderId});
     this.props.fetchLineItems(orderId);
-    this.setState({
-      orderId
-    })
+    this.setState({ orderId })
   }
 
   getOrderInfo = () => {
@@ -101,8 +79,7 @@ class OrderDetails extends React.Component {
 
   getProviderId = () => {
     const { currentOrder } = this.props;
-    const { providerInfo } = getOrderDetails(currentOrder);
-    return providerInfo.id;
+    return getProviderIdFromOrder(currentOrder);
   }
 
   getUserId = () => {
@@ -137,13 +114,36 @@ class OrderDetails extends React.Component {
     return updatedAt;
   }
 
+  editBoat = () => {
+    this.setState({ editBoat: true })
+  }
+
+  closeBoatEditor = () => {
+    this.setState({ editBoat: false })
+  }
+
+  updateBoat = (data) => {
+    const { boatInfo: { id } } = this.getOrderInfo();
+    const { orderId } = this.state;
+    this.props.updateBoats({ id, data, callback: () => { this.props.GetOrder({ orderId }) } })
+    this.setState({ editBoat: false })
+  }
+
   updateOrder = (data) => {
     const { orderId } = this.state;
     this.props.UpdateOrder({ orderId, data});
   }
 
+  getBoatLocation = (boatInfo) => {
+    const { currentOrder } = this.props;
+    const { locationId } = boatInfo;
+    const locations = getLocations(currentOrder);
+    return get(locations, `${locationId}`);
+  }
+
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
+    const boatLocation = this.getBoatLocation(boatInfo);
     const updatedDate = this.getUdpatedDate();
     const { orderId } = this.state;
     const providerId = this.getProviderId();
@@ -156,7 +156,7 @@ class OrderDetails extends React.Component {
         <OrderDetailHeader orderId={orderId} />
         <Wrapper>
           <Row>
-            <Col md={12} sm={12} xs={12} lg={8} xl={8}>
+            <Column md={12} sm={12} xs={12} lg={8} xl={8}>
               <SectionGroup>
                 <OrderSumarySection lineItem={lineItems[0]} />
                 <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
@@ -168,11 +168,12 @@ class OrderDetails extends React.Component {
               <SectionGroup>
                 <Scheduler orderId={orderId} />
               </SectionGroup>
-            </Col>
-            <Col md={12} sm={12} xs={12} lg={4} xl={4}>
+            </Column>
+            <Column md={12} sm={12} xs={12} lg={4} xl={4}>
               <SectionGroup>
                 <CustomerBoat
                   boatInfo={boatInfo}
+                  boatLocation={boatLocation}
                   customerInfo={customerInfo}
                   onEditBoat={() => this.editBoat()}
                 />
@@ -180,7 +181,7 @@ class OrderDetails extends React.Component {
               <SectionGroup>
                 <Timeline order={currentOrder} />
               </SectionGroup>
-            </Col>
+            </Column>
           </Row>
         </Wrapper>
       </React.Fragment>
