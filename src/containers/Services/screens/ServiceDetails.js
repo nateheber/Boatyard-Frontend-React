@@ -10,7 +10,7 @@ import {
 
 import { ServiceEditor } from '../components/ServiceEditor';
 
-import { updateServices, createServices } from 'store/reducers/services';
+import { UpdateService, CreateService } from 'store/actions/services';
 
 class ServiceDetails extends React.Component {
   constructor(props) {
@@ -155,14 +155,23 @@ class ServiceDetails extends React.Component {
 
   onSave = (mainValues) => {
     if (this.state.id) {
-      this.props.updateServices({
-        id: this.state.id,
-        data: mainValues
-      }, () => this.props.history.push('/services/'));
+      this.props.UpdateService({
+        serviceId: this.state.id,
+        data: mainValues,
+        success: () => {
+          this.props.history.push('/services/')
+        }
+      });
     } else {
-      this.props.createServices({
-        ...mainValues
-      }, () => this.props.history.push('/services/'));
+      this.props.CreateService({
+        data: {
+          'provider_id': 34,
+          ...mainValues
+        },
+        success: () => {
+          this.props.history.push('/services/')
+        }
+      });
     }
   };
   onCancel = () => {
@@ -191,8 +200,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = {
-  updateServices,
-  createServices,
+  UpdateService,
+  CreateService,
 };
 
 export default withRouter(

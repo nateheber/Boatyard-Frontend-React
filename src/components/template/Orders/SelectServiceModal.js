@@ -7,7 +7,7 @@ import Modal from 'components/compound/Modal';
 import { OrangeButton } from 'components/basic/Buttons';
 import { Selector } from 'components/basic/Input';
 
-import { filterServices, fetchOne } from 'store/reducers/services';
+import { FilterServices, GetService } from 'store/actions/services';
 
 const SubSectionTitle = styled.h5`
   text-transform: uppercase;
@@ -25,18 +25,21 @@ class SelectServiceModal extends React.Component {
     value: {}
   };
   componentDidMount() {
-    this.props.filterServices();
+    this.props.FilterServices();
   }
   onChangeServiceFilter = val => {
-    this.props.filterServices(val);
+    console.log('------------------------fetch all-----------')
+    this.props.FilterServices({
+      param: { 'service[name]': val }
+    });
   };
   onChangeService = val => {
     this.setState({
       service: val.value
     });
-    this.props.fetchOne({
-      id: val.value,
-      callback: this.onFetchService,
+    this.props.GetService({
+      serviceId: val.value,
+      success: this.onFetchService
     });
   };
   onFetchService = (service) => {
@@ -49,8 +52,8 @@ class SelectServiceModal extends React.Component {
   }
   render() {
     const action = [<OrangeButton onClick={this.next} key="modal_action_button">CREATE ORDER</OrangeButton>];
-    const { open, onClose, filtered } = this.props;
-    const options = filtered.map(option => ({
+    const { open, onClose, filteredServices } = this.props;
+    const options = filteredServices.map(option => ({
       value: option.id,
       label: option.name,
     }))
@@ -82,9 +85,9 @@ class SelectServiceModal extends React.Component {
   }
 }
 
-const mapStateToProps = ({ service: { filtered } }) => ({ filtered });
+const mapStateToProps = ({ service: { filteredServices } }) => ({ filteredServices });
 
-const mapDispatchToProps = { filterServices, fetchOne };
+const mapDispatchToProps = { FilterServices, GetService };
 
 export default connect(
   mapStateToProps,
