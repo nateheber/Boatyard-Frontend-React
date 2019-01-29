@@ -161,7 +161,7 @@ class CustomerDetails extends React.Component {
     const pageCount = this.getPageCount();
     const actions = [
       <HollowButton onClick={this.hideDeleteModal} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.deleteCustomer} key="modal_btn_save">Delete</OrangeButton>
+      <OrangeButton onClick={this.deleteCustomer} key="modal_btn_save">Confirm</OrangeButton>
     ];
 
     return (
@@ -199,13 +199,13 @@ class CustomerDetails extends React.Component {
           onSave={this.addNewBoat}
         />
         <Modal
-          title={'Confirm Deletion'}
+          title={'Are you sure?'}
           actions={actions}
+          normal={true}
           open={visibleofDeleteModal}
           onClose={this.hideDeleteModal}
         >
-          <Label>Are you sure want to delete {customerName}?</Label>
-          <Label>This action cannot be undone.</Label>
+          <Label>Deleting '{customerName}'' is permanent and cannot be undone.</Label>
         </Modal>
         {currentStatus === actionTypes.DELETE_CHILD_ACCOUNT && <LoadingSpinner
           loading={currentStatus === actionTypes.DELETE_CHILD_ACCOUNT}
