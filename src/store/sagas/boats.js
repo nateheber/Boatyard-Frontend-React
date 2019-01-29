@@ -17,9 +17,8 @@ const refineBoats = (boats) => {
 function* getBoats(action) {
   const boatClient = yield select(getBoatClient);
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(boatClient.list, params);
+    const result = yield call(boatClient.list, params);
     const boats = sortBy(get(result, 'data', []), 'id');
     const included = get(result, 'included', []);
     const { perPage, total } = result;
@@ -36,7 +35,7 @@ function* getBoats(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.GET_BOATS_FAILURE, payload: result });
+    yield put({ type: actionTypes.GET_BOATS_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -46,9 +45,8 @@ function* getBoats(action) {
 function* getBoat(action) {
   const boatClient = yield select(getBoatClient);
   const { boatId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(boatClient.read, boatId);
+    const result = yield call(boatClient.read, boatId);
     const { data: boat } = result;
     yield put({
       type: actionTypes.GET_BOAT_SUCCESS,
@@ -58,7 +56,7 @@ function* getBoat(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.GET_BOAT_FAILURE, payload: result });
+    yield put({ type: actionTypes.GET_BOAT_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -68,9 +66,8 @@ function* getBoat(action) {
 function* createBoat(action) {
   const boatClient = yield select(getBoatClient);
   const { data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(boatClient.create, data);
+    const result = yield call(boatClient.create, data);
     yield put({
       type: actionTypes.CREATE_BOAT_SUCCESS,
     });
@@ -78,7 +75,7 @@ function* createBoat(action) {
       yield call(success, get(result, 'data', {}));
     }
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_BOAT_FAILURE, payload: result });
+    yield put({ type: actionTypes.CREATE_BOAT_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -88,9 +85,8 @@ function* createBoat(action) {
 function* updateBoat(action) {
   const boatClient = yield select(getBoatClient);
   const { boatId, data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(boatClient.update, boatId, data);
+    yield call(boatClient.update, boatId, data);
     yield put({
       type: actionTypes.UPDATE_BOAT_SUCCESS,
     });
@@ -98,7 +94,7 @@ function* updateBoat(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.UPDATE_BOAT_FAILURE, payload: result });
+    yield put({ type: actionTypes.UPDATE_BOAT_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -108,9 +104,8 @@ function* updateBoat(action) {
 function* deleteBoat(action) {
   const boatClient = yield select(getBoatClient);
   const { boatId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(boatClient.delete, boatId);
+    yield call(boatClient.delete, boatId);
     yield put({
       type: actionTypes.DELETE_BOAT_SUCCESS,
     });
@@ -118,7 +113,7 @@ function* deleteBoat(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.DELETE_BOAT_FAILURE, payload: result });
+    yield put({ type: actionTypes.DELETE_BOAT_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }

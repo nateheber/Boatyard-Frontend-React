@@ -98,7 +98,7 @@ function* updateService(action) {
   const serviceClient = yield select(getServiceClient);
   const { serviceId, data, success, error } = action.payload;
   try {
-    const result = yield call(serviceClient.update, serviceId, data);
+    yield call(serviceClient.update, serviceId, data);
     yield put({
       type: actionTypes.UPDATE_SERVICE_SUCCESS,
     });
@@ -117,7 +117,7 @@ function* deleteService(action) {
   const serviceClient = yield select(getServiceClient);
   const { serviceId, success, error } = action.payload;
   try {
-    const result = yield call(serviceClient.delete, serviceId);
+    yield call(serviceClient.delete, serviceId);
     yield put({
       type: actionTypes.DELETE_SERVICE_SUCCESS,
     });

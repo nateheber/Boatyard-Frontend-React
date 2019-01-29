@@ -26,9 +26,8 @@ function* getProviders(action) {
   let successType = actionTypes.GET_PROVIDERS_SUCCESS;
   let failureType = actionTypes.GET_PROVIDERS_FAILURE;
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(adminApiClient.list, params);
+    const result = yield call(adminApiClient.list, params);
     const providers = get(result, 'data', []);
     const { perPage, total } = result;
     switch (action.type) {
@@ -52,7 +51,7 @@ function* getProviders(action) {
       yield call(success, refinedProviders);
     }
   } catch (e) {
-    yield put({ type: failureType, payload: result });
+    yield put({ type: failureType, payload: e });
     if (error) {
       yield call(error);
     }
@@ -101,7 +100,7 @@ function* loginWithProvider(action) {
       }
     }
   } catch (e) {
-    yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: result });
+    yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -112,13 +111,12 @@ function* getProvider(action) {
   const { providerId, success, error } = action.payload;
   const providers = yield select(getProvidersSelector);
   const filtered = filter(providers, provider => provider.id === providerId);
-  let result = null;
   try {
     let provider = {};
     if (!isEmpty(filtered)) {
       provider = filtered[0];
     } else {
-      result = yield call(adminApiClient.read, providerId);
+      const result = yield call(adminApiClient.read, providerId);
       const { data } = result;
       provider = { id: data.id, ...data.attributes };
     }
@@ -130,7 +128,7 @@ function* getProvider(action) {
       yield call(success, provider);
     }
   } catch (e) {
-    yield put({ type: actionTypes.GET_PROVIDER_FAILURE, payload: result });
+    yield put({ type: actionTypes.GET_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -139,9 +137,8 @@ function* getProvider(action) {
 
 function* createProvider(action) {
   const { data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(adminApiClient.create, data);
+    const result = yield call(adminApiClient.create, data);
     const id = get(result, 'data.id', false);
     yield call(customManagement.post, '/managements/', {
       management: {
@@ -156,7 +153,7 @@ function* createProvider(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_PROVIDER_FAILURE, payload: result });
+    yield put({ type: actionTypes.CREATE_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -165,9 +162,8 @@ function* createProvider(action) {
 
 function* updateProvider(action) {
   const { providerId, data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(adminApiClient.update, providerId, data);
+    const result = yield call(adminApiClient.update, providerId, data);
     const provider = get(result, 'data', {});
     yield put({
       type: actionTypes.UPDATE_PROVIDER_SUCCESS,
@@ -177,7 +173,7 @@ function* updateProvider(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.UPDATE_PROVIDER_FAILURE, payload: result });
+    yield put({ type: actionTypes.UPDATE_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -186,9 +182,8 @@ function* updateProvider(action) {
 
 function* deleteProvider(action) {
   const { providerId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(adminApiClient.delete, providerId);
+    yield call(adminApiClient.delete, providerId);
     yield put({
       type: actionTypes.DELETE_PROVIDER_SUCCESS,
     });
@@ -196,7 +191,7 @@ function* deleteProvider(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.DELETE_PROVIDER_FAILURE, payload: result });
+    yield put({ type: actionTypes.DELETE_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
