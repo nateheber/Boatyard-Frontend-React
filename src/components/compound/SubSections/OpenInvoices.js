@@ -22,11 +22,13 @@ class OpenInvoices extends React.Component {
 
   componentDidMount() {
     this.props.GetOpenOrders({
-      page: 1,
-      per_page: 5,
-      'order[state]': 'invoiced',
-      'order[sort]': 'desc',
-      'order[order]': 'created_at'
+      params: {
+        page: 1,
+        per_page: 5,
+        'order[state]': 'invoiced',
+        'order[sort]': 'desc',
+        'order[order]': 'created_at'  
+      }
     });
   }
 
