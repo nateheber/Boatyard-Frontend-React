@@ -5,7 +5,7 @@ import { findIndex } from 'lodash';
 
 import { ProviderDetails, ProviderHeader } from '../components';
 
-import { selectProvider, deleteProvider } from 'store/reducers/providers';
+import { LoginWithProvider, DeleteProvider } from 'store/actions/providers';
 
 class ServiceDetails extends React.Component {
   onCancel = () => {
@@ -28,14 +28,14 @@ class ServiceDetails extends React.Component {
   selectProvider = () => {
     const provider = this.getProvider();
     const { id } = provider;
-    const { selectProvider } = this.props;
-    selectProvider(id);
+    const { LoginWithProvider } = this.props;
+    LoginWithProvider({ providerId: id });
   };
   deleteProvider = () => {
     const provider = this.getProvider();
     const { id } = provider;
-    const { deleteProvider } = this.props;
-    deleteProvider(id);
+    const { DeleteProvider } = this.props;
+    DeleteProvider({ providerId: id });
   };
   render() {
     const provider = this.getProvider();
@@ -62,8 +62,8 @@ const mapStateToProps = ({ provider: { providers } }) => ({
 });
 
 const mapDispatchToProps = {
-  selectProvider,
-  deleteProvider
+  LoginWithProvider,
+  DeleteProvider
 };
 
 export default withRouter(
