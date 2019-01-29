@@ -164,10 +164,7 @@ class ServiceDetails extends React.Component {
       });
     } else {
       this.props.CreateService({
-        data: {
-          'provider_id': 34,
-          ...mainValues
-        },
+        data: mainValues,
         success: () => {
           this.props.history.push('/services/')
         }
