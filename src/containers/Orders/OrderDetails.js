@@ -19,6 +19,7 @@ import OrderDetailHeader from './components/templates/OrderDetailHeader'
 import Scheduler from './components/templates/Scheduler'
 import PaymentsSection from './components/templates/Payments'
 import Timeline from './components/templates/Timeline'
+import OrderAssignment from './components/templates/OrderAssignment'
 
 import { getProviderIdFromOrder } from 'utils/order'
 
@@ -170,6 +171,9 @@ class OrderDetails extends React.Component {
               </SectionGroup>
             </Column>
             <Column md={12} sm={12} xs={12} lg={4} xl={4}>
+              <SectionGroup>
+                <OrderAssignment />
+              </SectionGroup>
               <SectionGroup>
                 <CustomerBoat
                   boatInfo={boatInfo}
