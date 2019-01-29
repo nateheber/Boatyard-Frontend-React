@@ -159,17 +159,14 @@ class ServiceDetails extends React.Component {
         serviceId: this.state.id,
         data: mainValues,
         success: () => {
-          this.props.history.push('/services/')
+          this.props.history.push('/services/');
         }
       });
     } else {
       this.props.CreateService({
-        data: {
-          'provider_id': 34,
-          ...mainValues
-        },
+        data: mainValues,
         success: () => {
-          this.props.history.push('/services/')
+          this.props.history.push('/services/');
         }
       });
     }
@@ -192,10 +189,11 @@ class ServiceDetails extends React.Component {
 }
 
 const mapStateToProps = ({
-  service: { services },
+  service: { services, errors },
   category: { categories }
 }) => ({
   services,
+  errors,
   categories
 });
 

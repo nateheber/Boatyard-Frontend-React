@@ -17,12 +17,12 @@ export const responseInterceptor = client => {
     return response.data;
   }, (error) => {
     const errorData = get(error, 'response.data', {});
-    const message = get(error, 'response.data.message')
+    const message = get(error, 'response.data.message', '');
     if (message === 'Signature has expired') {
       store.dispatch(logout());
       return false;
     } else {
-      return {error: errorData};
+      throw errorData;
     }
   });
   return client;

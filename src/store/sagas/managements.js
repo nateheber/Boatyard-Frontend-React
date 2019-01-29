@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, findIndex } from 'lodash';
 
 import { actions } from '../reducers/management';
-import { actions as providerActions } from '../reducers/providers';
+import { actionTypes as providerActions } from '../actions/providers';
 import { actionTypes as userActions } from '../actions/users';
 import { getManagementClient, getManagements } from './sagaSelectors';
 
@@ -34,12 +34,12 @@ function* fetchRequest(action) {
         }
       });
       yield put({
-        type: providerActions.fetchProvider,
-        payload: providerId
+        type: providerActions.GET_PROVIDER,
+        payload: { providerId }
       });
       yield put({
         type: userActions.GET_USER,
-        payload: userId
+        payload: { userId }
       });
     }
   }
