@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import {
   get,
   findIndex,
-  startCase
+  startCase,
+  isNumber
 } from 'lodash';
 
 import { ServiceEditor } from '../components/ServiceEditor';
@@ -160,6 +162,18 @@ class ServiceDetails extends React.Component {
         data: mainValues,
         success: () => {
           this.props.history.push('/services/');
+        },
+        error: () => {
+          const { errors } = this.props;
+          if (errors && errors.length > 0) {
+            for (const key in errors) {
+              if (isNumber(key)) {
+                toastr.error(errors[key].join(''));
+              }else {
+                toastr.error(key, errors[key].join(''));
+              }
+            }
+          }
         }
       });
     } else {
@@ -167,6 +181,16 @@ class ServiceDetails extends React.Component {
         data: mainValues,
         success: () => {
           this.props.history.push('/services/');
+        },
+        error: () => {
+          const { errors } = this.props;
+          for (const key in errors) {
+            if (isNumber(key)) {
+              toastr.error(errors[key].join(''));
+            }else {
+              toastr.error(key, errors[key].join(''));
+            }
+          }
         }
       });
     }
