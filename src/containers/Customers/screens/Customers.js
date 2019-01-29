@@ -79,7 +79,7 @@ class Customers extends React.Component {
   createCustomer = (data) => {
     const { CreateChildAccount } = this.props;
     CreateChildAccount({
-      data : data,
+      data: { child_account: { ...data.user } },
       success: () => {
         this.closeNewModal();
         this.loadCustomers();
@@ -166,7 +166,7 @@ class Customers extends React.Component {
         />
         <CustomerModal
           open={showNewModal}
-          loading={currentStatus === actionTypes.CREATE_USER}
+          loading={currentStatus === actionTypes.CREATE_CHILD_ACCOUNT}
           onClose={this.closeNewModal}
           onSave={this.createCustomer}
         />

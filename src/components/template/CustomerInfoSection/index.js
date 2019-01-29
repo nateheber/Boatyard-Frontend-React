@@ -14,7 +14,7 @@ class CustomerInfoSection extends React.Component {
   onSave = (data) => {
     const { customerInfo: { id }, refreshInfo, UpdateChildAccount } = this.props;
     UpdateChildAccount({
-      childAccountId: id, data,
+      childAccountId: id, data: { child_account: { ...data.user } },
       success: () => {
         this.hideModal();
         refreshInfo();
@@ -52,7 +52,7 @@ class CustomerInfoSection extends React.Component {
         <CustomerModal
           title="Edit Customer"
           open={edit}
-          loading={currentStatus === actionTypes.UPDATE_USER}
+          loading={currentStatus === actionTypes.UPDATE_CHILD_ACCOUNT}
           customerInfo={customerInfo}
           onClose={this.hideModal}
           onSave={this.onSave}
@@ -63,8 +63,8 @@ class CustomerInfoSection extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  currentStatus: state.user.currentStatus,
-  errors: state.user.errors
+  currentStatus: state.childAccount.currentStatus,
+  errors: state.childAccount.errors
 });
 
 const mapDispatchToProps = {
