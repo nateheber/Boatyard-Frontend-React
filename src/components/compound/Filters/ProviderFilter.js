@@ -21,7 +21,7 @@ const FilterInput = styled(Input)`
 export const ProviderFilter = ({ onChangeFilter, onNewItem }) => (
   <ProviderFilterWrapper>
     <FilterInput
-      placeholder="Filter by name, contact, locatio, etc."
+      placeholder="Filter by name, contact, location, etc."
       onChange={onChangeFilter}
     />
     <OrangeButton onClick={onNewItem}>CREATE PROVIDER</OrangeButton>

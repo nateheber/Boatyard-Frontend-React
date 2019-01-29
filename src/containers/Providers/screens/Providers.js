@@ -26,6 +26,7 @@ class Providers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      keyword: '',
       sort: { col: 'name', direction: 'asc' },
       selectedColumns: PROVIDER_COLUMNS
     };
@@ -47,11 +48,20 @@ class Providers extends React.Component {
     });
   }
 
+  onChangeFilter = (val) => {
+    this.setState({
+      keyword: val.target.value
+    }, () => {
+      this.loadPage(1);
+    });
+  }
+
   loadPage = (page) => {
     const { GetProviders } = this.props;
-    const { sort } = this.state;
+    const { sort, keyword } = this.state;
     const params = {
       page: page,
+      'provider[name]': keyword,
       'provider[sort]': sort.direction,
       'provider[order]': sort.col
     };
@@ -77,7 +87,7 @@ class Providers extends React.Component {
           columns={PROVIDER_COLUMNS}
           selectedColumns={selectedColumns}
           onChangeColumns={this.onChangeColumns} />
-        <ProviderFilter onNewItem={this.createNew} />
+        <ProviderFilter onNewItem={this.createNew} onChangeFilter={this.onChangeFilter} />
         <Table
           columns={selectedColumns}
           records={providers}
