@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
-import { get } from 'lodash';
+import { get, isNumber } from 'lodash';
 
 import { actionTypes, CreateCreditCard } from 'store/actions/credit-cards';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
@@ -136,7 +136,13 @@ class CreateModal extends React.Component {
         error: () => {
           const { errors } = this.props;
           if (errors && errors.length > 0) {
-            toastr.error(errors[0].message);
+            for (const key in errors) {
+              if (isNumber(key)) {
+                toastr.error(errors[key].join(''));
+              }else {
+                toastr.error(key, errors[key].join(''));
+              }
+            }
           }
         }
       });

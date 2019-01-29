@@ -46,7 +46,7 @@ function* getServices(action) {
       yield call(success, refinedServices);
     }
   } catch (e) {
-    yield put({ type: failureType, payload: result });
+    yield put({ type: failureType, payload: e });
     if (error) {
       yield call(error);
     }
@@ -68,7 +68,7 @@ function* getService(action) {
       yield call(success, data, included);
     }
   } catch (e) {
-    yield put({ type: actionTypes.GET_SERVICE_FAILURE, payload: result });
+    yield put({ type: actionTypes.GET_SERVICE_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -78,9 +78,8 @@ function* getService(action) {
 function* createService(action) {
   const serviceClient = yield select(getServiceClient);
   const { data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(serviceClient.create, data);
+    const result = yield call(serviceClient.create, data);
     yield put({
       type: actionTypes.CREATE_SERVICE_SUCCESS,
     });
@@ -88,7 +87,7 @@ function* createService(action) {
       yield call(success, get(result, 'data', {}));
     }
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_SERVICE_FAILURE, payload: result });
+    yield put({ type: actionTypes.CREATE_SERVICE_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -98,9 +97,8 @@ function* createService(action) {
 function* updateService(action) {
   const serviceClient = yield select(getServiceClient);
   const { serviceId, data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(serviceClient.update, serviceId, data);
+    yield call(serviceClient.update, serviceId, data);
     yield put({
       type: actionTypes.UPDATE_SERVICE_SUCCESS,
     });
@@ -108,7 +106,7 @@ function* updateService(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.UPDATE_SERVICE_FAILURE, payload: result });
+    yield put({ type: actionTypes.UPDATE_SERVICE_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -118,9 +116,8 @@ function* updateService(action) {
 function* deleteService(action) {
   const serviceClient = yield select(getServiceClient);
   const { serviceId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(serviceClient.delete, serviceId);
+    yield call(serviceClient.delete, serviceId);
     yield put({
       type: actionTypes.DELETE_SERVICE_SUCCESS,
     });
@@ -128,7 +125,7 @@ function* deleteService(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.DELETE_SERVICE_FAILURE, payload: result });
+    yield put({ type: actionTypes.DELETE_SERVICE_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }

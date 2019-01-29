@@ -24,13 +24,13 @@ const Header = styled.div`
 
 const Body = styled.div`
   box-sizing: border-box;
-  min-height: 265px;
+  // min-height: 265px;
 `;
 
 const Content = styled.div`
   box-sizing: border-box;
   padding: 30px;
-  min-height: 265px;
+  // min-height: 265px;
 `;
 
 const ActionWrapper = styled.div`
@@ -74,15 +74,31 @@ const modalStyles = {
     closeIcon: {
       fill: '#003247'
     }
+  },
+  normal: {
+    overlay: {
+      background: 'transparent'
+    },
+    modal: {
+      padding: '0px',
+      width: '550px'
+    },
+    closeButton: {
+      top: '25px',
+      right: '15px'
+    },
+    closeIcon: {
+      fill: '#003247'
+    }
   }
 };
 
 export default class CustomModal extends React.Component {
   render() {
-    const { open, onClose, children, title, actions, small, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
+    const { open, onClose, children, title, actions, small, normal, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
     return (
       <Modal
-        styles={small ? modalStyles.small : modalStyles.main}
+        styles={small ? modalStyles.small : normal ? modalStyles.normal : modalStyles.main}
         open={open}
         onClose={onClose}
         style={{width: '300px'}}

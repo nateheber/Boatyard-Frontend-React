@@ -45,7 +45,7 @@ export default class OrderSumarySection extends React.Component {
       <Section title="Timeline">
         {
           timelineItems.map((item, idx) => (
-            <TimelineItem key={`timeline_${idx}`}>{item}</TimelineItem>
+            <TimelineItem key={`timeline_${idx}`}>{item.message}</TimelineItem>
           ))
         }
       </Section>

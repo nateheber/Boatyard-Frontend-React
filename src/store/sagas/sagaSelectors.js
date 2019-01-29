@@ -1,7 +1,6 @@
 import * as APIGenerator from '../../api';
 
 export const getAuthToken = state => state.auth.authToken;
-export const getProviders = state => state.provider.providers;
 export const getManagements = state => state.management.managements;
 export const getUsers = state => state.user.users;
 export const getUsersPageNumber = state => state.user.page;
@@ -31,6 +30,19 @@ export const getUserClient = state => {
       return APIGenerator.createUserClient('provider');
     default:
       return APIGenerator.createUserClient('basic');
+  }
+};
+
+export const getChildAccountClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createChildAccountClient('basic');
+    case 'admin':
+      return APIGenerator.createChildAccountClient('admin');
+    case 'provider':
+      return APIGenerator.createChildAccountClient('provider');
+    default:
+      return APIGenerator.createChildAccountClient('basic');
   }
 };
 

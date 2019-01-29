@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
+import {isNumber } from 'lodash';
 
-import { actionTypes, UpdateUser } from 'store/actions/users'
+import { actionTypes, UpdateChildAccount } from 'store/actions/child-accounts'
 import InfoSection from './InfoSection';
 import CustomerModal from './CustomerModal';
 
@@ -11,9 +12,9 @@ class CustomerInfoSection extends React.Component {
     edit: false,
   }
   onSave = (data) => {
-    const { customerInfo: { id }, refreshInfo, UpdateUser } = this.props;
-    UpdateUser({
-      userId: id, data,
+    const { customerInfo: { id }, refreshInfo, UpdateChildAccount } = this.props;
+    UpdateChildAccount({
+      childAccountId: id, data: { child_account: { ...data.user } },
       success: () => {
         this.hideModal();
         refreshInfo();
@@ -21,7 +22,13 @@ class CustomerInfoSection extends React.Component {
       error: () => {
         const { errors } = this.props;
         if (errors && errors.length > 0) {
-          toastr.error(errors[0].message);
+          for (const key in errors) {
+            if (isNumber(key)) {
+              toastr.error(errors[key].join(''));
+            }else {
+              toastr.error(key, errors[key].join(''));
+            }
+          }
         }
       }
     })
@@ -45,7 +52,7 @@ class CustomerInfoSection extends React.Component {
         <CustomerModal
           title="Edit Customer"
           open={edit}
-          loading={currentStatus === actionTypes.UPDATE_USER}
+          loading={currentStatus === actionTypes.UPDATE_CHILD_ACCOUNT}
           customerInfo={customerInfo}
           onClose={this.hideModal}
           onSave={this.onSave}
@@ -56,12 +63,12 @@ class CustomerInfoSection extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  currentStatus: state.user.currentStatus,
-  errors: state.user.errors
+  currentStatus: state.childAccount.currentStatus,
+  errors: state.childAccount.errors
 });
 
 const mapDispatchToProps = {
-  UpdateUser
+  UpdateChildAccount
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CustomerInfoSection);

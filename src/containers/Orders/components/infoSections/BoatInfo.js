@@ -33,7 +33,6 @@ const FieldValue = styled.div`
 `;
 
 const getLocationAddressString = (location) => {
-  console.log(location)
   const address = get(location, 'relationships.address.data');
   const street = get(address, 'street', '');
   const city = get(address, 'city', '');

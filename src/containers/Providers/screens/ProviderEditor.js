@@ -5,7 +5,7 @@ import queryString from 'query-string';
 import { findIndex } from 'lodash';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-import { createProvider, updateProvider } from 'store/reducers/providers';
+import { CreateProvider, UpdateProvider } from 'store/actions/providers';
 
 import { AccountEditor, AccountCreator, HeaderEditor } from '../components';
 
@@ -50,17 +50,17 @@ class ProviderEditFlow extends React.Component {
   onSave = data => {
     const { id } = this.state;
     if (id !== -1) {
-      this.props.updateProvider({
-        id,
+      this.props.UpdateProvider({
+        providerId: id,
         data
       });
       this.setState({
         ...data
       });
     } else {
-      this.props.createProvider({
+      this.props.CreateProvider({
         data,
-        callback: providerId => {
+        success: providerId => {
           this.setState({
             id: providerId,
             ...data
@@ -104,8 +104,8 @@ const mapStateToProps = ({ provider: { providers } }) => ({
 });
 
 const mapDispatchToProps = {
-  createProvider,
-  updateProvider,
+  CreateProvider,
+  UpdateProvider,
 };
 
 export default withRouter(

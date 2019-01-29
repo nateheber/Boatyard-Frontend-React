@@ -1,13 +1,13 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
 import { get } from 'lodash';
-import { actionTypes } from '../actions/providers';
+import { actionTypes } from '../actions/child-accounts';
 
 const initialState = {
   currentStatus: '',
-  providers: [],
-  filteredProviders: [],
-  currentProvider: {},
+  childAccounts: [],
+  filteredChildAccounts: [],
+  currentChildAccount: {},
   page: 1,
   perPage: 20,
   total: 0,
@@ -17,138 +17,119 @@ const initialState = {
 
 export default handleActions(
   {
-    [actionTypes.GET_PROVIDERS]: (state, action) =>
-      produce(state, draft => {
-        const { type, payload } = action;
-        draft.currentStatus = type;
-        draft.page = get(payload, 'params.page', 0);
-        draft.errors = null;
-      }),
-    [actionTypes.GET_PROVIDERS_SUCCESS]: (state, action) =>
-      produce(state, draft => {
-        const { type, payload } = action;
-        const { total, perPage, providers } = payload;
-        draft.currentStatus = type;
-        draft.total = total;
-        draft.perPage = perPage;
-        draft.providers = providers;
-      }),
-    [actionTypes.GET_PROVIDERS_FAILURE]: (state, action) =>
-      produce(state, draft => {
-        const { type, payload } = action;
-        draft.currentStatus = type;
-        draft.errors = payload;
-      }),
-
-    [actionTypes.FILTER_PROVIDERS]: (state, action) =>
+    [actionTypes.GET_CHILD_ACCOUNTS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.page = get(payload, 'params.page', 1);
         draft.errors = null;
       }),
-    [actionTypes.FILTER_PROVIDERS_SUCCESS]: (state, action) =>
+    [actionTypes.GET_CHILD_ACCOUNTS_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
-        const { total, perPage, providers } = payload;
+        const { total, perPage, childAccounts } = payload;
         draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
-        draft.filteredProviders = providers;
+        draft.childAccounts = childAccounts;
       }),
-    [actionTypes.FILTER_PROVIDERS_FAILURE]: (state, action) =>
+    [actionTypes.GET_CHILD_ACCOUNTS_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
       }),
 
-    [actionTypes.LOGIN_WITH_PROVIDER]: (state, action) =>
+    [actionTypes.FILTER_CHILD_ACCOUNTS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload } = action;
         draft.currentStatus = type;
+        draft.page = get(payload, 'params.page', 1);
         draft.errors = null;
       }),
-    [actionTypes.LOGIN_WITH_PROVIDER_SUCCESS]: (state, action) =>
+    [actionTypes.FILTER_CHILD_ACCOUNTS_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload } = action;
+        const { total, perPage, childAccounts } = payload;
         draft.currentStatus = type;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.filteredChildAccounts = childAccounts;
       }),
-    [actionTypes.LOGIN_WITH_PROVIDER_FAILURE]: (state, action) =>
+    [actionTypes.FILTER_CHILD_ACCOUNTS_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
       }),
 
-    [actionTypes.GET_PROVIDER]: (state, action) =>
+    [actionTypes.GET_CHILD_ACCOUNT]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
         draft.errors = null;
       }),
-    [actionTypes.GET_PROVIDER_SUCCESS]: (state, action) =>
+    [actionTypes.GET_CHILD_ACCOUNT_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.currentProvider = payload;
+        draft.currentChildAccount = payload;
       }),
-    [actionTypes.GET_PROVIDER_FAILURE]: (state, action) =>
+    [actionTypes.GET_CHILD_ACCOUNT_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
       }),
 
-    [actionTypes.CREATE_PROVIDER]: (state, action) =>
+    [actionTypes.CREATE_CHILD_ACCOUNT]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
         draft.errors = null;
       }),
-    [actionTypes.CREATE_PROVIDER_SUCCESS]: (state, action) =>
-      produce(state, draft => {
-        const { type, payload } = action;
-        draft.currentStatus = type;
-        draft.currentProvider = payload;
-      }),
-    [actionTypes.CREATE_PROVIDER_FAILURE]: (state, action) =>
-      produce(state, draft => {
-        const { type, payload } = action;
-        draft.currentStatus = type;
-        draft.errors = payload;
-      }),
-
-    [actionTypes.UPDATE_PROVIDER]: (state, action) =>
-      produce(state, draft => {
-        const { type } = action;
-        draft.currentStatus = type;
-        draft.errors = null;
-      }),
-    [actionTypes.UPDATE_PROVIDER_SUCCESS]: (state, action) =>
+    [actionTypes.CREATE_CHILD_ACCOUNT_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
       }),
-    [actionTypes.UPDATE_PROVIDER_FAILURE]: (state, action) =>
+    [actionTypes.CREATE_CHILD_ACCOUNT_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
       }),
 
-    [actionTypes.DELETE_PROVIDER]: (state, action) =>
+    [actionTypes.UPDATE_CHILD_ACCOUNT]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
         draft.errors = null;
       }),
-    [actionTypes.DELETE_PROVIDER_SUCCESS]: (state, action) =>
+    [actionTypes.UPDATE_CHILD_ACCOUNT_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
       }),
-    [actionTypes.DELETE_PROVIDER_FAILURE]: (state, action) =>
+    [actionTypes.UPDATE_CHILD_ACCOUNT_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.DELETE_CHILD_ACCOUNT]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.DELETE_CHILD_ACCOUNT_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.DELETE_CHILD_ACCOUNT_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;

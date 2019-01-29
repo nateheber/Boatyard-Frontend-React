@@ -91,7 +91,8 @@ class LineItem extends React.Component {
 
   filterOptions = () => {
     const { filteredServices } = this.props;
-    const options = filteredServices.map(option => ({
+    const services = filteredServices || [];
+    const options = services.map(option => ({
       value: option.id,
       label: option.name
     }))

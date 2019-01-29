@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 
 import { actions } from '../reducers/auth';
 import { actions as ProfileActions } from '../reducers/profile';
-import { actions as ProviderActions } from '../reducers/providers';
+import { actionTypes as ProviderActions } from '../actions/providers';
 
 import { login, signup } from '../../api/auth';
 
@@ -60,7 +60,7 @@ function* loginRequest(action) {
   }
 }
 
-function* userPermissionRequest() {
+function* userPermissionRequest(action) {
   const result = yield call(escalationClient.post, '/users/escalations', {
     escalation: { admin: true }
   });
@@ -75,7 +75,7 @@ function* userPermissionRequest() {
     });
   } else {
     yield put({
-      type: ProviderActions.selectProvider
+      type: ProviderActions.LOGIN_WITH_PROVIDER
     });
   }
 }

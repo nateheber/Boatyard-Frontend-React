@@ -22,6 +22,7 @@ const DropdownMenu = styled.ul`
   width: 200px;
   min-height: 70px;
   padding: 0;
+  z-index: 1;
   &::before {
     height: 100%;
     display: block;

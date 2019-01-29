@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import {
   get,
   findIndex,
-  startCase
+  startCase,
+  isNumber
 } from 'lodash';
 
 import { ServiceEditor } from '../components/ServiceEditor';
@@ -159,17 +161,36 @@ class ServiceDetails extends React.Component {
         serviceId: this.state.id,
         data: mainValues,
         success: () => {
-          this.props.history.push('/services/')
+          this.props.history.push('/services/');
+        },
+        error: () => {
+          const { errors } = this.props;
+          if (errors && errors.length > 0) {
+            for (const key in errors) {
+              if (isNumber(key)) {
+                toastr.error(errors[key].join(''));
+              }else {
+                toastr.error(key, errors[key].join(''));
+              }
+            }
+          }
         }
       });
     } else {
       this.props.CreateService({
-        data: {
-          'provider_id': 34,
-          ...mainValues
-        },
+        data: mainValues,
         success: () => {
-          this.props.history.push('/services/')
+          this.props.history.push('/services/');
+        },
+        error: () => {
+          const { errors } = this.props;
+          for (const key in errors) {
+            if (isNumber(key)) {
+              toastr.error(errors[key].join(''));
+            }else {
+              toastr.error(key, errors[key].join(''));
+            }
+          }
         }
       });
     }
@@ -192,10 +213,11 @@ class ServiceDetails extends React.Component {
 }
 
 const mapStateToProps = ({
-  service: { services },
+  service: { services, errors },
   category: { categories }
 }) => ({
   services,
+  errors,
   categories
 });
 
