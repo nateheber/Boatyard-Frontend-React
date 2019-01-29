@@ -151,21 +151,21 @@ export default class CustomerModal extends React.Component {
   onSave = () => {
     if (this.mainInfoFields.validateFields()) {
       const values = this.mainInfoFields.getFieldValues();
-      let user = {};
+      let child_account = {};
       const address_attributes = {}
       for (const key in values) {
         const value = get(values, key, '');
         if(mainFields.indexOf(key) > -1) {
-          user[key] = value;
+          child_account[key] = value;
         } else if (locationFields.indexOf(key) > -1) {
           address_attributes[key] = value;
         }
       }
-      user = {
-        ...user,
+      child_account = {
+        ...child_account,
         location_attributes: { address_attributes }
       };
-      this.props.onSave({ user });
+      this.props.onSave({ child_account });
     }
   }
 

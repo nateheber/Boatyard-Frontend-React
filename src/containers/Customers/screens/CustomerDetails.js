@@ -6,7 +6,7 @@ import { Row, Col } from 'react-flexbox-grid';
 import { get } from 'lodash';
 import styled from 'styled-components';
 
-import { GetUser } from 'store/actions/users';
+import { GetChildAccount } from 'store/actions/child-accounts';
 import { GetBoats, CreateBoat } from 'store/actions/boats';
 import { GetOrders } from 'store/actions/orders';
 import { GetCreditCards } from 'store/actions/credit-cards';
@@ -37,11 +37,11 @@ class CustomerDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const customerId = query.customer;
-    this.props.GetUser({ userId: customerId });
-    this.props.GetOrders({ params: { 'order[user_id]': customerId, page: 1 } });
-    this.props.GetBoats({ params: { 'boat[user_id]': customerId } });
+    this.props.GetChildAccount({ childAccountId: customerId });
+    this.props.GetOrders({ params: { 'order[child_account_id]': customerId, page: 1 } });
+    this.props.GetBoats({ params: { 'boat[child_account_id]': customerId } });
     this.props.GetCreditCards({
-      params: { 'credit_card[user_id]': customerId }
+      params: { 'credit_card[child_account_id]': customerId }
     });
     this.setState({
       customerId,
@@ -50,7 +50,7 @@ class CustomerDetails extends React.Component {
 
   changePage = (page) => {
     const { customerId } = this.state;
-    this.props.GetOrders({ params: { 'order[user_id]': customerId, page: page } });
+    this.props.GetOrders({ params: { 'order[child_account_id]': customerId, page: page } });
   }
 
   getPageCount = () => {
@@ -59,10 +59,10 @@ class CustomerDetails extends React.Component {
   }
   refreshInfo = () => {
     const { customerId } = this.state;
-    this.props.GetUser({ userId: customerId });
-    this.props.GetOrders({ params: { 'order[user_id]': customerId, page: 1 } });
+    this.props.GetChildAccount({ childAccountId: customerId });
+    this.props.GetOrders({ params: { 'order[child_account_id]': customerId, page: 1 } });
     this.props.GetCreditCards({
-      params: { 'credit_card[user_id]': customerId }
+      params: { 'credit_card[child_account_id]': customerId }
     });
     this.setState({
       customerId,
@@ -71,7 +71,7 @@ class CustomerDetails extends React.Component {
   refreshCards = () => {
     const { customerId } = this.state;
     this.props.GetCreditCards({
-      params: { 'credit_card[user_id]': customerId }
+      params: { 'credit_card[child_account_id]': customerId }
     });
   }
 
@@ -97,13 +97,13 @@ class CustomerDetails extends React.Component {
     CreateBoat({
       data: {
         boat: {
-          user_id: customerId,
+          child_account_id: customerId,
           ...data.boat,
         }
       },
       success: () => {
         this.hideBoatModal();
-        this.props.GetBoats({ params: { 'boat[user_id]': customerId } });
+        this.props.GetBoats({ params: { 'boat[child_account_id]': customerId } });
       },
       error: () => {
       }
@@ -111,11 +111,11 @@ class CustomerDetails extends React.Component {
   };
 
   render() {
-    const { currentUser, page, orders } = this.props
+    const { currentChildAccount, page, orders } = this.props
     const { customerId, visibleOfBoatModal } = this.state;
-    const id = get(currentUser, 'id', '')
-    const customerName = `${get(currentUser, 'attributes.firstName')} ${get(currentUser, 'attributes.lastName')}`;
-    const attributes = get(currentUser, 'attributes', {})
+    const id = get(currentChildAccount, 'id', '')
+    const customerName = `${get(currentChildAccount, 'attributes.firstName')} ${get(currentChildAccount, 'attributes.lastName')}`;
+    const attributes = get(currentChildAccount, 'attributes', {})
     const columns = [
       { label: 'orders', value: 'id' },
       { label: 'boat name', value: 'relationships.boat.attributes.name' },
@@ -144,7 +144,7 @@ class CustomerDetails extends React.Component {
             <SectionGroup>
               <Section title={"Customer & Boat Info"}>
                 <CustomerInfoSection customerInfo={{ id, ...attributes }} refreshInfo={this.refreshInfo} />
-                <BoatInfoSection customerId={customerId} />
+                <BoatInfoSection type="ChildAccount" customerId={customerId} />
                 <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>
               </Section>
             </SectionGroup>
@@ -165,7 +165,7 @@ class CustomerDetails extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  currentUser: state.user.currentUser,
+  currentChildAccount: state.childAccount.currentChildAccount,
   page: state.order.newOrders.total,
   perPage: state.order.newOrders.total,
   total: state.order.newOrders.total,
@@ -173,7 +173,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  GetUser,
+  GetChildAccount,
   GetBoats,
   CreateBoat,
   GetOrders,

@@ -25,7 +25,7 @@ const Wrapper = styled.div`
 `;
 
 const SearchWrapper = styled.div`
-  padding: 30px;
+  padding: 0 30px 15px;
 `;
 
 class Customers extends React.Component {
@@ -129,9 +129,9 @@ class Customers extends React.Component {
     const { showNewModal } = this.state;
     const pageCount = this.getPageCount();
     const columns = [
-      { label: 'name', value: 'firstName/lastName' },
-      { label: 'phone', value: 'phoneNumber' },
-      { label: 'email', value: 'email' },
+      { label: 'name', value: 'attributes.firstName/attributes.lastName' },
+      { label: 'phone', value: 'attributes.phoneNumber' },
+      { label: 'email', value: 'attributes.email' },
       { label: 'location', value: 'location' },
       { label: 'last order', value: 'lastOrder' },
       { label: 'orders', value: 'orders' },

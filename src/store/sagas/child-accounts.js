@@ -4,21 +4,11 @@ import { get } from 'lodash';
 import { actionTypes } from '../actions/child-accounts';
 import { getChildAccountClient } from './sagaSelectors';
 
-const refineChildAccounts = (childAccounts) => {
-  return childAccounts.map(childAccount => {
-    return {
-      id: childAccount.id,
-      ...childAccount.attributes
-    };
-  });
-};
-
 function* getChildAccounts(action) {
   const childAccountClient = yield select(getChildAccountClient);
   let successType = actionTypes.GET_CHILD_ACCOUNTS_SUCCESS;
   let failureType = actionTypes.GET_CHILD_ACCOUNTS_FAILURE;
   const { params, success, error } = action.payload;
-  console.log('--------PARAMS----', params);
   try {
     const result = yield call(childAccountClient.list, params);
     const childAccounts = get(result, 'data', []);
@@ -31,17 +21,16 @@ function* getChildAccounts(action) {
       }
       default:
     }
-    const refinedChildAccounts = refineChildAccounts(childAccounts);
     yield put({
       type: successType,
       payload: {
-        childAccounts: refinedChildAccounts,
+        childAccounts: childAccounts,
         perPage,
         total,
       }
     });
     if (success) {
-      yield call(success, refinedChildAccounts);
+      yield call(success, childAccounts);
     }
   } catch (e) {
     yield put({ type: failureType, payload: e });
@@ -56,10 +45,10 @@ function* getChildAccount(action) {
   const { childAccountId, success, error } = action.payload;
   try {
     const result = yield call(childAccountClient.read, childAccountId);
-    const { data: childAccount } = result;
+    const { data } = result;
     yield put({
       type: actionTypes.GET_CHILD_ACCOUNT_SUCCESS,
-      payload: childAccount
+      payload: data
     });
     if (success) {
       yield call(success);

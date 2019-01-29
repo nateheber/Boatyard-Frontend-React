@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import {isNumber } from 'lodash';
 
-import { actionTypes, UpdateUser } from 'store/actions/users'
+import { actionTypes, UpdateChildAccount } from 'store/actions/child-accounts'
 import InfoSection from './InfoSection';
 import CustomerModal from './CustomerModal';
 
@@ -12,9 +12,9 @@ class CustomerInfoSection extends React.Component {
     edit: false,
   }
   onSave = (data) => {
-    const { customerInfo: { id }, refreshInfo, UpdateUser } = this.props;
-    UpdateUser({
-      userId: id, data,
+    const { customerInfo: { id }, refreshInfo, UpdateChildAccount } = this.props;
+    UpdateChildAccount({
+      childAccountId: id, data,
       success: () => {
         this.hideModal();
         refreshInfo();
@@ -68,7 +68,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  UpdateUser
+  UpdateChildAccount
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CustomerInfoSection);
