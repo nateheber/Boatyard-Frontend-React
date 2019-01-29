@@ -14,6 +14,7 @@ import PaymentSaga from './payments';
 import CreditCardSaga from './credit-cards';
 import ProviderLocationSaga from './providerLocations';
 import ProviderLocationServiceSaga from './providerLocationServices';
+import ChildAccounts from './child-accounts';
 
 export default function* mainSaga() {
   yield all([
@@ -31,5 +32,6 @@ export default function* mainSaga() {
     fork(CreditCardSaga),
     fork(ProviderLocationSaga),
     fork(ProviderLocationServiceSaga),
+    fork(ChildAccounts)
   ]);
 }

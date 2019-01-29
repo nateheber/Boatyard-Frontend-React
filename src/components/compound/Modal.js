@@ -24,13 +24,13 @@ const Header = styled.div`
 
 const Body = styled.div`
   box-sizing: border-box;
-  min-height: 265px;
+  // min-height: 265px;
 `;
 
 const Content = styled.div`
   box-sizing: border-box;
   padding: 30px;
-  min-height: 265px;
+  // min-height: 265px;
 `;
 
 const ActionWrapper = styled.div`

@@ -7,7 +7,12 @@ import AsyncSelect from 'react-select/lib/Async';
 import { Row, Col } from 'react-flexbox-grid';
 import { isNumber } from 'lodash';
 
-import { actionTypes, GetUsers, FilterUsers, CreateUser } from 'store/actions/users';
+import {
+  actionTypes,
+  GetChildAccounts,
+  FilterChildAccounts,
+  CreateChildAccount
+} from 'store/actions/child-accounts';
 import Table from 'components/basic/Table';
 import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
@@ -20,7 +25,7 @@ const Wrapper = styled.div`
 `;
 
 const SearchWrapper = styled.div`
-  padding: 30px;
+  padding: 0 30px 15px;
 `;
 
 class Customers extends React.Component {
@@ -36,28 +41,28 @@ class Customers extends React.Component {
   }
 
   loadCustomers = (page) => {
-    this.props.GetUsers({
+    this.props.GetChildAccounts({
       params: { page: page || 1 }
     });
   };
 
   loadOptions = val => {
-    return this.onChangeUserFilter(val)
+    return this.onChangeCustomerFilter(val)
     .then((filtered) => {
-      return filtered.map(user => ({
-        value: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email
+      return filtered.map(childAccount => ({
+        value: childAccount.id,
+        firstName: childAccount.firstName,
+        lastName: childAccount.lastName,
+        email: childAccount.email
       }));
     }, () => {
       return [];
     });
   };
 
-  onChangeUserFilter = val => {
+  onChangeCustomerFilter = val => {
     return new Promise((resolve, reject) => {
-      this.props.FilterUsers({
+      this.props.FilterChildAccounts({
         params: {
           'search_by_full_name': val
         },
@@ -67,20 +72,15 @@ class Customers extends React.Component {
     });
   };
 
-  onChangeUser = (val) => {
+  onChangeCustomer = (val) => {
     this.props.history.push(`/customer-details/?customer=${val.value}`);
   };
 
   createCustomer = (data) => {
-    const { CreateUser } = this.props;
-    CreateUser({
-      data : {
-        user: {
-          ...data.user,
-          password: '_nHEm4?v^MJL[F5g'
-        }
-      },
-      success: (user) => {
+    const { CreateChildAccount } = this.props;
+    CreateChildAccount({
+      data: { child_account: { ...data.user } },
+      success: () => {
         this.closeNewModal();
         this.loadCustomers();
       },
@@ -125,13 +125,13 @@ class Customers extends React.Component {
   };
 
   render() {
-    const { currentStatus, page, users } = this.props;
+    const { currentStatus, page, childAccounts } = this.props;
     const { showNewModal } = this.state;
     const pageCount = this.getPageCount();
     const columns = [
-      { label: 'name', value: 'firstName/lastName' },
-      { label: 'phone', value: 'phoneNumber' },
-      { label: 'email', value: 'email' },
+      { label: 'name', value: 'attributes.firstName/attributes.lastName' },
+      { label: 'phone', value: 'attributes.phoneNumber' },
+      { label: 'email', value: 'attributes.email' },
       { label: 'location', value: 'location' },
       { label: 'last order', value: 'lastOrder' },
       { label: 'orders', value: 'orders' },
@@ -150,14 +150,14 @@ class Customers extends React.Component {
                 }}
                 defaultOptions
                 loadOptions={this.loadOptions}
-                onChange={this.onChangeUser}
+                onChange={this.onChangeCustomer}
               />
             </SearchWrapper>
           </Col>
         </Row>
         <Table
           columns={columns}
-          records={users}
+          records={childAccounts}
           sortColumn="order"
           toDetails={this.toDetails}
           page={page}
@@ -166,7 +166,7 @@ class Customers extends React.Component {
         />
         <CustomerModal
           open={showNewModal}
-          loading={currentStatus === actionTypes.CREATE_USER}
+          loading={currentStatus === actionTypes.CREATE_CHILD_ACCOUNT}
           onClose={this.closeNewModal}
           onSave={this.createCustomer}
         />
@@ -176,18 +176,18 @@ class Customers extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  currentStatus: state.user.currentStatus,
-  users: state.user.users,
-  page: state.user.page,
-  perPage: state.user.perPage,
-  total: state.user.total,
-  errors: state.user.errors
+  currentStatus: state.childAccount.currentStatus,
+  childAccounts: state.childAccount.childAccounts,
+  page: state.childAccount.page,
+  perPage: state.childAccount.perPage,
+  total: state.childAccount.total,
+  errors: state.childAccount.errors
 });
 
 const mapDispatchToProps = {
-  GetUsers,
-  FilterUsers,
-  CreateUser
+  GetChildAccounts,
+  FilterChildAccounts,
+  CreateChildAccount
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Customers));
