@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
+import {isNumber } from 'lodash';
 
 import { actionTypes, UpdateUser } from 'store/actions/users'
 import InfoSection from './InfoSection';
@@ -21,7 +22,13 @@ class CustomerInfoSection extends React.Component {
       error: () => {
         const { errors } = this.props;
         if (errors && errors.length > 0) {
-          toastr.error(errors[0].message);
+          for (const key in errors) {
+            if (isNumber(key)) {
+              toastr.error(errors[key].join(''));
+            }else {
+              toastr.error(key, errors[key].join(''));
+            }
+          }
         }
       }
     })

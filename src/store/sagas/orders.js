@@ -9,9 +9,8 @@ function* getOrders(action) {
   let successType = actionTypes.GET_ORDERS_SUCCESS;
   let failureType = actionTypes.GET_ORDERS_FAILURE;
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(orderClient.list, params);
+    const result = yield call(orderClient.list, params);
     const orders = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
@@ -63,7 +62,7 @@ function* getOrders(action) {
       yield call(success);
     }  
   } catch (e) {
-    yield put({ type: failureType, payload: result });
+    yield put({ type: failureType, payload: e });
     if (error) {
       yield call(error);
     }
@@ -73,9 +72,8 @@ function* getOrders(action) {
 function* getOrder(action) {
   const orderClient = yield select(getOrderClient);
   const { orderId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(orderClient.read, orderId);
+    const result = yield call(orderClient.read, orderId);
     yield put({
       type: actionTypes.GET_ORDER_SUCCESS,
       payload: result
@@ -84,7 +82,7 @@ function* getOrder(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.GET_ORDER_FAILURE, payload: result });
+    yield put({ type: actionTypes.GET_ORDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -94,15 +92,14 @@ function* getOrder(action) {
 function* createOrder(action) {
   const orderClient = yield select(getOrderClient);
   const { data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(orderClient.create, data);
+    yield call(orderClient.create, data);
     yield put({ type: actionTypes.CREATE_ORDER_SUCCESS });
     if (success) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_ORDER_FAILURE, payload: result });
+    yield put({ type: actionTypes.CREATE_ORDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -112,15 +109,14 @@ function* createOrder(action) {
 function* updateOrder(action) {
   const orderClient = yield select(getOrderClient);
   const { orderId, data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(orderClient.update, orderId, data);
+    yield call(orderClient.update, orderId, data);
     yield put({ type: actionTypes.UPDATE_ORDER_SUCCESS });
     if (success) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.UPDATE_ORDER_FAILURE, payload: result });
+    yield put({ type: actionTypes.UPDATE_ORDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -130,15 +126,14 @@ function* updateOrder(action) {
 function* deleteOrder(action) {
   const orderClient = yield select(getOrderClient);
   const { orderId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(orderClient.delete, orderId);
+    yield call(orderClient.delete, orderId);
     yield put({ type: actionTypes.DELETE_ORDER_SUCCESS });
     if (success) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.DELETE_ORDER_FAILURE, payload: result });
+    yield put({ type: actionTypes.DELETE_ORDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
