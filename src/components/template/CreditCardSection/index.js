@@ -1,19 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { findIndex, isEmpty } from 'lodash'
-import styled from 'styled-components';
 
 import { Section } from 'components/basic/InfoSection'
-
+import { NormalText } from 'components/basic/Typho'
 import InfoSection from './InfoSection'
 import ListModal from './ListModal'
 import CreationModal from './CreationModal'
 
-const NormalText = styled.div`
-  font-family: 'Source Sans Pro';
-  color: #898889;
-  font-size: 14px;
-`;
 
 class CreditCardSection extends React.Component {
   state = {

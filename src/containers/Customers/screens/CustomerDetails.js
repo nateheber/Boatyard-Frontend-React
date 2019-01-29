@@ -6,20 +6,29 @@ import { Row, Col } from 'react-flexbox-grid';
 import { get } from 'lodash';
 import styled from 'styled-components';
 
-import { GetChildAccount } from 'store/actions/child-accounts';
+import { GetChildAccount, DeleteChildAccount } from 'store/actions/child-accounts';
 import { GetBoats, CreateBoat } from 'store/actions/boats';
 import { GetOrders } from 'store/actions/orders';
 import { GetCreditCards } from 'store/actions/credit-cards';
 import { refinedOrdersSelector } from 'store/selectors/orders';
 
-import { OrangeButton } from 'components/basic/Buttons';
+import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import { Section, SectionGroup } from 'components/basic/InfoSection';
 import Table from 'components/basic/Table';
 import CustomerInfoSection from 'components/template/CustomerInfoSection';
 import BoatInfoSection from 'components/template/BoatInfoSection';
 import CreditCardSection from 'components/template/CreditCardSection';
 import { CustomerDetailsHeader } from '../components/CustomerDetailsHeader';
+import Modal from 'components/compound/Modal';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
+import { actionTypes } from '../../../store/actions/child-accounts';
+import { NormalText } from 'components/basic/Typho'
+
+export const Label = styled(NormalText)`
+  font-family: 'Open sans-serif', sans-serif;
+  padding: 10px 0;
+`;
 
 const PageContent = styled(Row)`
   padding: 30px 25px;
@@ -30,7 +39,8 @@ class CustomerDetails extends React.Component {
     super(props);
     this.state = {
       customerId: -1,
-      visibleOfBoatModal: false
+      visibleOfBoatModal: false,
+      visibleofDeleteModal: false
     };
   }
 
@@ -91,6 +101,18 @@ class CustomerDetails extends React.Component {
     });
   };
 
+  showDeleteModal = () => {
+    this.setState({
+      visibleofDeleteModal: true
+    });
+  };
+
+  hideDeleteModal = () => {
+    this.setState({
+      visibleofDeleteModal: false
+    });
+  };
+
   addNewBoat = (data) => {
     const { CreateBoat } = this.props;
     const { customerId } = this.state;
@@ -110,9 +132,21 @@ class CustomerDetails extends React.Component {
     })
   };
 
+  deleteCustomer = () => {
+    const { DeleteChildAccount } = this.props;
+    const { customerId } = this.state;
+    this.hideDeleteModal();
+    DeleteChildAccount({
+      childAccountId: customerId,
+      success: () => {
+        this.props.history.push('/customers');
+      }
+    })
+  };
+
   render() {
-    const { currentChildAccount, page, orders } = this.props
-    const { customerId, visibleOfBoatModal } = this.state;
+    const { currentChildAccount, page, orders, currentStatus } = this.props
+    const { customerId, visibleOfBoatModal, visibleofDeleteModal } = this.state;
     const id = get(currentChildAccount, 'id', '')
     const customerName = `${get(currentChildAccount, 'attributes.firstName')} ${get(currentChildAccount, 'attributes.lastName')}`;
     const attributes = get(currentChildAccount, 'attributes', {})
@@ -124,10 +158,15 @@ class CustomerDetails extends React.Component {
       { label: 'order placed', value: 'createdAt', isDate: true },
       { label: 'total', value: 'total', isValue: true, prefix: '$' }
     ]
-    const pageCount = this.getPageCount()
+    const pageCount = this.getPageCount();
+    const actions = [
+      <HollowButton onClick={this.hideDeleteModal} key="modal_btn_cancel">Cancel</HollowButton>,
+      <OrangeButton onClick={this.deleteCustomer} key="modal_btn_save">Delete</OrangeButton>
+    ];
+
     return (
       <React.Fragment>
-        <CustomerDetailsHeader name={customerName} onDelete={this.deleteCustomer} />
+        <CustomerDetailsHeader name={customerName} onDelete={this.showDeleteModal} />
         <PageContent>
           <Col sm={12} md={8} lg={8} xl={8} >
             <Table
@@ -159,12 +198,25 @@ class CustomerDetails extends React.Component {
           onClose={this.hideBoatModal}
           onSave={this.addNewBoat}
         />
+        <Modal
+          title={'Confirm Deletion'}
+          actions={actions}
+          open={visibleofDeleteModal}
+          onClose={this.hideDeleteModal}
+        >
+          <Label>Are you sure want to delete {customerName}?</Label>
+          <Label>This action cannot be undone.</Label>
+        </Modal>
+        {currentStatus === actionTypes.DELETE_CHILD_ACCOUNT && <LoadingSpinner
+          loading={currentStatus === actionTypes.DELETE_CHILD_ACCOUNT}
+        />}
       </React.Fragment>
     )
   }
 }
 
 const mapStateToProps = state => ({
+  currentStatus: state.childAccount.currentStatus,
   currentChildAccount: state.childAccount.currentChildAccount,
   page: state.order.newOrders.total,
   perPage: state.order.newOrders.total,
@@ -174,6 +226,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   GetChildAccount,
+  DeleteChildAccount,
   GetBoats,
   CreateBoat,
   GetOrders,
