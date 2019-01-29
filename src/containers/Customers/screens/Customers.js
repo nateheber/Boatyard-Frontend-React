@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import AsyncSelect from 'react-select/lib/Async';
 import { Row, Col } from 'react-flexbox-grid';
+import { isNumber } from 'lodash';
 
 import { actionTypes, GetUsers, FilterUsers, CreateUser } from 'store/actions/users';
 import Table from 'components/basic/Table';
@@ -86,7 +87,13 @@ class Customers extends React.Component {
       error: () => {
         const { errors } = this.props;
         if (errors && errors.length > 0) {
-          toastr.error(errors[0].message);
+          for (const key in errors) {
+            if (isNumber(key)) {
+              toastr.error(errors[key].join(''));
+            }else {
+              toastr.error(key, errors[key].join(''));
+            }
+          }
         }
       }
     });

@@ -11,7 +11,7 @@ import { PageTitle } from 'components/basic/Typho'
 import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
 
-import { filterProviders } from 'store/reducers/providers'
+import { FilterProviders } from 'store/actions/providers'
 import { UpdateOrder, DeleteOrder } from 'store/actions/orders'
 
 import OrderStatus from './OrderStatus'
@@ -36,7 +36,13 @@ class OrderHeader extends React.Component {
 
   onChangeProviderFilter = val => {
     return new Promise((resolve, reject) => {
-      this.props.filterProviders({keyword: val, resolve, reject});
+      this.props.FilterProviders({
+        params : {
+          'provider[name]': val,
+        },
+        success: resolve,
+        error: reject
+      });
     })
   };
 
@@ -132,7 +138,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-  filterProviders,
+  FilterProviders,
   UpdateOrder,
   DeleteOrder,
 }

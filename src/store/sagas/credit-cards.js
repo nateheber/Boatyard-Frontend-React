@@ -8,9 +8,8 @@ import { actionTypes } from '../actions/credit-cards';
 function* getCreditCards(action) {
   const creditCardClient = yield select(getCreditCardClient);
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(creditCardClient.list, params);
+    const result = yield call(creditCardClient.list, params);
     const creditCards = sortBy(get(result, 'data', []), 'id');
     yield put({
       type: actionTypes.GET_CREDIT_CARDS_SUCCESS,
@@ -20,7 +19,7 @@ function* getCreditCards(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.GET_CREDIT_CARDS_FAILURE, payload: result });
+    yield put({ type: actionTypes.GET_CREDIT_CARDS_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -32,9 +31,8 @@ function* createCreditCard(action) {
   const { cardNumber, cvv, year, month, firstName, lastName } = data;
   const spreedlyClient = createSpreedlyClient();
   const creditCardClient = yield select(getCreditCardClient);
-  let result = null;
   try {
-    result = yield call(spreedlyClient.post, '', {
+    const result = yield call(spreedlyClient.post, '', {
       paymentMethod: {
         creditCard: {
           firstName,
@@ -82,7 +80,7 @@ function* createCreditCard(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_CREDIT_CARD_FAILURE, payload: result });
+    yield put({ type: actionTypes.CREATE_CREDIT_CARD_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -92,9 +90,8 @@ function* createCreditCard(action) {
 function* deleteCreditCard(action) {
   const { creditCardId, success, error } = action.payload;
   const creditCardClient = yield select(getCreditCardClient);
-  let result = null;
   try {
-    result = yield call(creditCardClient.delete, creditCardId);
+    yield call(creditCardClient.delete, creditCardId);
     yield put({
       type: actionTypes.DELETE_CREDIT_CARD_SUCCESS
     });
@@ -102,7 +99,7 @@ function* deleteCreditCard(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.DELETE_CREDIT_CARD_FAILURE, payload: result });
+    yield put({ type: actionTypes.DELETE_CREDIT_CARD_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -112,9 +109,8 @@ function* deleteCreditCard(action) {
 function* updateCreditCard(action) {
   const { creditCardId, data, success, error } = action.payload;
   const creditCardClient = yield select(getCreditCardClient);
-  let result = null;
   try {
-    result = yield call(creditCardClient.update, creditCardId, data);
+    yield call(creditCardClient.update, creditCardId, data);
     yield put({
       type: actionTypes.UPDATE_CREDIT_CARD_SUCCESS
     });
@@ -122,7 +118,7 @@ function* updateCreditCard(action) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.UPDATE_CREDIT_CARD_FAILURE, payload: result });
+    yield put({ type: actionTypes.UPDATE_CREDIT_CARD_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
