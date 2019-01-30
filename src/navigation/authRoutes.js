@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import AuthPageTemplate from 'components/template/AuthPageTemplate';
 import Login from 'components/template/Login';
 
-const MainRouter = () => (
+const AuthRoutes = () => (
   <Router>
     <AuthPageTemplate>
       <Route exact path="*" component={Login} />
@@ -12,4 +12,4 @@ const MainRouter = () => (
   </Router>
 );
 
-export default MainRouter;
+export default AuthRoutes;
