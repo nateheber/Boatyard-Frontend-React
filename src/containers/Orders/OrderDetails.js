@@ -39,9 +39,10 @@ class OrderDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
-    this.props.GetOrder({orderId});
-    this.props.fetchLineItems(orderId);
-    this.setState({ orderId })
+    this.setState({ orderId }, () => {
+      this.props.GetOrder({orderId});
+      this.props.fetchLineItems(orderId);
+    });
   }
 
   getOrderInfo = () => {
