@@ -3,15 +3,17 @@ import moment from 'moment'
 
 export const getUserFromOrder = (order) => {
   let user = get(order, 'relationships.user');
-  if (user.hasOwnProperty('data')) {
-    user = get(order, 'relationships.childAccount');
-  }
   if (!isEmpty(user)) {
-    return {
-      id: user,
-      type: user.type,
-      ...user.attributes
-    };
+    if (user.hasOwnProperty('data')) {
+      user = get(order, 'relationships.childAccount');
+    }
+    if (!isEmpty(user)) {
+      return {
+        id: user,
+        type: user.type,
+        ...user.attributes
+      };
+    }
   }
   return user;
 }
@@ -22,7 +24,7 @@ export const getBoatFromOrder = (order) => {
     boat = {
       id: boat.id,
       ...boat.attributes,
-      ...boat.relationships
+      location: boat.location,
     }
   };
   return boat;

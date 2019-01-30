@@ -11,20 +11,26 @@ function refactorIncluded(included) {
 }
 
 const currentOrderSelector = state => {
-  let order = get(state.order.currentOrder, 'data', {});
-  const included = refactorIncluded(get(state.order.currentOrder, 'included', {}));
+  let order = state.order.currentOrder;
+  const included = state.order.included;
   if (!isEmpty(order)) {
     for(const key in order.relationships) {
       let value = order.relationships[key].data;
       if(value) {
         if (key !== 'lineItems') {
           order.relationships[key] = included[value.type][value.id];
+          if (key === 'boat') {
+            const location = get(order.relationships[key], 'relationships.location.data');
+            const locationInfo = get(included, `[${location.type}][${location.id}]`);
+            set(order, `relationships[${key}].location`, locationInfo )
+          }
         }
       }
     }
   }
   return order;
 }
+
 const allOrdersSelector = (state, orderType) => {
   switch (orderType) {
     case 'new': {

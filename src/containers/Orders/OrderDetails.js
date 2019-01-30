@@ -31,18 +31,6 @@ const Column = styled(Col)`
   padding-left: 15px !important;
 `;
 
-const getLocations = (orderInfo) => {
-  const included = get(orderInfo, 'included', []);
-  const locations = {};
-  forEach(included, (item) => {
-    if (item.type === 'locations') {
-      const { id } = item;
-      set(locations, `${id}`, item);
-    }
-  })
-  return locations;
-}
-
 class OrderDetails extends React.Component {
   state = {
     orderId: -1
@@ -119,16 +107,9 @@ class OrderDetails extends React.Component {
     this.props.UpdateOrder({ orderId, data});
   }
 
-  getBoatLocation = (boatInfo) => {
-    const { currentOrder } = this.props;
-    const { locationId } = boatInfo;
-    const locations = getLocations(currentOrder);
-    return get(locations, `${locationId}`);
-  }
-
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
-    const boatLocation = this.getBoatLocation(boatInfo);
+    const boatLocation = boatInfo.location;
     const updatedDate = this.getUdpatedDate();
     const { orderId } = this.state;
     const providerId = this.getProviderId();
