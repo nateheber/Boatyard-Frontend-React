@@ -8,6 +8,7 @@ const refineChildAccounts = (childAccounts) => {
   return childAccounts.map(childAccount => {
     return {
       id: childAccount.id,
+      type: childAccount.type,
       ...childAccount.attributes,
       relationships: childAccount.relationships,
     };
@@ -59,7 +60,12 @@ function* getChildAccount(action) {
     const { data } = result;
     yield put({
       type: actionTypes.GET_CHILD_ACCOUNT_SUCCESS,
-      payload: data
+      payload: {
+        id: data.id,
+        type: data.type,
+        ...data.attributes,
+        ...data.relationships
+      }
     });
     if (success) {
       yield call(success);

@@ -55,7 +55,7 @@ export default class CreditCardSelector extends React.Component {
   }
 
   render() {
-    const { creditCards, userId, refreshCards } = this.props;
+    const { creditCards, user, refreshCards } = this.props;
     const { selected, showNewPaymentModal } = this.state;
     return (
       <Wrapper>
@@ -74,7 +74,7 @@ export default class CreditCardSelector extends React.Component {
         </React.Fragment>
         <HollowButton onClick={this.showCreationModal} >New Payment Method</HollowButton>
         <CreationModal
-          userId={userId}
+          user={user}
           open={showNewPaymentModal}
           onClose={this.closeCreationModal}
           refreshCards={refreshCards}

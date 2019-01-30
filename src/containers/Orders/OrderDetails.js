@@ -20,7 +20,7 @@ import Scheduler from './components/templates/Scheduler'
 import PaymentsSection from './components/templates/Payments'
 import Timeline from './components/templates/Timeline'
 
-import { getProviderIdFromOrder } from 'utils/order'
+import { getUserFromOrder, getProviderIdFromOrder } from 'utils/order'
 
 const Wrapper = styled.div`
   padding: 30px 25px;
@@ -82,10 +82,9 @@ class OrderDetails extends React.Component {
     return getProviderIdFromOrder(currentOrder);
   }
 
-  getUserId = () => {
+  getUser = () => {
     const { currentOrder } = this.props;
-    const userId = get(currentOrder, 'data.relationships.user.data.id');
-    return userId;
+    return getUserFromOrder(currentOrder);
   }
 
   getSummaryInfo = () => {
@@ -149,7 +148,7 @@ class OrderDetails extends React.Component {
     const providerId = this.getProviderId();
     const { lineItems, currentOrder } = this.props;
     const summaryInfo = this.getSummaryInfo();
-    const userId = this.getUserId();
+    const user = this.getUser();
     const paymentInfo = this.getPaymentInfo();
     return (
       <React.Fragment>
@@ -163,7 +162,7 @@ class OrderDetails extends React.Component {
                 <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
               </SectionGroup>
               <SectionGroup>
-                <PaymentsSection orderId={orderId} userId={userId} providerId={providerId} {...paymentInfo} />
+                <PaymentsSection orderId={orderId} user={user} providerId={providerId} {...paymentInfo} />
               </SectionGroup>
               <SectionGroup>
                 <Scheduler orderId={orderId} />

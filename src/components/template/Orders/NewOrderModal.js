@@ -41,21 +41,23 @@ class NewOrderModal extends React.Component {
   }
   createNewOrder = (service) => {
     const { customer, boat } = this.state;
-    console.log(boat);
+    console.log('------Collected Data------', customer, boat, service);
     const data = {
-      userId: customer,
-      boatId: boat,
-      lineItemsAttributes: [
-        {
-          serviceId: service,
-          quantity: 1,
-        }
-      ]
+      order: {
+        childAccountId: customer.id,
+        boatId: boat.id,
+        lineItemsAttributes: [
+          {
+            serviceId: service.id,
+            quantity: 1
+          }
+        ]
+      }
     };
     this.props.CreateOrder({
       data,
-      callback: this.props.onFinishCreation
-    })
+      success: this.props.onFinishCreation
+    });
   }
   render() {
     const { showCustomerModal, showServiceModal } = this.state;

@@ -29,14 +29,17 @@ const SubSectionTitle = styled.h5`
 `;
 
 class SelectCustomerModal extends React.Component {
-  state = {
-    customer: {},
-    boat: {},
-    refinedBoats: [],
-    refinedBoat: {},
-    visibleOfCustomerModal: false,
-    visibleOfBoatModal: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      customer: {},
+      boat: {},
+      refinedBoats: [],
+      refinedBoat: {},
+      visibleOfCustomerModal: false,
+      visibleOfBoatModal: false
+    };
+  }
 
   setCustomerSelectRef = (ref) => {
     this.customerSelect = ref;
@@ -45,12 +48,7 @@ class SelectCustomerModal extends React.Component {
   loadOptions = val => {
     return this.onChangeUserFilter(val)
       .then((filtered) => {
-        return filtered.map(user => ({
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email
-        }));
+        return filtered;
       }, () => {
         return [];
       });
@@ -169,16 +167,12 @@ class SelectCustomerModal extends React.Component {
   onCreateCustomer = (data) => {
     const { CreateUser } = this.props;
     CreateUser({
-      data : {
-        user: {
-          ...data.user,
-          password: '_nHEm4?v^MJL[F5g'
-        }
-      },
+      data,
       success: (user) => {
         this.hideCustomerModal();
         const newUser = {
           id: user.id,
+          type: user.type,
           ...user.attributes
         };
         this.customerSelect.setState({
@@ -195,7 +189,7 @@ class SelectCustomerModal extends React.Component {
     CreateBoat({
       data: {
         boat: {
-          child_account_id: customer.id,
+          childAccountId: customer.id,
           ...data.boat,
         }
       },
@@ -302,8 +296,8 @@ class SelectCustomerModal extends React.Component {
         />
         {!isEmpty(customer) && <BoatModal
           open={visibleOfBoatModal}
-          loading={currentBoatStatus === boatActions.CREATE_USER}
-          customerId={customer.id}
+          loading={currentBoatStatus === boatActions.CREATE_BOAT}
+          user={customer}
           onClose={this.hideBoatModal}
           onSave={this.onCreateBoat}
         />}

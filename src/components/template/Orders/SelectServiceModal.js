@@ -33,10 +33,6 @@ class SelectServiceModal extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.props.FilterServices({ params: {} });
-  }
-
   loadOptions = val => {
     return this.onChangeServiceFilter(val)
       .then((filtered) => {
@@ -57,6 +53,7 @@ class SelectServiceModal extends React.Component {
   };
 
   onChangeService = val => {
+    console.log('---------------Service-----------', val);
     this.setState({
       service: val
     }, () => {
@@ -70,6 +67,7 @@ class SelectServiceModal extends React.Component {
     const { categoryId } = service;
     const properties = {};
     const orgProperties = get(service, `properties`, {});;
+    console.log('---------------Included-----------', included);
     if (categoryId) {
       const categories = get(included, 'categories', []);
       if (!isEmpty(categories)) {
@@ -104,6 +102,7 @@ class SelectServiceModal extends React.Component {
             xl: 6
           };
         });
+        console.log('--------serviceFields--------', serviceFields);
         this.setState({ serviceFields });
       }
     }
@@ -131,16 +130,22 @@ class SelectServiceModal extends React.Component {
     this.serviceFields = ref;
   };
 
-  next = () => {
+  createOrder = () => {
     const { service } = this.state;
     this.props.toNext(service);
     this.props.onClose();
   };
 
   render() {
-    const action = [<OrangeButton onClick={this.next} key="modal_action_button">CREATE ORDER</OrangeButton>];
     const { open, onClose } = this.props;
-    const { serviceFields } = this.state;
+    const { service, serviceFields } = this.state;
+    const action = [
+      <OrangeButton
+        key="modal_action_button"
+        onClick={this.createOrder}
+        disabled={isEmpty(service)}
+      >CREATE ORDER</OrangeButton>
+    ];
     return (
       <Modal
         title="Create Order"

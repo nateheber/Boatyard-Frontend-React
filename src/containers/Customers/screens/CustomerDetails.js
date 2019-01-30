@@ -119,7 +119,7 @@ class CustomerDetails extends React.Component {
     CreateBoat({
       data: {
         boat: {
-          child_account_id: customerId,
+          childAccountId: customerId,
           ...data.boat,
         }
       },
@@ -147,9 +147,7 @@ class CustomerDetails extends React.Component {
   render() {
     const { currentChildAccount, page, orders, currentStatus } = this.props
     const { customerId, visibleOfBoatModal, visibleofDeleteModal } = this.state;
-    const id = get(currentChildAccount, 'id', '')
-    const customerName = `${get(currentChildAccount, 'attributes.firstName')} ${get(currentChildAccount, 'attributes.lastName')}`;
-    const attributes = get(currentChildAccount, 'attributes', {})
+    const customerName = `${get(currentChildAccount, 'firstName')} ${get(currentChildAccount, 'lastName')}`;
     const columns = [
       { label: 'orders', value: 'id' },
       { label: 'boat name', value: 'relationships.boat.attributes.name' },
@@ -182,13 +180,13 @@ class CustomerDetails extends React.Component {
           <Col sm={12} md={4} lg={4} xl={4}>
             <SectionGroup>
               <Section title={"Customer & Boat Info"}>
-                <CustomerInfoSection customerInfo={{ id, ...attributes }} refreshInfo={this.refreshInfo} />
-                <BoatInfoSection type="ChildAccount" customerId={customerId} />
+                <CustomerInfoSection customerInfo={currentChildAccount} refreshInfo={this.refreshInfo} />
+                <BoatInfoSection user={currentChildAccount} />
                 <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>
               </Section>
             </SectionGroup>
             <SectionGroup>
-              <CreditCardSection userId={customerId} onRefresh={this.refreshCards} />
+              <CreditCardSection user={currentChildAccount} onRefresh={this.refreshCards} />
             </SectionGroup>
           </Col>
         </PageContent>

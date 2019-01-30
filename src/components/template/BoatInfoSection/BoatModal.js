@@ -15,7 +15,7 @@ const LOCATION_TYPES = [
 ];
 
 const BOAT_FIELDS = ['name', 'make', 'model', 'year', 'length', 'slip'];
-const LOCATION_FIELDS = ['location_name', 'location_type'];
+const LOCATION_FIELDS = ['locationName', 'locationType'];
 const ADDRESS_FILEDS = ['street', 'city', 'state', 'zip']
 
 class BoatModal extends React.Component {
@@ -132,7 +132,7 @@ class BoatModal extends React.Component {
     const optionalFields = [
       {
         type: 'select_box',
-        field: 'location_type',
+        field: 'locationType',
         label: 'Boat Location',
         errorMessage: 'Select Location Type',
         required: true,
@@ -151,7 +151,7 @@ class BoatModal extends React.Component {
         optionalFields.push(
           {
             type: 'text_field',
-            field: 'location_name',
+            field: 'locationName',
             label: 'Marina Name',
             errorMessage: 'Set Marina Name',
             required: true,
@@ -184,7 +184,7 @@ class BoatModal extends React.Component {
         optionalFields.push(
           {
             type: 'text_field',
-            field: 'location_name',
+            field: 'locationName',
             label: 'Location Name',
             errorMessage: 'Set Location Name',
             required: true,
@@ -268,13 +268,17 @@ class BoatModal extends React.Component {
   };
 
   onLocationTypeChange = (field, value) => {
-    if (value === 'location_type') {
-      this.getOptionalFields(field.location_type);
+    if (value === 'locationType') {
+      this.getOptionalFields(field.locationType);
     }
   };
 
   onSave = () => {
-    const { type, customerId } = this.props;
+    const { user } = this.props;
+    let type = 'User';
+    if (user.type === 'child_accounts') {
+      type = 'ChildAccount';
+    }
     if (this.mainInfoFields.validateFields() &&
     this.optionalFields.validateFields() &&
     this.locationFields.validateFields()) {
@@ -290,7 +294,7 @@ class BoatModal extends React.Component {
         if (BOAT_FIELDS.indexOf(key) > -1) {
           boat[key] = values[key];
         } else if (LOCATION_FIELDS.indexOf(key) > -1) {
-          if (key === 'location_name') {
+          if (key === 'locationName') {
             locationAttrs['name'] = values[key];
           } else {
             locationAttrs[key] = values[key];
@@ -304,7 +308,7 @@ class BoatModal extends React.Component {
         location_attributes: {
           ...locationAttrs,
           locatable_type: type || 'ChildAccount',
-          locatable_id: customerId,
+          locatable_id: user.id,
           address_attributes: addressAttrs
         }
       };
