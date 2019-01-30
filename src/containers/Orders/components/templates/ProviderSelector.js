@@ -19,14 +19,20 @@ const Button = styled.button`
 
 const Wrapper = styled.div`
   position: relative;
+  background-color: white;
 `;
+
+const FitlerWrapper = styled.div`
+  padding: 25px 30px;
+`
 
 const Scroller = styled.div`
   height: 308px;
+  padding: 25px 30px;
   overflow-y: scroll;
 `
 
-const DropdownMenu = styled.ul`
+const DropdownMenu = styled.div`
   &.show {
     display: block;
   }
@@ -37,10 +43,9 @@ const DropdownMenu = styled.ul`
   border: 1px solid #eaeaea;
   background-color: white;
   position: absolute;
-  width: 200px;
+  width: 439px;
   padding: 0;
   right: 0;
-  height: 30px;
   &::before {
     height: 100%;
     display: block;
@@ -66,20 +71,6 @@ const DropdownMenu = styled.ul`
 
 const MenuItemLi = styled.div`
   padding: 8px 0;
-  &:hover {
-    background-color: #f6f6f7;
-  }
-`;
-
-const MenuItem = styled.button`
-  border: none;
-  width: 100%;
-  padding: 0 15px;
-  text-align: left;
-  font-family: 'Source Sans Pro', sans-serif;
-  font-size: 14px;
-  background: transparent;
-  outline: none;
 `;
 
 class ProviderSelector extends React.Component {
@@ -125,11 +116,15 @@ class ProviderSelector extends React.Component {
           }}
         />
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
-          <Input type="text" value={keyword} />
+          <FitlerWrapper>
+            <Input type="text" value={keyword} />
+          </FitlerWrapper>
           <Scroller>
             {
               providers.map((provider, idx) => (
-                <ProviderCheck provider={provider} key={`provider_${idx}`} />
+                <MenuItemLi>
+                  <ProviderCheck provider={provider} key={`provider_${idx}`} />
+                </MenuItemLi>
               ))
             }
           </Scroller>
