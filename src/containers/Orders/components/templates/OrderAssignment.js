@@ -19,9 +19,15 @@ class OrderAssignmentSection extends React.Component {
     return { dispatchIds }
   }
 
+  updateDispatchIds = (dispatchIds) => {
+    const { currentOrder } = this.props;
+    const orderId = currentOrder.id;
+    this.props.UpdateOrder({ orderId, data: { order: { dispatchIds }} })
+  }
+
   renderDropdownButton = () => {
     const { dispatchIds } = this.props;
-    return <ProviderSelector dispatchIds={dispatchIds} />
+    return <ProviderSelector dispatchIds={dispatchIds} onChange={this.updateDispatchIds} />
   }
 
   render() {

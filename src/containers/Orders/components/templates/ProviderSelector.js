@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { findIndex, get } from 'lodash';
+import { findIndex } from 'lodash';
 
 import { Input } from 'components/basic/Input';
 
@@ -112,8 +112,13 @@ class ProviderSelector extends React.Component {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
       this.setState({
         showMenu: false
-      });
+      }, this.submitData);
     }
+  }
+
+  submitData = () => {
+    const { dispatchIds } = this.state;
+    this.props.onChange(dispatchIds);
   }
 
   isChecked = (providerId) => {
