@@ -5,8 +5,11 @@ import { Row, Col } from 'react-flexbox-grid';
 import { findIndex, isEmpty } from 'lodash';
 import styled from 'styled-components';
 
-import { FilterUsers } from 'store/actions/users';
-import { actionTypes as customerActions, CreateUser } from 'store/actions/users';
+import {
+  actionTypes as customerActions,
+  FilterChildAccounts,
+  CreateChildAccount
+} from 'store/actions/child-accounts';
 import { actionTypes as boatActions, GetBoats, CreateBoat } from 'store/actions/boats';
 import { refinedBoatsSelector } from 'store/selectors/boats';
 import Modal from 'components/compound/Modal';
@@ -29,14 +32,17 @@ const SubSectionTitle = styled.h5`
 `;
 
 class SelectCustomerModal extends React.Component {
-  state = {
-    customer: {},
-    boat: {},
-    refinedBoats: [],
-    refinedBoat: {},
-    visibleOfCustomerModal: false,
-    visibleOfBoatModal: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      customer: {},
+      boat: {},
+      refinedBoats: [],
+      refinedBoat: {},
+      visibleOfCustomerModal: false,
+      visibleOfBoatModal: false
+    };
+  }
 
   setCustomerSelectRef = (ref) => {
     this.customerSelect = ref;
@@ -45,12 +51,7 @@ class SelectCustomerModal extends React.Component {
   loadOptions = val => {
     return this.onChangeUserFilter(val)
       .then((filtered) => {
-        return filtered.map(user => ({
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email
-        }));
+        return filtered;
       }, () => {
         return [];
       });
@@ -58,7 +59,7 @@ class SelectCustomerModal extends React.Component {
 
   onChangeUserFilter = val => {
     return new Promise((resolve, reject) => {
-      this.props.FilterUsers({
+      this.props.FilterChildAccounts({
         params: {
           'search_by_full_name': val
         },
@@ -76,7 +77,7 @@ class SelectCustomerModal extends React.Component {
       refinedBoats: []
     }, () => {
       this.props.GetBoats({
-        params: { 'boat[user_id]': user.id },
+        params: { 'boat[child_account_id]': user.id },
         success: () => {
           const { boats } = this.props;
           if (!isEmpty(boats)) {
@@ -95,7 +96,7 @@ class SelectCustomerModal extends React.Component {
     });
   };
 
-  next = () => {
+  moveToChooseService = () => {
     const { customer, boat } = this.state;
     this.props.toNext({ customer, boat });
   };
@@ -167,18 +168,14 @@ class SelectCustomerModal extends React.Component {
   };
 
   onCreateCustomer = (data) => {
-    const { CreateUser } = this.props;
-    CreateUser({
-      data : {
-        user: {
-          ...data.user,
-          password: '_nHEm4?v^MJL[F5g'
-        }
-      },
+    const { CreateChildAccount } = this.props;
+    CreateChildAccount({
+      data: { child_account: { ...data.user } },
       success: (user) => {
         this.hideCustomerModal();
         const newUser = {
           id: user.id,
+          type: user.type,
           ...user.attributes
         };
         this.customerSelect.setState({
@@ -195,7 +192,7 @@ class SelectCustomerModal extends React.Component {
     CreateBoat({
       data: {
         boat: {
-          user_id: customer.id,
+          childAccountId: customer.id,
           ...data.boat,
         }
       },
@@ -208,7 +205,7 @@ class SelectCustomerModal extends React.Component {
           refinedBoats: []
         }, () => {
           this.props.GetBoats({
-            params: { 'boat[user_id]': customer.id },
+            params: { 'boat[child_account_id]': customer.id },
             success: () => {
               const { boats } = this.props;
               if (!isEmpty(boats)) {
@@ -230,16 +227,23 @@ class SelectCustomerModal extends React.Component {
   };
 
   render() {
-    const action = [<OrangeButton onClick={this.next} key="modal_action_button">Next</OrangeButton>];
     const { open, onClose, currentCustomerStatus, currentBoatStatus } = this.props;
     const {
       customer, boat, refinedBoats, refinedBoat,
       visibleOfCustomerModal, visibleOfBoatModal
     } = this.state;
+    const actionButtons = [
+      <OrangeButton
+        key="modal_action_button"
+        onClick={this.moveToChooseService}
+        disabled={isEmpty(customer) || isEmpty(boat)}
+      >Next</OrangeButton>
+    ];
     return (
       <Modal
         title="Select Customer"
-        actions={action}
+        minHeight={265}
+        actions={actionButtons}
         open={open}
         onClose={onClose}
       >
@@ -289,14 +293,14 @@ class SelectCustomerModal extends React.Component {
         }
         <CustomerModal
           open={visibleOfCustomerModal}
-          loading={currentCustomerStatus === customerActions.CREATE_USER}
+          loading={currentCustomerStatus === customerActions.CREATE_CHILD_ACCOUNT}
           onClose={this.hideCustomerModal}
           onSave={this.onCreateCustomer}
         />
         {!isEmpty(customer) && <BoatModal
           open={visibleOfBoatModal}
-          loading={currentBoatStatus === boatActions.CREATE_USER}
-          customerId={customer.id}
+          loading={currentBoatStatus === boatActions.CREATE_BOAT}
+          user={customer}
           onClose={this.hideBoatModal}
           onSave={this.onCreateBoat}
         />}
@@ -306,15 +310,15 @@ class SelectCustomerModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  currentCustomerStatus: state.user.currentStatus,
+  currentCustomerStatus: state.childAccount.currentStatus,
   currentBoatStatus: state.boat.currentStatus,
   boats: refinedBoatsSelector(state)
 });
 
 const mapDispatchToProps = {
-  FilterUsers,
+  FilterChildAccounts,
+  CreateChildAccount,
   GetBoats,
-  CreateUser,
   CreateBoat
 };
 

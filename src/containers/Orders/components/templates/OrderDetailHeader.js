@@ -3,18 +3,19 @@ import { connect } from 'react-redux'
 import AsyncSelect from 'react-select/lib/Async'
 import { Row, Col } from 'react-flexbox-grid'
 import { withRouter } from 'react-router-dom'
-import { get, findIndex } from 'lodash'
+import { get } from 'lodash'
 import styled from 'styled-components'
+
+import { FilterProviders } from 'store/actions/providers'
+import { UpdateOrder, DeleteOrder } from 'store/actions/orders'
+import { getCustomerName } from 'utils/order'
 
 import { ActionDropdown } from 'components/basic/Dropdown'
 import { PageTitle } from 'components/basic/Typho'
 import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
-
-import { FilterProviders } from 'store/actions/providers'
-import { UpdateOrder, DeleteOrder } from 'store/actions/orders'
-
 import OrderStatus from './OrderStatus'
+
 
 const SectionHeaderWrapper = styled.div`
   box-sizing: border-box;
@@ -47,36 +48,29 @@ class OrderHeader extends React.Component {
   };
 
   onChangeProvider = val => {
-    const { orderId } = this.props
-    this.props.UpdateOrder({ orderId, data: { providerId: val.id } })
+    const { order } = this.props
+    this.props.UpdateOrder({ orderId: order.id, data: { providerId: val.id } })
   }
 
   cancelOrder = () => {
-    const { orderId } = this.props
-    this.props.UpdateOrder({ orderId, data: { state: 'canceled' } })
+    const { order } = this.props;
+    this.props.UpdateOrder({ orderId: order.id, data: { state: 'canceled' } })
   }
 
   deleteOrder = () => {
-    const { orderId } = this.props
-    this.props.DeleteOrder(orderId)
-    this.props.history.push('/orders/')
-  }
-
-  getCustomerName = () => {
-    const included = get(this.props.currentOrder, 'included', [])
-    const idx = findIndex(included, item => item.type === 'users');
-    return `${get(included, `[${idx}].attributes.firstName`)} ${get(included, `[${idx}].attributes.lastName`)}`;
+    const { order } = this.props;
+    this.props.DeleteOrder({ orderId: order.id });
+    this.props.history.push('/orders/');
   }
 
   getOrderStatus = () => {
-    const { currentOrder: { data } } = this.props
-    const id = get(data, 'id', 'Unknown');
-    const attributes = get(data, 'attributes')
-    const time = get(attributes, 'createdAt', new Date())
-    const customerName = this.getCustomerName()
-    const total = get(attributes, 'total')
-    const scheduledAt = get(attributes, 'scheduledAt')
-    const status = get(attributes, 'state')
+    const { order } = this.props;
+    const customerName = getCustomerName(order);
+    const id = get(order, 'id', 'Unknown');
+    const time = get(order, 'attributes.createdAt', new Date());
+    const total = get(order, 'attributes.total');
+    const scheduledAt = get(order, 'attributes.scheduledAt');
+    const status = get(order, 'attributes.state');
     return ({
       id,
       time,
@@ -89,17 +83,18 @@ class OrderHeader extends React.Component {
 
   renderStatus = () => {
     const orderStatus = this.getOrderStatus();
+    console.log()
     return (
       <OrderStatus {...orderStatus} />
     )
   }
 
   render() {
-    const { orderId } = this.props;
+    const { order } = this.props;
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
-          <PageTitle>Orders #{orderId}</PageTitle>
+          <PageTitle>Orders #{order.id}</PageTitle>
           <ActionDropdown
             items={[
               {
@@ -133,14 +128,10 @@ class OrderHeader extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  currentOrder: state.order.currentOrder
-})
-
 const mapDispatchToProps = {
   FilterProviders,
   UpdateOrder,
   DeleteOrder,
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderHeader));
+export default withRouter(connect(null, mapDispatchToProps)(OrderHeader));

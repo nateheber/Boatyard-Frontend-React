@@ -52,7 +52,7 @@ class CreditCardSection extends React.Component {
   render() {
     const card = this.getDefaultCard();
     const { showPaymentModal, showNewPaymentModal } = this.state;
-    const { userId } = this.props;
+    const { user } = this.props;
     return (
       <React.Fragment>
         <Section title="Payment Methods" mode="view" onEdit={this.showListModal} >
@@ -69,7 +69,7 @@ class CreditCardSection extends React.Component {
           refreshCards={this.props.onRefresh}
         />
         <CreationModal
-          userId={userId}
+          user={user}
           open={showNewPaymentModal}
           onClose={this.closeCreationModal}
           refreshCards={this.props.onRefresh}

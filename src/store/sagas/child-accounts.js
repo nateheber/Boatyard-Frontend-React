@@ -4,6 +4,17 @@ import { get } from 'lodash';
 import { actionTypes } from '../actions/child-accounts';
 import { getChildAccountClient } from './sagaSelectors';
 
+const refineChildAccounts = (childAccounts) => {
+  return childAccounts.map(childAccount => {
+    return {
+      id: childAccount.id,
+      type: childAccount.type,
+      ...childAccount.attributes,
+      relationships: childAccount.relationships,
+    };
+  });
+};
+
 function* getChildAccounts(action) {
   const childAccountClient = yield select(getChildAccountClient);
   let successType = actionTypes.GET_CHILD_ACCOUNTS_SUCCESS;
@@ -21,16 +32,17 @@ function* getChildAccounts(action) {
       }
       default:
     }
+    const refinedChildAccounts = refineChildAccounts(childAccounts);
     yield put({
       type: successType,
       payload: {
-        childAccounts: childAccounts,
+        childAccounts: refinedChildAccounts,
         perPage,
         total,
       }
     });
     if (success) {
-      yield call(success, childAccounts);
+      yield call(success, refinedChildAccounts);
     }
   } catch (e) {
     yield put({ type: failureType, payload: e });
@@ -48,7 +60,12 @@ function* getChildAccount(action) {
     const { data } = result;
     yield put({
       type: actionTypes.GET_CHILD_ACCOUNT_SUCCESS,
-      payload: data
+      payload: {
+        id: data.id,
+        type: data.type,
+        ...data.attributes,
+        ...data.relationships
+      }
     });
     if (success) {
       yield call(success);

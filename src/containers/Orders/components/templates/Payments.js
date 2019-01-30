@@ -43,7 +43,7 @@ export default class OrderReviewSection extends React.Component {
   }
 
   render() {
-    const { userId, orderId, balance } = this.props;
+    const { user, orderId, balance } = this.props;
     const { showModal } = this.state;
     return (
       <Section title="Payment">
@@ -60,7 +60,7 @@ export default class OrderReviewSection extends React.Component {
         <OrderPaymentModal
           open={showModal}
           onClose={this.onCloseModal}
-          userId={userId}
+          user={user}
           balance={balance}
           orderId={orderId}
         />

@@ -18,6 +18,9 @@ export const OrangeButton = styled.button`
   text-transform: uppercase;
   outline: none;
   display: inline-block;
+  &:disabled {
+    opacity: 0.7;
+  }
   &.secondary {
     height: 33px;
     min-width: 100px;

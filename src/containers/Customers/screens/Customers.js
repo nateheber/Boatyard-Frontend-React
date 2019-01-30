@@ -129,9 +129,9 @@ class Customers extends React.Component {
     const { showNewModal } = this.state;
     const pageCount = this.getPageCount();
     const columns = [
-      { label: 'name', value: 'attributes.firstName/attributes.lastName' },
-      { label: 'phone', value: 'attributes.phoneNumber' },
-      { label: 'email', value: 'attributes.email' },
+      { label: 'name', value: 'firstName/lastName' },
+      { label: 'phone', value: 'phoneNumber' },
+      { label: 'email', value: 'email' },
       { label: 'location', value: 'location' },
       { label: 'last order', value: 'lastOrder' },
       { label: 'orders', value: 'orders' },

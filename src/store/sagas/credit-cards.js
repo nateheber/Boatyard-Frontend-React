@@ -51,11 +51,11 @@ function* createCreditCard(action) {
           month: expirationMonth,
           year: expirationYear,
           token: response,
-          lastFourDigits: last4,
+          lastFourDigits: last4
         }
       }
     } = result;
-    const { userId } = data;
+    const { userId, childAccountId } = data;
     const passData = userId ? {
       userId,
       name,
@@ -63,14 +63,22 @@ function* createCreditCard(action) {
       expirationYear,
       response,
       last4,
-      isDefault: false,
+      isDefault: false
+    }: childAccountId ? {
+      childAccountId,
+      name,
+      expirationMonth,
+      expirationYear,
+      response,
+      last4,
+      isDefault: false
     }: {
       name,
       expirationMonth,
       expirationYear,
       response,
       last4,
-      isDefault: false,
+      isDefault: false
     };
     yield call(creditCardClient.create, { creditCard: passData });
     yield put({
