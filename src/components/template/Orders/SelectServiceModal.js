@@ -6,6 +6,7 @@ import AsyncSelect from 'react-select/lib/Async';
 import { get, set, isEmpty, filter, camelCase, startCase, hasIn } from 'lodash';
 
 import { FilterServices, GetService } from 'store/actions/services';
+import { actionTypes } from 'store/actions/orders';
 import Modal from 'components/compound/Modal';
 import { OrangeButton } from 'components/basic/Buttons';
 import ProviderOption from 'components/basic/ProviderOption';
@@ -23,13 +24,28 @@ const SubSectionTitle = styled.h5`
   margin-bottom: 5px;
 `;
 
+const orderFields = [
+  {
+    type: 'text_area',
+    field: 'comments',
+    label: 'Special Instructions',
+    errorMessage: 'Enter Special Instructions',
+    required: false,
+    xs: 12,
+    sm: 12,
+    md: 12,
+    lg: 12,
+    xl: 12
+  }
+];
+
 class SelectServiceModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       service: {},
       value: {},
-      serviceFields: []
+      serviceFields: [],
     };
   }
 
@@ -130,19 +146,28 @@ class SelectServiceModal extends React.Component {
     this.serviceForm = ref;
   };
 
+  setOrderFieldsRef = ref => {
+    this.orderForm = ref;
+  };
+
   createOrder = () => {
     const { service } = this.state;
-    if (this.serviceForm && this.serviceForm.validateFields()) {
-      this.props.toNext(service, this.serviceForm.getFieldValues());
-      this.props.onClose();  
-    } else if (!this.serviceForm) {
-      this.props.toNext(service);
-      this.props.onClose();  
+    let serviceValues = {}, orderValues = {};
+    if ((this.serviceForm && !this.serviceForm.validateFields()) ||
+    (this.orderForm && !this.orderForm.validateFields())) {
+      return;
     }
+    if (this.serviceForm) {
+      serviceValues = this.serviceForm.getFieldValues();
+    }
+    if (this.orderForm) {
+      orderValues = this.orderForm.getFieldValues();
+    }
+    this.props.toNext(service, serviceValues, orderValues);
   };
 
   render() {
-    const { open, onClose } = this.props;
+    const { open, onClose, currentStatus } = this.props;
     const { service, serviceFields } = this.state;
     const action = [
       <OrangeButton
@@ -154,6 +179,7 @@ class SelectServiceModal extends React.Component {
     return (
       <Modal
         title="Create Order"
+        loading={currentStatus === actionTypes.CREATE_ORDER}
         minHeight={265}
         actions={action}
         open={open}
@@ -184,6 +210,9 @@ class SelectServiceModal extends React.Component {
             {!isEmpty(serviceFields) && (
               <FormFields ref={this.setServiceFieldsRef} fields={serviceFields} />
             )}
+            {!isEmpty(service) && (
+              <FormFields ref={this.setOrderFieldsRef} fields={orderFields} />
+            )}
           </Col>
         </Row>
       </Modal>
@@ -192,6 +221,7 @@ class SelectServiceModal extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  currentStatus: state.order.currentStatus,
   filteredServices: state.service.filteredServices,
   included: state.service.included
 });

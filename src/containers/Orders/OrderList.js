@@ -29,28 +29,35 @@ class OrderList extends React.Component {
   componentDidMount() {
     this.props.GetOrders({ params: { page: 1 } });
   }
+
   setNewOrderModalRef = (ref) => {
     if (ref) {
       this.orderCreation = ref.getWrappedInstance();
     }
-  }
+  };
+
   toDetails = orderId => {
     this.props.history.push(`/order-details/?order=${orderId}`);
   };
+
   getPageCount = () => {
     const { perPage, total } = this.props;
     return Math.ceil(total/perPage);
-  }
+  };
+
   changePage = (page) => {
     this.props.GetOrders({ params: { page: page } });
-  }
+  };
+
   newOrder = () => {
     this.orderCreation.createOrder();
-  }
+  };
+
   creationFinished = () => {
     const { page, GetOrders } = this.props;
     GetOrders({ params: { page: page } });
-  }
+  };
+
   render() {
     const { orders, page } = this.props;
     const pageCount = this.getPageCount();

@@ -39,12 +39,13 @@ class NewOrderModal extends React.Component {
       showServiceModal: false,
     })
   }
-  createNewOrder = (service, values = {}) => {
+  createNewOrder = (service, serviceValues = {}, orderValues = {}) => {
     const { customer, boat } = this.state;
     const data = {
       order: {
         childAccountId: customer.id,
         boatId: boat.id,
+        ...orderValues,
         lineItemsAttributes: [
           {
             serviceId: service.id,
@@ -52,13 +53,17 @@ class NewOrderModal extends React.Component {
           }
         ],
         properties: {
-          ...values
+          ...serviceValues
         }
       }
     };
     this.props.CreateOrder({
       data,
-      success: this.props.onFinishCreation
+      success: () => {
+        const { onFinishCreation } = this.props;
+        this.closeServiceModal();
+        if (onFinishCreation) onFinishCreation();
+      }
     });
   }
   render() {

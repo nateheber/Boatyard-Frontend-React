@@ -2,17 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import {
-  AssignedOrders,
-  ScheduledOrders,
-  MonthlyRevenue
-} from 'components/compound/SubSections';
-
+import { GetNewOrders, GetOpenOrders } from 'store/actions/orders';
+import { AssignedOrders, ScheduledOrders, MonthlyRevenue } from 'components/compound/SubSections';
 import NewOrders from 'components/compound/SubSections/NewOrders';
 import OpenInvoices from 'components/compound/SubSections/OpenInvoices';
-
-
 import { DashboardHeader } from 'components/compound/SectionHeader';
+import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
 const Container = styled.div``;
 
@@ -40,6 +35,41 @@ const RightPart = styled.div`
 `;
 
 class Dashboard extends React.Component {
+  setNewOrderModalRef = (ref) => {
+    if (ref) {
+      this.orderCreation = ref.getWrappedInstance();
+    }
+  };
+
+  creationFinished = () => {
+    const { privilege } = this.props;
+    if (privilege === 'admin') {
+    } else {
+      this.props.GetNewOrders({
+        params: {
+          page: 1,
+          per_page: 5,
+          'order[state]': 'draft',
+          'order[sort]': 'desc',
+          'order[order]': 'created_at'
+        }
+      });
+      this.props.GetOpenOrders({
+        params: {
+          page: 1,
+          per_page: 5,
+          'order[state]': 'invoiced',
+          'order[sort]': 'desc',
+          'order[order]': 'created_at'  
+        }
+      });    
+    }
+  };
+
+  newOrder = () => {
+    this.orderCreation.createOrder();
+  };
+
   render() {
     const { privilege } = this.props;
     return (
@@ -56,6 +86,7 @@ class Dashboard extends React.Component {
             {privilege === 'provider' && <OpenInvoices />}
           </RightPart>
         </Wrapper>
+        <NewOrderModal ref={this.setNewOrderModalRef} onFinishCreation={this.creationFinished} />
       </Container>
     );
   }
@@ -65,4 +96,9 @@ const mapStateToProps = ({ auth: { privilege } }) => ({
   privilege
 });
 
-export default connect(mapStateToProps)(Dashboard);
+const mapDispatchToProps = {
+  GetNewOrders,
+  GetOpenOrders
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
