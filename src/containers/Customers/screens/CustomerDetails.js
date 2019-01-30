@@ -146,7 +146,7 @@ class CustomerDetails extends React.Component {
 
   render() {
     const { currentChildAccount, page, orders, currentStatus } = this.props
-    const { customerId, visibleOfBoatModal, visibleofDeleteModal } = this.state;
+    const { visibleOfBoatModal, visibleofDeleteModal } = this.state;
     const customerName = `${get(currentChildAccount, 'firstName')} ${get(currentChildAccount, 'lastName')}`;
     const columns = [
       { label: 'orders', value: 'id' },

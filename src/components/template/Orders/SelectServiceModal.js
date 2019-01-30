@@ -127,13 +127,18 @@ class SelectServiceModal extends React.Component {
   };
 
   setServiceFieldsRef = ref => {
-    this.serviceFields = ref;
+    this.serviceForm = ref;
   };
 
   createOrder = () => {
     const { service } = this.state;
-    this.props.toNext(service);
-    this.props.onClose();
+    if (this.serviceForm && this.serviceForm.validateFields()) {
+      this.props.toNext(service, this.serviceForm.getFieldValues());
+      this.props.onClose();  
+    } else if (!this.serviceForm) {
+      this.props.toNext(service);
+      this.props.onClose();  
+    }
   };
 
   render() {
