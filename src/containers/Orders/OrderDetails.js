@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import queryString from 'query-string'
 import { Row, Col } from 'react-flexbox-grid'
 import styled from 'styled-components'
-import { get, set, findIndex, forEach } from 'lodash'
+import { get, set, forEach } from 'lodash'
 
 import { GetOrder, UpdateOrder } from 'store/actions/orders'
 import { fetchLineItems } from 'store/reducers/lineItems'
@@ -21,43 +21,16 @@ import PaymentsSection from './components/templates/Payments'
 import Timeline from './components/templates/Timeline'
 import OrderAssignment from './components/templates/OrderAssignment'
 
-import { getProviderIdFromOrder } from 'utils/order'
+import { getUserFromOrder, getBoatFromOrder, getProviderFromOrder } from 'utils/order'
 
 const Wrapper = styled.div`
   padding: 30px 25px;
-`
+`;
 
 const Column = styled(Col)`
   padding-right: 15px !important;
   padding-left: 15px !important;
-`
-
-const getOrderDetails = (orderInfo) => {
-  const included = get(orderInfo, 'included', [])
-  const boatIdx = findIndex(included, item => item.type === 'boats');
-  const boatInfo = { id: get(included, `[${boatIdx}].id`), ...get(included, `[${boatIdx}].attributes`) }
-  const customerIdx = findIndex(included, item => item.type === 'users');
-  const customerInfo = {
-    id: get(included, `[${customerIdx}].id`), ...get(included, `[${customerIdx}].attributes`)
-  }
-  const providerIdx = findIndex(included, item => item.type === 'providers');
-  const providerInfo = {
-    id: get(included, `[${providerIdx}].id`), ...get(included, `[${providerIdx}].attributes`)
-  }
-  return { boatInfo, customerInfo, providerInfo };
-}
-
-const getLocations = (orderInfo) => {
-  const included = get(orderInfo, 'included', []);
-  const locations = {};
-  forEach(included, (item) => {
-    if (item.type === 'locations') {
-      const { id } = item;
-      set(locations, `${id}`, item);
-    }
-  })
-  return locations;
-}
+`;
 
 class OrderDetails extends React.Component {
   state = {
@@ -74,30 +47,30 @@ class OrderDetails extends React.Component {
 
   getOrderInfo = () => {
     const { currentOrder } = this.props;
-    const { boatInfo, customerInfo } = getOrderDetails(currentOrder);
+    const customerInfo = getUserFromOrder(currentOrder);
+    const boatInfo = getBoatFromOrder(currentOrder);
     return { boatInfo, customerInfo };
   }
 
   getProviderId = () => {
     const { currentOrder } = this.props;
-    return getProviderIdFromOrder(currentOrder);
+    return get(getProviderFromOrder(currentOrder),'id', '');
   }
 
-  getUserId = () => {
+  getUser = () => {
     const { currentOrder } = this.props;
-    const userId = get(currentOrder, 'data.relationships.user.data.id');
-    return userId;
+    return getUserFromOrder(currentOrder);
   }
 
   getSummaryInfo = () => {
     const { currentOrder } = this.props;
-    const total = get(currentOrder, 'data.attributes.total')
-    const subtotal = get(currentOrder, 'data.attributes.subTotal')
-    const taxRate = get(currentOrder, 'data.attributes.taxRate')
-    const taxAmount = get(currentOrder, 'data.attributes.taxAmount')
-    const discount = get(currentOrder, 'data.attributes.discount')
-    const deposit = get(currentOrder, 'data.attributes.deposit')
-    const comments = get(currentOrder, 'data.attributes.comments')
+    const total = get(currentOrder, 'attributes.total')
+    const subtotal = get(currentOrder, 'attributes.subTotal')
+    const taxRate = get(currentOrder, 'attributes.taxRate')
+    const taxAmount = get(currentOrder, 'attributes.taxAmount')
+    const discount = get(currentOrder, 'attributes.discount')
+    const deposit = get(currentOrder, 'attributes.deposit')
+    const comments = get(currentOrder, 'attributes.comments')
     return ({
       total, subtotal, taxRate, discount, deposit, taxAmount, comments
     })
@@ -105,13 +78,13 @@ class OrderDetails extends React.Component {
 
   getPaymentInfo = () => {
     const { currentOrder } = this.props;
-    const balance = get(currentOrder, 'data.attributes.balance');
+    const balance = get(currentOrder, 'attributes.balance');
     return { balance }
   }
 
   getUdpatedDate = () => {
     const { currentOrder } = this.props;
-    const updatedAt = get(currentOrder, 'data.attributes.updatedAt');
+    const updatedAt = get(currentOrder, 'attributes.updatedAt');
     return updatedAt;
   }
 
@@ -135,26 +108,19 @@ class OrderDetails extends React.Component {
     this.props.UpdateOrder({ orderId, data});
   }
 
-  getBoatLocation = (boatInfo) => {
-    const { currentOrder } = this.props;
-    const { locationId } = boatInfo;
-    const locations = getLocations(currentOrder);
-    return get(locations, `${locationId}`);
-  }
-
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
-    const boatLocation = this.getBoatLocation(boatInfo);
+    const boatLocation = boatInfo.location;
     const updatedDate = this.getUdpatedDate();
     const { orderId } = this.state;
     const providerId = this.getProviderId();
     const { lineItems, currentOrder } = this.props;
     const summaryInfo = this.getSummaryInfo();
-    const userId = this.getUserId();
+    const user = this.getUser();
     const paymentInfo = this.getPaymentInfo();
     return (
       <React.Fragment>
-        <OrderDetailHeader orderId={orderId} />
+        <OrderDetailHeader order={currentOrder} />
         <Wrapper>
           <Row>
             <Column md={12} sm={12} xs={12} lg={8} xl={8}>
@@ -164,7 +130,7 @@ class OrderDetails extends React.Component {
                 <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
               </SectionGroup>
               <SectionGroup>
-                <PaymentsSection orderId={orderId} userId={userId} providerId={providerId} {...paymentInfo} />
+                <PaymentsSection orderId={orderId} user={user} providerId={providerId} {...paymentInfo} />
               </SectionGroup>
               <SectionGroup>
                 <Scheduler orderId={orderId} />

@@ -74,9 +74,13 @@ function* getOrder(action) {
   const { orderId, success, error } = action.payload;
   try {
     const result = yield call(orderClient.read, orderId);
+    const { data, included } = result;
     yield put({
       type: actionTypes.GET_ORDER_SUCCESS,
-      payload: result
+      payload: {
+        order: data,
+        included
+      }
     });
     if (success) {
       yield call(success);

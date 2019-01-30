@@ -51,15 +51,21 @@ class BoatInfoSection extends React.Component {
   }
 
   updateBoatInfo = (data) => {
-    const { boats, customerId, refreshInfo } = this.props;
+    const { boats, user, refreshInfo } = this.props;
     const { edtingBoatIndex } = this.state;
     const boatId = boats[edtingBoatIndex].id;
+    let params = {};
+    let paramName = 'user_id';
+    if (user.type === 'child_accounts') {
+      paramName = 'child_account_id';
+    }
+    params[`boat[${paramName}]`] = user.id;
     this.props.UpdateBoat({
       boatId,
       data,
       success: () => {
         this.endEditing();
-        this.props.GetBoats({ params: { 'boat[user_id]': customerId } });
+        this.props.GetBoats({ params });
         if (refreshInfo) {
           refreshInfo();
         }
@@ -75,7 +81,7 @@ class BoatInfoSection extends React.Component {
   }
 
   render() {
-    const { boats, customerId } = this.props;
+    const { boats, user } = this.props;
     const { visibleOfBoatModal, edtingBoatIndex, openedBoatIdx } = this.state;
 
     return (
@@ -92,7 +98,7 @@ class BoatInfoSection extends React.Component {
         ))}
         {edtingBoatIndex > -1 &&<BoatModal
           open={visibleOfBoatModal}
-          customerId={customerId}
+          user={user}
           onClose={this.endEditing}
           onSave={this.updateBoatInfo}
           boatInfo={boats[edtingBoatIndex]}

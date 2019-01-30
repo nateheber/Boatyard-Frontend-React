@@ -97,7 +97,7 @@ let infoFields = [
   },
   {
     type: 'text_field',
-    field: 'zipCode',
+    field: 'zip',
     label: 'Zip Code',
     required: true,
     errorMessage: 'Required',
@@ -126,12 +126,18 @@ class CreateModal extends React.Component {
   save = () => {
     const cardsVailid = this.cardFields.validateFields();
     const infoValid = this.infoFields.validateFields();
-    const { userId } = this.props;
+    const { user } = this.props;
     if (cardsVailid && infoValid) {
       const cardValue = this.cardFields.getFieldValues();
       const infoValues = this.infoFields.getFieldValues();
+      const data = { ...cardValue, ...infoValues };
+      if (user.type === 'child_accounts') {
+        data['childAccountId'] = user.id;
+      } else {
+        data['userId'] = user.id;
+      }
       this.props.CreateCreditCard({
-        data: { userId, ...cardValue, ...infoValues },
+        data,
         success: this.onSuccess,
         error: () => {
           const { errors } = this.props;
@@ -150,13 +156,13 @@ class CreateModal extends React.Component {
   };
 
   render() {
-    const { open, onClose, currentStatus, currentUser } = this.props;
+    const { open, onClose, currentStatus, user } = this.props;
     const actions = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
       <OrangeButton onClick={this.save} key="modal_btn_save">SAVE</OrangeButton>
     ];
-    infoFields[0].defaultValue = get(currentUser, 'attributes.firstName');
-    infoFields[1].defaultValue = get(currentUser, 'attributes.lastName');
+    infoFields[0].defaultValue = get(user, 'firstName');
+    infoFields[1].defaultValue = get(user, 'lastName');
     return (
       <Modal
         title="New Payment Method"
@@ -174,7 +180,6 @@ class CreateModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  currentUser: state.user.currentUser,
   currentStatus: state.creditCard.currentStatus,
   errors: state.creditCard.errors
 });

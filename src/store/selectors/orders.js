@@ -1,7 +1,36 @@
-import { get, filter, forEach, findIndex, sortBy } from 'lodash';
+import { get, set, filter, forEach, findIndex, sortBy, isEmpty } from 'lodash';
 import { createSelector } from 'reselect';
 
-const currentOrderSelector = state => state.order.currentOrder;
+function refactorIncluded(included) {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i]
+    set(refactored, `${type}.${id}`, {...included[i]})
+  }
+  return refactored;
+}
+
+const currentOrderSelector = state => {
+  let order = state.order.currentOrder;
+  const included = state.order.included;
+  if (!isEmpty(order)) {
+    for(const key in order.relationships) {
+      let value = order.relationships[key].data;
+      if(value) {
+        if (key !== 'lineItems') {
+          order.relationships[key] = included[value.type][value.id];
+          if (key === 'boat') {
+            const location = get(order.relationships[key], 'relationships.location.data');
+            const locationInfo = get(included, `[${location.type}][${location.id}]`);
+            set(order, `relationships[${key}].location`, locationInfo )
+          }
+        }
+      }
+    }
+  }
+  return order;
+}
+
 const allOrdersSelector = (state, orderType) => {
   switch (orderType) {
     case 'new': {

@@ -36,6 +36,7 @@ const FieldValue = styled.div`
 
 const HidingPart = styled.div`
   overflow: hidden;
+  margin: -30px 0 30px;
   &.opened {
     height: 252px;
   }

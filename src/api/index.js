@@ -60,6 +60,10 @@ export const createUserClient = authType => {
   return new CRUDClient('users', authType);
 };
 
+export const createChildAccountClient = authType => {
+  return new CRUDClient('child_accounts', authType);
+};
+
 export const createProviderLocationServiceClient = authType => {
   return new CRUDClient('provider_location_services', authType);
 }

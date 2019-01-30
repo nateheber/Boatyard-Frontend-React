@@ -85,7 +85,7 @@ class OrderPaymentModal extends React.Component {
   }
 
   render() {
-    const { open, onClose, creditCards, userId, privilege } = this.props;
+    const { open, onClose, creditCards, user, privilege } = this.props;
     const { balance, fee, tab } = this.state;
     const charging = parseFloat(balance) + parseFloat(fee);
     const action = [
@@ -107,7 +107,7 @@ class OrderPaymentModal extends React.Component {
             {
               tab === 'Credit Card' ? (
                 <CreditCardSelector
-                  userId={userId}
+                  user={user}
                   creditCards={creditCards}
                   onChange={this.onSelectCard}
                   refreshCards={this.refreshCards}

@@ -8,7 +8,8 @@ const refineServices = (services) => {
   return services.map(service => {
     return {
       id: service.id,
-      ...service.attributes
+      ...service.attributes,
+      ...service.relationships
     };
   });
 };

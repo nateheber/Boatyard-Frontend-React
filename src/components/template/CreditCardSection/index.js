@@ -1,19 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { findIndex, isEmpty } from 'lodash'
-import styled from 'styled-components';
 
 import { Section } from 'components/basic/InfoSection'
-
+import { NormalText } from 'components/basic/Typho'
 import InfoSection from './InfoSection'
 import ListModal from './ListModal'
 import CreationModal from './CreationModal'
 
-const NormalText = styled.div`
-  font-family: 'Source Sans Pro';
-  color: #898889;
-  font-size: 14px;
-`;
 
 class CreditCardSection extends React.Component {
   state = {
@@ -58,7 +52,7 @@ class CreditCardSection extends React.Component {
   render() {
     const card = this.getDefaultCard();
     const { showPaymentModal, showNewPaymentModal } = this.state;
-    const { userId } = this.props;
+    const { user } = this.props;
     return (
       <React.Fragment>
         <Section title="Payment Methods" mode="view" onEdit={this.showListModal} >
@@ -75,7 +69,7 @@ class CreditCardSection extends React.Component {
           refreshCards={this.props.onRefresh}
         />
         <CreationModal
-          userId={userId}
+          user={user}
           open={showNewPaymentModal}
           onClose={this.closeCreationModal}
           refreshCards={this.props.onRefresh}

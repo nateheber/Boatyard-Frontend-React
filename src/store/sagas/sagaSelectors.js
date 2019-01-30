@@ -33,6 +33,19 @@ export const getUserClient = state => {
   }
 };
 
+export const getChildAccountClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createChildAccountClient('basic');
+    case 'admin':
+      return APIGenerator.createChildAccountClient('admin');
+    case 'provider':
+      return APIGenerator.createChildAccountClient('provider');
+    default:
+      return APIGenerator.createChildAccountClient('basic');
+  }
+};
+
 export const getServiceClient = state => {
   switch (state.auth.privilege) {
     case 'basic':
