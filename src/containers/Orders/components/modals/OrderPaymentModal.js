@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { Row, Col } from 'react-flexbox-grid'
+import { get } from 'lodash';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
@@ -76,10 +77,11 @@ class OrderPaymentModal extends React.Component {
   }
 
   refreshCards = () => {
-    const { userId, GetCreditCards } = this.props;
+    const { user, GetCreditCards } = this.props;
+    const userId = get(user, 'id.id');
     GetCreditCards({
       params: {
-        'credit_card[user_id]': userId
+        'credit_card[user_id]': userId,
       }
     });
   }

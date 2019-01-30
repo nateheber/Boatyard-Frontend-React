@@ -74,6 +74,8 @@ const MenuItemLi = styled.div`
   padding: 8px 0;
 `;
 
+const getPageCount = (perPage, total) => Math.ceil(total/perPage)
+
 class ProviderSelector extends React.Component {
   constructor(props) {
     super(props);
@@ -83,12 +85,13 @@ class ProviderSelector extends React.Component {
       keyword: "",
       showMenu: false,
       dispatchIds: props.dispatchIds || [],
+      providers: [],
     }
   }
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
-    this.props.GetProviders({page: 1});
+    this.props.GetProviders({params: {page: 1}, success: this.onFetchProviders});
   }
 
   componentWillUnmount() {
@@ -99,20 +102,31 @@ class ProviderSelector extends React.Component {
     this.setState({ keyword: evt.target.value, providers: [] }, this.filterProviders);
   }
 
+  onFetchProviders = (providers, page) => {
+    if (page === 1) {
+      this.setState({ providers })
+    } else {
+      this.setState({ providers: [...this.state.providers, ...providers] })
+    }
+  }
+
   setWrapperRef(node) {
     this.wrapperRef = node;
   }
 
   filterProviders = () => {
     const { keyword } = this.state;
-    this.props.GetProviders({params: { 'provider[name]': keyword }})
+    this.props.GetProviders({params: { 'provider[name]': keyword }, success: this.onFetchProviders})
   }
 
   handleClickOutside(event) {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      if (this.state.showMenu) {
+        this.submitData();
+      }
       this.setState({
         showMenu: false
-      }, this.submitData);
+      });
     }
   }
 
@@ -129,14 +143,15 @@ class ProviderSelector extends React.Component {
 
   onScroll = (e) => {
     const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-    const { page, total } = this.props;
+    const { page, total, perPage } = this.props;
     const { keyword } = this.state;
     if (bottom) {
-      if (page + 1 < parseInt(total)) {
+      const pageCount = getPageCount(parseInt(perPage), parseInt(total));
+      if (page + 1 < pageCount) {
         if (keyword === '') {
-          this.props.GetProviders({ params: { page: page + 1 } })
+          this.props.GetProviders({ params: { page: page + 1 }, success: this.onFetchProviders })
         } else {
-          this.props.GetProviders({ params: { page: page + 1, 'provider[name]': keyword } })
+          this.props.GetProviders({ params: { page: page + 1, 'provider[name]': keyword }, success: this.onFetchProviders })
         }
       }
     }
@@ -154,8 +169,7 @@ class ProviderSelector extends React.Component {
   }
 
   render() {
-    const { showMenu, keyword } = this.state;
-    const { providers } = this.props;
+    const { showMenu, keyword, providers } = this.state;
     return (
       <Wrapper ref={this.setWrapperRef}>
         <Button
@@ -182,10 +196,11 @@ class ProviderSelector extends React.Component {
   }
 }
 
-const mapStateToProps = ({ provider: { providers, page, total} }) => ({
+const mapStateToProps = ({ provider: { providers, page, total, perPage} }) => ({
   providers,
   page,
   total,
+  perPage
 });
 
 const mapDispatchToProps = {

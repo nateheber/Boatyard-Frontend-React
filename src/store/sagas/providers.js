@@ -50,7 +50,7 @@ function* getProviders(action) {
       }
     });
     if (success) {
-      yield call(success, refinedProviders);
+      yield call(success, refinedProviders, page);
     }
   } catch (e) {
     yield put({ type: failureType, payload: e });
