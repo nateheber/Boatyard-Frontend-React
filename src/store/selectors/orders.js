@@ -1,12 +1,24 @@
 import { get, set, filter, forEach, findIndex, sortBy, isEmpty } from 'lodash';
 import { createSelector } from 'reselect';
 
+const setLineItemRelationships = (lineItem, included) => {
+  const resultData = {...lineItem};
+  const { relationships } = lineItem;
+  for(const key in relationships) {
+    let value = relationships[key].data;
+    if (value) {
+      resultData.relationships[key] = included[value.type][value.id];
+    }
+  }
+  return lineItem;
+}
+
 const currentOrderSelector = state => {
   let order = state.order.currentOrder;
   const included = state.order.included;
   if (!isEmpty(order)) {
     for(const key in order.relationships) {
-      let value = order.relationships[key].data;
+      const value = order.relationships[key].data;
       if(value) {
         if (key !== 'lineItems') {
           order.relationships[key] = included[value.type][value.id];
@@ -15,6 +27,15 @@ const currentOrderSelector = state => {
             const locationInfo = get(included, `[${location.type}][${location.id}]`);
             set(order, `relationships[${key}].location`, locationInfo )
           }
+        } else {
+          const lineItemRelation = get(order, `relationships[${key}].data`, []);
+          const lineItems = [];
+          forEach(lineItemRelation, (info) => {
+            const lineItemDetail = get(included, `[${info.type}][${info.id}]`);
+            const parsedLineItem = setLineItemRelationships(lineItemDetail, included);
+            lineItems.push(parsedLineItem);
+          })
+          set(order, 'lineItems', lineItems);
         }
       }
     }
