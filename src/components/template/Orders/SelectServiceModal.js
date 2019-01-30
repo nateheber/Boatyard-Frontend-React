@@ -49,8 +49,7 @@ class SelectServiceModal extends React.Component {
   onChangeServiceFilter = val => {
     return new Promise((resolve, reject) => {
       this.props.FilterServices({
-        // params: { 'service[name]': val },
-        params: {},
+        params: { 'search_by_name': val },
         success: resolve,
         error: reject
       });

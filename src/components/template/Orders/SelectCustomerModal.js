@@ -5,7 +5,7 @@ import { Row, Col } from 'react-flexbox-grid';
 import { findIndex, isEmpty } from 'lodash';
 import styled from 'styled-components';
 
-import { FilterUsers } from 'store/actions/users';
+import { FilterChildAccounts } from 'store/actions/child-accounts';
 import { actionTypes as customerActions, CreateUser } from 'store/actions/users';
 import { actionTypes as boatActions, GetBoats, CreateBoat } from 'store/actions/boats';
 import { refinedBoatsSelector } from 'store/selectors/boats';
@@ -58,7 +58,7 @@ class SelectCustomerModal extends React.Component {
 
   onChangeUserFilter = val => {
     return new Promise((resolve, reject) => {
-      this.props.FilterUsers({
+      this.props.FilterChildAccounts({
         params: {
           'search_by_full_name': val
         },
@@ -76,7 +76,7 @@ class SelectCustomerModal extends React.Component {
       refinedBoats: []
     }, () => {
       this.props.GetBoats({
-        params: { 'boat[user_id]': user.id },
+        params: { 'boat[child_account_id]': user.id },
         success: () => {
           const { boats } = this.props;
           if (!isEmpty(boats)) {
@@ -95,7 +95,7 @@ class SelectCustomerModal extends React.Component {
     });
   };
 
-  next = () => {
+  moveToChooseService = () => {
     const { customer, boat } = this.state;
     this.props.toNext({ customer, boat });
   };
@@ -195,7 +195,7 @@ class SelectCustomerModal extends React.Component {
     CreateBoat({
       data: {
         boat: {
-          user_id: customer.id,
+          child_account_id: customer.id,
           ...data.boat,
         }
       },
@@ -208,7 +208,7 @@ class SelectCustomerModal extends React.Component {
           refinedBoats: []
         }, () => {
           this.props.GetBoats({
-            params: { 'boat[user_id]': customer.id },
+            params: { 'boat[child_account_id]': customer.id },
             success: () => {
               const { boats } = this.props;
               if (!isEmpty(boats)) {
@@ -230,17 +230,23 @@ class SelectCustomerModal extends React.Component {
   };
 
   render() {
-    const action = [<OrangeButton onClick={this.next} key="modal_action_button">Next</OrangeButton>];
     const { open, onClose, currentCustomerStatus, currentBoatStatus } = this.props;
     const {
       customer, boat, refinedBoats, refinedBoat,
       visibleOfCustomerModal, visibleOfBoatModal
     } = this.state;
+    const actionButtons = [
+      <OrangeButton
+        key="modal_action_button"
+        onClick={this.moveToChooseService}
+        disabled={isEmpty(customer) || isEmpty(boat)}
+      >Next</OrangeButton>
+    ];
     return (
       <Modal
         title="Select Customer"
         minHeight={265}
-        actions={action}
+        actions={actionButtons}
         open={open}
         onClose={onClose}
       >
@@ -313,7 +319,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  FilterUsers,
+  FilterChildAccounts,
   GetBoats,
   CreateUser,
   CreateBoat
