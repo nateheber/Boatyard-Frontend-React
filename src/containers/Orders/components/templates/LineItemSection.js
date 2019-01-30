@@ -19,17 +19,17 @@ class LineItemSection extends React.Component {
     super(props)
     this.state = {
       newItems: [],
-      lineItems: props.lineItems,
+      lineItems: props.currentOrder.lineItems,
       mode: 'view'
     }
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.lineItems.length === 0 && prevProps.lineItems.length > 0) {
+    if (this.props.currentOrder.lineItems.length === 0 && prevProps.currentOrder.lineItems.length > 0) {
       this.setState({ mode: 'view' })
     }
-    if (!deepEqual(this.props.lineItems, prevProps.lineItems)) {
-      this.setState({ lineItems: this.props.lineItems })
+    if (!deepEqual(this.props.currentOrder.lineItems, prevProps.currentOrder.lineItems)) {
+      this.setState({ lineItems: this.props.currentOrder.lineItems })
     }
   }
 

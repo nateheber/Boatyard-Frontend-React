@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { get } from 'lodash';
 
 const Wrapper = styled.div``;
 
@@ -34,7 +35,7 @@ const FieldValue = styled.div`
 `;
 
 export default ({ lineItem }) => {
-  const { serviceAttributes: { name: serviceName } } = lineItem;
+  const serviceName = get(lineItem, 'relationships.service.attributes.name');
   return (
     <Wrapper>
       <Field>
