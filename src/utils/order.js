@@ -3,7 +3,7 @@ import moment from 'moment'
 
 export const getUserFromOrder = (order) => {
   let user = get(order, 'relationships.user');
-  if (isEmpty(user)) {
+  if (user.hasOwnProperty('data')) {
     user = get(order, 'relationships.childAccount');
   }
   if (!isEmpty(user)) {
@@ -16,13 +16,42 @@ export const getUserFromOrder = (order) => {
   return user;
 }
 
-export const getCreationInfo = (order) => {
+export const getBoatFromOrder = (order) => {
+  let boat = get(order, 'relationships.boat', {});
+  if(!isEmpty(boat)) {
+    boat = {
+      id: boat.id,
+      ...boat.attributes,
+      ...boat.relationships
+    }
+  };
+  return boat;
+}
+
+export const getProviderFromOrder = (order) => {
+  let provider = get(order, 'relationships.provider', {});
+  if(!isEmpty(provider)) {
+    provider = {
+      id: provider.id,
+      ...provider.attributes,
+      ...provider.relationships
+    }
+  };
+  return provider;
+}
+
+export const getCustomerName = (order) => {
   const user = getUserFromOrder(order);
   const firstName = get(user, 'firstName', '');
   const lastName = get(user, 'lastName');
+  return `${firstName} ${lastName}`;
+}
+
+export const getCreationInfo = (order) => {
+  const customerName = getCustomerName(order);
   const createdAt = get(order, 'attributes.createdAt');
   const dateString = moment(createdAt).format('MMM D, YYYY [at] hh:mm A');
-  return { time: moment(createdAt).valueOf(), message: `Order placed by ${firstName} ${lastName} ${dateString}`}
+  return { time: moment(createdAt).valueOf(), message: `Order placed by ${customerName} ${dateString}`}
 }
 
 export const getUpdatedStatus = (order) => {
@@ -72,10 +101,6 @@ export const generateOrderTimeline = (order) => {
   const timeLine = getOrderProcessInfo(order);
   const result = [creationInfo, updateInfo, ...timeLine ];
   return sortBy(result, ['time'])
-}
-
-export const getProviderIdFromOrder = (order) => {
-  return get(order, 'relationships.provider.id', '');
 }
 
 export const getLocationAddressFromOrder = (order) => {
