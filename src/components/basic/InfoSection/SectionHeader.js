@@ -30,11 +30,11 @@ const Title = styled.h5`
   font-family: 'Montserrat', sans-serif !important;
 `;
 
-export default ({ title, mode, onEdit }) => (
+export default ({ title, mode, onEdit, editComponent }) => (
   <Wrapper>
     <Title>{title}</Title>
     {
-      mode === 'view' && <EditButton onClick={onEdit} />
+      mode === 'view' && (editComponent ? editComponent : <EditButton onClick={onEdit} />)
     }
   </Wrapper>
 )
