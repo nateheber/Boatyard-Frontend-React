@@ -82,6 +82,7 @@ class ProviderSelector extends React.Component {
     this.state = {
       keyword: "",
       showMenu: false,
+      dispatchIds: props.dispatchIds || [],
     }
   }
 
@@ -116,7 +117,7 @@ class ProviderSelector extends React.Component {
   }
 
   isChecked = (providerId) => {
-    const dispatchIds = get(this.props, 'dispatchIds', []);
+    const { dispatchIds } = this.state;
     const idx= findIndex(dispatchIds, id => providerId === id);
     return idx >= 0;
   }
@@ -133,6 +134,17 @@ class ProviderSelector extends React.Component {
           this.props.GetProviders({ params: { page: page + 1, 'provider[name]': keyword } })
         }
       }
+    }
+  }
+
+  onChangeSelection = (providerId) => {
+    const { dispatchIds } = this.state;
+    const idx = findIndex(dispatchIds, id => id === providerId);
+    if (idx >= 0) {
+      const result = [...dispatchIds.slice(0, idx), ...dispatchIds.slice(idx + 1)];
+      this.setState({ dispatchIds: result });
+    } else {
+      this.setState({ dispatchIds: [...dispatchIds, providerId] });
     }
   }
 
@@ -154,7 +166,7 @@ class ProviderSelector extends React.Component {
             {
               providers.map((provider, idx) => (
                 <MenuItemLi key={`provider_${idx}`} >
-                  <ProviderCheck checked={this.isChecked(provider.id)} provider={provider} />
+                  <ProviderCheck checked={this.isChecked(provider.id)} provider={provider} onClick={() => this.onChangeSelection(provider.id)} />
                 </MenuItemLi>
               ))
             }
