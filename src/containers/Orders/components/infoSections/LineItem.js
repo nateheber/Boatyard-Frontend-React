@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
-import { set } from 'lodash';
+import { set, get } from 'lodash';
 import Select from 'react-select'
 import { Row, Col } from 'react-flexbox-grid'
 
@@ -78,8 +78,8 @@ class LineItem extends React.Component {
   }
 
   getServiceName = () => {
-    const { serviceAttributes: { name } } = this.props;
-    return name;
+    const serviceName = get(this.props, 'relationships.service.attributes.name');
+    return serviceName;
   }
 
   getServiceId = () => {

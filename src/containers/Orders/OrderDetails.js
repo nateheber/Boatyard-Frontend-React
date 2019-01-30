@@ -113,7 +113,8 @@ class OrderDetails extends React.Component {
     const updatedDate = this.getUdpatedDate();
     const { orderId } = this.state;
     const providerId = this.getProviderId();
-    const { lineItems, currentOrder } = this.props;
+    const { currentOrder } = this.props;
+    const { lineItems } = currentOrder;
     const summaryInfo = this.getSummaryInfo();
     const user = this.getUser();
     const paymentInfo = this.getPaymentInfo();
