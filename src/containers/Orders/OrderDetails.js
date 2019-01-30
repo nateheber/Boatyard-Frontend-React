@@ -75,13 +75,13 @@ class OrderDetails extends React.Component {
 
   getSummaryInfo = () => {
     const { currentOrder } = this.props;
-    const total = get(currentOrder, 'data.attributes.total')
-    const subtotal = get(currentOrder, 'data.attributes.subTotal')
-    const taxRate = get(currentOrder, 'data.attributes.taxRate')
-    const taxAmount = get(currentOrder, 'data.attributes.taxAmount')
-    const discount = get(currentOrder, 'data.attributes.discount')
-    const deposit = get(currentOrder, 'data.attributes.deposit')
-    const comments = get(currentOrder, 'data.attributes.comments')
+    const total = get(currentOrder, 'attributes.total')
+    const subtotal = get(currentOrder, 'attributes.subTotal')
+    const taxRate = get(currentOrder, 'attributes.taxRate')
+    const taxAmount = get(currentOrder, 'attributes.taxAmount')
+    const discount = get(currentOrder, 'attributes.discount')
+    const deposit = get(currentOrder, 'attributes.deposit')
+    const comments = get(currentOrder, 'attributes.comments')
     return ({
       total, subtotal, taxRate, discount, deposit, taxAmount, comments
     })
@@ -89,13 +89,13 @@ class OrderDetails extends React.Component {
 
   getPaymentInfo = () => {
     const { currentOrder } = this.props;
-    const balance = get(currentOrder, 'data.attributes.balance');
+    const balance = get(currentOrder, 'attributes.balance');
     return { balance }
   }
 
   getUdpatedDate = () => {
     const { currentOrder } = this.props;
-    const updatedAt = get(currentOrder, 'data.attributes.updatedAt');
+    const updatedAt = get(currentOrder, 'attributes.updatedAt');
     return updatedAt;
   }
 
