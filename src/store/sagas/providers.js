@@ -39,11 +39,13 @@ function* getProviders(action) {
       default:
     }
     const refinedProviders = refineProviders(providers);
+    const page = get(params, 'page', 1);
     yield put({
       type: successType,
       payload: {
         providers: refinedProviders,
         perPage,
+        page,
         total
       }
     });

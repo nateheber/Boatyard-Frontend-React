@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { findIndex, get } from 'lodash';
 
 import { Input } from 'components/basic/Input';
 
@@ -74,8 +75,8 @@ const MenuItemLi = styled.div`
 `;
 
 class ProviderSelector extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.setWrapperRef = this.setWrapperRef.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.state = {
@@ -86,15 +87,24 @@ class ProviderSelector extends React.Component {
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
-    this.props.GetProviders({});
+    this.props.GetProviders({page: 1});
   }
 
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
   }
 
+  onChangeFilter = (evt) => {
+    this.setState({ keyword: evt.target.value, providers: [] }, this.filterProviders);
+  }
+
   setWrapperRef(node) {
     this.wrapperRef = node;
+  }
+
+  filterProviders = () => {
+    const { keyword } = this.state;
+    this.props.GetProviders({params: { 'provider[name]': keyword }})
   }
 
   handleClickOutside(event) {
@@ -102,6 +112,27 @@ class ProviderSelector extends React.Component {
       this.setState({
         showMenu: false
       });
+    }
+  }
+
+  isChecked = (providerId) => {
+    const dispatchIds = get(this.props, 'dispatchIds', []);
+    const idx= findIndex(dispatchIds, id => providerId === id);
+    return idx >= 0;
+  }
+
+  onScroll = (e) => {
+    const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+    const { page, total } = this.props;
+    const { keyword } = this.state;
+    if (bottom) {
+      if (page + 1 < parseInt(total)) {
+        if (keyword === '') {
+          this.props.GetProviders({ params: { page: page + 1 } })
+        } else {
+          this.props.GetProviders({ params: { page: page + 1, 'provider[name]': keyword } })
+        }
+      }
     }
   }
 
@@ -117,13 +148,13 @@ class ProviderSelector extends React.Component {
         />
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
           <FitlerWrapper>
-            <Input type="text" value={keyword} />
+            <Input type="text" value={keyword} onChange={this.onChangeFilter} />
           </FitlerWrapper>
-          <Scroller>
+          <Scroller onScroll={this.onScroll}>
             {
               providers.map((provider, idx) => (
-                <MenuItemLi>
-                  <ProviderCheck provider={provider} key={`provider_${idx}`} />
+                <MenuItemLi key={`provider_${idx}`} >
+                  <ProviderCheck checked={this.isChecked(provider.id)} provider={provider} />
                 </MenuItemLi>
               ))
             }
