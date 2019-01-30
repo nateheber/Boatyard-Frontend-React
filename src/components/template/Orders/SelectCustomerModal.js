@@ -239,6 +239,7 @@ class SelectCustomerModal extends React.Component {
     return (
       <Modal
         title="Select Customer"
+        minHeight={265}
         actions={action}
         open={open}
         onClose={onClose}

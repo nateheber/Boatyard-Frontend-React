@@ -145,6 +145,7 @@ class SelectServiceModal extends React.Component {
     return (
       <Modal
         title="Create Order"
+        minHeight={265}
         actions={action}
         open={open}
         onClose={onClose}

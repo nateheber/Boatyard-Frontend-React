@@ -24,13 +24,11 @@ const Header = styled.div`
 
 const Body = styled.div`
   box-sizing: border-box;
-  // min-height: 265px;
 `;
 
 const Content = styled.div`
   box-sizing: border-box;
   padding: 30px;
-  // min-height: 265px;
 `;
 
 const ActionWrapper = styled.div`
@@ -95,7 +93,7 @@ const modalStyles = {
 
 export default class CustomModal extends React.Component {
   render() {
-    const { open, onClose, children, title, actions, small, normal, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
+    const { open, onClose, children, title, actions, small, normal, minHeight, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
     return (
       <Modal
         styles={small ? modalStyles.small : normal ? modalStyles.normal : modalStyles.main}
@@ -106,7 +104,7 @@ export default class CustomModal extends React.Component {
         <Header className={!isEmpty(tabs) ? 'noBorder' : ''}>{title}</Header>
         {!isEmpty(tabs) && <ModalTab tabs={tabs} selected={selected} onSelect={onSelect} /> }
         <Body>
-          <Content>
+          <Content style={{ minHeight: minHeight || 'inherit' }}>
             {children}
           </Content>
           {actions && <ActionWrapper>{actions}</ActionWrapper>}
