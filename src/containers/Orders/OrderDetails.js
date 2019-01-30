@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import queryString from 'query-string'
 import { Row, Col } from 'react-flexbox-grid'
 import styled from 'styled-components'
-import { get, set, forEach } from 'lodash'
+import { get } from 'lodash'
 
 import { GetOrder, UpdateOrder } from 'store/actions/orders'
 import { fetchLineItems } from 'store/reducers/lineItems'
