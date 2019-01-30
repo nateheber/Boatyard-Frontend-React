@@ -9,7 +9,7 @@ export const getUserFromOrder = (order) => {
     }
     if (!isEmpty(user)) {
       return {
-        id: user,
+        id: user.id,
         type: user.type,
         ...user.attributes
       };
