@@ -5,8 +5,11 @@ import { Row, Col } from 'react-flexbox-grid';
 import { findIndex, isEmpty } from 'lodash';
 import styled from 'styled-components';
 
-import { FilterChildAccounts } from 'store/actions/child-accounts';
-import { actionTypes as customerActions, CreateUser } from 'store/actions/users';
+import {
+  actionTypes as customerActions,
+  FilterChildAccounts,
+  CreateChildAccount
+} from 'store/actions/child-accounts';
 import { actionTypes as boatActions, GetBoats, CreateBoat } from 'store/actions/boats';
 import { refinedBoatsSelector } from 'store/selectors/boats';
 import Modal from 'components/compound/Modal';
@@ -165,9 +168,9 @@ class SelectCustomerModal extends React.Component {
   };
 
   onCreateCustomer = (data) => {
-    const { CreateUser } = this.props;
-    CreateUser({
-      data,
+    const { CreateChildAccount } = this.props;
+    CreateChildAccount({
+      data: { child_account: { ...data.user } },
       success: (user) => {
         this.hideCustomerModal();
         const newUser = {
@@ -290,7 +293,7 @@ class SelectCustomerModal extends React.Component {
         }
         <CustomerModal
           open={visibleOfCustomerModal}
-          loading={currentCustomerStatus === customerActions.CREATE_USER}
+          loading={currentCustomerStatus === customerActions.CREATE_CHILD_ACCOUNT}
           onClose={this.hideCustomerModal}
           onSave={this.onCreateCustomer}
         />
@@ -307,15 +310,15 @@ class SelectCustomerModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  currentCustomerStatus: state.user.currentStatus,
+  currentCustomerStatus: state.childAccount.currentStatus,
   currentBoatStatus: state.boat.currentStatus,
   boats: refinedBoatsSelector(state)
 });
 
 const mapDispatchToProps = {
   FilterChildAccounts,
+  CreateChildAccount,
   GetBoats,
-  CreateUser,
   CreateBoat
 };
 
