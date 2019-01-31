@@ -17,7 +17,8 @@ const Label = styled.td`
   color: #004258;
   text-transform: uppercase;
   font-weight: bold;
-  padding: 0 10px 15px 0;
+  padding-bottom: 15px;
+  padding-right: 10px;
   line-height: 20px;
 `;
 
