@@ -76,7 +76,7 @@ function* loginWithProvider(action) {
     if (!isEmpty(id)) {
       result = yield call(escalationApiClient.post, '/users/escalations', {
         escalation: {
-          providerId: parseInt(providerId)
+          providerId: parseInt(id)
         }
       });  
       const authorizationToken = get(

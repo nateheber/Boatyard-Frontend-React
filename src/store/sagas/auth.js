@@ -61,21 +61,29 @@ function* loginRequest(action) {
 }
 
 function* userPermissionRequest(action) {
-  const result = yield call(escalationClient.post, '/users/escalations', {
-    escalation: { admin: true }
-  });
-  if (!isEmpty(result)) {
-    yield put({
-      type: actions.setAdminToken,
-      payload: result.data.attributes.authorizationToken
+  try {
+    const result = yield call(escalationClient.post, '/users/escalations', {
+      escalation: { admin: true }
     });
+    if (!isEmpty(result)) {
+      yield put({
+        type: actions.setAdminToken,
+        payload: result.data.attributes.authorizationToken
+      });
+      yield put({
+        type: actions.setPrivilege,
+        payload: 'admin'
+      });
+    } else {
+      yield put({
+        type: ProviderActions.LOGIN_WITH_PROVIDER,
+        payload: {}
+      });
+    }
+  } catch (err) {
     yield put({
-      type: actions.setPrivilege,
-      payload: 'admin'
-    });
-  } else {
-    yield put({
-      type: ProviderActions.LOGIN_WITH_PROVIDER
+      type: ProviderActions.LOGIN_WITH_PROVIDER,
+      payload: {}
     });
   }
 }

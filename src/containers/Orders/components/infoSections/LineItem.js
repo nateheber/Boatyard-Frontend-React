@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import deepEqual from 'deep-equal'
 import styled from 'styled-components'
 import { set, get } from 'lodash';
 import Select from 'react-select'
@@ -49,6 +50,17 @@ class LineItem extends React.Component {
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!deepEqual(prevProps, this.props)) {
+      this.setState({
+        serviceId: this.props.serviceId,
+        quantity: this.props.attributes.quantity,
+        cost: this.props.attributes.cost,
+        comment: this.props.attributes.comment || '',
+      })
     }
   }
 
