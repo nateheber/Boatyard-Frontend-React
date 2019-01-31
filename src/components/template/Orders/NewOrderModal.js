@@ -66,6 +66,7 @@ class NewOrderModal extends React.Component {
       }
     });
   }
+
   render() {
     const { showCustomerModal, showServiceModal, boat } = this.state;
     return (
