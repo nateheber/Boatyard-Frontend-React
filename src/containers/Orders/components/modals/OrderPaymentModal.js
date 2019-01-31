@@ -10,7 +10,7 @@ import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
 import CreditCardSelector from 'components/template/CreditCardSection/CreditCardSelector';
 import PaymentSelector from 'components/template/CreditCardSection/PaymentSelector';
-import { getUserFromOrder, getBoatFromOrder, getProviderFromOrder } from 'utils/order'
+import { getUserFromOrder, getProviderFromOrder } from 'utils/order'
 
 const tabs = ['Credit Card', 'Cash/Check'];
 
