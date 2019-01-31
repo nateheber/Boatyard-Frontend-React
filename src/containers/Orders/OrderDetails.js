@@ -12,7 +12,7 @@ import { SectionGroup } from 'components/basic/InfoSection'
 
 import CustomerBoat from './components/templates/CustomerBoat'
 import LineItemSection from './components/templates/LineItemSection'
-import OrderSumarySection from './components/templates/OrderSumarySection'
+import OrderSummarySection from './components/templates/OrderSummarySection'
 import OrderReviewSection from './components/templates/OrderReviewSection'
 import OrderDetailHeader from './components/templates/OrderDetailHeader'
 import Scheduler from './components/templates/Scheduler'
@@ -130,7 +130,7 @@ class OrderDetails extends React.Component {
           <Row>
             <Column md={12} sm={12} xs={12} lg={8} xl={8}>
               <SectionGroup>
-                <OrderSumarySection lineItem={lineItems[0]} specialInstructions={this.getSpecialInstructions()} />
+                <OrderSummarySection lineItem={lineItems[0]} specialInstructions={this.getSpecialInstructions()} />
                 <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
                 <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
               </SectionGroup>

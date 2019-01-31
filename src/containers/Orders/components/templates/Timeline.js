@@ -36,7 +36,7 @@ const TimelineItem = styled.div`
   }
 `
 
-export default class OrderSumarySection extends React.Component {
+export default class OrderSummarySection extends React.Component {
 
   render () {
     const { order } = this.props;

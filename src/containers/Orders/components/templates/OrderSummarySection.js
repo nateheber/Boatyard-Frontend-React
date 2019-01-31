@@ -30,7 +30,7 @@ const FieldValue = styled.td`
   padding: 0 0 15px 0;
 `;
 
-export default class OrderSumarySection extends React.Component {
+export default class OrderSummarySection extends React.Component {
   render () {
     const { lineItem, specialInstructions } = this.props;
     const serviceName = get(lineItem, 'relationships.service.attributes.name');
