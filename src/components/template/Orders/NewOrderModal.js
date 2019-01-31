@@ -67,14 +67,23 @@ class NewOrderModal extends React.Component {
     });
   }
   render() {
-    const { showCustomerModal, showServiceModal } = this.state;
+    const { showCustomerModal, showServiceModal, boat } = this.state;
     return (
       <React.Fragment>
         {showCustomerModal &&
-          <SelectCustomerModal open={showCustomerModal} onClose={this.closeCustomerModal} toNext={this.toSelectService} />
+          <SelectCustomerModal
+            open={showCustomerModal}
+            onClose={this.closeCustomerModal}
+            toNext={this.toSelectService}
+          />
         }
         {showServiceModal &&
-          <SelectServiceModal open={showServiceModal} onClose={this.closeServiceModal} toNext={this.createNewOrder} />
+          <SelectServiceModal
+            open={showServiceModal}
+            boat={boat}
+            onClose={this.closeServiceModal}
+            toNext={this.createNewOrder}
+          />
         }
       </React.Fragment>
     )

@@ -64,16 +64,21 @@ class OrderDetails extends React.Component {
 
   getSummaryInfo = () => {
     const { currentOrder } = this.props;
-    const total = get(currentOrder, 'attributes.total')
-    const subtotal = get(currentOrder, 'attributes.subTotal')
-    const taxRate = get(currentOrder, 'attributes.taxRate')
-    const taxAmount = get(currentOrder, 'attributes.taxAmount')
-    const discount = get(currentOrder, 'attributes.discount')
-    const deposit = get(currentOrder, 'attributes.deposit')
-    const comments = get(currentOrder, 'attributes.comments')
+    const total = get(currentOrder, 'attributes.total');
+    const subtotal = get(currentOrder, 'attributes.subTotal');
+    const taxRate = get(currentOrder, 'attributes.taxRate');
+    const taxAmount = get(currentOrder, 'attributes.taxAmount');
+    const discount = get(currentOrder, 'attributes.discount');
+    const deposit = get(currentOrder, 'attributes.deposit');
+    const comments = get(currentOrder, 'attributes.comments');
     return ({
       total, subtotal, taxRate, discount, deposit, taxAmount, comments
-    })
+    });
+  }
+
+  getSpecialInstructions = () => {
+    const { currentOrder } = this.props;
+    return get(currentOrder, 'attributes.specialInstructions');
   }
 
   getPaymentInfo = () => {
@@ -119,6 +124,7 @@ class OrderDetails extends React.Component {
     const summaryInfo = this.getSummaryInfo();
     const user = this.getUser();
     const paymentInfo = this.getPaymentInfo();
+
     return (
       <React.Fragment>
         <OrderDetailHeader order={currentOrder} />
@@ -126,7 +132,7 @@ class OrderDetails extends React.Component {
           <Row>
             <Column md={12} sm={12} xs={12} lg={8} xl={8}>
               <SectionGroup>
-                <OrderSumarySection lineItem={lineItems[0]} />
+                <OrderSumarySection lineItem={lineItems[0]} specialInstructions={this.getSpecialInstructions()} />
                 <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
                 <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
               </SectionGroup>

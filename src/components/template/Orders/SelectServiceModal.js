@@ -27,7 +27,7 @@ const SubSectionTitle = styled.h5`
 const orderFields = [
   {
     type: 'text_area',
-    field: 'comments',
+    field: 'special_instructions',
     label: 'Special Instructions',
     errorMessage: 'Enter Special Instructions',
     required: false,
@@ -69,7 +69,6 @@ class SelectServiceModal extends React.Component {
   };
 
   onChangeService = val => {
-    console.log('---------------Service-----------', val);
     this.setState({
       service: val
     }, () => {
@@ -83,7 +82,6 @@ class SelectServiceModal extends React.Component {
     const { categoryId } = service;
     const properties = {};
     const orgProperties = get(service, `properties`, {});;
-    console.log('---------------Included-----------', included);
     if (categoryId) {
       const categories = get(included, 'categories', []);
       if (!isEmpty(categories)) {
@@ -118,7 +116,6 @@ class SelectServiceModal extends React.Component {
             xl: 6
           };
         });
-        console.log('--------serviceFields--------', serviceFields);
         this.setState({ serviceFields });
       }
     }
