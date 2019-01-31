@@ -3,8 +3,7 @@ import { isEmpty } from 'lodash';
 import styled from 'styled-components';
 import { get } from 'lodash';
 
-import { Section } from 'components/basic/InfoSection'
-
+import { Section } from 'components/basic/InfoSection';
 
 const TR = styled.tr`
   &:last-child {
@@ -32,28 +31,36 @@ const FieldValue = styled.td`
 
 export default class OrderSummarySection extends React.Component {
   render () {
-    const { lineItem, specialInstructions } = this.props;
+    const { lineItem, specialInstructions, slipNumber } = this.props;
     const serviceName = get(lineItem, 'relationships.service.attributes.name');
-    return isEmpty(lineItem) ? false : (
+    return (isEmpty(lineItem) && isEmpty(slipNumber) && isEmpty(specialInstructions)) ? false : (
       <Section title="Order Summary">
         <table>
           <tbody>
-            <TR>
+            {!isEmpty(lineItem) && <TR>
               <Label>
                 SERVICE
               </Label>
               <FieldValue sm={3} md={3} lg={3}>
                 {serviceName}
               </FieldValue>
-            </TR>
-            <TR>
+            </TR>}
+            {!isEmpty(slipNumber) && <TR>
+              <Label>
+                Slip Number
+              </Label>
+              <FieldValue sm={3} md={3} lg={3}>
+                {slipNumber}
+              </FieldValue>
+            </TR>}
+            {!isEmpty(specialInstructions) && <TR>
               <Label>
                 Special Instructions
               </Label>
               <FieldValue sm={3} md={3} lg={3}>
                 {specialInstructions}
               </FieldValue>
-            </TR>
+            </TR>}
           </tbody>
         </table>
       </Section>
