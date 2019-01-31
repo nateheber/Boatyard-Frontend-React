@@ -90,7 +90,7 @@ class OrderHeader extends React.Component {
   }
 
   render() {
-    const { order } = this.props;
+    const { order, privilege } = this.props;
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
@@ -108,7 +108,7 @@ class OrderHeader extends React.Component {
             ]}
           />
           <Col sm={6} md={3} lg={3}>
-            <AsyncSelect
+            {privilege === 'admin' && <AsyncSelect
               components={{
                 Option: ProviderOption,
                 SingleValue: ProviderOptionValue
@@ -117,7 +117,7 @@ class OrderHeader extends React.Component {
               placeholder="Search & Assign Provider"
               loadOptions={this.loadOptions}
               onChange={this.onChangeProvider}
-            />
+            />}
           </Col>
         </Row>
         {
@@ -128,10 +128,14 @@ class OrderHeader extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  privilege: state.auth.privilege,
+})
+
 const mapDispatchToProps = {
   FilterProviders,
   UpdateOrder,
   DeleteOrder,
 }
 
-export default withRouter(connect(null, mapDispatchToProps)(OrderHeader));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderHeader));

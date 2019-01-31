@@ -6,6 +6,7 @@ import AsyncSelect from 'react-select/lib/Async';
 import { get, set, isEmpty, filter, camelCase, startCase, hasIn } from 'lodash';
 
 import { FilterServices, GetService } from 'store/actions/services';
+import { actionTypes } from 'store/actions/orders';
 import Modal from 'components/compound/Modal';
 import { OrangeButton } from 'components/basic/Buttons';
 import ProviderOption from 'components/basic/ProviderOption';
@@ -23,13 +24,29 @@ const SubSectionTitle = styled.h5`
   margin-bottom: 5px;
 `;
 
+const orderFields = [
+  {
+    type: 'text_area',
+    field: 'special_instructions',
+    label: 'Special Instructions',
+    errorMessage: 'Enter Special Instructions',
+    required: true,
+    xs: 12,
+    sm: 12,
+    md: 12,
+    lg: 12,
+    xl: 12
+  }
+];
+
 class SelectServiceModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       service: {},
       value: {},
-      serviceFields: []
+      boatFields: [],
+      serviceFields: [],
     };
   }
 
@@ -53,11 +70,11 @@ class SelectServiceModal extends React.Component {
   };
 
   onChangeService = val => {
-    console.log('---------------Service-----------', val);
     this.setState({
       service: val
     }, () => {
       this.getServiceFields();
+      this.getBoatFields();
     });
   };
 
@@ -67,7 +84,6 @@ class SelectServiceModal extends React.Component {
     const { categoryId } = service;
     const properties = {};
     const orgProperties = get(service, `properties`, {});;
-    console.log('---------------Included-----------', included);
     if (categoryId) {
       const categories = get(included, 'categories', []);
       if (!isEmpty(categories)) {
@@ -94,7 +110,7 @@ class SelectServiceModal extends React.Component {
             type: fieldType,
             required,
             defaultValue: defVal,
-            errorMessage: `${label} is required`,
+            errorMessage: `Enter ${label}`,
             xs: 12,
             sm: 12,
             md: 6,
@@ -102,10 +118,30 @@ class SelectServiceModal extends React.Component {
             xl: 6
           };
         });
-        console.log('--------serviceFields--------', serviceFields);
         this.setState({ serviceFields });
       }
     }
+  };
+
+  getBoatFields = () => {
+    const { boat } = this.props;
+    const locationType = get(boat, 'relationships.location.attributes.locationType', '');
+    const boatFields = [];
+    if (locationType === 'marina') {
+      boatFields.push({
+        type: 'text_field',
+        field: 'slipNumber',
+        label: 'Slip Number',
+        required: true,
+        errorMessage: 'Enter Slip Number',
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      });
+    }
+    this.setState({ boatFields });
   };
 
   getDefaultValue = (type, field, orgProperties) => {
@@ -130,20 +166,38 @@ class SelectServiceModal extends React.Component {
     this.serviceForm = ref;
   };
 
+  setBoatFieldsRef = ref => {
+    this.boatForm = ref;
+  };
+
+  setOrderFieldsRef = ref => {
+    this.orderForm = ref;
+  };
+
   createOrder = () => {
     const { service } = this.state;
-    if (this.serviceForm && this.serviceForm.validateFields()) {
-      this.props.toNext(service, this.serviceForm.getFieldValues());
-      this.props.onClose();  
-    } else if (!this.serviceForm) {
-      this.props.toNext(service);
-      this.props.onClose();  
+    let serviceValues = {}, orderValues = {}, boatValues = {};
+    if ((this.serviceForm && !this.serviceForm.validateFields()) ||
+    (this.orderForm && !this.orderForm.validateFields()) ||
+    (this.boatForm && !this.boatForm.validateFields())) {
+      return;
     }
+    if (this.serviceForm) {
+      serviceValues = this.serviceForm.getFieldValues();
+    }
+    if (this.boatForm) {
+      boatValues = this.boatForm.getFieldValues();
+    }
+    if (this.orderForm) {
+      orderValues = this.orderForm.getFieldValues();
+    }
+    orderValues = { ...orderValues, ...boatValues };
+    this.props.toNext(service, serviceValues, orderValues);
   };
 
   render() {
-    const { open, onClose } = this.props;
-    const { service, serviceFields } = this.state;
+    const { open, onClose, currentStatus } = this.props;
+    const { service, serviceFields, boatFields } = this.state;
     const action = [
       <OrangeButton
         key="modal_action_button"
@@ -154,6 +208,7 @@ class SelectServiceModal extends React.Component {
     return (
       <Modal
         title="Create Order"
+        loading={currentStatus === actionTypes.CREATE_ORDER}
         minHeight={265}
         actions={action}
         open={open}
@@ -184,6 +239,12 @@ class SelectServiceModal extends React.Component {
             {!isEmpty(serviceFields) && (
               <FormFields ref={this.setServiceFieldsRef} fields={serviceFields} />
             )}
+            {!isEmpty(service) && (
+              <FormFields ref={this.setBoatFieldsRef} fields={boatFields} />
+            )}
+            {!isEmpty(service) && (
+              <FormFields ref={this.setOrderFieldsRef} fields={orderFields} />
+            )}
           </Col>
         </Row>
       </Modal>
@@ -192,6 +253,7 @@ class SelectServiceModal extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  currentStatus: state.order.currentStatus,
   filteredServices: state.service.filteredServices,
   included: state.service.included
 });

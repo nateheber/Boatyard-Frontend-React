@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { Row, Col } from 'react-flexbox-grid'
+import { get } from 'lodash';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
@@ -76,12 +77,14 @@ class OrderPaymentModal extends React.Component {
   }
 
   refreshCards = () => {
-    const { userId, GetCreditCards } = this.props;
-    GetCreditCards({
-      params: {
-        'credit_card[user_id]': userId
-      }
-    });
+    const { user, GetCreditCards } = this.props;
+    let params = {};
+    if (user.type === 'child_accounts') {
+      params = {'credit_card[child_account_id]': user.id };
+    } else {
+      params = {'credit_card[user_id]': user.id };
+    }
+    GetCreditCards({ params });
   }
 
   render() {

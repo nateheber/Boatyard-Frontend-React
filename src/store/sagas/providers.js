@@ -39,16 +39,18 @@ function* getProviders(action) {
       default:
     }
     const refinedProviders = refineProviders(providers);
+    const page = get(params, 'page', 1);
     yield put({
       type: successType,
       payload: {
         providers: refinedProviders,
         perPage,
+        page,
         total
       }
     });
     if (success) {
-      yield call(success, refinedProviders);
+      yield call(success, refinedProviders, page);
     }
   } catch (e) {
     yield put({ type: failureType, payload: e });
@@ -74,7 +76,7 @@ function* loginWithProvider(action) {
     if (!isEmpty(id)) {
       result = yield call(escalationApiClient.post, '/users/escalations', {
         escalation: {
-          providerId: parseInt(providerId)
+          providerId: parseInt(id)
         }
       });  
       const authorizationToken = get(

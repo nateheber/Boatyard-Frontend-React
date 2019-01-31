@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import deepEqual from 'deep-equal'
 import styled from 'styled-components'
 import { set, get } from 'lodash';
-import Select from 'react-select'
+import AsyncSelect from 'react-select/lib/Async'
 import { Row, Col } from 'react-flexbox-grid'
 
 import { Input, TextArea } from 'components/basic/Input'
@@ -52,15 +53,31 @@ class LineItem extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (!deepEqual(prevProps, this.props)) {
+      this.setState({
+        serviceId: this.props.serviceId,
+        quantity: this.props.attributes.quantity,
+        cost: this.props.attributes.cost,
+        comment: this.props.attributes.comment || '',
+      })
+    }
+  }
+
   componentDidMount() {
     this.props.FilterServices({ params: {} });
   }
 
-  onChangeFilter = (val) => {
-    this.props.FilterServices({
-      params: { 'service[name]': val }
-    });
-  }
+  onChangeFilter = (val) =>  new Promise((resolve, reject) => {
+    if (val === '') {
+      this.props.FilterServices({ success: resolve, error: resolve });
+    } else {
+      this.props.FilterServices({ params: { 'service[name]': val }, success: resolve, error: resolve });
+    }
+  }).then((services) => this.filterOptions(services)
+  ).catch(err => {
+    return [];
+  })
 
   onChange = (evt, field) => {
     const changeVal = {}
@@ -89,8 +106,7 @@ class LineItem extends React.Component {
 
   getCurrentOption = () => ({ value: this.getServiceId(), label: this.getServiceName() })
 
-  filterOptions = () => {
-    const { filteredServices } = this.props;
+  filterOptions = (filteredServices) => {
     const services = filteredServices || [];
     const options = services.map(option => ({
       value: option.id,
@@ -105,19 +121,19 @@ class LineItem extends React.Component {
     const { mode, onRemove } = this.props;
     const { quantity, cost, comment } = this.state;
     const name = this.getServiceName();
-    const options = this.filterOptions();
     const currentOption = this.getCurrentOption();
     return (
       <Record>
         <Line>
           <Col md={4} sm={4} lg={4} xl={4} xs={4}>
             {mode === 'edit' ? (
-              <Select
+              <AsyncSelect
                 className="basic-single"
                 classNamePrefix="select"
-                options={options}
+                cacheOptions
+                defaultOptions
                 defaultValue={currentOption}
-                onInputChange={this.onChangeFilter}
+                loadOptions={this.onChangeFilter}
                 onChange={this.onChangeService}
               />
             ) : (
@@ -155,12 +171,8 @@ class LineItem extends React.Component {
   }
 }
 
-const mapStateToProps = ({ service: { filteredServices } }) => ({
-  filteredServices
-})
-
 const mapDispatchToProps = {
   FilterServices
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LineItem);
+export default connect(null, mapDispatchToProps)(LineItem);

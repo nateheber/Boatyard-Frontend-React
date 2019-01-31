@@ -3,22 +3,22 @@ import { connect } from 'react-redux'
 import queryString from 'query-string'
 import { Row, Col } from 'react-flexbox-grid'
 import styled from 'styled-components'
-import { get, set, forEach } from 'lodash'
+import { get } from 'lodash'
 
 import { GetOrder, UpdateOrder } from 'store/actions/orders'
-import { fetchLineItems } from 'store/reducers/lineItems'
 import { orderSelector } from 'store/selectors/orders'
 
 import { SectionGroup } from 'components/basic/InfoSection'
 
 import CustomerBoat from './components/templates/CustomerBoat'
 import LineItemSection from './components/templates/LineItemSection'
-import OrderSumarySection from './components/templates/OrderSumarySection'
+import OrderSummarySection from './components/templates/OrderSummarySection'
 import OrderReviewSection from './components/templates/OrderReviewSection'
 import OrderDetailHeader from './components/templates/OrderDetailHeader'
 import Scheduler from './components/templates/Scheduler'
 import PaymentsSection from './components/templates/Payments'
 import Timeline from './components/templates/Timeline'
+import OrderAssignment from './components/templates/OrderAssignment'
 
 import { getUserFromOrder, getBoatFromOrder, getProviderFromOrder } from 'utils/order'
 
@@ -39,9 +39,9 @@ class OrderDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
-    this.props.GetOrder({orderId});
-    this.props.fetchLineItems(orderId);
-    this.setState({ orderId })
+    this.setState({ orderId }, () => {
+      this.props.GetOrder({orderId});
+    });
   }
 
   getOrderInfo = () => {
@@ -63,16 +63,21 @@ class OrderDetails extends React.Component {
 
   getSummaryInfo = () => {
     const { currentOrder } = this.props;
-    const total = get(currentOrder, 'attributes.total')
-    const subtotal = get(currentOrder, 'attributes.subTotal')
-    const taxRate = get(currentOrder, 'attributes.taxRate')
-    const taxAmount = get(currentOrder, 'attributes.taxAmount')
-    const discount = get(currentOrder, 'attributes.discount')
-    const deposit = get(currentOrder, 'attributes.deposit')
-    const comments = get(currentOrder, 'attributes.comments')
+    const total = get(currentOrder, 'attributes.total');
+    const subtotal = get(currentOrder, 'attributes.subTotal');
+    const taxRate = get(currentOrder, 'attributes.taxRate');
+    const taxAmount = get(currentOrder, 'attributes.taxAmount');
+    const discount = get(currentOrder, 'attributes.discount');
+    const deposit = get(currentOrder, 'attributes.deposit');
+    const comments = get(currentOrder, 'attributes.comments');
     return ({
       total, subtotal, taxRate, discount, deposit, taxAmount, comments
-    })
+    });
+  }
+
+  getSpecialInstructions = () => {
+    const { currentOrder } = this.props;
+    return get(currentOrder, 'attributes.specialInstructions');
   }
 
   getPaymentInfo = () => {
@@ -113,11 +118,12 @@ class OrderDetails extends React.Component {
     const updatedDate = this.getUdpatedDate();
     const { orderId } = this.state;
     const providerId = this.getProviderId();
-    const { currentOrder } = this.props;
+    const { currentOrder, privilege } = this.props;
     const { lineItems } = currentOrder;
     const summaryInfo = this.getSummaryInfo();
     const user = this.getUser();
     const paymentInfo = this.getPaymentInfo();
+
     return (
       <React.Fragment>
         <OrderDetailHeader order={currentOrder} />
@@ -125,7 +131,7 @@ class OrderDetails extends React.Component {
           <Row>
             <Column md={12} sm={12} xs={12} lg={8} xl={8}>
               <SectionGroup>
-                <OrderSumarySection lineItem={lineItems[0]} />
+                <OrderSummarySection lineItem={lineItems[0]} specialInstructions={this.getSpecialInstructions()} />
                 <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
                 <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
               </SectionGroup>
@@ -137,6 +143,9 @@ class OrderDetails extends React.Component {
               </SectionGroup>
             </Column>
             <Column md={12} sm={12} xs={12} lg={4} xl={4}>
+              {privilege === 'admin' && <SectionGroup>
+                <OrderAssignment />
+              </SectionGroup>}
               <SectionGroup>
                 <CustomerBoat
                   boatInfo={boatInfo}
@@ -156,11 +165,10 @@ class OrderDetails extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({ ...orderSelector(state) });
+const mapStateToProps = state => ({ ...orderSelector(state), privilege: state.auth.privilege });
 
 const mapDispatchToProps = {
   GetOrder,
-  fetchLineItems,
   UpdateOrder
 };
 

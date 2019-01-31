@@ -23,7 +23,7 @@ const Buttons  = styled.div`
   flex-direction: column;
 `
 
-export default class OrderSumarySection extends React.Component {
+export default class OrderSummarySection extends React.Component {
   state = {
     newAssignment: false,
     showCalendar: false,

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Row, Col } from 'react-flexbox-grid'
-import Select from 'react-select'
+import AsyncSelect from 'react-select/lib/Async'
 import { connect } from 'react-redux'
 
 import { Input, TextArea } from 'components/basic/Input'
@@ -16,13 +16,21 @@ class NewLineItem extends React.Component {
     comment: '',
   }
 
-  componentDidMount() {
-    this.props.FilterServices({ param: { 'service[name]': '' } });
-  }
-
-  onChangeFilter = (val) => {
-    this.props.FilterServices({ param: { 'service[name]': 'val' } });
-  }
+  onChangeFilter = (val) =>  new Promise((resolve, reject) => {
+    if (val === '') {
+      this.props.FilterServices({ success: resolve, error: resolve });
+    } else {
+      this.props.FilterServices({ params: { 'service[name]': val }, success: resolve, error: resolve });
+    }
+  }).then((services) =>
+    services.map(option => ({
+      value: option.id,
+      cost: option.cost,
+      label: option.name
+    }))
+  ).catch(err => {
+    return [];
+  })
 
   onChangeQuantity = (evt) => {
     this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) })
@@ -33,7 +41,7 @@ class NewLineItem extends React.Component {
   }
 
   onChangeService = (service) => {
-    this.setState({ serviceId: service.value }, () => { this.props.onChange(this.state) })
+    this.setState({ serviceId: service.value, cost: service.cost, quantity: 1 }, () => { this.props.onChange(this.state) })
   }
 
   onChangeComment = (evt) => {
@@ -41,23 +49,19 @@ class NewLineItem extends React.Component {
   }
 
   render() {
-    const { filteredServices } = this.props;
     const { quantity, cost, comment } = this.state;
-    const options = filteredServices.map(option => ({
-      value: option.id,
-      label: option.name
-    }))
     return (
       <React.Fragment>
         <Row>
           <Col lg={8} sm={8} xs={8} md={8} xl={8}>
             <Row>
               <Col lg={6} sm={6} xs={6} md={6} xl={6}>
-                <Select
+                <AsyncSelect
                   className="basic-single"
                   classNamePrefix="select"
-                  options={options}
-                  onInputChange={this.onChangeFilter}
+                  cacheOptions
+                  defaultOptions
+                  loadOptions={this.onChangeFilter}
                   onChange={this.onChangeService}
                 />
               </Col>
@@ -86,12 +90,8 @@ class NewLineItem extends React.Component {
   }
 }
 
-const mapStateToProps = ({ service: { filteredServices } }) => ({
-  filteredServices
-})
-
 const mapDispatchToProps = {
   FilterServices
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewLineItem)
+export default connect(null, mapDispatchToProps)(NewLineItem)
