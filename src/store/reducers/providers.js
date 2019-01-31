@@ -8,7 +8,7 @@ const initialState = {
   providers: [],
   filteredProviders: [],
   currentProvider: {},
-  page: 1,
+  page: 0,
   perPage: 20,
   total: 0,
   errors: null
@@ -19,18 +19,18 @@ export default handleActions(
   {
     [actionTypes.GET_PROVIDERS]: (state, action) =>
       produce(state, draft => {
-        const { type, payload } = action;
+        const { type } = action;
         draft.currentStatus = type;
-        draft.page = get(payload, 'params.page', 0);
         draft.errors = null;
       }),
     [actionTypes.GET_PROVIDERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
-        const { total, perPage, providers } = payload;
+        const { total, perPage, providers, page } = payload;
         draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
+        draft.page = page;
         draft.providers = providers;
       }),
     [actionTypes.GET_PROVIDERS_FAILURE]: (state, action) =>

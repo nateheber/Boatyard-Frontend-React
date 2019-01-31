@@ -134,7 +134,7 @@ class CreateModal extends React.Component {
       if (user.type === 'child_accounts') {
         data['childAccountId'] = user.id;
       } else {
-        data['userId'] = user.id;
+        data['userId'] = user.id.id;
       }
       this.props.CreateCreditCard({
         data,
