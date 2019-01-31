@@ -118,7 +118,7 @@ class OrderDetails extends React.Component {
     const updatedDate = this.getUdpatedDate();
     const { orderId } = this.state;
     const providerId = this.getProviderId();
-    const { currentOrder, privilage } = this.props;
+    const { currentOrder, privilege } = this.props;
     const { lineItems } = currentOrder;
     const summaryInfo = this.getSummaryInfo();
     const user = this.getUser();
@@ -143,7 +143,7 @@ class OrderDetails extends React.Component {
               </SectionGroup>
             </Column>
             <Column md={12} sm={12} xs={12} lg={4} xl={4}>
-              {privilage === 'admin' && <SectionGroup>
+              {privilege === 'admin' && <SectionGroup>
                 <OrderAssignment />
               </SectionGroup>}
               <SectionGroup>
@@ -165,7 +165,7 @@ class OrderDetails extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({ ...orderSelector(state), privilage: state.auth.privilage });
+const mapStateToProps = state => ({ ...orderSelector(state), privilege: state.auth.privilege });
 
 const mapDispatchToProps = {
   GetOrder,
