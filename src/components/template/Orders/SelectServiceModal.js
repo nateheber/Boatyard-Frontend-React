@@ -128,11 +128,13 @@ class SelectServiceModal extends React.Component {
     const locationType = get(boat, 'relationships.location.attributes.locationType', '');
     const boatFields = [];
     if (locationType === 'marina') {
+      const slip = get(boat, 'slip', '');
       boatFields.push({
         type: 'text_field',
         field: 'slipNumber',
         label: 'Slip Number',
         required: true,
+        defaultValue: slip,
         errorMessage: 'Enter Slip Number',
         xs: 12,
         sm: 12,

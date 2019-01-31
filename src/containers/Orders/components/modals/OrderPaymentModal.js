@@ -1,17 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import { Row, Col } from 'react-flexbox-grid'
-import { get } from 'lodash';
 
+import { GetCreditCards } from 'store/actions/credit-cards';
+import { createPayment } from 'store/reducers/payments';
+import ChargeSelector from '../basic/ChargeSelector';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
 import CreditCardSelector from 'components/template/CreditCardSection/CreditCardSelector';
 import PaymentSelector from 'components/template/CreditCardSection/PaymentSelector';
-
-import { GetCreditCards } from 'store/actions/credit-cards';
-import { createPayment } from 'store/reducers/payments';
-
-import ChargeSelector from '../basic/ChargeSelector';
 
 const tabs = ['Credit Card', 'Cash/Check'];
 
