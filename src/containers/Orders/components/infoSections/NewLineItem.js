@@ -33,7 +33,7 @@ class NewLineItem extends React.Component {
   }
 
   onChangeService = (service) => {
-    this.setState({ serviceId: service.value }, () => { this.props.onChange(this.state) })
+    this.setState({ serviceId: service.value, cost: service.cost, quantity: 1 }, () => { this.props.onChange(this.state) })
   }
 
   onChangeComment = (evt) => {
@@ -45,8 +45,9 @@ class NewLineItem extends React.Component {
     const { quantity, cost, comment } = this.state;
     const options = filteredServices.map(option => ({
       value: option.id,
+      cost: option.cost,
       label: option.name
-    }))
+    }));
     return (
       <React.Fragment>
         <Row>
