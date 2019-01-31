@@ -16,7 +16,7 @@ import OrderSummarySection from './components/templates/OrderSummarySection'
 import OrderReviewSection from './components/templates/OrderReviewSection'
 import OrderDetailHeader from './components/templates/OrderDetailHeader'
 import Scheduler from './components/templates/Scheduler'
-import PaymentsSection from './components/templates/Payments'
+import PaymentSection from './components/templates/PaymentSection'
 import Timeline from './components/templates/Timeline'
 import OrderAssignment from './components/templates/OrderAssignment'
 
@@ -83,7 +83,7 @@ class OrderDetails extends React.Component {
   getPaymentInfo = () => {
     const { currentOrder } = this.props;
     const balance = get(currentOrder, 'attributes.balance');
-    return { balance }
+    return { balance };
   }
 
   getUdpatedDate = () => {
@@ -136,7 +136,7 @@ class OrderDetails extends React.Component {
                 <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
               </SectionGroup>
               <SectionGroup>
-                <PaymentsSection orderId={orderId} user={user} providerId={providerId} {...paymentInfo} />
+                <PaymentSection order={currentOrder} />
               </SectionGroup>
               <SectionGroup>
                 <Scheduler orderId={orderId} />

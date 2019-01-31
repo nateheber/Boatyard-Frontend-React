@@ -1,15 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
+import { get, isEmpty } from 'lodash';
 
 import { Section } from 'components/basic/InfoSection';
 import { HollowButton } from 'components/basic/Buttons';
-
 import OrderPaymentModal from '../modals/OrderPaymentModal';
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
-`
+`;
 
 const InfoItem = styled.div`
   color: #8f8f8f;
@@ -22,29 +22,30 @@ const InfoList = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-`
+`;
 
 const Buttons  = styled.div`
   display: flex;
   flex-direction: column;
-`
+`;
 
 export default class OrderReviewSection extends React.Component {
   state = {
     showModal: false
-  }
+  };
 
   onCloseModal = () => {
     this.setState({ showModal: false })
-  }
+  };
 
   openModal = () => {
     this.setState({ showModal: true })
-  }
+  };
 
   render() {
-    const { user, orderId, balance } = this.props;
+    const { order } = this.props;
     const { showModal } = this.state;
+    const balance = get(order, 'attributes.balance');
     return (
       <Section title="Payment">
         <Wrapper>
@@ -57,13 +58,11 @@ export default class OrderReviewSection extends React.Component {
             <HollowButton onClick={this.openModal}>Enter Payment</HollowButton>
           </Buttons>
         </Wrapper>
-        <OrderPaymentModal
+        {!isEmpty(order) && <OrderPaymentModal
           open={showModal}
           onClose={this.onCloseModal}
-          user={user}
-          balance={balance}
-          orderId={orderId}
-        />
+          order={order}
+        />}
       </Section>
     )
   }
