@@ -30,7 +30,7 @@ const orderFields = [
     field: 'special_instructions',
     label: 'Special Instructions',
     errorMessage: 'Enter Special Instructions',
-    required: false,
+    required: true,
     xs: 12,
     sm: 12,
     md: 12,
@@ -45,6 +45,7 @@ class SelectServiceModal extends React.Component {
     this.state = {
       service: {},
       value: {},
+      boatFields: [],
       serviceFields: [],
     };
   }
@@ -73,6 +74,7 @@ class SelectServiceModal extends React.Component {
       service: val
     }, () => {
       this.getServiceFields();
+      this.getBoatFields();
     });
   };
 
@@ -108,7 +110,7 @@ class SelectServiceModal extends React.Component {
             type: fieldType,
             required,
             defaultValue: defVal,
-            errorMessage: `${label} is required`,
+            errorMessage: `Enter ${label}`,
             xs: 12,
             sm: 12,
             md: 6,
@@ -119,6 +121,27 @@ class SelectServiceModal extends React.Component {
         this.setState({ serviceFields });
       }
     }
+  };
+
+  getBoatFields = () => {
+    const { boat } = this.props;
+    const locationType = get(boat, 'relationships.location.attributes.locationType', '');
+    const boatFields = [];
+    if (locationType === 'marina') {
+      boatFields.push({
+        type: 'text_field',
+        field: 'slipNumber',
+        label: 'Slip Number',
+        required: true,
+        errorMessage: 'Enter Slip Number',
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      });
+    }
+    this.setState({ boatFields });
   };
 
   getDefaultValue = (type, field, orgProperties) => {
@@ -143,29 +166,38 @@ class SelectServiceModal extends React.Component {
     this.serviceForm = ref;
   };
 
+  setBoatFieldsRef = ref => {
+    this.boatForm = ref;
+  };
+
   setOrderFieldsRef = ref => {
     this.orderForm = ref;
   };
 
   createOrder = () => {
     const { service } = this.state;
-    let serviceValues = {}, orderValues = {};
+    let serviceValues = {}, orderValues = {}, boatValues = {};
     if ((this.serviceForm && !this.serviceForm.validateFields()) ||
-    (this.orderForm && !this.orderForm.validateFields())) {
+    (this.orderForm && !this.orderForm.validateFields()) ||
+    (this.boatForm && !this.boatForm.validateFields())) {
       return;
     }
     if (this.serviceForm) {
       serviceValues = this.serviceForm.getFieldValues();
     }
+    if (this.boatForm) {
+      boatValues = this.boatForm.getFieldValues();
+    }
     if (this.orderForm) {
       orderValues = this.orderForm.getFieldValues();
     }
+    orderValues = { ...orderValues, ...boatValues };
     this.props.toNext(service, serviceValues, orderValues);
   };
 
   render() {
     const { open, onClose, currentStatus } = this.props;
-    const { service, serviceFields } = this.state;
+    const { service, serviceFields, boatFields } = this.state;
     const action = [
       <OrangeButton
         key="modal_action_button"
@@ -206,6 +238,9 @@ class SelectServiceModal extends React.Component {
           <Col sm={12}>
             {!isEmpty(serviceFields) && (
               <FormFields ref={this.setServiceFieldsRef} fields={serviceFields} />
+            )}
+            {!isEmpty(service) && (
+              <FormFields ref={this.setBoatFieldsRef} fields={boatFields} />
             )}
             {!isEmpty(service) && (
               <FormFields ref={this.setOrderFieldsRef} fields={orderFields} />

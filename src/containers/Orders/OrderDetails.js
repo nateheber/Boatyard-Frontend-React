@@ -6,7 +6,6 @@ import styled from 'styled-components'
 import { get } from 'lodash'
 
 import { GetOrder, UpdateOrder } from 'store/actions/orders'
-import { fetchLineItems } from 'store/reducers/lineItems'
 import { orderSelector } from 'store/selectors/orders'
 
 import { SectionGroup } from 'components/basic/InfoSection'
@@ -41,7 +40,6 @@ class OrderDetails extends React.Component {
     const orderId = query.order;
     this.setState({ orderId }, () => {
       this.props.GetOrder({orderId});
-      this.props.fetchLineItems(orderId);
     });
   }
 
@@ -167,7 +165,6 @@ const mapStateToProps = state => ({ ...orderSelector(state) });
 
 const mapDispatchToProps = {
   GetOrder,
-  fetchLineItems,
   UpdateOrder
 };
 

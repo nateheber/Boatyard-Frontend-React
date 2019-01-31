@@ -6,7 +6,7 @@ import { get } from 'lodash';
 import { Section } from 'components/basic/InfoSection'
 
 
-const Field = styled.tr`
+const TR = styled.tr`
   &:last-child {
   }
 `;
@@ -37,22 +37,24 @@ export default class OrderSumarySection extends React.Component {
     return isEmpty(lineItem) ? false : (
       <Section title="Order Summary">
         <table>
-          <Field>
-            <Label>
-              SERVICE
-            </Label>
-            <FieldValue sm={3} md={3} lg={3}>
-              {serviceName}
-            </FieldValue>
-          </Field>
-          <Field>
-            <Label>
-              Special Instructions
-            </Label>
-            <FieldValue sm={3} md={3} lg={3}>
-              {specialInstructions}
-            </FieldValue>
-          </Field>
+          <tbody>
+            <TR>
+              <Label>
+                SERVICE
+              </Label>
+              <FieldValue sm={3} md={3} lg={3}>
+                {serviceName}
+              </FieldValue>
+            </TR>
+            <TR>
+              <Label>
+                Special Instructions
+              </Label>
+              <FieldValue sm={3} md={3} lg={3}>
+                {specialInstructions}
+              </FieldValue>
+            </TR>
+          </tbody>
         </table>
       </Section>
     )
