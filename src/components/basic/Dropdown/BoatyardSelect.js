@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import AsyncSelect from 'react-select/lib/Async'
 
 export const BoatyardSelect = styled(AsyncSelect)`
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 400;
   letter-spacing: -0.3px;
   .css-2o5izw {
     min-height: 35px;
