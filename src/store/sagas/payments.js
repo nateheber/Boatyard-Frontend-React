@@ -1,90 +1,118 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty, hasIn } from 'lodash';
-import { actions as toastrActions } from 'react-redux-toastr';
+import { get } from 'lodash';
 
-import { actions } from '../reducers/payments';
+import { actionTypes } from '../actions/payments';
 import { getPaymentClient } from './sagaSelectors';
 
-function* createRequest(action) {
-  const { data, callback } = action.payload
+function* getPayments(action) {
   const paymentClient = yield select(getPaymentClient)
-  const result = yield call(paymentClient.create, { payment: data })
-  if (hasIn(result, 'error')) {
-    console.log(result)
-    if (result.error.message === "undefined method `default_payment_gateway' for nil:NilClass") {
-      const errorAction = toastrActions.add({
-        type: 'error',
-        title: 'Payment error',
-        message: 'Payment Gateway is not set for this provider',
-        position: 'top-right',
-        timeOut: 4000,
-      })
-      yield put(toastrActions.clean())
-      yield put(errorAction)
-    } else if (hasIn(result, 'error.creditCard')) {
-      const errorAction = toastrActions.add({
-        type: 'error',
-        title: 'Payment error',
-        message: get(result, 'error.creditCard[0]'),
-        position: 'top-right',
-        timeOut: 4000,
-      })
-      yield put(toastrActions.clean())
-      yield put(errorAction)
-    } else {
-      const errorAction = toastrActions.add({
-        type: 'error',
-        title: 'Payment error',
-        message: 'Payment failed due to unknown error',
-        position: 'top-right',
-        timeOut: 4000,
-      })
-      yield put(toastrActions.clean())
-      yield put(errorAction)
+  const { params, success, error } = action.payload;
+  try {
+    const result = yield call(paymentClient.list, params);
+    const payments = get(result, 'data', []);
+    const { perPage, total } = result;
+    yield put({
+      type: actionTypes.GET_PAYMENTS_SUCCESS,
+      payload: {
+        payments,
+        perPage,
+        total,
+      }
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.GET_PAYMENTS_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
     }
   }
-
-  if (callback) {
-    yield call(callback)
-  }
 }
 
-function* fetchRequest(action) {
-  const userId = action.payload
-  const paymentClient = yield select(getPaymentClient)
-  const results = yield call(paymentClient.list, 1, isEmpty(userId) ? '' : `&payment[user_id]=${userId}`)
-  const payments = get(results, 'data', [])
-  const included = get(results, 'included', [])
-  yield put({
-    type: actions.setPayments,
-    payload: {
-      payments,
-      included
+function* getPayment(action) {
+  const { paymentId, success, error } = action.payload;
+  const paymentClient = yield select(getPaymentClient);
+  try {
+    const result = yield call(paymentClient.read, paymentId);
+    yield put({
+      type: actionTypes.GET_PAYMENT_SUCCESS,
+      payload: result
+    });
+    if (success) {
+      yield call(success);
     }
-  })
-}
-
-function* deleteRequest(action) {
-  const {paymentId, callback} = action.payload
-  const paymentClient = yield select(getPaymentClient)
-  yield call(paymentClient.delete, paymentId)
-  if (callback) {
-    yield call(callback)
+  } catch (e) {
+    yield put({ type: actionTypes.GET_PAYMENT_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
   }
 }
 
-function* updateRequest(action) {
-  const { paymentId, data, callback } = action.payload
-  const paymentClient = yield select(getPaymentClient)
-  yield call(paymentClient.patch, paymentId, data)
-  if (callback) {
-    yield call(callback)
+function* createPayment(action) {
+  const { data, success, error } = action.payload;
+  const paymentClient = yield select(getPaymentClient);
+  try {
+    const result = yield call(paymentClient.create, data);
+    yield put({
+      type: actionTypes.CREATE_PAYMENT_SUCCESS,
+      payload: result
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.CREATE_PAYMENT_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+function* updatePayment(action) {
+  const { paymentId, data, success, error } = action.payload;
+  const paymentClient = yield select(getPaymentClient);
+  try {
+    const result = yield call(paymentClient.patch, paymentId, data);
+    yield put({
+      type: actionTypes.UPDATE_PAYMENT_SUCCESS,
+      payload: result
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.UPDATE_PAYMENT_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+function* deletePayment(action) {
+  const { paymentId, success, error } = action.payload;
+  const paymentClient = yield select(getPaymentClient);
+  try {
+    yield call(paymentClient.delete, paymentId);
+    yield put({
+      type: actionTypes.DELETE_PAYMENT_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.DELETE_PAYMENT_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
   }
 }
 
 export default function* Profile() {
-  yield takeEvery(actions.createPayment, createRequest);
-  yield takeEvery(actions.fetchPayments, fetchRequest);
-  yield takeEvery(actions.deletePayment, deleteRequest);
-  yield takeEvery(actions.updatePayment, updateRequest);
+  yield takeEvery(actionTypes.GET_PAYMENTS, getPayments);
+  yield takeEvery(actionTypes.GET_PAYMENT, getPayment);
+  yield takeEvery(actionTypes.CREATE_PAYMENT, createPayment);
+  yield takeEvery(actionTypes.UPDATE_PAYMENT, updatePayment);
+  yield takeEvery(actionTypes.DELETE_PAYMENT, deletePayment);
 }

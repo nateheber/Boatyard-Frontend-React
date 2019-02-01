@@ -1,20 +1,20 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import AsyncSelect from 'react-select/lib/Async'
-import { Row, Col } from 'react-flexbox-grid'
-import { withRouter } from 'react-router-dom'
-import { get } from 'lodash'
-import styled from 'styled-components'
+import React from 'react';
+import { connect } from 'react-redux';
+import { Row, Col } from 'react-flexbox-grid';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
+import styled from 'styled-components';
 
-import { FilterProviders } from 'store/actions/providers'
-import { UpdateOrder, DeleteOrder } from 'store/actions/orders'
-import { getCustomerName } from 'utils/order'
+import { FilterProviders } from 'store/actions/providers';
+import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders';
+import { getCustomerName } from 'utils/order';
 
-import { ActionDropdown } from 'components/basic/Dropdown'
-import { PageTitle } from 'components/basic/Typho'
+import { ActionDropdown, BoatyardSelect } from 'components/basic/Dropdown';
+import { OrangeButton } from 'components/basic/Buttons';
+import { PageTitle } from 'components/basic/Typho';
 import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
-import OrderStatus from './OrderStatus'
+import OrderStatus from './OrderStatus';
 
 
 const SectionHeaderWrapper = styled.div`
@@ -23,16 +23,17 @@ const SectionHeaderWrapper = styled.div`
   width: 100%;
 `;
 
-class OrderHeader extends React.Component {
+class OrderDetailHeader extends React.Component {
 
   loadOptions = val => {
     return this.onChangeProviderFilter(val)
-      .then(
-        (filtered) => filtered.map(({ id, attributes }) => ({id, ...attributes })),
-        () => {
-          return [];
-        }
-      )
+      .then((filtered) => {
+        return filtered;
+      },
+      () => {
+        return [];
+      }
+    )
   }
 
   onChangeProviderFilter = val => {
@@ -50,6 +51,12 @@ class OrderHeader extends React.Component {
   onChangeProvider = val => {
     const { order } = this.props
     this.props.UpdateOrder({ orderId: order.id, data: { providerId: val.id } })
+  }
+
+  acceptOrder = () => {
+    const { order } = this.props;
+    const orderId = get(order, 'id');
+    this.props.AcceptOrder({ orderId });
   }
 
   cancelOrder = () => {
@@ -90,7 +97,9 @@ class OrderHeader extends React.Component {
   }
 
   render() {
-    const { order, privilege } = this.props;
+    const { order, privilege, providerInfo } = this.props;
+    const providerId = parseInt(get(order, 'attributes.providerId'));
+    const myProviderId = parseInt(get(providerInfo, 'data.id'));
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
@@ -107,8 +116,8 @@ class OrderHeader extends React.Component {
               }
             ]}
           />
-          <Col sm={6} md={3} lg={3}>
-            {privilege === 'admin' && <AsyncSelect
+          <Col xs={12} sm={6} md={4} lg={3}>
+            {privilege === 'admin' && !providerId && <BoatyardSelect
               components={{
                 Option: ProviderOption,
                 SingleValue: ProviderOptionValue
@@ -118,6 +127,10 @@ class OrderHeader extends React.Component {
               loadOptions={this.loadOptions}
               onChange={this.onChangeProvider}
             />}
+            {
+              privilege === 'provider' && providerId !== myProviderId &&
+              <OrangeButton onClick={this.acceptOrder} >Accept Order</OrangeButton>
+            }
           </Col>
         </Row>
         {
@@ -130,12 +143,14 @@ class OrderHeader extends React.Component {
 
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
+  providerInfo: state.provider.currentProvider,
 })
 
 const mapDispatchToProps = {
   FilterProviders,
   UpdateOrder,
   DeleteOrder,
+  AcceptOrder
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderHeader));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderDetailHeader));

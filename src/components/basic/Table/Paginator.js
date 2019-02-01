@@ -7,8 +7,6 @@ const Wrapper = styled.div`
   display: inline-block;
   box-sizing: border-box;
   height: 44px;
-  border: 2px solid #A1ACB7;
-  border-radius: 5px;
 `;
 
 const ButtonWrapper = styled.div`
@@ -34,43 +32,33 @@ const Button = styled.div`
   font-weight: 600;
   line-height: 22px;
   cursor: pointer;
-  border-right: 2px solid #A1ACB7;
   &:hover {
-    background-color: #E49853;
-    color: white;
+    color: #E49853;
   }
   &.active {
-    background-color: #E49853;
-    color: white;
-    border-right: 2px solid #E49853;
-  }
-  &.before-active {
-    border-right: 2px solid #E49853;
+    color: #E49853;
   }
   &.prev {
-    padding-left: 32px;
+    padding-left: 22px;
     ::after {
       position: absolute;
       content: '<';
       width: 16px;
       height: 12px;
       left: 10px;
-      top: 8px;
+      top: 10px;
     }
   }
   &.next {
-    padding-right: 32px;
+    padding-right: 22px;
     ::after {
       position: absolute;
       content: '>';
       width: 16px;
       height: 12px;
-      right: 10px;
-      top: 8px;
+      right: 0px;
+      top: 10px;
     }
-  }
-  &:last-child {
-    border-right: none;
   }
   &.disabled {
     &:hover {
@@ -88,32 +76,27 @@ export default class Paginator extends React.Component {
       onChange(page)
     }
   }
-  renderLeft () {
-    const { page } = this.props;
-    return (
-      <React.Fragment>
-        <Button className={classNames('prev', { 'before-active': page === 1 })} onClick={() => this.onChange(page - 1)}>Prev</Button>
-        <Button className={classNames({ active: page === 1 })} onClick={() => this.onChange(1)}>1</Button>
-        { page > 3 && <Button className="disabled">...</Button> }
-      </React.Fragment>
-    )
-  }
-  renderRight () {
+  renderPageNum () {
     const { page, totalPages } = this.props;
+    let startNumber = 1;
+    let endNumber = totalPages;
+    if (totalPages < 6) {
+      startNumber = 1;
+      endNumber = totalPages;
+    } else if(page < 3) {
+      startNumber = 1;
+      if(page > totalPages - 2) {
+        endNumber = totalPages
+      } else {
+        endNumber = startNumber + 3;
+      }
+    } else {
+      startNumber = page - 2;
+      endNumber = page + 1;
+    }
     return (
       <React.Fragment>
-        { totalPages > page + 3 && <Button className="disabled">...</Button> }
-        <Button className={classNames({ active: page === totalPages })} onClick={() => this.onChange(totalPages)}>{totalPages}</Button>
-        <Button className="next" onClick={() => this.onChange(page + 1)}>Next</Button>
-      </React.Fragment>
-    )
-  }
-  renderMain () {
-    const { page, totalPages } = this.props;
-    const startNumber = Math.max(page - 1, 2);
-    const endNumber = Math.min(totalPages > page + 3 ? page + 1 : totalPages - 1, totalPages - 1);
-    return (
-      <React.Fragment>
+        <Button className="prev" onClick={() => this.onChange(page - 1)}>Prev</Button>
         {
           times(endNumber - startNumber + 1, (pos) => (
             <Button
@@ -125,6 +108,7 @@ export default class Paginator extends React.Component {
             </Button>
           ))
         }
+        <Button className="next" onClick={() => this.onChange(page + 1)}>Next</Button>
       </React.Fragment>
     )
   }
@@ -132,9 +116,7 @@ export default class Paginator extends React.Component {
     return (
       <Wrapper>
         <ButtonWrapper>
-          {this.renderLeft()}
-          {this.renderMain()}
-          {this.renderRight()}
+          {this.renderPageNum()}
         </ButtonWrapper>
       </Wrapper>
     )

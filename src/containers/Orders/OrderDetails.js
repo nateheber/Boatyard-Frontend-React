@@ -5,22 +5,21 @@ import { Row, Col } from 'react-flexbox-grid'
 import styled from 'styled-components'
 import { get } from 'lodash'
 
-import { GetOrder, UpdateOrder } from 'store/actions/orders'
+import { actionTypes, GetOrder, UpdateOrder } from 'store/actions/orders'
 import { orderSelector } from 'store/selectors/orders'
+import { getUserFromOrder, getBoatFromOrder, getProviderFromOrder } from 'utils/order'
 
 import { SectionGroup } from 'components/basic/InfoSection'
-
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 import CustomerBoat from './components/templates/CustomerBoat'
 import LineItemSection from './components/templates/LineItemSection'
 import OrderSummarySection from './components/templates/OrderSummarySection'
 import OrderReviewSection from './components/templates/OrderReviewSection'
 import OrderDetailHeader from './components/templates/OrderDetailHeader'
 import Scheduler from './components/templates/Scheduler'
-import PaymentsSection from './components/templates/Payments'
+import PaymentSection from './components/templates/PaymentSection'
 import Timeline from './components/templates/Timeline'
 import OrderAssignment from './components/templates/OrderAssignment'
-
-import { getUserFromOrder, getBoatFromOrder, getProviderFromOrder } from 'utils/order'
 
 const Wrapper = styled.div`
   padding: 30px 25px;
@@ -33,14 +32,21 @@ const Column = styled(Col)`
 
 class OrderDetails extends React.Component {
   state = {
-    orderId: -1
+    orderId: -1,
+    isFirstLoad: true
   }
 
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
+    const { GetOrder } = this.props;
     this.setState({ orderId }, () => {
-      this.props.GetOrder({orderId});
+      GetOrder({
+        orderId,
+        success: () => {
+          this.setState({ isFirstLoad: false });
+        }
+      });
     });
   }
 
@@ -54,11 +60,6 @@ class OrderDetails extends React.Component {
   getProviderId = () => {
     const { currentOrder } = this.props;
     return get(getProviderFromOrder(currentOrder),'id', '');
-  }
-
-  getUser = () => {
-    const { currentOrder } = this.props;
-    return getUserFromOrder(currentOrder);
   }
 
   getSummaryInfo = () => {
@@ -83,12 +84,6 @@ class OrderDetails extends React.Component {
   getSlipNumber = () => {
     const { currentOrder } = this.props;
     return get(currentOrder, 'attributes.slipNumber');
-  }
-
-  getPaymentInfo = () => {
-    const { currentOrder } = this.props;
-    const balance = get(currentOrder, 'attributes.balance');
-    return { balance }
   }
 
   getUdpatedDate = () => {
@@ -121,60 +116,67 @@ class OrderDetails extends React.Component {
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const boatLocation = boatInfo.location;
     const updatedDate = this.getUdpatedDate();
-    const { orderId } = this.state;
+    const { orderId, isFirstLoad } = this.state;
     const providerId = this.getProviderId();
-    const { currentOrder, privilege } = this.props;
-    const { lineItems } = currentOrder;
+    const { currentOrder, currentStatus, privilege } = this.props;
+    const lineItems = get(currentOrder, 'lineItems', []);
     const summaryInfo = this.getSummaryInfo();
-    const user = this.getUser();
-    const paymentInfo = this.getPaymentInfo();
+    const loading = currentStatus === actionTypes.GET_ORDER;
 
     return (
       <React.Fragment>
-        <OrderDetailHeader order={currentOrder} />
-        <Wrapper>
-          <Row>
-            <Column md={12} sm={12} xs={12} lg={8} xl={8}>
-              <SectionGroup>
-                <OrderSummarySection
-                  lineItem={lineItems[0]}
-                  specialInstructions={this.getSpecialInstructions()}
-                  slipNumber={this.getSlipNumber()}
-                />
-                <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
-                <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
-              </SectionGroup>
-              <SectionGroup>
-                <PaymentsSection orderId={orderId} user={user} providerId={providerId} {...paymentInfo} />
-              </SectionGroup>
-              <SectionGroup>
-                <Scheduler orderId={orderId} />
-              </SectionGroup>
-            </Column>
-            <Column md={12} sm={12} xs={12} lg={4} xl={4}>
-              {privilege === 'admin' && <SectionGroup>
-                <OrderAssignment />
-              </SectionGroup>}
-              <SectionGroup>
-                <CustomerBoat
-                  boatInfo={boatInfo}
-                  boatLocation={boatLocation}
-                  customerInfo={customerInfo}
-                  onEditBoat={() => this.editBoat()}
-                />
-              </SectionGroup>
-              <SectionGroup>
-                <Timeline order={currentOrder} />
-              </SectionGroup>
-            </Column>
-          </Row>
-        </Wrapper>
+        {loading && isFirstLoad ? 
+          <LoadingSpinner loading={true} />
+        : <React.Fragment>
+          <OrderDetailHeader order={currentOrder} />
+          <Wrapper>
+            <Row>
+              <Column md={12} sm={12} xs={12} lg={8} xl={8}>
+                <SectionGroup>
+                  <OrderSummarySection
+                    lineItem={get(lineItems, '0', {})}
+                    specialInstructions={this.getSpecialInstructions()}
+                    slipNumber={this.getSlipNumber()}
+                  />
+                  <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
+                  <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
+                </SectionGroup>
+                <SectionGroup>
+                  <PaymentSection order={currentOrder} />
+                </SectionGroup>
+                <SectionGroup>
+                  <Scheduler orderId={orderId} />
+                </SectionGroup>
+              </Column>
+              <Column md={12} sm={12} xs={12} lg={4} xl={4}>
+                {(privilege === 'admin' && !providerId) && <SectionGroup>
+                  <OrderAssignment />
+                </SectionGroup>}
+                <SectionGroup>
+                  <CustomerBoat
+                    boatInfo={boatInfo}
+                    boatLocation={boatLocation}
+                    customerInfo={customerInfo}
+                    onEditBoat={() => this.editBoat()}
+                  />
+                </SectionGroup>
+                <SectionGroup>
+                  <Timeline order={currentOrder} />
+                </SectionGroup>
+              </Column>
+            </Row>
+          </Wrapper>
+        </React.Fragment>}
       </React.Fragment>
     )
   }
 }
 
-const mapStateToProps = state => ({ ...orderSelector(state), privilege: state.auth.privilege });
+const mapStateToProps = state => ({
+  ...orderSelector(state),
+  currentStatus: state.order.currentStatus,
+  privilege: state.auth.privilege
+ });
 
 const mapDispatchToProps = {
   GetOrder,

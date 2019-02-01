@@ -46,44 +46,44 @@ const currentOrderSelector = state => {
 const allOrdersSelector = (state, orderType) => {
   switch (orderType) {
     case 'new': {
-      return state.order.newOrders.orders;
+      return get(state, 'order.newOrders.orders', []);
     }
     case 'scheduled': {
-      return state.order.scheduledOrders.orders;
+      return get(state, 'order.scheduledOrders.orders', []);
     }
     case 'assigned': {
-      return state.order.assignedOrders.orders;
+      return get(state, 'order.assignedOrders.orders', []);
     }
     case 'open': {
-      return state.order.openOrders.orders;
+      return get(state, 'order.openOrders.orders', []);
     }
     case 'paid': {
-      return state.order.paidOrders.orders;
+      return get(state, 'order.paidOrders.orders', []);
     }
     default: {
-      return state.order.orders.orders;
+      return get(state, 'order.orders.orders', []);
     }
   }
 };
 const includedSelector = (state, orderType) => {
   switch (orderType) {
     case 'new': {
-      return state.order.newOrders.included;
+      return get(state, 'order.newOrders.included', []);
     }
     case 'scheduled': {
-      return state.order.scheduledOrders.included;
+      return get(state, 'order.scheduledOrders.included', []);
     }
     case 'assigned': {
-      return state.order.assignedOrders.included;
+      return get(state, 'order.assignedOrders.included', []);
     }
     case 'open': {
-      return state.order.openOrders.included;
+      return get(state, 'order.openOrders.included', []);
     }
     case 'paid': {
-      return state.order.paidOrders.included;
+      return get(state, 'order.paidOrders.included', []);
     }
     default: {
-      return state.order.orders.included;
+      return get(state, 'order.orders.included', []);
     }
   }
 };

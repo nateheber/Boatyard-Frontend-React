@@ -1,12 +1,12 @@
 import React from 'react'
 import { Row, Col } from 'react-flexbox-grid'
-import AsyncSelect from 'react-select/lib/Async'
 import { connect } from 'react-redux'
 
-import { Input, TextArea } from 'components/basic/Input'
 import { FilterServices } from 'store/actions/services'
 
+import { Input, TextArea } from 'components/basic/Input'
 import RemoveButton from '../basic/RemoveButton'
+import { BoatyardSelect } from 'components/basic/Dropdown';
 
 class NewLineItem extends React.Component {
   state = {
@@ -56,7 +56,7 @@ class NewLineItem extends React.Component {
           <Col lg={8} sm={8} xs={8} md={8} xl={8}>
             <Row>
               <Col lg={6} sm={6} xs={6} md={6} xl={6}>
-                <AsyncSelect
+                <BoatyardSelect
                   className="basic-single"
                   classNamePrefix="select"
                   cacheOptions

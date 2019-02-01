@@ -71,8 +71,9 @@ export default handleActions(
       }),
     [actionTypes.LOGIN_WITH_PROVIDER_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload } = action;
         draft.currentStatus = type;
+        draft.currentProvider = payload;
       }),
     [actionTypes.LOGIN_WITH_PROVIDER_FAILURE]: (state, action) =>
       produce(state, draft => {

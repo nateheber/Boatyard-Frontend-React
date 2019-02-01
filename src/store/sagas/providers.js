@@ -91,7 +91,7 @@ function* loginWithProvider(action) {
         type: authActions.setPrivilege,
         payload: 'provider'
       });
-      yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS });
+      yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: result });
       if (success) {
         yield call(success);
       }

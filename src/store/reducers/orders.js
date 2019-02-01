@@ -39,7 +39,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.orders.page = get(payload, 'params.page', 1);
+        set(draft, 'orders.page', get(payload, 'params.page', 1));
         draft.errors = null;
       }),
     [actionTypes.GET_ORDERS_SUCCESS]: (state, action) =>
@@ -47,10 +47,10 @@ export default handleActions(
         const { type, payload } = action;
         const { total, perPage, orders, included } = payload;
         draft.currentStatus = type;
-        draft.orders.total = total;
-        draft.orders.perPage = perPage;
-        draft.orders.orders = orders;
-        draft.orders.included = refactorIncluded(included);
+        set(draft, 'orders.total', total);
+        set(draft, 'orders.perPage', perPage);
+        set(draft, 'orders.orders', orders);
+        set(draft, 'orders.included', refactorIncluded(included));
       }),
     [actionTypes.GET_ORDERS_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -63,7 +63,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.newOrders.page = get(payload, 'params.page', 1);
+        set(draft, 'newOrders.page', get(payload, 'params.page', 1));
         draft.errors = null;
       }),
     [actionTypes.GET_NEW_ORDERS_SUCCESS]: (state, action) =>
@@ -71,10 +71,10 @@ export default handleActions(
         const { type, payload } = action;
         const { total, perPage, orders, included } = payload;
         draft.currentStatus = type;
-        draft.newOrders.total = total;
-        draft.newOrders.perPage = perPage;
-        draft.newOrders.orders = orders;
-        draft.newOrders.included = refactorIncluded(included);
+        set(draft, 'newOrders.total', total);
+        set(draft, 'newOrders.perPage', perPage);
+        set(draft, 'newOrders.orders', orders);
+        set(draft, 'newOrders.included', refactorIncluded(included));
       }),
     [actionTypes.GET_NEW_ORDERS_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -87,7 +87,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.scheduledOrders.page = get(payload, 'params.page', 1);
+        set(draft, 'scheduledOrders.page', get(payload, 'params.page', 1));
         draft.errors = null;
       }),
     [actionTypes.GET_SCHEDULED_ORDERS_SUCCESS]: (state, action) =>
@@ -95,10 +95,10 @@ export default handleActions(
         const { type, payload } = action;
         const { total, perPage, orders, included } = payload;
         draft.currentStatus = type;
-        draft.scheduledOrders.total = total;
-        draft.scheduledOrders.perPage = perPage;
-        draft.scheduledOrders.orders = orders;
-        draft.scheduledOrders.included = refactorIncluded(included);
+        set(draft, 'scheduledOrders.total', total);
+        set(draft, 'scheduledOrders.perPage', perPage);
+        set(draft, 'scheduledOrders.orders', orders);
+        set(draft, 'scheduledOrders.included', refactorIncluded(included));
       }),
     [actionTypes.GET_SCHEDULED_ORDERS_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -111,7 +111,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.assignedOrders.page = get(payload, 'params.page', 1);
+        set(draft, 'assignedOrders.page', get(payload, 'params.page', 1));
         draft.errors = null;
       }),
     [actionTypes.GET_ASSIGNED_ORDERS_SUCCESS]: (state, action) =>
@@ -119,10 +119,10 @@ export default handleActions(
         const { type, payload } = action;
         const { total, perPage, orders, included } = payload;
         draft.currentStatus = type;
-        draft.assignedOrders.total = total;
-        draft.assignedOrders.perPage = perPage;
-        draft.assignedOrders.orders = orders;
-        draft.assignedOrders.included = refactorIncluded(included);
+        set(draft, 'assignedOrders.total', total);
+        set(draft, 'assignedOrders.perPage', perPage);
+        set(draft, 'assignedOrders.orders', orders);
+        set(draft, 'assignedOrders.included', refactorIncluded(included));
       }),
     [actionTypes.GET_ASSIGNED_ORDERS_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -135,7 +135,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.openOrders.page = get(payload, 'params.page', 1);
+        set(draft, 'openOrders.page', get(payload, 'params.page', 1));
         draft.errors = null;
       }),
     [actionTypes.GET_OPEN_ORDERS_SUCCESS]: (state, action) =>
@@ -143,10 +143,10 @@ export default handleActions(
         const { type, payload } = action;
         const { total, perPage, orders, included } = payload;
         draft.currentStatus = type;
-        draft.openOrders.total = total;
-        draft.openOrders.perPage = perPage;
-        draft.openOrders.orders = orders;
-        draft.openOrders.included = refactorIncluded(included);
+        set(draft, 'openOrders.total', total);
+        set(draft, 'openOrders.perPage', perPage);
+        set(draft, 'openOrders.orders', orders);
+        set(draft, 'openOrders.included', refactorIncluded(included));
       }),
     [actionTypes.GET_OPEN_ORDERS_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -159,7 +159,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.paidOrders.page = get(payload, 'params.page', 1);
+        set(draft, 'paidOrders.page', get(payload, 'params.page', 1));
         draft.errors = null;
       }),
     [actionTypes.GET_PAID_ORDERS_SUCCESS]: (state, action) =>
@@ -167,10 +167,10 @@ export default handleActions(
         const { type, payload } = action;
         const { total, perPage, orders, included } = payload;
         draft.currentStatus = type;
-        draft.paidOrders.total = total;
-        draft.paidOrders.perPage = perPage;
-        draft.paidOrders.orders = orders;
-        draft.paidOrders.included = refactorIncluded(included);
+        set(draft, 'paidOrders.total', total);
+        set(draft, 'paidOrders.perPage', perPage);
+        set(draft, 'paidOrders.orders', orders);
+        set(draft, 'paidOrders.included', refactorIncluded(included));
       }),
     [actionTypes.GET_PAID_ORDERS_FAILURE]: (state, action) =>
       produce(state, draft => {

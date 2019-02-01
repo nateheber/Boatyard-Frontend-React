@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
-import AsyncSelect from 'react-select/lib/Async';
 import { Row, Col } from 'react-flexbox-grid';
 import { isNumber } from 'lodash';
 
@@ -18,6 +17,7 @@ import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 import CustomerModal from 'components/template/CustomerInfoSection/CustomerModal';
 import { CustomersHeader } from '../components/CustomersHeader';
+import { BoatyardSelect } from 'components/basic/Dropdown';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -143,7 +143,7 @@ class Customers extends React.Component {
         <Row>
           <Col md={8} lg={4} sm={12}>
             <SearchWrapper>
-              <AsyncSelect
+              <BoatyardSelect
                 components={{
                   Option: CustomerOption,
                   SingleValue: CustomerOptionValue
