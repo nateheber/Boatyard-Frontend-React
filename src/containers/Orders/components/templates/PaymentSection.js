@@ -1,7 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
 
+import { actionTypes, GetPayments, CreatePayment } from 'store/actions/payments';
 import { Section } from 'components/basic/InfoSection';
 import { HollowButton } from 'components/basic/Buttons';
 import OrderPaymentModal from '../modals/OrderPaymentModal';
@@ -29,10 +31,14 @@ const Buttons  = styled.div`
   flex-direction: column;
 `;
 
-export default class OrderReviewSection extends React.Component {
+class PaymentSection extends React.Component {
   state = {
     showModal: false
   };
+
+  componentDidMount() {
+    this.loadPayments();
+  }
 
   onCloseModal = () => {
     this.setState({ showModal: false })
@@ -42,14 +48,39 @@ export default class OrderReviewSection extends React.Component {
     this.setState({ showModal: true })
   };
 
+  renderPayments = () => {
+    const { payments } = this.props;
+    return payments.map(payment => {
+      return (
+        <InfoItem key={`payment_${payment.id}`}>
+          Payment - {payment.id}
+        </InfoItem>
+      );
+    });
+  };
+
+  onSave = (data) => {
+    const { CreatePayment } = this.props;
+    CreatePayment({
+      data,
+      success: this.loadPayments
+    });  
+  };
+
+  loadPayments = () => {
+    const { order, GetPayments } = this.props;
+    GetPayments({ params: { 'payment[order_id]': order.id } });
+  };
+
   render() {
-    const { order } = this.props;
+    const { order, currenStatus } = this.props;
     const { showModal } = this.state;
     const balance = get(order, 'attributes.balance');
     return (
       <Section title="Payment">
         <Wrapper>
           <InfoList>
+            {this.renderPayments()}
             <InfoItem>
               Balance Remaining: ${balance}
             </InfoItem>
@@ -60,6 +91,8 @@ export default class OrderReviewSection extends React.Component {
         </Wrapper>
         {(!isEmpty(order) && showModal) && <OrderPaymentModal
           open={showModal}
+          loading={currenStatus === actionTypes.CREATE_PAYMENT}
+          onSave={this.onSave}
           onClose={this.onCloseModal}
           order={order}
         />}
@@ -67,3 +100,16 @@ export default class OrderReviewSection extends React.Component {
     )
   }
 }
+
+
+const mapStateToProps = ({ payment: { payments, currenStatus } }) => ({
+  currenStatus,
+  payments
+})
+
+const mapDispatchToProps = {
+  GetPayments,
+  CreatePayment
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PaymentSection);

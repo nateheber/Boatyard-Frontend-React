@@ -128,7 +128,7 @@ class OrderDetails extends React.Component {
             <Row>
               <Column md={12} sm={12} xs={12} lg={8} xl={8}>
                 <SectionGroup>
-                  <OrderSummarySection lineItem={lineItems[0]} specialInstructions={this.getSpecialInstructions()} />
+                  <OrderSummarySection lineItem={get(lineItems, '0', {})} specialInstructions={this.getSpecialInstructions()} />
                   <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
                   <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
                 </SectionGroup>

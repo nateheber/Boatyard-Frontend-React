@@ -49,7 +49,7 @@ class OrderPaymentModal extends React.Component {
   }
 
   onSave = () => {
-    const { order, privilege, CreatePayment }  = this.props;
+    const { order, privilege, CreatePayment, onSave }  = this.props;
     const { balance, fee, cardId } = this.state;
     const user = getUserFromOrder(order);
     const provider = getProviderFromOrder(order);
@@ -70,10 +70,14 @@ class OrderPaymentModal extends React.Component {
     } else {
       data['user_id'] = user.id;
     }
-    CreatePayment({
-      data: { payment: { ...data }},
-      success: this.props.onClose
-    });
+    if (onSave) {
+      onSave({ payment: { ...data }});
+    } else {
+      CreatePayment({
+        data: { payment: { ...data }},
+        success: this.props.onClose
+      });  
+    }
   }
 
   refreshCards = () => {
@@ -89,7 +93,7 @@ class OrderPaymentModal extends React.Component {
   }
 
   render() {
-    const { open, onClose, creditCards, privilege, order } = this.props;
+    const { open, loading, onClose, creditCards, privilege, order } = this.props;
     const { balance, fee, tab } = this.state;
     const charging = parseFloat(balance) + parseFloat(fee);
     const user = getUserFromOrder(order);
@@ -102,6 +106,7 @@ class OrderPaymentModal extends React.Component {
         title="Enter Payment Info"
         actions={action}
         open={open}
+        loading={loading}
         onClose={onClose}
         tabs={tabs}
         selected={tab}
