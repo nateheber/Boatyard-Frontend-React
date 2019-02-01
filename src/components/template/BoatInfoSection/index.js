@@ -96,7 +96,7 @@ class BoatInfoSection extends React.Component {
             toggleSection={() => this.toggleInfoSection(index)}
           />
         ))}
-        {edtingBoatIndex > -1 &&<BoatModal
+        {edtingBoatIndex > -1 && <BoatModal
           open={visibleOfBoatModal}
           user={user}
           onClose={this.endEditing}

@@ -1,25 +1,27 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import queryString from 'query-string'
-import { Row, Col } from 'react-flexbox-grid'
-import styled from 'styled-components'
-import { get } from 'lodash'
+import React from 'react';
+import { connect } from 'react-redux';
+import queryString from 'query-string';
+import { Row, Col } from 'react-flexbox-grid';
+import styled from 'styled-components';
+import { get } from 'lodash';
 
-import { actionTypes, GetOrder, UpdateOrder } from 'store/actions/orders'
-import { orderSelector } from 'store/selectors/orders'
-import { getUserFromOrder, getBoatFromOrder, getProviderFromOrder } from 'utils/order'
+import { actionTypes, GetOrder, UpdateOrder } from 'store/actions/orders';
+import { orderSelector } from 'store/selectors/orders';
+import { getUserFromOrder, getBoatFromOrder, getProviderFromOrder } from 'utils/order';
+import { actionTypes as boatActions, UpdateBoat } from 'store/actions/boats';
 
-import { SectionGroup } from 'components/basic/InfoSection'
+import { SectionGroup } from 'components/basic/InfoSection';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
-import CustomerBoat from './components/templates/CustomerBoat'
-import LineItemSection from './components/templates/LineItemSection'
-import OrderSummarySection from './components/templates/OrderSummarySection'
-import OrderReviewSection from './components/templates/OrderReviewSection'
-import OrderDetailHeader from './components/templates/OrderDetailHeader'
-import Scheduler from './components/templates/Scheduler'
-import PaymentSection from './components/templates/PaymentSection'
-import Timeline from './components/templates/Timeline'
-import OrderAssignment from './components/templates/OrderAssignment'
+import CustomerBoat from './components/templates/CustomerBoat';
+import LineItemSection from './components/templates/LineItemSection';
+import OrderSummarySection from './components/templates/OrderSummarySection';
+import OrderReviewSection from './components/templates/OrderReviewSection';
+import OrderDetailHeader from './components/templates/OrderDetailHeader';
+import Scheduler from './components/templates/Scheduler';
+import PaymentSection from './components/templates/PaymentSection';
+import Timeline from './components/templates/Timeline';
+import OrderAssignment from './components/templates/OrderAssignment';
+import BoatModal from 'components/template/BoatInfoSection/BoatModal';
 
 const Wrapper = styled.div`
   padding: 30px 25px;
@@ -33,7 +35,8 @@ const Column = styled(Col)`
 class OrderDetails extends React.Component {
   state = {
     orderId: -1,
-    isFirstLoad: true
+    isFirstLoad: true,
+    visibleOfBoatModal: false
   }
 
   componentDidMount() {
@@ -92,19 +95,26 @@ class OrderDetails extends React.Component {
     return updatedAt;
   }
 
-  editBoat = () => {
-    this.setState({ editBoat: true })
+  showBoatModal = () => {
+    this.setState({ visibleOfBoatModal: true })
   }
 
-  closeBoatEditor = () => {
-    this.setState({ editBoat: false })
+  hideBoatModal = () => {
+    this.setState({ visibleOfBoatModal: false })
   }
 
   updateBoat = (data) => {
+    const { UpdateBoat, GetOrder } = this.props;
     const { boatInfo: { id } } = this.getOrderInfo();
     const { orderId } = this.state;
-    this.props.updateBoats({ id, data, callback: () => { this.props.GetOrder({ orderId }) } })
-    this.setState({ editBoat: false })
+      UpdateBoat({
+        boatId: id,
+        data,
+        success: () => {
+          this.hideBoatModal();
+          GetOrder({ orderId });
+        }
+      });
   }
 
   updateOrder = (data) => {
@@ -114,11 +124,10 @@ class OrderDetails extends React.Component {
 
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
-    const boatLocation = boatInfo.location;
     const updatedDate = this.getUdpatedDate();
-    const { orderId, isFirstLoad } = this.state;
+    const { orderId, isFirstLoad, visibleOfBoatModal } = this.state;
     const providerId = this.getProviderId();
-    const { currentOrder, currentStatus, privilege } = this.props;
+    const { currentOrder, currentStatus, boatStatus, privilege } = this.props;
     const lineItems = get(currentOrder, 'lineItems', []);
     const summaryInfo = this.getSummaryInfo();
     const loading = currentStatus === actionTypes.GET_ORDER;
@@ -155,9 +164,8 @@ class OrderDetails extends React.Component {
                 <SectionGroup>
                   <CustomerBoat
                     boatInfo={boatInfo}
-                    boatLocation={boatLocation}
                     customerInfo={customerInfo}
-                    onEditBoat={() => this.editBoat()}
+                    onEditBoat={() => this.showBoatModal()}
                   />
                 </SectionGroup>
                 <SectionGroup>
@@ -166,7 +174,16 @@ class OrderDetails extends React.Component {
               </Column>
             </Row>
           </Wrapper>
-        </React.Fragment>}
+          {visibleOfBoatModal && <BoatModal
+            open={visibleOfBoatModal}
+            loading={boatStatus === boatActions.UPDATE_BOAT}
+            user={customerInfo}
+            onClose={this.hideBoatModal}
+            onSave={this.updateBoat}
+            boatInfo={boatInfo}
+          />}
+        </React.Fragment>
+      }
       </React.Fragment>
     )
   }
@@ -175,12 +192,14 @@ class OrderDetails extends React.Component {
 const mapStateToProps = state => ({
   ...orderSelector(state),
   currentStatus: state.order.currentStatus,
+  boatStatus: state.boat.currentStatus,
   privilege: state.auth.privilege
  });
 
 const mapDispatchToProps = {
   GetOrder,
-  UpdateOrder
+  UpdateOrder,
+  UpdateBoat
 };
 
 export default connect(
