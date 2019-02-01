@@ -75,13 +75,15 @@ class OrderPaymentModal extends React.Component {
 
   refreshCards = () => {
     const { user, GetCreditCards } = this.props;
-    let params = {};
-    if (user.type === 'child_accounts') {
-      params = {'credit_card[child_account_id]': user.id };
-    } else {
-      params = {'credit_card[user_id]': user.id };
+    if (user) {
+      let params = {};
+      if (user.type === 'child_accounts') {
+        params = {'credit_card[child_account_id]': user.id };
+      } else {
+        params = {'credit_card[user_id]': user.id };
+      }
+      GetCreditCards({ params });
     }
-    GetCreditCards({ params });
   }
 
   render() {

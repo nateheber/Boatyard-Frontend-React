@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
 import { GetOpenOrders } from 'store/actions/orders';
 import { refinedOrdersSelector } from 'store/selectors/orders'
@@ -56,7 +57,7 @@ class OpenInvoices extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  total: state.order.openOrders.total,
+  total: get(state, 'order.openOrders.total', 0),
   orders: refinedOrdersSelector(state ,'open')
 });
 
