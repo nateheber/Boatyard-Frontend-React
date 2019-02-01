@@ -1,25 +1,26 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import deepEqual from 'deep-equal'
-import moment from 'moment'
+import React from 'react';
+import { connect } from 'react-redux';
+import deepEqual from 'deep-equal';
+import moment from 'moment';
+import { get, set } from 'lodash';
 
-import { Section } from 'components/basic/InfoSection'
+import { Section } from 'components/basic/InfoSection';
 
-import NewLineItems from '../infoSections/NewLineItem'
-import LineItem from '../infoSections/LineItem'
-import ButtonGroup from '../basic/ButtonGroup'
-import QuoteHeader from '../basic/QuoteHeader'
+import NewLineItems from '../infoSections/NewLineItem';
+import LineItem from '../infoSections/LineItem';
+import ButtonGroup from '../basic/ButtonGroup';
+import QuoteHeader from '../basic/QuoteHeader';
 
-import { updateLineItems, deleteLineItem, createLineItems } from 'store/reducers/lineItems'
-import { GetOrder } from 'store/actions/orders'
-import { orderSelector } from 'store/selectors/orders'
+import { updateLineItems, deleteLineItem, createLineItems } from 'store/reducers/lineItems';
+import { GetOrder } from 'store/actions/orders';
+import { orderSelector } from 'store/selectors/orders';
 
 class LineItemSection extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       newItems: [],
-      lineItems: props.currentOrder.lineItems,
+      lineItems: get(props, 'currentOrder.lineItems', []),
       mode: 'view'
     }
   }
@@ -49,10 +50,10 @@ class LineItemSection extends React.Component {
 
   onChangeLineItems = (updateInfo, idx) => {
     const lineItems = this.state.lineItems.map((val) => ({...val}));
-    lineItems[idx].attributes.serviceId = updateInfo.serviceId;
-    lineItems[idx].attributes.quantity = updateInfo.quantity;
-    lineItems[idx].attributes.cost = updateInfo.cost;
-    lineItems[idx].attributes.comment = updateInfo.comment;
+    set(lineItems, `[${idx}].attributes.serviceId`, updateInfo.serviceId);
+    set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
+    set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
+    set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
     this.setState({ lineItems });
   }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
 import { GetNewOrders } from 'store/actions/orders';
 import { refinedOrdersSelector } from 'store/selectors/orders'
@@ -59,7 +60,7 @@ class NewOrders extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  total: state.order.newOrders.total,
+  total: get(state, 'order.newOrders.total'),
   orders: refinedOrdersSelector(state, 'new')
 });
 

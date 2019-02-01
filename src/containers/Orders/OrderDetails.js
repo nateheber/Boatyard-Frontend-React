@@ -124,7 +124,7 @@ class OrderDetails extends React.Component {
     const { orderId } = this.state;
     const providerId = this.getProviderId();
     const { currentOrder, privilege } = this.props;
-    const { lineItems } = currentOrder;
+    const lineItems = get(currentOrder, 'lineItems', []);
     const summaryInfo = this.getSummaryInfo();
     const user = this.getUser();
     const paymentInfo = this.getPaymentInfo();
@@ -152,9 +152,12 @@ class OrderDetails extends React.Component {
               </SectionGroup>
             </Column>
             <Column md={12} sm={12} xs={12} lg={4} xl={4}>
-              {privilege === 'admin' && <SectionGroup>
-                <OrderAssignment />
-              </SectionGroup>}
+              {
+                privilege === 'admin' && !providerId &&
+                  <SectionGroup>
+                    <OrderAssignment />
+                  </SectionGroup>
+              }
               <SectionGroup>
                 <CustomerBoat
                   boatInfo={boatInfo}
