@@ -58,7 +58,7 @@ export default class OrderReviewSection extends React.Component {
             <HollowButton onClick={this.openModal}>Enter Payment</HollowButton>
           </Buttons>
         </Wrapper>
-        {!isEmpty(order) && <OrderPaymentModal
+        {(!isEmpty(order) && showModal) && <OrderPaymentModal
           open={showModal}
           onClose={this.onCloseModal}
           order={order}

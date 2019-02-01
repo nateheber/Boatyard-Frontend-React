@@ -4,7 +4,7 @@ import { Row, Col } from 'react-flexbox-grid';
 import { get } from 'lodash';
 
 import { GetCreditCards } from 'store/actions/credit-cards';
-import { createPayment } from 'store/reducers/payments';
+import { CreatePayment } from 'store/actions/payments';
 import ChargeSelector from '../basic/ChargeSelector';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
@@ -49,7 +49,7 @@ class OrderPaymentModal extends React.Component {
   }
 
   onSave = () => {
-    const { order, privilege, createPayment }  = this.props;
+    const { order, privilege, CreatePayment }  = this.props;
     const { balance, fee, cardId } = this.state;
     const user = getUserFromOrder(order);
     const provider = getProviderFromOrder(order);
@@ -62,18 +62,17 @@ class OrderPaymentModal extends React.Component {
       boatyardFee: parseFloat(fee)
     } : {
       orderId: order.id,
-      amount: parseFloat(balance),
+      creditCardId: cardId,
+      amount: parseFloat(balance)
     };
-    if (privilege === 'admin') {
-      if (user.type === 'child_accounts') {
-        data['child_account_id'] = user.id;
-      } else {
-        data['user_id'] = user.id;
-      }
+    if (user.type === 'child_accounts') {
+      data['child_account_id'] = user.id;
+    } else {
+      data['user_id'] = user.id;
     }
-    createPayment({
-      data,
-      callback: this.props.onClose
+    CreatePayment({
+      data: { payment: { ...data }},
+      success: this.props.onClose
     });
   }
 
@@ -139,7 +138,7 @@ const mapStateToProps = ({ creditCard: { creditCards }, auth: { privilege } }) =
 
 const mapDispatchToProps = {
   GetCreditCards,
-  createPayment
+  CreatePayment
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderPaymentModal);
