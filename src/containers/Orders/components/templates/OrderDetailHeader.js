@@ -1,21 +1,20 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import AsyncSelect from 'react-select/lib/Async'
-import { Row, Col } from 'react-flexbox-grid'
-import { withRouter } from 'react-router-dom'
-import { get } from 'lodash'
-import styled from 'styled-components'
+import React from 'react';
+import { connect } from 'react-redux';
+import { Row, Col } from 'react-flexbox-grid';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
+import styled from 'styled-components';
 
-import { FilterProviders } from 'store/actions/providers'
-import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders'
-import { getCustomerName } from 'utils/order'
+import { FilterProviders } from 'store/actions/providers';
+import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders';
+import { getCustomerName } from 'utils/order';
 
-import { ActionDropdown } from 'components/basic/Dropdown';
+import { ActionDropdown, BoatyardSelect } from 'components/basic/Dropdown';
 import { OrangeButton } from 'components/basic/Buttons';
-import { PageTitle } from 'components/basic/Typho'
+import { PageTitle } from 'components/basic/Typho';
 import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
-import OrderStatus from './OrderStatus'
+import OrderStatus from './OrderStatus';
 
 
 const SectionHeaderWrapper = styled.div`
@@ -24,16 +23,17 @@ const SectionHeaderWrapper = styled.div`
   width: 100%;
 `;
 
-class OrderHeader extends React.Component {
+class OrderDetailHeader extends React.Component {
 
   loadOptions = val => {
     return this.onChangeProviderFilter(val)
-      .then(
-        (filtered) => filtered.map(({ id, attributes }) => ({id, ...attributes })),
-        () => {
-          return [];
-        }
-      )
+      .then((filtered) => {
+        return filtered;
+      },
+      () => {
+        return [];
+      }
+    )
   }
 
   onChangeProviderFilter = val => {
@@ -115,8 +115,8 @@ class OrderHeader extends React.Component {
               }
             ]}
           />
-          <Col sm={6} md={3} lg={3}>
-            {privilege === 'admin' && !providerId && <AsyncSelect
+          <Col xs={12} sm={6} md={4} lg={3}>
+            {privilege === 'admin' && !providerId && <BoatyardSelect
               components={{
                 Option: ProviderOption,
                 SingleValue: ProviderOptionValue
@@ -151,4 +151,4 @@ const mapDispatchToProps = {
   AcceptOrder
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderHeader));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderDetailHeader));

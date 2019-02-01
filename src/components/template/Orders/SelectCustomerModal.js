@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import AsyncSelect from 'react-select/lib/Async';
 import { Row, Col } from 'react-flexbox-grid';
 import { findIndex, isEmpty } from 'lodash';
 import styled from 'styled-components';
@@ -20,6 +19,8 @@ import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 import BoatInfo from './BoatInfo';
 import CustomerModal from 'components/template/CustomerInfoSection/CustomerModal';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
+import { BoatyardSelect } from 'components/basic/Dropdown';
+
 
 const SubSectionTitle = styled.h5`
   text-transform: uppercase;
@@ -249,7 +250,7 @@ class SelectCustomerModal extends React.Component {
       >
         <Row>
           <Col sm={12} md={8} lg={7}>
-            <AsyncSelect
+            <BoatyardSelect
               ref={this.setCustomerSelectRef}
               components={{
                 Option: CustomerOption,
