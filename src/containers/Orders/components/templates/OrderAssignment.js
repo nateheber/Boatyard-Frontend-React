@@ -9,7 +9,7 @@ import { UpdateOrder } from 'store/actions/orders';
 import ProviderInfo from './ProviderInfo';
 import ProviderSelector from './ProviderSelector'
 
-class OrderAssignmentSection extends React.Component {
+class OrderAssignment extends React.Component {
   state = {
     dispatchIds: []
   }
@@ -50,4 +50,4 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = { UpdateOrder };
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignmentSection);
+export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignment);

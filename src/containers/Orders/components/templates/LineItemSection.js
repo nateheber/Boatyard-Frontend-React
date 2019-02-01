@@ -2,18 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import deepEqual from 'deep-equal';
 import moment from 'moment';
-import { get, set } from 'lodash';
+import { get, set, isEmpty } from 'lodash';
 
+import { updateLineItems, deleteLineItem, createLineItems } from 'store/reducers/lineItems';
+import { GetOrder } from 'store/actions/orders';
+import { orderSelector } from 'store/selectors/orders';
 import { Section } from 'components/basic/InfoSection';
-
 import NewLineItems from '../infoSections/NewLineItem';
 import LineItem from '../infoSections/LineItem';
 import ButtonGroup from '../basic/ButtonGroup';
 import QuoteHeader from '../basic/QuoteHeader';
 
-import { updateLineItems, deleteLineItem, createLineItems } from 'store/reducers/lineItems';
-import { GetOrder } from 'store/actions/orders';
-import { orderSelector } from 'store/selectors/orders';
 
 class LineItemSection extends React.Component {
   constructor(props) {
@@ -103,11 +102,11 @@ class LineItemSection extends React.Component {
     return (
       <Section title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`} mode={mode} onEdit={this.onEdit} >
         <QuoteHeader />
-        {
-          lineItems.map((val, idx) => (
+        {!isEmpty(lineItems) && <React.Fragment>
+          {lineItems.map((val, idx) => (
             <LineItem {...val} onRemove={() => this.removeLineItem(val.id)} mode={mode} onChange={(updateInfo) => this.onChangeLineItems(updateInfo, idx)} key={`lineItem_${idx}`} />
-          ))
-        }
+          ))}
+        </React.Fragment>}
         {
           newItems.map((val, idx) => (
             <NewLineItems onChange={(item) => this.onChange(item, idx)} key={`new_item_${idx}`} remove={() => this.removeNewItem(idx)} />

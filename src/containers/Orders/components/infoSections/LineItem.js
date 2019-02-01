@@ -3,14 +3,12 @@ import { connect } from 'react-redux'
 import deepEqual from 'deep-equal'
 import styled from 'styled-components'
 import { set, get } from 'lodash';
-import AsyncSelect from 'react-select/lib/Async'
 import { Row, Col } from 'react-flexbox-grid'
 
-import { Input, TextArea } from 'components/basic/Input'
-
 import { FilterServices } from 'store/actions/services'
-
+import { Input, TextArea } from 'components/basic/Input'
 import RemoveButton from '../basic/RemoveButton'
+import { BoatyardSelect } from 'components/basic/Dropdown';
 
 const Record = styled.div`
   padding: 15px 0px;
@@ -127,7 +125,7 @@ class LineItem extends React.Component {
         <Line>
           <Col md={4} sm={4} lg={4} xl={4} xs={4}>
             {mode === 'edit' ? (
-              <AsyncSelect
+              <BoatyardSelect
                 className="basic-single"
                 classNamePrefix="select"
                 cacheOptions

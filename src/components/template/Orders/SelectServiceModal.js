@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
-import AsyncSelect from 'react-select/lib/Async';
 import { get, set, isEmpty, filter, camelCase, startCase, hasIn } from 'lodash';
 
 import { FilterServices, GetService } from 'store/actions/services';
@@ -12,6 +11,7 @@ import { OrangeButton } from 'components/basic/Buttons';
 import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
 import FormFields from 'components/template/FormFields';
+import { BoatyardSelect } from 'components/basic/Dropdown';
 
 
 const SubSectionTitle = styled.h5`
@@ -223,7 +223,7 @@ class SelectServiceModal extends React.Component {
             </Row>
             <Row style={{ marginBottom: 15 }}>
               <Col sm={12}>
-                <AsyncSelect
+                <BoatyardSelect
                   defaultOptions
                   components={{
                     Option: ProviderOption,
