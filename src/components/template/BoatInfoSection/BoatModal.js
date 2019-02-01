@@ -118,11 +118,15 @@ class BoatModal extends React.Component {
 
   getOptionalFields = (locationType) => {
     const { boatInfo } = this.props;
+    let boatLocation = get(boatInfo, 'location');
+    if (isEmpty(boatLocation)) {
+      boatLocation = get(boatInfo, 'relationships.location');
+    }
     let slip = '', locationName = '';
     if (isEmpty(locationType)) {
       if (!isEmpty(boatInfo)) {
-        locationType = get(boatInfo, 'relationships.location.attributes.locationType', '');
-        locationName = get(boatInfo, 'relationships.location.attributes.name', '');
+        locationType = get(boatLocation, 'attributes.locationType', '');
+        locationName = get(boatLocation, 'attributes.name', '');
         slip = get(boatInfo, 'slip', '');
       } else {
         locationType = 'marina';
@@ -205,7 +209,11 @@ class BoatModal extends React.Component {
 
   getLocationFieldInfo = () => {
     const { boatInfo } = this.props;
-    const locatoinValues = get(boatInfo, 'relationships.location.relationships.address.data', {});
+    let boatLocation = get(boatInfo, 'location');
+    if (isEmpty(boatLocation)) {
+      boatLocation = get(boatInfo, 'relationships.location');
+    }
+    const locatoinValues = get(boatLocation, 'relationships.address.data', {});
     const fields = [
       {
         type: 'text_field',

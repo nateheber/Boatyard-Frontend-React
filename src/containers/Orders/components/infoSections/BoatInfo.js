@@ -43,7 +43,9 @@ const getLocationAddressString = (location) => {
   return {line1, line2};
 }
 
-export default ({ name, make, model, length, boatLocation, onEdit }) => {
+export default ({ boatInfo, onEdit }) => {
+  const { name, make, model, length } = boatInfo;
+  const boatLocation = get(boatInfo, 'location');
   const { line1, line2 } = getLocationAddressString(boatLocation);
   return (
     <Wrapper>
