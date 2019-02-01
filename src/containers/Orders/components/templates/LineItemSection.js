@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import deepEqual from 'deep-equal';
 import moment from 'moment';
-import { isEmpty } from 'lodash';
+import { get, set, isEmpty } from 'lodash';
 
 import { updateLineItems, deleteLineItem, createLineItems } from 'store/reducers/lineItems';
 import { GetOrder } from 'store/actions/orders';
@@ -19,7 +19,7 @@ class LineItemSection extends React.Component {
     super(props)
     this.state = {
       newItems: [],
-      lineItems: props.currentOrder.lineItems,
+      lineItems: get(props, 'currentOrder.lineItems', []),
       mode: 'view'
     }
   }
@@ -49,10 +49,10 @@ class LineItemSection extends React.Component {
 
   onChangeLineItems = (updateInfo, idx) => {
     const lineItems = this.state.lineItems.map((val) => ({...val}));
-    lineItems[idx].attributes.serviceId = updateInfo.serviceId;
-    lineItems[idx].attributes.quantity = updateInfo.quantity;
-    lineItems[idx].attributes.cost = updateInfo.cost;
-    lineItems[idx].attributes.comment = updateInfo.comment;
+    set(lineItems, `[${idx}].attributes.serviceId`, updateInfo.serviceId);
+    set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
+    set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
+    set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
     this.setState({ lineItems });
   }
 

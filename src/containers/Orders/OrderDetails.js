@@ -119,7 +119,7 @@ class OrderDetails extends React.Component {
     const { orderId, isFirstLoad } = this.state;
     const providerId = this.getProviderId();
     const { currentOrder, currentStatus, privilege } = this.props;
-    const { lineItems } = currentOrder;
+    const lineItems = get(currentOrder, 'lineItems', []);
     const summaryInfo = this.getSummaryInfo();
     const loading = currentStatus === actionTypes.GET_ORDER;
 
@@ -149,7 +149,7 @@ class OrderDetails extends React.Component {
                 </SectionGroup>
               </Column>
               <Column md={12} sm={12} xs={12} lg={4} xl={4}>
-                {privilege === 'admin' && <SectionGroup>
+                {(privilege === 'admin' && !providerId) && <SectionGroup>
                   <OrderAssignment />
                 </SectionGroup>}
                 <SectionGroup>

@@ -61,7 +61,7 @@ class OrderList extends React.Component {
   render() {
     const { orders, page } = this.props;
     const pageCount = this.getPageCount();
-    const processedOrders = orders.map(order => ({
+    const processedOrders = (orders || []).map(order => ({
       ...order,
       name: `Order #${order.id}`,
       createdAt: `${moment(order.createdAt).format('MMM DD, YYYY')}`

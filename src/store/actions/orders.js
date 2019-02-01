@@ -39,7 +39,11 @@ export const actionTypes = {
 
   DELETE_ORDER: '[ORDERS] - Delete order',
   DELETE_ORDER_SUCCESS: '[ORDERS] - Delete order Success',
-  DELETE_ORDER_FAILURE: '[ORDERS] - Delete order Failure'
+  DELETE_ORDER_FAILURE: '[ORDERS] - Delete order Failure',
+
+  ACCEPT_ORDER: '[ORDERS] - Accept order',
+  ACCEPT_ORDER_SUCCESS: '[ORDERS] - Accept order success',
+  ACCEPT_ORDER_FAILURE: '[ORDERS] - Accept order failure',
 };
 
 export const GetOrders = createAction(actionTypes.GET_ORDERS, payload => payload);
@@ -81,3 +85,7 @@ export const UpdateOrderFailure = createAction(actionTypes.UPDATE_ORDER_FAILURE)
 export const DeleteOrder = createAction(actionTypes.DELETE_ORDER, payload => payload);
 export const DeleteOrderSuccess = createAction(actionTypes.DELETE_ORDER_SUCCESS);
 export const DeleteOrderFailure = createAction(actionTypes.DELETE_ORDER_FAILURE);
+
+export const AcceptOrder = createAction(actionTypes.ACCEPT_ORDER, payload => payload);
+export const AcceptOrderSuccess = createAction(actionTypes.ACCEPT_ORDER_SUCCESS);
+export const AcceptOrderFailure = createAction(actionTypes.ACCEPT_ORDER_FAILURE);
