@@ -97,8 +97,9 @@ class OrderDetailHeader extends React.Component {
   }
 
   render() {
-    const { order, privilege } = this.props;
-    const providerId = get(order, 'attributes.providerId');
+    const { order, privilege, providerInfo } = this.props;
+    const providerId = parseInt(get(order, 'attributes.providerId'));
+    const myProviderId = parseInt(get(providerInfo, 'data.id'));
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
@@ -127,7 +128,7 @@ class OrderDetailHeader extends React.Component {
               onChange={this.onChangeProvider}
             />}
             {
-              privilege === 'provider' && !providerId &&
+              privilege === 'provider' && providerId !== myProviderId &&
               <OrangeButton onClick={this.acceptOrder} >Accept Order</OrangeButton>
             }
           </Col>
@@ -142,6 +143,7 @@ class OrderDetailHeader extends React.Component {
 
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
+  providerInfo: state.provider.currentProvider,
 })
 
 const mapDispatchToProps = {
