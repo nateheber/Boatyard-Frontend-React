@@ -73,7 +73,7 @@ class PaymentSection extends React.Component {
   };
 
   render() {
-    const { order, currenStatus } = this.props;
+    const { order, currentStatus } = this.props;
     const { showModal } = this.state;
     const balance = get(order, 'attributes.balance');
     return (
@@ -91,7 +91,7 @@ class PaymentSection extends React.Component {
         </Wrapper>
         {(!isEmpty(order) && showModal) && <OrderPaymentModal
           open={showModal}
-          loading={currenStatus === actionTypes.CREATE_PAYMENT}
+          loading={currentStatus === actionTypes.CREATE_PAYMENT}
           onSave={this.onSave}
           onClose={this.onCloseModal}
           order={order}
@@ -102,8 +102,8 @@ class PaymentSection extends React.Component {
 }
 
 
-const mapStateToProps = ({ payment: { payments, currenStatus } }) => ({
-  currenStatus,
+const mapStateToProps = ({ payment: { payments, currentStatus } }) => ({
+  currentStatus,
   payments
 })
 
