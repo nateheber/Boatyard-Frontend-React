@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
 import { actionTypes } from '../actions/orders';
-import { getOrderClient } from './sagaSelectors';
+import { getOrderClient, getCustomApiClient } from './sagaSelectors';
 
 function* getOrders(action) {
   const orderClient = yield select(getOrderClient);
@@ -144,6 +144,24 @@ function* deleteOrder(action) {
   }
 }
 
+function* acceptOrder(action) {
+  const apiClient = yield select(getCustomApiClient);
+  const { orderId, success, error } = action.payload;
+  try {
+    yield call(apiClient.patch, `/dispatched_orders/${orderId}`, { order: { transition: 'accept' } });
+    yield put({ type: actionTypes.ACCEPT_ORDER_SUCCESS });
+    yield put({ type: actionTypes.GET_ORDER, payload: { orderId } })
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.ACCEPT_ORDER_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
 export default function* OrderSaga() {
   yield takeEvery(actionTypes.GET_ORDERS, getOrders);
   yield takeEvery(actionTypes.GET_NEW_ORDERS, getOrders);
@@ -155,4 +173,5 @@ export default function* OrderSaga() {
   yield takeEvery(actionTypes.CREATE_ORDER, createOrder);
   yield takeEvery(actionTypes.UPDATE_ORDER, updateOrder);
   yield takeEvery(actionTypes.DELETE_ORDER, deleteOrder);
+  yield takeEvery(actionTypes.ACCEPT_ORDER, acceptOrder);
 }

@@ -7,10 +7,11 @@ import { get } from 'lodash'
 import styled from 'styled-components'
 
 import { FilterProviders } from 'store/actions/providers'
-import { UpdateOrder, DeleteOrder } from 'store/actions/orders'
+import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders'
 import { getCustomerName } from 'utils/order'
 
-import { ActionDropdown } from 'components/basic/Dropdown'
+import { ActionDropdown } from 'components/basic/Dropdown';
+import { OrangeButton } from 'components/basic/Buttons';
 import { PageTitle } from 'components/basic/Typho'
 import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
@@ -52,6 +53,12 @@ class OrderHeader extends React.Component {
     this.props.UpdateOrder({ orderId: order.id, data: { providerId: val.id } })
   }
 
+  acceptOrder = () => {
+    const { order } = this.props;
+    const orderId = get(order, 'id');
+    this.props.AcceptOrder({ orderId });
+  }
+
   cancelOrder = () => {
     const { order } = this.props;
     this.props.UpdateOrder({ orderId: order.id, data: { state: 'canceled' } })
@@ -91,6 +98,7 @@ class OrderHeader extends React.Component {
 
   render() {
     const { order, privilege } = this.props;
+    const providerId = get(order, 'attributes.providerId');
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
@@ -108,7 +116,7 @@ class OrderHeader extends React.Component {
             ]}
           />
           <Col sm={6} md={3} lg={3}>
-            {privilege === 'admin' && <AsyncSelect
+            {privilege === 'admin' && !providerId && <AsyncSelect
               components={{
                 Option: ProviderOption,
                 SingleValue: ProviderOptionValue
@@ -118,6 +126,10 @@ class OrderHeader extends React.Component {
               loadOptions={this.loadOptions}
               onChange={this.onChangeProvider}
             />}
+            {
+              privilege === 'provider' && !providerId &&
+              <OrangeButton onClick={this.acceptOrder} >Accept Order</OrangeButton>
+            }
           </Col>
         </Row>
         {
@@ -136,6 +148,7 @@ const mapDispatchToProps = {
   FilterProviders,
   UpdateOrder,
   DeleteOrder,
+  AcceptOrder
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderHeader));

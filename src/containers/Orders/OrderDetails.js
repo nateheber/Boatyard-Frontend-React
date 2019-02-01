@@ -152,9 +152,12 @@ class OrderDetails extends React.Component {
               </SectionGroup>
             </Column>
             <Column md={12} sm={12} xs={12} lg={4} xl={4}>
-              {privilege === 'admin' && <SectionGroup>
-                <OrderAssignment />
-              </SectionGroup>}
+              {
+                privilege === 'admin' && !providerId &&
+                  <SectionGroup>
+                    <OrderAssignment />
+                  </SectionGroup>
+              }
               <SectionGroup>
                 <CustomerBoat
                   boatInfo={boatInfo}
