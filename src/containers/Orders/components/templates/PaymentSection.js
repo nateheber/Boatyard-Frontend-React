@@ -11,6 +11,9 @@ import OrderPaymentModal from '../modals/OrderPaymentModal';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
 `;
 
 const InfoItem = styled.div`
@@ -24,11 +27,15 @@ const InfoList = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  margin-bottom: 15px;
 `;
 
 const Buttons  = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  @media (max-width: 600px) {
+    justify-content: space-evenly;
+  }
 `;
 
 class PaymentSection extends React.Component {
@@ -86,6 +93,7 @@ class PaymentSection extends React.Component {
             </InfoItem>
           </InfoList>
           <Buttons>
+            <HollowButton onClick={this.openModal}>Refund</HollowButton>
             <HollowButton onClick={this.openModal}>Enter Payment</HollowButton>
           </Buttons>
         </Wrapper>
