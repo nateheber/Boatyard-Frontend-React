@@ -110,27 +110,11 @@ export default class Paginator extends React.Component {
       page = totalPages;
     }
     onChange(page);
-    // if (page >= 1 && page <= totalPages) {
-    // }
   }
   renderPageNum () {
     const { page, totalPages } = this.props;
     let startNumber = page - 2 <= 0 ? 1 : page - 2;
     let endNumber = page + 2 > totalPages ? totalPages : page + 2 ;
-    // if (totalPages < 6) {
-    //   startNumber = 1;
-    //   endNumber = totalPages;
-    // } else if(page < 3) {
-    //   startNumber = 1;
-    //   if(page > totalPages - 2) {
-    //     endNumber = totalPages
-    //   } else {
-    //     endNumber = startNumber + 3;
-    //   }
-    // } else {
-    //   startNumber = page - 2;
-    //   endNumber = page + 1;
-    // }
     return (
       <React.Fragment>
         { startNumber === 2 && <React.Fragment>
