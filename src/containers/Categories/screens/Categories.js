@@ -17,8 +17,8 @@ class Categories extends React.Component {
   componentDidMount() {
     this.props.fetchCategories();
   }
-  toDetails = categoryId => {
-    this.props.history.push(`/category-details/?category=${categoryId}`);
+  toDetails = category => {
+    this.props.history.push(`/category-details/?category=${category.id}`);
   };
   createCategory = () => {
     this.props.history.push(`/category-details/`);

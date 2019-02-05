@@ -11,8 +11,8 @@ const Wrapper = styled.div`
 `;
 
 class Team extends React.Component {
-  toDetails = memberId => {
-    this.props.history.push(`/member-details/${memberId}/`);
+  toDetails = member => {
+    this.props.history.push(`/member-details/${member.id}/`);
   };
   render() {
     const columns = [

@@ -17,6 +17,7 @@ import UpdateProfile from 'containers/Profiles/screens/UpdateProfile';
 import OpenedInvoices from 'containers/Invoices/OpenedInvoices';
 import PaidInvoices from 'containers/Invoices/PaidInvoices';
 import Services from 'containers/Services/screens/Services';
+import AddService from 'containers/Services/screens/AddService';
 import ServiceDetails from 'containers/Services/screens/ServiceDetails';
 import Categories from 'containers/Categories/screens/Categories';
 import CategoryDetails from 'containers/Categories/screens/CategoryDetails';
@@ -77,6 +78,15 @@ const MainRoutes = ({ privilege }) => (
         render={() => {
           if(privilege === 'provider') {
             return (<Services />);
+          } else {
+            return (<Redirect to="/dashboard"/>);
+          }
+        }}
+      />
+      <Route exact path="/services/new"
+        render={() => {
+          if(privilege === 'provider') {
+            return (<AddService />);
           } else {
             return (<Redirect to="/dashboard"/>);
           }

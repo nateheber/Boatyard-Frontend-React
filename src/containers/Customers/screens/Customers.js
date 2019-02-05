@@ -111,8 +111,8 @@ class Customers extends React.Component {
     });
   };
 
-  toDetails = customerId => {
-    this.props.history.push(`/customer-details/?customer=${customerId}`);
+  toDetails = customer => {
+    this.props.history.push(`/customer-details/?customer=${customer.id}`);
   };
 
   changePage = (page) => {

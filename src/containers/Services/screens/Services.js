@@ -6,8 +6,7 @@ import { withRouter } from 'react-router-dom';
 import Table from 'components/basic/Table';
 import { ServiceHeader } from 'components/compound/SectionHeader';
 
-import { GetServices } from 'store/actions/services';
-import { fetchCategories } from 'store/reducers/categories';
+import { actionTypes, GetServices } from 'store/actions/services';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -24,7 +23,6 @@ class Services extends React.Component {
 
   componentDidMount() {
     this.loadPage(1);
-    this.props.fetchCategories();
   }
 
   loadPage = (page) => {
@@ -44,12 +42,12 @@ class Services extends React.Component {
     });
   }
 
-  toDetails = serviceId => {
-    this.props.history.push(`/service-details/?service=${serviceId}`);
+  toDetails = service => {
+    this.props.history.push(`/service-details/?service=${service.id}`);
   };
 
   createService = () => {
-    this.props.history.push(`/service-details/`);
+    this.props.history.push(`/services/new`);
   };
 
   render() {
@@ -59,14 +57,14 @@ class Services extends React.Component {
       { label: 'price type', value: 'costType', sort: 'cost_type' }
     ];
 
-    const { services, loading, page, perPage, total } = this.props;
+    const { services, currenStatus, page, perPage, total } = this.props;
     const { sort } = this.state;
     const pageCount = Math.ceil(total/perPage);
     return (
       <Wrapper>
         <ServiceHeader onAdd={this.createService} />
         <Table
-          loading={loading}
+          loading={currenStatus === actionTypes.GET_SERVICES}
           columns={columns}
           records={services}
           sort={sort}
@@ -81,17 +79,16 @@ class Services extends React.Component {
   }
 }
 
-const mapStateToProps = ({ service: { services, loading, page, perPage, total } }) => ({
+const mapStateToProps = ({ service: { services, currenStatus, page, perPage, total } }) => ({
   services,
-  loading,
+  currenStatus,
   page,
   perPage,
   total
 });
 
 const mapDispatchToProps = {
-  GetServices,
-  fetchCategories
+  GetServices
 };
 
 export default withRouter(

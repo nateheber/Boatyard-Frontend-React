@@ -22,8 +22,8 @@ class Users extends React.Component {
   onAdd = () => {
     this.props.history.push(`/user-details/`);
   };
-  toDetails = userId => {
-    this.props.history.push(`/user-details?user=${userId}`);
+  toDetails = user => {
+    this.props.history.push(`/user-details?user=${user.id}`);
   };
   render() {
     const columns = [

@@ -33,15 +33,15 @@ class BoatModal extends React.Component {
     this.getOptionalFields();
   }
 
-  setMainFieldRef = (ref) => {
+  setMainFieldsRef = (ref) => {
     this.mainInfoFields = ref;
   };
 
-  setOptionalFieldRef = (ref) => {
+  setOptionalFieldsRef = (ref) => {
     this.optionalFields = ref;
   };
 
-  setLocationFieldRef = (ref) => {
+  setLocationFieldsRef = (ref) => {
     this.locationFields = ref;
   };
 
@@ -341,17 +341,17 @@ class BoatModal extends React.Component {
         onClose={onClose}
       >
         <FormFields
-          ref={this.setMainFieldRef}
+          ref={this.setMainFieldsRef}
           fields={mainFields}
         />
         <FormFields
-          ref={this.setOptionalFieldRef}
+          ref={this.setOptionalFieldsRef}
           fields={optionalFields}
           onChange={this.onLocationTypeChange}
         />
         <div style={{ height: 15 }} />
         <FormFields
-          ref={this.setLocationFieldRef}
+          ref={this.setLocationFieldsRef}
           fields={locationFields}
         />
       </Modal>
