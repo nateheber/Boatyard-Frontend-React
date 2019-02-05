@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import classNames from 'classnames'
 
 import { TableHeader } from './Header';
 import { Record } from './Record';
@@ -8,6 +9,12 @@ import Paginator from './Paginator';
 const Wrapper = styled.div`
   background-color: white;
   width: 100%;
+  &.tile {
+    width: initial;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 12px;
+  }
 `;
 
 const PaginatorWrapper = styled.div`
@@ -54,6 +61,13 @@ export default class Table extends React.Component {
     this.visitRef = ref;
   };
 
+  toDetails = record => {
+    const { toDetails } = this.props;
+    if (toDetails) {
+      toDetails(record);
+    }
+  };
+
   renderContent = () => {
     const { columns, records, type } = this.props;
     return (
@@ -61,7 +75,7 @@ export default class Table extends React.Component {
         {records.map((rec, idx) => (
           <Record
             type={type}
-            toDetails={() => this.props.toDetails(rec.id)}
+            toDetails={() => this.toDetails(rec)}
             columns={columns}
             record={rec}
             key={`rec_${idx}`}
@@ -79,14 +93,14 @@ export default class Table extends React.Component {
     const { columns, page, pageCount, onPageChange, type } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
-      <Wrapper>
-        <TableHeader
+      <Wrapper className={classNames(type)}>
+        {type !== 'tile' && <TableHeader
           type={type}
           columns={columns}
           sortColumn={sortColumn}
           isAsc={isAsc}
           onSort={this.sort}
-        />
+        />}
         {this.renderContent()}
         {
           pageCount > 1 && (

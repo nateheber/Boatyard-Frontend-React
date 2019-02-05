@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import changeCase from 'change-case';
 import classNames from 'classnames'
 import moment from 'moment';
+import { Col } from 'react-flexbox-grid';
+import { startCase } from 'lodash';
 
 import CaretDownIcon from '../../../resources/caret-down-solid.svg';
 import CaretUpIcon from '../../../resources/caret-up-solid.svg';
@@ -22,6 +24,34 @@ const Wrapper = styled.div`
     &.active {
       border-bottom: 1px solid #eaeaea;
     }
+  }
+`;
+
+const Tile = styled(Col)`
+  padding: 0 12px;
+  margin-bottom: 20px;
+  .tile-content {
+    display: flex;
+    background: #F8F8F8;
+    align-items: center;
+    padding: 20px 10px 20px 30px;
+    cursor: pointer;
+    border-radius: 6px;
+    &:hover {
+      background: #EEE;
+    }
+    .tile-image {
+      max-width: 40px;
+      min-width: 40px;
+      margin-right: 40px;
+      max-height: 40px;  
+    }
+    .tile-name {
+      font-family: Helvetica;
+      font-size: 12px;
+      color: #003247;
+      text-transform: uppercase;
+    }  
   }
 `;
 
@@ -180,25 +210,36 @@ export class Record extends React.Component {
     const firstColumn = columns[0];
     const hidingCols = columns.slice(1);
     return (
-      <Wrapper className={show ? 'active' : 'deactive'}>
-        <FirstField
-          onClick={this.onShowDetails}
-          className={classNames(show ? 'active' : 'deactive', type, 'is-mobile')}
-        >
-          {this.getValue(firstColumn, record)}
-          {!show && <CaretDown />}
-          {show && <CaretUp />}
-        </FirstField>
-        <FirstField className="is-desktop" onClick={this.onGoToDetails}>
-          {this.getValue(firstColumn, record)}
-        </FirstField>
-        {hidingCols.map((column, idx) => (
-          <Field className={classNames(show ? 'show' : 'hide', type)} key={`col_${idx}`}>
-            <FieldLabel>{changeCase.upperCaseFirst(column.label)}</FieldLabel>
-            <FieldValue>{this.getValue(column, record)}</FieldValue>
-          </Field>
-        ))}
-      </Wrapper>
+      <React.Fragment>
+        { type === 'tile' ?
+          <Tile xs={12} sm={6} md={4} lg={3}>
+            <Col className="tile-content" onClick={this.onGoToDetails}>
+              <img className="tile-image" src={'https://dev.boatyard.com/img/logo.svg'} alt={this.getValue(firstColumn, record)} />
+              <p className="tile-name">{startCase(this.getValue(firstColumn, record))}</p>
+            </Col>
+          </Tile>
+        :
+          <Wrapper className={show ? 'active' : 'deactive'}>
+            <FirstField
+              onClick={this.onShowDetails}
+              className={classNames(show ? 'active' : 'deactive', type, 'is-mobile')}
+            >
+              {this.getValue(firstColumn, record)}
+              {!show && <CaretDown />}
+              {show && <CaretUp />}
+            </FirstField>
+            <FirstField className="is-desktop" onClick={this.onGoToDetails}>
+              {this.getValue(firstColumn, record)}
+            </FirstField>
+            {hidingCols.map((column, idx) => (
+              <Field className={classNames(show ? 'show' : 'hide', type)} key={`col_${idx}`}>
+                <FieldLabel>{changeCase.upperCaseFirst(column.label)}</FieldLabel>
+                <FieldValue>{this.getValue(column, record)}</FieldValue>
+              </Field>
+            ))}
+          </Wrapper>
+        }
+      </React.Fragment>
     );
   }
 }
