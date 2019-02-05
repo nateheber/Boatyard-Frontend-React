@@ -1,12 +1,12 @@
-const hostName = window.location.hostname;
+const mode = process.env.NODE_ENV;
 
 let apiUrl = '';
-switch(hostName) {
-  case 'secret-staging.boatyard.com':
+switch(mode) {
+  case 'staging':
     apiUrl = 'https://staging-api.boatyard.com/api/v2';
     break;
-  case 'secret-production.boatyard.com':
-    apiUrl = 'https://production-api.boatyard.com/api/v2';
+  case 'production':
+    apiUrl = 'https://staging-api.boatyard.com/api/v2';
     break;
   default:
     apiUrl = 'http://development-api.boatyard.com/api/v2';
