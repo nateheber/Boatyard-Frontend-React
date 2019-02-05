@@ -215,7 +215,7 @@ class ServiceDetails extends React.Component {
     const { serviceStatus } = this.props;
     return (
       <React.Fragment>
-        {serviceStatus == serviceActions.GET_SERVICE ?
+        {serviceStatus === serviceActions.GET_SERVICE ?
           <LoadingSpinner
             loading={true}
           />
