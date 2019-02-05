@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import { GetServices } from 'store/actions/services';
-import { fetchCategories } from 'store/reducers/categories';
+import { GetCategories } from 'store/actions/categories';
 import Table from 'components/basic/Table';
 import { PageTitle } from 'components/basic/Typho';
 import { SectionHeaderWrapper, LeftPart, RightPart } from 'components/basic/Header';
@@ -25,15 +24,14 @@ class AddService extends React.Component {
 
   componentDidMount() {
     this.loadPage(1);
-    this.props.fetchCategories();
   }
 
   loadPage = (page) => {
-    const { GetServices } = this.props;
+    const { GetCategories } = this.props;
     const params = {
       page: page
     };
-    GetServices({ params });
+    GetCategories({ params });
   };
 
   toDetails = service => {
@@ -96,8 +94,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  GetServices,
-  fetchCategories
+  GetCategories
 };
 
 export default withRouter(
