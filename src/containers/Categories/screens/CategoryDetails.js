@@ -5,19 +5,16 @@ import { withRouter } from 'react-router-dom';
 
 import { CategoryEditor } from '../components/CategoryEditor';
 
-import {
-  updateCategories,
-  createCategories,
-  selectCategory
-} from 'store/reducers/categories';
+import { GetCategory, UpdateCategory, CreateCategory } from 'store/actions/categories';
 
 class CategoryDetails extends React.Component {
   constructor(props) {
     super(props);
     const query = queryString.parse(props.location.search);
     const categoryId = query.category;
+    const { GetCategory } = this.props;
     if (categoryId) {
-      props.selectCategory({ categoryId, callback: this.onFetchSuccess });
+      GetCategory({ categoryId, success: this.onFetchSuccess });
     } else {
       this.state = {
         id: '',
@@ -199,13 +196,13 @@ class CategoryDetails extends React.Component {
   onSave = data => {
     console.log(data);
     if (this.state.id) {
-      this.props.updateCategories({
+      this.props.UpdateCategory({
         id: this.state.id,
         data
       });
       this.props.history.goBack();
     } else {
-      this.props.createCategories(data);
+      this.props.CreateCategory(data);
     }
   };
   onCancel = () => {
@@ -224,14 +221,15 @@ class CategoryDetails extends React.Component {
   }
 }
 
-const mapStateToProps = ({ category: { categories } }) => ({
-  categories
+const mapStateToProps = ({ category: { currentStatus, currentCategory } }) => ({
+  currentStatus,
+  currentCategory
 });
 
 const mapDispatchToProps = {
-  updateCategories,
-  createCategories,
-  selectCategory
+  GetCategory,
+  CreateCategory,
+  UpdateCategory
 };
 
 export default withRouter(
