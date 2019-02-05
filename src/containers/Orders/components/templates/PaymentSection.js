@@ -40,19 +40,28 @@ const Buttons  = styled.div`
 
 class PaymentSection extends React.Component {
   state = {
-    showModal: false
+    visibleOfCreateModal: false,
+    visibleOfRefundModal: false
   };
 
   componentDidMount() {
     this.loadPayments();
   }
 
-  onCloseModal = () => {
-    this.setState({ showModal: false })
+  hideCreateModal = () => {
+    this.setState({ visibleOfCreateModal: false });
   };
 
-  openModal = () => {
-    this.setState({ showModal: true })
+  showCreateModal = () => {
+    this.setState({ visibleOfCreateModal: true });
+  };
+
+  hideRefundModal = () => {
+    this.setState({ visibleOfRefundModal: false });
+  };
+
+  showRefundModal = () => {
+    this.setState({ visibleOfRefundModal: true });
   };
 
   renderPayments = () => {
@@ -81,7 +90,7 @@ class PaymentSection extends React.Component {
 
   render() {
     const { order, currentStatus } = this.props;
-    const { showModal } = this.state;
+    const { visibleOfCreateModal } = this.state;
     const balance = get(order, 'attributes.balance');
     return (
       <Section title="Payment">
@@ -93,15 +102,15 @@ class PaymentSection extends React.Component {
             </InfoItem>
           </InfoList>
           <Buttons>
-            <HollowButton onClick={this.openModal}>Refund</HollowButton>
-            <HollowButton onClick={this.openModal}>Enter Payment</HollowButton>
+            <HollowButton onClick={this.showRefundModal}>Refund</HollowButton>
+            <HollowButton onClick={this.showCreateModal}>Enter Payment</HollowButton>
           </Buttons>
         </Wrapper>
-        {(!isEmpty(order) && showModal) && <OrderPaymentModal
-          open={showModal}
+        {(!isEmpty(order) && visibleOfCreateModal) && <OrderPaymentModal
+          open={visibleOfCreateModal}
           loading={currentStatus === actionTypes.CREATE_PAYMENT}
           onSave={this.onSave}
-          onClose={this.onCloseModal}
+          onClose={this.hideCreateModal}
           order={order}
         />}
       </Section>
