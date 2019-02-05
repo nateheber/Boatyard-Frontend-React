@@ -6,7 +6,7 @@ switch(mode) {
     apiUrl = 'http://staging-api.boatyard.com/api/v2';
     break;
   case 'production':
-    apiUrl = 'https://production-api.boatyard.com/v2';
+    apiUrl = 'https://production-api.boatyard.com/api/v2';
     break;
   default:
     apiUrl = 'http://development-api.boatyard.com/api/v2';
