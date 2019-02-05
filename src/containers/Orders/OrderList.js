@@ -36,8 +36,8 @@ class OrderList extends React.Component {
     }
   };
 
-  toDetails = orderId => {
-    this.props.history.push(`/order-details/?order=${orderId}`);
+  toDetails = order => {
+    this.props.history.push(`/order-details/?order=${order.id}`);
   };
 
   getPageCount = () => {
