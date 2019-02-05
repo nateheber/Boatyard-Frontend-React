@@ -4,40 +4,51 @@ import { toastr } from 'react-redux-toastr';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import {
-  get,
-  findIndex,
   startCase,
   isNumber
 } from 'lodash';
 
+import { actionTypes as serviceActions, GetService, UpdateService, CreateService } from 'store/actions/services';
+import { GetCategories } from 'store/actions/categories';
 import { ServiceEditor } from '../components/ServiceEditor';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 
-import { UpdateService, CreateService } from 'store/actions/services';
 
 class ServiceDetails extends React.Component {
   constructor(props) {
     super(props);
-    const { services, categories } = props;
     const query = queryString.parse(props.location.search);
-    const serviceId = query.service;
-    let categoryId = get(categories, '[0].id', -1);
-    if (serviceId) {
-      const idx = findIndex(services, service => service.id === serviceId);
-      const serviceDetail = services[idx];
-      this.state = {
-        ...serviceDetail
-      };
-      categoryId = serviceDetail.categoryId;
-    } else {
-      this.state = {
-        name: '',
-        categoryId: `${categoryId}`,
-        cost: '',
-        costType: null,
-        description: '',
-        isTaxable: false
-      };
-    }
+    this.state = {
+      serviceId: query.service,
+      name: '',
+      categoryId: '',
+      cost: '',
+      costType: null,
+      description: '',
+      isTaxable: false
+    };
+  }
+
+  componentDidMount() {
+    this.loadService();
+  }
+
+  loadService = () => {
+    const { GetService } = this.props;
+    const { serviceId } = this.state;
+    GetService({ serviceId, success: (service, included) => {
+      this.setState({
+        ...service
+      });
+    }});
+  };
+
+  loadCategories = () => {
+    const { GetCategories } = this.props;
+    const params = {
+      page: 1
+    };
+    GetCategories({ params });
   }
 
   getMainInputOptions = () => {
@@ -201,27 +212,35 @@ class ServiceDetails extends React.Component {
   render() {
     const mainFields = this.getMainInputOptions();
     const { propertyFields } = this.state;
+    const { serviceStatus } = this.props;
     return (
-      <ServiceEditor
-        mainFields={mainFields}
-        propertyFields={propertyFields}
-        onCancel={this.onCancel}
-        onSave={this.onSave}
-      />
+      <React.Fragment>
+        {serviceStatus === serviceActions.GET_SERVICE ?
+          <LoadingSpinner
+            loading={true}
+          />
+        :
+          <ServiceEditor
+            mainFields={mainFields}
+            propertyFields={propertyFields}
+            onCancel={this.onCancel}
+            onSave={this.onSave}
+          />
+        }
+      </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = ({
-  service: { services, errors },
-  category: { categories }
-}) => ({
-  services,
-  errors,
-  categories
+const mapStateToProps = (state) => ({
+  service: state.service.currentService,
+  serviceStatus: state.service.currentStatus,
+  categories: state.category.categories
 });
 
 const mapDispatchToProps = {
+  GetCategories,
+  GetService,
   UpdateService,
   CreateService,
 };

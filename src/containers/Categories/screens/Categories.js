@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
+import { GetCategories } from 'store/actions/categories';
 import Table from 'components/basic/Table';
 import { CategoryHeader } from 'components/compound/SectionHeader';
-
-import { fetchCategories } from 'store/reducers/categories';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -15,7 +14,8 @@ const Wrapper = styled.div`
 
 class Categories extends React.Component {
   componentDidMount() {
-    this.props.fetchCategories();
+    const { GetCategories } = this.props;
+    GetCategories({ params: { page: 1 }});
   }
   toDetails = category => {
     this.props.history.push(`/category-details/?category=${category.id}`);
@@ -50,7 +50,7 @@ const mapStateToProps = ({ category: { categories } }) => ({
 });
 
 const mapDispatchToProps = {
-  fetchCategories
+  GetCategories
 };
 
 export default withRouter(

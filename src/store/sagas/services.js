@@ -8,6 +8,7 @@ const refineServices = (services) => {
   return services.map(service => {
     return {
       id: service.id,
+      type: service.type,
       ...service.attributes,
       ...service.relationships
     };
@@ -61,12 +62,19 @@ function* getService(action) {
   try {
     result = yield call(serviceClient.read, serviceId);
     const { data, included } = result;
+    const refinedData = {
+      id: data.id,
+      type: data.type,
+      ...data.attributes,
+      ...data.relationships
+    };
+
     yield put({
       type: actionTypes.GET_SERVICE_SUCCESS,
-      payload: data
+      payload: refinedData
     });
     if (success) {
-      yield call(success, data, included);
+      yield call(success, refinedData, included);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_SERVICE_FAILURE, payload: e });
