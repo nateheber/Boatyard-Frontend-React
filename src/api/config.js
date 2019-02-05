@@ -3,7 +3,7 @@ const mode = process.env.NODE_ENV;
 let apiUrl = '';
 switch(mode) {
   case 'staging':
-    apiUrl = 'http://staging-api.boatyard.com/api/v2';
+    apiUrl = 'https://staging-api.boatyard.com/api/v2';
     break;
   case 'production':
     apiUrl = 'https://production-api.boatyard.com/api/v2';

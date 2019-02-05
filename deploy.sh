@@ -10,12 +10,12 @@ if [[ $TRAVIS_BRANCH == $STAGING_BRANCH ]]; then
   NODE_ENV="staging"
   CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID_STAGING
   yarn add create-react-app
-  yarn build
+  yarn build:staging
 elif [[ $TRAVIS_BRANCH == $PRODUCTION_BRANCH ]]; then
   NODE_ENV="production"
   CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID_PRODUCTION
   yarn add create-react-app
-  yarn build
+  yarn build:production
 else
   echo "Not deploying"
   exit
