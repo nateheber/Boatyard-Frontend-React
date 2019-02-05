@@ -212,7 +212,7 @@ export class Record extends React.Component {
     return (
       <React.Fragment>
         { type === 'tile' ?
-          <Tile xs={12} sm={6} md={4} lg={3}>
+          <Tile xs={12} sm={6} md={4} lg={4} xl={3}>
             <Col className="tile-content" onClick={this.onGoToDetails}>
               <img className="tile-image" src={'https://dev.boatyard.com/img/logo.svg'} alt={this.getValue(firstColumn, record)} />
               <p className="tile-name">{startCase(this.getValue(firstColumn, record))}</p>
