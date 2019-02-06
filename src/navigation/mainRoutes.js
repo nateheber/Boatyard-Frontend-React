@@ -101,8 +101,24 @@ const MainRoutes = ({ privilege }) => (
           }
         }}
       />
-      <Route exact path="/categories/" component={Categories} />
-      <Route exact path="/category-details/" component={CategoryDetails} />
+      <Route exact path="/categories/"
+        render={() => {
+          if(privilege === 'admin') {
+            return (<Categories />);
+          } else {
+            return (<Redirect to="/dashboard"/>);
+          }
+        }}
+      />
+      <Route exact path="/category-details/"
+        render={() => {
+          if(privilege === 'admin') {
+            return (<CategoryDetails />);
+          } else {
+            return (<Redirect to="/dashboard"/>);
+          }
+        }}
+      />
       <Route exact path="/team/" component={Team} />
       <Route exact path="/customers/"
         render={() => {

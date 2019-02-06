@@ -12,7 +12,7 @@ import { PageTitle } from 'components/basic/Typho';
 export const CategoryHeader = ({ onAction, onAdd }) => (
   <SectionHeaderWrapper>
     <LeftPart>
-      <PageTitle>Category</PageTitle>
+      <PageTitle>Service Categories</PageTitle>
       <ActionDropdown
         items={[
           {

@@ -102,6 +102,13 @@ const navItems = [
   {
     activeImage: ServicesActiveIcon,
     mainImage: ServicesIcon,
+    title: 'CATEGORIES',
+    link: '/categories/',
+    privileges: ['admin']
+  },
+  {
+    activeImage: ServicesActiveIcon,
+    mainImage: ServicesIcon,
     title: 'SERVICES',
     link: '/services/',
     privileges: ['provider']
