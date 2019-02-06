@@ -9,14 +9,16 @@ const Header = styled.div`
   flex: 1 0 auto;
   background-color: #fafafa;
   color: #003247;
-  padding: 25px 40px 25px 25px;
+  padding: 15px 40px 15px 15px;
   border-bottom: 1px solid #e5e5e5;
-  font-size: 18px;
   line-height: 1.42857;
   font-weight: 700;
-  font-family: Montserrat, sans-serif;
+  // font-family: Montserrat, sans-serif;
   box-sizing: border-box;
   width: 100%;
+  font-family: Helvetica;
+  font-size: 36px;
+  text-align: center;
   &.noBorder {
     border-bottom: none;
   }
@@ -28,15 +30,53 @@ const Body = styled.div`
 
 const Content = styled.div`
   box-sizing: border-box;
-  padding: 30px;
+  padding: 35px 100px 15px;
+  @media (max-width: 1200px) {
+    padding: 35px 70px 15px;    
+  }
+  @media (max-width: 1200px) {
+    padding: 35px 60px 15px;    
+  }
+  @media (max-width: 768px) {
+    padding: 35px 40px 15px;    
+  }
+  @media (max-width: 600px) {
+    padding: 30px 20px 5px;    
+  }
 `;
 
 const ActionWrapper = styled.div`
   display: flex;
-  padding: 15px 30px;
-  justify-content: flex-end;
+  padding: 10px 100px 30px;
+  justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #e5e5e5;
+  &.alone {
+    justify-content: flex-end;
+  }
+  // border-top: 1px solid #e5e5e5;
+  > button {
+    height: 48px;
+  }
+  @media (max-width: 1200px) {
+    padding: 10px 70px 30px;    
+  }
+  @media (max-width: 1200px) {
+    padding: 10px 60px 30px;    
+  }
+  @media (max-width: 820px) {
+    flex-direction: column-reverse;
+    justify-content: center;
+    > button {
+      width: 100%;
+    }
+  }
+  @media (max-width: 768px) {
+    padding: 10px 40px 30px;    
+  }
+  @media (max-width: 600px) {
+    padding: 10px 20px 20px;    
+  }
+
 `;
 
 const modalStyles = {
@@ -107,7 +147,7 @@ export default class CustomModal extends React.Component {
           <Content style={{ minHeight: minHeight || 'inherit' }}>
             {children}
           </Content>
-          {actions && <ActionWrapper>{actions}</ActionWrapper>}
+          {actions && <ActionWrapper className={actions.length < 2 && 'alone'}>{actions}</ActionWrapper>}
           {loading && <LoadingSpinner
             loading={true}
             backgroundColor={spinnerOptions && spinnerOptions.backgroundColor}

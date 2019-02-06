@@ -2,12 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
-import { get, isEmpty, camelCase, startCase, orderBy } from 'lodash';
+import { get, isEmpty, startCase } from 'lodash';
 
 import { actionTypes, GetCategory } from 'store/actions/categories';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
-import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import { OrangeButton } from 'components/basic/Buttons';
 
 const Divider = styled.div`
   height: 20px;
@@ -19,37 +19,24 @@ class AddServiceModal extends React.Component {
     super(props);
     this.state = {
       mainFields: this.getMainFields(),
-      serviceFields: [],
+      serviceValues: {},
       descriptionField: this.getDescriptionFields()
     };
   }
 
   componentDidMount() {
-    const { GetCategory } = this.props;
-    const categoryId = this.getCategoryId();
+    const { GetCategory, category } = this.props;
+    const categoryId = get(category, 'id');
     GetCategory({ categoryId: categoryId, success: (category, included) => {
-      const serviceFields = this.getServiceFields(included);
-      this.setState({ serviceFields });
+      const serviceValues = this.getServiceValues(included);
+      this.setState({ serviceValues });
     }});
 
   }
 
-  getCategoryId = () => {
-    const { service, category } = this.props;
-    let categoryId = get(category, 'id');
-    if (isEmpty(categoryId)) {
-      categoryId = get(service, 'categoryId');
-    }
-    return categoryId;
-  };
-
   getServiceName = () => {
-    const { service, category } = this.props;
-    let name = get(category, 'name');
-    if (isEmpty(name)) {
-      name = get(service, 'name');
-    }
-    return name;
+    const { category } = this.props;
+    return get(category, 'name');
   }
 
   getMainFields = () => {
@@ -128,8 +115,9 @@ class AddServiceModal extends React.Component {
     ];
   };
 
-  getServiceFields = (included) => {
+  getServiceValues = (included) => {
     let refinedFields = [];
+    let serviceValues = {};
     for (const index in included) {
       const field = included[index];
       refinedFields.push({
@@ -138,27 +126,27 @@ class AddServiceModal extends React.Component {
         ...field.attributes
       });
     }
-    refinedFields = orderBy(refinedFields, ['position'], ['asc']);
-    const serviceFields = refinedFields.map(field => {
-      const { name, fieldType, required, placeholder } = field;
-      const fieldLabel = camelCase(name);
-      const label = startCase(name);
-      return {
-        field: fieldLabel,
-        label: label,
-        type: fieldType,
-        required,
-        placeholder: placeholder || '',
-        defaultValue: '',
-        errorMessage: `Enter ${label}`,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      };
-    });
-    return serviceFields;
+    for (const index in refinedFields) {
+      const field = refinedFields[index];
+      const { name, fieldType } = field;
+      serviceValues[name] = this.getDefaultValue(fieldType);
+    }
+    return serviceValues;
+  };
+
+  getDefaultValue = (type) => {
+    switch (type) {
+      case 'text_field':
+        return 'none';
+      case 'check_box':
+        return false;
+      case 'text_area':
+        return 'none';
+      case 'select_box':
+        return 0;
+      default:
+        return 'none';
+    }
   };
 
   getDescriptionFields = () =>{
@@ -167,6 +155,7 @@ class AddServiceModal extends React.Component {
         field: 'description',
         label: 'Description',
         type: 'text_area',
+        required: false,
         defaultValue: '',
         xs: 12,
         sm: 12,
@@ -178,24 +167,16 @@ class AddServiceModal extends React.Component {
   }
 
   onSave = () => {
-    const { serviceFields } = this.state;
-    const { onSave } = this.props;
-    if (this.mainFields.validateFields() &&
-      (isEmpty(serviceFields) ||
-      (!isEmpty(serviceFields) && this.serviceFields.validateFields()))) {
+    const { category, onSave } = this.props;
+    const { serviceValues } = this.state;
+    if (this.mainFields.validateFields() && this.descriptionField.validateFields()) {
       const mainValues = {
-        categoryId: this.getCategoryId(),
+        categoryId: get(category, 'id'),
         ...this.mainFields.getFieldValues(),
-        ...this.descriptionField.getFieldValues()
+        ...this.descriptionField.getFieldValues(),
+        properties: serviceValues
       };
-      if (!isEmpty(serviceFields)) {
-        onSave({
-          ...mainValues,
-          properties: this.serviceFields.getFieldValues()
-        });
-      } else {
-        onSave(mainValues);
-      }
+      onSave(mainValues);
     } else {
       toastr.clean()
       toastr.error('Please fill out all the required fields')
@@ -206,24 +187,19 @@ class AddServiceModal extends React.Component {
     this.mainFields = ref;
   };
 
-  setServiceFieldsRef = ref => {
-    this.serviceFields = ref;
-  };
-
   setDescriptionFieldRef = ref => {
     this.descriptionField = ref;
   }
 
   render() {
     const { loading, open, onClose, currentStatus } = this.props;
-    const { mainFields, serviceFields, descriptionField } = this.state;
+    const { mainFields, descriptionField } = this.state;
     const actions = [
-      <HollowButton onClick={onClose} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>
+      <OrangeButton onClick={this.onSave} key="modal_btn_save">Add Service</OrangeButton>
     ];
     return (
       <Modal
-        title={this.getServiceName()}
+        title={startCase(this.getServiceName())}
         loading={loading || currentStatus === actionTypes.GET_CATEGORY}
         actions={actions}
         open={open}
@@ -232,10 +208,6 @@ class AddServiceModal extends React.Component {
         { !isEmpty(mainFields) && <FormFields
           ref={this.setMainFieldsRef}
           fields={this.getMainFields()}
-        />}
-        { !isEmpty(serviceFields) && <FormFields
-          ref={this.setServiceFieldsRef}
-          fields={serviceFields}
         />}
         <Divider />
         { !isEmpty(descriptionField) && <FormFields
