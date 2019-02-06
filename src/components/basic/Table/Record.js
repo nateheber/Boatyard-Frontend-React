@@ -4,7 +4,7 @@ import changeCase from 'change-case';
 import classNames from 'classnames'
 import moment from 'moment';
 import { Col } from 'react-flexbox-grid';
-import { startCase } from 'lodash';
+import { get, startCase } from 'lodash';
 
 import CaretDownIcon from '../../../resources/caret-down-solid.svg';
 import CaretUpIcon from '../../../resources/caret-up-solid.svg';
@@ -209,12 +209,13 @@ export class Record extends React.Component {
     const { show } = this.state;
     const firstColumn = columns[0];
     const hidingCols = columns.slice(1);
+    const icon = get(record, 'icon') || 'https://dev.boatyard.com/img/logo.svg';
     return (
       <React.Fragment>
         { type === 'tile' ?
           <Tile xs={12} sm={6} md={4} lg={4} xl={3}>
             <Col className="tile-content" onClick={this.onGoToDetails}>
-              <img className="tile-image" src={'https://dev.boatyard.com/img/logo.svg'} alt={this.getValue(firstColumn, record)} />
+              <img className="tile-image" src={icon} alt={this.getValue(firstColumn, record)} />
               <p className="tile-name">{startCase(this.getValue(firstColumn, record))}</p>
             </Col>
           </Tile>
