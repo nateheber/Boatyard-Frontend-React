@@ -47,6 +47,7 @@ class AddService extends React.Component {
     const { GetCategories } = this.props;
     const params = {
       page: page,
+      per_page: 24,
       'category[name]': keyword
     };
     GetCategories({ params });
