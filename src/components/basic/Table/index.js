@@ -9,6 +9,10 @@ import Paginator from './Paginator';
 const Wrapper = styled.div`
   background-color: white;
   width: 100%;
+`;
+
+const TableWrapper = styled.div`
+  width: 100%;
   &.tile {
     width: initial;
     display: flex;
@@ -93,15 +97,17 @@ export default class Table extends React.Component {
     const { columns, page, pageCount, onPageChange, type } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
-      <Wrapper className={classNames(type)}>
-        {type !== 'tile' && <TableHeader
-          type={type}
-          columns={columns}
-          sortColumn={sortColumn}
-          isAsc={isAsc}
-          onSort={this.sort}
-        />}
-        {this.renderContent()}
+      <Wrapper>
+        <TableWrapper className={classNames(type)}>
+          {type !== 'tile' && <TableHeader
+            type={type}
+            columns={columns}
+            sortColumn={sortColumn}
+            isAsc={isAsc}
+            onSort={this.sort}
+          />}
+          {this.renderContent()}
+        </TableWrapper>
         {
           pageCount > 1 && (
             <PaginatorWrapper>

@@ -5,7 +5,7 @@ import className from 'classnames';
 const Check = styled.button`
   width: 20px;
   height: 20px;
-  margin-bottom: 5px;
+  margin: 7px 10px 5px 0;
   &.small {
     width: 15px;
     height: 15px;
@@ -16,7 +16,6 @@ const Check = styled.button`
   border-image: initial;
   border-radius: 4px !important;
   cursor: pointer;
-  margin-right: 10px;
   position: relative;
   &:hover {
     background: rgb(204, 204, 204);
