@@ -19,6 +19,7 @@ const Wrapper = styled.div`
 
 const PaginatorWrapper = styled.div`
   padding: 18px 50px;
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
