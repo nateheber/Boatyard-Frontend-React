@@ -5,6 +5,7 @@ import className from 'classnames';
 const Check = styled.button`
   width: 20px;
   height: 20px;
+  margin-bottom: 5px;
   &.small {
     width: 15px;
     height: 15px;
