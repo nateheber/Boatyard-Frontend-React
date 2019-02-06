@@ -30,6 +30,14 @@ const Wrapper = styled.div`
 const Tile = styled(Col)`
   padding: 0 12px;
   margin-bottom: 20px;
+  @media (min-width: 1400px) {
+    flex-basis: 20% !important;
+    max-width: 20% !important;
+  }
+  @media (min-width: 1600px) {
+    flex-basis: 16.66% !important;
+    max-width: 16.66% !important;
+  }
   .tile-content {
     display: flex;
     background: #F8F8F8;
