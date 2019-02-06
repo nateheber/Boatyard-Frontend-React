@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { Col, Row } from 'react-flexbox-grid';
 
-import { GetCategories } from 'store/actions/categories';
+import { actionTypes as categoryActions, GetCategories } from 'store/actions/categories';
+import { actionTypes as serviceActions, CreateService } from 'store/actions/services';
 import Table from 'components/basic/Table';
 import { PageTitle } from 'components/basic/Typho';
 import { SectionHeaderWrapper, LeftPart, RightPart } from 'components/basic/Header';
@@ -48,15 +49,10 @@ class AddService extends React.Component {
     GetCategories({ params });
   };
 
-  toDetails = service => {
-    this.setState({ selectedService: service }, () => {
+  toDetails = category => {
+    this.setState({ selectedCategory: category }, () => {
       this.showAddServiceModal();
     });
-  };
-
-  createService = (values) => {
-    // this.props.history.push(`/service-details/`);
-    console.log('------------Values-----------', values);
   };
 
   showAddServiceModal = () => {
@@ -75,12 +71,24 @@ class AddService extends React.Component {
     this.setState({ keyword: event.target.value });
   }
 
+  createService = (values) => {
+    const { CreateService } = this.props;
+    CreateService({ 
+      data: {
+        service: values,
+      },
+      success: () => {
+        this.hideAddServiceModal();
+      }
+    });
+  };
+
   render() {
     const columns = [
       { label: 'serivce name', value: 'name' },
     ];
-    const { keyword, visibleOfServiceModal, selectedService } = this.state;
-    const { categories, categoryStatus, page, perPage, total } = this.props;
+    const { keyword, visibleOfServiceModal, selectedCategory } = this.state;
+    const { categories, categoryStatus, serviceStatus, page, perPage, total } = this.props;
     const pageCount = Math.ceil(total/perPage);
     return (
       <Wrapper>
@@ -105,7 +113,7 @@ class AddService extends React.Component {
           </SearchCotainer>
         </SearchSection>
         <Table
-          loading={categoryStatus === ''}
+          loading={categoryStatus === categoryActions.GET_CATEGORIES}
           type={'tile'}
           columns={columns}
           records={categories}
@@ -114,10 +122,10 @@ class AddService extends React.Component {
           onPageChange={this.loadPage}
           toDetails={this.toDetails}
         />
-        {visibleOfServiceModal && <AddServiceModal 
-          title={selectedService.name}
+        {visibleOfServiceModal && <AddServiceModal
+          loading={serviceStatus === serviceActions.CREATE_SERVICE}
           open={visibleOfServiceModal}
-          service={selectedService}
+          category={selectedCategory}
           onClose={this.hideAddServiceModal}
           onSave={this.createService}
         />}
@@ -127,16 +135,17 @@ class AddService extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  serviceStatus: state.service.currentStatus,
   categories: state.category.categories,
   categoryStatus: state.category.currentStatus,
+  serviceStatus: state.service.currentStatus,
   page: state.category.page,
   perPage: state.category.perPage,
   total: state.category.total
 });
 
 const mapDispatchToProps = {
-  GetCategories
+  GetCategories,
+  CreateService
 };
 
 export default withRouter(
