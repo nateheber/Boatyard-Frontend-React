@@ -180,7 +180,9 @@ class AddServiceModal extends React.Component {
   onSave = () => {
     const { serviceFields } = this.state;
     const { onSave } = this.props;
-    if (this.mainFields.validateFields() &&  (!isEmpty(serviceFields) && this.serviceFields.validateFields())) {
+    if (this.mainFields.validateFields() &&
+      (isEmpty(serviceFields) ||
+      (!isEmpty(serviceFields) && this.serviceFields.validateFields()))) {
       const mainValues = {
         categoryId: this.getCategoryId(),
         ...this.mainFields.getFieldValues(),

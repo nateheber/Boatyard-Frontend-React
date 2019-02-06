@@ -1,14 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
+import styled from 'styled-components';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
-import { get, filter, camelCase, isEmpty, startCase, isNumber, hasIn } from 'lodash';
+import { get, filter, camelCase, isEmpty, startCase, isNumber, hasIn, orderBy } from 'lodash';
 
-import { actionTypes as serviceActions, GetService, UpdateService, CreateService } from 'store/actions/services';
-import { GetCategories } from 'store/actions/categories';
-import { ServiceEditor } from '../components/ServiceEditor';
+import { actionTypes as serviceActions, GetService, UpdateService } from 'store/actions/services';
+import { GetCategories, GetCategory } from 'store/actions/categories';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
+import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import { EditorSection } from 'components/compound/SubSections';
+import FormFields from 'components/template/FormFields';
+
+const Divider = styled.div`
+  height: 20px;
+  width: 100%;
+`;
 
 
 class ServiceDetails extends React.Component {
@@ -16,6 +24,8 @@ class ServiceDetails extends React.Component {
     super(props);
     this.state = {
       serviceId: '',
+      service: {},
+      included: [],
       mainFields: [],
       serviceFields: [],
       descriptionField: []
@@ -29,6 +39,7 @@ class ServiceDetails extends React.Component {
       serviceId: query.service
     }, () => {
       this.loadService();
+      this.loadCategories();
     })
   }
 
@@ -37,6 +48,7 @@ class ServiceDetails extends React.Component {
     const { serviceId } = this.state;
     GetService({ serviceId, success: (service, included) => {
       const mainFields = this.getMainFields(service);
+      this.setState({ service, included });
       const serviceFields = this.getServiceFields(service, included);
       const descriptionField = this.getDescriptionFields(service);
       this.setState({
@@ -45,6 +57,17 @@ class ServiceDetails extends React.Component {
         descriptionField
       });
     }});
+  };
+
+  loadCategory = (categoryId) => {
+    const { GetCategory } = this.props;
+    GetCategory({
+      categoryId,
+      success: (category, included) => {
+        const serviceFields = this.getServiceFieldsFromCategory(included);
+        this.setState({ serviceFields });
+      }
+    })
   };
 
   loadCategories = () => {
@@ -72,6 +95,30 @@ class ServiceDetails extends React.Component {
         return '';
     }
   };
+
+  handleChange = (field, value) => {
+    const { service, included } = this.state;
+    if (value === 'categoryId') {
+      if (field.categoryId === service.categoryId) {
+        const serviceFields = this.getServiceFields(service, included);
+        this.setState({ serviceFields });
+      } else {
+        this.loadCategory(field.categoryId);
+      }
+    }
+  };
+
+  setMainFieldsRef = ref => {
+    this.mainFields = ref;
+  };
+
+  setServiceFieldsRef = ref => {
+    this.serviceFields = ref;
+  };
+
+  setdescriptionFieldRef = ref => {
+    this.descriptionField = ref;
+  }
 
   getMainFields = (service) => {
     const {
@@ -215,6 +262,39 @@ class ServiceDetails extends React.Component {
     return serviceFields;
   };
 
+  getServiceFieldsFromCategory = (included) => {
+    let refinedFields = [];
+    for (const index in included) {
+      const field = included[index];
+      refinedFields.push({
+        id: field.id,
+        type: field.type,
+        ...field.attributes
+      });
+    }
+    refinedFields = orderBy(refinedFields, ['position'], ['asc']);
+    const serviceFields = refinedFields.map(field => {
+      const { name, fieldType, required, placeholder } = field;
+      const fieldLabel = camelCase(name);
+      const label = startCase(name);
+      return {
+        field: fieldLabel,
+        label: label,
+        type: fieldType,
+        required,
+        placeholder: placeholder || '',
+        defaultValue: '',
+        errorMessage: `Enter ${label}`,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      };
+    });
+    return serviceFields;
+  };
+
   getDescriptionFields = (service) =>{
     const { description } = service;
     return [
@@ -232,37 +312,85 @@ class ServiceDetails extends React.Component {
     ];
   };
 
+  renderFields = () => {
+    const { mainFields, serviceFields, descriptionField } = this.state;
+    const fields = (
+      <React.Fragment>
+        { !isEmpty(mainFields) && <FormFields
+          ref={this.setMainFieldsRef}
+          fields={mainFields}
+          onChange={this.handleChange}
+        />}
+        { !isEmpty(serviceFields) && <FormFields
+          ref={this.setServiceFieldsRef}
+          fields={serviceFields}
+        />}
+        <Divider />
+        { !isEmpty(descriptionField) && <FormFields
+          ref={this.setdescriptionFieldRef}
+          fields={descriptionField}
+        />}
+      </React.Fragment>
+    );
+    const actions = (
+      <React.Fragment>
+        <HollowButton onClick={this.onCancel}>Cancel</HollowButton>
+        <OrangeButton onClick={this.onSave}>Save</OrangeButton>
+      </React.Fragment>
+    );
 
-  onSave = (mainValues) => {
-    const { serviceId } = this.state;
+    return (<EditorSection content={fields} actions={actions} />);
+  }
+
+  onSave = () => {
+    const { serviceId, serviceFields } = this.state;
     const { UpdateService } = this.props;
+    if (this.mainFields.validateFields() &&
+      (isEmpty(serviceFields) ||
+      (!isEmpty(serviceFields) && this.serviceFields.validateFields()))) {
+      let mainValues = {
+        ...this.mainFields.getFieldValues(),
+        ...this.descriptionField.getFieldValues()
+      };
+      if (!isEmpty(serviceFields)) {
+        mainValues = {
+          ...mainValues,
+          properties: this.serviceFields.getFieldValues()
+        };
+      }
 
-    UpdateService({
-      serviceId: serviceId,
-      data: mainValues,
-      success: () => {
-        this.props.history.push('/services/');
-      },
-      error: () => {
-        const { errors } = this.props;
-        if (errors && errors.length > 0) {
-          for (const key in errors) {
-            if (isNumber(key)) {
-              toastr.error(errors[key].join(''));
-            }else {
-              toastr.error(key, errors[key].join(''));
+      UpdateService({
+        serviceId: serviceId,
+        data: mainValues,
+        success: () => {
+          this.onCancel();
+        },
+        error: () => {
+          const { errors } = this.props;
+          if (errors && errors.length > 0) {
+            for (const key in errors) {
+              if (isNumber(key)) {
+                toastr.error(errors[key].join(''));
+              }else {
+                toastr.error(key, errors[key].join(''));
+              }
             }
           }
         }
-      }
-    });
+      });
+    } else {
+      toastr.clean()
+      toastr.error('Please fill out all the required fields')
+    }
   };
+
   onCancel = () => {
     this.props.history.goBack();
   };
+
   render() {
-    const { mainFields, serviceFields, descriptionField } = this.state;
     const { serviceStatus } = this.props;
+
     return (
       <React.Fragment>
         {serviceStatus === serviceActions.GET_SERVICE ?
@@ -270,13 +398,9 @@ class ServiceDetails extends React.Component {
             loading={true}
           />
         :
-          <ServiceEditor
-            mainFields={mainFields}
-            serviceFields={serviceFields}
-            descriptionField={descriptionField}
-            onCancel={this.onCancel}
-            onSave={this.onSave}
-          />
+          <React.Fragment>
+            {this.renderFields()}
+          </React.Fragment>
         }
       </React.Fragment>
     );
@@ -291,9 +415,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   GetCategories,
+  GetCategory,
   GetService,
-  UpdateService,
-  CreateService,
+  UpdateService
 };
 
 export default withRouter(

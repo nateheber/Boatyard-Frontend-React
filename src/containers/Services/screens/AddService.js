@@ -42,9 +42,11 @@ class AddService extends React.Component {
   }
 
   loadPage = (page) => {
+    const { keyword } = this.state;
     const { GetCategories } = this.props;
     const params = {
-      page: page
+      page: page,
+      'category[name]': keyword
     };
     GetCategories({ params });
   };
@@ -68,7 +70,10 @@ class AddService extends React.Component {
   }
 
   handleInputChange = (event) => {
-    this.setState({ keyword: event.target.value });
+    const keyword = event.target.value;
+    this.setState({ keyword }, () => {
+      this.loadPage(1);
+    });
   }
 
   createService = (values) => {
