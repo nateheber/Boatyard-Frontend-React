@@ -19,8 +19,9 @@ const Wrapper = styled.div`
 `;
 
 const SearchSection = styled(Row)`
-  border-top: 1px solid #A9B5BB;
-  margin: 0 !important;
+  border-top: 1px solid #D5DBDE;
+  border-bottom: 1px solid #D5DBDE;
+  margin: 0 0 20px 0 !important;
 `;
 
 const SearchCotainer = styled(Col)`

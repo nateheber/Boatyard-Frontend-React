@@ -210,7 +210,7 @@ class AddServiceModal extends React.Component {
     this.serviceFields = ref;
   };
 
-  setdescriptionFieldRef = ref => {
+  setDescriptionFieldRef = ref => {
     this.descriptionField = ref;
   }
 
@@ -239,7 +239,7 @@ class AddServiceModal extends React.Component {
         />}
         <Divider />
         { !isEmpty(descriptionField) && <FormFields
-          ref={this.setdescriptionFieldRef}
+          ref={this.setDescriptionFieldRef}
           fields={descriptionField}
         />}
       </Modal>
