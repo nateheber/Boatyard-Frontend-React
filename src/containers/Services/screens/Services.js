@@ -52,7 +52,7 @@ class Services extends React.Component {
 
   render() {
     const columns = [
-      { label: 'serivce name', value: 'name', sort: 'name' },
+      { label: 'service name', value: 'name', sort: 'name' },
       { label: 'price', value: 'cost', sort: 'cost', prefix: '$', isValue: true },
       { label: 'price type', value: 'costType', sort: 'cost_type' }
     ];
