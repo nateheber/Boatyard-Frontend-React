@@ -2,11 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { get, isNumber } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
+import { actionTypes, GetServices, UpdateService, DeleteService } from 'store/actions/services';
 import Table from 'components/basic/Table';
 import { ServiceHeader } from 'components/compound/SectionHeader';
-
-import { actionTypes, GetServices } from 'store/actions/services';
+import EditServiceModal from '../components/EditServiceModal';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -17,7 +19,9 @@ class Services extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sort: { col: 'name', direction: 'asc' }
+      sort: { col: 'name', direction: 'asc' },
+      visibleOfEditServiceModal: false,
+      selectedService: {}
     };
   }
 
@@ -43,12 +47,72 @@ class Services extends React.Component {
   }
 
   toDetails = service => {
-    this.props.history.push(`/service-details/?service=${service.id}`);
+    this.setState({ selectedService: service }, () => {
+      // this.props.history.push(`/service-details/?service=${service.id}`);
+      this.showEditModal();
+    })
   };
 
   createService = () => {
     this.props.history.push(`/services/new`);
   };
+
+  showEditModal = () => {
+    this.setState({ visibleOfEditServiceModal: true });
+  }
+
+  hideEditModal = () => {
+    this.setState({ visibleOfEditServiceModal: false });
+  }
+
+  deleteService = () => {
+    const { selectedService } = this.state;
+    const { page, DeleteService } = this.props;
+    DeleteService({
+      serviceId: get(selectedService, 'id'),
+      success: () => {
+        this.hideEditModal();
+        this.loadPage(page);
+      },
+      error: () => {
+        const { errors } = this.props;
+        if (errors && errors.length > 0) {
+          for (const key in errors) {
+            if (isNumber(key)) {
+              toastr.error(errors[key].join(''));
+            }else {
+              toastr.error(key, errors[key].join(''));
+            }
+          }
+        }
+      }
+    });
+  }
+
+  updateService = (data) => {
+    const { selectedService } = this.state;
+    const { page, UpdateService } = this.props;
+    UpdateService({
+      serviceId: get(selectedService, 'id'),
+      data,
+      success: () => {
+        this.hideEditModal();
+        this.loadPage(page);
+      },
+      error: () => {
+        const { errors } = this.props;
+        if (errors && errors.length > 0) {
+          for (const key in errors) {
+            if (isNumber(key)) {
+              toastr.error(errors[key].join(''));
+            }else {
+              toastr.error(key, errors[key].join(''));
+            }
+          }
+        }
+      }
+    });
+  }
 
   render() {
     const columns = [
@@ -57,14 +121,14 @@ class Services extends React.Component {
       { label: 'price type', value: 'costType', sort: 'cost_type' }
     ];
 
-    const { services, currenStatus, page, perPage, total } = this.props;
-    const { sort } = this.state;
+    const { services, currentStatus, page, perPage, total } = this.props;
+    const { sort, visibleOfEditServiceModal, selectedService } = this.state;
     const pageCount = Math.ceil(total/perPage);
     return (
       <Wrapper>
         <ServiceHeader onAdd={this.createService} />
         <Table
-          loading={currenStatus === actionTypes.GET_SERVICES}
+          loading={currentStatus === actionTypes.GET_SERVICES}
           columns={columns}
           records={services}
           sort={sort}
@@ -74,21 +138,31 @@ class Services extends React.Component {
           onPageChange={this.loadPage}
           toDetails={this.toDetails}
         />
+        {visibleOfEditServiceModal && <EditServiceModal
+          loading={currentStatus === actionTypes.UPDATE_SERVICE}
+          open={visibleOfEditServiceModal}
+          service={selectedService}
+          onClose={this.hideEditModal}
+          onDelete={this.deleteService}
+          onSave={this.updateService}
+        />}
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ service: { services, currenStatus, page, perPage, total } }) => ({
+const mapStateToProps = ({ service: { services, currentStatus, page, perPage, total } }) => ({
   services,
-  currenStatus,
+  currentStatus,
   page,
   perPage,
   total
 });
 
 const mapDispatchToProps = {
-  GetServices
+  GetServices,
+  UpdateService,
+  DeleteService
 };
 
 export default withRouter(
