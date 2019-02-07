@@ -131,6 +131,8 @@ class OrderDetails extends React.Component {
     const lineItems = get(currentOrder, 'lineItems', []);
     const summaryInfo = this.getSummaryInfo();
     const loading = currentStatus === actionTypes.GET_ORDER;
+    const orderStatus = get(currentOrder, 'attributes.state' );
+    const canAssignOrder = orderStatus !== ' invoiced' && privilege === "admin";
 
     return (
       <React.Fragment>
@@ -158,7 +160,7 @@ class OrderDetails extends React.Component {
                 </SectionGroup>
               </Column>
               <Column md={12} sm={12} xs={12} lg={4} xl={4}>
-                {(privilege === 'admin' && !providerId) && <SectionGroup>
+                {canAssignOrder && <SectionGroup>
                   <OrderAssignment />
                 </SectionGroup>}
                 <SectionGroup>
