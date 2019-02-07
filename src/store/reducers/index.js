@@ -17,6 +17,7 @@ import creditCard from './credit-cards';
 import providerLocation from './providerLocations';
 import providerLocationService from './providerLocationServices';
 import childAccount from './child-accounts';
+import icon from './icons';
 
 const rootReducer = combineReducers({
   navigation,
@@ -35,7 +36,8 @@ const rootReducer = combineReducers({
   toastr: toastrReducer,
   providerLocation,
   providerLocationService,
-  childAccount
+  childAccount,
+  icon
 });
 
 export default rootReducer;

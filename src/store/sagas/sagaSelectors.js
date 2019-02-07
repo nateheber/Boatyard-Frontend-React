@@ -175,3 +175,16 @@ export const getProviderLocationServiceClient = state => {
       return APIGenerator.createProviderLocationServiceClient('basic');
   }
 };
+
+export const getIconClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createIconClient('basic');
+    case 'admin':
+      return APIGenerator.createIconClient('admin');
+    case 'provider':
+      return APIGenerator.createIconClient('provider');
+    default:
+      return APIGenerator.createIconClient('basic');
+  }
+};
