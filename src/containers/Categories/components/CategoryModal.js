@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
+import { get, isEmpty, startCase } from 'lodash';
 
 import { GetCategory } from 'store/actions/categories';
 import Modal from 'components/compound/Modal';
@@ -22,7 +23,10 @@ class CategoryModal extends React.Component {
     };
   }
 
-
+  componentDidMount() {
+    this.getCategoryFields();
+    this.getDescriptionField();
+  }
 
   onSave = () => {
     const { onSave } = this.props;
@@ -39,11 +43,12 @@ class CategoryModal extends React.Component {
   };
 
   getCategoryFields = () => {
+    const { category } = this.props;
+    const name = get(category, 'name');
+    const cost = get(category, 'cost');
+    const costType = get(category, 'costType');
+    const isTaxable = get(category, 'isTaxable');
 
-    const name = '';
-    const cost = '';
-    const costType = '';
-    const isTaxable = false;
     const priceTypes = [
       {
         value: null,
@@ -90,8 +95,8 @@ class CategoryModal extends React.Component {
         xs: 12,
         sm: 12,
         md: 6,
-        lg: 4,
-        xl: 4
+        lg: 3,
+        xl: 3
       },
       {
         field: 'cost_type',
@@ -122,7 +127,8 @@ class CategoryModal extends React.Component {
   };
 
   getDescriptionField = () => {
-    const description = '';
+    const { category } = this.props;
+    const description = get(category, 'description');
     const descriptionField = [
       {
         field: 'description',
@@ -149,15 +155,18 @@ class CategoryModal extends React.Component {
   }
 
   render() {
-    const { loading, title, open, onClose } = this.props;
+    const { loading, title, category, open, onClose, onDelete } = this.props;
     const { categoryFields, descriptionField } = this.state;
-    const actions = [
-      <HollowButton onClick={onClose} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>
-    ];
+    const actions = isEmpty(category) ? 
+      [<OrangeButton onClick={this.onSave} key="modal_btn_save">Add Category</OrangeButton>]
+      :
+      [
+        <HollowButton onClick={onDelete} key="modal_btn_cancel">Delete</HollowButton>,
+        <OrangeButton onClick={this.onSave} key="modal_btn_save">Update Category</OrangeButton>
+      ];
     return (
       <Modal
-        title={title || 'New Category'}
+        title={startCase(category.name) || title}
         loading={loading}
         actions={actions}
         open={open}

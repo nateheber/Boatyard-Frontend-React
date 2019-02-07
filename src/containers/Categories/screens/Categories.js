@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { Col, Row } from 'react-flexbox-grid';
+import { get, isEmpty, isNumber, startCase } from 'lodash';
 
-import { actionTypes as categoryActions, GetCategories, CreateCategory } from 'store/actions/categories';
+import { actionTypes, GetCategories, CreateCategory, UpdateCategory, DeleteCategory } from 'store/actions/categories';
 import Table from 'components/basic/Table';
 import { CategoryHeader } from 'components/compound/SectionHeader';
 import { Input } from 'components/basic/Input';
@@ -30,6 +32,7 @@ class Categories extends React.Component {
     super(props);
     this.state = {
       keyword: '',
+      selectedCategory: {},
       visibleOfCategoryModal: false
     };
   }
@@ -56,8 +59,17 @@ class Categories extends React.Component {
     });
   }
 
-  toDetails = category => {
-    this.props.history.push(`/category-details/?category=${category.id}`);
+  handleUpdateCategory = category => {
+    this.setState({ selectedCategory: category }, () => {
+      // this.props.history.push(`/category-details/?category=${category.id}`);
+      this.showCategoryModal();
+    })
+  };
+
+  handleCreateCategory = () => {
+    this.setState({ selectedCategory: {} }, () => {
+      this.showCategoryModal();
+    })
   };
 
   showCategoryModal = () => {
@@ -68,20 +80,78 @@ class Categories extends React.Component {
     this.setState({ visibleOfCategoryModal: false });
   };
 
-  createCategory = (data) => {
-    const { CreateCategory, page } = this.props;
-    CreateCategory({
-      data,
+  saveCategory = (data) => {
+    const { CreateCategory, UpdateCategory, page } = this.props;
+    const { selectedCategory } = this.state;
+    if (isEmpty(selectedCategory)) {
+      CreateCategory({
+        data,
+        success: () => {
+          this.hideCategoryModal();
+          this.loadPage(page);
+        },
+        error: () => {
+          this.showErrors();
+        }
+      });  
+    } else {
+      const categoryId = get(selectedCategory, 'id');
+      UpdateCategory({
+        categoryId,
+        data,
+        success: () => {
+          this.hideCategoryModal();
+          this.loadPage(page);
+        },
+        error: () => {
+          this.showErrors();
+        }
+      });  
+    }
+
+  }
+
+  deleteCategory = () => {
+    const { DeleteCategory, page } = this.props;
+    const { selectedCategory } = this.state;
+    const categoryId = get(selectedCategory, 'id');
+    DeleteCategory({
+      categoryId,
       success: () => {
         this.hideCategoryModal();
         this.loadPage(page);
+      },
+      error: () => {
+        this.showErrors();
       }
     })
   };
 
+  showErrors = () => {
+    const { errors } = this.props;
+    toastr.clean();
+    if (errors && errors.length > 0) {
+      for (const key in errors) {
+        if (isNumber(key)) {
+          toastr.error(startCase(errors[key].join('')));
+        }else {
+          toastr.error(startCase(key), startCase(errors[key].join('')));
+        }
+      }
+    } else {
+      for (const key in errors) {
+        if (isNumber(key)) {
+          toastr.error(startCase(errors[key]));
+        }else {
+          toastr.error(startCase(key), startCase(errors[key]));
+        }
+      }
+    }
+  };
+
   render() {
     const { categories, currentStatus, page, perPage, total } = this.props;
-    const { keyword, visibleOfCategoryModal } = this.state;
+    const { keyword, selectedCategory, visibleOfCategoryModal } = this.state;
     const columns = [
       { label: 'category name', value: 'name' },
     ];
@@ -89,7 +159,7 @@ class Categories extends React.Component {
 
     return (
       <Wrapper>
-        <CategoryHeader onAdd={this.showCategoryModal} />
+        <CategoryHeader onAdd={this.handleCreateCategory} />
         <SearchSection>
           <SearchCotainer>
             <Input
@@ -101,38 +171,43 @@ class Categories extends React.Component {
           </SearchCotainer>
         </SearchSection>
         <Table
-          loading={currentStatus === categoryActions.GET_CATEGORIES}
+          loading={currentStatus === actionTypes.GET_CATEGORIES}
           type={'tile'}
           columns={columns}
           records={categories}
           page={page}
           pageCount={pageCount}
           onPageChange={this.loadPage}
-          toDetails={this.toDetails}
+          toDetails={this.handleUpdateCategory}
         />
         {visibleOfCategoryModal && <CategoryModal
           title={'New Category'}
-          loading={currentStatus === categoryActions.CREATE_CATEGORY}
+          category={selectedCategory}
+          loading={currentStatus === actionTypes.CREATE_CATEGORY || currentStatus === actionTypes.UPDATE_CATEGORY}
           open={visibleOfCategoryModal}
           onClose={this.hideCategoryModal}
-          onSave={this.createCategory}
+          onDelete={this.deleteCategory}
+          onSave={this.saveCategory}
         />}
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ category: { categories, currentStatus, page, perPage, total } }) => ({
+const mapStateToProps = ({ category: { categories, currentStatus, page, perPage, total, errors } }) => ({
   categories,
   currentStatus,
   page,
   perPage,
-  total
+  total,
+  errors
 });
 
 const mapDispatchToProps = {
   GetCategories,
-  CreateCategory
+  CreateCategory,
+  UpdateCategory,
+  DeleteCategory
 };
 
 export default withRouter(
