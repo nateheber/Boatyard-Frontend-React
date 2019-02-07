@@ -53,6 +53,9 @@ const ActionWrapper = styled.div`
   &.alone {
     justify-content: flex-end;
   }
+  &.centered {
+    justify-content: center;
+  }
   // border-top: 1px solid #e5e5e5;
   > button {
     height: 48px;
@@ -133,7 +136,7 @@ const modalStyles = {
 
 export default class CustomModal extends React.Component {
   render() {
-    const { open, onClose, children, title, actions, small, normal, minHeight, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
+    const { open, onClose, children, title, actions, small, normal, minHeight, loading, spinnerOptions, tabs, selected, onSelect, centered } = this.props;
     return (
       <Modal
         styles={small ? modalStyles.small : normal ? modalStyles.normal : modalStyles.main}
@@ -147,7 +150,7 @@ export default class CustomModal extends React.Component {
           <Content style={{ minHeight: minHeight || 'inherit' }}>
             {children}
           </Content>
-          {actions && <ActionWrapper className={actions.length < 2 && 'alone'}>{actions}</ActionWrapper>}
+          {actions && <ActionWrapper className={centered ? 'centered' : actions.length < 2 && 'alone'}>{actions}</ActionWrapper>}
           {loading && <LoadingSpinner
             loading={true}
             backgroundColor={spinnerOptions && spinnerOptions.backgroundColor}
