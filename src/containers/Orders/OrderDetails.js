@@ -7,7 +7,11 @@ import { get } from 'lodash';
 
 import { actionTypes, GetOrder, UpdateOrder } from 'store/actions/orders';
 import { orderSelector } from 'store/selectors/orders';
-import { getUserFromOrder, getBoatFromOrder, getProviderFromOrder } from 'utils/order';
+import {
+  getUserFromOrder,
+  getBoatFromOrder,
+  getProviderFromOrder
+} from 'utils/order';
 import { actionTypes as boatActions, UpdateBoat } from 'store/actions/boats';
 
 import { SectionGroup } from 'components/basic/InfoSection';
@@ -22,6 +26,7 @@ import PaymentSection from './components/templates/PaymentSection';
 import Timeline from './components/templates/Timeline';
 import OrderAssignment from './components/templates/OrderAssignment';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
+import PaymentGatewayModal from 'components/template/CreditCardSection/PaymentGatewayModal';
 
 const Wrapper = styled.div`
   padding: 30px 25px;
@@ -37,7 +42,7 @@ class OrderDetails extends React.Component {
     orderId: -1,
     isFirstLoad: true,
     visibleOfBoatModal: false
-  }
+  };
 
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
@@ -58,12 +63,12 @@ class OrderDetails extends React.Component {
     const customerInfo = getUserFromOrder(currentOrder);
     const boatInfo = getBoatFromOrder(currentOrder);
     return { boatInfo, customerInfo };
-  }
+  };
 
   getProviderId = () => {
     const { currentOrder } = this.props;
-    return get(getProviderFromOrder(currentOrder),'id', '');
-  }
+    return get(getProviderFromOrder(currentOrder), 'id', '');
+  };
 
   getSummaryInfo = () => {
     const { currentOrder } = this.props;
@@ -74,53 +79,61 @@ class OrderDetails extends React.Component {
     const discount = get(currentOrder, 'attributes.discount');
     const deposit = get(currentOrder, 'attributes.deposit');
     const comments = get(currentOrder, 'attributes.comments');
-    return ({
-      total, subtotal, taxRate, discount, deposit, taxAmount, comments
-    });
-  }
+    return {
+      total,
+      subtotal,
+      taxRate,
+      discount,
+      deposit,
+      taxAmount,
+      comments
+    };
+  };
 
   getSpecialInstructions = () => {
     const { currentOrder } = this.props;
     return get(currentOrder, 'attributes.specialInstructions');
-  }
+  };
 
   getSlipNumber = () => {
     const { currentOrder } = this.props;
     return get(currentOrder, 'attributes.slipNumber');
-  }
+  };
 
   getUdpatedDate = () => {
     const { currentOrder } = this.props;
     const updatedAt = get(currentOrder, 'attributes.updatedAt');
     return updatedAt;
-  }
+  };
 
   showBoatModal = () => {
-    this.setState({ visibleOfBoatModal: true })
-  }
+    this.setState({ visibleOfBoatModal: true });
+  };
 
   hideBoatModal = () => {
-    this.setState({ visibleOfBoatModal: false })
-  }
+    this.setState({ visibleOfBoatModal: false });
+  };
 
-  updateBoat = (data) => {
+  updateBoat = data => {
     const { UpdateBoat, GetOrder } = this.props;
-    const { boatInfo: { id } } = this.getOrderInfo();
+    const {
+      boatInfo: { id }
+    } = this.getOrderInfo();
     const { orderId } = this.state;
-      UpdateBoat({
-        boatId: id,
-        data,
-        success: () => {
-          this.hideBoatModal();
-          GetOrder({ orderId });
-        }
-      });
-  }
+    UpdateBoat({
+      boatId: id,
+      data,
+      success: () => {
+        this.hideBoatModal();
+        GetOrder({ orderId });
+      }
+    });
+  };
 
-  updateOrder = (data) => {
+  updateOrder = data => {
     const { orderId } = this.state;
-    this.props.UpdateOrder({ orderId, data});
-  }
+    this.props.UpdateOrder({ orderId, data });
+  };
 
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
@@ -134,58 +147,72 @@ class OrderDetails extends React.Component {
 
     return (
       <React.Fragment>
-        {loading && isFirstLoad ? 
+        {loading && isFirstLoad ? (
           <LoadingSpinner loading={true} />
-        : <React.Fragment>
-          <OrderDetailHeader order={currentOrder} />
-          <Wrapper>
-            <Row>
-              <Column md={12} sm={12} xs={12} lg={8} xl={8}>
-                <SectionGroup>
-                  <OrderSummarySection
-                    lineItem={get(lineItems, '0', {})}
-                    specialInstructions={this.getSpecialInstructions()}
-                    slipNumber={this.getSlipNumber()}
-                  />
-                  <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
-                  <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
-                </SectionGroup>
-                <SectionGroup>
-                  <PaymentSection order={currentOrder} />
-                </SectionGroup>
-                <SectionGroup>
-                  <Scheduler orderId={orderId} />
-                </SectionGroup>
-              </Column>
-              <Column md={12} sm={12} xs={12} lg={4} xl={4}>
-                {(privilege === 'admin' && !providerId) && <SectionGroup>
-                  <OrderAssignment />
-                </SectionGroup>}
-                <SectionGroup>
-                  <CustomerBoat
-                    boatInfo={boatInfo}
-                    customerInfo={customerInfo}
-                    onEditBoat={() => this.showBoatModal()}
-                  />
-                </SectionGroup>
-                <SectionGroup>
-                  <Timeline order={currentOrder} />
-                </SectionGroup>
-              </Column>
-            </Row>
-          </Wrapper>
-          {visibleOfBoatModal && <BoatModal
-            open={visibleOfBoatModal}
-            loading={boatStatus === boatActions.UPDATE_BOAT}
-            user={customerInfo}
-            onClose={this.hideBoatModal}
-            onSave={this.updateBoat}
-            boatInfo={boatInfo}
-          />}
-        </React.Fragment>
-      }
+        ) : (
+          <React.Fragment>
+            <OrderDetailHeader order={currentOrder} />
+            <Wrapper>
+              <Row>
+                <Column md={12} sm={12} xs={12} lg={8} xl={8}>
+                  <SectionGroup>
+                    <OrderSummarySection
+                      lineItem={get(lineItems, '0', {})}
+                      specialInstructions={this.getSpecialInstructions()}
+                      slipNumber={this.getSlipNumber()}
+                    />
+                    <LineItemSection
+                      updatedAt={updatedDate}
+                      orderId={orderId}
+                      providerId={providerId}
+                    />
+                    <OrderReviewSection
+                      {...summaryInfo}
+                      updateOrder={this.updateOrder}
+                    />
+                  </SectionGroup>
+                  <SectionGroup>
+                    <PaymentSection order={currentOrder} />
+                  </SectionGroup>
+                  <SectionGroup>
+                    <Scheduler orderId={orderId} />
+                  </SectionGroup>
+                </Column>
+                <Column md={12} sm={12} xs={12} lg={4} xl={4}>
+                  {privilege === 'admin' &&
+                    !providerId && (
+                      <SectionGroup>
+                        <OrderAssignment />
+                      </SectionGroup>
+                    )}
+                  <SectionGroup>
+                    <CustomerBoat
+                      boatInfo={boatInfo}
+                      customerInfo={customerInfo}
+                      onEditBoat={() => this.showBoatModal()}
+                    />
+                  </SectionGroup>
+                  <SectionGroup>
+                    <Timeline order={currentOrder} />
+                  </SectionGroup>
+                </Column>
+              </Row>
+            </Wrapper>
+            {visibleOfBoatModal && (
+              <BoatModal
+                open={visibleOfBoatModal}
+                loading={boatStatus === boatActions.UPDATE_BOAT}
+                user={customerInfo}
+                onClose={this.hideBoatModal}
+                onSave={this.updateBoat}
+                boatInfo={boatInfo}
+              />
+            )}
+            {/* <PaymentGatewayModal open={true} /> */}
+          </React.Fragment>
+        )}
       </React.Fragment>
-    )
+    );
   }
 }
 
@@ -194,7 +221,7 @@ const mapStateToProps = state => ({
   currentStatus: state.order.currentStatus,
   boatStatus: state.boat.currentStatus,
   privilege: state.auth.privilege
- });
+});
 
 const mapDispatchToProps = {
   GetOrder,

@@ -1,9 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { set, get, isEmpty } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
-import { Selector, Input } from 'components/basic/Input'
+import { Selector, Input } from 'components/basic/Input';
 import Modal from 'components/compound/Modal';
+
+import { CreatePaymentGateway } from 'store/actions/paymentGateway';
+
+import { gatewayOptions } from 'utils/paymentGateway';
 
 const Wrapper = styled.div`
   text-align: center;
@@ -19,37 +25,62 @@ const Title = styled.div`
 const SelectorWrapper = styled.div`
   display: inline-block;
   width: 200px;
-`
+`;
 
 const InputField = styled(Input)`
   text-align: center;
   margin-bottom: 14px;
 `;
 
-const options = [
-  { value: 'Authorize.Net', label: 'AUTHORIZE.NET' },
-]
-
-export default class PaymentGatewayModal extends React.Component {
+class PaymentGatewayModal extends React.Component {
   state = {
     step: 'gateway',
     gateway: {},
-    loginId: '',
-    transactionKey: '',
-  }
+    credential: {}
+  };
 
-  onChangeGateway = (gateway) => {
+  onChangeGateway = gateway => {
     this.setState({ gateway });
-  }
+  };
+
+  onChangeField = field => event => {
+    const credential = { ...this.state.credential };
+    set(credential, field, event.target.value);
+    this.setState({ credential });
+  };
 
   next = () => {
-    this.setState({ step: 'gatewayInfo' });
+    if (!isEmpty(this.state.gateway)) {
+      this.setState({ step: 'gatewayInfo', credential: {} });
+    }
+  };
+
+  isValid = () => {
+    const { gateway, credential } = this.state;
+    const { fields } = gateway;
+    return fields.reduce((prev, field) => {
+      if (prev === false) {
+        return false;
+      }
+      const value = get(credential, field.name);
+      if (isEmpty(value)) {
+        return false;
+      }
+      return true;
+    }, false);
   };
 
   connect = () => {
-    const { gateway, loginId, transactionKey } = this.state;
-    this.props.connect({ gateway: gateway.value, loginId, transactionKey });
-  }
+    if (this.isValid()) {
+      const { gateway, credential } = this.state;
+      this.props.CreatePaymentGateway({
+        data: {
+          gatewayType: gateway.value,
+          ...credential
+        }
+      });
+    }
+  };
 
   getActions = () => {
     const { step } = this.state;
@@ -57,7 +88,7 @@ export default class PaymentGatewayModal extends React.Component {
       return [<OrangeButton onClick={this.next}>Next</OrangeButton>];
     }
     return [<OrangeButton onClick={this.connect}>Connect</OrangeButton>];
-  }
+  };
 
   renderGatewaySelection = () => {
     const { gateway } = this.state;
@@ -68,23 +99,33 @@ export default class PaymentGatewayModal extends React.Component {
           <Selector
             value={gateway}
             onChange={this.onChangeGateway}
-            options={options}
+            options={gatewayOptions}
           />
         </SelectorWrapper>
       </Wrapper>
-    )
-  }
+    );
+  };
 
   renderInfoSelection = () => {
-    const { gateway } = this.state;
+    const { gateway, credential } = this.state;
+    const { fields } = gateway;
     return (
       <Wrapper>
-        <Title>Please enter the information below to connect your payment gateway:</Title>
-        <InputField type="text" onChange={this.onChangeLoginId} placeholder={`Your ${gateway.value} API Login ID`} />
-        <InputField type="text" onChange={this.onChangeTransactionKey} placeholder={`Your ${gateway.value} Transaction Key`} />
+        <Title>
+          Please enter the information below to connect your payment gateway:
+        </Title>
+        {fields.map((field, idx) => (
+          <InputField
+            type="text"
+            value={get(credential, field.name, '')}
+            onChange={this.onChangeField(field.name)}
+            placeholder={field.placeholder}
+            key={`field_${idx}`}
+          />
+        ))}
       </Wrapper>
-    )
-  }
+    );
+  };
 
   renderContent = () => {
     const { step } = this.state;
@@ -92,7 +133,7 @@ export default class PaymentGatewayModal extends React.Component {
       return this.renderGatewaySelection();
     }
     return this.renderInfoSelection();
-  }
+  };
 
   render() {
     const { open, onClose } = this.props;
@@ -111,3 +152,12 @@ export default class PaymentGatewayModal extends React.Component {
     );
   }
 }
+
+const mapDispatchToProps = {
+  CreatePaymentGateway
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(PaymentGatewayModal);
