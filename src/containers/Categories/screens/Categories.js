@@ -8,7 +8,7 @@ import { actionTypes as categoryActions, GetCategories, CreateCategory } from 's
 import Table from 'components/basic/Table';
 import { CategoryHeader } from 'components/compound/SectionHeader';
 import { Input } from 'components/basic/Input';
-import AddCategoryModal from '../components/AddCategoryModal';
+import CategoryModal from '../components/CategoryModal';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -110,7 +110,7 @@ class Categories extends React.Component {
           onPageChange={this.loadPage}
           toDetails={this.toDetails}
         />
-        {visibleOfCategoryModal && <AddCategoryModal
+        {visibleOfCategoryModal && <CategoryModal
           title={'New Category'}
           loading={currentStatus === categoryActions.CREATE_CATEGORY}
           open={visibleOfCategoryModal}
