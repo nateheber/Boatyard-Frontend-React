@@ -217,7 +217,7 @@ export class Record extends React.Component {
     const { show } = this.state;
     const firstColumn = columns[0];
     const hidingCols = columns.slice(1);
-    const icon = get(record, 'icon') || 'https://dev.boatyard.com/img/logo.svg';
+    const icon = get(record, 'icon_id') || 'https://dev.boatyard.com/img/logo.svg';
     return (
       <React.Fragment>
         { type === 'tile' ?
