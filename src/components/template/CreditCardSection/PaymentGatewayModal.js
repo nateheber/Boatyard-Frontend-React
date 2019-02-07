@@ -73,11 +73,18 @@ class PaymentGatewayModal extends React.Component {
   connect = () => {
     if (this.isValid()) {
       const { gateway, credential } = this.state;
+      const { providerId } = this.props;
       this.props.CreatePaymentGateway({
-        data: {
-          gatewayType: gateway.value,
-          ...credential
-        }
+        data: providerId
+          ? {
+              providerId,
+              gatewayType: gateway.value,
+              ...credential
+            }
+          : {
+              gatewayType: gateway.value,
+              ...credential
+            }
       });
     }
   };
