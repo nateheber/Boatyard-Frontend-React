@@ -4,14 +4,57 @@ import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import { get, isEmpty, startCase } from 'lodash';
 
-import { GetCategory } from 'store/actions/categories';
+import { actionTypes, GetIcons } from 'store/actions/icons';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 
 const Divider = styled.div`
   height: 20px;
   width: 100%;
+`;
+
+const IconSection = styled.div`
+`;
+
+const HeaderSection = styled.div`
+  > label {
+    font-size: 12px;
+    font-family: Montserrat, sans-serif;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #004258;
+    margin-right: 20px;
+  }
+`;
+
+const IconsContainer = styled.div`
+  width: 100%;
+  height: 156px;
+  overflow: auto;
+  display: flex;
+  background: gray;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 10px 0 30px;
+  position: relative;
+
+  .service-icon-wrapper {
+    width: 30px;
+    height: 30px;
+    margin: 2px;
+    padding:2px;
+    cursor: pointer;
+    &.-selected {
+      border: 1px solid wheat;
+      border-radius: 8px;  
+    }
+    > img {
+      width: 100%;
+      height: 100%;
+    }
+  }
 `;
 
 class CategoryModal extends React.Component {
@@ -26,6 +69,7 @@ class CategoryModal extends React.Component {
   componentDidMount() {
     this.getCategoryFields();
     this.getDescriptionField();
+    this.loadIcons();
   }
 
   onSave = () => {
@@ -40,6 +84,11 @@ class CategoryModal extends React.Component {
       toastr.clean()
       toastr.error('Please fill out all the required fields')
     }
+  };
+
+  loadIcons = (page = 1) => {
+    const { GetIcons } = this.props;
+    GetIcons({ params: { page } });
   };
 
   getCategoryFields = () => {
@@ -154,8 +203,64 @@ class CategoryModal extends React.Component {
     this.descriptionField = ref;
   }
 
+  renderIcons = () => {
+    const { icons } = this.props;
+    return (
+      <React.Fragment>
+        <div className="service-icon-wrapper -selected"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
+      </React.Fragment>
+    );
+  };
+
   render() {
-    const { loading, title, category, open, onClose, onDelete } = this.props;
+    const { loading, title, category, open, onClose, onDelete, currentStatus } = this.props;
     const { categoryFields, descriptionField } = this.state;
     const actions = isEmpty(category) ? 
       [<OrangeButton onClick={this.onSave} key="modal_btn_save">Add Category</OrangeButton>]
@@ -172,6 +277,19 @@ class CategoryModal extends React.Component {
         open={open}
         onClose={onClose}
       >
+        <IconSection>
+          <HeaderSection>
+            <label>Choose Icon</label>
+            <HollowButton>Upload Icon</HollowButton>
+          </HeaderSection>
+          <IconsContainer>
+            {currentStatus === actionTypes.GET_ICONS ?
+              <LoadingSpinner
+                loading={true}
+              />
+            : this.renderIcons()}
+          </IconsContainer>
+        </IconSection>
         <FormFields
           ref={this.setCategoryFieldsRef}
           fields={categoryFields}
@@ -186,12 +304,16 @@ class CategoryModal extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  currentStatus: state.category.currentStatus
+const mapStateToProps = ({ icon : {currentStatus, icons, page, perPage, total }}) => ({
+  currentStatus,
+  icons,
+  page,
+  perPage,
+  total
 });
 
 const mapDispatchToProps = {
-  GetCategory
+  GetIcons
 };
 
 export default connect(
