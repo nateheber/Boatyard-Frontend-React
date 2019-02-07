@@ -34,7 +34,7 @@ const Body = styled.div`
 
 const Content = styled.div`
   box-sizing: border-box;
-  padding: 20px 30px;
+  padding: 30px;
   &.new {
     padding: 35px 100px 15px;
     @media (max-width: 1200px) {
