@@ -6,6 +6,7 @@ import { set, get, isEmpty } from 'lodash';
 import { OrangeButton } from 'components/basic/Buttons';
 import { Selector, Input } from 'components/basic/Input';
 import Modal from 'components/compound/Modal';
+import { toastr } from 'react-redux-toastr';
 
 import { CreatePaymentGateway } from 'store/actions/paymentGateway';
 
@@ -49,6 +50,16 @@ class PaymentGatewayModal extends React.Component {
     this.setState({ credential });
   };
 
+  onSuccess = () => {
+    // this.props.onClose();
+    toastr.success('Payment Gateway Created!');
+  }
+
+  onError = () => {
+    console.log('error');
+    toastr.error('Payment Gateway Error', 'Invalid Credentials')
+  }
+
   next = () => {
     if (!isEmpty(this.state.gateway)) {
       this.setState({ step: 'gatewayInfo', credential: {} });
@@ -67,7 +78,7 @@ class PaymentGatewayModal extends React.Component {
         return false;
       }
       return true;
-    }, false);
+    }, true);
   };
 
   connect = () => {
@@ -88,8 +99,12 @@ class PaymentGatewayModal extends React.Component {
                 gatewayType: gateway.value,
                 ...credential
               }
-            }
+            },
+        success: this.onSuccess,
+        error: this.onError,
       });
+    } else {
+      console.log('invalid');
     }
   };
 

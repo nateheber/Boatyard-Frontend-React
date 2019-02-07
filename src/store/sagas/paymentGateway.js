@@ -30,7 +30,7 @@ function* createPaymentGateway(action) {
   const creditCardClient = yield select(getPaymentGatewayClient);
   try {
     yield call(creditCardClient.create, {
-      paymentGateway: { data }
+      paymentGateway: { ...data }
     });
     yield put({
       type: actionTypes.CREATE_PAYMENT_GATEWAY_SUCCESS

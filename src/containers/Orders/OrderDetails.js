@@ -208,7 +208,7 @@ class OrderDetails extends React.Component {
                 boatInfo={boatInfo}
               />
             )}
-            {/* <PaymentGatewayModal open={true} /> */}
+            <PaymentGatewayModal open={true} />
           </React.Fragment>
         )}
       </React.Fragment>
