@@ -13,8 +13,6 @@ import LineItem from '../infoSections/LineItem';
 import ButtonGroup from '../basic/ButtonGroup';
 import QuoteHeader from '../basic/QuoteHeader';
 
-import PaymentGatewayModal from 'components/template/CreditCardSection/PaymentGatewayModal';
-
 
 class LineItemSection extends React.Component {
   constructor(props) {
