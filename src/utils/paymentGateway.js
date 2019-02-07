@@ -1,6 +1,6 @@
 export const gatewayOptions = [
   {
-    value: 'athorize_net',
+    value: 'authorize_net',
     label: 'AUTHORIZE.NET',
     fields: [
       { name: 'login', placeholder: 'Your Authorize.Net API Login ID' },
