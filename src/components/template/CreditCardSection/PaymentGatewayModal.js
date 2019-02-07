@@ -78,12 +78,16 @@ class PaymentGatewayModal extends React.Component {
         data: providerId
           ? {
               providerId,
-              gatewayType: gateway.value,
-              ...credential
+              credentials: {
+                gatewayType: gateway.value,
+                ...credential
+              }
             }
           : {
-              gatewayType: gateway.value,
-              ...credential
+              credentials: {
+                gatewayType: gateway.value,
+                ...credential
+              }
             }
       });
     }
