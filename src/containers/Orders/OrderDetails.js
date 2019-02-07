@@ -26,7 +26,6 @@ import PaymentSection from './components/templates/PaymentSection';
 import Timeline from './components/templates/Timeline';
 import OrderAssignment from './components/templates/OrderAssignment';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
-import PaymentGatewayModal from 'components/template/CreditCardSection/PaymentGatewayModal';
 
 const Wrapper = styled.div`
   padding: 30px 25px;
@@ -208,7 +207,6 @@ class OrderDetails extends React.Component {
                 boatInfo={boatInfo}
               />
             )}
-            <PaymentGatewayModal open={true} />
           </React.Fragment>
         )}
       </React.Fragment>

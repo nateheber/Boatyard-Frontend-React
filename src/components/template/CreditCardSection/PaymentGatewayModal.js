@@ -51,7 +51,7 @@ class PaymentGatewayModal extends React.Component {
   };
 
   onSuccess = () => {
-    // this.props.onClose();
+    this.props.onClose();
     toastr.success('Payment Gateway Created!');
   }
 
