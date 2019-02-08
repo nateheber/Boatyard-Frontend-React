@@ -5,9 +5,13 @@ import { findIndex } from 'lodash';
 
 import { Input } from 'components/basic/Input';
 
+import { GetProviders } from 'store/actions/providers';
+
+import GearIcon from 'resources/gear.png';
+import CloseIcon from 'resources/close.png';
 import ProviderCheck from '../basic/ProviderCheck';
 
-import { GetProviders } from 'store/actions/providers';
+import AssignConfirmModal from '../modals/AssignConfirmModal';
 
 const Button = styled.button`
   position: relative;
@@ -15,8 +19,35 @@ const Button = styled.button`
   height: 30px;
   background-color: white;
   border: 1px solid #A9B5BB;
-  border-radius: 6px;
+  border-radius: 5px;
+  padding: 5.5px;
+  outline: none;
+  cursor: pointer;
 `;
+
+const ClearButton = styled.button`
+  position: relative;
+  height: 30px;
+  width: 240px;
+  text-align: center;
+  font-size: 16px;
+  font-family: Montserrat;
+  color: #003247;
+  background-color: white;
+  outline: none;
+  border: 1px solid #A9B5BB;
+  border-radius: 5px;
+  &::after {
+    display: inline-block;
+    position: absolute;
+    content: '';
+    width: 20px;
+    height: 20px;
+    right: 5px;
+    background-image: url(${CloseIcon})
+  }
+  cursor: pointer;
+`
 
 const Wrapper = styled.div`
   position: relative;
@@ -44,7 +75,7 @@ const DropdownMenu = styled.div`
   border: 1px solid #eaeaea;
   background-color: white;
   position: absolute;
-  width: 439px;
+  width: 304px;
   padding: 0;
   right: 0;
   &::before {
@@ -74,6 +105,17 @@ const MenuItemLi = styled.div`
   padding: 8px 0;
 `;
 
+const ClearAssigneeWrapper = styled.div`
+  height: 51px;
+  background-color: #F5F5F5;
+  border-top: 1px solid #DBDBDB;
+  border-bottom: 1px solid #DBDBDB;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`
+
 const getPageCount = (perPage, total) => Math.ceil(total/perPage)
 
 class ProviderSelector extends React.Component {
@@ -86,6 +128,7 @@ class ProviderSelector extends React.Component {
       showMenu: false,
       dispatchIds: props.dispatchIds || [],
       providers: [],
+      showModal: false,
     }
   }
 
@@ -108,37 +151,6 @@ class ProviderSelector extends React.Component {
     } else {
       this.setState({ providers: [...this.state.providers, ...providers] })
     }
-  }
-
-  setWrapperRef(node) {
-    this.wrapperRef = node;
-  }
-
-  filterProviders = () => {
-    const { keyword } = this.state;
-    this.props.GetProviders({params: { 'provider[name]': keyword }, success: this.onFetchProviders})
-  }
-
-  handleClickOutside(event) {
-    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      if (this.state.showMenu) {
-        this.submitData();
-      }
-      this.setState({
-        showMenu: false
-      });
-    }
-  }
-
-  submitData = () => {
-    const { dispatchIds } = this.state;
-    this.props.onChange(dispatchIds);
-  }
-
-  isChecked = (providerId) => {
-    const { dispatchIds } = this.state;
-    const idx= findIndex(dispatchIds, id => providerId === id);
-    return idx >= 0;
   }
 
   onScroll = (e) => {
@@ -168,19 +180,68 @@ class ProviderSelector extends React.Component {
     }
   }
 
+  clearAssignees = () => {
+    this.setState({
+      dispatchIds: []
+    });
+  }
+
+  setWrapperRef(node) {
+    this.wrapperRef = node;
+  }
+
+  filterProviders = () => {
+    const { keyword } = this.state;
+    this.props.GetProviders({params: { 'provider[name]': keyword }, success: this.onFetchProviders})
+  }
+
+  handleClickOutside(event) {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      if (this.state.showMenu) {
+        this.showModal();
+      }
+      this.setState({
+        showMenu: false
+      });
+    }
+  }
+
+  showModal = () => {
+    const { dispatchIds } = this.state;
+    if (dispatchIds.length > 0) {
+      this.setState({ showModal: true });
+    }
+  }
+
+  closeModal = () => {
+    this.setState({ dispatchIds: [], showModal: false });
+  }
+
+  submitData = () => {
+    const { dispatchIds } = this.state;
+    this.props.onChange(dispatchIds);
+  }
+
+  isChecked = (providerId) => {
+    const { dispatchIds } = this.state;
+    const idx= findIndex(dispatchIds, id => providerId === id);
+    return idx >= 0;
+  }
+
   render() {
-    const { showMenu, keyword, providers } = this.state;
+    const { showMenu, showModal, keyword, providers, dispatchIds } = this.state;
     return (
       <Wrapper ref={this.setWrapperRef}>
-        <Button
-          onClick={() => {
-            this.setState({ showMenu: true });
-          }}
-        />
+        <Button onClick={() => { this.setState({ showMenu: true }); }}>
+          <img src={GearIcon} alt="gear_icon" />
+        </Button>
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
           <FitlerWrapper>
             <Input type="text" value={keyword} onChange={this.onChangeFilter} />
           </FitlerWrapper>
+          <ClearAssigneeWrapper>
+            <ClearButton onClick={this.clearAssignees}>Clear Assignees</ClearButton>
+          </ClearAssigneeWrapper>
           <Scroller onScroll={this.onScroll}>
             {
               providers.map((provider, idx) => (
@@ -191,6 +252,7 @@ class ProviderSelector extends React.Component {
             }
           </Scroller>
         </DropdownMenu>
+        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} count={dispatchIds.length} />
       </Wrapper>
     );
   }

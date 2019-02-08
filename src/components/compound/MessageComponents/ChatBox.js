@@ -4,8 +4,8 @@ import EvilIcon from 'react-evil-icons';
 
 import { OrangeButton } from 'components/basic/Buttons';
 
-import QuickReply from '../../../resources/quick-reply.svg';
-import Attach from '../../../resources/attach.svg';
+import QuickReply from 'resources/quick-reply.svg';
+import Attach from 'resources/attach.svg';
 
 const Wrapper = styled.div`
   border-top: 1px solid #e6e6e6;
