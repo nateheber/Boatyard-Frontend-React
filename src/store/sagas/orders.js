@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get } from 'lodash';
+import { get, set, hasIn } from 'lodash';
 
 import { actionTypes } from '../actions/orders';
 import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag } from './sagaSelectors';
@@ -8,6 +8,16 @@ function* getOrders(action) {
   let successType = actionTypes.GET_ORDERS_SUCCESS;
   let failureType = actionTypes.GET_ORDERS_FAILURE;
   const { params, success, error } = action.payload;
+  let submissionParams = {};
+  if (!hasIn(params, 'order[order]')) {
+    submissionParams = {
+      ...params,
+      'order[order]': 'created_at',
+      'order[sort]': 'desc',
+    };
+  } else {
+    submissionParams = { ...params };
+  }
   const dispatched = yield select(getOrderDispatchedFlag);
   let orderClient;
   if (dispatched) {
@@ -16,7 +26,7 @@ function* getOrders(action) {
     orderClient = yield select(getOrderClient);
   }
   try {
-    const result = yield call(orderClient.list, params);
+    const result = yield call(orderClient.list, submissionParams);
     const orders = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
