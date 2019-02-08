@@ -18,6 +18,7 @@ import providerLocation from './providerLocations';
 import providerLocationService from './providerLocationServices';
 import childAccount from './child-accounts';
 import paymentGateway from './paymentGateway';
+import icon from './icons';
 
 const rootReducer = combineReducers({
   navigation,
@@ -37,7 +38,8 @@ const rootReducer = combineReducers({
   providerLocation,
   providerLocationService,
   childAccount,
-  paymentGateway
+  paymentGateway,
+  icon
 });
 
 export default rootReducer;

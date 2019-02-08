@@ -61,12 +61,17 @@ function* getCategory(action) {
   try {
     result = yield call(categoryClient.read, categoryId);
     const { data, included } = result;
+    const category = {
+      id: data.id,
+      ...data.attributes,
+      ...data.relationships
+    };
     yield put({
       type: actionTypes.GET_CATEGORY_SUCCESS,
-      payload: data
+      payload: category
     });
     if (success) {
-      yield call(success, data, included);
+      yield call(success, category, included);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_CATEGORY_FAILURE, payload: e });

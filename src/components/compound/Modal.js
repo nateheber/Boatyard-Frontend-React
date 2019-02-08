@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Modal from 'react-responsive-modal';
+import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import ModalTab from './ModalTab';
@@ -9,18 +10,21 @@ const Header = styled.div`
   flex: 1 0 auto;
   background-color: #fafafa;
   color: #003247;
-  padding: 15px 40px 15px 15px;
+  padding: 25px 40px 25px 30px;
   border-bottom: 1px solid #e5e5e5;
   line-height: 1.42857;
   font-weight: 700;
-  // font-family: Montserrat, sans-serif;
+  font-family: Montserrat, sans-serif;
   box-sizing: border-box;
   width: 100%;
-  font-family: Helvetica;
-  font-size: 36px;
-  text-align: center;
+  font-size: 18px;
   &.noBorder {
     border-bottom: none;
+  }
+  &.new {
+    font-size: 36px;
+    text-align: center;
+    padding: 15px 40px 15px 15px;
   }
 `;
 
@@ -30,42 +34,30 @@ const Body = styled.div`
 
 const Content = styled.div`
   box-sizing: border-box;
-  padding: 35px 100px 15px;
-  @media (max-width: 1200px) {
-    padding: 35px 70px 15px;    
-  }
-  @media (max-width: 1200px) {
-    padding: 35px 60px 15px;    
-  }
-  @media (max-width: 768px) {
-    padding: 35px 40px 15px;    
-  }
-  @media (max-width: 600px) {
-    padding: 30px 20px 5px;    
+  padding: 30px;
+  &.new {
+    padding: 35px 100px 15px;
+    @media (max-width: 1200px) {
+      padding: 35px 70px 15px;    
+    }
+    @media (max-width: 1200px) {
+      padding: 35px 60px 15px;    
+    }
+    @media (max-width: 768px) {
+      padding: 35px 40px 15px;    
+    }
+    @media (max-width: 600px) {
+      padding: 30px 20px 5px;    
+    }  
   }
 `;
 
 const ActionWrapper = styled.div`
   display: flex;
-  padding: 10px 100px 30px;
-  justify-content: space-between;
+  padding: 10px 30px;
+  justify-content: flex-end;
   align-items: center;
-  &.alone {
-    justify-content: flex-end;
-  }
-  &.centered {
-    justify-content: center;
-  }
-  // border-top: 1px solid #e5e5e5;
-  > button {
-    height: 48px;
-  }
-  @media (max-width: 1200px) {
-    padding: 10px 70px 30px;    
-  }
-  @media (max-width: 1200px) {
-    padding: 10px 60px 30px;    
-  }
+  border-top: 1px solid #e5e5e5;
   @media (max-width: 820px) {
     flex-direction: column-reverse;
     justify-content: center;
@@ -73,13 +65,35 @@ const ActionWrapper = styled.div`
       width: 100%;
     }
   }
-  @media (max-width: 768px) {
-    padding: 10px 40px 30px;    
-  }
-  @media (max-width: 600px) {
-    padding: 10px 20px 20px;    
-  }
 
+  &.new {
+    justify-content: space-between;
+    &.alone {
+      justify-content: flex-end;
+    }
+    > button {
+      height: 48px;
+    }
+    @media (max-width: 1200px) {
+      padding: 10px 70px 30px;    
+    }
+    @media (max-width: 1200px) {
+      padding: 10px 60px 30px;    
+    }
+    @media (max-width: 820px) {
+      flex-direction: column-reverse;
+      justify-content: center;
+      > button {
+        width: 100%;
+      }
+    }
+    @media (max-width: 768px) {
+      padding: 10px 40px 30px;    
+    }
+    @media (max-width: 600px) {
+      padding: 10px 20px 20px;    
+    }  
+  }
 `;
 
 const modalStyles = {
@@ -136,7 +150,11 @@ const modalStyles = {
 
 export default class CustomModal extends React.Component {
   render() {
+<<<<<<< HEAD
     const { open, onClose, children, title, actions, small, normal, minHeight, loading, spinnerOptions, tabs, selected, onSelect, centered } = this.props;
+=======
+    const { open, onClose, classes, children, title, actions, small, normal, minHeight, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
+>>>>>>> 146b04337ed5fbd825eaa05640724bdc288352e3
     return (
       <Modal
         styles={small ? modalStyles.small : normal ? modalStyles.normal : modalStyles.main}
@@ -144,13 +162,17 @@ export default class CustomModal extends React.Component {
         onClose={onClose}
         style={{width: '300px'}}
       >
-        <Header className={!isEmpty(tabs) ? 'noBorder' : ''}>{title}</Header>
+        <Header className={classNames(!isEmpty(tabs) ? 'noBorder' : '', classes)}>{title}</Header>
         {!isEmpty(tabs) && <ModalTab tabs={tabs} selected={selected} onSelect={onSelect} /> }
         <Body>
-          <Content style={{ minHeight: minHeight || 'inherit' }}>
+          <Content style={{ minHeight: minHeight || 'inherit' }} className={classNames(classes)}>
             {children}
           </Content>
+<<<<<<< HEAD
           {actions && <ActionWrapper className={centered ? 'centered' : actions.length < 2 && 'alone'}>{actions}</ActionWrapper>}
+=======
+          {actions && <ActionWrapper className={classNames(actions.length < 2 && 'alone', classes)}>{actions}</ActionWrapper>}
+>>>>>>> 146b04337ed5fbd825eaa05640724bdc288352e3
           {loading && <LoadingSpinner
             loading={true}
             backgroundColor={spinnerOptions && spinnerOptions.backgroundColor}

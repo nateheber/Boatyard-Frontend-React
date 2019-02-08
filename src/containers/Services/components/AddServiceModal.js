@@ -34,12 +34,12 @@ class AddServiceModal extends React.Component {
 
   }
 
-  getServiceName = () => {
-    const { category } = this.props;
-    return get(category, 'name');
-  }
-
   getMainFields = () => {
+    const { category } = this.props;
+    const name = get(category, 'name');
+    const cost = get(category, 'cost');
+    const costType = get(category, 'costType');
+    const isTaxable = get(category, 'isTaxable');
     const priceTypes = [
       {
         value: null,
@@ -70,7 +70,7 @@ class AddServiceModal extends React.Component {
         type: 'text_field',
         errorMessage: 'Enter the service name',
         required: true,
-        defaultValue: this.getServiceName(),
+        defaultValue: name,
         xs: 12,
         sm: 12,
         md: 6,
@@ -81,7 +81,7 @@ class AddServiceModal extends React.Component {
         field: 'cost',
         label: 'Price',
         type: 'text_field',
-        defaultValue: '',
+        defaultValue: cost,
         placeholder: 'e.g., 35.00',
         xs: 12,
         sm: 12,
@@ -94,7 +94,7 @@ class AddServiceModal extends React.Component {
         label: 'Price Type',
         type: 'select_box',
         options: priceTypes,
-        defaultValue: null,
+        defaultValue: costType,
         xs: 12,
         sm: 12,
         md: 6,
@@ -105,7 +105,7 @@ class AddServiceModal extends React.Component {
         field: 'is_taxable',
         label: 'Taxable',
         type: 'check_box',
-        defaultValue: false,
+        defaultValue: isTaxable,
         xs: 12,
         sm: 12,
         md: 6,
@@ -150,13 +150,15 @@ class AddServiceModal extends React.Component {
   };
 
   getDescriptionFields = () =>{
+    const { category } = this.props;
+    const description = get(category, 'description');
     return [
       {
         field: 'description',
         label: 'Description',
         type: 'text_area',
         required: false,
-        defaultValue: '',
+        defaultValue: description,
         xs: 12,
         sm: 12,
         md: 12,
@@ -192,14 +194,14 @@ class AddServiceModal extends React.Component {
   }
 
   render() {
-    const { loading, open, onClose, currentStatus } = this.props;
+    const { loading, open, onClose, currentStatus, category } = this.props;
     const { mainFields, descriptionField } = this.state;
     const actions = [
       <OrangeButton onClick={this.onSave} key="modal_btn_save">Add Service</OrangeButton>
     ];
     return (
       <Modal
-        title={startCase(this.getServiceName())}
+        title={startCase(get(category, 'name'))}
         loading={loading || currentStatus === actionTypes.GET_CATEGORY}
         actions={actions}
         open={open}
