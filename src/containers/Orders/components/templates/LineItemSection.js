@@ -8,6 +8,7 @@ import { updateLineItems, deleteLineItem, createLineItems } from 'store/reducers
 import { GetOrder } from 'store/actions/orders';
 import { orderSelector } from 'store/selectors/orders';
 import { Section } from 'components/basic/InfoSection';
+import SendQuoteModal from 'components/template/SendQuoteModal';
 import NewLineItems from '../infoSections/NewLineItem';
 import LineItem from '../infoSections/LineItem';
 import ButtonGroup from '../basic/ButtonGroup';
@@ -20,7 +21,8 @@ class LineItemSection extends React.Component {
     this.state = {
       newItems: [],
       lineItems: get(props, 'currentOrder.lineItems', []),
-      mode: 'view'
+      mode: 'view',
+      showQuote: false,
     }
   }
 
@@ -68,6 +70,15 @@ class LineItemSection extends React.Component {
     this.saveNewItems()
     this.setState({ mode: 'view' })
   }
+
+  onSendQuote = () => {
+    this.setState({ showQuote: true });
+  }
+
+  hideQuoteModal = () => {
+    this.setState({ showQuote: false });
+  }
+
   updateLineItems = () => {
     const { lineItems } = this.state;
     const { orderId, updateLineItems, GetOrder } = this.props;
@@ -76,18 +87,22 @@ class LineItemSection extends React.Component {
       updateLineItems({ orderId, data: updateInfo, callback: () => {GetOrder({orderId})}});
     }
   }
+
   addNewItem = () => {
     const { newItems } = this.state
     this.setState({ newItems: [...newItems, {}] })
   }
+
   removeLineItem = (itemId) => {
     const { orderId, GetOrder } = this.props;
     this.props.deleteLineItem({ orderId, itemId, callback: () => { GetOrder({orderId}) } })
   }
+
   removeNewItem = (idx) => {
     const { newItems } = this.state
     this.setState({ newItems: [...newItems.slice(0, idx), ...newItems.slice(idx + 1)] })
   }
+
   saveNewItems = () => {
     const { newItems } = this.state;
     const { orderId, GetOrder } = this.props;
@@ -96,9 +111,10 @@ class LineItemSection extends React.Component {
       GetOrder({orderId})}
     })
   }
+
   render () {
-    const { newItems, mode, lineItems } = this.state;
-    const { updatedAt } = this.props;
+    const { newItems, mode, lineItems, showQuote } = this.state;
+    const { updatedAt, privilege } = this.props;
     return (
       <Section title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`} mode={mode} onEdit={this.onEdit} >
         <QuoteHeader />
@@ -112,13 +128,14 @@ class LineItemSection extends React.Component {
             <NewLineItems onChange={(item) => this.onChange(item, idx)} key={`new_item_${idx}`} remove={() => this.removeNewItem(idx)} />
           ))
         }
-        <ButtonGroup onAdd={this.addNewItem} showSave={newItems.length > 0 || mode === 'edit'} onSave={this.onSave} />
+        <ButtonGroup onAdd={this.addNewItem} showQuote={privilege === 'provider'} onSendQuote={this.onSendQuote} showSave={newItems.length > 0 || mode === 'edit'} onSave={this.onSave} />
+        <SendQuoteModal open={showQuote} onClose={this.hideQuoteModal} />
       </Section>
     )
   }
 }
 
-const mapStateToProps = state => ({ ...orderSelector(state) })
+const mapStateToProps = state => ({ ...orderSelector(state), privilege: state.auth.privilege })
 
 const mapDispatchToProps = {
   updateLineItems,
