@@ -65,7 +65,7 @@ export const DateColumn = ({ date, active, onClickTime, assignments }) => (
     <TimeWrapper>
       {times(24, idx => {
         return (
-          <div>
+          <div key={`div_${idx}`}>
             <FirstHalf onClick={() => {onClickTime(parsetMomentToDate(date), `${idx}:00`)}}/>
             <SecondHalf onClick={() => {onClickTime(parsetMomentToDate(date), `${idx}:30`)}}/>
           </div>
