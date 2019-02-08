@@ -111,7 +111,7 @@ class OrderDetails extends React.Component {
       return true;
     }
     const orderStatus = get(currentOrder, 'attributes.state' );
-    if (orderStatus === 'assigned') {
+    if (orderStatus === 'assigned' || orderStatus === 'dispatched') { 
       return false;
     }
     return true;
