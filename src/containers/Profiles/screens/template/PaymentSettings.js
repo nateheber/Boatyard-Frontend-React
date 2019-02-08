@@ -1,11 +1,30 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import { HollowButton } from 'components/basic/Buttons';
+import PaymentGatewayModal from 'components/template/CreditCardSection/PaymentGatewayModal';
 
 class PaymentSettings extends React.Component {
+  state = {
+    showPaymentModal: false,
+  }
+
+  showGatewayModal = () => {
+    this.setState({ showPaymentModal: true });
+  }
+
+  closeGatewayModal = () => {
+    this.setState({ showPaymentModal: false });
+  }
+
   render() {
-    return false;
+    const { showPaymentModal } = this.state;
+    return (
+      <React.Fragment>
+        <HollowButton onClick={this.showGatewayModal}>Connect Payment Gateway</HollowButton>
+        <PaymentGatewayModal open={showPaymentModal} onClose={this.closeGatewayModal} />
+      </React.Fragment>
+    );
   }
 }
 
