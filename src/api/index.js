@@ -72,6 +72,10 @@ export const createProviderLocationClient = authType => {
   return new CRUDClient('provider_locations', authType);
 }
 
+export const createIconClient = authType => {
+  return new CRUDClient('icons', authType);
+}
+
 export const customApiClient = authType => {
   return new NormalClient(authType);
 };
