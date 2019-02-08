@@ -117,40 +117,41 @@ class CategoryModal extends React.Component {
   }
 
   componentDidMount() {
+    const { category } = this.props;
+    const customIcon = get(category, 'customIcon.url');
+    if (!isEmpty(customIcon)) {
+      this.setState({ customIcon });
+      this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
+    }
     this.getCategoryFields();
     this.getDescriptionField();
     this.loadIcons();
   }
 
-  onSave = () => {
-    const { onSave } = this.props;
-    const { defaultIcon, customIcon } = this.state;
-    if (this.categoryFields.validateFields()) {
-      let values = {
-        ...this.categoryFields.getFieldValues(),
-        ...this.descriptionField.getFieldValues()
-      };
-      if (customIcon) {
-        values = {
-          ...values,
-          customIcon
-        };
-      } else if (defaultIcon) {
-        values = {
-          ...values,
-          icon: defaultIcon
-        };
-      }
-      onSave(values);
-    } else {
-      toastr.clean()
-      toastr.error('Please fill out all the required fields')
-    }
-  };
-
   loadIcons = (page = 1) => {
     const { GetIcons } = this.props;
     GetIcons({ params: { page } });
+  };
+
+  renderIcons = () => {
+    const { icons } = this.props;
+    const {defaultIcon } = this.state;
+    if (isEmpty(icons)) {
+      return (
+        <NoIcons>There is no default icons.</NoIcons>
+      );
+    } else {
+      return icons.map(icon => {
+        return (
+          <div
+            className={classNames('service-icon-wrapper', icon.id === defaultIcon && '-selected')}
+            onClick={() => this.handleChangeIcon(icon)}
+          >
+            <img className="service-icon" alt={icon.name} src={icon.icon} />
+          </div>
+        )
+      });
+    }
   };
 
   getCategoryFields = () => {
@@ -286,24 +287,28 @@ class CategoryModal extends React.Component {
     this.setState({ defaultIcon: icon.id });
   };
 
-  renderIcons = () => {
-    const { icons } = this.props;
-    const {defaultIcon } = this.state;
-    if (isEmpty(icons)) {
-      return (
-        <NoIcons>There is no default icons.</NoIcons>
-      );
+  onSave = () => {
+    const { onSave } = this.props;
+    const { defaultIcon, customIcon } = this.state;
+    if (this.categoryFields.validateFields()) {
+      let values = {
+        ...this.categoryFields.getFieldValues(),
+        ...this.descriptionField.getFieldValues()
+      };
+      values = {
+        ...values,
+        customIcon
+      };
+      if (defaultIcon) {
+        values = {
+          ...values,
+          icon: defaultIcon
+        };
+      }
+      onSave(values);
     } else {
-      return icons.map(icon => {
-        return (
-          <div
-            className={classNames('service-icon-wrapper', icon.id === defaultIcon && '-selected')}
-            onClick={() => this.handleChangeIcon(icon)}
-          >
-            <img className="service-icon" alt={icon.name} src={icon.icon} />
-          </div>
-        )
-      });
+      toastr.clean()
+      toastr.error('Please fill out all the required fields')
     }
   };
 
