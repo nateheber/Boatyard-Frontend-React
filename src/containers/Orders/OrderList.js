@@ -8,7 +8,7 @@ import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 
-import { GetOrders } from 'store/actions/orders';
+import { GetOrders, SetDispatchedFlag } from 'store/actions/orders';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
@@ -25,8 +25,28 @@ const TableWrapper = styled.div`
   overflow-y: scroll;
 `;
 
+const columns = [
+  { label: 'order', value: 'name' },
+  { label: 'order placed', value: 'createdAt' },
+  { label: 'total', value: 'total' },
+  { label: 'order status', value: 'state' }
+];
+const tabs = [
+  { title: 'NORMAL', value: 'all', counts: 0 },
+  { title: 'DISPATCHED', value: 'dispatched', counts: 0 },
+];
+
 class OrderList extends React.Component {
+  state = { tab: 'all' }
+
   componentDidMount() {
+    this.props.SetDispatchedFlag(false);
+    this.props.GetOrders({ params: { page: 1 } });
+  }
+
+  onChangeTab = (tab) => {
+    this.setState({ tab });
+    this.props.SetDispatchedFlag(tab === 'dispatched');
     this.props.GetOrders({ params: { page: 1 } });
   }
 
@@ -67,22 +87,11 @@ class OrderList extends React.Component {
       name: `Order #${order.id}`,
       createdAt: `${moment(order.createdAt).format('MMM DD, YYYY')}`
     }));
-    const columns = [
-      { label: 'order', value: 'name' },
-      { label: 'order placed', value: 'createdAt' },
-      { label: 'total', value: 'total' },
-      { label: 'order status', value: 'state' }
-    ];
-    const tabs = [
-      { title: 'ALL', value: 'all', counts: 2 },
-      { title: 'NEW', value: 'new', counts: 0 },
-      { title: 'IN PROGRESS', value: 'in_progress', counts: 1 },
-      { title: 'COMPLETED', value: 'completed', counts: 1 }
-    ];
+    const { tab } = this.state;
     return (
       <Wrapper>
         <OrderHeader onNewOrder={this.newOrder} />
-        <Tab tabs={tabs} selected="all" />
+        <Tab tabs={tabs} selected={tab} onChange={this.onChangeTab} />
         <TableWrapper>
           <Table
             columns={columns}
@@ -108,7 +117,8 @@ const mapStateToProps = ({ order: { orders : { orders, page, perPage, total } } 
 });
 
 const mapDispatchToProps = {
-  GetOrders
+  GetOrders,
+  SetDispatchedFlag,
 };
 
 export default withRouter(

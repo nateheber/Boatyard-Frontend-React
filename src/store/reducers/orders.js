@@ -18,7 +18,8 @@ const ordersState = {
   included: {},
   page: 1,
   perPage: 20,
-  total: 0
+  total: 0,
+  dispatched: false,
 };
 
 const initialState = {
@@ -35,6 +36,11 @@ const initialState = {
 
 export default handleActions(
   {
+    [actionTypes.SET_DISPATCHED_FLAG]: (state, action) => 
+      produce(state, draft => {
+        const { payload } = action;
+        draft.dispatched = payload;
+      }),
     [actionTypes.GET_ORDERS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;

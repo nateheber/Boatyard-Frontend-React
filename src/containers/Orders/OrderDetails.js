@@ -52,7 +52,7 @@ class OrderDetails extends React.Component {
         orderId,
         success: () => {
           this.setState({ isFirstLoad: false });
-        }
+        },
       });
     });
   }

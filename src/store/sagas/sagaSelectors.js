@@ -6,6 +6,7 @@ export const getUsers = state => state.user.users;
 export const getUsersPageNumber = state => state.user.page;
 export const getServicesPageNumber = state => state.service.nextPage;
 export const getOrdersPageNumber = state => state.order.nextPage;
+export const getOrderDispatchedFlag = state => state.order.dispatched;
 
 export const getCategoryClient = state => {
   switch (state.auth.privilege) {
@@ -69,6 +70,19 @@ export const getOrderClient = state => {
       return APIGenerator.createOrderClient('provider');
     default:
       return APIGenerator.createOrderClient('basic');
+  }
+};
+
+export const getDispatchedOrderClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createDispatchedOrderClient('basic');
+    case 'admin':
+      return APIGenerator.createDispatchedOrderClient('admin');
+    case 'provider':
+      return APIGenerator.createDispatchedOrderClient('provider');
+    default:
+      return APIGenerator.createDispatchedOrderClient('basic');
   }
 };
 

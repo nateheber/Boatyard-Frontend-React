@@ -30,7 +30,7 @@ const orderFields = [
     field: 'special_instructions',
     label: 'Special Instructions',
     errorMessage: 'Enter Special Instructions',
-    required: true,
+    required: false,
     xs: 12,
     sm: 12,
     md: 12,
