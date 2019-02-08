@@ -34,7 +34,7 @@ const DateTime = styled.div`
 const MessageBody = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px !important;
-  border-radius: 5px !important;
+  border-radius: 6px !important;
   padding: 10px;
   position: relative;
   margin-bottom: 0 !important;
