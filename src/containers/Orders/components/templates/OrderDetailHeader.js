@@ -97,9 +97,10 @@ class OrderDetailHeader extends React.Component {
   }
 
   render() {
-    const { order, privilege, providerInfo } = this.props;
-    const providerId = parseInt(get(order, 'attributes.providerId'));
-    const myProviderId = parseInt(get(providerInfo, 'data.id'));
+    const { order, privilege } = this.props;
+    const orderStatus = get(order, 'attributes.state');
+    const canAcceptOrder = privilege === 'provider' && (orderStatus === 'dispatched' || orderStatus === 'assigned');
+    const canAssignOrder = privilege === 'admin' && orderStatus !== 'invoiced';
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
@@ -117,7 +118,7 @@ class OrderDetailHeader extends React.Component {
             ]}
           />
           <Col xs={12} sm={6} md={4} lg={3}>
-            {privilege === 'admin' && !providerId && <BoatyardSelect
+            {canAssignOrder && <BoatyardSelect
               components={{
                 Option: ProviderOption,
                 SingleValue: ProviderOptionValue
@@ -128,7 +129,7 @@ class OrderDetailHeader extends React.Component {
               onChange={this.onChangeProvider}
             />}
             {
-              privilege === 'provider' && providerId !== myProviderId &&
+              canAcceptOrder &&
               <OrangeButton onClick={this.acceptOrder} >Accept Order</OrangeButton>
             }
           </Col>
@@ -141,10 +142,7 @@ class OrderDetailHeader extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  privilege: state.auth.privilege,
-  providerInfo: state.provider.currentProvider,
-})
+const mapStateToProps = state => ({ privilege: state.auth.privilege })
 
 const mapDispatchToProps = {
   FilterProviders,

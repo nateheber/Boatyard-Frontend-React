@@ -11,11 +11,24 @@ const Container = styled(Row)`
   justify-content: space-between;
 `;
 
-export default ({ onAdd, onSave, showSave }) => (
+const Left = styled.div`
+  align-items: center;
+`
+
+export default ({ onAdd, onSave, showSave, showQuote, onSendQuote }) => (
   <Container>
-    <HollowButton onClick={onAdd}>
-      ADD ITEM
-    </HollowButton>
+    <Left>
+      <HollowButton onClick={onAdd}>
+        ADD ITEM
+      </HollowButton>
+      {
+        showQuote && (
+          <HollowButton onClick={onSendQuote}>
+            Send Quote
+          </HollowButton>
+        )
+      }
+    </Left>
     {
       showSave && (
         <OrangeButton onClick={onSave}>

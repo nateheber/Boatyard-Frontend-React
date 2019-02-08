@@ -12,6 +12,7 @@ import {
 import { GetOrder } from 'store/actions/orders';
 import { orderSelector } from 'store/selectors/orders';
 import { Section } from 'components/basic/InfoSection';
+import SendQuoteModal from 'components/template/SendQuoteModal';
 import NewLineItems from '../infoSections/NewLineItem';
 import LineItem from '../infoSections/LineItem';
 import ButtonGroup from '../basic/ButtonGroup';
@@ -23,8 +24,9 @@ class LineItemSection extends React.Component {
     this.state = {
       newItems: [],
       lineItems: get(props, 'currentOrder.lineItems', []),
-      mode: 'view'
-    };
+      mode: 'view',
+      showQuote: false,
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -76,9 +78,18 @@ class LineItemSection extends React.Component {
     if (mode === 'edit') {
       this.updateLineItems();
     }
-    this.saveNewItems();
-    this.setState({ mode: 'view' });
-  };
+    this.saveNewItems()
+    this.setState({ mode: 'view' })
+  }
+
+  onSendQuote = () => {
+    this.setState({ showQuote: true });
+  }
+
+  hideQuoteModal = () => {
+    this.setState({ showQuote: false });
+  }
+
   updateLineItems = () => {
     const { lineItems } = this.state;
     const { orderId, updateLineItems, GetOrder } = this.props;
@@ -131,8 +142,8 @@ class LineItemSection extends React.Component {
     });
   };
   render() {
-    const { newItems, mode, lineItems } = this.state;
-    const { updatedAt } = this.props;
+    const { newItems, mode, lineItems, showQuote } = this.state;
+    const { updatedAt, privilege } = this.props;
     return (
       <Section
         title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`}
@@ -164,13 +175,18 @@ class LineItemSection extends React.Component {
           onAdd={this.addNewItem}
           showSave={newItems.length > 0 || mode === 'edit'}
           onSave={this.onSave}
+          showQuote={privilege === 'provider'}
+          onSendQuote={this.onSendQuote}
         />
+        {
+          privilege === 'provider' && <SendQuoteModal open={showQuote} onClose={this.hideQuoteModal} />
+        }
       </Section>
     );
   }
 }
 
-const mapStateToProps = state => ({ ...orderSelector(state) });
+const mapStateToProps = state => ({ ...orderSelector(state), privilege: state.auth.privilege })
 
 const mapDispatchToProps = {
   updateLineItems,
