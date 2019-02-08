@@ -51,13 +51,17 @@ class PaymentGatewayModal extends React.Component {
   };
 
   onSuccess = () => {
-    this.props.onClose();
+    this.onClose();
     toastr.success('Payment Gateway Created!');
   }
 
   onError = () => {
-    console.log('error');
     toastr.error('Payment Gateway Error', 'Invalid Credentials')
+  }
+
+  onClose = () => {
+    this.props.onClose();
+    this.setState({ step: 'gateway', gateway: {}, credential: {} });
   }
 
   next = () => {
@@ -162,14 +166,14 @@ class PaymentGatewayModal extends React.Component {
   };
 
   render() {
-    const { open, onClose } = this.props;
+    const { open } = this.props;
     const actions = this.getActions();
     return (
       <Modal
         title="New Payment Method"
         actions={actions}
         open={open}
-        onClose={onClose}
+        onClose={this.onClose}
         normal
         centered
       >

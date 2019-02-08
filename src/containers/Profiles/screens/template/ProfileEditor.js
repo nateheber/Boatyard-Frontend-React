@@ -11,6 +11,7 @@ import {
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 
+import PaymentSettings from './PaymentSettings';
 import { PasswordEditor } from './PasswordEditor';
 
 const Wrapper = styled.div`
@@ -40,7 +41,7 @@ const modalStyles = {
   }
 };
 
-export class ProfileEditor extends React.Component {
+export default class ProfileEditor extends React.Component {
   constructor(props) {
     super(props);
     const { firstName, lastName, phoneNumber, email } = props.profile;
@@ -101,7 +102,7 @@ export class ProfileEditor extends React.Component {
   };
   render() {
     const { firstName, lastName, phoneNumber, email, showModal } = this.state;
-    const { history } = this.props;
+    const { history, privilege } = this.props;
     const { type } = this.props.profile;
     const actions = (
       <React.Fragment>
@@ -161,6 +162,13 @@ export class ProfileEditor extends React.Component {
               Change Password
             </HollowButton>
           </InputWrapper>
+          {
+            privilege === 'provider' &&
+            <InputWrapper style={{ flex: '3' }} className="secondary">
+              <InputLabel>Payment Settings</InputLabel>
+              <PaymentSettings />
+            </InputWrapper>
+          }
           {/* <InputWrapper style={{ flex: '2' }} className="secondary">
             <InputLabel>IOS App Version</InputLabel>
             <Input type="text" />

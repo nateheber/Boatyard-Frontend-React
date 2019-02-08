@@ -17,6 +17,29 @@ const Value = styled.div`
   text-overflow: ellipsis;
 `
 
+const StyledSelector = styled(Select)`
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+  .css-2o5izw {
+    min-height: 35px;
+  }
+  .css-vj8t7z {
+    min-height: 35px;
+  }
+  .css-1wy0on6 {
+    .css-1uq0kb5 {
+      padding: 5px;
+    }
+    .css-d8oujb {
+      display: none;
+    }
+    .css-1ep9fjw {
+      display: none;
+    }
+  }
+`;
+
 const CustomOption = ({ innerProps: { id, ...rest }, data }) => (
   <Option key={`option_${id}`} {...rest} >
     {data.label}
@@ -32,7 +55,7 @@ const CustomValue = ({ data }) => (
 export class Selector extends React.Component {
   render() {
     return (
-      <Select
+      <StyledSelector
         components={{
           Option: CustomOption,
           SingleValue: CustomValue,
