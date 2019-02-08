@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
-import { get, merge, isEmpty, filter, camelCase, startCase, hasIn } from 'lodash';
+import { get, isEmpty, filter, camelCase, startCase, hasIn } from 'lodash';
 
 import { FilterServices, GetService } from 'store/actions/services';
 import { actionTypes } from 'store/actions/orders';
