@@ -106,8 +106,13 @@ class OrderDetails extends React.Component {
   };
 
   getCustomerInfoCondition = () => {
-    const { currentOrder, privilege } = this.props;
+    const { currentOrder, privilege, provider } = this.props;
     if (privilege === 'admin') {
+      return true;
+    }
+    const providerId = get(currentOrder, 'attributes.providerId');
+    const myProviderId = get(provider, 'data.id');
+    if (providerId === parseInt(myProviderId)) {
       return true;
     }
     const orderStatus = get(currentOrder, 'attributes.state' );
@@ -231,7 +236,8 @@ const mapStateToProps = state => ({
   ...orderSelector(state),
   currentStatus: state.order.currentStatus,
   boatStatus: state.boat.currentStatus,
-  privilege: state.auth.privilege
+  privilege: state.auth.privilege,
+  provider: state.provider.currentProvider,
 });
 
 const mapDispatchToProps = {
