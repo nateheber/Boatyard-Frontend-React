@@ -4,7 +4,7 @@ import changeCase from 'change-case';
 import classNames from 'classnames'
 import moment from 'moment';
 import { Col } from 'react-flexbox-grid';
-import { get, startCase } from 'lodash';
+import { get, startCase, isEmpty } from 'lodash';
 
 import CaretDownIcon from '../../../resources/caret-down-solid.svg';
 import CaretUpIcon from '../../../resources/caret-up-solid.svg';
@@ -217,7 +217,10 @@ export class Record extends React.Component {
     const { show } = this.state;
     const firstColumn = columns[0];
     const hidingCols = columns.slice(1);
-    const icon = get(record, 'icon_id') || 'https://dev.boatyard.com/img/logo.svg';
+    let icon = get(record, 'customIcon.url');
+    if (isEmpty(icon)) {
+      icon = get(record, 'iconId') || 'https://dev.boatyard.com/img/logo.svg';
+    }
     return (
       <React.Fragment>
         { type === 'tile' ?

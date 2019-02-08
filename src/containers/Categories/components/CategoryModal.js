@@ -2,13 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
+import classNames from 'classnames';
 import { get, isEmpty, startCase } from 'lodash';
 
 import { actionTypes, GetIcons } from 'store/actions/icons';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
-import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import { OrangeButton, HollowButton, UploadButton } from 'components/basic/Buttons';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
+import { NormalText } from 'components/basic/Typho'
 
 const Divider = styled.div`
   height: 20px;
@@ -18,14 +20,59 @@ const Divider = styled.div`
 const IconSection = styled.div`
 `;
 
+const NoIcons = styled(NormalText)`
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+`;
+
 const HeaderSection = styled.div`
-  > label {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  > span {
     font-size: 12px;
     font-family: Montserrat, sans-serif;
     text-transform: uppercase;
     font-weight: 700;
     color: #004258;
     margin-right: 20px;
+  }
+
+  .selected-icon {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid #dfdfdf;
+    border-radius: 8px;
+    background-image: url('https://dev.boatyard.com/img/logo.svg');
+    background-size: contain;
+    background-position: center;
+    transition: all ease-in-out .2s;
+    background-repeat: no-repeat;
+    .close-icon {
+      position: absolute;
+      opacity: 0;
+      right: -5px;
+      top: -15px;
+      font-size: 25px;
+      transition: all ease-in-out .2s;
+    }
+    &.has-icon {
+      cursor: pointer;
+      .close-icon {
+        cursor: pointer;
+      }
+    &:hover {
+      &.has-icon {
+      box-shadow: 0 3px 5px 1px rgba(0, 0, 0, 0.25);
+        .close-icon {
+          opacity: 1;
+        }
+      }
+    }
   }
 `;
 
@@ -34,7 +81,7 @@ const IconsContainer = styled.div`
   height: 156px;
   overflow: auto;
   display: flex;
-  background: gray;
+  border: 1px solid #dfdfdf;
   flex-wrap: wrap;
   justify-content: space-between;
   margin: 10px 0 30px;
@@ -47,7 +94,7 @@ const IconsContainer = styled.div`
     padding:2px;
     cursor: pointer;
     &.-selected {
-      border: 1px solid wheat;
+      border: 1px solid #dfdfdf;
       border-radius: 8px;  
     }
     > img {
@@ -62,7 +109,10 @@ class CategoryModal extends React.Component {
     super(props);
     this.state = {
       categoryFields: [],
-      descriptionField: []
+      descriptionField: [],
+      iconRef: null,
+      customIcon: null,
+      defaultIcon: null
     };
   }
 
@@ -74,11 +124,23 @@ class CategoryModal extends React.Component {
 
   onSave = () => {
     const { onSave } = this.props;
+    const { defaultIcon, customIcon } = this.state;
     if (this.categoryFields.validateFields()) {
-      const values = {
+      let values = {
         ...this.categoryFields.getFieldValues(),
         ...this.descriptionField.getFieldValues()
       };
+      if (customIcon) {
+        values = {
+          ...values,
+          customIcon
+        };
+      } else if (defaultIcon) {
+        values = {
+          ...values,
+          icon: defaultIcon
+        };
+      }
       onSave(values);
     } else {
       toastr.clean()
@@ -203,65 +265,51 @@ class CategoryModal extends React.Component {
     this.descriptionField = ref;
   }
 
+  handleFileChange = (file, ref) => {
+    this.setState({ customIcon: file });
+    this.setState({ iconRef: ref });
+    this.refs.selectedIconContainer.style.backgroundImage = `url(${file})`;
+  }
+
+  deleteCustomIcon = () => {
+    const { customIcon, iconRef } = this.state;
+    if (!isEmpty(customIcon)) {
+      this.setState({ customIcon: null });
+      this.refs.selectedIconContainer.style.backgroundImage = 'none';
+      if (iconRef) {
+        iconRef.value = '';
+      }
+    }
+  };
+
+  handleChangeIcon = (icon) => {
+    this.setState({ defaultIcon: icon.id });
+  };
+
   renderIcons = () => {
     const { icons } = this.props;
-    return (
-      <React.Fragment>
-        <div className="service-icon-wrapper -selected"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-        <div className="service-icon-wrapper"><img className="service-icon" alt="service" src="https://dev.boatyard.com/img/logo.svg" /></div>
-      </React.Fragment>
-    );
+    const {defaultIcon } = this.state;
+    if (isEmpty(icons)) {
+      return (
+        <NoIcons>There is no default icons.</NoIcons>
+      );
+    } else {
+      return icons.map(icon => {
+        return (
+          <div
+            className={classNames('service-icon-wrapper', icon.id === defaultIcon && '-selected')}
+            onClick={() => this.handleChangeIcon(icon)}
+          >
+            <img className="service-icon" alt={icon.name} src={icon.icon} />
+          </div>
+        )
+      });
+    }
   };
 
   render() {
     const { loading, title, category, open, onClose, onDelete, currentStatus } = this.props;
-    const { categoryFields, descriptionField } = this.state;
+    const { categoryFields, descriptionField, customIcon } = this.state;
     const actions = isEmpty(category) ? 
       [<OrangeButton onClick={this.onSave} key="modal_btn_save">Add Category</OrangeButton>]
       :
@@ -279,8 +327,11 @@ class CategoryModal extends React.Component {
       >
         <IconSection>
           <HeaderSection>
-            <label>Choose Icon</label>
-            <HollowButton>Upload Icon</HollowButton>
+            <span>Choose Icon</span>
+            <UploadButton title="Upload Icon" accept="image/*" onFileChange={this.handleFileChange} />
+            <div className={classNames('selected-icon', !isEmpty(customIcon) && 'has-icon' )} ref="selectedIconContainer" onClick={this.deleteCustomIcon}>
+              <label className="close-icon">×</label>
+            </div>
           </HeaderSection>
           <IconsContainer>
             {currentStatus === actionTypes.GET_ICONS ?
