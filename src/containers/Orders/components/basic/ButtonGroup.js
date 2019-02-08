@@ -21,9 +21,13 @@ export default ({ onAdd, onSave, showSave, showQuote, onSendQuote }) => (
       <HollowButton onClick={onAdd}>
         ADD ITEM
       </HollowButton>
-      <HollowButton onClick={onSendQuote}>
-        Send Quote
-      </HollowButton>
+      {
+        showQuote && (
+          <HollowButton onClick={onSendQuote}>
+            Send Quote
+          </HollowButton>
+        )
+      }
     </Left>
     {
       showSave && (

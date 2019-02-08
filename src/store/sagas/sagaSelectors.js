@@ -122,7 +122,7 @@ export const getPaymentClient = state => {
     default:
       return APIGenerator.createPaymentClient('basic');
   }
-}
+};
 
 export const getCreditCardClient = state => {
   switch (state.auth.privilege) {
@@ -135,7 +135,7 @@ export const getCreditCardClient = state => {
     default:
       return APIGenerator.createCreditCardClient('basic');
   }
-}
+};
 
 export const getCustomApiClient = state => {
   switch (state.auth.privilege) {
@@ -173,6 +173,19 @@ export const getProviderLocationServiceClient = state => {
       return APIGenerator.createProviderLocationServiceClient('provider');
     default:
       return APIGenerator.createProviderLocationServiceClient('basic');
+  }
+};
+
+export const getPaymentGatewayClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createPaymentGatewayClient('basic');
+    case 'admin':
+      return APIGenerator.createPaymentGatewayClient('admin');
+    case 'provider':
+      return APIGenerator.createPaymentGatewayClient('provider');
+    default:
+      return APIGenerator.createPaymentGatewayClient('basic');
   }
 };
 

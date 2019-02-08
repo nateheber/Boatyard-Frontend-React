@@ -26,7 +26,7 @@ export default class SendQuoteModal extends React.Component {
   
   render() {
     const { onClose, open } = this.props;
-    const action = [ <ActionFooter onCancel={onClose} onSend={this.sendQuote} /> ];
+    const action = [ <ActionFooter onCancel={onClose} onSend={this.sendQuote} key="action_footer" /> ];
     const { quote, body, subject } = this.state;
     return (
       <Modal
