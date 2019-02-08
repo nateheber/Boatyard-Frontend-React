@@ -45,20 +45,30 @@ const FieldWrapper = styled.div`
 `
 
 export default class TemplateEditor extends React.Component {
+  changeSubject = (evt) => {
+    const { quote } = this.props;
+    const subject = evt.target.value;
+    this.props.onChange({ quote, subject });
+  }
+
+  changeQuote = (evt) => {
+    const { subject } = this.props;
+    const quote = evt.target.value;
+    this.props.onChange({ quote, subject });
+  }
+
   render() {
+    const { subject, body, quote } = this.props;
     return (
       <Wrapper>
         <InputWrapper className="primary">
           <Label>Subject</Label>
-          <Input type="text" value="Your Quote from Boatyard" />
+          <Input type="text" value={subject} onChange={this.changeSubject} />
         </InputWrapper>
         <BodyWrapper>
           <Label>Body</Label>
           <BodyContent>
-            Hi Brock Smoke Test 23, 
-            <br />
-            <br />
-            Thank you for the obligation to provide you with our services. To view your quote, please click here:
+            {body}
           </BodyContent>
         </BodyWrapper>
         <br />
@@ -68,17 +78,8 @@ export default class TemplateEditor extends React.Component {
         </ViewTemplateButtonWrapper>
         <FieldWrapper>
           <TextArea
-            value="Once we receive your approval, we will contact you to schedule your service. If you have any questions, or if there is anything else I can do for you, please let me know.
-
-
-            We appreciate your business.
-            
-
-            Thank you,
-
-            Brock (BY Provider) Admin
-            
-            Boatyard"
+            value={quote}
+            onChange={this.changeQuote}
           />
         </FieldWrapper>
       </Wrapper>
