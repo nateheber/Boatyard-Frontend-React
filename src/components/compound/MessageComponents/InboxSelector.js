@@ -102,7 +102,7 @@ export class InboxSelector extends React.Component {
               DELETE MESSAGES
             </HollowButton>
           ) : (
-            <SearchBox secondary onChange={this.setFilter} />
+            <SearchBox onChange={this.setFilter} />
           )}
         </FilterWrapper>
         <Content>
