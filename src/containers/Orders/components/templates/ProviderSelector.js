@@ -220,7 +220,7 @@ class ProviderSelector extends React.Component {
   submitData = () => {
     const { dispatchIds } = this.state;
     this.props.onChange(dispatchIds);
-    this.setState({ showModal: false });
+    this.setState({ showModal: false, dispatchIds: [] });
   }
 
   isChecked = (providerId) => {
