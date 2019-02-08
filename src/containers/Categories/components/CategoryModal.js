@@ -77,16 +77,20 @@ const HeaderSection = styled.div`
   }
 `;
 
-const IconsContainer = styled.div`
+const ContentSection = styled.div`
+  position: relative;
   width: 100%;
   height: 156px;
   overflow: auto;
-  display: flex;
   border: 1px solid #dfdfdf;
+  margin: 10px 0 30px;
+`;
+const IconsContainer = styled.div`
+  display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin: 10px 0 30px;
-  position: relative;
+  width: 100%;
+  overflow: visible;
 
   .service-icon-wrapper {
     width: 30px;
@@ -342,13 +346,17 @@ class CategoryModal extends React.Component {
               <label className="close-icon">×</label>
             </div>
           </HeaderSection>
-          <IconsContainer>
-            {currentStatus === actionTypes.GET_ICONS ?
-              <LoadingSpinner
-                loading={true}
-              />
-            : this.renderIcons()}
-          </IconsContainer>
+          <ContentSection>
+              {currentStatus === actionTypes.GET_ICONS ?
+                <LoadingSpinner
+                  loading={true}
+                />
+              : 
+              <IconsContainer>
+                {this.renderIcons()}
+              </IconsContainer>
+              }
+          </ContentSection>
         </IconSection>
         <FormFields
           ref={this.setCategoryFieldsRef}
