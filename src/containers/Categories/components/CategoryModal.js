@@ -43,7 +43,6 @@ const HeaderSection = styled.div`
     position: relative;
     width: 30px;
     height: 30px;
-    min-width: 36px;
     margin: 2px;
     padding: 2px;
     border: 1px solid #dfdfdf;
@@ -310,7 +309,7 @@ class CategoryModal extends React.Component {
       if (defaultIcon) {
         values = {
           ...values,
-          icon: defaultIcon
+          iconId: defaultIcon
         };
       }
       onSave(values);

@@ -10,7 +10,7 @@ import Table from 'components/basic/Table';
 import { PageTitle } from 'components/basic/Typho';
 import { SectionHeaderWrapper, LeftPart, RightPart } from 'components/basic/Header';
 import { OrangeButton } from 'components/basic/Buttons';
-import { Input } from 'components/basic/Input';
+import { SearchBox } from 'components/basic/Input';
 import AddServiceModal from '../components/AddServiceModal';
 
 const Wrapper = styled.div`
@@ -71,8 +71,7 @@ class AddService extends React.Component {
     this.props.history.push(`/services`);
   }
 
-  handleInputChange = (event) => {
-    const keyword = event.target.value;
+  handleInputChange = (keyword) => {
     this.setState({ keyword }, () => {
       this.loadPage(1);
     });
@@ -94,7 +93,7 @@ class AddService extends React.Component {
     const columns = [
       { label: 'serivce name', value: 'name' },
     ];
-    const { keyword, visibleOfServiceModal, selectedCategory } = this.state;
+    const { visibleOfServiceModal, selectedCategory } = this.state;
     const { categories, categoryStatus, serviceStatus, page, perPage, total } = this.props;
     const pageCount = Math.ceil(total/perPage);
     return (
@@ -111,12 +110,7 @@ class AddService extends React.Component {
         </SectionHeaderWrapper>
         <SearchSection>
           <SearchCotainer>
-            <Input
-              type="text"
-              placeholder="SEARCH SERVICE"
-              value={keyword}
-              onChange={this.handleInputChange}
-            />
+            <SearchBox placeholder="SEARCH SERVICES" onChange={this.handleInputChange} />
           </SearchCotainer>
         </SearchSection>
         <Table

@@ -107,6 +107,23 @@ class OrderDetails extends React.Component {
     return updatedAt;
   };
 
+  getCustomerInfoCondition = () => {
+    const { currentOrder, privilege, provider } = this.props;
+    if (privilege === 'admin') {
+      return true;
+    }
+    const providerId = get(currentOrder, 'attributes.providerId');
+    const myProviderId = get(provider, 'data.id');
+    if (providerId === parseInt(myProviderId)) {
+      return true;
+    }
+    const orderStatus = get(currentOrder, 'attributes.state' );
+    if (orderStatus === 'assigned' || orderStatus === 'dispatched') { 
+      return false;
+    }
+    return true;
+  }
+
   showBoatModal = () => {
     this.setState({ visibleOfBoatModal: true });
   };
@@ -147,6 +164,7 @@ class OrderDetails extends React.Component {
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
     const canAssignOrder = orderStatus !== ' invoiced' && privilege === "admin";
+    const canShowCustomerInfo = this.getCustomerInfoCondition();
 
     return (
       <React.Fragment>
@@ -187,6 +205,7 @@ class OrderDetails extends React.Component {
                   </SectionGroup>}
                   <SectionGroup>
                     <CustomerBoat
+                      canShowCustomerInfo={canShowCustomerInfo}
                       boatInfo={boatInfo}
                       customerInfo={customerInfo}
                       onEditBoat={() => this.showBoatModal()}
@@ -219,7 +238,8 @@ const mapStateToProps = state => ({
   ...orderSelector(state),
   currentStatus: state.order.currentStatus,
   boatStatus: state.boat.currentStatus,
-  privilege: state.auth.privilege
+  privilege: state.auth.privilege,
+  provider: state.provider.currentProvider,
 });
 
 const mapDispatchToProps = {

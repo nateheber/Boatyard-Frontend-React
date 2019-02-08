@@ -9,7 +9,7 @@ import { get, isEmpty, isNumber, startCase } from 'lodash';
 import { actionTypes, GetCategories, CreateCategory, UpdateCategory, DeleteCategory } from 'store/actions/categories';
 import Table from 'components/basic/Table';
 import { CategoryHeader } from 'components/compound/SectionHeader';
-import { Input } from 'components/basic/Input';
+import { SearchBox } from 'components/basic/Input';
 import CategoryModal from '../components/CategoryModal';
 
 const Wrapper = styled.div`
@@ -52,8 +52,7 @@ class Categories extends React.Component {
     GetCategories({ params });
   };
 
-  handleInputChange = (event) => {
-    const keyword = event.target.value;
+  handleInputChange = (keyword) => {
     this.setState({ keyword }, () => {
       this.loadPage(1);
     });
@@ -61,7 +60,6 @@ class Categories extends React.Component {
 
   handleUpdateCategory = category => {
     this.setState({ selectedCategory: category }, () => {
-      // this.props.history.push(`/category-details/?category=${category.id}`);
       this.showCategoryModal();
     })
   };
@@ -151,7 +149,7 @@ class Categories extends React.Component {
 
   render() {
     const { categories, currentStatus, page, perPage, total } = this.props;
-    const { keyword, selectedCategory, visibleOfCategoryModal } = this.state;
+    const { selectedCategory, visibleOfCategoryModal } = this.state;
     const columns = [
       { label: 'category name', value: 'name' },
     ];
@@ -162,12 +160,7 @@ class Categories extends React.Component {
         <CategoryHeader onAdd={this.handleCreateCategory} />
         <SearchSection>
           <SearchCotainer>
-            <Input
-              type="text"
-              placeholder="SEARCH CATEGORIES"
-              value={keyword}
-              onChange={this.handleInputChange}
-            />
+            <SearchBox placeholder="SEARCH CATEGORIES" onChange={this.handleInputChange} />
           </SearchCotainer>
         </SearchSection>
         <Table

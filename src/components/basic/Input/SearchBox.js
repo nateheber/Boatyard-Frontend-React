@@ -8,13 +8,14 @@ const InputWrapper = styled.div`
   display: inline-block;
   position: relative;
   width: 280px;
-  height: 35px;
+  height: 30px;
   border-radius: 6px !important;
-  background-color: #ffaa5c;
+  border: 1px solid rgb(223, 223, 223);
+  background-color: transparent;
   align-items: center;
   &.secondary {
-    border: 1px solid rgb(223, 223, 223);
-    background-color: transparent;
+    background-color: #ffaa5c;
+    border: none;
   }
 `;
 
@@ -24,23 +25,23 @@ const Input = styled.input`
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
   border: none;
-  height: 35px;
-  width: 100%;
+  height: 30px;
+  width: calc(100% - 40px);
   font-weight: 600;
-  color: white;
   padding-top: 0px;
   padding-bottom: 0px;
   padding-left: 10px;
-  padding-right: 0px;
+  padding-right: 30px;
   background-color: transparent;
-  &::placeholder {
-    color: white;
-  }
+  color: rgb(51, 51, 51);
   &:focus {
     outline: none;
   }
   &.secondary {
-    color: rgb(51, 51, 51);
+    color: white;
+    &::placeholder {
+      color: white;
+    }
   }
 `;
 
@@ -54,6 +55,14 @@ const SearchButton = styled.button`
   &:focus {
     outline: none;
   }
+  .search-icon {
+    color: #A9B5BB;
+    width: 20px;
+    height: 20px;
+    &.secondary {
+      color: white;
+    }
+  }
 `;
 
 export class SearchBox extends React.Component {
@@ -62,18 +71,24 @@ export class SearchBox extends React.Component {
     value: ''
   };
   onChangeInput = evt => {
+    const { onChange } = this.props;
     this.setState({
       value: evt.target.value
     });
-    this.props.onChange(evt.target.value);
+    if (onChange) {
+      onChange(evt.target.value);
+    }
   };
   onClick = () => {
+    const { onChange } = this.props;
     const { value } = this.state;
     if (!isEmpty(value)) {
       this.setState({
         value: ''
       });
-      this.props.onChange('');
+      if (onChange) {
+        onChange('');
+      }
     }
   };
   render() {
@@ -101,13 +116,13 @@ export class SearchBox extends React.Component {
             <EvilIcon
               name="ei-close-o"
               size="s"
-              className={className('searchIcon', { secondary: secondary })}
+              className={className('search-icon', { secondary: secondary })}
             />
           ) : (
             <EvilIcon
               name="ei-search"
               size="s"
-              className={className('searchIcon', { secondary: secondary })}
+              className={className('search-icon', { secondary: secondary })}
             />
           )}
         </SearchButton>

@@ -98,7 +98,7 @@ export class QRSelector extends React.Component {
               DELETE QUICK REPLIE(S)
             </HollowButton>
           ) : (
-            <SearchBox secondary onChange={this.setFilter} />
+            <SearchBox onChange={this.setFilter} />
           )}
         </FilterWrapper>
         <Content>

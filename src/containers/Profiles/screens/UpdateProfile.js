@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import { ProfileEditor } from 'components/template/Editors';
+import ProfileEditor from './template/ProfileEditor';
 
 import { updateProfile } from 'store/reducers/profile';
 
@@ -21,7 +21,7 @@ class UpdateProfile extends React.Component {
   }
 }
 
-const mapStateToProps = ({ profile }) => ({ profile });
+const mapStateToProps = ({ profile, auth }) => ({ profile, privilege: auth.privilege });
 const mapDispatchToProps = { updateProfile };
 
 export default connect(

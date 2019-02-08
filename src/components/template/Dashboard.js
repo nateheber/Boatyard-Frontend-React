@@ -1,8 +1,8 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { GetNewOrders, GetOpenOrders } from 'store/actions/orders';
 import { AssignedOrders, ScheduledOrders, MonthlyRevenue } from 'components/compound/SubSections';
 import NewOrders from 'components/compound/SubSections/NewOrders';
 import OpenInvoices from 'components/compound/SubSections/OpenInvoices';
@@ -41,29 +41,8 @@ class Dashboard extends React.Component {
     }
   };
 
-  creationFinished = () => {
-    const { privilege } = this.props;
-    if (privilege === 'admin') {
-    } else {
-      this.props.GetNewOrders({
-        params: {
-          page: 1,
-          per_page: 5,
-          'order[state]': 'draft',
-          'order[sort]': 'desc',
-          'order[order]': 'created_at'
-        }
-      });
-      this.props.GetOpenOrders({
-        params: {
-          page: 1,
-          per_page: 5,
-          'order[state]': 'invoiced',
-          'order[sort]': 'desc',
-          'order[order]': 'created_at'  
-        }
-      });    
-    }
+  creationFinished = (orderId) => {
+    this.props.history.push(`/order-details/?order=${orderId}`);
   };
 
   newOrder = () => {
@@ -96,9 +75,4 @@ const mapStateToProps = ({ auth: { privilege } }) => ({
   privilege
 });
 
-const mapDispatchToProps = {
-  GetNewOrders,
-  GetOpenOrders
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default withRouter(connect(mapStateToProps, null)(Dashboard));
