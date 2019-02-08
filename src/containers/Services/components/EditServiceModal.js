@@ -20,7 +20,7 @@ class AddServiceModal extends React.Component {
     this.state = {
       mainFields: this.getMainFields(),
       serviceValues: this.getServiceValues(),
-      descriptionField: this.getDescriptionFields()
+      descriptionField: this.getDescriptionField()
     };
   }
 
@@ -33,8 +33,10 @@ class AddServiceModal extends React.Component {
     GetCategory({
       categoryId,
       success: (category, included) => {
+        const mainFields = this.getMainFields(category);
         const serviceValues = this.getServiceValuesFromCategory(included);
-        this.setState({ serviceValues });
+        const descriptionField = this.getDescriptionField(category);
+        this.setState({ mainFields, serviceValues, descriptionField });  
       }
     })
   };
@@ -53,19 +55,25 @@ class AddServiceModal extends React.Component {
     });
   }
 
-  getServiceName = () => {
+  getDescriptionField = () => {
     const { service } = this.props;
     return get(service, 'name');
   }
 
-  getMainFields = () => {
-    const { service: { name, categoryId, cost, costType, isTaxable } } = this.props;
+  getMainFields = (category) => {
+    let { service: { name, categoryId, cost, costType, isTaxable } } = this.props;
     const categories = get(this.props, 'categories', []);
     const categoryOptions = categories.map(val => ({
       value: val.id,
       label: startCase(val.name)
     }));
-
+    if (!isEmpty(category)) {
+      name = get(category, 'name');
+      categoryId = get(category, 'id');
+      cost = get(category, 'cost');
+      costType = get(category, 'costType');
+      isTaxable = get(category, 'isTaxable');
+    }
     const priceTypes = [
       {
         value: null,
@@ -193,7 +201,7 @@ class AddServiceModal extends React.Component {
           refinedFields.push({
             id: filtered[0].id,
             type: filtered[0].type,
-            ...filtered[0].attributes    
+            ...filtered[0].attributes
           });
         }
       }
@@ -226,8 +234,11 @@ class AddServiceModal extends React.Component {
   };
 
 
-  getDescriptionFields = () =>{
-    const { service: { description } } = this.props;
+  getDescriptionField = (category) =>{
+    let { service: { description } } = this.props;
+    if (!isEmpty(category)) {
+      description = get(category, 'description');  
+    }
     return [
       {
         field: 'description',
@@ -281,7 +292,7 @@ class AddServiceModal extends React.Component {
   }
 
   render() {
-    const { loading, open, onClose, onDelete, currentStatus } = this.props;
+    const { loading, open, onClose, onDelete, currentStatus, service } = this.props;
     const { mainFields, descriptionField } = this.state;
     const actions = [
       <HollowButton onClick={onDelete} key="modal_btn_cancel">Delete</HollowButton>,
@@ -289,7 +300,7 @@ class AddServiceModal extends React.Component {
     ];
     return (
       <Modal
-        title={startCase(this.getServiceName())}
+        title={startCase(get(service, 'name'))}
         loading={loading || currentStatus === actionTypes.GET_CATEGORIES}
         actions={actions}
         open={open}
@@ -297,7 +308,7 @@ class AddServiceModal extends React.Component {
       >
         { !isEmpty(mainFields) && <FormFields
           ref={this.setMainFieldsRef}
-          fields={this.getMainFields()}
+          fields={mainFields}
           onChange={this.handleChange}
         />}
         <Divider />
