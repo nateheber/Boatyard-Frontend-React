@@ -9,8 +9,7 @@ const refineIcons = (icons) => {
     return {
       id: icon.id,
       type: icon.type,
-      ...icon.attributes,
-      ...icon.relationships
+      ...icon.attributes
     };
   });
 };
