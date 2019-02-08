@@ -11,7 +11,7 @@ import GearIcon from 'resources/gear.png';
 import CloseIcon from 'resources/close.png';
 import ProviderCheck from '../basic/ProviderCheck';
 
-import AssignConfirmModal from '../modals/AssignConfirmationModal';
+import AssignConfirmModal from '../modals/AssignConfirmModal';
 
 const Button = styled.button`
   position: relative;
@@ -229,7 +229,7 @@ class ProviderSelector extends React.Component {
   }
 
   render() {
-    const { showMenu, showModal, keyword, providers } = this.state;
+    const { showMenu, showModal, keyword, providers, dispatchIds } = this.state;
     return (
       <Wrapper ref={this.setWrapperRef}>
         <Button onClick={() => { this.setState({ showMenu: true }); }}>
@@ -252,7 +252,7 @@ class ProviderSelector extends React.Component {
             }
           </Scroller>
         </DropdownMenu>
-        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} />
+        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} count={dispatchIds.length} />
       </Wrapper>
     );
   }

@@ -25,7 +25,7 @@ export default class AssignConfirmModal extends React.Component {
         open={open}
         onClose={onClose}
       >
-        <Text>You are dispatching account to {count} providers</Text>
+        <Text>You are dispatching order to {count} providers</Text>
       </Modal>
     );
   }
