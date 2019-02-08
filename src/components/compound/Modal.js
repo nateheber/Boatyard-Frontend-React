@@ -150,11 +150,7 @@ const modalStyles = {
 
 export default class CustomModal extends React.Component {
   render() {
-<<<<<<< HEAD
-    const { open, onClose, children, title, actions, small, normal, minHeight, loading, spinnerOptions, tabs, selected, onSelect, centered } = this.props;
-=======
     const { open, onClose, classes, children, title, actions, small, normal, minHeight, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
->>>>>>> 146b04337ed5fbd825eaa05640724bdc288352e3
     return (
       <Modal
         styles={small ? modalStyles.small : normal ? modalStyles.normal : modalStyles.main}
@@ -168,11 +164,7 @@ export default class CustomModal extends React.Component {
           <Content style={{ minHeight: minHeight || 'inherit' }} className={classNames(classes)}>
             {children}
           </Content>
-<<<<<<< HEAD
-          {actions && <ActionWrapper className={centered ? 'centered' : actions.length < 2 && 'alone'}>{actions}</ActionWrapper>}
-=======
           {actions && <ActionWrapper className={classNames(actions.length < 2 && 'alone', classes)}>{actions}</ActionWrapper>}
->>>>>>> 146b04337ed5fbd825eaa05640724bdc288352e3
           {loading && <LoadingSpinner
             loading={true}
             backgroundColor={spinnerOptions && spinnerOptions.backgroundColor}
