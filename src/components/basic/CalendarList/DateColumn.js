@@ -66,8 +66,16 @@ export const DateColumn = ({ date, active, onClickTime, assignments }) => (
       {times(24, idx => {
         return (
           <div key={`div_${idx}`}>
-            <FirstHalf onClick={() => {onClickTime(parsetMomentToDate(date), `${idx}:00`)}}/>
-            <SecondHalf onClick={() => {onClickTime(parsetMomentToDate(date), `${idx}:30`)}}/>
+            <FirstHalf onClick={() => {
+              if (onClickTime) {
+                onClickTime(parsetMomentToDate(date), `${idx}:00`)}
+              }
+            }/>
+            <SecondHalf onClick={() => {
+              if (onClickTime) {
+                onClickTime(parsetMomentToDate(date), `${idx}:30`)}
+              }
+            }/>
           </div>
         );
       })}
