@@ -20,7 +20,7 @@ const Button = styled.button`
   background-color: white;
   border: 1px solid #A9B5BB;
   border-radius: 5px;
-  padding: 5.5px;
+  padding: 5px;
   outline: none;
   cursor: pointer;
 `;
@@ -220,6 +220,7 @@ class ProviderSelector extends React.Component {
   submitData = () => {
     const { dispatchIds } = this.state;
     this.props.onChange(dispatchIds);
+    this.setState({ showModal: false });
   }
 
   isChecked = (providerId) => {

@@ -22,7 +22,7 @@ class OrderAssignment extends React.Component {
   updateDispatchIds = (dispatchIds) => {
     const { currentOrder } = this.props;
     const orderId = currentOrder.id;
-    this.props.UpdateOrder({ orderId, data: { order: { dispatchIds }} })
+    this.props.UpdateOrder({ orderId, data: { order: { dispatchIds }}, dispatched: true })
   }
 
   renderDropdownButton = () => {

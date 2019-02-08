@@ -56,7 +56,7 @@ export default class OrderReviewSection extends React.Component {
 
   updatePriceInfo = () => {
     const { comments, ...priceInfo } = this.state;
-    this.props.updateOrder(priceInfo);
+    this.props.updateOrder({order: priceInfo});
   }
 
   onChangeTax = (taxRate) => {
@@ -82,7 +82,7 @@ export default class OrderReviewSection extends React.Component {
 
   submitComments = () => {
     const { comments } = this.state;
-    this.props.updateOrder({ comments });
+    this.props.updateOrder({ order: { comments } });
   }
 
   render() {

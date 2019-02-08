@@ -9,11 +9,9 @@ import { FilterProviders } from 'store/actions/providers';
 import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders';
 import { getCustomerName } from 'utils/order';
 
-import { ActionDropdown, BoatyardSelect } from 'components/basic/Dropdown';
+import { ActionDropdown } from 'components/basic/Dropdown';
 import { OrangeButton } from 'components/basic/Buttons';
 import { PageTitle } from 'components/basic/Typho';
-import ProviderOption from 'components/basic/ProviderOption';
-import ProviderOptionValue from 'components/basic/ProviderOptionValue';
 import OrderStatus from './OrderStatus';
 
 
@@ -50,7 +48,7 @@ class OrderDetailHeader extends React.Component {
 
   onChangeProvider = val => {
     const { order } = this.props
-    this.props.UpdateOrder({ orderId: order.id, data: { providerId: val.id } })
+    this.props.UpdateOrder({ orderId: order.id, data: { order: { providerId: val.id } } })
   }
 
   acceptOrder = () => {
@@ -61,7 +59,7 @@ class OrderDetailHeader extends React.Component {
 
   cancelOrder = () => {
     const { order } = this.props;
-    this.props.UpdateOrder({ orderId: order.id, data: { state: 'canceled' } })
+    this.props.UpdateOrder({ orderId: order.id, data: { order: { state: 'canceled' } } })
   }
 
   deleteOrder = () => {
@@ -100,7 +98,6 @@ class OrderDetailHeader extends React.Component {
     const { order, privilege } = this.props;
     const orderStatus = get(order, 'attributes.state');
     const canAcceptOrder = privilege === 'provider' && (orderStatus === 'dispatched' || orderStatus === 'assigned');
-    const canAssignOrder = privilege === 'admin' && orderStatus !== 'invoiced';
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
@@ -118,16 +115,6 @@ class OrderDetailHeader extends React.Component {
             ]}
           />
           <Col xs={12} sm={6} md={4} lg={3}>
-            {canAssignOrder && <BoatyardSelect
-              components={{
-                Option: ProviderOption,
-                SingleValue: ProviderOptionValue
-              }}
-              defaultOptions
-              placeholder="Search & Assign Provider"
-              loadOptions={this.loadOptions}
-              onChange={this.onChangeProvider}
-            />}
             {
               canAcceptOrder &&
               <OrangeButton onClick={this.acceptOrder} >Accept Order</OrangeButton>

@@ -8,7 +8,7 @@ import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 
-import { GetOrders } from 'store/actions/orders';
+import { GetOrders, SetDispatchedFlag } from 'store/actions/orders';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
@@ -40,16 +40,14 @@ class OrderList extends React.Component {
   state = { tab: 'all' }
 
   componentDidMount() {
+    this.props.SetDispatchedFlag(false);
     this.props.GetOrders({ params: { page: 1 } });
   }
 
   onChangeTab = (tab) => {
     this.setState({ tab });
-    if (tab === 'dispatched') {
-      this.props.GetOrders({ params: { page: 1 }, dispatched: true });
-    } else {
-      this.props.GetOrders({ params: { page: 1 } });
-    }
+    this.props.SetDispatchedFlag(tab === 'dispatched');
+    this.props.GetOrders({ params: { page: 1 } });
   }
 
   setNewOrderModalRef = (ref) => {
@@ -59,12 +57,7 @@ class OrderList extends React.Component {
   };
 
   toDetails = order => {
-    const { tab } = this.state;
-    if (tab === 'dispatched') {
-      this.props.history.push(`/order-details/?order=${order.id}&dispatched=true`);
-    } else {
-      this.props.history.push(`/order-details/?order=${order.id}`);
-    }
+    this.props.history.push(`/order-details/?order=${order.id}`);
   };
 
   getPageCount = () => {
@@ -124,7 +117,8 @@ const mapStateToProps = ({ order: { orders : { orders, page, perPage, total } } 
 });
 
 const mapDispatchToProps = {
-  GetOrders
+  GetOrders,
+  SetDispatchedFlag,
 };
 
 export default withRouter(

@@ -46,7 +46,6 @@ class OrderDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
-    const dispatched = query.dispatched;
     const { GetOrder } = this.props;
     this.setState({ orderId }, () => {
       GetOrder({
@@ -54,7 +53,6 @@ class OrderDetails extends React.Component {
         success: () => {
           this.setState({ isFirstLoad: false });
         },
-        dispatched
       });
     });
   }
