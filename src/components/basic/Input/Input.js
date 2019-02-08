@@ -25,9 +25,9 @@ const MaskInput = styled(InputMask)`
   padding: 0 15px;
   margin-bottom: 5px;
   border: 1px solid #dfdfdf;
-  height: 35px;
+  height: 30px;
   width: 100%;
-  border-radius: 5px !important;
+  border-radius: 6px !important;
   outline: none;
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
@@ -58,7 +58,7 @@ const Selector = styled.select`
   padding: 0 15px;
   margin-bottom: 5px;
   border: 1px solid #dfdfdf;
-  height: 35px;
+  height: 30px;
   width: 100%;
   border-radius: 5px !important;
   outline: none;

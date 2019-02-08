@@ -19,7 +19,7 @@ const Header = ({ onMenuToggle }) => (
     <HamburgerButton onClick={onMenuToggle} />
     <Logo />
     <RightPart xs={10}>
-      <SearchBox placeholder="Search by order number, user, boat, etc" />
+      <SearchBox secondary placeholder="Search by order number, user, boat, etc" />
       <RightMenu />
     </RightPart>
   </HeaderWrapper>

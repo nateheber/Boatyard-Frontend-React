@@ -155,7 +155,9 @@ export class FilterOptions extends React.Component {
                   showMenu: false,
                   type: 'order_completed'
                 });
-                onChangeFilter({ type: 'order_completed' });
+                if (onChangeFilter) {
+                  onChangeFilter({ type: 'order_completed' });
+                }
               }}
             >
               Orders Completed
@@ -165,7 +167,9 @@ export class FilterOptions extends React.Component {
             <MenuItem
               onClick={() => {
                 this.setState({ showMenu: false });
-                onChangeFilter({ type: 'scheduling_needed' });
+                if (onChangeFilter) {
+                  onChangeFilter({ type: 'scheduling_needed' });
+                }
               }}
             >
               Scheduling Needed
@@ -175,7 +179,9 @@ export class FilterOptions extends React.Component {
             <MenuItem
               onClick={() => {
                 this.setState({ showMenu: false });
-                onChangeFilter({ type: 'payment_needed' });
+                if (onChangeFilter) {
+                  onChangeFilter({ type: 'payment_needed' });
+                }
               }}
             >
               Payment Needed
@@ -185,7 +191,9 @@ export class FilterOptions extends React.Component {
             <MenuItem
               onClick={() => {
                 this.setState({ showMenu: false });
-                onChangeFilter({ type: 'assigned_to_me' });
+                if (onChangeFilter) {
+                  onChangeFilter({ type: 'assigned_to_me' });
+                }
               }}
             >
               Assigned to Me
@@ -195,7 +203,9 @@ export class FilterOptions extends React.Component {
             <MenuItem
               onClick={() => {
                 this.setState({ showMenu: false });
-                onChangeFilter({ type: 'pending_customer_approval' });
+                if (onChangeFilter) {
+                  onChangeFilter({ type: 'pending_customer_approval' });
+                }
               }}
             >
               Pending Customer Approval
@@ -209,10 +219,12 @@ export class FilterOptions extends React.Component {
               this.setState({
                 showPicker: false
               });
-              onChangeFilter({
-                type,
-                range
-              });
+              if (onChangeFilter) {
+                onChangeFilter({
+                  type,
+                  range
+                });
+              }
             }}
           />
         </PickerWrapper>

@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 
 const InputGroup = styled.div`
   border: 1px solid #e6e6e6;
-  border-radius: 5px !important;
+  border-radius: 6px !important;
   margin: 30px 30px 0 30px;
 `;
 

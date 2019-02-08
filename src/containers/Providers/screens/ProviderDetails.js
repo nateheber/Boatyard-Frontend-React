@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
 
+import { actionTypes, LoginWithProvider, DeleteProvider } from 'store/actions/providers';
 import { ProviderDetails, ProviderHeader } from '../components';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 
-import { LoginWithProvider, DeleteProvider } from 'store/actions/providers';
 
 class ServiceDetails extends React.Component {
   onCancel = () => {
@@ -29,7 +30,12 @@ class ServiceDetails extends React.Component {
     const provider = this.getProvider();
     const { id } = provider;
     const { LoginWithProvider } = this.props;
-    LoginWithProvider({ providerId: id });
+    LoginWithProvider({
+      providerId: id,
+      success: () => {
+        this.props.history.push('/dashboard');
+      }
+    });
   };
   deleteProvider = () => {
     const provider = this.getProvider();
@@ -40,6 +46,7 @@ class ServiceDetails extends React.Component {
   render() {
     const provider = this.getProvider();
     const { name } = provider;
+    const { currentStatus } = this.props;
     return (
       <div>
         <ProviderHeader
@@ -52,13 +59,15 @@ class ServiceDetails extends React.Component {
           onCancel={this.onCancel}
           onEdit={this.onEdit}
         />
+        {currentStatus === actionTypes.LOGIN_WITH_PROVIDER && <LoadingSpinner loading={true} />}
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ provider: { providers } }) => ({
-  providers
+const mapStateToProps = ({ provider: { providers, currentStatus } }) => ({
+  providers,
+  currentStatus
 });
 
 const mapDispatchToProps = {

@@ -21,7 +21,7 @@ const AMButton = styled.button`
   margin-left: 3px;
   border: 1px solid #E6E6E6;
   color: #8f8f8f;
-  border-radius: 5px !important;
+  border-radius: 6px !important;
   outline: 0!important;
   box-shadow: none!important;
   background-color: #fff;

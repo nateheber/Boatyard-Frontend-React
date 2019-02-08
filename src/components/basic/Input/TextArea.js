@@ -24,7 +24,7 @@ const Input = styled.textarea`
   border: 1px solid #dfdfdf;
   min-height: 100px;
   width: 100%;
-  border-radius: 5px !important;
+  border-radius: 6px !important;
   outline: none;
   box-sizing: border-box;
   resize: none;
