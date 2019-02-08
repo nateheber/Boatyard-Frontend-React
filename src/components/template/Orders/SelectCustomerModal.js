@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
-import { findIndex, isEmpty } from 'lodash';
+import { findIndex, isEmpty, get } from 'lodash';
 import styled from 'styled-components';
 
 import {
@@ -13,7 +13,7 @@ import { actionTypes as boatActions, GetBoats, CreateBoat } from 'store/actions/
 import { refinedBoatsSelector } from 'store/selectors/boats';
 import Modal from 'components/compound/Modal';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
-import { Selector } from 'components/basic/Input';
+import { Select } from 'components/basic/Input';
 import CustomerOption from 'components/basic/CustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 import BoatInfo from './BoatInfo';
@@ -119,17 +119,21 @@ class SelectCustomerModal extends React.Component {
     });
   };
 
-  setBoat = (boat) => {
+  handleBoatChange = (selectRef) => {
     const { boats } = this.props;
-    if (!isEmpty(boats)) {
-      let index = findIndex(boats, item => item.id === boat.value);
-      if (index < 0) {
-        index = 0;
+    const { refinedBoats } = this.state;
+    if (selectRef.selectedIndex) {
+      const refinedBoat = get(refinedBoats, selectRef.selectedIndex);
+      if (!isEmpty(boats) && !isEmpty(refinedBoat)) {
+        let index = findIndex(boats, item => item.id === refinedBoat.value);
+        if (index < 0) {
+          index = 0;
+        }
+        this.setState({
+          refinedBoat,
+          boat: boats[index]
+        });
       }
-      this.setState({
-        refinedBoat: boat,
-        boat: boats[index]
-      });
     }
   };
 
@@ -248,7 +252,7 @@ class SelectCustomerModal extends React.Component {
         open={open}
         onClose={onClose}
       >
-        <Row>
+        <Row style={{ alignItems: 'center'}}>
           <Col sm={12} md={8} lg={7}>
             <BoatyardSelect
               ref={this.setCustomerSelectRef}
@@ -271,16 +275,23 @@ class SelectCustomerModal extends React.Component {
             <Row>
               <Col sm={12}><SubSectionTitle>SELECT A BOAT</SubSectionTitle></Col>
             </Row>
-            <Row style={{ marginBottom: 5 }}>
+            <Row style={{ marginBottom: 5, alignItems: 'center' }}>
               <Col sm={12} md={8} lg={7}>
-                <Selector
-                  value={refinedBoat}
-                  options={refinedBoats}
-                  onChange={this.setBoat}
-                />
+                <Select
+                  value={refinedBoat.value}
+                  onChange={event => this.handleBoatChange(event.target)}
+                >
+                  <React.Fragment>
+                    {refinedBoats.map(item => (
+                      <option value={item.value} key={`boat_${item.value},`}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </React.Fragment>
+                </Select>
               </Col>
               <Col sm={12} md={4} lg={3} lgOffset={2}>
-                <HollowButton onClick={this.showBoatModal}>Add New</HollowButton>
+                <HollowButton style={{ marginTop: 0 }} onClick={this.showBoatModal}>Add New</HollowButton>
               </Col>
             </Row>
             {!isEmpty(boat) &&
