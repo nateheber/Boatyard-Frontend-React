@@ -31,33 +31,33 @@ export class ProviderDetails extends React.Component {
         <InputRow>
           <InputWrapper className="secondary">
             <InputLabel>Provider Name</InputLabel>
-            <Input type="text" value={name} disabled />
+            <Input type="text" value={name || ''} disabled />
           </InputWrapper>
           <InputWrapper className="secondary">
             <InputLabel>Phone</InputLabel>
-            <Input type="text" value={phoneNumber} disabled />
+            <Input type="text" value={phoneNumber || ''} disabled />
           </InputWrapper>
         </InputRow>
         <InputRow>
           <InputWrapper className="secondary">
             <InputLabel>Tax Rate</InputLabel>
-            <Input type="text" value={taxRate} disabled />
+            <Input type="text" value={taxRate || ''} disabled />
           </InputWrapper>
         </InputRow>
         <InputRow>
           <InputWrapper className="secondary">
             <InputLabel>Subscription Fee</InputLabel>
-            <Input type="text" value={subscriptionFee} disabled />
+            <Input type="text" value={subscriptionFee || ''} disabled />
           </InputWrapper>
           <InputWrapper className="secondary">
             <InputLabel>Transaction Fee</InputLabel>
-            <Input type="text" value={transactionFee} disabled />
+            <Input type="text" value={transactionFee || ''} disabled />
           </InputWrapper>
         </InputRow>
         <InputRow>
           <InputWrapper className="secondary">
             <InputLabel>Website</InputLabel>
-            <Input type="text" value={websiteUrl} disabled />
+            <Input type="text" value={websiteUrl || ''} disabled />
           </InputWrapper>
           <InputWrapper />
         </InputRow>
