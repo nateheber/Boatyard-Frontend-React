@@ -72,6 +72,19 @@ export const getOrderClient = state => {
   }
 };
 
+export const getDispatchedOrderClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createDispatchedOrderClient('basic');
+    case 'admin':
+      return APIGenerator.createDispatchedOrderClient('admin');
+    case 'provider':
+      return APIGenerator.createDispatchedOrderClient('provider');
+    default:
+      return APIGenerator.createDispatchedOrderClient('basic');
+  }
+};
+
 export const getBoatClient = state => {
   switch (state.auth.privilege) {
     case 'basic':

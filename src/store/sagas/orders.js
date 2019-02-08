@@ -2,13 +2,18 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
 import { actionTypes } from '../actions/orders';
-import { getOrderClient, getCustomApiClient } from './sagaSelectors';
+import { getOrderClient, getDispatchedOrderClient, getCustomApiClient } from './sagaSelectors';
 
 function* getOrders(action) {
-  const orderClient = yield select(getOrderClient);
   let successType = actionTypes.GET_ORDERS_SUCCESS;
   let failureType = actionTypes.GET_ORDERS_FAILURE;
-  const { params, success, error } = action.payload;
+  const { params, success, error, dispatched } = action.payload;
+  let orderClient;
+  if (dispatched) {
+    orderClient = yield select(getDispatchedOrderClient);
+  } else {
+    orderClient = yield select(getOrderClient);
+  }
   try {
     const result = yield call(orderClient.list, params);
     const orders = get(result, 'data', []);
@@ -70,8 +75,13 @@ function* getOrders(action) {
 }
 
 function* getOrder(action) {
-  const orderClient = yield select(getOrderClient);
-  const { orderId, success, error } = action.payload;
+  const { orderId, success, error, dispatched } = action.payload;
+  let orderClient;
+  if (dispatched) {
+    orderClient = yield select(getDispatchedOrderClient);
+  } else {
+    orderClient = yield select(getOrderClient);
+  }
   try {
     const result = yield call(orderClient.read, orderId);
     const { data, included } = result;
@@ -111,8 +121,13 @@ function* createOrder(action) {
 }
 
 function* updateOrder(action) {
-  const orderClient = yield select(getOrderClient);
-  const { orderId, data, success, error } = action.payload;
+  const { orderId, data, success, error, dispatched } = action.payload;
+  let orderClient;
+  if (dispatched) {
+    orderClient = yield select(getDispatchedOrderClient);
+  } else {
+    orderClient = yield select(getOrderClient);
+  }
   try {
     yield call(orderClient.update, orderId, data);
     yield put({ type: actionTypes.UPDATE_ORDER_SUCCESS });
@@ -128,8 +143,13 @@ function* updateOrder(action) {
 }
 
 function* deleteOrder(action) {
-  const orderClient = yield select(getOrderClient);
-  const { orderId, success, error } = action.payload;
+  const { orderId, success, error, dispatched } = action.payload;
+  let orderClient;
+  if (dispatched) {
+    orderClient = yield select(getDispatchedOrderClient);
+  } else {
+    orderClient = yield select(getOrderClient);
+  }
   try {
     yield call(orderClient.delete, orderId);
     yield put({ type: actionTypes.DELETE_ORDER_SUCCESS });
@@ -146,9 +166,9 @@ function* deleteOrder(action) {
 
 function* acceptOrder(action) {
   const apiClient = yield select(getCustomApiClient);
-  const { orderId, success, error } = action.payload;
+  const { orderId, success, error, dispatched } = action.payload;
   try {
-    yield call(apiClient.patch, `/dispatched_orders/${orderId}`, { order: { transition: 'accept' } });
+    yield call(apiClient.patch, `/${dispatched ? 'dispatched_orders' : 'orders'}/${orderId}`, { order: { transition: 'accept' } });
     yield put({ type: actionTypes.ACCEPT_ORDER_SUCCESS });
     yield put({ type: actionTypes.GET_ORDER, payload: { orderId } })
     if (success) {

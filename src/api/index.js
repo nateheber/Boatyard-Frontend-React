@@ -85,6 +85,10 @@ export const createIconClient = authType => {
   return new CRUDClient('icons', authType);
 }
 
+export const createDispatchedOrderClient = authType => {
+  return new CRUDClient('dispatched_orders', authType);
+}
+
 export const customApiClient = authType => {
   return new NormalClient(authType);
 };

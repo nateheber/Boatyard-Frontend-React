@@ -25,9 +25,31 @@ const TableWrapper = styled.div`
   overflow-y: scroll;
 `;
 
+const columns = [
+  { label: 'order', value: 'name' },
+  { label: 'order placed', value: 'createdAt' },
+  { label: 'total', value: 'total' },
+  { label: 'order status', value: 'state' }
+];
+const tabs = [
+  { title: 'NORMAL', value: 'all', counts: 0 },
+  { title: 'DISPATCHED', value: 'dispatched', counts: 0 },
+];
+
 class OrderList extends React.Component {
+  state = { tab: 'all' }
+
   componentDidMount() {
     this.props.GetOrders({ params: { page: 1 } });
+  }
+
+  onChangeTab = (tab) => {
+    this.setState({ tab });
+    if (tab === 'dispatched') {
+      this.props.GetOrders({ params: { page: 1 }, dispatched: true });
+    } else {
+      this.props.GetOrders({ params: { page: 1 } });
+    }
   }
 
   setNewOrderModalRef = (ref) => {
@@ -37,7 +59,12 @@ class OrderList extends React.Component {
   };
 
   toDetails = order => {
-    this.props.history.push(`/order-details/?order=${order.id}`);
+    const { tab } = this.state;
+    if (tab === 'dispatched') {
+      this.props.history.push(`/order-details/?order=${order.id}&dispatched=true`);
+    } else {
+      this.props.history.push(`/order-details/?order=${order.id}`);
+    }
   };
 
   getPageCount = () => {
@@ -66,22 +93,11 @@ class OrderList extends React.Component {
       name: `Order #${order.id}`,
       createdAt: `${moment(order.createdAt).format('MMM DD, YYYY')}`
     }));
-    const columns = [
-      { label: 'order', value: 'name' },
-      { label: 'order placed', value: 'createdAt' },
-      { label: 'total', value: 'total' },
-      { label: 'order status', value: 'state' }
-    ];
-    const tabs = [
-      { title: 'ALL', value: 'all', counts: 2 },
-      { title: 'NEW', value: 'new', counts: 0 },
-      { title: 'IN PROGRESS', value: 'in_progress', counts: 1 },
-      { title: 'COMPLETED', value: 'completed', counts: 1 }
-    ];
+    const { tab } = this.state;
     return (
       <Wrapper>
         <OrderHeader onNewOrder={this.newOrder} />
-        <Tab tabs={tabs} selected="all" />
+        <Tab tabs={tabs} selected={tab} onChange={this.onChangeTab} />
         <TableWrapper>
           <Table
             columns={columns}
