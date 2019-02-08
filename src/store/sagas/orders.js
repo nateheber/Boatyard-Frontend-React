@@ -50,6 +50,7 @@ function* getOrders(action) {
       payload: {
         orders: orders.map(order => ({
           id: order.id,
+          type: order.type,
           ...order.attributes,
           relationships: order.relationships,
         })),
@@ -97,10 +98,18 @@ function* createOrder(action) {
   const orderClient = yield select(getOrderClient);
   const { data, success, error } = action.payload;
   try {
-    yield call(orderClient.create, data);
+    const result = yield call(orderClient.create, data);
     yield put({ type: actionTypes.CREATE_ORDER_SUCCESS });
+    const order = get(result, 'data', {});
+    const included = get(result, 'data', {});
+    const refinedOrder = {
+      id: order.id,
+      type: order.type,
+      ...order.attributes,
+      relationships: order.relationships,
+    };
     if (success) {
-      yield call(success);
+      yield call(success, refinedOrder, included);
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_ORDER_FAILURE, payload: e });

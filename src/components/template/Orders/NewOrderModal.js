@@ -1,18 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 import { CreateOrder } from 'store/actions/orders';
-
 import SelectCustomerModal from './SelectCustomerModal';
 import SelectServiceModal from './SelectServiceModal';
 
 class NewOrderModal extends React.Component {
-  state = {
-    showCustomerModal: false,
-    showServiceModal: false,
-    customer: -1,
-    boat: -1
+  constructor(props) {
+    super(props);
+    this.state = {
+      showCustomerModal: false,
+      showServiceModal: false,
+      customer: -1,
+      boat: -1
+    };
+  
   }
+
   createOrder = () => {
     this.setState({
       customer: {},
@@ -20,7 +25,8 @@ class NewOrderModal extends React.Component {
       showCustomerModal: true,
       showServiceModal: false,
     })
-  }
+  };
+
   toSelectService = ({ customer, boat }) => {
     this.setState({
       customer,
@@ -28,17 +34,20 @@ class NewOrderModal extends React.Component {
       showCustomerModal: false,
       showServiceModal: true,
     });
-  }
+  };
+
   closeCustomerModal = () => {
     this.setState({
       showCustomerModal: false,
     })
-  }
+  };
+
   closeServiceModal = () => {
     this.setState({
       showServiceModal: false,
     })
-  }
+  };
+
   createNewOrder = (service, serviceValues = {}, orderValues = {}) => {
     const { customer, boat } = this.state;
     const data = {
@@ -59,13 +68,13 @@ class NewOrderModal extends React.Component {
     };
     this.props.CreateOrder({
       data,
-      success: () => {
+      success: (order) => {
         const { onFinishCreation } = this.props;
         this.closeServiceModal();
-        if (onFinishCreation) onFinishCreation();
+        if (onFinishCreation) onFinishCreation(get(order, 'id'));
       }
     });
-  }
+  };
 
   render() {
     const { showCustomerModal, showServiceModal, boat } = this.state;
