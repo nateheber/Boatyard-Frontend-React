@@ -151,6 +151,7 @@ class CategoryModal extends React.Component {
         const iconURL = get(icon, 'icon.url');
         return (
           <div
+            key={`icon_${icon.id}`}
             className={classNames('service-icon-wrapper', icon.id === defaultIcon && '-selected')}
             onClick={() => this.handleChangeIcon(icon)}
           >

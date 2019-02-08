@@ -255,14 +255,14 @@ class AddServiceModal extends React.Component {
     ];
   }
 
-  handleChange = (field, value) => {
+  handleChange = (value, field) => {
     const { service } = this.props;
-    if (value === 'categoryId') {
-      if (field.categoryId === service.categoryId) {
+    if (field === 'categoryId') {
+      if (value.categoryId === service.categoryId) {
         const serviceValues = this.getServiceValues();
         this.setState({ serviceValues });
       } else {
-        this.loadCategory(field.categoryId);
+        this.loadCategory(value.categoryId);
       }
     }
   };

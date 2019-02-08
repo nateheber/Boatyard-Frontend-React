@@ -8,8 +8,9 @@ const refineCategories = (categories) => {
   return categories.map(category => {
     return {
       id: category.id,
+      type: category.type,
       ...category.attributes,
-      ...category.relationships
+      relationships: category.relationships
     };
   });
 };

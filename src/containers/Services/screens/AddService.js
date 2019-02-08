@@ -6,6 +6,7 @@ import { Col, Row } from 'react-flexbox-grid';
 
 import { actionTypes as categoryActions, GetCategories } from 'store/actions/categories';
 import { actionTypes as serviceActions, CreateService } from 'store/actions/services';
+import { refinedCategoriesSelector } from 'store/selectors/categories';
 import Table from 'components/basic/Table';
 import { PageTitle } from 'components/basic/Typho';
 import { SectionHeaderWrapper, LeftPart, RightPart } from 'components/basic/Header';
@@ -136,7 +137,7 @@ class AddService extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  categories: state.category.categories,
+  categories: refinedCategoriesSelector(state, ''),
   categoryStatus: state.category.currentStatus,
   serviceStatus: state.service.currentStatus,
   page: state.category.page,

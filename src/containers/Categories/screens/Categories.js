@@ -7,6 +7,8 @@ import { Col, Row } from 'react-flexbox-grid';
 import { get, isEmpty, isNumber, startCase } from 'lodash';
 
 import { actionTypes, GetCategories, CreateCategory, UpdateCategory, DeleteCategory } from 'store/actions/categories';
+import { refinedCategoriesSelector } from 'store/selectors/categories';
+
 import Table from 'components/basic/Table';
 import { CategoryHeader } from 'components/compound/SectionHeader';
 import { SearchBox } from 'components/basic/Input';
@@ -187,13 +189,13 @@ class Categories extends React.Component {
   }
 }
 
-const mapStateToProps = ({ category: { categories, currentStatus, page, perPage, total, errors } }) => ({
-  categories,
-  currentStatus,
-  page,
-  perPage,
-  total,
-  errors
+const mapStateToProps = (state) => ({
+  categories: refinedCategoriesSelector(state, ''),
+  currentStatus: state.category.currentStatus,
+  page: state.category.page,
+  perPage: state.category.perPage,
+  total: state.category.total,
+  errors: state.category.errors
 });
 
 const mapDispatchToProps = {

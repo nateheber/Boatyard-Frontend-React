@@ -219,7 +219,7 @@ export class Record extends React.Component {
     const hidingCols = columns.slice(1);
     let icon = get(record, 'customIcon.url');
     if (isEmpty(icon)) {
-      icon = get(record, 'iconId') || 'https://dev.boatyard.com/img/logo.svg';
+      icon = get(record, 'relationships.icon.attributes.icon.url') || 'https://dev.boatyard.com/img/logo.svg';
     }
     return (
       <React.Fragment>
