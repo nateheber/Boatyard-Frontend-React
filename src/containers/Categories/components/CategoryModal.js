@@ -43,6 +43,7 @@ const HeaderSection = styled.div`
     position: relative;
     width: 30px;
     height: 30px;
+    min-width: 36px;
     margin: 2px;
     padding: 2px;
     border: 1px solid #dfdfdf;
@@ -91,9 +92,10 @@ const IconsContainer = styled.div`
     width: 30px;
     height: 30px;
     margin: 2px;
-    padding:2px;
+    padding:3px;
     cursor: pointer;
-    &.-selected {
+    &:hover, &.-selected {
+      padding:2px;
       border: 1px solid #dfdfdf;
       border-radius: 8px;  
     }
@@ -286,6 +288,7 @@ class CategoryModal extends React.Component {
 
   handleChangeIcon = (icon) => {
     this.setState({ customIcon: null, defaultIcon: icon.id });
+    this.refs.selectedIconContainer.style.backgroundImage = 'none';
   };
 
   onSave = () => {
