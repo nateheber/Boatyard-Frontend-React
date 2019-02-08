@@ -4,7 +4,7 @@ import { get } from 'lodash';
 
 import { Section } from 'components/basic/InfoSection'
 
-import { UpdateOrder } from 'store/actions/orders';
+import { UpdateOrder, SetDispatchedFlag } from 'store/actions/orders';
 
 import ProviderInfo from './ProviderInfo';
 import ProviderSelector from './ProviderSelector'
@@ -22,7 +22,12 @@ class OrderAssignment extends React.Component {
   updateDispatchIds = (dispatchIds) => {
     const { currentOrder } = this.props;
     const orderId = currentOrder.id;
-    this.props.UpdateOrder({ orderId, data: { order: { dispatchIds }}, dispatched: true })
+    this.props.UpdateOrder({
+      orderId,
+      data: { order: { dispatchIds }},
+      dispatched: true,
+      success: () => { this.props.SetDispatchedFlag(true) }
+    });
   }
 
   renderDropdownButton = () => {
@@ -48,6 +53,6 @@ const mapStateToProps = (state) => ({
   currentOrder: state.order.currentOrder
 })
 
-const mapDispatchToProps = { UpdateOrder };
+const mapDispatchToProps = { UpdateOrder, SetDispatchedFlag };
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignment);
