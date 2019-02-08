@@ -267,8 +267,7 @@ class CategoryModal extends React.Component {
   }
 
   handleFileChange = (file, ref) => {
-    this.setState({ customIcon: file });
-    this.setState({ iconRef: ref });
+    this.setState({ defaultIcon: null, iconRef: ref, customIcon: file });
     this.refs.selectedIconContainer.style.backgroundImage = `url(${file})`;
   }
 
@@ -284,7 +283,7 @@ class CategoryModal extends React.Component {
   };
 
   handleChangeIcon = (icon) => {
-    this.setState({ defaultIcon: icon.id });
+    this.setState({ customIcon: null, defaultIcon: icon.id });
   };
 
   onSave = () => {
