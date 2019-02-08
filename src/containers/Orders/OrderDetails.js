@@ -105,6 +105,18 @@ class OrderDetails extends React.Component {
     return updatedAt;
   };
 
+  getCustomerInfoCondition = () => {
+    const { currentOrder, privilege } = this.props;
+    if (privilege === 'admin') {
+      return true;
+    }
+    const orderStatus = get(currentOrder, 'attributes.state' );
+    if (orderStatus === 'assigned') {
+      return false;
+    }
+    return true;
+  }
+
   showBoatModal = () => {
     this.setState({ visibleOfBoatModal: true });
   };
@@ -145,6 +157,7 @@ class OrderDetails extends React.Component {
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
     const canAssignOrder = orderStatus !== ' invoiced' && privilege === "admin";
+    const canShowCustomerInfo = this.getCustomerInfoCondition();
 
     return (
       <React.Fragment>
@@ -185,6 +198,7 @@ class OrderDetails extends React.Component {
                   </SectionGroup>}
                   <SectionGroup>
                     <CustomerBoat
+                      canShowCustomerInfo={canShowCustomerInfo}
                       boatInfo={boatInfo}
                       customerInfo={customerInfo}
                       onEditBoat={() => this.showBoatModal()}
