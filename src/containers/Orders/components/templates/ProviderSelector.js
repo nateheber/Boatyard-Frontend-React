@@ -134,7 +134,6 @@ class ProviderSelector extends React.Component {
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
-    this.props.GetProviders({params: {page: 1}, success: this.onFetchProviders});
   }
 
   componentWillUnmount() {
@@ -178,6 +177,11 @@ class ProviderSelector extends React.Component {
     } else {
       this.setState({ dispatchIds: [...dispatchIds, providerId] });
     }
+  }
+
+  showMenu = () => {
+    this.props.GetProviders({params: {page: 1}, success: this.onFetchProviders});
+    this.setState({ showMenu: true });
   }
 
   clearAssignees = () => {
@@ -233,7 +237,7 @@ class ProviderSelector extends React.Component {
     const { showMenu, showModal, keyword, providers, dispatchIds } = this.state;
     return (
       <Wrapper ref={this.setWrapperRef}>
-        <Button onClick={() => { this.setState({ showMenu: true }); }}>
+        <Button onClick={this.showMenu}>
           <img src={GearIcon} alt="gear_icon" />
         </Button>
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
