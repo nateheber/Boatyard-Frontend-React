@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, set, hasIn } from 'lodash';
+import { get, hasIn } from 'lodash';
 
 import { actionTypes } from '../actions/orders';
 import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag } from './sagaSelectors';
