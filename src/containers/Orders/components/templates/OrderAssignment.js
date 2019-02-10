@@ -14,9 +14,12 @@ class OrderAssignment extends React.Component {
     dispatchIds: []
   }
 
-  static getDervidedStateFromProps(props) {
-    const { dispatchIds } = get(props, 'currentOrder.data.attributes.dispatchIds', [])
-    return { dispatchIds }
+  static getDerivedStateFromProps(props) {
+    const providerId = get(props, 'currentOrder.attributes.providerId');
+    if (providerId) {
+      return { dispatchIds: [providerId] };
+    }
+    return {};
   }
 
   updateDispatchIds = (dispatchIds) => {

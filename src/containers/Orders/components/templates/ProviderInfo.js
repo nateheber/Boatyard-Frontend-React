@@ -26,7 +26,7 @@ class ProviderInfo extends React.Component {
     this.props.GetProvider({ providerId: id, success: this.onFetchSucceed })
   }
 
-  onFetchSucceed = (provider) => {
+  onFetchSucceed(provider) {
     this.setState({ provider })
   }
 
