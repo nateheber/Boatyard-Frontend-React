@@ -4,6 +4,7 @@ import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { get, isEmpty, startCase } from 'lodash';
+import EvilIcon from 'react-evil-icons';
 
 import { actionTypes, GetIcons } from 'store/actions/icons';
 import Modal from 'components/compound/Modal';
@@ -55,9 +56,11 @@ const HeaderSection = styled.div`
     .close-icon {
       position: absolute;
       opacity: 0;
-      right: -5px;
-      top: -15px;
-      font-size: 25px;
+      right: -7px;
+      top: -8px;
+      width: 20px;
+      height: 20px;
+      fill: #004258;
       transition: all ease-in-out .2s;
     }
     &.has-icon {
@@ -291,8 +294,8 @@ class CategoryModal extends React.Component {
   };
 
   handleChangeIcon = (icon) => {
-    this.setState({ customIcon: null, defaultIcon: icon.id });
-    this.refs.selectedIconContainer.style.backgroundImage = 'none';
+    this.deleteCustomIcon();
+    this.setState({ defaultIcon: icon.id });
   };
 
   onSave = () => {
@@ -343,7 +346,7 @@ class CategoryModal extends React.Component {
             <span>Choose Icon</span>
             <UploadButton title="Upload Icon" accept="image/*" onFileChange={this.handleFileChange} />
             <div className={classNames('selected-icon', !isEmpty(customIcon) && 'has-icon' )} ref="selectedIconContainer" onClick={this.deleteCustomIcon}>
-              <label className="close-icon">×</label>
+              <EvilIcon name="ei-close-o" size="s" className="close-icon" />
             </div>
           </HeaderSection>
           <ContentSection>
