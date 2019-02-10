@@ -244,7 +244,7 @@ class CustomerDetails extends React.Component {
               open={visibleofDeleteModal}
               onClose={this.hideDeleteModal}
             >
-              <Label>Deleting {customerName}'s account is permanent and cannot be undone.</Label>
+              <Label>Deleting {customerName}&#39;s account is permanent and cannot be undone.</Label>
             </Modal>
             {customerStatus === customerActions.DELETE_CHILD_ACCOUNT && <LoadingSpinner
               loading={customerStatus === customerActions.DELETE_CHILD_ACCOUNT}
