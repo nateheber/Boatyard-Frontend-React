@@ -101,14 +101,14 @@ export default class OrderReviewSection extends React.Component {
           <Col sm={12} md={6}>
             <Row>
               <Col sm={6}><Label>Subtotal:</Label></Col>
-              <Col sm={6}><Value>${subtotal}</Value></Col>
+              <Col sm={6}><Value>${parseFloat(subtotal).toFixed(2)}</Value></Col>
             </Row>
             <TaxEditor value={taxRate} taxAmount={taxAmount} onChange={this.onChangeTax} />
             <OnClickEditor value={deposit} label="Deposit" onChange={this.onChangeDeposit} />
             <OnClickEditor value={discount} label="Discount" onChange={this.onChangeDiscount} />
             <Row>
               <Col sm={6}><Label className="total">Total:</Label></Col>
-              <Col sm={6}><Value className="total">${total}</Value></Col>
+              <Col sm={6}><Value className="total">${parseFloat(total).toFixed(2)}</Value></Col>
             </Row>
           </Col>
         </Row>

@@ -70,7 +70,7 @@ export default class OnClickEditor extends React.Component {
         </Col>
         <Col sm={6}>
           <Placeholder onClick={this.setEdit}>
-            {isEmpty(value) ? 'Add' : `$${value}`}
+            {isEmpty(value) ? 'Add' : `$${parseFloat(value).toFixed(2)}`}
           </Placeholder>
         </Col>
       </Row>
