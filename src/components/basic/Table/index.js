@@ -9,6 +9,7 @@ import Paginator from './Paginator';
 const Wrapper = styled.div`
   background-color: white;
   width: 100%;
+  overflow-x: scroll;
 `;
 
 const TableWrapper = styled.div`

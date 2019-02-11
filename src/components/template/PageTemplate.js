@@ -10,6 +10,8 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow: hidden;
 `;
+
+
 const PageContent = styled.div`
   display: flex;
   box-sizing: border-box;
@@ -18,6 +20,7 @@ const PageContent = styled.div`
   flex: 1;
   padding-top: 68px;
   height: 100%;
+  width: 100vw;
   background-color: #e6e6e6;
 `;
 

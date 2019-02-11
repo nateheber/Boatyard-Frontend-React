@@ -11,7 +11,10 @@ import CaretUpIcon from '../../../resources/caret-up-solid.svg';
 
 const Wrapper = styled.div`
   display: flex;
+  box-sizing: border-box;
   flex-direction: row;
+  max-width: 100%;
+  min-width: 100%;
   width: 100%;
   border-bottom: 1px solid #eaeaea;
   font-family: 'Source Sans Pro', sans-serif;
@@ -162,7 +165,7 @@ const CaretUp = styled.div`
   }
 `;
 
-export class Record extends React.Component {
+export class Record extends React.PureComponent {
   state = {
     show: false
   };
@@ -215,8 +218,13 @@ export class Record extends React.Component {
     return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
   };
 
+  getFlex = (pos) => {
+    const { sizes } = this.props;
+    return sizes[pos].size / sizes[0].size;
+  }
+
   render() {
-    const { record, columns, type } = this.props;
+    const { record, columns, type, sizes } = this.props;
     const { show } = this.state;
     const firstColumn = columns[0];
     const hidingCols = columns.slice(1);
@@ -234,7 +242,7 @@ export class Record extends React.Component {
             </Col>
           </Tile>
         :
-          <Wrapper className={show ? 'active' : 'deactive'}>
+          <Wrapper className={classNames(show ? 'active' : 'deactive', 'is-mobile')}>
             <FirstField
               onClick={this.onShowDetails}
               className={classNames(show ? 'active' : 'deactive', type, 'is-mobile')}
@@ -243,11 +251,19 @@ export class Record extends React.Component {
               {!show && <CaretDown />}
               {show && <CaretUp />}
             </FirstField>
-            <FirstField className="is-desktop" onClick={this.onGoToDetails}>
+            <FirstField
+              className="is-desktop"
+              onClick={this.onGoToDetails}
+              style={isEmpty(sizes) ? {} : { flex: 1 }}
+            >
               {this.getValue(firstColumn, record)}
             </FirstField>
             {hidingCols.map((column, idx) => (
-              <Field className={classNames(show ? 'show' : 'hide', type)} key={`col_${idx}`}>
+              <Field
+                className={classNames(show ? 'show' : 'hide', type)}
+                style={isEmpty(sizes) ? {} : { flex: this.getFlex(idx + 1) }}
+                key={`col_${idx}`}
+              >
                 <FieldLabel>{changeCase.upperCaseFirst(column.label)}</FieldLabel>
                 <FieldValue>{this.getValue(column, record)}</FieldValue>
               </Field>
