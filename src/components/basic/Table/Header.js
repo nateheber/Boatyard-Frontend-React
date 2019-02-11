@@ -1,10 +1,11 @@
-import React from 'react'
-import styled from 'styled-components'
-import className from 'classnames'
+import React from 'react';
+import styled from 'styled-components';
+import className from 'classnames';
+import PanelGroup from 'react-panelgroup';
 
-import ArrBlueIcon from '../../../resources/arrow-blue.png'
+import ArrBlueIcon from '../../../resources/arrow-blue.png';
 
-const Wrapper = styled.div`
+const Wrapper = styled(PanelGroup)`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -12,7 +13,8 @@ const Wrapper = styled.div`
   @media (max-width: 843px) {
     display: none;
   }
-`
+`;
+
 const ColumnHeader = styled.div`
   display: flex;
   flex: 1;
@@ -47,7 +49,8 @@ const ColumnHeader = styled.div`
     background-color: rgb(249, 249, 249);
     height: auto;
   }
-`
+`;
+
 const ArrBlue = styled.span`
   margin-left: 2px;
   background-image: url(${ArrBlueIcon});
@@ -59,10 +62,10 @@ const ArrBlue = styled.span`
   &.ascending {
     transform: rotate(180deg);
   }
-`
+`;
 
-export const TableHeader = ({ columns, sortColumn, isAsc, onSort, type = 'primary' }) => (
-  <Wrapper className={className(type)}>
+export const TableHeader = ({ columns, sortColumn, isAsc, onSort, type = 'primary', onChangeSize }) => (
+  <Wrapper className={className(type)} onUpdate={onChangeSize}>
     {columns.map((col, idx) => (
       <ColumnHeader
         key={`col_${idx}`}
@@ -80,4 +83,4 @@ export const TableHeader = ({ columns, sortColumn, isAsc, onSort, type = 'primar
       </ColumnHeader>
     ))}
   </Wrapper>
-)
+);
