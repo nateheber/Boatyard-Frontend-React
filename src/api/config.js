@@ -9,8 +9,8 @@ switch(mode) {
     apiUrl = 'https://staging-api.boatyard.com/api/v2';
     break;
   default:
-    apiUrl = 'http://development-api.boatyard.com/api/v2';
-    // apiUrl = 'https://staging-api.boatyard.com/api/v2';
+    // apiUrl = 'http://development-api.boatyard.com/api/v2';
+    apiUrl = 'https://staging-api.boatyard.com/api/v2';
 }
 
 export const apiBaseUrl = apiUrl;

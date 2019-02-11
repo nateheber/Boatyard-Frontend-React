@@ -87,7 +87,7 @@ class SelectServiceModal extends React.Component {
       const categories = get(included, 'categories', []);
       if (!isEmpty(categories)) {
         const category = get(categories, categoryId, {});
-        const fields = get(category, 'relationships.fields.data', []);
+        const fields = get(category, 'relationships.serviceFields.data', []);
         const includedFields = get(included, 'service_fields', []);
         const refinedFields = [];
         for (const index in fields) {
@@ -97,7 +97,9 @@ class SelectServiceModal extends React.Component {
             refinedFields.push(filtered[0]);
           }
         }
-        const serviceFields = refinedFields.map(field => {
+        const serviceFields = [];
+        for (const index in refinedFields) {
+          const field = refinedFields[index];
           const { name, fieldType, required } = field.attributes;
           const fieldLabel = camelCase(name);
           const defVal = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
@@ -126,8 +128,17 @@ class SelectServiceModal extends React.Component {
             options = [{ value: '', label: '' }].concat(options);
             formField['options'] = options;
           }
-          return formField;
-        });
+          serviceFields.push(formField);
+          if (fieldLabel === 'fuelType') {
+            serviceFields.push({
+              xs: 12,
+              sm: 12,
+              md: 6,
+              lg: 6,
+              xl: 6
+            });
+          }
+        }
         this.setState({ serviceFields });
       }
     }
@@ -172,6 +183,10 @@ class SelectServiceModal extends React.Component {
       default:
         return '';
     }
+  };
+
+  handleServiceFieldChange = (value, field) => {
+    console.log('----------------------', field, value);
   };
 
   setServiceFieldsRef = ref => {
