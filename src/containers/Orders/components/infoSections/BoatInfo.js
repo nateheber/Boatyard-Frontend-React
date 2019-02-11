@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { EditButton } from 'components/basic/Buttons';
 
@@ -38,8 +38,11 @@ const getLocationAddressString = (location) => {
   const city = get(address, 'city', '');
   const state = get(address, 'state', '');
   const zip = get(address, 'zip', '');
-  const line1 = `${street} ${city}`;
-  const line2 = `${state} ${zip}`;
+  const line1 = `${street}`;
+  let line2 = `${city}, ${state} ${zip}`;
+  if (isEmpty(city)) {
+    line2 = `${state} ${zip}`;
+  }
   return {line1, line2};
 }
 
