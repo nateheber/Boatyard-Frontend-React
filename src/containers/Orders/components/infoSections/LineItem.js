@@ -139,13 +139,13 @@ class LineItem extends React.Component {
             )}
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-            {mode === 'edit' ? <Input type="text" value={quantity} onChange={(evt) => this.onChange(evt, 'quantity')} hideError /> : <Value>{quantity}</Value>}
+            {mode === 'edit' ? <Input type="text" value={quantity} onChange={(evt) => this.onChange(evt, 'quantity')} hideError /> : <Value>{parseInt(quantity)}</Value>}
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-            {mode === 'edit' ? <Input type="text" value={cost} onChange={(evt) => this.onChange(evt, 'cost')} hideError /> : <Value>${cost}</Value>}
+            {mode === 'edit' ? <Input type="text" value={cost} onChange={(evt) => this.onChange(evt, 'cost')} hideError /> : <Value>${parseFloat(cost).toFixed(2)}</Value>}
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-            <Value>${parseInt(quantity, 10) * parseFloat(cost)}</Value>
+            <Value>${(parseFloat(quantity) * parseFloat(cost)).toFixed(2)}</Value>
           </Col>
           { mode === 'edit' && (
             <Col md={2} sm={2} lg={2} xl={2} xs={2}>
