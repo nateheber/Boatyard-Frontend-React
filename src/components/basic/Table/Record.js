@@ -201,6 +201,9 @@ export class Record extends React.Component {
     if (column.isValue && parseInt(value) === 0) {
       return '_';
     }
+    if (column.isCurrency) {
+      value = parseFloat(value).toFixed(2);
+    }
     if (column.isDate) {
       const date = moment(value);
       if (date.isValid()) {
