@@ -46,7 +46,7 @@ const columns = {
 const tabs = {
   admin: [
     { title: 'ALL', value: 'all', counts: 0 },
-    { title: 'AWAITING ACCEPTANCE', value: 'assigned', counts: 0 },
+    { title: 'NEED ASSIGNMENT', value: 'needAssignment', counts: 0 },
     { title: 'DISPATCHED', value: 'dispatched', counts: 0 },
   ],
   provider: [
@@ -66,8 +66,8 @@ class OrderList extends React.Component {
   onChangeTab = (tab) => {
     this.setState({ tab });
     this.props.SetDispatchedFlag(tab === 'dispatched');
-    if (tab === 'assigned') {
-      this.props.GetOrders({ params: { page: 1, 'order[state]': 'assigned' } })
+    if (tab === 'needAssignment') {
+      this.props.GetOrders({ params: { page: 1, 'order[state]': 'draft' } })
     } else {
       this.props.GetOrders({ params: { page: 1 } });
     }
