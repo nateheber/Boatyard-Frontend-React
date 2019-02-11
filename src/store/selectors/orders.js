@@ -121,22 +121,36 @@ export const refinedOrdersSelector = createSelector(
   (allOrders, included) => {
     return allOrders.map(order => {
       for(const key in order.relationships) {
-        let value = order.relationships[key].data;
+        let value = get(order, `relationships[${key}].data`);
         if(value) {
           if (key === 'lineItems') {
             if (value.length > 0) {
               order.relationships[key] = value.map(obj => {
-                return included[obj.type][obj.id];
+                return get(included, `[${obj.type}][${obj.id}]`);
               });
-              for(const subKey in order.relationships[key][0].relationships) {
-                const subValue = order.relationships[key][0].relationships[subKey].data;
+              for(const subKey in get(order, `relationships[${key}][0].relationships`)) {
+                const subValue = get(order, `relationships[${key}][0].relationships[${subKey}].data`);
                 if (subValue) {
-                  order.relationships[subKey] = included[subValue.type][subValue.id];
+                  order.relationships[subKey] = get(included, `[${subValue.type}][${subValue.id}]`);
+                  if (subKey === 'service') {
+                    for(const serviceKey in order.relationships[subKey].relationships) {
+                      const val = get(order, `relationships[${subKey}].relationships[${serviceKey}]`);
+                      if (val.data) {
+                        if (Array.isArray(val.data)) {
+                          const values = val.data.map(obj => included[obj.type][obj.id]);
+                          order.relationships[subKey].relationships[serviceKey] = values;
+                        } else {
+                          const { type, id } = val.data;
+                          order.relationships[subKey].relationships[serviceKey] = included[type][id];
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           } else {
-            order.relationships[key] = included[value.type][value.id];
+            order.relationships[key] = get(included, `[${value.type}][${value.id}]`);
           }
         }
       }
