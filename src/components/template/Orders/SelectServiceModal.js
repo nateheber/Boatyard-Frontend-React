@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
-import { get, set, isEmpty, filter, camelCase, startCase, hasIn } from 'lodash';
+import { get, isEmpty, filter, camelCase, startCase, hasIn } from 'lodash';
 
 import { FilterServices, GetService } from 'store/actions/services';
 import { actionTypes } from 'store/actions/orders';
@@ -82,8 +82,7 @@ class SelectServiceModal extends React.Component {
     const { service } = this.state;
     const { included } = this.props;
     const { categoryId } = service;
-    const properties = {};
-    const orgProperties = get(service, `properties`, {});;
+    const orgProperties = {}; // get(service, `properties`, {});;
     if (categoryId) {
       const categories = get(included, 'categories', []);
       if (!isEmpty(categories)) {
@@ -102,21 +101,32 @@ class SelectServiceModal extends React.Component {
           const { name, fieldType, required } = field.attributes;
           const fieldLabel = camelCase(name);
           const defVal = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
-          set(properties, name, defVal);
           const label = startCase(name);
-          return {
+          let formField = {
             field: fieldLabel,
             label: label,
             type: fieldType,
             required,
             defaultValue: defVal,
-            errorMessage: `Enter ${label}`,
+            errorMessage: fieldType === 'select_box' ? `Choose ${label}` : `Enter ${label}`,
             xs: 12,
             sm: 12,
             md: 6,
             lg: 6,
             xl: 6
           };
+          if (fieldType === 'select_box') {
+            const { collectionForSelect } = field.attributes;
+            let options = collectionForSelect.map(option => {
+              return {
+                value: option,
+                label: option
+              };
+            });
+            options = [{ value: '', label: '' }].concat(options);
+            formField['options'] = options;
+          }
+          return formField;
         });
         this.setState({ serviceFields });
       }
@@ -239,7 +249,11 @@ class SelectServiceModal extends React.Component {
         <Row>
           <Col sm={12}>
             {!isEmpty(serviceFields) && (
-              <FormFields ref={this.setServiceFieldsRef} fields={serviceFields} />
+              <FormFields
+                ref={this.setServiceFieldsRef}
+                fields={serviceFields}
+                onChange={this.handleServiceFieldChange}
+              />
             )}
             {!isEmpty(service) && (
               <FormFields ref={this.setBoatFieldsRef} fields={boatFields} />

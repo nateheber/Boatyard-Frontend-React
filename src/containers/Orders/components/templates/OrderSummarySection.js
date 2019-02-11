@@ -30,8 +30,31 @@ const FieldValue = styled.td`
 `;
 
 export default class OrderSummarySection extends React.Component {
+  renderProperties = () => {
+    const { order } = this.props;
+    const properties = get(order, 'attributes.properties', {});
+    const fields = [];
+    for (const key in properties) {
+      const value = get(properties, key);
+      fields.push(
+        <TR>
+          <Label>
+            {key.toUpperCase()}
+          </Label>
+          <FieldValue sm={3} md={3} lg={3}>
+            {value}
+          </FieldValue>
+        </TR>
+      );
+    }
+    return fields;
+  };
+
   render () {
-    const { lineItem, specialInstructions, slipNumber } = this.props;
+    const { lineItem, order } = this.props;
+    const specialInstructions = get(order, 'attributes.specialInstructions');
+    const slipNumber = get(order, 'attributes.slipNumber');
+
     const serviceName = get(lineItem, 'relationships.service.attributes.name');
     return (isEmpty(lineItem) && isEmpty(slipNumber) && isEmpty(specialInstructions)) ? false : (
       <Section title="Order Summary">
@@ -45,6 +68,7 @@ export default class OrderSummarySection extends React.Component {
                 {serviceName}
               </FieldValue>
             </TR>}
+            {this.renderProperties()}
             {!isEmpty(slipNumber) && <TR>
               <Label>
                 Slip Number

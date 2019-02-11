@@ -89,16 +89,6 @@ class OrderDetails extends React.Component {
     };
   };
 
-  getSpecialInstructions = () => {
-    const { currentOrder } = this.props;
-    return get(currentOrder, 'attributes.specialInstructions');
-  };
-
-  getSlipNumber = () => {
-    const { currentOrder } = this.props;
-    return get(currentOrder, 'attributes.slipNumber');
-  };
-
   getUdpatedDate = () => {
     const { currentOrder } = this.props;
     const updatedAt = get(currentOrder, 'attributes.updatedAt');
@@ -177,8 +167,7 @@ class OrderDetails extends React.Component {
                   <SectionGroup>
                     <OrderSummarySection
                       lineItem={get(lineItems, '0', {})}
-                      specialInstructions={this.getSpecialInstructions()}
-                      slipNumber={this.getSlipNumber()}
+                      order={currentOrder}
                     />
                     <LineItemSection
                       updatedAt={updatedDate}

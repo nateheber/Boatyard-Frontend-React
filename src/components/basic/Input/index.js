@@ -7,5 +7,5 @@ export * from './InputWrapper';
 export * from './ImageUploader';
 export * from './ImageSelector';
 export * from './Selector';
-export * from './DatePicker';
+export * from './DateSelector';
 export * from './TimePicker'

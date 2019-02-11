@@ -36,7 +36,7 @@ export const TimeColumn = () => (
       const hour = idx === 0 ? 12 : idx % 12;
       const apm = (idx + 1) / 12 > 1 ? 'pm' : 'am';
       return (
-        <div>
+        <div key={`div_${idx}`}>
           <FirstHalf>
             {hour}
             {apm}

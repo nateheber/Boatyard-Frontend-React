@@ -61,11 +61,12 @@ export default handleActions(
     [actionTypes.FILTER_SERVICES_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
-        const { total, perPage, services } = payload;
+        const { total, perPage, services, included } = payload;
         draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
         draft.filteredServices = services;
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.FILTER_SERVICES_FAILURE]: (state, action) =>
       produce(state, draft => {
