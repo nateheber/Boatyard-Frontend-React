@@ -28,7 +28,7 @@ const TableWrapper = styled.div`
 const columns = [
   { label: 'order', value: 'name' },
   { label: 'order placed', value: 'createdAt' },
-  { label: 'total', value: 'total' },
+  { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
   { label: 'order status', value: 'state' }
 ];
 const tabs = [
