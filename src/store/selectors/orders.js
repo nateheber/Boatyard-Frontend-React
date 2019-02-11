@@ -140,7 +140,7 @@ export const refinedOrdersSelector = createSelector(
             if (key === 'boat') {
               const boatLocationInfo = get(order.relationships[key], 'relationships.location.data');
               if (boatLocationInfo) {
-                const locationInfo = included[boatLocationInfo.type][boatLocationInfo.id];
+                const locationInfo = get(included, `[${boatLocationInfo.type}][${boatLocationInfo.id}]`);
                 set(order.relationships[key], 'relationships.location', { attributes: locationInfo.attributes, address: get(locationInfo, 'relationships.address.data') });
               }
             }
