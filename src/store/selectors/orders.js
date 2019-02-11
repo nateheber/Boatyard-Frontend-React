@@ -121,22 +121,22 @@ export const refinedOrdersSelector = createSelector(
   (allOrders, included) => {
     return allOrders.map(order => {
       for(const key in order.relationships) {
-        let value = order.relationships[key].data;
+        let value = get(order, `relationships[${key}].data`);
         if(value) {
           if (key === 'lineItems') {
             if (value.length > 0) {
-              order.relationships[key] = value.map(obj => {
-                return included[obj.type][obj.id];
-              });
-              for(const subKey in order.relationships[key][0].relationships) {
-                const subValue = order.relationships[key][0].relationships[subKey].data;
+              set(order.relationships, `[${key}]`, value.map(obj => {
+                return get(included, `[${obj.type}][${obj.id}]`);
+              }))
+              for(const subKey in get(order, `relationships[${key}][0].relationships`)) {
+                const subValue = get(order, `relationships[${key}][0].relationships[${subKey}].data`);
                 if (subValue) {
-                  order.relationships[subKey] = included[subValue.type][subValue.id];
+                  order.relationships[subKey] = get(included, `[${subValue.type}][${subValue.id}]`);
                 }
               }
             }
           } else {
-            order.relationships[key] = included[value.type][value.id];
+            order.relationships[key] = get(included, `[${value.type}][${value.id}]`);
             if (key === 'boat') {
               const boatLocationInfo = get(order.relationships[key], 'relationships.location.data');
               if (boatLocationInfo) {
