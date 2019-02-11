@@ -67,7 +67,7 @@ export default class TaxEditor extends React.Component {
         </Col>
         <Col sm={6}>
           <Value>
-            ${taxAmount}
+            ${parseFloat(taxAmount).toFixed(2)}
           </Value>
         </Col>
       </Row>
@@ -83,7 +83,7 @@ export default class TaxEditor extends React.Component {
         </Col>
         <Col sm={6}>
           <Value>
-            ${taxAmount}
+            ${parseFloat(taxAmount).toFixed(2)}
           </Value>
         </Col>
       </Row>    

@@ -117,7 +117,7 @@ class Services extends React.Component {
   render() {
     const columns = [
       { label: 'service name', value: 'name', sort: 'name' },
-      { label: 'price', value: 'cost', sort: 'cost', prefix: '$', isValue: true },
+      { label: 'price', value: 'cost', sort: 'cost', prefix: '$', isValue: true, isCurrency: true },
       { label: 'price type', value: 'costType', sort: 'cost_type' }
     ];
 

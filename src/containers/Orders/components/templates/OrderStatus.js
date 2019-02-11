@@ -90,7 +90,7 @@ export default ({ id, time, customerName, total, scheduledAt, status }) => (
       <FieldValue>{id}</FieldValue>
       <FieldValue>{moment(time).format('MMM D, YYYY')}</FieldValue>
       <FieldValue>{customerName}</FieldValue>
-      <FieldValue>${total}</FieldValue>
+      <FieldValue>${parseFloat(total).toFixed(2)}</FieldValue>
       <StatusValue> </StatusValue>
       <StatusValue>{isEmpty(scheduledAt) ? 'Scheduling Needed' : `Scheduled At ${moment(scheduledAt).format('MMM D, YYYY')}`}</StatusValue>
       <StatusValue>{status}</StatusValue>
@@ -110,7 +110,7 @@ export default ({ id, time, customerName, total, scheduledAt, status }) => (
       </FieldWrapper>
       <FieldWrapper>
         <FieldLabel>total</FieldLabel>
-        <FieldValue>${total}</FieldValue>
+        <FieldValue>${parseFloat(total).toFixed(2)}</FieldValue>
       </FieldWrapper>
       <FieldWrapper>
         <FieldLabel>payment status</FieldLabel>
