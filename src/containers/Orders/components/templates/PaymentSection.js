@@ -82,7 +82,7 @@ class PaymentSection extends React.Component {
           <InfoList>
             {this.renderPayments()}
             <InfoItem>
-              Balance Remaining: ${balance}
+              Balance Remaining: ${parseFloat(balance).toFixed(2)}
             </InfoItem>
           </InfoList>
           <Buttons>
