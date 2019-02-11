@@ -52,7 +52,7 @@ export class TeamMembers extends React.PureComponent {
       <Wrapper>
         <Title>team members</Title>
         {members.map((member, idx) => (
-          <MemberWrapper>
+          <MemberWrapper key={`member_${idx}`}>
             <CheckBox />
             <Name>{member.name}</Name>
             <Color style={{ backgroundColor: member.color }} />
