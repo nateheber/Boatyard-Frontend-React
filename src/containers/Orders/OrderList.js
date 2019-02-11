@@ -32,7 +32,8 @@ const columns = [
   { label: 'order status', value: 'state' }
 ];
 const tabs = [
-  { title: 'NORMAL', value: 'all', counts: 0 },
+  { title: 'ALL', value: 'all', counts: 0 },
+  { title: 'AWAITING ACCEPTANCE', value: 'assigned', counts: 0 },
   { title: 'DISPATCHED', value: 'dispatched', counts: 0 },
 ];
 
@@ -47,7 +48,11 @@ class OrderList extends React.Component {
   onChangeTab = (tab) => {
     this.setState({ tab });
     this.props.SetDispatchedFlag(tab === 'dispatched');
-    this.props.GetOrders({ params: { page: 1 } });
+    if (tab === 'assigned') {
+      this.props.GetOrders({ params: { page: 1, 'order[state]': 'assigned' } })
+    } else {
+      this.props.GetOrders({ params: { page: 1 } });
+    }
   }
 
   setNewOrderModalRef = (ref) => {
