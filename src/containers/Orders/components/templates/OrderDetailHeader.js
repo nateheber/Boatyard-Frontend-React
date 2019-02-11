@@ -88,10 +88,10 @@ class OrderDetailHeader extends React.Component {
 
   renderStatus = () => {
     const orderStatus = this.getOrderStatus();
-    console.log()
+    console.log('----------RENDER STATUS--------');
     return (
       <OrderStatus {...orderStatus} />
-    )
+    );
   }
 
   render() {
