@@ -59,7 +59,7 @@ const tabs = {
   ],
   provider: [
     { title: 'ALL', value: 'all', counts: 0 },
-    { title: 'DISPATCHED', value: 'dispatched', counts: 0 },
+    { title: 'AWAITING ACCEPTANCE', value: 'dispatched', counts: 0 },
   ]
 };
 
