@@ -31,6 +31,9 @@ const columns = {
   admin: [
     { label: 'order', value: 'name' },
     { label: 'order placed', value: 'createdAt' },
+    { label: 'customer', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
+    { label: 'service', value: 'relationships.service.attributes.name' },
+    { label: 'location', value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state' },
     { label: 'boat name', value: 'relationships.boat.attributes.name' },
     { label: 'boat', value: 'relationships.boat.attributes.make' },
     { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
