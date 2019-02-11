@@ -33,13 +33,13 @@ const columns = {
     { label: 'order placed', value: 'createdAt' },
     { label: 'boat name', value: 'relationships.boat.attributes.name' },
     { label: 'boat', value: 'relationships.boat.attributes.make' },
-    { label: 'total', value: 'total' },
+    { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
     { label: 'order status', value: 'state' },
   ],
   provider: [
     { label: 'order', value: 'name' },
     { label: 'order placed', value: 'createdAt' },
-    { label: 'total', value: 'total' },
+    { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
     { label: 'order status', value: 'state' },
   ]
 };

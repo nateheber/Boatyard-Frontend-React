@@ -201,6 +201,9 @@ export class Record extends React.Component {
     if (column.isValue && parseInt(value) === 0) {
       return '_';
     }
+    if (column.isCurrency) {
+      value = parseFloat(value).toFixed(2);
+    }
     if (column.isDate) {
       const date = moment(value);
       if (date.isValid()) {
@@ -219,7 +222,7 @@ export class Record extends React.Component {
     const hidingCols = columns.slice(1);
     let icon = get(record, 'customIcon.url');
     if (isEmpty(icon)) {
-      icon = get(record, 'iconId') || 'https://dev.boatyard.com/img/logo.svg';
+      icon = get(record, 'relationships.icon.attributes.icon.url') || 'https://dev.boatyard.com/img/logo.svg';
     }
     return (
       <React.Fragment>

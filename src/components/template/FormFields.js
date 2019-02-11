@@ -9,7 +9,8 @@ import {
   Input,
   CheckBox,
   TextArea,
-  Select
+  Select,
+  DateSelector
 } from 'components/basic/Input';
 
 export default class FormFields extends React.Component {
@@ -92,12 +93,16 @@ export default class FormFields extends React.Component {
 
   getFieldValues = () => this.state.value;
 
-  renderInputField = (field, type, mask, maskChar, placeholder, errorMessage, options) => {
+  renderInputField = (field, type, mask, maskChar, placeholder, dateFormat, errorMessage, options) => {
     const { value, errors } = this.state;
-    const fieldValue =
-      type === 'check_box'
-        ? get(value, field) || false
-        : get(value, field) || '';
+    let fieldValue = '';
+      if (type === 'check_box') {
+        fieldValue = get(value, field) || false;
+      } else if (type === 'date') {
+        fieldValue = get(value, field) || new Date();
+      } else {
+        fieldValue = get(value, field) || '';
+      }
     const errorIdx = findIndex(errors, errorField => errorField === field);
     switch (type) {
       case 'dummy':
@@ -109,11 +114,22 @@ export default class FormFields extends React.Component {
             onClick={() => this.onChangeValue(field, !fieldValue)}
           />
         );
-      case 'text_area':
+        case 'text_area':
         return (
           <TextArea
             value={fieldValue}
             onChange={evt => this.onChangeValue(field, evt.target.value)}
+            hasError={errorIdx >= 0}
+            placeholder={placeholder}
+            errorMessage={errorMessage}
+          />
+        );
+      case 'date':
+        return (
+          <DateSelector
+            dateFormat={dateFormat || 'dd/MM/yyyy'}
+            selected={fieldValue}
+            onChange={value => this.onChangeValue(field, value)}
             hasError={errorIdx >= 0}
             placeholder={placeholder}
             errorMessage={errorMessage}
@@ -137,7 +153,6 @@ export default class FormFields extends React.Component {
           </Select>
         );
       case 'text_field':
-      default:
         return (
           <Input
             mask={mask}
@@ -149,6 +164,8 @@ export default class FormFields extends React.Component {
             errorMessage={errorMessage}
           />
         );
+      default:
+        return null;
     }
   };
 
@@ -164,6 +181,7 @@ export default class FormFields extends React.Component {
               mask,
               maskChar,
               placeholder,
+              dateFormat,
               errorMessage,
               type,
               options,
@@ -180,6 +198,7 @@ export default class FormFields extends React.Component {
                   mask,
                   maskChar,
                   placeholder,
+                  dateFormat,
                   errorMessage,
                   options
                 )}
