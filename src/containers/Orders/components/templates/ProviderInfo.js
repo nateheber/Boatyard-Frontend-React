@@ -7,7 +7,6 @@ import { GetProvider } from 'store/actions/providers';
 const Wrapper = styled.div`
   box-sizing: border-box;
   height: 50px;
-  border: 1px solid #F5F5F5;
   background-color: white;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 16px;
