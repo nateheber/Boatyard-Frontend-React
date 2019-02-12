@@ -43,7 +43,7 @@ class NeedAssignment extends React.Component {
       {
         label: 'City / State',
         value: 'relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
-        combineString: ', ' }
+        combines: [', '] }
     ];
 
     return (

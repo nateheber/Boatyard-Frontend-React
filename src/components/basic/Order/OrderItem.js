@@ -68,6 +68,7 @@ function getValue(column, item) {
   }
   const fields = column.value.split('/');
   let value = '';
+  let combines = get(column, 'combines', []);
   for (const idx in fields) {
     const field = fields[idx];
     const arr = field.split('.');
@@ -78,7 +79,7 @@ function getValue(column, item) {
       part = part[key];
     }
     if(part && part.length > 0) {
-      let combineString = get(column, 'combineString', ' ');
+      const combineString = get(combines, `${idx - 1}`, ' ');
       value = value.length > 0 ? `${value}${combineString}${part}` : part;
     }    
   }

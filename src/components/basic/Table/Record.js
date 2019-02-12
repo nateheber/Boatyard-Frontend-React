@@ -185,6 +185,7 @@ export class Record extends React.Component {
     }
     const fields = column.value.split('/');
     let value = '';
+    let combines = get(column, 'combines', []);
     for (const idx in fields) {
       const field = fields[idx];
       const arr = field.split('.');
@@ -195,8 +196,7 @@ export class Record extends React.Component {
         part = part[key];
       }
       if(part && part.length > 0) {
-        console.log('----------------column------', column);
-        let combineString = get(column, 'combineString', ' ');
+        const combineString = get(combines, `${idx - 1}`, ' ');
         value = value.length > 0 ? `${value}${combineString}${part}` : part;
       }    
     }
@@ -214,7 +214,7 @@ export class Record extends React.Component {
         value = '';
       }
     }
-    return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
+    return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;  
   };
 
   render() {
