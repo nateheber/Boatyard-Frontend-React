@@ -263,7 +263,24 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
-      })
+      }),
+    [actionTypes.DISPATCH_ORDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.DISPATCH_ORDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.DISPATCH_ORDER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
     },
   initialState
 );
