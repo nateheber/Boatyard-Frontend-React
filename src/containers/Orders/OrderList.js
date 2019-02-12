@@ -3,12 +3,14 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
+import { get } from 'lodash';
 
 import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 
 import { GetOrders, SetDispatchedFlag } from 'store/actions/orders';
+import { refinedOrdersSelector } from 'store/selectors/orders';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
@@ -25,16 +27,36 @@ const TableWrapper = styled.div`
   overflow-y: scroll;
 `;
 
-const columns = [
-  { label: 'order', value: 'name' },
-  { label: 'order placed', value: 'createdAt' },
-  { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
-  { label: 'order status', value: 'state' }
-];
-const tabs = [
-  { title: 'NORMAL', value: 'all', counts: 0 },
-  { title: 'DISPATCHED', value: 'dispatched', counts: 0 },
-];
+const columns = {
+  admin: [
+    { label: 'order', value: 'name' },
+    { label: 'order placed', value: 'createdAt' },
+    { label: 'customer', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
+    { label: 'service', value: 'relationships.service.attributes.name' },
+    { label: 'location', value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state' },
+    { label: 'boat name', value: 'relationships.boat.attributes.name' },
+    { label: 'boat', value: 'relationships.boat.attributes.make' },
+    { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
+    { label: 'order status', value: 'state' },
+  ],
+  provider: [
+    { label: 'order', value: 'name' },
+    { label: 'order placed', value: 'createdAt' },
+    { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
+    { label: 'order status', value: 'state' },
+  ]
+};
+const tabs = {
+  admin: [
+    { title: 'ALL', value: 'all', counts: 0 },
+    { title: 'NEED ASSIGNMENT', value: 'needAssignment', counts: 0 },
+    { title: 'DISPATCHED', value: 'dispatched', counts: 0 },
+  ],
+  provider: [
+    { title: 'ALL', value: 'all', counts: 0 },
+    { title: 'AWAITING ACCEPTANCE', value: 'dispatched', counts: 0 },
+  ]
+};
 
 class OrderList extends React.Component {
   state = { tab: 'all' }
@@ -47,7 +69,11 @@ class OrderList extends React.Component {
   onChangeTab = (tab) => {
     this.setState({ tab });
     this.props.SetDispatchedFlag(tab === 'dispatched');
-    this.props.GetOrders({ params: { page: 1 } });
+    if (tab === 'needAssignment') {
+      this.props.GetOrders({ params: { page: 1, 'order[state]': 'draft' } })
+    } else {
+      this.props.GetOrders({ params: { page: 1 } });
+    }
   }
 
   setNewOrderModalRef = (ref) => {
@@ -80,7 +106,7 @@ class OrderList extends React.Component {
   };
 
   render() {
-    const { orders, page } = this.props;
+    const { orders, page, privilege } = this.props;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => ({
       ...order,
@@ -91,10 +117,10 @@ class OrderList extends React.Component {
     return (
       <Wrapper>
         <OrderHeader onNewOrder={this.newOrder} />
-        <Tab tabs={tabs} selected={tab} onChange={this.onChangeTab} />
+        <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
         <TableWrapper>
           <Table
-            columns={columns}
+            columns={columns[privilege]}
             records={processedOrders}
             sortColumn="order"
             toDetails={this.toDetails}
@@ -109,11 +135,12 @@ class OrderList extends React.Component {
   }
 }
 
-const mapStateToProps = ({ order: { orders : { orders, page, perPage, total } } }) => ({
-  orders,
-  perPage,
-  total,
-  page,
+const mapStateToProps = state => ({
+  orders: refinedOrdersSelector(state),
+  page: get(state, 'order.orders.page', 1),
+  perPage: get(state, 'oreder.orders.perPage', 20),
+  total: get(state, 'order.orders.total', 0),
+  privilege: get(state, 'auth.privilege'),
 });
 
 const mapDispatchToProps = {
