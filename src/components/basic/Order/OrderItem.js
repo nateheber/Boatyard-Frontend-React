@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import moment from 'moment';
 
 const Wrapper = styled.div`
@@ -60,28 +60,48 @@ const THeader = styled.div`
 `;
 
 function getValue(column, item) {
-  if (column.value === 'id') {
-    if (item.state === 'draft' && column.type === 'new') {
-      return 'New Order';
-    }
-    return `Order #${item.id}`;    
-  }
-  const fields = column.value.split('/');
   let value = '';
-  let combines = get(column, 'combines', []);
-  for (const idx in fields) {
-    const field = fields[idx];
-    const arr = field.split('.');
-    let part = item;
-    for (const subIdx in arr) {
-      const key = arr[subIdx];
-      if (!part) return '_';
-      part = part[key];
+  if (column.isCustomer) {
+    for (const idx in column.value) {
+      const val = column.value[idx];
+      const fields = val.split('/');
+      let part = null;
+      for (const subIdx in fields) {
+        if (part === null) {
+          part = get(item, fields[subIdx], '');
+        } else {
+          part = `${part} ${get(item, fields[subIdx], '')}`;
+        }
+      }
+      if (!isEmpty(part.trim())) {
+        return part;
+      } else {
+        value = '_';
+      }
     }
-    if(part && part.length > 0) {
-      const combineString = get(combines, `${idx - 1}`, ' ');
-      value = value.length > 0 ? `${value}${combineString}${part}` : part;
-    }    
+  } else {
+    if (column.value === 'id') {
+      if (item.state === 'draft' && column.type === 'new') {
+        return 'New Order';
+      }
+      return `Order #${item.id}`;    
+    }
+    const fields = column.value.split('/');
+    let combines = get(column, 'combines', []);
+    for (const idx in fields) {
+      const field = fields[idx];
+      const arr = field.split('.');
+      let part = item;
+      for (const subIdx in arr) {
+        const key = arr[subIdx];
+        if (!part) return '_';
+        part = part[key];
+      }
+      if(part && part.length > 0) {
+        const combineString = get(combines, `${idx - 1}`, ' ');
+        value = value.length > 0 ? `${value}${combineString}${part}` : part;
+      }    
+    }
   }
   if (column.isValue && parseInt(value) === 0) {
     return '_';
@@ -102,6 +122,7 @@ function getValue(column, item) {
 
 export const OrderItem = props => {
   const { columns, item } = props;
+  // console.log('---------------------Order----------', item);
   return (
     <Wrapper>
       {columns.map((column, idx) => {
