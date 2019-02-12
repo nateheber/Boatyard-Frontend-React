@@ -129,7 +129,7 @@ export const generateOrderTimeline = order => {
   const updateInfo = getUpdatedStatus(order);
   const timeLine = getOrderProcessInfo(order);
   const result = [creationInfo, updateInfo, ...timeLine];
-  return sortBy(result, ['time']);
+  return sortBy(result, ['time']).reverse();
 };
 
 export const getLocationAddressFromOrder = order => {
