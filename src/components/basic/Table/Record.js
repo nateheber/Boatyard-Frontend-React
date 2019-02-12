@@ -195,7 +195,9 @@ export class Record extends React.Component {
         part = part[key];
       }
       if(part && part.length > 0) {
-        value = value.length > 0 ? `${value} ${part}` : part;
+        console.log('----------------column------', column);
+        let combineString = get(column, 'combineString', ' ');
+        value = value.length > 0 ? `${value}${combineString}${part}` : part;
       }    
     }
     if (column.isValue && parseInt(value) === 0) {
