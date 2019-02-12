@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { get } from 'lodash';
 import moment from 'moment';
 
 const Wrapper = styled.div`
@@ -67,6 +68,7 @@ function getValue(column, item) {
   }
   const fields = column.value.split('/');
   let value = '';
+  let combines = get(column, 'combines', []);
   for (const idx in fields) {
     const field = fields[idx];
     const arr = field.split('.');
@@ -77,21 +79,25 @@ function getValue(column, item) {
       part = part[key];
     }
     if(part && part.length > 0) {
-      value = value.length > 0 ? `${value} ${part}` : part;
+      const combineString = get(combines, `${idx - 1}`, ' ');
+      value = value.length > 0 ? `${value}${combineString}${part}` : part;
     }    
   }
-  if(column.isValue && parseInt(value) === 0) {
-    return '';
+  if (column.isValue && parseInt(value) === 0) {
+    return '_';
+  }
+  if (column.isCurrency) {
+    value = parseFloat(value).toFixed(2);
   }
   if (column.isDate) {
     const date = moment(value);
     if (date.isValid()) {
       value = `${date.format('MMM DD, YYYY')}`;
     } else {
-      value = '_';
+      value = '';
     }
   }
-return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
+  return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
 }
 
 export const OrderItem = props => {
