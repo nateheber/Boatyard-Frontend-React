@@ -19,7 +19,8 @@ class OrderAssignment extends React.Component {
     if (providerId) {
       return { dispatchIds: [providerId] };
     }
-    return {};
+    const dispatchIds = get(props, 'currentOrder.dispatchIds', []);
+    return { dispatchIds };
   }
 
   updateDispatchIds = (dispatchIds) => {
