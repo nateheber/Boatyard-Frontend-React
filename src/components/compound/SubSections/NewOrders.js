@@ -37,7 +37,14 @@ class NewOrders extends React.Component {
     const { orders, total, history } = this.props;
     const columns = [
       { label: 'ORDER', value: 'id', isTitle: true, type: 'new', link: true },
-      { label: 'CUSTOMER', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
+      {
+        label: 'CUSTOMER',
+        value: [
+          'relationships.user.attributes.firstName/relationships.user.attributes.lastName',
+          'relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'
+        ],
+        isCustomer: true
+      },
       { label: 'SERVICE', value: 'relationships.service.attributes.name' },
       { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' },
       { label: 'BOAT MAKE', value: 'relationships.boat.attributes.make' },
