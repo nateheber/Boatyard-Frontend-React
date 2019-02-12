@@ -4,7 +4,7 @@ import changeCase from 'change-case';
 import classNames from 'classnames'
 import moment from 'moment';
 import { Col } from 'react-flexbox-grid';
-import { get, startCase, isEmpty } from 'lodash';
+import { get, capitalize, isEmpty } from 'lodash';
 
 import CaretDownIcon from '../../../resources/caret-down-solid.svg';
 import CaretUpIcon from '../../../resources/caret-up-solid.svg';
@@ -241,7 +241,7 @@ export class Record extends React.Component {
           <Tile xs={12} sm={6} md={4} lg={4} xl={3}>
             <Col className="tile-content" onClick={this.onGoToDetails}>
               <img className="tile-image" src={icon} alt={this.getValue(firstColumn, record)} />
-              <p className="tile-name">{startCase(this.getValue(firstColumn, record))}</p>
+              <p className="tile-name">{capitalize(this.getValue(firstColumn, record))}</p>
             </Col>
           </Tile>
         :

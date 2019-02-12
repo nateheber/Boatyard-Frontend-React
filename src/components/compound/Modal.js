@@ -26,6 +26,7 @@ const Header = styled.div`
     text-align: center;
     padding: 15px 40px 15px 15px;
   }
+  text-transform: capitalize;
 `;
 
 const Body = styled.div`
