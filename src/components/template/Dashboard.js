@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { AssignedOrders, ScheduledOrders, MonthlyRevenue } from 'components/compound/SubSections';
 import NewOrders from 'components/compound/SubSections/NewOrders';
+import NeedAssignment from 'components/compound/SubSections/NeedAssignment';
 import OpenInvoices from 'components/compound/SubSections/OpenInvoices';
 import { DashboardHeader } from 'components/compound/SectionHeader';
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
@@ -56,6 +57,7 @@ class Dashboard extends React.Component {
         <DashboardHeader onNewOrder={this.newOrder} />
         <Wrapper>
           <LeftPart>
+            {privilege === 'admin' && <NeedAssignment />}
             {privilege === 'provider' && <NewOrders />}
             <ScheduledOrders />
             <AssignedOrders />

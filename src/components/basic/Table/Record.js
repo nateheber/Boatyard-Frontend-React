@@ -177,26 +177,48 @@ export class Record extends React.Component {
   };
 
   getValue = (column, item) => {
-    if (column.value === 'id') {
-      if (item.state === 'draft' && column.type === 'new') {
-        return 'New Order';
-      }
-      return `Order #${item.id}`;    
-    }
-    const fields = column.value.split('/');
     let value = '';
-    for (const idx in fields) {
-      const field = fields[idx];
-      const arr = field.split('.');
-      let part = item;
-      for (const subIdx in arr) {
-        const key = arr[subIdx];
-        if (!part) return '_';
-        part = part[key];
+    if (column.isCustomer) {
+      for (const idx in column.value) {
+        const val = column.value[idx];
+        const fields = val.split('/');
+        let part = null;
+        for (const subIdx in fields) {
+          if (part === null) {
+            part = get(item, fields[subIdx], '');
+          } else {
+            part = `${part} ${get(item, fields[subIdx], '')}`;
+          }
+        }
+        if (!isEmpty(part.trim())) {
+          return part;
+        } else {
+          value = '_';
+        }
       }
-      if(part && part.length > 0) {
-        value = value.length > 0 ? `${value} ${part}` : part;
-      }    
+    } else {
+      if (column.value === 'id') {
+        if (item.state === 'draft' && column.type === 'new') {
+          return 'New Order';
+        }
+        return `Order #${item.id}`;    
+      }
+      const fields = column.value.split('/');
+      let combines = get(column, 'combines', []);
+      for (const idx in fields) {
+        const field = fields[idx];
+        const arr = field.split('.');
+        let part = item;
+        for (const subIdx in arr) {
+          const key = arr[subIdx];
+          if (!part) return '_';
+          part = part[key];
+        }
+        if(part && part.length > 0) {
+          const combineString = get(combines, `${idx - 1}`, ' ');
+          value = value.length > 0 ? `${value}${combineString}${part}` : part;
+        }    
+      }
     }
     if (column.isValue && parseInt(value) === 0) {
       return '_';

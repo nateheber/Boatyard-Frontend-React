@@ -16,6 +16,14 @@ export const NewOrderSection = ({ count }) => (
   />
 );
 
+export const NeedAssignmentSection = ({ count }) => (
+  <SubSectionFrame
+    title={`Need Assignment(${count})`}
+    iconBg="#e49852"
+    icon={AssignmentImage}
+  />
+);
+
 export const ScheduledSection = ({ count }) => (
   <SubSectionFrame
     title={`Today's Scheduled Orders (${count})`}

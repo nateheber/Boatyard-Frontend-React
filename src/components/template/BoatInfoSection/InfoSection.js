@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { EditButton } from 'components/basic/Buttons';
 
@@ -38,7 +38,7 @@ const HidingPart = styled.div`
   overflow: hidden;
   margin: -30px 0 30px;
   &.opened {
-    height: 252px;
+    height: 270px;
   }
   &.closed {
     height: 0px;
@@ -52,6 +52,12 @@ export default class InfoSection extends React.Component {
     const city = get(boatInfo, 'relationships.location.relationships.address.data.city', '');
     const state = get(boatInfo, 'relationships.location.relationships.address.data.state', '');
     const zip = get(boatInfo, 'relationships.location.relationships.address.data.zip', '');
+    const line1 = `${street}`;
+    let line2 = `${city}, ${state} ${zip}`;
+    if (isEmpty(city)) {
+      line2 = `${state} ${zip}`;
+    }
+  
     return (
       <Wrapper onClick={toggleSection}>
         <Field>
@@ -76,7 +82,8 @@ export default class InfoSection extends React.Component {
           </Field>
           <Field>
             <Label>BOAT LOCATION</Label>
-            <FieldValue>{street} {city} {state} {zip}</FieldValue>
+            <FieldValue>{line1}</FieldValue>
+            <FieldValue>{line2}</FieldValue>
           </Field>
         </HidingPart>
       </Wrapper>

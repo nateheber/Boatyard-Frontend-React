@@ -1,12 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import { get } from 'lodash';
 
 import { GetNewOrders } from 'store/actions/orders';
 import { refinedOrdersSelector } from 'store/selectors/orders'
-import { NewOrderSection } from 'components/basic/SubSection';
+import { NeedAssignmentSection } from 'components/basic/SubSection';
 import { OrderTable } from 'components/basic/Order';
 import { HollowButton } from 'components/basic/Buttons'
 
@@ -19,7 +18,7 @@ const Wrapper = styled.div`
   }
 `;
 
-class NewOrders extends React.Component {
+class NeedAssignment extends React.Component {
 
   componentDidMount() {
     this.props.GetNewOrders({
@@ -48,12 +47,16 @@ class NewOrders extends React.Component {
       { label: 'SERVICE', value: 'relationships.service.attributes.name' },
       { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' },
       { label: 'BOAT MAKE', value: 'relationships.boat.attributes.make' },
-      { label: 'ORDER STATUS', value: 'status' }
+      {
+        label: 'City / State',
+        value: 'relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
+        combines: [', ']
+      }
     ];
 
     return (
       <Wrapper>
-      <NewOrderSection count={total} />
+      <NeedAssignmentSection count={total} />
       <OrderTable
         columns={columns}
         items={orders}
@@ -75,7 +78,7 @@ const mapDispatchToProps = {
   GetNewOrders
 };
 
-export default withRouter(connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-  )(NewOrders));
+  )(NeedAssignment);
