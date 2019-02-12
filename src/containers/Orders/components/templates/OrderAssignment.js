@@ -35,7 +35,7 @@ class OrderAssignment extends React.Component {
   }
 
   renderDropdownButton = () => {
-    const { dispatchIds } = this.props;
+    const { dispatchIds } = this.state;
     return <ProviderSelector dispatchIds={dispatchIds} onChange={this.updateDispatchIds} />
   }
 
