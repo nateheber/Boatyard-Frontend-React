@@ -204,20 +204,9 @@ export class Record extends React.Component {
         return `Order #${item.id}`;    
       }
       const fields = column.value.split('/');
-      let combines = get(column, 'combines', []);
       for (const idx in fields) {
         const field = fields[idx];
-        const arr = field.split('.');
-        let part = item;
-        for (const subIdx in arr) {
-          const key = arr[subIdx];
-          if (!part) return '_';
-          part = part[key];
-        }
-        if(part && part.length > 0) {
-          const combineString = get(combines, `${idx - 1}`, ' ');
-          value = value.length > 0 ? `${value}${combineString}${part}` : part;
-        }    
+        value = value.length > 0 ? `${value} ${get(item, field, '')}` : `${get(item, field, '')}`;
       }
     }
     if (column.isValue && parseInt(value) === 0) {
