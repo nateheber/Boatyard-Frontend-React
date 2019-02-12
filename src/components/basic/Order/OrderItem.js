@@ -122,7 +122,6 @@ function getValue(column, item) {
 
 export const OrderItem = props => {
   const { columns, item } = props;
-  // console.log('---------------------Order----------', item);
   return (
     <Wrapper>
       {columns.map((column, idx) => {
