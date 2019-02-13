@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
-import { CreateOrder } from 'store/actions/orders';
+import { CreateOrder, UpdateOrder } from 'store/actions/orders';
 import SelectCustomerModal from './SelectCustomerModal';
 import SelectServiceModal from './SelectServiceModal';
 
@@ -49,6 +49,7 @@ class NewOrderModal extends React.Component {
   };
 
   createNewOrder = (service, serviceValues = {}, orderValues = {}) => {
+    const { CreateOrder, UpdateOrder, onFinishCreation } = this.props;
     const { customer, boat } = this.state;
     const data = {
       order: {
@@ -61,17 +62,29 @@ class NewOrderModal extends React.Component {
             quantity: 1
           }
         ],
-        properties: {
-          ...serviceValues
-        }
+        // properties: {
+        //   ...serviceValues
+        // }
       }
     };
-    this.props.CreateOrder({
+    CreateOrder({
       data,
       success: (order) => {
-        const { onFinishCreation } = this.props;
-        this.closeServiceModal();
-        if (onFinishCreation) onFinishCreation(get(order, 'id'));
+        UpdateOrder({
+          orderId: order.id,
+          data: {
+            order: {
+              id: order.id,
+              properties: {
+                ...serviceValues
+              }
+            }
+          },
+          success: () => {
+            this.closeServiceModal();
+            if (onFinishCreation) onFinishCreation(get(order, 'id'));
+          }
+        });
       }
     });
   };
@@ -102,6 +115,7 @@ class NewOrderModal extends React.Component {
 
 const mapDispatchToProps = {
   CreateOrder,
+  UpdateOrder
 }
 
 export default connect(
