@@ -4,21 +4,23 @@ import changeCase from 'change-case';
 import classNames from 'classnames'
 import moment from 'moment';
 import { Col } from 'react-flexbox-grid';
-import { get, startCase, isEmpty } from 'lodash';
+import { get, capitalize, isEmpty } from 'lodash';
 
 import CaretDownIcon from '../../../resources/caret-down-solid.svg';
 import CaretUpIcon from '../../../resources/caret-up-solid.svg';
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
-  width: 100%;
+  box-sizing: border-box;
   border-bottom: 1px solid #eaeaea;
   font-family: 'Source Sans Pro', sans-serif;
+  width: ${props => props.width};
+  cursor: pointer;
   &:last-child {
     border-bottom: none;
   }
   @media (max-width: 843px) {
+    width: 100%;
     flex-direction: column;
     border-bottom: none;
     &.active {
@@ -64,8 +66,6 @@ const Tile = styled(Col)`
 `;
 
 const FirstField = styled.div`
-  display: flex;
-  flex: 1;
   font-size: 14px;
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: bold;
@@ -105,8 +105,6 @@ const FirstField = styled.div`
 `;
 
 const Field = styled.div`
-  display: flex;
-  flex: 1;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
   align-items: center;
@@ -162,7 +160,7 @@ const CaretUp = styled.div`
   }
 `;
 
-export class Record extends React.Component {
+export class Record extends React.PureComponent {
   state = {
     show: false
   };
@@ -204,20 +202,9 @@ export class Record extends React.Component {
         return `Order #${item.id}`;    
       }
       const fields = column.value.split('/');
-      let combines = get(column, 'combines', []);
       for (const idx in fields) {
         const field = fields[idx];
-        const arr = field.split('.');
-        let part = item;
-        for (const subIdx in arr) {
-          const key = arr[subIdx];
-          if (!part) return '_';
-          part = part[key];
-        }
-        if(part && part.length > 0) {
-          const combineString = get(combines, `${idx - 1}`, ' ');
-          value = value.length > 0 ? `${value}${combineString}${part}` : part;
-        }    
+        value = value.length > 0 ? `${value} ${get(item, field, '')}` : `${get(item, field, '')}`;
       }
     }
     if (column.isValue && parseInt(value) === 0) {
@@ -237,8 +224,18 @@ export class Record extends React.Component {
     return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
   };
 
+  getWidth = () => {
+    const { sizes } = this.props;
+    if (sizes) {
+      const totalWidth = sizes.reduce((prev, size) => prev + size, 0);
+      return `${totalWidth}px`;
+    } else {
+      return '100%';
+    }
+  }
+
   render() {
-    const { record, columns, type } = this.props;
+    const { record, columns, type, sizes } = this.props;
     const { show } = this.state;
     const firstColumn = columns[0];
     const hidingCols = columns.slice(1);
@@ -252,24 +249,35 @@ export class Record extends React.Component {
           <Tile xs={12} sm={6} md={4} lg={4} xl={3}>
             <Col className="tile-content" onClick={this.onGoToDetails}>
               <img className="tile-image" src={icon} alt={this.getValue(firstColumn, record)} />
-              <p className="tile-name">{startCase(this.getValue(firstColumn, record))}</p>
+              <p className="tile-name">{capitalize(this.getValue(firstColumn, record))}</p>
             </Col>
           </Tile>
         :
-          <Wrapper className={show ? 'active' : 'deactive'}>
+          <Wrapper
+            onClick={this.onGoToDetails}
+            className={classNames(show ? 'active' : 'deactive', 'is-mobile')}
+            width={this.getWidth()}
+          >
             <FirstField
-              onClick={this.onShowDetails}
               className={classNames(show ? 'active' : 'deactive', type, 'is-mobile')}
             >
               {this.getValue(firstColumn, record)}
               {!show && <CaretDown />}
               {show && <CaretUp />}
             </FirstField>
-            <FirstField className="is-desktop" onClick={this.onGoToDetails}>
+            <FirstField
+              className="is-desktop"
+              onClick={this.onGoToDetails}
+              style={isEmpty(sizes) ? {} : { width: `${sizes[0]}px` }}
+            >
               {this.getValue(firstColumn, record)}
             </FirstField>
             {hidingCols.map((column, idx) => (
-              <Field className={classNames(show ? 'show' : 'hide', type)} key={`col_${idx}`}>
+              <Field
+                className={classNames(show ? 'show' : 'hide', type)}
+                style={isEmpty(sizes) ? {} : { width: `${sizes[idx + 1]}px` }}
+                key={`col_${idx}`}
+              >
                 <FieldLabel>{changeCase.upperCaseFirst(column.label)}</FieldLabel>
                 <FieldValue>{this.getValue(column, record)}</FieldValue>
               </Field>

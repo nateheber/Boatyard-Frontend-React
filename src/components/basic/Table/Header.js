@@ -1,21 +1,24 @@
-import React from 'react'
-import styled from 'styled-components'
-import className from 'classnames'
+import React from 'react';
+import styled from 'styled-components';
+import className from 'classnames';
+import { isBrowser } from 'react-device-detect';
+import { ResizableBox } from 'react-resizable';
 
-import ArrBlueIcon from '../../../resources/arrow-blue.png'
+import 'react-resizable/css/styles.css';
+import './style.css';
+
+import ArrBlueIcon from '../../../resources/arrow-blue.png';
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
   align-items: center;
-  width: 100%;
+  width: auto;
   @media (max-width: 843px) {
-    display: none;
+    display: none !important;
   }
-`
-const ColumnHeader = styled.div`
-  display: flex;
-  flex: 1;
+`;
+
+const ColumnHeader = styled(ResizableBox)`
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
@@ -47,7 +50,8 @@ const ColumnHeader = styled.div`
     background-color: rgb(249, 249, 249);
     height: auto;
   }
-`
+`;
+
 const ArrBlue = styled.span`
   margin-left: 2px;
   background-image: url(${ArrBlueIcon});
@@ -59,25 +63,58 @@ const ArrBlue = styled.span`
   &.ascending {
     transform: rotate(180deg);
   }
-`
+`;
 
-export const TableHeader = ({ columns, sortColumn, isAsc, onSort, type = 'primary' }) => (
-  <Wrapper className={className(type)}>
-    {columns.map((col, idx) => (
-      <ColumnHeader
-        key={`col_${idx}`}
-        onClick={() => {
-          if (type === 'primary' && col.sort) {
-            onSort(col.sort);
-          }
-        }}
-        className={className(type)}
-      >
-        {col.label}
-        {col.sort === sortColumn && type === 'primary' && (
-          <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
-        )}
-      </ColumnHeader>
-    ))}
-  </Wrapper>
-)
+export class TableHeader extends React.Component {
+  state = {
+    widths: []
+  }
+
+  setWrapperInfo = (ref) => {
+    if (ref) {
+      const { width } = ref.getBoundingClientRect();
+      const { columns } = this.props;
+      const colWidth = width / columns.length;
+      const widths = [];
+      for(let i = 0; i < columns.length; i += 1) {
+        widths.push(colWidth);
+      }
+      this.setState({ widths });
+      this.props.onChangeSize(widths);
+    }
+  }
+
+  onResize = (idx) => (evt, obj) => {
+    const { size: { width } } = obj;
+    const widths = [...this.state.widths];
+    widths[idx] = width;
+    this.setState({ widths });
+    this.props.onChangeSize(widths);
+  }
+
+  render () {
+    const { columns, sortColumn, isAsc, onSort, type = 'primary' } = this.props;
+    const { widths } = this.state;
+    return isBrowser ? (
+      <Wrapper className={className(type)} ref={this.setWrapperInfo}>
+        {columns.map((col, idx) => (
+          <ColumnHeader className={className(type)} key={`col_${idx}`} axis="x" width={widths[idx]} height={34} onResize={this.onResize(idx)}>
+            <div
+              onClick={() => {
+                if (type === 'primary' && col.sort) {
+                  onSort(col.sort);
+                }
+              }}
+              style={{ width: `${widths[idx]}px` }}
+            >
+              {col.label}
+              {col.sort === sortColumn && type === 'primary' && (
+                <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
+              )}
+            </div>
+          </ColumnHeader>
+        ))}
+      </Wrapper>
+    ) : false;
+  }
+}

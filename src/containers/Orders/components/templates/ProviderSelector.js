@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { findIndex } from 'lodash';
+import { findIndex, sortBy } from 'lodash';
+import deepEqual from 'deep-equal';
 
 import { Input } from 'components/basic/Input';
 
@@ -136,6 +137,12 @@ class ProviderSelector extends React.Component {
     document.addEventListener('mousedown', this.handleClickOutside);
   }
 
+  componentDidUpdate(prevProps) {
+    if (!deepEqual(this.props.dispatchIds, prevProps.dispatchIds)) {
+      this.setState({ dispatchIds: this.props.dispatchIds });
+    }
+  }
+
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
   }
@@ -170,12 +177,12 @@ class ProviderSelector extends React.Component {
 
   onChangeSelection = (providerId) => {
     const { dispatchIds } = this.state;
-    const idx = findIndex(dispatchIds, id => id === providerId);
+    const idx = findIndex(dispatchIds, id => id === parseInt(providerId));
     if (idx >= 0) {
       const result = [...dispatchIds.slice(0, idx), ...dispatchIds.slice(idx + 1)];
       this.setState({ dispatchIds: result });
     } else {
-      this.setState({ dispatchIds: [...dispatchIds, providerId] });
+      this.setState({ dispatchIds: [...dispatchIds, parseInt(providerId)] });
     }
   }
 
@@ -212,8 +219,12 @@ class ProviderSelector extends React.Component {
 
   showModal = () => {
     const { dispatchIds } = this.state;
-    if (dispatchIds.length > 0) {
-      this.setState({ showModal: true });
+    const originalArray = sortBy(this.props.dispatchIds);
+    const targetArray = sortBy(dispatchIds);
+    if (!deepEqual(originalArray, targetArray)) {
+      if (dispatchIds.length > 0) {
+        this.setState({ showModal: true });
+      }
     }
   }
 
@@ -229,7 +240,7 @@ class ProviderSelector extends React.Component {
 
   isChecked = (providerId) => {
     const { dispatchIds } = this.state;
-    const idx= findIndex(dispatchIds, id => providerId === id);
+    const idx= findIndex(dispatchIds, id => parseInt(providerId) === id);
     return idx >= 0;
   }
 

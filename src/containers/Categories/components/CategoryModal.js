@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { get, isEmpty, startCase } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import EvilIcon from 'react-evil-icons';
 
 import { actionTypes, GetIcons } from 'store/actions/icons';
@@ -335,7 +335,7 @@ class CategoryModal extends React.Component {
       ];
     return (
       <Modal
-        title={startCase(category.name) || title}
+        title={category.name || title}
         loading={loading}
         actions={actions}
         open={open}

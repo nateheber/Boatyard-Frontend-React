@@ -21,31 +21,29 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const TableWrapper = styled.div`
+const Content = styled.div`
   display: flex;
   flex: 1;
-  overflow-y: scroll;
+  width: 100%;
+  overflow-x: scroll;
 `;
 
-const columns = {
-  admin: [
-    { label: 'order', value: 'name' },
-    { label: 'order placed', value: 'createdAt' },
-    { label: 'customer', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
-    { label: 'service', value: 'relationships.service.attributes.name' },
-    { label: 'location', value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state' },
-    { label: 'boat name', value: 'relationships.boat.attributes.name' },
-    { label: 'boat', value: 'relationships.boat.attributes.make' },
-    { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
-    { label: 'order status', value: 'state' },
-  ],
-  provider: [
-    { label: 'order', value: 'name' },
-    { label: 'order placed', value: 'createdAt' },
-    { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
-    { label: 'order status', value: 'state' },
-  ]
-};
+const TableWrapper = styled.div`
+  width: auto;
+  min-width: 100%;
+`;
+
+const columns = [
+  { label: 'order', value: 'name' },
+  { label: 'order placed', value: 'createdAt' },
+  { label: 'customer', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
+  { label: 'service', value: 'relationships.service.attributes.name' },
+  { label: 'location', value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state' },
+  { label: 'boat name', value: 'relationships.boat.attributes.name' },
+  { label: 'boat', value: 'relationships.boat.attributes.make' },
+  { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
+  { label: 'order status', value: 'state' },
+];
 const tabs = {
   admin: [
     { title: 'ALL', value: 'all', counts: 0 },
@@ -118,17 +116,19 @@ class OrderList extends React.Component {
       <Wrapper>
         <OrderHeader onNewOrder={this.newOrder} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
-        <TableWrapper>
-          <Table
-            columns={columns[privilege]}
-            records={processedOrders}
-            sortColumn="order"
-            toDetails={this.toDetails}
-            page={page}
-            pageCount={pageCount}
-            onPageChange={this.changePage}
-          />
-        </TableWrapper>
+        <Content>
+          <TableWrapper>
+            <Table
+              columns={columns}
+              records={processedOrders}
+              sortColumn="order"
+              toDetails={this.toDetails}
+              page={page}
+              pageCount={pageCount}
+              onPageChange={this.changePage}
+            />
+          </TableWrapper>
+        </Content>
         <NewOrderModal ref={this.setNewOrderModalRef} onFinishCreation={this.creationFinished} />
       </Wrapper>
     );

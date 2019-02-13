@@ -18,16 +18,9 @@ const currentOrderSelector = state => {
   const included = state.order.included;
   if (!isEmpty(order)) {
     for(const key in order.relationships) {
-      const value = order.relationships[key].data;
+      const value = get(order, `relationships[${key}].data`);
       if(value) {
-        if (key !== 'lineItems') {
-          order.relationships[key] = included[value.type][value.id];
-          if (key === 'boat') {
-            const location = get(order.relationships[key], 'relationships.location.data');
-            const locationInfo = get(included, `[${location.type}][${location.id}]`);
-            set(order, `relationships[${key}].location`, locationInfo )
-          }
-        } else {
+        if (key === 'lineItems') {
           const lineItemRelation = get(order, `relationships[${key}].data`, []);
           const lineItems = [];
           forEach(lineItemRelation, (info) => {
@@ -36,6 +29,22 @@ const currentOrderSelector = state => {
             lineItems.push(parsedLineItem);
           })
           set(order, 'lineItems', lineItems);
+        } else if (key === 'orderDispatches') {
+          const dispatchRelation = get(order, `relationships[${key}].data`, []);
+          const dispatchIds = [];
+          forEach(dispatchRelation, (info) => {
+            const dispatchDetail = get(included, `[${info.type}][${info.id}].attributes`);
+            const dispatchId = get(dispatchDetail, 'providerId');
+            dispatchIds.push(dispatchId);
+          })
+          set(order, 'dispatchIds', dispatchIds);
+        } else {
+          order.relationships[key] = get(included, `[${value.type}][${value.id}]`);
+          if (key === 'boat') {
+            const location = get(order.relationships[key], 'relationships.location.data');
+            const locationInfo = get(included, `[${location.type}][${location.id}]`);
+            set(order, `relationships[${key}].location`, locationInfo )
+          }
         }
       }
     }

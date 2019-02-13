@@ -55,14 +55,14 @@ class OrderPaymentModal extends React.Component {
     const provider = getProviderFromOrder(order);
 
     const data = privilege === 'admin' ? {
-      order_id: order.id,
-      credit_card_id: cardId,
-      provider_id: provider.id,
+      orderId: order.id,
+      creditCardId: cardId,
+      providerId: provider.id,
       amount: parseFloat(balance),
-      boatyard_fee: parseFloat(fee)
+      boatyardFee: parseFloat(fee)
     } : {
-      order_id: order.id,
-      credit_card_id: cardId,
+      orderId: order.id,
+      creditCardId: cardId,
       amount: parseFloat(balance)
     };
     if (user.type === 'child_accounts') {
@@ -111,7 +111,7 @@ class OrderPaymentModal extends React.Component {
         tabs={tabs}
         selected={tab}
         onSelect={this.onChangeTab}
-      >
+      >   
         <Row>
           <Col sm={7}>
             {

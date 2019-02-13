@@ -1,14 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get } from 'lodash';
 
 import { GetProvider } from 'store/actions/providers';
 
 const Wrapper = styled.div`
   box-sizing: border-box;
   height: 50px;
-  border: 1px solid #F5F5F5;
   background-color: white;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 16px;
@@ -17,27 +15,32 @@ const Wrapper = styled.div`
 `
 
 class ProviderInfo extends React.Component {
-  state = {
-    provider: {}
+  constructor(props) {
+    super(props);
+    this.state = {
+      providerName: `Provider #${props.id}`
+    };
+    this._isMounted = false;
   }
 
   componentDidMount() {
     const { id } = this.props;
     this.props.GetProvider({ providerId: id, success: this.onFetchSucceed })
+    this._isMounted = true;
   }
 
-  onFetchSucceed(provider) {
-    this.setState({ provider })
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
-  getProviderName = () => {
-    const { provider } = this.state;
-    const { id } = this.props;
-    return get(provider, 'name', `Provider #${id}`);
+  onFetchSucceed = (provider) => {
+    if (this._isMounted) {
+      this.setState({ providerName: provider.name })
+    }
   }
 
   render() {
-    const providerName = this.getProviderName();
+    const { providerName } = this.state;;
     return (
       <Wrapper>
         {providerName}
