@@ -73,7 +73,7 @@ function getValue(column, item) {
           part = `${part} ${get(item, fields[subIdx], '')}`;
         }
       }
-      if (!isEmpty(part.trim())) {
+      if (part && !isEmpty(part.trim())) {
         return part;
       } else {
         value = '_';
