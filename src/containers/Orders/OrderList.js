@@ -30,6 +30,7 @@ const Content = styled.div`
 
 const TableWrapper = styled.div`
   width: auto;
+  min-width: 100%;
 `;
 
 const columns = [
