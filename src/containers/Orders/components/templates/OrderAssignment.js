@@ -16,7 +16,8 @@ class OrderAssignment extends React.Component {
 
   static getDerivedStateFromProps(props) {
     const providerId = get(props, 'currentOrder.attributes.providerId');
-    if (providerId) {
+    const orderState = get(props, 'currentOrder.attributes.state');
+    if (orderState !== 'dispatched' && providerId) {
       return { dispatchIds: [providerId] };
     }
     const dispatchIds = get(props, 'currentOrder.dispatchIds', []);
@@ -46,8 +47,8 @@ class OrderAssignment extends React.Component {
     return (
       <Section title="Assignees" mode="view" editComponent={this.renderDropdownButton()} noPadding>
         {
-          dispatchIds.map((id, key) => (
-            <ProviderInfo id={id} key={`provider_${key}`} />
+          dispatchIds.map((id) => (
+            <ProviderInfo id={id} key={`provider_${id}`} />
           ))
         }
       </Section>
