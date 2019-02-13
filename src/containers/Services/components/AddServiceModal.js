@@ -173,7 +173,7 @@ class AddServiceModal extends React.Component {
     const { serviceValues } = this.state;
     if (this.mainFields.validateFields() && this.descriptionField.validateFields()) {
       const mainValues = {
-        categoryId: get(category, 'id'),
+        category_id: get(category, 'id'),
         ...this.mainFields.getFieldValues(),
         ...this.descriptionField.getFieldValues(),
         properties: serviceValues

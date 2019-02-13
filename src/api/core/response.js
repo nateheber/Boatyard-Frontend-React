@@ -1,20 +1,23 @@
 import { get } from 'lodash';
+import { camelize } from '@ridi/object-case-converter';
 
 import store from 'store';
 import { logout } from 'store/reducers/auth';
 
 export const responseInterceptor = client => {
   client.interceptors.response.use((response) => {
-    const { perPage, total } = response.headers;
+    const perPage = get(response.headers, 'per-page');
+    const total = get(response.headers, 'total');
+    const data = camelize(response.data, { recursive: true });
     if (perPage || total) {
       return ({
         perPage,
         total,
-        data: get(response.data, 'data', []),
-        included: get(response.data, 'included', [])
+        data: get(data, 'data', []),
+        included: get(data, 'included', [])
       });
     }
-    return response.data;
+    return data;
   }, (error) => {
     const errorData = get(error, 'response.data', {});
     const message = get(error, 'response.data.message', '');
@@ -30,7 +33,7 @@ export const responseInterceptor = client => {
 
 export const spreedlyResponseInterceptor = client => {
   client.interceptors.response.use((response) => {
-    return response.data;
+    return camelize(response.data, { recursive: true });
   }, (error) => {
     return get(error, 'response.data.errors', []);
   });

@@ -16,7 +16,7 @@ const Divider = styled.hr`
 const cardFields = [
   {
     type: 'text_field',
-    field: 'cardNumber',
+    field: 'card_number',
     label: 'CARD NUMBER',
     mask: '9999 9999 9999 9999',
     errorMessage: 'Please enter a valid card number.',
@@ -71,7 +71,7 @@ const cardFields = [
 let infoFields = [
   {
     type: 'text_field',
-    field: 'firstName',
+    field: 'first_name',
     label: 'First Name',
     required: true,
     errorMessage: 'Required',
@@ -84,7 +84,7 @@ let infoFields = [
   },
   {
     type: 'text_field',
-    field: 'lastName',
+    field: 'last_name',
     label: 'Last Name',
     required: true,
     errorMessage: 'Required',
@@ -132,9 +132,9 @@ class CreateModal extends React.Component {
       const infoValues = this.infoFields.getFieldValues();
       const data = { ...cardValue, ...infoValues };
       if (user.type === 'child_accounts') {
-        data['childAccountId'] = user.id;
+        data['child_account_id'] = user.id;
       } else {
-        data['userId'] = user.id;
+        data['user_id'] = user.id;
       }
       this.props.CreateCreditCard({
         data,

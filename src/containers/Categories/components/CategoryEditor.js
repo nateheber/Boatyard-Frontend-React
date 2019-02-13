@@ -50,7 +50,7 @@ export class CategoryEditor extends React.Component {
         if (get(val, 'fieldInfo.Destroy', false)) {
           return {
             id: val.id,
-            Destroy: true
+            destroy: true
           };
         }
         return {
@@ -68,7 +68,7 @@ export class CategoryEditor extends React.Component {
       }
       this.props.onSave({
         ...mainValues,
-        fieldsAttributes: [
+        fields_attributes: [
           ...additionalFieldValues,
           ...newAdditionalFieldValues
         ]
@@ -126,7 +126,7 @@ export class CategoryEditor extends React.Component {
           xl: 4
         },
         {
-          field: 'fieldType',
+          field: 'field_type',
           label: 'Field Type',
           type: 'select_box',
           errorMessage: 'Select Field Type',
