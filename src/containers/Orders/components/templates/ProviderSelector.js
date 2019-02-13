@@ -203,7 +203,11 @@ class ProviderSelector extends React.Component {
 
   filterProviders = () => {
     const { keyword } = this.state;
-    this.props.GetProviders({params: { 'provider[name]': keyword }, success: this.onFetchProviders})
+    if (keyword === '') {
+      this.props.GetProviders({ success: this.onFetchProviders })
+    } else {
+      this.props.GetProviders({ params: { 'provider[name]': keyword }, success: this.onFetchProviders })
+    }
   }
 
   handleClickOutside(event) {
@@ -244,7 +248,7 @@ class ProviderSelector extends React.Component {
     return idx >= 0;
   }
 
-  filterProviders = () => {
+  filterShowingProviders = () => {
     const { providers } = this.state;
     const { dispatchIds } = this.props;
     const result = providers.filter((provider) => {
@@ -257,7 +261,7 @@ class ProviderSelector extends React.Component {
 
   render() {
     const { showMenu, showModal, keyword, dispatchIds } = this.state;
-    const filteredProviders = this.filterProviders();
+    const filteredProviders = this.filterShowingProviders();
     const { dispatchIds: originalIds } = this.props;
     return (
       <Wrapper ref={this.setWrapperRef}>

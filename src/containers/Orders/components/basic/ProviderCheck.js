@@ -16,7 +16,9 @@ class ProviderCheck extends React.Component {
 
   componentDidMount() {
     const { providerId } = this.props;
-    this.props.GetProvider({ providerId, success: this.onFetchSucceed })
+    if (providerId) {
+      this.props.GetProvider({ providerId, success: this.onFetchSucceed })
+    }
     this._isMounted = true;
   }
 
