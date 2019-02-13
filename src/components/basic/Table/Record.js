@@ -12,16 +12,14 @@ import CaretUpIcon from '../../../resources/caret-up-solid.svg';
 const Wrapper = styled.div`
   display: flex;
   box-sizing: border-box;
-  flex-direction: row;
-  max-width: 100%;
-  min-width: 100%;
-  width: 100%;
   border-bottom: 1px solid #eaeaea;
   font-family: 'Source Sans Pro', sans-serif;
+  width: ${props => props.width};
   &:last-child {
     border-bottom: none;
   }
   @media (max-width: 843px) {
+    width: 100%;
     flex-direction: column;
     border-bottom: none;
     &.active {
@@ -67,8 +65,6 @@ const Tile = styled(Col)`
 `;
 
 const FirstField = styled.div`
-  display: flex;
-  flex: 1;
   font-size: 14px;
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: bold;
@@ -108,8 +104,6 @@ const FirstField = styled.div`
 `;
 
 const Field = styled.div`
-  display: flex;
-  flex: 1;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
   align-items: center;
@@ -218,9 +212,14 @@ export class Record extends React.PureComponent {
     return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
   };
 
-  getFlex = (pos) => {
+  getWidth = () => {
     const { sizes } = this.props;
-    return sizes[pos].size / sizes[0].size;
+    if (sizes) {
+      const totalWidth = sizes.reduce((prev, size) => prev + size, 0);
+      return `${totalWidth}px`;
+    } else {
+      return '100%';
+    }
   }
 
   render() {
@@ -242,7 +241,7 @@ export class Record extends React.PureComponent {
             </Col>
           </Tile>
         :
-          <Wrapper className={classNames(show ? 'active' : 'deactive', 'is-mobile')}>
+          <Wrapper className={classNames(show ? 'active' : 'deactive', 'is-mobile')} width={this.getWidth()}>
             <FirstField
               onClick={this.onShowDetails}
               className={classNames(show ? 'active' : 'deactive', type, 'is-mobile')}
@@ -254,14 +253,14 @@ export class Record extends React.PureComponent {
             <FirstField
               className="is-desktop"
               onClick={this.onGoToDetails}
-              style={isEmpty(sizes) ? {} : { flex: 1 }}
+              style={isEmpty(sizes) ? {} : { width: `${sizes[0]}px` }}
             >
               {this.getValue(firstColumn, record)}
             </FirstField>
             {hidingCols.map((column, idx) => (
               <Field
                 className={classNames(show ? 'show' : 'hide', type)}
-                style={isEmpty(sizes) ? {} : { flex: this.getFlex(idx + 1) }}
+                style={isEmpty(sizes) ? {} : { width: `${sizes[idx + 1]}px` }}
                 key={`col_${idx}`}
               >
                 <FieldLabel>{changeCase.upperCaseFirst(column.label)}</FieldLabel>
