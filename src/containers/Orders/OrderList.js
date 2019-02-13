@@ -36,7 +36,14 @@ const TableWrapper = styled.div`
 const columns = [
   { label: 'order', value: 'name' },
   { label: 'order placed', value: 'createdAt' },
-  { label: 'customer', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
+  {
+    label: 'CUSTOMER',
+    value: [
+      'relationships.user.attributes.firstName/relationships.user.attributes.lastName',
+      'relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'
+    ],
+    isCustomer: true
+  },
   { label: 'service', value: 'relationships.service.attributes.name' },
   { label: 'location', value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state' },
   { label: 'boat name', value: 'relationships.boat.attributes.name' },
