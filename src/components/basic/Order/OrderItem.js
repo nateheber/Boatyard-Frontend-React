@@ -4,11 +4,12 @@ import { Link } from 'react-router-dom';
 import { get, isEmpty } from 'lodash';
 import moment from 'moment';
 
-const Wrapper = styled.div`
+const Wrapper = styled(Link)`
   display: flex;
   flex-direction: row;
   align-items: center;
   border-bottom: 1px solid #e6e6e6;
+  text-decoration: none;
   @media (max-width: 778px) {
     box-sizing: border-box;
     // height: 290px;
@@ -123,10 +124,14 @@ function getValue(column, item) {
 export const OrderItem = props => {
   const { columns, item } = props;
   return (
-    <Wrapper>
+    <Wrapper to={`/order-details/?order=${item.id}`}>
       {columns.map((column, idx) => {
         return (
-          <Field className={column.isTitle && 'title'} key={`field_${idx}`} style={{ width: column.width || `${100 / columns.length}%`}}>
+          <Field
+            className={column.isTitle && 'title'}
+            key={`field_${idx}`}
+            style={{ width: column.width || `${100 / columns.length}%`}}
+          >
             <THeader>{column.label}</THeader>
             {column.link && <Link to={`/order-details/?order=${item.id}`}>{getValue(column, item)}</Link>}
             {!column.link && getValue(column, item)}
