@@ -135,7 +135,7 @@ class CustomerDetails extends React.Component {
     CreateBoat({
       data: {
         boat: {
-          childAccountId: customerId,
+          child_account_id: customerId,
           ...data.boat,
         }
       },

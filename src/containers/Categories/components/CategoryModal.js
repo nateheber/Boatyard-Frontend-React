@@ -308,12 +308,12 @@ class CategoryModal extends React.Component {
       };
       values = {
         ...values,
-        customIcon
+        custom_icon: customIcon
       };
       if (defaultIcon) {
         values = {
           ...values,
-          iconId: defaultIcon
+          icon_id: defaultIcon
         };
       }
       onSave(values);

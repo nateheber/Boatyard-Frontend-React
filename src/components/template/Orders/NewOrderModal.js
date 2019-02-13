@@ -53,12 +53,12 @@ class NewOrderModal extends React.Component {
     const { customer, boat } = this.state;
     const data = {
       order: {
-        childAccountId: customer.id,
-        boatId: boat.id,
+        child_account_id: customer.id,
+        boat_id: boat.id,
         ...orderValues,
-        lineItemsAttributes: [
+        line_items_attributes: [
           {
-            serviceId: service.id,
+            service_id: service.id,
             quantity: 1
           }
         ],

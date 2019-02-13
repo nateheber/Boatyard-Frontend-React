@@ -101,11 +101,10 @@ class SelectServiceModal extends React.Component {
   //       for (const index in refinedFields) {
   //         const field = refinedFields[index];
   //         const { name, fieldType, required } = field.attributes;
-  //         const fieldLabel = camelCase(name);
-  //         const defVal = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
+  //         const defVal = this.getDefaultValue(fieldType, name, orgProperties);
   //         const label = startCase(name);
   //         let formField = {
-  //           field: fieldLabel,
+  //           field: name,
   //           label: label,
   //           type: fieldType,
   //           required,
@@ -129,7 +128,7 @@ class SelectServiceModal extends React.Component {
   //           formField['options'] = options;
   //         }
   //         serviceFields.push(formField);
-  //         if (fieldLabel === 'fuelType') {
+  //         if (name === 'fuelType') {
   //           serviceFields.push({
   //             xs: 12,
   //             sm: 12,
@@ -166,7 +165,7 @@ class SelectServiceModal extends React.Component {
       const defVal = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
       const label = startCase(name);
       let formField = {
-        field: fieldLabel,
+        field: name,
         label: label,
         type: fieldType,
         required,
@@ -190,7 +189,7 @@ class SelectServiceModal extends React.Component {
         formField['options'] = options;
       }
       serviceFields.push(formField);
-      if (fieldLabel === 'fuelType') {
+      if (name === 'Fuel Type') {
         serviceFields.push({
           xs: 12,
           sm: 12,
@@ -211,7 +210,7 @@ class SelectServiceModal extends React.Component {
       const slip = get(boat, 'slip', '');
       boatFields.push({
         type: 'text_field',
-        field: 'slipNumber',
+        field: 'slip_number',
         label: 'Slip Number',
         required: true,
         defaultValue: slip,

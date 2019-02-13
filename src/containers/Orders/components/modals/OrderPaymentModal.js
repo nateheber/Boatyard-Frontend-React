@@ -55,14 +55,14 @@ class OrderPaymentModal extends React.Component {
     const provider = getProviderFromOrder(order);
 
     const data = privilege === 'admin' ? {
-      orderId: order.id,
-      creditCardId: cardId,
-      providerId: provider.id,
+      order_id: order.id,
+      credit_card_id: cardId,
+      provider_id: provider.id,
       amount: parseFloat(balance),
-      boatyardFee: parseFloat(fee)
+      boatyard_fee: parseFloat(fee)
     } : {
-      orderId: order.id,
-      creditCardId: cardId,
+      order_id: order.id,
+      credit_card_id: cardId,
       amount: parseFloat(balance)
     };
     if (user.type === 'child_accounts') {

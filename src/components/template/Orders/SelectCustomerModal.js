@@ -197,7 +197,7 @@ class SelectCustomerModal extends React.Component {
     CreateBoat({
       data: {
         boat: {
-          childAccountId: customer.id,
+          child_account_id: customer.id,
           ...data.boat,
         }
       },

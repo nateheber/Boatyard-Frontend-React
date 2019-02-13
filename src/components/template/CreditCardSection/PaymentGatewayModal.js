@@ -92,15 +92,15 @@ class PaymentGatewayModal extends React.Component {
       this.props.CreatePaymentGateway({
         data: providerId
           ? {
-              providerId,
+              provider_id: providerId,
               credentials: {
-                gatewayType: gateway.value,
+                gateway_type: gateway.value,
                 ...credential
               }
             }
           : {
               credentials: {
-                gatewayType: gateway.value,
+                gateway_type: gateway.value,
                 ...credential
               }
             },

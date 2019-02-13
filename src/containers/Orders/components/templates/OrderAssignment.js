@@ -27,7 +27,7 @@ class OrderAssignment extends React.Component {
     const orderId = currentOrder.id;
     this.props.UpdateOrder({
       orderId,
-      data: { order: { dispatchIds }},
+      data: { order: { dispatch_ids: dispatchIds }},
       dispatched: true,
       success: () => { this.props.SetDispatchedFlag(true) }
     });
