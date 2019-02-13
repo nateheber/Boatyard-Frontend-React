@@ -1,18 +1,21 @@
-import React from 'react'
-import styled from 'styled-components'
-import className from 'classnames'
+import React from 'react';
+import styled from 'styled-components';
+import className from 'classnames';
+import PanelGroup from 'react-panelgroup';
+import { isBrowser } from 'react-device-detect';
 
-import ArrBlueIcon from '../../../resources/arrow-blue.png'
+import ArrBlueIcon from '../../../resources/arrow-blue.png';
 
-const Wrapper = styled.div`
+const Wrapper = styled(PanelGroup)`
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 100%;
   @media (max-width: 843px) {
-    display: none;
+    display: none !important;
   }
-`
+`;
+
 const ColumnHeader = styled.div`
   display: flex;
   flex: 1;
@@ -47,7 +50,8 @@ const ColumnHeader = styled.div`
     background-color: rgb(249, 249, 249);
     height: auto;
   }
-`
+`;
+
 const ArrBlue = styled.span`
   margin-left: 2px;
   background-image: url(${ArrBlueIcon});
@@ -59,25 +63,27 @@ const ArrBlue = styled.span`
   &.ascending {
     transform: rotate(180deg);
   }
-`
+`;
 
-export const TableHeader = ({ columns, sortColumn, isAsc, onSort, type = 'primary' }) => (
-  <Wrapper className={className(type)}>
-    {columns.map((col, idx) => (
-      <ColumnHeader
-        key={`col_${idx}`}
-        onClick={() => {
-          if (type === 'primary' && col.sort) {
-            onSort(col.sort);
-          }
-        }}
-        className={className(type)}
-      >
-        {col.label}
-        {col.sort === sortColumn && type === 'primary' && (
-          <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
-        )}
-      </ColumnHeader>
-    ))}
-  </Wrapper>
-)
+export const TableHeader = ({ columns, sortColumn, isAsc, onSort, type = 'primary', onChangeSize }) => {
+  return isBrowser ? (
+    <Wrapper className={className(type)} onUpdate={onChangeSize}>
+      {columns.map((col, idx) => (
+        <ColumnHeader
+          key={`col_${idx}`}
+          onClick={() => {
+            if (type === 'primary' && col.sort) {
+              onSort(col.sort);
+            }
+          }}
+          className={className(type)}
+        >
+          {col.label}
+          {col.sort === sortColumn && type === 'primary' && (
+            <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
+          )}
+        </ColumnHeader>
+      ))}
+    </Wrapper>
+  ) : false;
+};

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import { PageTitle } from 'components/basic/Typho';
 import LoginForm from './Forms/LoginForm';
 
 import { login } from 'store/reducers/auth';
@@ -12,8 +11,23 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   background-color: white;
-  height: 100%;
-  padding: 30px;
+  padding: 42px 50px 45px;
+  @media (max-width: 694px) {
+    padding: 30px;
+  }
+`;
+
+export const PageTitle = styled.h2`
+  color: #004258;
+  font-weight: 700;
+  display: inline-block;
+  margin: 0;
+  padding: 5px 0 30px;
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 36px;
+  &.centered {
+    text-align: center;
+  }
 `;
 
 class Login extends React.Component {

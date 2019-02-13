@@ -9,6 +9,7 @@ import Paginator from './Paginator';
 const Wrapper = styled.div`
   background-color: white;
   width: 100%;
+  overflow-x: scroll;
 `;
 
 const TableWrapper = styled.div`
@@ -35,8 +36,13 @@ export default class Table extends React.Component {
     const { sort } = props;
     this.state = {
       sortColumn: sort ? sort.col : null,
-      isAsc: sort ? (sort.direction === 'asc' ? true : false) : false
+      isAsc: sort ? (sort.direction === 'asc' ? true : false) : false,
+      sizes: [],
     };
+  }
+
+  onChangeSize = (sizes) => {
+    this.setState({ sizes });
   }
 
   sort = col => {
@@ -74,10 +80,12 @@ export default class Table extends React.Component {
 
   renderContent = () => {
     const { columns, records, type } = this.props;
+    const { sizes } = this.state;
     return (
       <React.Fragment>
         {records.map((rec, idx) => (
           <Record
+            sizes={sizes}
             type={type}
             toDetails={() => this.toDetails(rec)}
             columns={columns}
@@ -105,6 +113,7 @@ export default class Table extends React.Component {
             sortColumn={sortColumn}
             isAsc={isAsc}
             onSort={this.sort}
+            onChangeSize={this.onChangeSize}
           />}
           {this.renderContent()}
         </TableWrapper>

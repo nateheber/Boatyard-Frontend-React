@@ -21,10 +21,15 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const TableWrapper = styled.div`
+const Content = styled.div`
   display: flex;
   flex: 1;
-  overflow-y: scroll;
+  width: 100%;
+  overflow-x: scroll;
+`;
+
+const TableWrapper = styled.div`
+  width: auto;
 `;
 
 const columns = [
@@ -110,17 +115,19 @@ class OrderList extends React.Component {
       <Wrapper>
         <OrderHeader onNewOrder={this.newOrder} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
-        <TableWrapper>
-          <Table
-            columns={columns}
-            records={processedOrders}
-            sortColumn="order"
-            toDetails={this.toDetails}
-            page={page}
-            pageCount={pageCount}
-            onPageChange={this.changePage}
-          />
-        </TableWrapper>
+        <Content>
+          <TableWrapper>
+            <Table
+              columns={columns}
+              records={processedOrders}
+              sortColumn="order"
+              toDetails={this.toDetails}
+              page={page}
+              pageCount={pageCount}
+              onPageChange={this.changePage}
+            />
+          </TableWrapper>
+        </Content>
         <NewOrderModal ref={this.setNewOrderModalRef} onFinishCreation={this.creationFinished} />
       </Wrapper>
     );
