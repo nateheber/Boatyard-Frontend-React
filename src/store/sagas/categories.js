@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get } from 'lodash';
+import { get, hasIn } from 'lodash';
 
 import { actionTypes } from '../actions/categories';
 import { getCategoryClient } from './sagaSelectors';
@@ -20,9 +20,19 @@ function* getCategories(action) {
   let successType = actionTypes.GET_CATEGORIES_SUCCESS;
   let failureType = actionTypes.GET_CATEGORIES_FAILURE;
   const { params, success, error } = action.payload;
+  let submissionParams = {};
+  if (!hasIn(params, 'category[order]')) {
+    submissionParams = {
+      ...params,
+      'category[order]': 'name',
+      'category[sort]': 'desc',
+    };
+  } else {
+    submissionParams = { ...params };
+  }
   let result = null;
   try {
-    result = yield call(categoryClient.list, params);
+    result = yield call(categoryClient.list, submissionParams);
     const categories = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;

@@ -181,10 +181,10 @@ class CustomerDetails extends React.Component {
     const customerName = `${get(currentChildAccount, 'firstName')} ${get(currentChildAccount, 'lastName')}`;
     const columns = [
       { label: 'orders', value: 'id' },
+      { label: 'order placed', value: 'createdAt', isDate: true },
+      { label: 'service', value: 'relationships.service.attributes.name' },
       { label: 'boat name', value: 'relationships.boat.attributes.name' },
       { label: 'boat make', value: 'relationships.boat.attributes.make' },
-      { label: 'service', value: 'relationships.service.attributes.name' },
-      { label: 'order placed', value: 'createdAt', isDate: true },
       { label: 'total', value: 'total', isValue: true, prefix: '$' }
     ]
     const pageCount = this.getPageCount();
