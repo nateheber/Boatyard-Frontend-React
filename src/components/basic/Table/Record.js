@@ -18,6 +18,7 @@ const Wrapper = styled.div`
   width: 100%;
   border-bottom: 1px solid #eaeaea;
   font-family: 'Source Sans Pro', sans-serif;
+  cursor: pointer;
   &:last-child {
     border-bottom: none;
   }
@@ -264,9 +265,11 @@ export class Record extends React.PureComponent {
             </Col>
           </Tile>
         :
-          <Wrapper className={classNames(show ? 'active' : 'deactive', 'is-mobile')}>
+          <Wrapper
+            onClick={this.onGoToDetails}
+            className={classNames(show ? 'active' : 'deactive', 'is-mobile')}
+          >
             <FirstField
-              onClick={this.onShowDetails}
               className={classNames(show ? 'active' : 'deactive', type, 'is-mobile')}
             >
               {this.getValue(firstColumn, record)}
@@ -275,7 +278,6 @@ export class Record extends React.PureComponent {
             </FirstField>
             <FirstField
               className="is-desktop"
-              onClick={this.onGoToDetails}
               style={isEmpty(sizes) ? {} : { flex: 1 }}
             >
               {this.getValue(firstColumn, record)}
