@@ -151,7 +151,7 @@ class OrderDetails extends React.Component {
     const summaryInfo = this.getSummaryInfo();
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
-    const canAssignOrder = orderStatus !== ' invoiced' && privilege === "admin";
+    const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled' && privilege === "admin";
     const canShowCustomerInfo = this.getCustomerInfoCondition();
 
     return (

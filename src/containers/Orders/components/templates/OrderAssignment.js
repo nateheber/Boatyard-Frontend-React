@@ -4,7 +4,7 @@ import { get } from 'lodash';
 
 import { Section } from 'components/basic/InfoSection'
 
-import { UpdateOrder, SetDispatchedFlag } from 'store/actions/orders';
+import { DispatchOrder, SetDispatchedFlag } from 'store/actions/orders';
 
 import ProviderInfo from './ProviderInfo';
 import ProviderSelector from './ProviderSelector'
@@ -19,23 +19,26 @@ class OrderAssignment extends React.Component {
     if (providerId) {
       return { dispatchIds: [providerId] };
     }
-    return {};
+    const dispatchIds = get(props, 'currentOrder.dispatchIds', []);
+    return { dispatchIds };
   }
 
   updateDispatchIds = (dispatchIds) => {
     const { currentOrder } = this.props;
     const orderId = currentOrder.id;
-    this.props.UpdateOrder({
+    const orderState = get(currentOrder, 'attributes.state');
+    this.props.DispatchOrder({
       orderId,
-      data: { order: { dispatchIds }},
-      dispatched: true,
+      dispatchIds,
+      orderState,
       success: () => { this.props.SetDispatchedFlag(true) }
     });
   }
 
   renderDropdownButton = () => {
-    const { dispatchIds } = this.props;
-    return <ProviderSelector dispatchIds={dispatchIds} onChange={this.updateDispatchIds} />
+    const { dispatchIds } = this.state;
+    const providerId = get(this.props, 'currentOrder.attributes.providerId');
+    return <ProviderSelector dispatchIds={providerId ? [] : dispatchIds} onChange={this.updateDispatchIds} />
   }
 
   render() {
@@ -56,6 +59,6 @@ const mapStateToProps = (state) => ({
   currentOrder: state.order.currentOrder
 })
 
-const mapDispatchToProps = { UpdateOrder, SetDispatchedFlag };
+const mapDispatchToProps = { DispatchOrder, SetDispatchedFlag };
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignment);

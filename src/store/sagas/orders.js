@@ -209,6 +209,27 @@ function* acceptOrder(action) {
   }
 }
 
+function* dispatchOrder(action) {
+  const orderClient = yield select(getOrderClient);
+  const { orderId, dispatchIds, orderState, success, error } = action.payload;
+  try {
+    if (orderState !== 'draft') {
+      yield call(orderClient.update, orderId, { order: { transition: "undispatch" } });
+    }
+    yield call(orderClient.update, orderId, { order: { dispatchIds } });
+    yield put({ type: actionTypes.DISPATCH_ORDER_SUCCESS });
+    yield put({ type: actionTypes.GET_ORDER, payload: { orderId } })
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.DISPATCH_ORDER_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
 export default function* OrderSaga() {
   yield takeEvery(actionTypes.GET_ORDERS, getOrders);
   yield takeEvery(actionTypes.GET_NEW_ORDERS, getOrders);
@@ -220,5 +241,6 @@ export default function* OrderSaga() {
   yield takeEvery(actionTypes.CREATE_ORDER, createOrder);
   yield takeEvery(actionTypes.UPDATE_ORDER, updateOrder);
   yield takeEvery(actionTypes.DELETE_ORDER, deleteOrder);
+  yield takeEvery(actionTypes.DISPATCH_ORDER, dispatchOrder);
   yield takeEvery(actionTypes.ACCEPT_ORDER, acceptOrder);
 }
