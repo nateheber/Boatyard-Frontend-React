@@ -51,8 +51,8 @@ class LineItemSection extends React.Component {
     const { serviceId, quantity, cost, comment } = item;
     const { providerId } = this.props;
     newItems[idx] = {
-      serviceId: parseInt(serviceId),
-      providerId,
+      service_id: parseInt(serviceId),
+      provider_id: providerId,
       quantity: parseInt(quantity),
       cost: parseFloat(cost),
       comment
@@ -96,7 +96,7 @@ class LineItemSection extends React.Component {
     const updateInfo = lineItems.map(
       ({ id, attributes: { serviceId, quantity, cost, comment } }) => ({
         id,
-        lineItem: { serviceId, quantity, cost, comment }
+        lineItem: { service_id: serviceId, quantity, cost, comment }
       })
     );
     if (lineItems.length > 0) {

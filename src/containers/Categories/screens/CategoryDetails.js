@@ -194,7 +194,6 @@ class CategoryDetails extends React.Component {
     });
   };
   onSave = data => {
-    console.log(data);
     if (this.state.id) {
       this.props.UpdateCategory({
         id: this.state.id,

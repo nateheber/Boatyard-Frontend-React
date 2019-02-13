@@ -1,5 +1,4 @@
 import axios from 'axios';
-import applyCaseConverter from 'axios-case-converter';
 
 import { apiBaseUrl, spreedlyApiToken, spreedlyApiUrl } from '../config';
 import { authInterceptor } from './auth';
@@ -7,14 +6,12 @@ import { responseInterceptor, spreedlyResponseInterceptor } from './response';
 
 export const createAuthClient = () => {
   const client = responseInterceptor(
-    applyCaseConverter(
-      axios.create({
-        header: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache'
-        }
-      })
-    )
+    axios.create({
+      header: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache'
+      }
+    })
   );
   return client;
 };
@@ -22,14 +19,12 @@ export const createAuthClient = () => {
 export const createMainClient = authType => {
   const client = responseInterceptor(
     authInterceptor(
-      applyCaseConverter(
-        axios.create({
-          header: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache'
-          }
-        })
-      ),
+      axios.create({
+        header: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        }
+      }),
       authType
     )
   );
@@ -38,15 +33,13 @@ export const createMainClient = authType => {
 
 export const createSpreedlyClient = () => {
   const client = spreedlyResponseInterceptor(
-    applyCaseConverter(
-      axios.create({
-        header: {
-          'Content-Type': 'application/json',
-          'Cache-control': 'no-cache',
-          'Authorization': `Bearer ${spreedlyApiToken}`
-        }
-      })
-    )
+    axios.create({
+      header: {
+        'Content-Type': 'application/json',
+        'Cache-control': 'no-cache',
+        'Authorization': `Bearer ${spreedlyApiToken}`
+      }
+    })
   )
   return client;
 }

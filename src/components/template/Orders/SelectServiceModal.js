@@ -46,7 +46,7 @@ class SelectServiceModal extends React.Component {
       service: {},
       value: {},
       boatFields: [],
-      serviceFields: [],
+      serviceFields: []
     };
   }
 
@@ -78,59 +78,128 @@ class SelectServiceModal extends React.Component {
     });
   };
 
+  // getServiceFields = () => {
+  //   const { service } = this.state;
+  //   const { included } = this.props;
+  //   const { categoryId } = service;
+  //   const orgProperties = {}; // get(service, `properties`, {});;
+  //   if (categoryId) {
+  //     const categories = get(included, 'categories', []);
+  //     if (!isEmpty(categories)) {
+  //       const category = get(categories, categoryId, {});
+  //       const fields = get(category, 'relationships.serviceFields.data', []);
+  //       const includedFields = get(included, 'service_fields', []);
+  //       const refinedFields = [];
+  //       for (const index in fields) {
+  //         const field = fields[index];
+  //         const filtered = filter(includedFields, item => !isEmpty(item) && item.id === field.id);
+  //         if (!isEmpty(filtered)) {
+  //           refinedFields.push(filtered[0]);
+  //         }
+  //       }
+  //       const serviceFields = [];
+  //       for (const index in refinedFields) {
+  //         const field = refinedFields[index];
+  //         const { name, fieldType, required } = field.attributes;
+  //         const defVal = this.getDefaultValue(fieldType, name, orgProperties);
+  //         const label = startCase(name);
+  //         let formField = {
+  //           field: name,
+  //           label: label,
+  //           type: fieldType,
+  //           required,
+  //           defaultValue: defVal,
+  //           errorMessage: fieldType === 'select_box' ? `Choose ${label}` : `Enter ${label}`,
+  //           xs: 12,
+  //           sm: 12,
+  //           md: 6,
+  //           lg: 6,
+  //           xl: 6
+  //         };
+  //         if (fieldType === 'select_box') {
+  //           const { collectionForSelect } = field.attributes;
+  //           let options = collectionForSelect.map(option => {
+  //             return {
+  //               value: option,
+  //               label: option
+  //             };
+  //           });
+  //           options = [{ value: '', label: '' }].concat(options);
+  //           formField['options'] = options;
+  //         }
+  //         serviceFields.push(formField);
+  //         if (name === 'fuelType') {
+  //           serviceFields.push({
+  //             xs: 12,
+  //             sm: 12,
+  //             md: 6,
+  //             lg: 6,
+  //             xl: 6
+  //           });
+  //         }
+  //       }
+  //       this.setState({ serviceFields });
+  //     }
+  //   }
+  // };
+
   getServiceFields = () => {
     const { service } = this.state;
     const { included } = this.props;
-    const { categoryId } = service;
-    const orgProperties = {}; // get(service, `properties`, {});;
-    if (categoryId) {
-      const categories = get(included, 'categories', []);
-      if (!isEmpty(categories)) {
-        const category = get(categories, categoryId, {});
-        const fields = get(category, 'relationships.fields.data', []);
-        const includedFields = get(included, 'service_fields', []);
-        const refinedFields = [];
-        for (const index in fields) {
-          const field = fields[index];
-          const filtered = filter(includedFields, item => !isEmpty(item) && item.id === field.id);
-          if (!isEmpty(filtered)) {
-            refinedFields.push(filtered[0]);
-          }
-        }
-        const serviceFields = refinedFields.map(field => {
-          const { name, fieldType, required } = field.attributes;
-          const fieldLabel = camelCase(name);
-          const defVal = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
-          const label = startCase(name);
-          let formField = {
-            field: fieldLabel,
-            label: label,
-            type: fieldType,
-            required,
-            defaultValue: defVal,
-            errorMessage: fieldType === 'select_box' ? `Choose ${label}` : `Enter ${label}`,
-            xs: 12,
-            sm: 12,
-            md: 6,
-            lg: 6,
-            xl: 6
-          };
-          if (fieldType === 'select_box') {
-            const { collectionForSelect } = field.attributes;
-            let options = collectionForSelect.map(option => {
-              return {
-                value: option,
-                label: option
-              };
-            });
-            options = [{ value: '', label: '' }].concat(options);
-            formField['options'] = options;
-          }
-          return formField;
-        });
-        this.setState({ serviceFields });
+    const orgProperties = {}; // get(service, `properties`, {});
+    const fields = get(service, 'orderFields.data', []);
+    const includedFields = get(included, 'order_fields', []);
+    const refinedFields = [];
+    for (const index in fields) {
+      const field = fields[index];
+      const filtered = filter(includedFields, item => !isEmpty(item) && item.id === field.id);
+      if (!isEmpty(filtered)) {
+        refinedFields.push(filtered[0]);
       }
     }
+    const serviceFields = [];
+    for (const index in refinedFields) {
+      const field = refinedFields[index];
+      const { name, fieldType, required } = field.attributes;
+      const fieldLabel = camelCase(name);
+      const defVal = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
+      const label = startCase(name);
+      let formField = {
+        field: name,
+        label: label,
+        type: fieldType,
+        required,
+        defaultValue: defVal,
+        errorMessage: fieldType === 'select_box' ? `Choose ${label}` : `Enter ${label}`,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      };
+      if (fieldType === 'select_box') {
+        const { collectionForSelect } = field.attributes;
+        let options = collectionForSelect.map(option => {
+          return {
+            value: option,
+            label: option
+          };
+        });
+        options = [{ value: '', label: '' }].concat(options);
+        formField['options'] = options;
+      }
+      serviceFields.push(formField);
+      if (name === 'Fuel Type') {
+        serviceFields.push({
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 6,
+          xl: 6
+        });
+      }
+    }
+    this.setState({ serviceFields });
   };
 
   getBoatFields = () => {
@@ -141,7 +210,7 @@ class SelectServiceModal extends React.Component {
       const slip = get(boat, 'slip', '');
       boatFields.push({
         type: 'text_field',
-        field: 'slipNumber',
+        field: 'slip_number',
         label: 'Slip Number',
         required: true,
         defaultValue: slip,
@@ -172,6 +241,10 @@ class SelectServiceModal extends React.Component {
       default:
         return '';
     }
+  };
+
+  handleServiceFieldChange = (value, field) => {
+    console.log('----------------------', field, value);
   };
 
   setServiceFieldsRef = ref => {
@@ -220,7 +293,7 @@ class SelectServiceModal extends React.Component {
     return (
       <Modal
         title="Create Order"
-        loading={currentStatus === actionTypes.CREATE_ORDER}
+        loading={currentStatus === actionTypes.CREATE_ORDER || currentStatus === actionTypes.UPDATE_ORDER}
         minHeight={265}
         actions={action}
         open={open}

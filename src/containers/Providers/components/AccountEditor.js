@@ -10,19 +10,19 @@ export class AccountEditor extends React.Component {
     if (this.fields.validateFields()) {
       const {
         name,
-        phoneNumber,
-        websiteUrl,
-        taxRate,
-        subscriptionFee,
-        transactionFee
+        phone_number,
+        website_url,
+        tax_rate,
+        subscription_fee,
+        transaction_fee
       } = this.fields.getFieldValues();
       this.props.save({
         name,
-        phoneNumber,
-        websiteUrl,
-        taxRate: parseFloat(taxRate),
-        subscriptionFee: parseFloat(subscriptionFee),
-        transactionFee: parseFloat(transactionFee)
+        phone_number,
+        website_url,
+        tax_rate: parseFloat(tax_rate),
+        subscription_fee: parseFloat(subscription_fee),
+        transaction_fee: parseFloat(transaction_fee)
       });
     } else {
       toastr.clean()
@@ -53,7 +53,7 @@ export class AccountEditor extends React.Component {
         xl: 6
       },
       {
-        field: 'phoneNumber',
+        field: 'phone_number',
         label: 'Phone',
         type: 'text_field',
         mask: '(999) 999-9999',
@@ -68,7 +68,7 @@ export class AccountEditor extends React.Component {
         xl: 6
       },
       {
-        field: 'websiteUrl',
+        field: 'website_url',
         label: 'Website URL',
         type: 'text_field',
         defaultValue: websiteUrl,
@@ -79,7 +79,7 @@ export class AccountEditor extends React.Component {
         xl: 6
       },
       {
-        field: 'subscriptionFee',
+        field: 'subscription_fee',
         label: 'Monthly Subscription Fee',
         type: 'text_field',
         required: true,
@@ -92,7 +92,7 @@ export class AccountEditor extends React.Component {
         xl: 6
       },
       {
-        field: 'transactionFee',
+        field: 'transaction_fee',
         label: 'Transaction Fee',
         type: 'text_field',
         required: true,
@@ -105,7 +105,7 @@ export class AccountEditor extends React.Component {
         xl: 6
       },
       {
-        field: 'taxRate',
+        field: 'tax_rate',
         label: 'Tax Rate',
         type: 'text_field',
         required: true,

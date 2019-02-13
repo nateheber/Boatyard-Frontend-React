@@ -48,7 +48,7 @@ class OrderDetailHeader extends React.Component {
 
   onChangeProvider = val => {
     const { order } = this.props
-    this.props.UpdateOrder({ orderId: order.id, data: { order: { providerId: val.id } } })
+    this.props.UpdateOrder({ order_id: order.id, data: { order: { provider_id: val.id } } })
   }
 
   acceptOrder = () => {
@@ -59,12 +59,12 @@ class OrderDetailHeader extends React.Component {
 
   cancelOrder = () => {
     const { order } = this.props;
-    this.props.UpdateOrder({ orderId: order.id, data: { order: { state: 'canceled' } } })
+    this.props.UpdateOrder({ order_id: order.id, data: { order: { state: 'canceled' } } })
   }
 
   deleteOrder = () => {
     const { order } = this.props;
-    this.props.DeleteOrder({ orderId: order.id });
+    this.props.DeleteOrder({ order_id: order.id });
     this.props.history.push('/orders/');
   }
 

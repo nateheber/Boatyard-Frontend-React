@@ -22,7 +22,7 @@ function* fetchRequest(action) {
   for (let i = 0; i < managements.length; i += 1) {
     const {
       id: mngId,
-      attributes: { providerId, userId }
+      attributes: { provider_id: providerId, user_id: userId }
     } = managements[i];
     const idx = findIndex(currentMngs, mng => mng.id === mngId);
     if (idx === -1) {
@@ -35,11 +35,11 @@ function* fetchRequest(action) {
       });
       yield put({
         type: providerActions.GET_PROVIDER,
-        payload: { providerId }
+        payload: { provider_id: providerId }
       });
       yield put({
         type: userActions.GET_USER,
-        payload: { userId }
+        payload: { user_id: userId }
       });
     }
   }

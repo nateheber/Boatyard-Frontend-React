@@ -112,7 +112,7 @@ class AddServiceModal extends React.Component {
         xl: 5
       },
       {
-        field: 'categoryId',
+        field: 'category_id',
         label: 'Category',
         type: 'select_box',
         errorMessage: 'Select category',
@@ -209,7 +209,7 @@ class AddServiceModal extends React.Component {
         const field = refinedFields[index];
         const { name, fieldType } = field;
         const fieldLabel = camelCase(name);
-        serviceValues[fieldLabel] = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
+        serviceValues[name] = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
       }
     }
     return serviceValues;
@@ -257,12 +257,12 @@ class AddServiceModal extends React.Component {
 
   handleChange = (value, field) => {
     const { service } = this.props;
-    if (field === 'categoryId') {
-      if (value.categoryId === service.categoryId) {
+    if (field === 'category_id') {
+      if (value['category_id'] === service.categoryId) {
         const serviceValues = this.getServiceValues();
         this.setState({ serviceValues });
       } else {
-        this.loadCategory(value.categoryId);
+        this.loadCategory(value['category_id']);
       }
     }
   };

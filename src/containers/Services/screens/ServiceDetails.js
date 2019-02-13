@@ -96,14 +96,14 @@ class ServiceDetails extends React.Component {
     }
   };
 
-  handleChange = (field, value) => {
+  handleChange = (value, field) => {
     const { service, included } = this.state;
-    if (value === 'categoryId') {
-      if (field.categoryId === service.categoryId) {
+    if (field === 'category_id') {
+      if (value['category_id'] === service.categoryId) {
         const serviceFields = this.getServiceFields(service, included);
         this.setState({ serviceFields });
       } else {
-        this.loadCategory(field.categoryId);
+        this.loadCategory(value['category_id']);
       }
     }
   };
@@ -172,7 +172,7 @@ class ServiceDetails extends React.Component {
         xl: 6
       },
       {
-        field: 'categoryId',
+        field: 'category_id',
         label: 'Category',
         type: 'select_box',
         errorMessage: 'Select category',
@@ -245,7 +245,7 @@ class ServiceDetails extends React.Component {
         const defVal = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
         const label = startCase(name);
         return {
-          field: fieldLabel,
+          field: name,
           label: label,
           type: fieldType,
           required,
@@ -275,10 +275,9 @@ class ServiceDetails extends React.Component {
     refinedFields = orderBy(refinedFields, ['position'], ['asc']);
     const serviceFields = refinedFields.map(field => {
       const { name, fieldType, required, placeholder } = field;
-      const fieldLabel = camelCase(name);
       const label = startCase(name);
       return {
-        field: fieldLabel,
+        field: name,
         label: label,
         type: fieldType,
         required,
@@ -360,7 +359,7 @@ class ServiceDetails extends React.Component {
       }
 
       UpdateService({
-        serviceId: serviceId,
+        serviceId,
         data: mainValues,
         success: () => {
           this.onCancel();
