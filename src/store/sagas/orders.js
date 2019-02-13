@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, hasIn } from 'lodash';
 
 import { actionTypes } from '../actions/orders';
-import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag } from './sagaSelectors';
+import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag, getPrivilege } from './sagaSelectors';
 
 function* getOrders(action) {
   let successType = actionTypes.GET_ORDERS_SUCCESS;
@@ -89,8 +89,9 @@ function* getOrders(action) {
 function* getOrder(action) {
   const { orderId, success, error } = action.payload;
   const dispatched = yield select(getOrderDispatchedFlag);
+  const privilege = yield select(getPrivilege);
   let orderClient;
-  if (dispatched) {
+  if (dispatched && privilege !== 'admin') {
     orderClient = yield select(getDispatchedOrderClient);
   } else {
     orderClient = yield select(getOrderClient);
@@ -210,14 +211,22 @@ function* acceptOrder(action) {
 }
 
 function* dispatchOrder(action) {
-  const orderClient = yield select(getOrderClient);
+  const dispatched = yield select(getOrderDispatchedFlag);
+  const normalClient = yield select(getOrderClient);
+  let orderClient;
+  if (dispatched) {
+    orderClient = yield select(getDispatchedOrderClient);
+  } else {
+    orderClient = yield select(getOrderClient);
+  }
   const { orderId, dispatchIds, orderState, success, error } = action.payload;
   try {
     if (orderState !== 'draft') {
       yield call(orderClient.update, orderId, { order: { transition: "undispatch" } });
     }
-    yield call(orderClient.update, orderId, { order: { dispatchIds } });
+    yield call(normalClient.update, orderId, { order: { dispatchIds } });
     yield put({ type: actionTypes.DISPATCH_ORDER_SUCCESS });
+    yield put({ type: actionTypes.SET_DISPATCHED_FLAG, payload: true })
     yield put({ type: actionTypes.GET_ORDER, payload: { orderId } })
     if (success) {
       yield call(success);

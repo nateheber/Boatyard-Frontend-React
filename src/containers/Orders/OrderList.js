@@ -81,6 +81,8 @@ class OrderList extends React.Component {
   };
 
   toDetails = order => {
+    const { state } = order;
+    this.props.SetDispatchedFlag(state === 'dispatched');
     this.props.history.push(`/order-details/?order=${order.id}`);
   };
 
