@@ -3,4 +3,5 @@
   border-right: 1px solid #eaeaea !important;
   height: 100% !important;
   right: -1px !important;
+  cursor: col-resize !important;
 }
