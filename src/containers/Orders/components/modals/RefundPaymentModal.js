@@ -111,7 +111,7 @@ class OrderPaymentModal extends React.Component {
         tabs={tabs}
         selected={tab}
         onSelect={this.onChangeTab}
-      >
+      >   
         <Row>
           <Col sm={7}>
             {
