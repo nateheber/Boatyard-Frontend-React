@@ -4,7 +4,7 @@ import changeCase from 'change-case';
 import classNames from 'classnames'
 import moment from 'moment';
 import { Col } from 'react-flexbox-grid';
-import { get, startCase, isEmpty } from 'lodash';
+import { get, capitalize, isEmpty } from 'lodash';
 
 import CaretDownIcon from '../../../resources/caret-down-solid.svg';
 import CaretUpIcon from '../../../resources/caret-up-solid.svg';
@@ -208,20 +208,9 @@ export class Record extends React.PureComponent {
         return `Order #${item.id}`;    
       }
       const fields = column.value.split('/');
-      let combines = get(column, 'combines', []);
       for (const idx in fields) {
         const field = fields[idx];
-        const arr = field.split('.');
-        let part = item;
-        for (const subIdx in arr) {
-          const key = arr[subIdx];
-          if (!part) return '_';
-          part = part[key];
-        }
-        if(part && part.length > 0) {
-          const combineString = get(combines, `${idx - 1}`, ' ');
-          value = value.length > 0 ? `${value}${combineString}${part}` : part;
-        }    
+        value = value.length > 0 ? `${value} ${get(item, field, '')}` : `${get(item, field, '')}`;
       }
     }
     if (column.isValue && parseInt(value) === 0) {
@@ -261,7 +250,7 @@ export class Record extends React.PureComponent {
           <Tile xs={12} sm={6} md={4} lg={4} xl={3}>
             <Col className="tile-content" onClick={this.onGoToDetails}>
               <img className="tile-image" src={icon} alt={this.getValue(firstColumn, record)} />
-              <p className="tile-name">{startCase(this.getValue(firstColumn, record))}</p>
+              <p className="tile-name">{capitalize(this.getValue(firstColumn, record))}</p>
             </Col>
           </Tile>
         :
