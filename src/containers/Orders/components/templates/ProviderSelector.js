@@ -203,7 +203,11 @@ class ProviderSelector extends React.Component {
 
   filterProviders = () => {
     const { keyword } = this.state;
-    this.props.GetProviders({params: { 'provider[name]': keyword }, success: this.onFetchProviders})
+    if (keyword === '') {
+      this.props.GetProviders({ success: this.onFetchProviders })
+    } else {
+      this.props.GetProviders({ params: { 'provider[name]': keyword }, success: this.onFetchProviders })
+    }
   }
 
   handleClickOutside(event) {
@@ -244,8 +248,21 @@ class ProviderSelector extends React.Component {
     return idx >= 0;
   }
 
+  filterShowingProviders = () => {
+    const { providers } = this.state;
+    const { dispatchIds } = this.props;
+    const result = providers.filter((provider) => {
+      const { id } = provider;
+      const idx = dispatchIds.findIndex(dispatchId => dispatchId === parseInt(id));
+      return idx === -1;
+    })
+    return result;
+  }
+
   render() {
-    const { showMenu, showModal, keyword, providers, dispatchIds } = this.state;
+    const { showMenu, showModal, keyword, dispatchIds } = this.state;
+    const filteredProviders = this.filterShowingProviders();
+    const { dispatchIds: originalIds } = this.props;
     return (
       <Wrapper ref={this.setWrapperRef}>
         <Button onClick={this.showMenu}>
@@ -260,8 +277,15 @@ class ProviderSelector extends React.Component {
           </ClearAssigneeWrapper>
           <Scroller onScroll={this.onScroll}>
             {
-              providers.map((provider, idx) => (
-                <MenuItemLi key={`provider_${idx}`} >
+              originalIds.map(( providerId, idx ) => (
+                <MenuItemLi key={`provider_${providerId}`} >
+                  <ProviderCheck checked={this.isChecked(providerId)} providerId={providerId} onClick={() => this.onChangeSelection(providerId)} />
+                </MenuItemLi>
+              ))
+            }
+            {
+              filteredProviders.map((provider, idx) => (
+                <MenuItemLi key={`provider_${provider.id}`} >
                   <ProviderCheck checked={this.isChecked(provider.id)} provider={provider} onClick={() => this.onChangeSelection(provider.id)} />
                 </MenuItemLi>
               ))

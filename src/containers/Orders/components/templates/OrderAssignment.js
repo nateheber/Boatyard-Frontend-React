@@ -39,7 +39,7 @@ class OrderAssignment extends React.Component {
   renderDropdownButton = () => {
     const { dispatchIds } = this.state;
     const providerId = get(this.props, 'currentOrder.attributes.providerId');
-    return <ProviderSelector dispatchIds={providerId ? [] : dispatchIds} onChange={this.updateDispatchIds} />
+    return <ProviderSelector dispatchIds={providerId ? [providerId] : dispatchIds} onChange={this.updateDispatchIds} />
   }
 
   render() {
