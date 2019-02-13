@@ -239,8 +239,11 @@ export class Record extends React.PureComponent {
     const { show } = this.state;
     const firstColumn = columns[0];
     const hidingCols = columns.slice(1);
-    let icon = get(record, 'customIcon.url');
-    if (isEmpty(icon)) {
+    const { iconId } = record;
+    let icon = null;
+    if (!iconId) {
+      icon = get(record, 'customIcon.url') || 'https://dev.boatyard.com/img/logo.svg';
+    } else {
       icon = get(record, 'relationships.icon.attributes.icon.url') || 'https://dev.boatyard.com/img/logo.svg';
     }
     return (
