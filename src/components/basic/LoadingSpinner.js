@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { BounceLoader } from 'react-spinners';
+import { ClipLoader } from 'react-spinners';
 
 const SpinnerWrapper = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ export default class LoadingSpinner extends React.Component {
             opacity: opacity || 0.2
           }}
         />
-        <BounceLoader
+        <ClipLoader
           sizeUnit={"px"}
           size={size || 50}
           color={color || '#094359'}
