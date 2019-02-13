@@ -35,7 +35,7 @@ export default class LoadingSpinner extends React.Component {
         <BounceLoader
           sizeUnit={"px"}
           size={size || 50}
-          color={color || '#ffaa5c'}
+          color={color || '#094359'}
           loading={loading}
         />
       </SpinnerWrapper>
