@@ -47,8 +47,8 @@ class OrderAssignment extends React.Component {
     return (
       <Section title="Assignees" mode="view" editComponent={this.renderDropdownButton()} noPadding>
         {
-          dispatchIds.map((id, key) => (
-            <ProviderInfo id={id} key={`provider_${key}`} />
+          dispatchIds.map((id) => (
+            <ProviderInfo id={id} key={`provider_${id}`} />
           ))
         }
       </Section>
