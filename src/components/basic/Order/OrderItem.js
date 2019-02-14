@@ -1,15 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { get, isEmpty } from 'lodash';
 import moment from 'moment';
 
-const Wrapper = styled(Link)`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   border-bottom: 1px solid #e6e6e6;
   text-decoration: none;
+  cursor: pointer;
   @media (max-width: 778px) {
     box-sizing: border-box;
     // height: 290px;
@@ -121,24 +122,33 @@ function getValue(column, item) {
   return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
 }
 
-export const OrderItem = props => {
-  const { columns, item } = props;
-  return (
-    <Wrapper to={`/order-details/?order=${item.id}`}>
-      {columns.map((column, idx) => {
-        return (
-          <Field
-            className={column.isTitle && 'title'}
-            key={`field_${idx}`}
-            style={{ width: column.width || `${100 / columns.length}%`}}
-          >
-            <THeader>{column.label}</THeader>
-            {column.link && <Link to={`/order-details/?order=${item.id}`}>{getValue(column, item)}</Link>}
-            {!column.link && getValue(column, item)}
-          </Field>
-        );
-      })
-      }
-    </Wrapper>
-  );
-};
+class OrderItem extends React.Component {
+  onGoToDetails = () => {
+    const { item } = this.props;
+    this.props.history.push(`/order-details/?order=${item.id}`);
+  };
+
+  render() {
+    const { columns, item } = this.props;
+    return (
+      <Wrapper onClick={this.onGoToDetails}>
+        {columns.map((column, idx) => {
+          return (
+            <Field
+              className={column.isTitle && 'title'}
+              key={`field_${idx}`}
+              style={{ width: column.width || `${100 / columns.length}%`}}
+            >
+              <THeader>{column.label}</THeader>
+              {column.link && <Link to={`/order-details/?order=${item.id}`}>{getValue(column, item)}</Link>}
+              {!column.link && getValue(column, item)}
+            </Field>
+          );
+        })
+        }
+      </Wrapper>
+    );  
+  }
+}
+
+export default withRouter(OrderItem);

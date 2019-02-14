@@ -37,7 +37,7 @@ export default class OrderSummarySection extends React.Component {
     for (const key in properties) {
       const value = get(properties, key);
       fields.push(
-        <TR>
+        <TR key={`${key} - ${value}`}>
           <Label>
             {key.toUpperCase()}
           </Label>
