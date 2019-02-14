@@ -14,7 +14,7 @@ const TimeInput = styled(Input)`
   width: 35px;
   padding: 3px;
   text-align: center;
-  color: #8f8f8f;
+  color: #555;
   margin: 0;
   &.-hours{
     margin-right: 1px;
@@ -27,7 +27,7 @@ const TimeInput = styled(Input)`
 const AMButton = styled.button`
   margin-left: 4px;
   border: 1px solid #E6E6E6;
-  color: #8f8f8f;
+  color: #555;
   border-radius: 6px !important;
   outline: 0!important;
   box-shadow: none!important;

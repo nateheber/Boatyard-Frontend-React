@@ -16,12 +16,16 @@ const Name = styled.span`
   white-space: nowrap;
   display: inline-block;
   text-overflow: ellipsis;
+  font-size: 14px;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.1px;
 `;
 
 const Email = styled.span`
   color: #7e7d7e;
   font-size: 9pt;
-  font-weight: 300;
+  font-weight: 600;
   font-style: italic;
   display: inline-block;
   font-family: 'Open Sans';

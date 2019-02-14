@@ -6,29 +6,31 @@ export const BoatyardSelect = styled(AsyncSelect)`
   font-size: 13px;
   font-weight: 400;
   letter-spacing: -0.3px;
-  .css-2o5izw {
+  .css-bl6clz {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 14px;
+    color: #555;
+  }
+  .css-2o5izw,
+  .css-vj8t7z {
     min-height: 30px;
     height: 30px;
     border-radius: 6px;
     border: 1px solid #dfdfdf !important;
     box-shadow: none;
-  }
-  .css-vj8t7z {
-    min-height: 30px;
-    border-radius: 6px;
-    border: 1px solid #dfdfdf;
-    color: #000000;
+    color: #555;
     &:hover {
       border: 1px solid #dfdfdf;
       .css-1hwfws3 {
         .css-xp4uvy {
-          color: #000000;
+          color: #555;
         }
       }
     }
     .css-1hwfws3 {
-      .css-xp4uvy {
-        color: #000000;
+      div {
+        color: #555;
+        font-family: 'Source Sans Pro', sans-serif !important;
       }
     }
   }

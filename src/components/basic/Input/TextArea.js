@@ -30,6 +30,7 @@ const Input = styled.textarea`
   resize: none;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
+  color: #555;
   &:disabled {
     background: #f1f1f1;
   }
