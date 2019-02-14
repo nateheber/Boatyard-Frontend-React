@@ -53,7 +53,7 @@ const Wrapper = styled.div`
   align-items: center;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
-  color: ${props => props.color || '#333'};
+  color: ${props => props.color || '#555'};
   cursor: pointer;
 `;
 

@@ -32,6 +32,7 @@ const MaskInput = styled(InputMask)`
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
+  color: #555;
   &:disabled {
     background: #f1f1f1;
   }
@@ -65,6 +66,7 @@ const Selector = styled.select`
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
+  color: #555;
   &:disabled {
     background: #f1f1f1;
   }
