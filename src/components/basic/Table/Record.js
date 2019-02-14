@@ -199,7 +199,7 @@ export class Record extends React.PureComponent {
             part = `${part} ${get(item, fields[subIdx], '')}`;
           }
         }
-        if (!isEmpty(part.trim())) {
+        if (part && !isEmpty(part.trim())) {
           return part;
         } else {
           value = '_';

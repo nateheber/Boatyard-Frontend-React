@@ -6,10 +6,15 @@ import { TableHeader } from './Header';
 import { Record } from './Record';
 import Paginator from './Paginator';
 
+const ContentWrapper =styled.div`
+  width: 100%;
+`
+
 const Wrapper = styled.div`
   background-color: white;
   width: 100%;
   overflow-x: scroll;
+  padding-bottom: 10px;
 `;
 
 const TableWrapper = styled.div`
@@ -122,19 +127,21 @@ export default class Table extends React.Component {
     const { columns, page, pageCount, onPageChange, type } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
-      <Wrapper ref={this.setWrapperRef}>
-        <TableWrapper className={classNames(type)}>
-          {type !== 'tile' && <TableHeader
-            ref={this.setHeaderRef}
-            type={type}
-            columns={columns}
-            sortColumn={sortColumn}
-            isAsc={isAsc}
-            onSort={this.sort}
-            onChangeSize={this.onChangeSize}
-          />}
-          {this.renderContent()}
-        </TableWrapper>
+      <ContentWrapper>
+        <Wrapper ref={this.setWrapperRef}>
+          <TableWrapper className={classNames(type)}>
+            {type !== 'tile' && <TableHeader
+              ref={this.setHeaderRef}
+              type={type}
+              columns={columns}
+              sortColumn={sortColumn}
+              isAsc={isAsc}
+              onSort={this.sort}
+              onChangeSize={this.onChangeSize}
+            />}
+            {this.renderContent()}
+          </TableWrapper>
+        </Wrapper>
         {
           pageCount > 1 && (
             <PaginatorWrapper>
@@ -142,7 +149,7 @@ export default class Table extends React.Component {
             </PaginatorWrapper>
           )
         }        
-      </Wrapper>
+      </ContentWrapper>
     );
   }
 }
