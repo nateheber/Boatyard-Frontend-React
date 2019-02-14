@@ -19,6 +19,7 @@ const DropdownMenu = styled.ul`
   width: 200px;
   min-height: 70px;
   padding: 0;
+  z-index: 1;
   &::before {
     height: 100%;
     display: block;
@@ -117,7 +118,7 @@ export class FilterOptions extends React.Component {
         <ToggleButton
           title="FILTER BY"
           onClick={() => {
-            this.setState({ showMenu: true });
+            this.setState({ showMenu: !showMenu });
           }}
         />
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
