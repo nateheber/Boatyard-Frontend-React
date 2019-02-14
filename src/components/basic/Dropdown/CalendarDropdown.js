@@ -19,6 +19,7 @@ const DropdownMenu = styled.ul`
   position: absolute;
   width: 200px;
   padding: 0;
+  z-index: 1;
   &::before {
     height: 100%;
     display: block;
@@ -98,7 +99,7 @@ export class CalendarDropdown extends React.Component {
           title="Calendar"
           type="plain"
           onClick={() => {
-            this.setState({ showMenu: true });
+            this.setState({ showMenu: !showMenu });
           }}
         />
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
