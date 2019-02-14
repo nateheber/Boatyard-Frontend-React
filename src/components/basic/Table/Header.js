@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import className from 'classnames';
 import { isBrowser } from 'react-device-detect';
 import { ResizableBox } from 'react-resizable';
+import { get } from 'lodash';
 
 import 'react-resizable/css/styles.css';
 import './style.css';
@@ -52,6 +53,10 @@ const ColumnHeader = styled(ResizableBox)`
   }
 `;
 
+const ColumnHeaderContent = styled.div`
+  min-width: 130px;
+`
+
 const ArrBlue = styled.span`
   margin-left: 2px;
   background-image: url(${ArrBlueIcon});
@@ -74,11 +79,11 @@ export class TableHeader extends React.Component {
     if (ref) {
       const { width } = ref.getBoundingClientRect();
       const { columns } = this.props;
-      const colWidth = width / columns.length;
-      const widths = [];
-      for(let i = 0; i < columns.length; i += 1) {
-        widths.push(colWidth);
-      }
+      const totalPortion = columns.reduce((prev, column) => {
+        const width = get(column, 'width', 1);
+        return prev + width;
+      }, 0);
+      const widths = columns.map(column => Math.max(width * get(column, 'width', 1) / totalPortion, 140));
       this.setState({ widths });
       this.props.onChangeSize(widths);
     }
@@ -97,23 +102,30 @@ export class TableHeader extends React.Component {
     const { widths } = this.state;
     return isBrowser ? (
       <Wrapper className={className(type)} ref={this.setWrapperInfo}>
-        {columns.map((col, idx) => (
-          <ColumnHeader className={className(type)} key={`col_${idx}`} axis="x" width={widths[idx]} height={34} onResize={this.onResize(idx)}>
-            <div
-              onClick={() => {
-                if (type === 'primary' && col.sort) {
-                  onSort(col.sort);
-                }
-              }}
-              style={{ width: `${widths[idx]}px` }}
-            >
-              {col.label}
-              {col.sort === sortColumn && type === 'primary' && (
-                <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
-              )}
-            </div>
-          </ColumnHeader>
-        ))}
+        {columns.map((col, idx) => {
+          const width = widths[idx];
+          let widthObj = {};
+          if (width) {
+            widthObj = { width };
+          }
+          return  (
+            <ColumnHeader className={className(type)} key={`col_${idx}`} axis="x" {...widthObj} height={34} onResize={this.onResize(idx)} minConstraints={[130, 34]}>
+              <ColumnHeaderContent
+                onClick={() => {
+                  if (type === 'primary' && col.sort) {
+                    onSort(col.sort);
+                  }
+                }}
+                style={{ width: `${widths[idx]}px` }}
+              >
+                {col.label}
+                {col.sort === sortColumn && type === 'primary' && (
+                  <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
+                )}
+              </ColumnHeaderContent>
+            </ColumnHeader>
+          );
+        })}
       </Wrapper>
     ) : false;
   }

@@ -10,12 +10,16 @@ import CaretDownIcon from '../../../resources/caret-down-solid.svg';
 import CaretUpIcon from '../../../resources/caret-up-solid.svg';
 
 const Wrapper = styled.div`
-  display: flex;
   box-sizing: border-box;
   border-bottom: 1px solid #eaeaea;
   font-family: 'Source Sans Pro', sans-serif;
-  width: ${props => props.width};
+  width: calc(${props => props.width} + 3px);
   cursor: pointer;
+  &:before {
+    content: "";
+    vertical-align: top;
+    height: 100%;
+  }
   &:last-child {
     border-bottom: none;
   }
@@ -66,6 +70,8 @@ const Tile = styled(Col)`
 `;
 
 const FirstField = styled.div`
+  vertical-align: top;
+  box-sizing: border-box;
   font-size: 14px;
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: bold;
@@ -81,7 +87,7 @@ const FirstField = styled.div`
     display: none;
   }
   &.is-desktop {
-    display: flex;
+    display: inline-block;
   }
   @media (max-width: 843px) {
     display: flex;
@@ -105,9 +111,14 @@ const FirstField = styled.div`
 `;
 
 const Field = styled.div`
+  vertical-align: top;
+  display: inline-block;
+  box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
   align-items: center;
+  padding: 8px;
+  padding-left: 30px;
   @media (max-width: 843px) {
     display: none;
     &.show {
