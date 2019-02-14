@@ -6,10 +6,15 @@ import { TableHeader } from './Header';
 import { Record } from './Record';
 import Paginator from './Paginator';
 
+const ContentWrapper =styled.div`
+  width: 100%;
+`
+
 const Wrapper = styled.div`
   background-color: white;
   width: 100%;
   overflow-x: scroll;
+  padding-bottom: 10px;
 `;
 
 const TableWrapper = styled.div`
@@ -41,6 +46,22 @@ export default class Table extends React.Component {
     };
   }
 
+  componentDidMount() {
+    window.addEventListener("resize", this.updateDimension);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimension);
+  }
+
+  setWrapperRef = (ref) => {
+    this.wrapper = ref;
+  }
+
+  setHeaderRef = (ref) => {
+    this.header = ref;
+  }
+
   onChangeSize = (sizes) => {
     this.setState({ sizes });
   }
@@ -67,9 +88,10 @@ export default class Table extends React.Component {
     }
   };
 
-  setVisitRef = ref => {
-    this.visitRef = ref;
-  };
+  updateDimension = () => {
+    const { width } = this.wrapper.getBoundingClientRect();
+    this.header.updateDimensions(width);
+  }
 
   toDetails = record => {
     const { toDetails } = this.props;
@@ -105,18 +127,21 @@ export default class Table extends React.Component {
     const { columns, page, pageCount, onPageChange, type } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
-      <Wrapper>
-        <TableWrapper className={classNames(type)}>
-          {type !== 'tile' && <TableHeader
-            type={type}
-            columns={columns}
-            sortColumn={sortColumn}
-            isAsc={isAsc}
-            onSort={this.sort}
-            onChangeSize={this.onChangeSize}
-          />}
-          {this.renderContent()}
-        </TableWrapper>
+      <ContentWrapper>
+        <Wrapper ref={this.setWrapperRef}>
+          <TableWrapper className={classNames(type)}>
+            {type !== 'tile' && <TableHeader
+              ref={this.setHeaderRef}
+              type={type}
+              columns={columns}
+              sortColumn={sortColumn}
+              isAsc={isAsc}
+              onSort={this.sort}
+              onChangeSize={this.onChangeSize}
+            />}
+            {this.renderContent()}
+          </TableWrapper>
+        </Wrapper>
         {
           pageCount > 1 && (
             <PaginatorWrapper>
@@ -124,7 +149,7 @@ export default class Table extends React.Component {
             </PaginatorWrapper>
           )
         }        
-      </Wrapper>
+      </ContentWrapper>
     );
   }
 }

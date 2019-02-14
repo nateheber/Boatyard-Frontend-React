@@ -34,22 +34,27 @@ const TableWrapper = styled.div`
 `;
 
 const columns = [
-  { label: 'order', value: 'name' },
-  { label: 'order placed', value: 'createdAt' },
+  { label: 'order', value: 'name', width: 1 },
+  { label: 'order placed', value: 'createdAt', width: 1.2 },
   {
     label: 'CUSTOMER',
     value: [
       'relationships.user.attributes.firstName/relationships.user.attributes.lastName',
       'relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'
     ],
-    isCustomer: true
+    isCustomer: true,
+    width: 1.2
   },
-  { label: 'service', value: 'relationships.service.attributes.name' },
-  { label: 'location', value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state' },
-  { label: 'boat name', value: 'relationships.boat.attributes.name' },
-  { label: 'boat', value: 'relationships.boat.attributes.make' },
-  { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$' },
-  { label: 'order status', value: 'state' },
+  { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
+  {
+    label: 'location',
+    value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
+    width: 2.5
+  },
+  { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1.5, },
+  { label: 'boat', value: 'relationships.boat.attributes.make', width: 1.2, },
+  { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$', width: 0.8, },
+  { label: 'order status', value: 'state', width: 1.2 },
 ];
 const tabs = {
   admin: [
