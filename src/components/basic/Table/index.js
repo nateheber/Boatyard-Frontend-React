@@ -41,6 +41,22 @@ export default class Table extends React.Component {
     };
   }
 
+  componentDidMount() {
+    window.addEventListener("resize", this.updateDimension);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimension);
+  }
+
+  setWrapperRef = (ref) => {
+    this.wrapper = ref;
+  }
+
+  setHeaderRef = (ref) => {
+    this.header = ref;
+  }
+
   onChangeSize = (sizes) => {
     this.setState({ sizes });
   }
@@ -67,9 +83,10 @@ export default class Table extends React.Component {
     }
   };
 
-  setVisitRef = ref => {
-    this.visitRef = ref;
-  };
+  updateDimension = () => {
+    const { width } = this.wrapper.getBoundingClientRect();
+    this.header.updateDimensions(width);
+  }
 
   toDetails = record => {
     const { toDetails } = this.props;
@@ -105,9 +122,10 @@ export default class Table extends React.Component {
     const { columns, page, pageCount, onPageChange, type } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
-      <Wrapper>
+      <Wrapper ref={this.setWrapperRef}>
         <TableWrapper className={classNames(type)}>
           {type !== 'tile' && <TableHeader
+            ref={this.setHeaderRef}
             type={type}
             columns={columns}
             sortColumn={sortColumn}

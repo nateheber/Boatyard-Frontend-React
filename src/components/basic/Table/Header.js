@@ -89,6 +89,17 @@ export class TableHeader extends React.Component {
     }
   }
 
+  updateDimensions = (width) => {
+    const { columns } = this.props;
+    const totalPortion = columns.reduce((prev, column) => {
+      const width = get(column, 'width', 1);
+      return prev + width;
+    }, 0);
+    const widths = columns.map(column => Math.max(width * get(column, 'width', 1) / totalPortion, 140));
+    this.setState({ widths });
+    this.props.onChangeSize(widths);
+  }
+
   onResize = (idx) => (evt, obj) => {
     const { size: { width } } = obj;
     const widths = [...this.state.widths];
@@ -103,13 +114,9 @@ export class TableHeader extends React.Component {
     return isBrowser ? (
       <Wrapper className={className(type)} ref={this.setWrapperInfo}>
         {columns.map((col, idx) => {
-          const width = widths[idx];
-          let widthObj = {};
-          if (width) {
-            widthObj = { width };
-          }
+          const width = get(widths, `[${idx}]`, 130);
           return  (
-            <ColumnHeader className={className(type)} key={`col_${idx}`} axis="x" {...widthObj} height={34} onResize={this.onResize(idx)} minConstraints={[130, 34]}>
+            <ColumnHeader className={className(type)} key={`col_${idx}`} axis="x" width={width} height={34} onResize={this.onResize(idx)} minConstraints={[130, 34]}>
               <ColumnHeaderContent
                 onClick={() => {
                   if (type === 'primary' && col.sort) {
