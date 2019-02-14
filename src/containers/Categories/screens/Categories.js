@@ -46,7 +46,10 @@ class Categories extends React.Component {
   loadPage = (page) => {
     const { keyword } = this.state;
     const { GetCategories } = this.props;
-    const params = {
+    const params = isEmpty(keyword) ? {
+      page: page,
+      per_page: 24,
+    } : {
       page: page,
       per_page: 24,
       'category[name]': keyword
