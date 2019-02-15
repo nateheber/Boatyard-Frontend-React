@@ -176,7 +176,7 @@ export class TableHeader extends React.Component {
               </ColumnHeaderContent>
             </NormalHeader>
           ) : (
-            <ColumnHeader className={className(type)} key={`col_${idx}`} axis="x" width={width} height={34} onResize={this.onResize(idx)} minConstraints={[130, 34]}>
+            <ColumnHeader className={className(type)} key={`col_${idx}`} axis="x" width={width} height={type === 'secondary' ? 59 : 34} onResize={this.onResize(idx)} minConstraints={[130, 34]}>
               <ColumnHeaderContent
                 onClick={() => {
                   if (type === 'primary' && col.sort) {

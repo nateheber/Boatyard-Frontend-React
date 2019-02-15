@@ -5,3 +5,7 @@
   right: -1px !important;
   cursor: col-resize !important;
 }
+
+.secondary > .react-resizable-handle{
+  right: 1px !important;
+}
