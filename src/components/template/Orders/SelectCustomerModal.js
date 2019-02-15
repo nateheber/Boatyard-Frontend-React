@@ -246,12 +246,15 @@ class SelectCustomerModal extends React.Component {
     ];
     return (
       <Modal
-        title="Select Customer"
+        title="Create Order"
         minHeight={265}
         actions={actionButtons}
         open={open}
         onClose={onClose}
       >
+        <Row>
+          <Col sm={12}><SubSectionTitle style={{ marginTop: 0 }}>SELECT A CUSTOMER</SubSectionTitle></Col>
+        </Row>
         <Row style={{ alignItems: 'center'}}>
           <Col sm={12} md={8} lg={7}>
             <BoatyardSelect
