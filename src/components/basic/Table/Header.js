@@ -156,7 +156,11 @@ export class TableHeader extends React.Component {
         {columns.map((col, idx) => {
           const width = get(widths, `[${idx}]`, 130);
           return  columns.length - 1 === idx ? (
-            <NormalHeader className={className(type)} key={`col_${idx}`} axis="x" width={width} height={34} onResize={this.onResize(idx)} minConstraints={[130, 34]}>
+            <NormalHeader
+              className={className(type)}
+              key={`col_${idx}`}
+              style={{ width: `${width}px` }}
+            >
               <ColumnHeaderContent
                 onClick={() => {
                   if (type === 'primary' && col.sort) {
@@ -172,7 +176,7 @@ export class TableHeader extends React.Component {
               </ColumnHeaderContent>
             </NormalHeader>
           ) : (
-            <ColumnHeader className={className(type)} key={`col_${idx}`} axis="x" width={width} height={34} onResize={this.onResize(idx)} minConstraints={[130, 34]}>
+            <ColumnHeader className={className(type)} key={`col_${idx}`} axis="x" width={width} height={type === 'secondary' ? 59 : 34} onResize={this.onResize(idx)} minConstraints={[130, 34]}>
               <ColumnHeaderContent
                 onClick={() => {
                   if (type === 'primary' && col.sort) {

@@ -90,7 +90,9 @@ export default class Table extends React.Component {
 
   updateDimension = () => {
     const { width } = this.wrapper.getBoundingClientRect();
-    this.header.updateDimensions(width);
+    if (this.header) {
+      this.header.updateDimensions(width);
+    }
   }
 
   toDetails = record => {

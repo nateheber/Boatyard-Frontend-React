@@ -25,7 +25,7 @@ function* getCategories(action) {
     submissionParams = {
       ...params,
       'category[order]': 'name',
-      'category[sort]': 'desc',
+      'category[sort]': 'asc',
     };
   } else {
     submissionParams = { ...params };
