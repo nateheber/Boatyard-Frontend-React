@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Input } from 'components/basic/Input'
+import { CurrencyInput } from 'components/basic/Input'
 
 const Title = styled.div`
   font-family: Montserrat, sans-serif;
@@ -37,7 +37,7 @@ const Value = styled.div`
   align-items: center;
 `
 
-const ValueEditor = styled(Input)`
+const ValueEditor = styled(CurrencyInput)`
   margin-left: 5px;
 `
 
@@ -57,7 +57,7 @@ export default class ChargeSelector extends React.Component {
           <Label>Amount to Charge:</Label>
           <Value>
             <Label style={{ width: 'initial', marginLeft: '10px'}}>$</Label>
-            <ValueEditor type="text" value={balance} onChange={this.onChange('balance')} />
+            <ValueEditor decimalScale={2} value={balance} onChange={this.onChange('balance')} />
           </Value>
         </FieldWrapper>
         {
@@ -66,7 +66,7 @@ export default class ChargeSelector extends React.Component {
               <Label>Boatyard Fee:</Label>
               <Value>
                 <Label style={{ width: 'initial', marginLeft: '10px'}}>$</Label>
-                <ValueEditor type="text" value={fee} onChange={this.onChange('fee')} />
+                <ValueEditor decimalScale={2} value={fee} onChange={this.onChange('fee')} />
               </Value>
             </FieldWrapper>
           )
