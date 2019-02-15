@@ -27,7 +27,6 @@ const CardInfo = styled.div`
     color: #003247;
   }
   padding-left: 20px;
-  margin-bottom: 5px;
 `
 
 const RadioButton = styled.span`

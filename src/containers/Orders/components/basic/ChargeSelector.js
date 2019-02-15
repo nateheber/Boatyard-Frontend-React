@@ -8,6 +8,7 @@ const Title = styled.div`
   color: #07384b;
   margin-top: 0;
   margin-bottom: 25px;
+  font-size: 14px;
 `
 
 const FieldWrapper = styled.div`
@@ -24,6 +25,9 @@ const FieldWrapper = styled.div`
 const Label = styled.div`
   display: inline-block;
   width: 50%;
+  margin-bottom: 5px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
 `
 
 const Value = styled.div`
@@ -48,16 +52,22 @@ export default class ChargeSelector extends React.Component {
     const { balance, fee, previlage } = this.props;
     return (
       <div>
-        <Title>Balance: ${balance}</Title>
+        <Title>Balance: ${parseFloat(balance || '0').toFixed(2)}</Title>
         <FieldWrapper>
           <Label>Amount to Charge:</Label>
-          <Value>$ <ValueEditor type="text" value={balance} onChange={this.onChange('balance')} /></Value>
+          <Value>
+            <Label style={{ width: 'initial', marginLeft: '10px'}}>$</Label>
+            <ValueEditor type="text" value={balance} onChange={this.onChange('balance')} />
+          </Value>
         </FieldWrapper>
         {
           previlage === 'admin' && (
             <FieldWrapper>
               <Label>Boatyard Fee:</Label>
-              <Value>$ <ValueEditor type="text" value={fee} onChange={this.onChange('fee')} /></Value>
+              <Value>
+                <Label style={{ width: 'initial', marginLeft: '10px'}}>$</Label>
+                <ValueEditor type="text" value={fee} onChange={this.onChange('fee')} />
+              </Value>
             </FieldWrapper>
           )
         }

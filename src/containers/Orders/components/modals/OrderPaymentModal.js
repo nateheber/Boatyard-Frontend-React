@@ -58,12 +58,12 @@ class OrderPaymentModal extends React.Component {
       order_id: order.id,
       credit_card_id: cardId,
       provider_id: provider.id,
-      amount: parseFloat(balance),
-      boatyard_fee: parseFloat(fee)
+      amount: parseFloat(balance).toFixed(2),
+      boatyard_fee: parseFloat(fee).toFixed(2)
     } : {
       order_id: order.id,
       credit_card_id: cardId,
-      amount: parseFloat(balance)
+      amount: parseFloat(balance).toFixed(2)
     };
     if (user.type === 'child_accounts') {
       data['child_account_id'] = user.id;
@@ -95,7 +95,7 @@ class OrderPaymentModal extends React.Component {
   render() {
     const { open, loading, onClose, creditCards, privilege, order } = this.props;
     const { balance, fee, tab } = this.state;
-    const charging = parseFloat(balance) + parseFloat(fee);
+    const charging = parseFloat(parseFloat(parseFloat(balance || '0').toFixed(2)) + parseFloat(parseFloat(fee || '0').toFixed(2))).toFixed(2);
     const user = getUserFromOrder(order);
     const action = [
       <HollowButton onClick={onClose} key="Cancel">Cancel</HollowButton>,
