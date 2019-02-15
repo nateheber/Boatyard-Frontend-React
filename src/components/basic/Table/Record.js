@@ -145,6 +145,14 @@ const FieldValue = styled.div`
   word-break: break-all;
 `;
 
+const LocationFieldValue = styled.div`
+  color: #898889;
+  word-break: break-word;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+`;
+
 const CaretDown = styled.div`
   display: none;
   width: 20px;
@@ -207,7 +215,21 @@ export class Record extends React.PureComponent {
           value = '_';
         }
       }
-    } else {
+    } else if(column.isLocation) {
+      const street = get(item ,get(column, 'street'));
+      const city = get(item ,get(column, 'city'));
+      const state = get(item ,get(column, 'state'));
+      const zip = get(item ,get(column, 'zip'));
+      let line1 = `${street}, `;
+      let line2 = `${city}, ${state || ''} ${zip || ''}`;
+      if (isEmpty(street)) {
+        line1 = '';
+      }
+      if (isEmpty(city)) {
+        line2 = `${state || ''} ${zip || ''}`;
+      }
+      return { line1, line2 };
+      } else {
       if (column.value === 'id') {
         if (item.state === 'draft' && column.type === 'new') {
           return 'New Order';
@@ -215,9 +237,20 @@ export class Record extends React.PureComponent {
         return `Order #${item.id}`;    
       }
       const fields = column.value.split('/');
+      let combines = get(column, 'combines', []);
       for (const idx in fields) {
         const field = fields[idx];
-        value = value.length > 0 ? `${value} ${get(item, field, '')}` : `${get(item, field, '')}`;
+        const arr = field.split('.');
+        let part = item;
+        for (const subIdx in arr) {
+          const key = arr[subIdx];
+          if (!part) return '_';
+          part = part[key];
+        }
+        if(part && part.length > 0) {
+          const combineString = get(combines, `${idx - 1}`, ' ');
+          value = value.length > 0 ? `${value}${combineString}${part}` : part;
+        }    
       }
     }
     if (column.isValue && parseInt(value) === 0) {
@@ -295,7 +328,13 @@ export class Record extends React.PureComponent {
                 key={`col_${idx}`}
               >
                 <FieldLabel>{changeCase.upperCaseFirst(column.label)}</FieldLabel>
-                <FieldValue>{this.getValue(column, record)}</FieldValue>
+                {!column.isLocation && <FieldValue>{this.getValue(column, record)}</FieldValue>}
+                {column.isLocation && 
+                  <LocationFieldValue style={{wordBreak: 'break-word'}}>
+                    {!isEmpty(this.getValue(column, record)['line1']) && <span>{this.getValue(column, record)['line1']}&nbsp;</span>}
+                    <span>{this.getValue(column, record)['line2']}</span>
+                  </LocationFieldValue>
+                }
               </Field>
             ))}
           </Wrapper>
