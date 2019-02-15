@@ -81,20 +81,6 @@ function getValue(column, item) {
         value = '_';
       }
     }
-  } else if(column.isLocation) {
-    const street = get(item ,get(column, 'street'));
-    const city = get(item ,get(column, 'city'));
-    const state = get(item ,get(column, 'state'));
-    const zip = get(item ,get(column, 'zip'));
-    let line1 = `${street},`;
-    let line2 = `${city}, ${state} ${zip}`;
-    if (isEmpty(street)) {
-      line1 = '';
-    }
-    if (isEmpty(city)) {
-      line2 = `${state} ${zip}`;
-    }
-    return { line1, line2 };
   } else {
     if (column.value === 'id') {
       if (item.state === 'draft' && column.type === 'new') {

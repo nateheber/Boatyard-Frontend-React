@@ -331,7 +331,7 @@ export class Record extends React.PureComponent {
                 {!column.isLocation && <FieldValue>{this.getValue(column, record)}</FieldValue>}
                 {column.isLocation && 
                   <LocationFieldValue style={{wordBreak: 'break-word'}}>
-                    <span>{this.getValue(column, record)['line1']}</span>
+                    {!isEmpty(this.getValue(column, record)['line1']) && <span>{this.getValue(column, record)['line1']}&nbsp;</span>}
                     <span>{this.getValue(column, record)['line2']}</span>
                   </LocationFieldValue>
                 }
