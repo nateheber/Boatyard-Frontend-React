@@ -257,6 +257,9 @@ export class Record extends React.PureComponent {
       return '_';
     }
     if (column.isCurrency) {
+      if (isEmpty(value)) {
+        return '_';
+      }
       value = parseFloat(value).toFixed(2);
     }
     if (column.isDate) {
