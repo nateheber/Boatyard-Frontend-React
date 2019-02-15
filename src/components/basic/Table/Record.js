@@ -12,8 +12,9 @@ import CaretUpIcon from '../../../resources/caret-up-solid.svg';
 const Wrapper = styled.div`
   box-sizing: border-box;
   border-bottom: 1px solid #eaeaea;
+  border-right: 1px solid #eaeaea;
   font-family: 'Source Sans Pro', sans-serif;
-  width: calc(${props => props.width} + 3px);
+  width: calc(${props => props.width} + 1px);
   cursor: pointer;
   &:before {
     content: "";
