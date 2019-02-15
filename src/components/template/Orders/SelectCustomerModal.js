@@ -256,7 +256,7 @@ class SelectCustomerModal extends React.Component {
           <Col sm={12}><SubSectionTitle style={{ marginTop: 0 }}>SELECT A CUSTOMER</SubSectionTitle></Col>
         </Row>
         <Row style={{ alignItems: 'center'}}>
-          <Col sm={12} md={8} lg={7}>
+          <Col sm={12} md={8} lg={7} style={{ marginBottom: 5 }}>
             <BoatyardSelect
               ref={this.setCustomerSelectRef}
               components={{
@@ -270,7 +270,7 @@ class SelectCustomerModal extends React.Component {
             />
           </Col>
           <Col sm={12} md={4} lg={3} lgOffset={2}>
-            <HollowButton onClick={this.showCustomerModal}>Add New</HollowButton>
+            <HollowButton style={{ marginTop: 0 }} onClick={this.showCustomerModal}>Add New</HollowButton>
           </Col>
         </Row>
         {!isEmpty(customer) && 
