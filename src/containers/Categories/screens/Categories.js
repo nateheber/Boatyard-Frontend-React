@@ -54,7 +54,7 @@ class Categories extends React.Component {
       page: page,
       per_page: 24,
       'category[discarded_at]': null,
-      'category[name]': keyword
+      search_by_name: keyword
     };
     GetCategories({ params });
   };
