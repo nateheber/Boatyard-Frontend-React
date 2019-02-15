@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { Col, Row } from 'react-flexbox-grid';
+import { isEmpty } from 'lodash';
 
 import { actionTypes as categoryActions, GetCategories } from 'store/actions/categories';
 import { actionTypes as serviceActions, CreateService } from 'store/actions/services';
@@ -46,7 +47,10 @@ class AddService extends React.Component {
   loadPage = (page) => {
     const { keyword } = this.state;
     const { GetCategories } = this.props;
-    const params = {
+    const params = isEmpty(keyword) ? {
+      page: page,
+      per_page: 24,
+    } : {
       page: page,
       per_page: 24,
       'category[name]': keyword
