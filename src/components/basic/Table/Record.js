@@ -142,6 +142,7 @@ const FieldLabel = styled.div`
 
 const FieldValue = styled.div`
   color: #898889;
+  word-break: break-all;
 `;
 
 const CaretDown = styled.div`
