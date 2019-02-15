@@ -7,7 +7,7 @@ import { getCustomApiClient } from './sagaSelectors';
 function* createRequest(action) {
   const lineItemClient = yield select(getCustomApiClient)
   const { orderId, data, callback } = action.payload
-  yield call(lineItemClient.post, `/orders/${orderId}/items/`, {lineItem: data})
+  yield call(lineItemClient.post, `/orders/${orderId}/items/`, {line_item: data})
   yield put({
     type: actions.fetchLineItems,
     payload: orderId
@@ -21,7 +21,7 @@ function* createBatchRequest(action) {
   const lineItemClient = yield select(getCustomApiClient)
   const { orderId, data, callback } = action.payload
   for (let i = 0; i < data.length; i += 1) {
-    yield call(lineItemClient.post, `/orders/${orderId}/items/`, {lineItem: data[i]});
+    yield call(lineItemClient.post, `/orders/${orderId}/items/`, {line_item: data[i]});
   }
   if (callback) {
     yield call(callback)
@@ -58,7 +58,7 @@ function* deleteRequest(action) {
 function* updateRequest(action) {
   const lineItemClient = yield select(getCustomApiClient);
   const { orderId, itemId, data } = action.payload;
-  yield call(lineItemClient.patch, `/orders/${orderId}/items/${itemId}`, {lineItem: data});
+  yield call(lineItemClient.patch, `/orders/${orderId}/items/${itemId}`, {line_item: data});
   yield put({
     type: actions.fetchLineItems,
     payload: orderId
@@ -70,7 +70,7 @@ function* updateBatchRequest(action) {
   const { orderId, data, callback } = action.payload;
   for (let i = 0; i < data.length; i += 1) {
     const { id, lineItem } = data[i];
-    yield call(lineItemClient.patch, `/orders/${orderId}/items/${id}`, { lineItem })
+    yield call(lineItemClient.patch, `/orders/${orderId}/items/${id}`, { line_item: lineItem })
   }
   yield put({
     type: actions.fetchLineItems,
