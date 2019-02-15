@@ -46,9 +46,18 @@ const columns = [
     width: 1.2
   },
   { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
+  // {
+  //   label: 'location',
+  //   value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
+  //   combines: [', ', ', '],
+  //   width: 2.5
+  // },
   {
     label: 'location',
-    value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
+    street: 'relationships.boat.relationships.location.address.street',
+    city: 'relationships.boat.relationships.location.address.city',
+    state: 'relationships.boat.relationships.location.address.state',
+    isLocation: true,
     width: 2.5
   },
   { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1.5, },
