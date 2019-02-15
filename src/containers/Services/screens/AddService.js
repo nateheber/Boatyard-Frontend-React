@@ -53,7 +53,7 @@ class AddService extends React.Component {
     } : {
       page: page,
       per_page: 24,
-      'category[name]': keyword
+      search_by_name: keyword
     };
     GetCategories({ params });
   };
