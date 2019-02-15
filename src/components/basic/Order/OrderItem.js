@@ -63,6 +63,9 @@ const THeader = styled.div`
 
 function getValue(column, item) {
   let value = '';
+  if (column.type && column.type === 'new-customer' && item.state === 'dispatched') {
+    return '_';
+  }
   if (column.isCustomer) {
     for (const idx in column.value) {
       const val = column.value[idx];
