@@ -14,7 +14,7 @@ const Title = styled.div`
   font-size: 14px;
 `;
 
-const options = ['cache', 'check']
+const options = ['cash', 'check']
 
 export default class PaymentOptionSelector extends React.Component {
   state = {

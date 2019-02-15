@@ -25,6 +25,7 @@ const Tab = styled.div`
     border-right: 1px solid #dcdcdc;
   }
   margin-bottom: -1px;
+  color: #004258;
 `;
 
 const TabWrapper = styled.div`

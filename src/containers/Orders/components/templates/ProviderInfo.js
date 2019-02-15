@@ -6,12 +6,13 @@ import { GetProvider } from 'store/actions/providers';
 
 const Wrapper = styled.div`
   box-sizing: border-box;
-  height: 50px;
+  height: 44px;
   background-color: white;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 16px;
   font-weight: 400;
-  padding: 10px 25px;
+  padding: 10px 15px;
+  color: #004258;
 `
 
 class ProviderInfo extends React.Component {
