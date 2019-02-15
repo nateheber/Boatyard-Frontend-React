@@ -49,9 +49,11 @@ class Categories extends React.Component {
     const params = isEmpty(keyword) ? {
       page: page,
       per_page: 24,
+      'category[discarded_at]': null
     } : {
       page: page,
       per_page: 24,
+      'category[discarded_at]': null,
       'category[name]': keyword
     };
     GetCategories({ params });
