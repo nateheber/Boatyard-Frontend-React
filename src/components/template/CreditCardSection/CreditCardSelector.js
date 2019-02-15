@@ -16,6 +16,7 @@ const Title = styled.div`
   color: #07384b;
   margin-top: 0;
   margin-bottom: 20px;
+  font-size: 14px;
 `
 
 export default class CreditCardSelector extends React.Component {

@@ -78,8 +78,8 @@ class LineItem extends React.Component {
   })
 
   onChange = (evt, field) => {
-    const changeVal = {}
-    set(changeVal, field, evt.target.value)
+    const changeVal = {};
+    set(changeVal, field, evt.target.value);
     this.setState(changeVal, () => {
       this.props.onChange(this.state);
     });
@@ -145,7 +145,7 @@ class LineItem extends React.Component {
             {mode === 'edit' ? <Input type="text" value={cost} onChange={(evt) => this.onChange(evt, 'cost')} hideError /> : <Value>${parseFloat(cost).toFixed(2)}</Value>}
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-            <Value>${(parseFloat(quantity) * parseFloat(cost)).toFixed(2)}</Value>
+            <Value>${(parseFloat(parseFloat(quantity) * parseFloat(parseFloat(cost)).toFixed(2))).toFixed(2)}</Value>
           </Col>
           { mode === 'edit' && (
             <Col md={2} sm={2} lg={2} xl={2} xs={2}>
