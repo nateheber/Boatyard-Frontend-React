@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames'
 
+import LoadingSpinner from 'components/basic/LoadingSpinner';
+
 import { TableHeader } from './Header';
 import { Record } from './Record';
 import Paginator from './Paginator';
@@ -103,9 +105,10 @@ export default class Table extends React.Component {
   };
 
   renderContent = () => {
-    const { columns, records, type } = this.props;
+    const { columns, records, type, loading } = this.props;
     const { sizes } = this.state;
-    return (
+    return loading ? <LoadingSpinner /> :
+    (
       <React.Fragment>
         {records.map((rec, idx) => (
           <Record
@@ -126,7 +129,7 @@ export default class Table extends React.Component {
   };
 
   render() {
-    const { columns, page, pageCount, onPageChange, type } = this.props;
+    const { columns, page, pageCount, onPageChange, type, loading } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
       <ContentWrapper>
@@ -145,7 +148,7 @@ export default class Table extends React.Component {
           </TableWrapper>
         </Wrapper>
         {
-          pageCount > 1 && (
+          !loading && pageCount > 1 && (
             <PaginatorWrapper>
               <Paginator page={page} totalPages={pageCount} onChange={onPageChange} />
             </PaginatorWrapper>
