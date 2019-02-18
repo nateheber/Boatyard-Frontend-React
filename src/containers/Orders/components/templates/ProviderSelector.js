@@ -226,9 +226,7 @@ class ProviderSelector extends React.Component {
     const originalArray = sortBy(this.props.dispatchIds);
     const targetArray = sortBy(dispatchIds);
     if (!deepEqual(originalArray, targetArray)) {
-      if (dispatchIds.length > 0) {
-        this.setState({ showModal: true });
-      }
+      this.setState({ showModal: true });
     }
   }
 
