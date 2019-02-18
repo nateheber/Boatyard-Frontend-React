@@ -69,9 +69,10 @@ class PaymentSection extends React.Component {
     const { payments } = this.props;
     return payments.map(payment => {
       const { amount, createdAt } = payment.attributes;
+      const amountInFloat = parseFloat(amount);
       return (
         <InfoItem key={`payment_${payment.id}`}>
-          {moment(createdAt).format('MMM D, YYYY')} - ${amount} Paid by Credit Card
+          ${amountInFloat.toFixed(2)} paid by Credit Card - {moment(createdAt).format('MMM D, YYYY')}
         </InfoItem>
       );
     });
