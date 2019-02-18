@@ -4,6 +4,7 @@ import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
 import { toastr } from 'react-redux-toastr';
+import { decamelize } from '@ridi/object-case-converter';
 
 import { UserEditor } from './Editors';
 
@@ -42,16 +43,17 @@ class UserDetails extends React.Component {
       toastr.clean()
       toastr.error('Please fill out all the required fields')
     } else {
+      let userData = decamelize(data, { recursive: true });
       if (this.state.userId) {
         this.props.UpdateUser({
           userId: this.state.userId,
           data: {
-            user: data
+            user: userData
           }
         });
         this.props.history.goBack();
       } else {
-        this.props.CreateUser(data);
+        this.props.CreateUser({ data: { user: userData } });
       }
     }
   };
