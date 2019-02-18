@@ -9,6 +9,7 @@ import {
   FilterChildAccounts,
   CreateChildAccount
 } from 'store/actions/child-accounts';
+import { actionTypes as userActions, FilterUsers } from 'store/actions/users';
 import { actionTypes as boatActions, GetBoats, CreateBoat } from 'store/actions/boats';
 import { refinedBoatsSelector } from 'store/selectors/boats';
 import Modal from 'components/compound/Modal';
@@ -59,14 +60,25 @@ class SelectCustomerModal extends React.Component {
   };
 
   onChangeUserFilter = val => {
+    const { privilege, FilterChildAccounts, FilterUsers } = this.props;
     return new Promise((resolve, reject) => {
-      this.props.FilterChildAccounts({
-        params: {
-          'search_by_full_name': val
-        },
-        success: resolve,
-        error: reject
-      });
+      if (privilege === 'admin') {
+        FilterUsers({
+          params: {
+            'search_by_full_name': val
+          },
+          success: resolve,
+          error: reject
+        });
+      } else {
+        FilterChildAccounts({
+          params: {
+            'search_by_full_name': val
+          },
+          success: resolve,
+          error: reject
+        });
+      }
     });
   };
 
@@ -173,9 +185,13 @@ class SelectCustomerModal extends React.Component {
   };
 
   onCreateCustomer = (data) => {
-    const { CreateChildAccount } = this.props;
+    const { privilege, CreateChildAccount } = this.props;
+    const child_account = data.user;
+    if (privilege === 'admin') {
+      child_account['provider_id'] = 1;
+    }
     CreateChildAccount({
-      data: { child_account: { ...data.user } },
+      data: child_account,
       success: (user) => {
         this.hideCustomerModal();
         const newUser = {
@@ -327,14 +343,16 @@ class SelectCustomerModal extends React.Component {
 const mapStateToProps = (state) => ({
   currentCustomerStatus: state.childAccount.currentStatus,
   currentBoatStatus: state.boat.currentStatus,
-  boats: refinedBoatsSelector(state)
+  boats: refinedBoatsSelector(state),
+  privilege: state.auth.privilege
 });
 
 const mapDispatchToProps = {
   FilterChildAccounts,
   CreateChildAccount,
   GetBoats,
-  CreateBoat
+  CreateBoat,
+  FilterUsers
 };
 
 export default connect(
