@@ -44,7 +44,8 @@ class AddServiceModal extends React.Component {
   loadCategories = () => {
     const { GetCategories } = this.props;
     const params = {
-      page: 1
+      page: 1,
+      per_page: 200
     };
     GetCategories({
       params,
