@@ -149,7 +149,7 @@ class OrderList extends React.Component {
               page={page}
               pageCount={pageCount}
               onPageChange={this.changePage}
-              loading={currentStatus !== actionTypes.GET_ORDERS_SUCCESS && currentStatus !== actionTypes.GET_ORDERS_FAILURE}
+              loading={currentStatus === actionTypes.GET_ORDERS}
             />
           </TableWrapper>
         </Content>
