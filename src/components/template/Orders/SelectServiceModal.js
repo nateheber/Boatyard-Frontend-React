@@ -60,9 +60,14 @@ class SelectServiceModal extends React.Component {
   };
 
   onChangeServiceFilter = val => {
+    const { privilege } = this.props;
     return new Promise((resolve, reject) => {
+      let params = { 'search_by_name': val };
+      if (privilege === 'admin') {
+        params['service[provider_id]'] = 1;
+      }
       this.props.FilterServices({
-        params: { 'search_by_name': val },
+        params: params,
         success: resolve,
         error: reject
       });
@@ -344,7 +349,8 @@ class SelectServiceModal extends React.Component {
 const mapStateToProps = state => ({
   currentStatus: state.order.currentStatus,
   filteredServices: state.service.filteredServices,
-  included: state.service.included
+  included: state.service.included,
+  privilege: state.auth.privilege
 });
 
 const mapDispatchToProps = { FilterServices, GetService };
