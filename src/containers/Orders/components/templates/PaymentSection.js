@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
+import moment from 'moment';
 
 import { actionTypes, GetPayments, CreatePayment } from 'store/actions/payments';
 import { Section } from 'components/basic/InfoSection';
@@ -67,9 +68,10 @@ class PaymentSection extends React.Component {
   renderPayments = () => {
     const { payments } = this.props;
     return payments.map(payment => {
+      const { amount, createdAt } = payment.attributes;
       return (
         <InfoItem key={`payment_${payment.id}`}>
-          Payment - {payment.id}
+          {moment(createdAt).format('MMM D, YYYY')} - ${amount} Paid by Credit Card
         </InfoItem>
       );
     });
