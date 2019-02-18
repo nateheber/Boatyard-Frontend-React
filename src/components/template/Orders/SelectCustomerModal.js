@@ -9,7 +9,7 @@ import {
   FilterChildAccounts,
   CreateChildAccount
 } from 'store/actions/child-accounts';
-import { actionTypes as userActions, FilterUsers } from 'store/actions/users';
+import { FilterUsers } from 'store/actions/users';
 import { actionTypes as boatActions, GetBoats, CreateBoat } from 'store/actions/boats';
 import { refinedBoatsSelector } from 'store/selectors/boats';
 import Modal from 'components/compound/Modal';
