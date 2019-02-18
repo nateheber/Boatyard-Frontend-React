@@ -9,7 +9,7 @@ import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 
-import { GetOrders, SetDispatchedFlag } from 'store/actions/orders';
+import { GetOrders, SetDispatchedFlag, actionTypes } from 'store/actions/orders';
 import { refinedOrdersSelector } from 'store/selectors/orders';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
@@ -127,7 +127,7 @@ class OrderList extends React.Component {
   };
 
   render() {
-    const { orders, page, privilege } = this.props;
+    const { orders, page, privilege, currentStatus } = this.props;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => ({
       ...order,
@@ -149,6 +149,7 @@ class OrderList extends React.Component {
               page={page}
               pageCount={pageCount}
               onPageChange={this.changePage}
+              loading={currentStatus !== actionTypes.GET_ORDERS_SUCCESS && currentStatus !== actionTypes.GET_ORDERS_FAILURE}
             />
           </TableWrapper>
         </Content>
@@ -164,6 +165,7 @@ const mapStateToProps = state => ({
   perPage: get(state, 'oreder.orders.perPage', 20),
   total: get(state, 'order.orders.total', 0),
   privilege: get(state, 'auth.privilege'),
+  currentStatus: get(state, 'order.currentStatus'),
 });
 
 const mapDispatchToProps = {
