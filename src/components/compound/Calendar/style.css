@@ -4,6 +4,7 @@
   font-size: 12px;
   font-weight: 400;
   color: #a5a4a5;
+  margin-bottom: 30px;
 }
 
 .react-calendar__navigation__arrow,
@@ -30,7 +31,7 @@
   height: 30px;
   text-align: center;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 .react-calendar__tile {
@@ -39,7 +40,7 @@
   border: none;
   outline: none;
   height: 40px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .react-calendar__tile time {

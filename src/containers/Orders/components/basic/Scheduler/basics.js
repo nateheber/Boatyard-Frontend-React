@@ -28,7 +28,6 @@ export const Wrapper = styled.div`
 export const LeftPart = styled.div`
   flex: 1;
   display: inline-block;
-  height: 100%;
   overflow-y: scroll;
   background-color: #f2f2f2;
 `
@@ -39,6 +38,7 @@ export const Content = styled.div`
 
 export const RightPart = styled.div`
   flex: 3;
+  height: 100%;
   display: inline-block;
   padding-bottom: 15px;
 `

@@ -24,5 +24,6 @@ export const HollowButton = styled.button`
   &:disabled {
     background: #9e9e9e;
     border: 1.5px solid #9e9e9e !important;
+    color: #07384b;
   }
 `;
