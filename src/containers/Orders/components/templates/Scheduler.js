@@ -1,9 +1,10 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
+import { get } from 'lodash';
 
-import { Section } from 'components/basic/InfoSection'
-import { HollowButton } from 'components/basic/Buttons'
-import NewScheduleModal from '../modals/NewScheduleModal'
+import { Section } from 'components/basic/InfoSection';
+import { HollowButton } from 'components/basic/Buttons';
+import NewScheduleModal from '../modals/NewScheduleModal';
 import CalendarModal from '../modals/CalendarModal';
 import AssignmentInfo from '../basic/AssignmentInfo';
 
@@ -86,7 +87,8 @@ export default class OrderSummarySection extends React.Component {
 
   render () {
     const { optionCount, totalCount, newAssignment, assignments, showCalendar } = this.state;
-    const { orderId } = this.props;
+    const { order } = this.props;
+    const orderId = get(order, 'id');
     return (
       <Section title="Scheduling">
         {
@@ -112,6 +114,7 @@ export default class OrderSummarySection extends React.Component {
           )
         }
         <CalendarModal
+          order={order}
           onClose={this.closeCalendar}
           optionCount={optionCount}
           totalCount={totalCount}
