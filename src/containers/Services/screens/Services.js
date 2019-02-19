@@ -1,24 +1,38 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { Col, Row } from 'react-flexbox-grid';
 import { withRouter } from 'react-router-dom';
-import { get, isNumber } from 'lodash';
+import { get, isNumber, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, GetServices, UpdateService, DeleteService } from 'store/actions/services';
 import Table from 'components/basic/Table';
 import { ServiceHeader } from 'components/compound/SectionHeader';
 import EditServiceModal from '../components/EditServiceModal';
+import { SearchBox } from 'components/basic/Input';
 
 const Wrapper = styled.div`
   height: 100%;
   background-color: white;
 `;
 
+const SearchSection = styled(Row)`
+  border-top: 1px solid #D5DBDE;
+  border-bottom: 1px solid #D5DBDE;
+  margin: 0 0 20px 0 !important;
+`;
+
+const SearchCotainer = styled(Col)`
+  padding: 24px 20px;
+  width: 305px;
+`;
+
 class Services extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      keyword: '',
       sort: { col: 'name', direction: 'asc' },
       visibleOfEditServiceModal: false,
       selectedService: {}
@@ -30,18 +44,30 @@ class Services extends React.Component {
   }
 
   loadPage = (page) => {
+    const { keyword } = this.state;
     const { GetServices } = this.props;
     const { sort } = this.state;
-    const params = {
+    const params = isEmpty(keyword) ? {
       page: page,
       'service[sort]': sort.direction,
       'service[order]': sort.col
+    } : {
+      page: page,
+      'service[sort]': sort.direction,
+      'service[order]': sort.col,
+      search_by_name: keyword
     };
     GetServices({ params });
   };
 
   onSortChange = (sort) => {
     this.setState({ sort: sort }, () => {
+      this.loadPage(1);
+    });
+  }
+
+  handleInputChange = (keyword) => {
+    this.setState({ keyword }, () => {
       this.loadPage(1);
     });
   }
@@ -127,6 +153,11 @@ class Services extends React.Component {
     return (
       <Wrapper>
         <ServiceHeader onAdd={this.createService} />
+        <SearchSection>
+          <SearchCotainer>
+            <SearchBox placeholder="SEARCH SERVICES" onChange={this.handleInputChange} />
+          </SearchCotainer>
+        </SearchSection>
         <Table
           loading={currentStatus === actionTypes.GET_SERVICES}
           columns={columns}
