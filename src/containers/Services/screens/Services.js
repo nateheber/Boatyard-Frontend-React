@@ -35,6 +35,7 @@ class Services extends React.Component {
       keyword: '',
       sort: { col: 'name', direction: 'asc' },
       visibleOfEditServiceModal: false,
+      isFirstLoad: true,
       selectedService: {}
     };
   }
@@ -57,7 +58,12 @@ class Services extends React.Component {
       'service[order]': sort.col,
       search_by_name: keyword
     };
-    GetServices({ params });
+    GetServices({
+      params,
+      success: () => {
+        this.setState({ isFirstLoad: false });
+      }
+    });
   };
 
   onSortChange = (sort) => {
@@ -148,7 +154,7 @@ class Services extends React.Component {
     ];
 
     const { services, currentStatus, page, perPage, total } = this.props;
-    const { sort, visibleOfEditServiceModal, selectedService } = this.state;
+    const { sort, visibleOfEditServiceModal, selectedService, isFirstLoad } = this.state;
     const pageCount = Math.ceil(total/perPage);
     return (
       <Wrapper>
@@ -159,7 +165,7 @@ class Services extends React.Component {
           </SearchCotainer>
         </SearchSection>
         <Table
-          loading={currentStatus === actionTypes.GET_SERVICES}
+          loading={isFirstLoad && currentStatus === actionTypes.GET_SERVICES}
           columns={columns}
           records={services}
           sort={sort}
