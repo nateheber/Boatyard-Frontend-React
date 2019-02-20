@@ -195,8 +195,8 @@ class SelectCustomerModal extends React.Component {
       success: (user) => {
         this.hideCustomerModal();
         const newUser = {
-          id: user.id,
-          type: user.type,
+          id: privilege === 'admin' ? get(user, 'relationships.user.data.id') : user.id,
+          type: privilege === 'admin' ? get(user, 'relationships.user.data.type') : user.type,
           ...user.attributes
         };
         this.customerSelect.setState({
@@ -208,15 +208,17 @@ class SelectCustomerModal extends React.Component {
   }
 
   onCreateBoat = (data) => {
-    const { CreateBoat } = this.props;
+    const { privilege, CreateBoat } = this.props;
     const { customer } = this.state;
+    const boat = privilege === 'admin' ? {
+        user_id: customer.id,
+        ...data.boat,
+      } : {
+        child_account_id: customer.id,
+        ...data.boat,
+      };
     CreateBoat({
-      data: {
-        boat: {
-          child_account_id: customer.id,
-          ...data.boat,
-        }
-      },
+      data: { boat },
       success: (newBoat) => {
         const { customer } = this.state;
         this.hideBoatModal();
@@ -225,8 +227,11 @@ class SelectCustomerModal extends React.Component {
           refinedBoat: {},
           refinedBoats: []
         }, () => {
+          const params = privilege === 'admin' ?
+            { 'boat[user_id]': customer.id } :
+            { 'boat[child_account_id]': customer.id };
           this.props.GetBoats({
-            params: { 'boat[child_account_id]': customer.id },
+            params: params,
             success: () => {
               const { boats } = this.props;
               if (!isEmpty(boats)) {
