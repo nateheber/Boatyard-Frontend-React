@@ -185,7 +185,7 @@ class CustomerDetails extends React.Component {
       { label: 'service', value: 'relationships.service.attributes.name' },
       { label: 'boat name', value: 'relationships.boat.attributes.name' },
       { label: 'boat make', value: 'relationships.boat.attributes.make' },
-      { label: 'total paid', value: 'total_payments', isCurrency: true, isValue: true, prefix: '$' }
+      { label: 'total paid', value: 'totalPayments', isCurrency: true, isValue: true, prefix: '$' }
     ]
     const pageCount = this.getPageCount();
     const actions = [

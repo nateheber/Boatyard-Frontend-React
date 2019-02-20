@@ -100,6 +100,9 @@ const IconsContainer = styled.div`
     margin: 2px;
     padding:3px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     &:hover, &.-selected {
       padding:2px;
       border: 1px solid #dfdfdf;
@@ -107,7 +110,6 @@ const IconsContainer = styled.div`
     }
     > img {
       width: 100%;
-      height: 100%;
     }
   }
 `;
@@ -126,14 +128,19 @@ class CategoryModal extends React.Component {
 
   componentDidMount() {
     const { category } = this.props;
+    const defaultIcon = get(category, 'iconId');
     const customIcon = get(category, 'customIcon.url');
-    if (!isEmpty(customIcon)) {
-      this.setState({ customIcon });
-      this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
-    }
-    this.getCategoryFields();
-    this.getDescriptionField();
-    this.loadIcons();
+    this.setState({ defaultIcon, customIcon }, () => {
+      if (!defaultIcon) {
+        if (!isEmpty(customIcon)) {
+          this.setState({ customIcon });
+          this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
+        }
+      }
+      this.getCategoryFields();
+      this.getDescriptionField();
+      this.loadIcons();
+    });
   }
 
   loadIcons = (page = 1) => {
@@ -143,7 +150,8 @@ class CategoryModal extends React.Component {
 
   renderIcons = () => {
     const { icons } = this.props;
-    const {defaultIcon } = this.state;
+    const { defaultIcon } = this.state;
+    const iconId = defaultIcon ? defaultIcon.toString() : '';
     if (isEmpty(icons)) {
       return (
         <NoIcons>There is no default icons.</NoIcons>
@@ -155,7 +163,7 @@ class CategoryModal extends React.Component {
         return (
           <div
             key={`icon_${icon.id}`}
-            className={classNames('service-icon-wrapper', icon.id === defaultIcon && '-selected')}
+            className={classNames('service-icon-wrapper', icon.id === iconId && '-selected')}
             onClick={() => this.handleChangeIcon(icon)}
           >
             <img className="service-icon" alt={iconName} src={iconURL} />

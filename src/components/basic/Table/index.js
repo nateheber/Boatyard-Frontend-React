@@ -32,6 +32,7 @@ const TableWrapper = styled.div`
 const PaginatorWrapper = styled.div`
   padding: 18px 50px;
   display: flex;
+  background-color: white;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;

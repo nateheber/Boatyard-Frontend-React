@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
 import { withRouter } from 'react-router-dom';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import styled from 'styled-components';
 
 import { FilterProviders } from 'store/actions/providers';
@@ -71,7 +71,10 @@ class OrderDetailHeader extends React.Component {
   getOrderStatus = () => {
     const { order } = this.props;
     const customerName = getCustomerName(order);
-    const id = get(order, 'id', 'Unknown');
+    let id = get(order, 'attributes.providerOrderSequence', null);
+    if (!id) {
+      id = get(order, 'id', 'Unknown');
+    }
     const time = get(order, 'attributes.createdAt', new Date());
     const total = get(order, 'attributes.total');
     const scheduledAt = get(order, 'attributes.scheduledAt');
@@ -97,10 +100,14 @@ class OrderDetailHeader extends React.Component {
     const { order, privilege } = this.props;
     const orderStatus = get(order, 'attributes.state');
     const canAcceptOrder = privilege === 'provider' && (orderStatus === 'dispatched' || orderStatus === 'assigned');
+    let orderId = get(order, 'attributes.providerOrderSequence', null);
+    if (!orderId) {
+      orderId = get(order, 'id');
+    }
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
-          <PageTitle>Orders #{order.id}</PageTitle>
+          <PageTitle>Orders #{orderId}</PageTitle>
           <ActionDropdown
             items={[
               {
