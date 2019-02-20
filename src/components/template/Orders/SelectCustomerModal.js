@@ -83,14 +83,19 @@ class SelectCustomerModal extends React.Component {
   };
 
   onChangeUser = user => {
+    const { privilege } = this.props;
     this.setState({
       customer: user,
       boat: {},
       refinedBoat: {},
       refinedBoats: []
     }, () => {
+      const params = privilege === 'admin' ?
+      { 'boat[user_id]': user.id } :
+      { 'boat[child_account_id]': user.id };
+
       this.props.GetBoats({
-        params: { 'boat[child_account_id]': user.id },
+        params,
         success: () => {
           const { boats } = this.props;
           if (!isEmpty(boats)) {

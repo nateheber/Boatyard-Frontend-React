@@ -49,26 +49,28 @@ class NewOrderModal extends React.Component {
   };
 
   createNewOrder = (service, serviceValues = {}, orderValues = {}) => {
-    const { CreateOrder, UpdateOrder, onFinishCreation } = this.props;
+    const { CreateOrder, UpdateOrder, onFinishCreation, privilege } = this.props;
     const { customer, boat } = this.state;
-    const data = {
-      order: {
-        child_account_id: customer.id,
-        boat_id: boat.id,
-        ...orderValues,
-        line_items_attributes: [
-          {
-            service_id: service.id,
-            quantity: 1
-          }
-        ],
-        // properties: {
-        //   ...serviceValues
-        // }
-      }
+    const orderData = {
+      boat_id: boat.id,
+      ...orderValues,
+      line_items_attributes: [
+        {
+          service_id: service.id,
+          quantity: 1
+        }
+      ],
+      // properties: {
+      //   ...serviceValues
+      // }
     };
+    if (privilege === 'admin') {
+      orderData['user_id'] = customer.id;
+    } else {
+      orderData['child_account_id'] = customer.id;
+    }
     CreateOrder({
-      data,
+      data: { order: orderData },
       success: (order) => {
         UpdateOrder({
           orderId: order.id,
@@ -113,13 +115,17 @@ class NewOrderModal extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  privilege: state.auth.privilege
+});
+
 const mapDispatchToProps = {
   CreateOrder,
   UpdateOrder
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
   null,
   { withRef: true }
