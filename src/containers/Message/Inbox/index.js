@@ -15,9 +15,11 @@ class Inbox extends React.Component {
     selected: [],
     createNew: false
   };
+
   componentDidMount() {
     this.props.GetNetworks({ page: 1 });
   }
+
   render() {
     const { showContent, showing, createNew } = this.state;
     const items = [
@@ -115,7 +117,6 @@ class Inbox extends React.Component {
         { name: 'Daniel', time: '2018/10/21 23:20:10', body: 'test', own: true }
       ]
     };
-    console.log(this.props);
     return (
       <MessageBasic
         left={

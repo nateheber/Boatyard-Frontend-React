@@ -18,7 +18,7 @@ const SearchWrapper = styled.div`
   width: 228px;
 `
 
-const Header = ({ onMenuToggle }) => (
+const Header = ({ onMenuToggle, onToggleMessage }) => (
   <HeaderWrapper>
     <HamburgerButton onClick={onMenuToggle} />
     <Logo />
@@ -26,7 +26,7 @@ const Header = ({ onMenuToggle }) => (
       <SearchWrapper>
         <SearchBox secondary placeholder="Search by order number, user, boat, etc" />
       </SearchWrapper>
-      <RightMenu />
+      <RightMenu toggleMessage={onToggleMessage} />
     </RightPart>
   </HeaderWrapper>
 );

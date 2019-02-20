@@ -13,6 +13,7 @@ const InputWrapper = styled.div`
   border: 1px solid rgb(223, 223, 223);
   background-color: transparent;
   align-items: center;
+  background-color: white;
   &.secondary {
     background-color: #ffaa5c;
     border: none;
@@ -93,9 +94,9 @@ export class SearchBox extends React.Component {
   };
   render() {
     const { value } = this.state;
-    const { secondary } = this.props;
+    const { secondary, style } = this.props;
     return (
-      <InputWrapper className={secondary ? 'secondary' : 'primary'}>
+      <InputWrapper className={secondary ? 'secondary' : 'primary'} style={style}>
         <Input
           className={secondary ? 'secondary' : 'primary'}
           {...this.props}
