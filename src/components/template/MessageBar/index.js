@@ -6,6 +6,8 @@ import { OrangeButton } from 'components/basic/Buttons';
 import { MessageBox } from 'components/compound/Message/MessageBox';
 import { ChatBox } from 'components/compound/Message/ChatBox';
 
+import BackImage from 'resources/back.svg';
+
 import ChatTrigger from './ChatTrigger';
 
 const Wrapper = styled.div`
@@ -34,7 +36,6 @@ const InputWrapper = styled.div`
 `;
 
 const ChatHeader = styled.div`
-  max-height: 90px;
   background-color: #07384b;
   border-bottom: 1px solid #aaa2aa;
   padding: 15px 0;
@@ -43,6 +44,25 @@ const ChatHeader = styled.div`
 const MessageWrapper = styled.div`
   flex: 1;
   overflow-y: scroll;
+`;
+
+const BackButton = styled.button`
+  outline: none;
+  background-color: transparent;
+  z-index: 9999;
+  padding: 1px 7px 2px;
+  border: none;
+  margin: 10px;
+  cursor: pointer;
+`;
+
+const BackImg = styled.div`
+  width: 13px;
+  height: 22px;
+  mask: url(${props => props.src});
+  mask-repeat: no-repeat;
+  mask-size: 13px 22px;
+  background-color: white;
 `;
 
 const history = [
@@ -147,6 +167,10 @@ export default class MessageBar extends React.Component {
     this.setState({ selected: id });
   }
 
+  onBack = () => {
+    this.setState({ selected: -1 });
+  }
+
   render() {
     const { show } = this.props;
     const { selected } = this.state;
@@ -167,7 +191,11 @@ export default class MessageBar extends React.Component {
         }
         {selected !== -1 &&
           <React.Fragment>
-            <ChatHeader />
+            <ChatHeader>
+              <BackButton onClick={this.onBack}>
+                <BackImg src={BackImage} alt="back" />
+              </BackButton>
+            </ChatHeader>
             <MessageWrapper>
               <MessageBox secondary chatHistory={history} />
             </MessageWrapper>

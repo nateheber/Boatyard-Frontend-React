@@ -10,10 +10,10 @@ const Wrapper = styled.div`
   overflow-y: scroll;
 `;
 
-export const MessageBox = ({ chatHistory }) => (
+export const MessageBox = ({ chatHistory, secondary }) => (
   <Wrapper>
     {chatHistory.map((chat, key) => (
-      <ChatItem {...chat} key={`chat_${key}`} />
+      <ChatItem secondary {...chat} key={`chat_${key}`} />
     ))}
   </Wrapper>
 );
