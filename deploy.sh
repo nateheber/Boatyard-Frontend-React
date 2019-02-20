@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 AWS_S3_REGION="us-east-2"
 STAGING_BRANCH="develop"
@@ -25,7 +26,12 @@ S3_BUCKET="boatyard-react-$NODE_ENV"
 echo "Deploying to the $S3_BUCKET bucket"
 
 pip install awscli --upgrade --user
-aws s3 sync build/ "s3://$S3_BUCKET" --acl public-read --delete
+aws s3 sync \
+  build/ \
+  "s3://$S3_BUCKET" \
+  --acl public-read \
+  --delete \
+  --cache-control no-cache
 
 aws cloudfront create-invalidation \
   --distribution-id $CLOUDFRONT_DIST_ID \
