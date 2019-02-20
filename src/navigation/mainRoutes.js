@@ -21,9 +21,9 @@ import AddService from 'containers/Services/screens/AddService';
 import ServiceDetails from 'containers/Services/screens/ServiceDetails';
 import Categories from 'containers/Categories/screens/Categories';
 import CategoryDetails from 'containers/Categories/screens/CategoryDetails';
+import { Inbox, QRBox, TemplateBox } from 'containers/Message';
 import Users from 'components/template/Users';
 import UserDetails from 'components/template/UserDetails';
-import { Inbox, QRBox, TemplateBox } from 'components/template/Message';
 
 const MainRoutes = ({ privilege }) => (
   <Router>

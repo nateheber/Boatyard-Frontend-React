@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { QRHeader } from 'components/compound/MessageHeader';
-import { QRSelector } from 'components/compound/MessageComponents';
+import { QRHeader } from '../components/MessageHeader';
+import { QRSelector } from '../components';
 
 const Wrapper = styled.div``;
 

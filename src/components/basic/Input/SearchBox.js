@@ -5,9 +5,9 @@ import { isEmpty } from 'lodash';
 import className from 'classnames';
 
 const InputWrapper = styled.div`
+  flex: 1;
   display: inline-block;
   position: relative;
-  width: 280px;
   height: 30px;
   border-radius: 6px !important;
   border: 1px solid rgb(223, 223, 223);

@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { MessageEmptyState } from 'components/basic/Message';
-import { QRGenerator } from 'components/compound/MessageComponents';
-import { InboxContentHeader } from 'components/compound/MessageHeader';
+import { QRGenerator } from '../components';
+import { InboxContentHeader } from '../components/MessageHeader';
 
 const Wrapper = styled.div`
   display: flex;

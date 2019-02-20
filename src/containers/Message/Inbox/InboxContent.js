@@ -6,8 +6,8 @@ import {
   MessageBox,
   ChatBox,
   NewMessageInfo
-} from 'components/compound/MessageComponents';
-import { InboxContentHeader } from 'components/compound/MessageHeader';
+} from '../components';
+import { InboxContentHeader } from '../components/MessageHeader';
 
 const Wrapper = styled.div`
   display: flex;
