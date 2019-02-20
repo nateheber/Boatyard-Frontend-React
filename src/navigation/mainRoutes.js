@@ -21,7 +21,8 @@ import AddService from 'containers/Services/screens/AddService';
 import ServiceDetails from 'containers/Services/screens/ServiceDetails';
 import Categories from 'containers/Categories/screens/Categories';
 import CategoryDetails from 'containers/Categories/screens/CategoryDetails';
-import { Inbox, QRBox, TemplateBox } from 'containers/Message';
+import Inbox from 'containers/Message/Inbox';
+import { QRBox, TemplateBox } from 'containers/Message';
 import Users from 'components/template/Users';
 import UserDetails from 'components/template/UserDetails';
 

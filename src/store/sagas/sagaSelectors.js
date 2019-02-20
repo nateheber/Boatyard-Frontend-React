@@ -216,3 +216,16 @@ export const getIconClient = state => {
       return APIGenerator.createIconClient('basic');
   }
 };
+
+export const getNetworkClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createNetworkClient('basic');
+    case 'admin':
+      return APIGenerator.createNetworkClient('admin');
+    case 'provider':
+      return APIGenerator.createNetworkClient('provider');
+    default:
+      return APIGenerator.createNetworkClient('basic');
+  }
+};

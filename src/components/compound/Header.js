@@ -12,6 +12,10 @@ const RightPart = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0px;
+`;
+
+const SearchWrapper = styled.div`
+  width: 228px;
 `
 
 const Header = ({ onMenuToggle }) => (
@@ -19,7 +23,9 @@ const Header = ({ onMenuToggle }) => (
     <HamburgerButton onClick={onMenuToggle} />
     <Logo />
     <RightPart xs={10}>
-      <SearchBox secondary placeholder="Search by order number, user, boat, etc" />
+      <SearchWrapper>
+        <SearchBox secondary placeholder="Search by order number, user, boat, etc" />
+      </SearchWrapper>
       <RightMenu />
     </RightPart>
   </HeaderWrapper>
