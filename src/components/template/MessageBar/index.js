@@ -26,7 +26,7 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const InputWrapper = styled.div`
+const SearchWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -161,27 +161,37 @@ const items = [
 export default class MessageBar extends React.Component {
   state = {
     selected: -1,
+    newMessage: false,
   };
+
+  onNew = () => {
+    this.setState({ newMessage: true });
+  }
 
   onSelect = id => () => {
     this.setState({ selected: id });
   }
 
   onBack = () => {
-    this.setState({ selected: -1 });
+    this.setState({ selected: -1, newMessage: false });
   }
 
   render() {
     const { show } = this.props;
-    const { selected } = this.state;
+    const { selected, newMessage } = this.state;
     return (
       <Wrapper className={show ? 'show' : 'hide'}>
-        {selected === -1 && 
+        { newMessage &&
           <React.Fragment>
-            <InputWrapper>
+            <ChatBox />
+          </React.Fragment>
+        }
+        {selected === -1 && !newMessage && 
+          <React.Fragment>
+            <SearchWrapper>
               <SearchBox style={{ width: '100%', marginBottom: '15px' }} />
-              <OrangeButton  style={{ width: '100%' }} >Compose</OrangeButton>
-            </InputWrapper>
+              <OrangeButton  style={{ width: '100%' }} onClick={this.onNew} >Compose</OrangeButton>
+            </SearchWrapper>
             {
               items.map((item, idx) => (
                 <ChatTrigger item={item} onClick={this.onSelect} key={`item_${idx}`} />
@@ -189,7 +199,7 @@ export default class MessageBar extends React.Component {
             }
           </React.Fragment>
         }
-        {selected !== -1 &&
+        {selected !== -1 && !newMessage &&
           <React.Fragment>
             <ChatHeader>
               <BackButton onClick={this.onBack}>

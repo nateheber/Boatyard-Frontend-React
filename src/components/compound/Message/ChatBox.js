@@ -18,6 +18,7 @@ const InputGroup = styled.div`
   .secondary & {
     border: none;
   }
+  background-color: white;
 `;
 
 const TextArea = styled.textarea`
