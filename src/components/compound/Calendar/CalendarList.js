@@ -3,11 +3,25 @@ import styled from 'styled-components';
 import moment from 'moment';
 
 import { TimeColumn, DateColumn } from 'components/basic/CalendarList';
+import DateHeader from 'components/basic/CalendarList/DateHeader';
 
 const Wrapper = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: row;
 `;
+
+const Content = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`
+
+const ColumnContent = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+`
 
 export class CalendarList extends React.Component {
 
@@ -30,10 +44,16 @@ export class CalendarList extends React.Component {
   }
 
   render() {
+    const {date} = this.props;
     return (
       <Wrapper>
         <TimeColumn />
-        {this.renderColumns()}
+        <Content>
+          <DateHeader date={date} />
+          <ColumnContent>
+            {this.renderColumns()}
+          </ColumnContent>
+        </Content>
       </Wrapper>
     );
   }
