@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { get, merge, orderBy } from 'lodash';
 
-import { GetNewOrders, GetOrders } from 'store/actions/orders';
+import { GetNewOrders, GetPaidOrders } from 'store/actions/orders';
 import { refinedOrdersSelector } from 'store/selectors/orders'
 import { NewOrderSection } from 'components/basic/SubSection';
 import { OrderTable } from 'components/basic/Order';
@@ -30,7 +30,7 @@ class NewOrders extends React.Component {
   }
 
   componentDidMount() {
-    const { GetNewOrders, GetOrders } = this.props;
+    const { GetNewOrders, GetPaidOrders } = this.props;
     GetNewOrders({
       params: {
         page: 1,
@@ -40,7 +40,7 @@ class NewOrders extends React.Component {
         'order[order]': 'created_at'
       },
       success: () => {
-        GetOrders({
+        GetPaidOrders({
           params: {
             page: 1,
             per_page: 5,
@@ -99,14 +99,14 @@ class NewOrders extends React.Component {
 
 const mapStateToProps = state => ({
   draftTotal: get(state, 'order.newOrders.total'),
-  dispatchedTotal: get(state, 'order.orders.total'),
+  dispatchedTotal: get(state, 'order.paidOrders.total'),
   draftOrders: refinedOrdersSelector(state, 'new'),
-  dispatchedOrders: refinedOrdersSelector(state, '')
+  dispatchedOrders: refinedOrdersSelector(state, 'paid')
 });
 
 const mapDispatchToProps = {
   GetNewOrders,
-  GetOrders
+  GetPaidOrders
 };
 
 export default withRouter(connect(
