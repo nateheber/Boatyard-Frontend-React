@@ -100,6 +100,9 @@ const IconsContainer = styled.div`
     margin: 2px;
     padding:3px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     &:hover, &.-selected {
       padding:2px;
       border: 1px solid #dfdfdf;
@@ -107,7 +110,6 @@ const IconsContainer = styled.div`
     }
     > img {
       width: 100%;
-      height: 100%;
     }
   }
 `;
