@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 AWS_S3_REGION="us-east-2"
 STAGING_BRANCH="develop"
@@ -30,7 +31,6 @@ aws s3 sync \
   "s3://$S3_BUCKET" \
   --acl public-read \
   --delete \
-  --ca \
   --cache-control no-cache
 
 aws cloudfront create-invalidation \
