@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
 import { withRouter } from 'react-router-dom';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import styled from 'styled-components';
 
 import { FilterProviders } from 'store/actions/providers';
