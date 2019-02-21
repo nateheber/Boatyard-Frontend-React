@@ -32,7 +32,7 @@ class Users extends React.Component {
     super(props);
     this.state = {
       keyword: '',
-      sort: { col: '', direction: '' },
+      sort: { col: 'last_name', direction: 'asc' },
     };
   }
 
@@ -80,8 +80,7 @@ class Users extends React.Component {
 
   render() {
     const columns = [
-      { label: 'first name', value: 'firstName', sort: 'first_name' },
-      { label: 'last name', value: 'lastName', sort: 'last_name' },
+      { label: 'name', value: 'firstName/lastName', sort: 'last_name' },
       { label: 'email', value: 'email', sort: 'email' },
       { label: 'contact number', value: 'phoneNumber', sort: 'phone_number' }
     ];
