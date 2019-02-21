@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
+import { get } from 'lodash';
 
 const Wrapper = styled.div`
   padding: 15px 30px;
@@ -33,12 +34,20 @@ const TimeStamp = styled.div`
   color: #688da0;
 `
 
-export default ({ item: { id, sender, dateTime, textBody }, onClick }) => (
+const getName = (owner) => {
+  if (owner.type === 'providers') {
+    return get(owner, 'attributes.name');
+  } else {
+    return `${get(owner, 'attributes.firstName')} ${get(owner, 'attributes.lastName')}`;
+  }
+}
+
+export default ({ network: { id, owner }, onClick }) => (
   <Wrapper onClick={onClick(id)}>
-    <Label>{sender}</Label>
-    <InfoWrapper>
+    <Label>{getName(owner)}</Label>
+    {/* <InfoWrapper>
       <History>{textBody.slice(0, 10)}...</History>
       <TimeStamp>{moment(dateTime).format('MMM D')}</TimeStamp>
-    </InfoWrapper>
+    </InfoWrapper> */}
   </Wrapper>
 )
