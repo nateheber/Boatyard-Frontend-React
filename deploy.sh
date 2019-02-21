@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 AWS_S3_REGION="us-east-2"
 STAGING_BRANCH="develop"
