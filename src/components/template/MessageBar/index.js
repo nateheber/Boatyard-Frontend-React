@@ -1,10 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { MessageBox } from 'components/compound/Message/MessageBox';
-import { ChatBox } from 'components/compound/Message/ChatBox';
-
-import BackImage from 'resources/back.svg';
+import { GetNetworks } from 'store/actions/networks';
+import { refinedNetworkSelector } from 'store/selectors/network';
 
 import NewMessage from './NewMessage';
 import ChatHistory from './ChatHistory';
@@ -26,138 +25,15 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const ChatHeader = styled.div`
-  background-color: #07384b;
-  border-bottom: 1px solid #aaa2aa;
-  padding: 15px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const MessageWrapper = styled.div`
-  flex: 1;
-  overflow-y: scroll;
-`;
-
-const BackButton = styled.button`
-  outline: none;
-  background-color: transparent;
-  z-index: 9999;
-  padding: 1px 7px 2px;
-  border: none;
-  margin: 10px;
-  cursor: pointer;
-`;
-
-const BackImg = styled.div`
-  width: 13px;
-  height: 22px;
-  mask: url(${props => props.src});
-  mask-repeat: no-repeat;
-  mask-size: 13px 22px;
-  background-color: white;
-`;
-
-const history = [
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body:
-      'test test test test test test test stest teste set set set set',
-    own: true
-  },
-  {
-    name: 'Brock Prod Test 9 Donnelly',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: false
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Brock Prod Test 9 Donnelly',
-    time: '2018/10/21 23:20:10',
-    body:
-      'test test test test test test test stest teste set set set set',
-    own: false
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Brock Prod Test 9 Donnelly',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: false
-  },
-  { name: 'Daniel', time: '2018/10/21 23:20:10', body: 'test', own: true }
-];
-
-const items = [
-  {
-    id: 1,
-    subject: 'test',
-    sender: 'Test Sender',
-    textBody: 'test',
-    unread: 0,
-    dateTime: new Date('2018/10/1')
-  },
-  {
-    id: 2,
-    subject: 'test',
-    sender: 'Test Sender',
-    textBody: 'test',
-    unread: 1,
-    dateTime: new Date('2018/10/2')
-  },
-  {
-    id: 3,
-    subject: 'test',
-    sender: 'Test Sender',
-    textBody: 'test',
-    unread: 0,
-    dateTime: new Date('2018/10/21')
-  }
-];
-
-export default class MessageBar extends React.Component {
+class MessageBar extends React.Component {
   state = {
     selected: -1,
     newMessage: false,
   };
+
+  componentDidMount() {
+    this.props.GetNetworks({ page: 1 });
+  }
 
   onNew = () => {
     this.setState({ newMessage: true });
@@ -176,7 +52,7 @@ export default class MessageBar extends React.Component {
   }
 
   render() {
-    const { show } = this.props;
+    const { show, networks } = this.props;
     const { selected, newMessage } = this.state;
     return (
       <Wrapper className={show ? 'show' : 'hide'}>
@@ -187,7 +63,7 @@ export default class MessageBar extends React.Component {
           <ChatHistory
             onNew={this.onNew}
             onSelect={this.onSelect}
-            items={items}
+            networks={networks}
           />
         }
         {selected !== -1 && !newMessage &&
@@ -199,3 +75,13 @@ export default class MessageBar extends React.Component {
     )
   }
 }
+
+const mapStateToProps = state => ({
+  ...refinedNetworkSelector(state)
+})
+
+const mapDispatchToProps = {
+  GetNetworks
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MessageBar);
