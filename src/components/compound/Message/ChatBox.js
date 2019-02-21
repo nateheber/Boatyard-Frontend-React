@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
+import classNames from 'classnames';
 
 import { OrangeButton } from 'components/basic/Buttons';
 
@@ -9,12 +10,22 @@ import Attach from 'resources/attach.svg';
 
 const Wrapper = styled.div`
   border-top: 1px solid #e6e6e6;
+  &.noBorder {
+    border: none;
+  }
 `;
 
 const InputGroup = styled.div`
   border: 1px solid #e6e6e6;
   border-radius: 6px !important;
   margin: 30px 30px 0 30px;
+  .secondary & {
+    border: none;
+  }
+  .noBorder * {
+    border: none;
+  }
+  background-color: white;
 `;
 
 const TextArea = styled.textarea`
@@ -27,7 +38,28 @@ const TextArea = styled.textarea`
   overflow: auto;
   outline: none;
   box-shadow: none;
+  .secondary & {
+    padding: 2px;
+    min-height: 100px;
+  }
+  .third & {
+    padding: 2px;
+    min-height: 100px;
+  }
 `;
+
+const InputView = styled.div`
+  .secondary &{
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+  }
+  .third & {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+  }
+`
 
 const ImageArea = styled.div`
   display: flex;
@@ -61,6 +93,12 @@ const CloseButton = styled.button`
 
 const ChatBoxFooter = styled.div`
   border-top: 1px solid #e6e6e6;
+  .secondary & {
+    border: none;
+  }
+  .third & {
+    border: none;
+  }
   padding: 12px 15px;
   align-items: center;
   display: flex;
@@ -87,9 +125,16 @@ const IconButton = styled.button`
   }
 `;
 
-const ButtonIcon = styled.img`
+const ButtonIcon = styled.div`
   width: 22px;
   height: 22px;
+  mask: url(${props => props.src});
+  mask-repeat: no-repeat;
+  mask-size: 22px 22px;
+  background-color: rgb(19, 48, 68);
+  .secondary & {
+    background-color: white;
+  }
 `;
 
 export class ChatBox extends React.Component {
@@ -130,28 +175,30 @@ export class ChatBox extends React.Component {
     this.fileInput.click();
   };
   render() {
-    const { onSend } = this.props;
+    const { onSend, secondary, third, noBorder } = this.props;
     const { text, images } = this.state;
     return (
-      <Wrapper>
+      <Wrapper className={classNames({ secondary, third, noBorder })}>
         <InputGroup>
-          <TextArea value={text} onChange={this.onChangeText} />
-          {images.length > 0 && (
-            <ImageArea>
-              {images.map((image, key) => (
-                <ImageContainer key={`img_${key}`}>
-                  <Image src={image} />
-                  <CloseButton
-                    onClick={() => {
-                      this.removeImage(key);
-                    }}
-                  >
-                    <EvilIcon name="ei-close-o" size="s" />
-                  </CloseButton>
-                </ImageContainer>
-              ))}
-            </ImageArea>
-          )}
+          <InputView>
+            <TextArea value={text} onChange={this.onChangeText} />
+            {images.length > 0 && (
+              <ImageArea>
+                {images.map((image, key) => (
+                  <ImageContainer key={`img_${key}`}>
+                    <Image src={image} />
+                    <CloseButton
+                      onClick={() => {
+                        this.removeImage(key);
+                      }}
+                    >
+                      <EvilIcon name="ei-close-o" size="s" />
+                    </CloseButton>
+                  </ImageContainer>
+                ))}
+              </ImageArea>
+            )}
+          </InputView>
           <ChatBoxFooter>
             <IconWrapper>
               <IconButton>

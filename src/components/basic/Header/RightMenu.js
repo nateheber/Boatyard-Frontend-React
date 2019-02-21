@@ -153,7 +153,7 @@ const Chevron = styled.div`
   }
 `;
 
-const MenuUI = ({ firstName, lastName, logout, history }) => (
+const MenuUI = ({ firstName, lastName, logout, history, toggleMessage }) => (
   <Wrapper>
     <MenuWrapper>
       <DropdownItem>
@@ -177,7 +177,7 @@ const MenuUI = ({ firstName, lastName, logout, history }) => (
       <IconItem>
         <Icon width={20} height={20} src={Bell} alt="bell" />
       </IconItem>
-      <IconItem className="hide-on-mobile">
+      <IconItem className="hide-on-mobile" onClick={toggleMessage}>
         <Icon width={32} height={20} src={Message} alt="bell" />
       </IconItem>
     </MenuWrapper>

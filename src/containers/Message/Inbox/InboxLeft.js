@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { InboxHeader } from 'components/compound/MessageHeader';
-import { InboxSelector } from 'components/compound/MessageComponents';
+import { InboxHeader } from '../components/MessageHeader';
+import { InboxSelector } from '../components';
 
 const Wrapper = styled.div``;
 
