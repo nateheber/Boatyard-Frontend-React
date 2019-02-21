@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
+import classNames from 'classnames';
 
 import { OrangeButton } from 'components/basic/Buttons';
 
@@ -9,6 +10,9 @@ import Attach from 'resources/attach.svg';
 
 const Wrapper = styled.div`
   border-top: 1px solid #e6e6e6;
+  &.noBorder {
+    border: none;
+  }
 `;
 
 const InputGroup = styled.div`
@@ -16,6 +20,9 @@ const InputGroup = styled.div`
   border-radius: 6px !important;
   margin: 30px 30px 0 30px;
   .secondary & {
+    border: none;
+  }
+  .noBorder * {
     border: none;
   }
   background-color: white;
@@ -35,10 +42,19 @@ const TextArea = styled.textarea`
     padding: 2px;
     min-height: 100px;
   }
+  .third & {
+    padding: 2px;
+    min-height: 100px;
+  }
 `;
 
 const InputView = styled.div`
   .secondary &{
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+  }
+  .third & {
     background-color: white;
     border-radius: 15px;
     padding: 15px;
@@ -78,6 +94,9 @@ const CloseButton = styled.button`
 const ChatBoxFooter = styled.div`
   border-top: 1px solid #e6e6e6;
   .secondary & {
+    border: none;
+  }
+  .third & {
     border: none;
   }
   padding: 12px 15px;
@@ -156,10 +175,10 @@ export class ChatBox extends React.Component {
     this.fileInput.click();
   };
   render() {
-    const { onSend, secondary } = this.props;
+    const { onSend, secondary, third, noBorder } = this.props;
     const { text, images } = this.state;
     return (
-      <Wrapper className={secondary ? 'secondary' : 'primary'}>
+      <Wrapper className={classNames({ secondary, third, noBorder })}>
         <InputGroup>
           <InputView>
             <TextArea value={text} onChange={this.onChangeText} />

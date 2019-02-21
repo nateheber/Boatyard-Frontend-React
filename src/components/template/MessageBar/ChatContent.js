@@ -6,26 +6,6 @@ import { ChatBox } from 'components/compound/Message/ChatBox';
 
 import BackImage from 'resources/back.svg';
 
-import NewMessage from './NewMessage';
-import ChatHistory from './ChatHistory';
-import ChatContent from './ChatContent';
-
-const Wrapper = styled.div`
-  position: absolute;
-  height: calc(100vh - 68px) !important;
-  width: 350px;
-  background-color: #01556d;
-  transition: right 1s;
-  &.show {
-    right: 0px;
-  }
-  &.hide {
-    right: -350px;
-  }
-  display: flex;
-  flex-direction: column;
-`;
-
 const ChatHeader = styled.div`
   background-color: #07384b;
   border-bottom: 1px solid #aaa2aa;
@@ -126,76 +106,21 @@ const history = [
   { name: 'Daniel', time: '2018/10/21 23:20:10', body: 'test', own: true }
 ];
 
-const items = [
-  {
-    id: 1,
-    subject: 'test',
-    sender: 'Test Sender',
-    textBody: 'test',
-    unread: 0,
-    dateTime: new Date('2018/10/1')
-  },
-  {
-    id: 2,
-    subject: 'test',
-    sender: 'Test Sender',
-    textBody: 'test',
-    unread: 1,
-    dateTime: new Date('2018/10/2')
-  },
-  {
-    id: 3,
-    subject: 'test',
-    sender: 'Test Sender',
-    textBody: 'test',
-    unread: 0,
-    dateTime: new Date('2018/10/21')
-  }
-];
-
-export default class MessageBar extends React.Component {
-  state = {
-    selected: -1,
-    newMessage: false,
-  };
-
-  onNew = () => {
-    this.setState({ newMessage: true });
-  }
-
-  onCancelNew = () => {
-    this.setState({ newMessage: false });
-  }
-
-  onSelect = id => () => {
-    this.setState({ selected: id });
-  }
-
-  onBack = () => {
-    this.setState({ selected: -1, newMessage: false });
-  }
-
+export default class ChatContent extends React.Component {
   render() {
-    const { show } = this.props;
-    const { selected, newMessage } = this.state;
+    const { onBack } = this.props;
     return (
-      <Wrapper className={show ? 'show' : 'hide'}>
-        { newMessage &&
-          <NewMessage onCancel={this.onCancelNew} />
-        }
-        {selected === -1 && !newMessage && 
-          <ChatHistory
-            onNew={this.onNew}
-            onSelect={this.onSelect}
-            items={items}
-          />
-        }
-        {selected !== -1 && !newMessage &&
-          <ChatContent
-            onBack={this.onBack}
-          />
-        }
-      </Wrapper>
+      <React.Fragment>
+        <ChatHeader>
+          <BackButton onClick={onBack}>
+            <BackImg src={BackImage} alt="back" />
+          </BackButton>
+        </ChatHeader>
+        <MessageWrapper>
+          <MessageBox secondary chatHistory={history} />
+        </MessageWrapper>
+        <ChatBox secondary />
+      </React.Fragment>
     )
   }
 }
