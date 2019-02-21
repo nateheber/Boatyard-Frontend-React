@@ -145,7 +145,7 @@ class CategoryModal extends React.Component {
 
   loadIcons = (page = 1) => {
     const { GetIcons } = this.props;
-    GetIcons({ params: { page } });
+    GetIcons({ params: { page, per_page: 200 } });
   };
 
   renderIcons = () => {
