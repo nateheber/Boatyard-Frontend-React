@@ -25,33 +25,6 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const items = [
-  {
-    id: 1,
-    subject: 'test',
-    sender: 'Test Sender',
-    textBody: 'test',
-    unread: 0,
-    dateTime: new Date('2018/10/1')
-  },
-  {
-    id: 2,
-    subject: 'test',
-    sender: 'Test Sender',
-    textBody: 'test',
-    unread: 1,
-    dateTime: new Date('2018/10/2')
-  },
-  {
-    id: 3,
-    subject: 'test',
-    sender: 'Test Sender',
-    textBody: 'test',
-    unread: 0,
-    dateTime: new Date('2018/10/21')
-  }
-];
-
 class MessageBar extends React.Component {
   state = {
     selected: -1,
