@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import moment from 'moment';
+// import moment from 'moment';
 import { get } from 'lodash';
 
 const Wrapper = styled.div`
@@ -17,22 +17,22 @@ const Label = styled.div`
   color: #E6E6E6;
 `;
 
-const InfoWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: space-between;
-`;
+// const InfoWrapper = styled.div`
+//   display: flex;
+//   flex-direction: row;
+//   align-items: flex-end;
+//   justify-content: space-between;
+// `;
 
-const History = styled.div`
-  display: inline-block;
-  color: #688da0;
-`
+// const History = styled.div`
+//   display: inline-block;
+//   color: #688da0;
+// `
 
-const TimeStamp = styled.div`
-  display: inline-block;
-  color: #688da0;
-`
+// const TimeStamp = styled.div`
+//   display: inline-block;
+//   color: #688da0;
+// `
 
 const getName = (owner) => {
   if (owner.type === 'providers') {
