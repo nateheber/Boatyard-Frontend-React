@@ -171,7 +171,6 @@ class Categories extends React.Component {
           </SearchCotainer>
         </SearchSection>
         <Table
-          loading={currentStatus === actionTypes.GET_CATEGORIES}
           type={'tile'}
           columns={columns}
           records={categories}

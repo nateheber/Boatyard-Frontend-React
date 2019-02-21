@@ -183,7 +183,7 @@ class OrderDetails extends React.Component {
                     <PaymentSection order={currentOrder} />
                   </SectionGroup>
                   <SectionGroup>
-                    <Scheduler orderId={orderId} />
+                    <Scheduler order={currentOrder} />
                   </SectionGroup>
                 </Column>
                 <Column md={12} sm={12} xs={12} lg={4} xl={4}>

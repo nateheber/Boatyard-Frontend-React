@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
-import { GetNewOrders } from 'store/actions/orders';
+import { GetNewOrders, SetDispatchedFlag } from 'store/actions/orders';
 import { refinedOrdersSelector } from 'store/selectors/orders'
 import { NeedAssignmentSection } from 'components/basic/SubSection';
 import { OrderTable } from 'components/basic/Order';
@@ -21,6 +21,7 @@ const Wrapper = styled.div`
 class NeedAssignment extends React.Component {
 
   componentDidMount() {
+    this.props.SetDispatchedFlag(false);
     this.props.GetNewOrders({
       params: {
         page: 1,
@@ -75,7 +76,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  GetNewOrders
+  GetNewOrders,
+  SetDispatchedFlag
 };
 
 export default connect(
