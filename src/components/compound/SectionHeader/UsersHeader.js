@@ -3,7 +3,9 @@ import React from 'react';
 import {
   SectionHeaderWrapper,
   LeftPart,
+  RightPart
 } from 'components/basic/Header';
+import { OrangeButton } from 'components/basic/Buttons';
 import { ActionDropdown } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
@@ -28,10 +30,10 @@ export const UsersHeader = ({ onAction, onAdd }) => (
         ]}
       />
     </LeftPart>
-    {/* <RightPart>
+    <RightPart>
       <OrangeButton className="desktop" onClick={onAdd}>
         ADD NEW USER
       </OrangeButton>
-    </RightPart> */}
+    </RightPart>
   </SectionHeaderWrapper>
 );

@@ -159,7 +159,6 @@ class Services extends React.Component {
           </SearchCotainer>
         </SearchSection>
         <Table
-          loading={currentStatus === actionTypes.GET_SERVICES}
           columns={columns}
           records={services}
           sort={sort}
