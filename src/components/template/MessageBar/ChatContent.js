@@ -1,8 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { MessageBox } from 'components/compound/Message/MessageBox';
 import { ChatBox } from 'components/compound/Message/ChatBox';
+import { GetConversation } from 'store/actions/conversations';
 
 import BackImage from 'resources/back.svg';
 
@@ -106,7 +108,11 @@ const history = [
   { name: 'Daniel', time: '2018/10/21 23:20:10', body: 'test', own: true }
 ];
 
-export default class ChatContent extends React.Component {
+class ChatContent extends React.Component {
+  componentDidMount() {
+    const { conversationId, GetConversation } = this.props;
+    GetConversation({ conversationId });
+  }
   render() {
     const { onBack } = this.props;
     return (
@@ -124,3 +130,13 @@ export default class ChatContent extends React.Component {
     )
   }
 }
+
+const mapStateToProps = (state) => ({
+
+})
+
+const mapDispatchToProps = {
+  GetConversation
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatContent)

@@ -229,3 +229,16 @@ export const getNetworkClient = state => {
       return APIGenerator.createNetworkClient('basic');
   }
 };
+
+export const getConversationClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createConversationsClient('basic');
+    case 'admin':
+      return APIGenerator.createConversationsClient('admin');
+    case 'provider':
+      return APIGenerator.createConversationsClient('provider');
+    default:
+      return APIGenerator.createConversationsClient('basic');
+  }
+};

@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { GetNetworks } from 'store/actions/networks';
+import { GetConversations } from 'store/actions/conversations';
 import { refinedNetworkSelector } from 'store/selectors/network';
+import { refinedConversationSelector } from 'store/selectors/conversations';
 
 import NewMessage from './NewMessage';
 import ChatHistory from './ChatHistory';
@@ -32,7 +34,8 @@ class MessageBar extends React.Component {
   };
 
   componentDidMount() {
-    this.props.GetNetworks({ page: 1 });
+    // this.props.GetNetworks({ page: 1 });
+    this.props.GetConversations({ page: 1 });
   }
 
   onNew = () => {
@@ -52,7 +55,7 @@ class MessageBar extends React.Component {
   }
 
   render() {
-    const { show, networks } = this.props;
+    const { show, conversations } = this.props;
     const { selected, newMessage } = this.state;
     return (
       <Wrapper className={show ? 'show' : 'hide'}>
@@ -63,11 +66,12 @@ class MessageBar extends React.Component {
           <ChatHistory
             onNew={this.onNew}
             onSelect={this.onSelect}
-            networks={networks}
+            conversations={conversations}
           />
         }
         {selected !== -1 && !newMessage &&
           <ChatContent
+            conversationId={selected}
             onBack={this.onBack}
           />
         }
@@ -77,11 +81,13 @@ class MessageBar extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  ...refinedNetworkSelector(state)
+  ...refinedNetworkSelector(state),
+  ...refinedConversationSelector(state)
 })
 
 const mapDispatchToProps = {
-  GetNetworks
+  GetNetworks,
+  GetConversations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageBar);

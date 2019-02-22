@@ -81,6 +81,10 @@ export const createPaymentGatewayClient = authType => {
   return new CRUDClient('gateways', authType);
 };
 
+export const createConversationsClient = authType => {
+  return new CRUDClient('conversations', authType);
+};
+
 export const createIconClient = authType => {
   return new CRUDClient('icons', authType);
 }
