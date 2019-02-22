@@ -277,7 +277,7 @@ class BoatModal extends React.Component {
 
   onLocationTypeChange = (field, value) => {
     if (value === 'location_type') {
-      this.getOptionalFields(field.locationType);
+      this.getOptionalFields(field.location_type);
     }
   };
 
