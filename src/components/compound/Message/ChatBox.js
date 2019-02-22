@@ -142,17 +142,24 @@ export class ChatBox extends React.Component {
     text: '',
     images: []
   };
+
   handleChange = event => {
     const { images } = this.state;
-    this.setState({
-      images: [...images, URL.createObjectURL(event.target.files[0])]
-    });
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      this.setState({
+        images: [...images, reader.result]
+      });
+    }
+    reader.readAsDataURL(event.target.files[0]);
   };
+
   onChangeText = evt => {
     this.setState({
       text: evt.target.value
     });
   };
+
   removeImage = idx => {
     const { images } = this.state;
     if (idx === 0) {
@@ -171,11 +178,19 @@ export class ChatBox extends React.Component {
       });
     }
   };
+
   showInput = () => {
     this.fileInput.click();
   };
+
+  onSend = () => {
+    const { onSend } = this.props;
+    const { text, images } = this.state;
+    onSend({text, images});
+  }
+
   render() {
-    const { onSend, secondary, third, noBorder } = this.props;
+    const { secondary, third, noBorder } = this.props;
     const { text, images } = this.state;
     return (
       <Wrapper className={classNames({ secondary, third, noBorder })}>
@@ -208,7 +223,7 @@ export class ChatBox extends React.Component {
                 <ButtonIcon src={Attach} />
               </IconButton>
             </IconWrapper>
-            <OrangeButton onClick={onSend}>Send</OrangeButton>
+            <OrangeButton onClick={this.onSend}>Send</OrangeButton>
           </ChatBoxFooter>
           <input
             ref={ref => {

@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import { GetNetworks } from 'store/actions/networks';
 import { GetConversations } from 'store/actions/conversations';
-import { refinedNetworkSelector } from 'store/selectors/network';
 import { refinedConversationSelector } from 'store/selectors/conversations';
 
 import NewMessage from './NewMessage';
@@ -34,7 +33,7 @@ class MessageBar extends React.Component {
   };
 
   componentDidMount() {
-    // this.props.GetNetworks({ page: 1 });
+    this.props.GetNetworks({ page: 1 });
     this.props.GetConversations({ page: 1 });
   }
 
@@ -81,7 +80,6 @@ class MessageBar extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  ...refinedNetworkSelector(state),
   ...refinedConversationSelector(state)
 })
 
