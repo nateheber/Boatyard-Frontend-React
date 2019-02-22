@@ -1,26 +1,10 @@
 #!/bin/bash
 set -ex
 
-AWS_S3_REGION="us-east-2"
-STAGING_BRANCH="develop"
-PRODUCTION_BRANCH="production"
-
-NODE_ENV=''
-CLOUDFRONT_DIST_ID=''
-if [[ $TRAVIS_BRANCH == $STAGING_BRANCH ]]; then
-  NODE_ENV="staging"
-  CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID_STAGING
-  yarn add create-react-app
-  yarn build
-elif [[ $TRAVIS_BRANCH == $PRODUCTION_BRANCH ]]; then
-  NODE_ENV="production"
-  CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID_PRODUCTION
-  yarn add create-react-app
-  yarn build
-else
-  echo "Not deploying"
-  exit
-fi
+# deploy run only on prod and stagin
+if [ $TRAVIS_BRANCH != "$PRODUCTION_BRANCH" ] || [ $TRAVIS_BRANCH == "$STAGING_BRANCH" ]; then
+  exit 0
+fi;
 
 S3_BUCKET="boatyard-react-$NODE_ENV"
 echo "Deploying to the $S3_BUCKET bucket"

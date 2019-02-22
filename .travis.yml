@@ -24,9 +24,11 @@ script:
       export NODE_ENV="production"
       export CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID_PRODUCTION
     fi  
+  - echo $NODE_ENV
+  - echo $CLOUDFRONT_DIST_ID
   - yarn test 
   - yarn build
 
-# after_suc cess:
-#   - set -ex
-#   - sh deploy.sh
+after_success:
+  - set -e
+  - sh deploy.sh
