@@ -1,16 +1,25 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { GetNetworks } from 'store/actions/networks';
+import { refinedNetworkSelector } from 'store/selectors/network';
 
 import MessageBasic from '../MessageBasic';
 import InboxLeft from './InboxLeft';
 import InboxContent from './InboxContent';
 
-export class Inbox extends React.Component {
+class Inbox extends React.Component {
   state = {
     showContent: false,
     showing: -1,
     selected: [],
     createNew: false
   };
+
+  componentDidMount() {
+    this.props.GetNetworks({ page: 1 });
+  }
+
   render() {
     const { showContent, showing, createNew } = this.state;
     const items = [
@@ -149,3 +158,13 @@ export class Inbox extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  ...refinedNetworkSelector(state),
+})
+
+const mapDispatchToProps = {
+  GetNetworks
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Inbox);

@@ -21,6 +21,9 @@ const DisplayName = styled.div`
   &.own {
     text-align: right;
   }
+  &.secondary {
+    color: #E6E6E6;
+  }
 `;
 
 const DateTime = styled.div`
@@ -63,10 +66,10 @@ const MessageBody = styled.div`
   }
 `;
 
-export const ChatItem = ({ name, time, body, own }) => (
+export const ChatItem = ({ name, time, body, own, secondary }) => (
   <div>
     <Wrapper className={own ? 'own' : 'op'}>
-      <DisplayName>{name}</DisplayName>
+      <DisplayName className={secondary ? 'secondary' : 'primary'}>{name}</DisplayName>
       <MessageBody className={own ? 'own' : 'op'}>{body}</MessageBody>
       <DateTime>{moment(time).format('MMM D, YYYY h:m A')}</DateTime>
     </Wrapper>

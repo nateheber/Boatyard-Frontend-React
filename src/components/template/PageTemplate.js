@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 import Header from 'components/compound/Header';
 import SideBar from 'components/compound/Sidebar';
+import MessageBar from './MessageBar';
 
 const Wrapper = styled.div`
   display: flex;
@@ -37,24 +38,35 @@ const ContentWrapper = styled.div`
 
 class PageTemplate extends React.Component {
   state = {
-    showSidebar: false
+    showSidebar: false,
+    showMessage: false,
   };
+
   toggleMenu = () => {
     const { showSidebar } = this.state;
     this.setState({
       showSidebar: !showSidebar
     });
   };
+
+  toggleMessage = () => {
+    const { showMessage } = this.state;
+    this.setState({
+      showMessage: !showMessage
+    });
+  }
+
   render() {
-    const { showSidebar } = this.state;
+    const { showSidebar, showMessage } = this.state;
     return (
       <Wrapper>
-        <Header onMenuToggle={this.toggleMenu} />
+        <Header onMenuToggle={this.toggleMenu} onToggleMessage={this.toggleMessage} />
         <PageContent>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
             {this.props.children}
           </ContentWrapper>
+          <MessageBar show={showMessage} />
         </PageContent>
       </Wrapper>
     );

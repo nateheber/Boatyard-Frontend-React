@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import BackImage from '../../../resources/back.svg';
+import BackImage from 'resources/back.svg';
 
 const Wrapper = styled.div`
   display: flex;

@@ -17,6 +17,7 @@ import ProviderLocationServiceSaga from './providerLocationServices';
 import ChildAccounts from './child-accounts';
 import PaymentGateway from './paymentGateway';
 import Icons from './icons';
+import Networks from './networks';
 
 export default function* mainSaga() {
   yield all([
@@ -36,6 +37,7 @@ export default function* mainSaga() {
     fork(ProviderLocationServiceSaga),
     fork(ChildAccounts),
     fork(PaymentGateway),
-    fork(Icons)
+    fork(Icons),
+    fork(Networks),
   ]);
 }
