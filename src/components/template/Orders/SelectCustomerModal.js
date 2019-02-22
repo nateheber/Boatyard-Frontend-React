@@ -62,22 +62,30 @@ class SelectCustomerModal extends React.Component {
   onChangeUserFilter = val => {
     const { privilege, FilterChildAccounts, FilterUsers } = this.props;
     return new Promise((resolve, reject) => {
-      const params = isEmpty(val) ? {
-        'user[sort]': 'asc',
-        'user[order]': 'last_name'
-      } : {
-        'search_by_full_name': val,
-        'user[sort]': 'asc',
-        'user[order]': 'last_name'
-      };
       if (privilege === 'admin') {
-        FilterUsers({
+        const params = isEmpty(val) ? {
+          'user[sort]': 'asc',
+          'user[order]': 'last_name'
+        } : {
+          'search_by_full_name': val,
+          'user[sort]': 'asc',
+          'user[order]': 'last_name'
+        };
+          FilterUsers({
           params,
           success: resolve,
           error: reject
         });
       } else {
-        FilterChildAccounts({
+        const params = isEmpty(val) ? {
+          'child_account[sort]': 'asc',
+          'child_account[order]': 'last_name'
+        } : {
+          'search_by_full_name': val,
+          'child_account[sort]': 'asc',
+          'child_account[order]': 'last_name'
+        };
+          FilterChildAccounts({
           params,
           success: resolve,
           error: reject
