@@ -120,6 +120,7 @@ class CategoryModal extends React.Component {
     this.state = {
       categoryFields: [],
       descriptionField: [],
+      iconFile: null,
       iconRef: null,
       customIcon: null,
       defaultIcon: null
@@ -285,15 +286,15 @@ class CategoryModal extends React.Component {
     this.descriptionField = ref;
   }
 
-  handleFileChange = (file, ref) => {
-    this.setState({ defaultIcon: null, iconRef: ref, customIcon: file });
-    this.refs.selectedIconContainer.style.backgroundImage = `url(${file})`;
+  handleFileChange = (file, baseString, ref) => {
+    this.setState({ defaultIcon: null, iconFile: file, iconRef: ref, customIcon: baseString });
+    this.refs.selectedIconContainer.style.backgroundImage = `url(${baseString})`;
   }
 
   deleteCustomIcon = () => {
     const { customIcon, iconRef } = this.state;
     if (!isEmpty(customIcon)) {
-      this.setState({ customIcon: null });
+      this.setState({ iconFile: null, customIcon: null });
       this.refs.selectedIconContainer.style.backgroundImage = 'none';
       if (iconRef) {
         iconRef.value = '';
@@ -308,16 +309,11 @@ class CategoryModal extends React.Component {
 
   onSave = () => {
     const { onSave } = this.props;
-    const { defaultIcon, customIcon } = this.state;
+    const { defaultIcon, iconFile, customIcon } = this.state;
     if (this.categoryFields.validateFields()) {
       let values = {
         ...this.categoryFields.getFieldValues(),
         ...this.descriptionField.getFieldValues()
-      };
-      values = {
-        ...values,
-        custom_icon: customIcon,
-        icon_id: null
       };
       if (defaultIcon) {
         values = {
@@ -325,7 +321,7 @@ class CategoryModal extends React.Component {
           icon_id: defaultIcon
         };
       }
-      onSave(values);
+      onSave(values, iconFile, customIcon);
     } else {
       toastr.clean()
       toastr.error('Please fill out all the required fields')
