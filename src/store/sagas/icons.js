@@ -84,7 +84,6 @@ function* getIcon(action) {
 function* createIcon(action) {
   const iconClient = yield select(getIconClient);
   const { data, success, error } = action.payload;
-  console.log('-----------data---------------', data);
   try {
     const result = yield call(iconClient.create, data);
     yield put({
