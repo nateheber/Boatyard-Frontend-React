@@ -31,7 +31,7 @@ export default class ChatHistory extends React.Component {
     return (
       <Wrapper>
         <SearchWrapper>
-          <SearchBox style={{ width: '100%', marginBottom: '15px' }} />
+          <SearchBox style={{ marginBottom: '15px' }} />
           <OrangeButton  style={{ width: '100%' }} onClick={onNew} >Compose</OrangeButton>
         </SearchWrapper>
         <NetworkListWrapper>
