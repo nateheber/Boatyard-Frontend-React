@@ -6,8 +6,18 @@ import { withRouter } from 'react-router-dom';
 import { Col, Row } from 'react-flexbox-grid';
 import { get, isEmpty, isNumber, startCase } from 'lodash';
 
-import { actionTypes, GetCategories, CreateCategory, UpdateCategory, DeleteCategory } from 'store/actions/categories';
+import {
+  actionTypes as categoryActions,
+  GetCategories,
+  CreateCategory,
+  UpdateCategory,
+  DeleteCategory
+} from 'store/actions/categories';
 import { refinedCategoriesSelector } from 'store/selectors/categories';
+import {
+  actionTypes as iconActions,
+  CreateIcon
+} from 'store/actions/icons';
 
 import Table from 'components/basic/Table';
 import { CategoryHeader } from 'components/compound/SectionHeader';
@@ -85,6 +95,28 @@ class Categories extends React.Component {
     this.setState({ visibleOfCategoryModal: false });
   };
 
+  onSave = (data, iconFile, customIcon) => {
+    const { CreateIcon } = this.props;
+    if (customIcon) {
+      CreateIcon({
+        data: {
+          icon: {
+            name: iconFile.name,
+            icon: customIcon
+          }
+        },
+        success: (icon) => {
+          this.saveCategory({
+            ...data,
+            icon_id: icon.id
+          });
+        }
+      })
+    } else {
+      this.saveCategory(data);
+    }
+  }
+
   saveCategory = (data) => {
     const { CreateCategory, UpdateCategory, page } = this.props;
     const { selectedCategory } = this.state;
@@ -113,7 +145,6 @@ class Categories extends React.Component {
         }
       });  
     }
-
   }
 
   deleteCategory = () => {
@@ -155,7 +186,7 @@ class Categories extends React.Component {
   };
 
   render() {
-    const { categories, currentStatus, page, perPage, total } = this.props;
+    const { categories, categoryStatus, iconStatus, page, perPage, total } = this.props;
     const { selectedCategory, visibleOfCategoryModal } = this.state;
     const columns = [
       { label: 'category name', value: 'name' },
@@ -182,11 +213,15 @@ class Categories extends React.Component {
         {visibleOfCategoryModal && <CategoryModal
           title={'New Category'}
           category={selectedCategory}
-          loading={currentStatus === actionTypes.CREATE_CATEGORY || currentStatus === actionTypes.UPDATE_CATEGORY}
+          loading={
+            iconStatus === iconActions.CREATE_ICON ||
+            categoryStatus === categoryActions.CREATE_CATEGORY ||
+            categoryStatus === categoryActions.UPDATE_CATEGORY
+          }
           open={visibleOfCategoryModal}
           onClose={this.hideCategoryModal}
           onDelete={this.deleteCategory}
-          onSave={this.saveCategory}
+          onSave={this.onSave}
         />}
       </Wrapper>
     );
@@ -195,18 +230,20 @@ class Categories extends React.Component {
 
 const mapStateToProps = (state) => ({
   categories: refinedCategoriesSelector(state, ''),
-  currentStatus: state.category.currentStatus,
+  categoryStatus: state.category.currentStatus,
   page: state.category.page,
   perPage: state.category.perPage,
   total: state.category.total,
-  errors: state.category.errors
+  errors: state.category.errors,
+  iconStatus: state.icon.currentStatus
 });
 
 const mapDispatchToProps = {
   GetCategories,
   CreateCategory,
   UpdateCategory,
-  DeleteCategory
+  DeleteCategory,
+  CreateIcon
 };
 
 export default withRouter(

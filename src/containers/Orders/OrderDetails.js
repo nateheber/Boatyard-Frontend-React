@@ -46,14 +46,19 @@ class OrderDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
-    const { GetOrder } = this.props;
     this.setState({ orderId }, () => {
-      GetOrder({
-        orderId,
-        success: () => {
-          this.setState({ isFirstLoad: false });
-        },
-      });
+      this.loadOrder();
+    });
+  }
+
+  loadOrder = () => {
+    const { GetOrder } = this.props;
+    const { orderId } = this.state;
+    GetOrder({
+      orderId,
+      success: () => {
+        this.setState({ isFirstLoad: false });
+      },
     });
   }
 
@@ -180,7 +185,7 @@ class OrderDetails extends React.Component {
                     />
                   </SectionGroup>
                   <SectionGroup>
-                    <PaymentSection order={currentOrder} />
+                    <PaymentSection order={currentOrder} onFinished={this.loadOrder}/>
                   </SectionGroup>
                   <SectionGroup>
                     <Scheduler order={currentOrder} />

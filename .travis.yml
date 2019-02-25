@@ -1,7 +1,34 @@
 sudo: required
 language: node_js
+
 node_js:
-- node
+  - node
+
+env:
+  global:
+    - AWS_S3_REGION=us-east-2
+    - STAGING_BRANCH=develop 
+    - PRODUCTION_BRANCH=production
+
+install:
+  - set -e
+  - yarn
+  - yarn add create-react-app
+
+script:
+  - set -e
+  - export NODE_ENV="staging"
+  - export CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID_STAGING
+  - |
+    if [ $TRAVIS_BRANCH == "$PRODUCTION_BRANCH" ]; then
+      export NODE_ENV="production"
+      export CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID_PRODUCTION
+    fi  
+  - echo $NODE_ENV
+  - echo $CLOUDFRONT_DIST_ID
+  - yarn test 
+  - yarn build
+
 after_success:
-- chmod +x deploy.sh
-- "./deploy.sh"
+  - set -e
+  - 'if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then bash .travis/deploy.sh; fi'
