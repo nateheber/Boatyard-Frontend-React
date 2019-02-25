@@ -39,7 +39,7 @@ export class UploadButton extends React.Component{
       this.setState({ loaded: false });
 
       reader.onload = e => {
-        onFileChange(reader.result, this.refs.input);
+        onFileChange(newFile, reader.result, this.refs.input);
       };
   
       reader.readAsDataURL(newFile);  
