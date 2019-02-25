@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { GetNetworks } from 'store/actions/networks';
-import { GetConversations } from 'store/actions/conversations';
+import { GetConversations, GetConversation } from 'store/actions/conversations';
 import { refinedConversationSelector } from 'store/selectors/conversations';
 
 import NewMessage from './NewMessage';
@@ -46,6 +46,7 @@ class MessageBar extends React.Component {
   }
 
   onSelect = id => () => {
+    this.props.GetConversation({ conversationId: id });
     this.setState({ selected: id });
   }
 
@@ -59,7 +60,10 @@ class MessageBar extends React.Component {
     return (
       <Wrapper className={show ? 'show' : 'hide'}>
         { newMessage &&
-          <NewMessage onCancel={this.onCancelNew} />
+          <NewMessage
+            onCancel={this.onCancelNew}
+            onCreationSuccess={this.onSelect}
+          />
         }
         {selected === -1 && !newMessage && 
           <ChatHistory
@@ -80,12 +84,13 @@ class MessageBar extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  ...refinedConversationSelector(state)
+  ...refinedConversationSelector(state),
 })
 
 const mapDispatchToProps = {
   GetNetworks,
-  GetConversations
+  GetConversations,
+  GetConversation,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageBar);

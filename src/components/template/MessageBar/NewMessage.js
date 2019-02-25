@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { get } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
 import { ChatBox } from 'components/compound/Message/ChatBox';
@@ -88,7 +89,7 @@ const parseUserType = (type) => {
     case 'users':
       return 'User';
     case 'providers':
-      return 'Providers';
+      return 'Provider';
     default:
       return 'User';
   }
@@ -119,7 +120,8 @@ class NewMessage extends React.Component {
   };
 
   getSenderInfo = () => {
-    const { profile: { id, type } } = this.props;
+    const { privilege, provider, profile } = this.props;
+    const { id, type } = privilege === 'provider' ? provider.data : profile;
     const parsedType = parseUserType(type);
     return { sender_id: id, sender_type: parsedType };
   }
@@ -164,7 +166,8 @@ class NewMessage extends React.Component {
   }
 
   onSendingSuccess = (result) => {
-    console.log(result);
+    const conversationId = get(result, 'attributes.conversationId', -1);
+    this.props.onCreationSuccess(conversationId);
   }
 
   sendMessage = (data, recipientInfo) => () => {
@@ -215,6 +218,8 @@ const mapStateToProps = (state) => ({
   ...refinedNetworkSelector(state),
   currentCustomerStatus: state.childAccount.currentStatus,
   profile: state.profile,
+  provider: state.provider.loggedInProvider,
+  privilege: state.auth.privilege,
 })
 
 const mapDispatchToProps = {
