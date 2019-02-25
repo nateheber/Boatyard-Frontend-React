@@ -79,10 +79,16 @@ class PaymentSection extends React.Component {
   };
 
   onSave = (data) => {
-    const { CreatePayment } = this.props;
+    const { CreatePayment, onFinished } = this.props;
     CreatePayment({
       data,
-      success: this.loadPayments
+      success: () => {
+        this.hideCreateModal();
+        this.loadPayments();
+        if (onFinished) {
+          onFinished();
+        }
+      }
     });  
   };
 
@@ -122,9 +128,10 @@ class PaymentSection extends React.Component {
 }
 
 
-const mapStateToProps = ({ payment: { payments, currentStatus } }) => ({
+const mapStateToProps = ({ payment: { payments, currentStatus }, order }) => ({
   currentStatus,
-  payments
+  payments,
+  orderStatus: order.currentStatus
 })
 
 const mapDispatchToProps = {

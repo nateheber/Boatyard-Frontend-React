@@ -57,7 +57,7 @@ export default class ChargeSelector extends React.Component {
           <Label>Amount to Charge:</Label>
           <Value>
             <Label style={{ width: 'initial', marginLeft: '10px'}}>$</Label>
-            <ValueEditor decimalScale={2} value={balance} onChange={this.onChange('balance')} />
+            <ValueEditor fixedDecimalScale decimalScale={2} value={balance} onChange={this.onChange('balance')} />
           </Value>
         </FieldWrapper>
         {
