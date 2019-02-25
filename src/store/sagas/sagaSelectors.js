@@ -242,3 +242,16 @@ export const getConversationClient = state => {
       return APIGenerator.createConversationsClient('basic');
   }
 };
+
+export const getMessageClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createMessageClient('basic');
+    case 'admin':
+      return APIGenerator.createMessageClient('admin');
+    case 'provider':
+      return APIGenerator.createMessageClient('provider');
+    default:
+      return APIGenerator.createMessageClient('basic');
+  }
+};

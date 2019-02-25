@@ -9,9 +9,10 @@ import CustomerOption from 'components/basic/CustomerOption';
 
 import { refinedNetworkSelector } from 'store/selectors/network';
 import { CreateNetwork } from 'store/actions/networks';
+import { CreateMessage } from 'store/actions/conversations';
 import {
-  FilterChildAccounts,
-} from 'store/actions/child-accounts';
+  FilterUsers,
+} from 'store/actions/users';
 
 const ChatHeader = styled.div`
   background-color: #07384b;
@@ -82,9 +83,20 @@ const MultiValueLabel = (props) => {
   );
 };
 
+const parseUserType = (type) => {
+  switch(type) {
+    case 'users':
+      return 'User';
+    case 'providers':
+      return 'Providers';
+    default:
+      return 'User';
+  }
+}
+
 class NewMessage extends React.Component {
   state = {
-    user: -1,
+    users: -1,
     defaultOptions: []
   };
 
@@ -106,9 +118,21 @@ class NewMessage extends React.Component {
       });
   };
 
+  getSenderInfo = () => {
+    const { profile: { id, type } } = this.props;
+    const parsedType = parseUserType(type);
+    return { sender_id: id, sender_type: parsedType };
+  }
+
+  getRecipientInfo = (user) => {
+    const { id, type } = user;
+    const parsedType = parseUserType(type);
+    return { recipient_id: id, recipient_type: parsedType };
+  }
+
   onChangeUserFilter = val => {
     return new Promise((resolve, reject) => {
-      this.props.FilterChildAccounts({
+      this.props.FilterUsers({
         params: {
           'search_by_full_name': val
         },
@@ -118,17 +142,45 @@ class NewMessage extends React.Component {
     });
   };
 
-  onChangeUser = (user) => {
-    console.log(user);
-    this.setState({ user });
+  onChangeUser = (users) => {
+    this.setState({ users });
   }
 
   onSend = (data) => {
-    console.log(data);
+    const { users } = this.state;
+    const senderInfo = this.getSenderInfo();
+    users.forEach((user) => {
+      const recipientInfo = this.getRecipientInfo(user);
+      this.props.CreateNetwork({
+        data: {
+          network: {
+            ...senderInfo,
+            ...recipientInfo
+          }
+        },
+        success: this.sendMessage(data, recipientInfo)
+      })
+    })
+  }
+
+  onSendingSuccess = (result) => {
+    console.log(result);
+  }
+
+  sendMessage = (data, recipientInfo) => () => {
+    this.props.CreateMessage({
+      data: {
+        message: {
+          content: data.text,
+          ...recipientInfo,
+        }
+      },
+      success: this.onSendingSuccess
+    })
   }
 
   render() {
-    const { user, defaultOptions } = this.state;
+    const { users, defaultOptions } = this.state;
     return (
       <React.Fragment>
         <ChatHeader>
@@ -150,7 +202,7 @@ class NewMessage extends React.Component {
             loadOptions={this.loadOptions}
             onChange={this.onChangeUser}
             styles={selectorStyle}
-            value={user}
+            value={users}
           />
         </InputWrapper>
         <ChatBox third noBorder onSend={this.onSend} />
@@ -167,7 +219,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   CreateNetwork,
-  FilterChildAccounts,
+  CreateMessage,
+  FilterUsers,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewMessage);

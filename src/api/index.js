@@ -93,6 +93,10 @@ export const createDispatchedOrderClient = authType => {
   return new CRUDClient('dispatched_orders', authType);
 }
 
+export const createMessageClient = authType => {
+  return new CRUDClient('messages', authType);
+}
+
 export const customApiClient = authType => {
   return new NormalClient(authType);
 };

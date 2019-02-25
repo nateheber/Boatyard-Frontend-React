@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, sortBy } from 'lodash';
 
 import { actionTypes } from '../actions/conversations';
-import { getConversationClient, getCustomApiClient } from './sagaSelectors';
+import { getConversationClient, getMessageClient, getCustomApiClient } from './sagaSelectors';
 
 const refineConversations = (conversations) => {
   return conversations.map(conversation => {
@@ -63,57 +63,19 @@ function* getConversation(action) {
   }
 }
 
-function* createConversation(action) {
-  const conversationClient = yield select(getConversationClient);
+function* createMessage(action){
+  const apiClient = yield select(getMessageClient);
   const { data, success, error } = action.payload;
   try {
-    const result = yield call(conversationClient.create, data);
+    const result = yield call(apiClient.create, data);
     yield put({
-      type: actionTypes.CREATE_CONVERSATION_SUCCESS,
+      type: actionTypes.CREATE_MESSAGE_SUCCESS,
     });
     if (success) {
       yield call(success, get(result, 'data', {}));
     }
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_CONVERSATION_FAILURE, payload: e });
-    if (error) {
-      yield call(error);
-    }
-  }
-}
-
-function* updateConversation(action) {
-  const conversationClient = yield select(getConversationClient);
-  const { conversationId, data, success, error } = action.payload;
-  try {
-    yield call(conversationClient.update, conversationId, data);
-    yield put({
-      type: actionTypes.UPDATE_CONVERSATION_SUCCESS,
-    });
-    if (success) {
-      yield call(success);
-    }
-  } catch (e) {
-    yield put({ type: actionTypes.UPDATE_CONVERSATION_FAILURE, payload: e });
-    if (error) {
-      yield call(error);
-    }
-  }
-}
-
-function* deleteConversation(action) {
-  const conversationClient = yield select(getConversationClient);
-  const { conversationId, success, error } = action.payload;
-  try {
-    yield call(conversationClient.delete, conversationId);
-    yield put({
-      type: actionTypes.DELETE_CONVERSATION_SUCCESS,
-    });
-    if (success) {
-      yield call(success);
-    }
-  } catch (e) {
-    yield put({ type: actionTypes.DELETE_CONVERSATION_FAILURE, payload: e });
+    yield put({ type: actionTypes.CREATE_MESSAGE_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -123,7 +85,5 @@ function* deleteConversation(action) {
 export default function* ConversationSaga() {
   yield takeEvery(actionTypes.GET_CONVERSATIONS, getConversations);
   yield takeEvery(actionTypes.GET_CONVERSATION, getConversation);
-  yield takeEvery(actionTypes.CREATE_CONVERSATION, createConversation);
-  yield takeEvery(actionTypes.UPDATE_CONVERSATION, updateConversation);
-  yield takeEvery(actionTypes.DELETE_CONVERSATION, deleteConversation);
+  yield takeEvery(actionTypes.CREATE_MESSAGE, createMessage);
 }
