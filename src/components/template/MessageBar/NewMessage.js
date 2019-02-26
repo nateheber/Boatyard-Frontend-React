@@ -160,14 +160,15 @@ class NewMessage extends React.Component {
             ...recipientInfo
           }
         },
-        success: this.sendMessage(data, recipientInfo)
+        success: this.sendMessage(data, recipientInfo),
+        error: this.networkCreationFailed(data, recipientInfo)
       })
     })
   }
 
   onSendingSuccess = (result) => {
     const conversationId = get(result, 'attributes.conversationId', -1);
-    this.props.onCreationSuccess(conversationId);
+    this.props.onCreationSuccess(conversationId)();
   }
 
   sendMessage = (data, recipientInfo) => () => {
@@ -180,6 +181,12 @@ class NewMessage extends React.Component {
       },
       success: this.onSendingSuccess
     })
+  }
+
+  networkCreationFailed = (data, recipientInfo) => (result) => {
+    if (get(result, 'recipient_id[0]') === 'already exists.') {
+      this.sendMessage(data, recipientInfo)();
+    }
   }
 
   render() {

@@ -53,6 +53,7 @@ export default handleActions(
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
+        draft.currentConversation = {};
         draft.errors = null;
       }),
     [actionTypes.GET_CONVERSATION_SUCCESS]: (state, action) =>

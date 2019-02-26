@@ -47,7 +47,7 @@ class MessageBar extends React.Component {
 
   onSelect = id => () => {
     this.props.GetConversation({ conversationId: id });
-    this.setState({ selected: id });
+    this.setState({ selected: id, newMessage: false });
   }
 
   onBack = () => {

@@ -132,7 +132,7 @@ class ChatContent extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-
+  
 })
 
 const mapDispatchToProps = {
