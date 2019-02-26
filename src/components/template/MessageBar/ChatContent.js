@@ -4,7 +4,9 @@ import styled from 'styled-components';
 
 import { MessageBox } from 'components/compound/Message/MessageBox';
 import { ChatBox } from 'components/compound/Message/ChatBox';
+
 import { GetConversation } from 'store/actions/conversations';
+import { refinedMessageSelector } from 'store/selectors/conversations';
 
 import BackImage from 'resources/back.svg';
 
@@ -42,79 +44,13 @@ const BackImg = styled.div`
   background-color: white;
 `;
 
-const history = [
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body:
-      'test test test test test test test stest teste set set set set',
-    own: true
-  },
-  {
-    name: 'Brock Prod Test 9 Donnelly',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: false
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Brock Prod Test 9 Donnelly',
-    time: '2018/10/21 23:20:10',
-    body:
-      'test test test test test test test stest teste set set set set',
-    own: false
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Daniel',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: true
-  },
-  {
-    name: 'Brock Prod Test 9 Donnelly',
-    time: '2018/10/21 23:20:10',
-    body: 'test',
-    own: false
-  },
-  { name: 'Daniel', time: '2018/10/21 23:20:10', body: 'test', own: true }
-];
-
 class ChatContent extends React.Component {
   componentDidMount() {
     const { conversationId, GetConversation } = this.props;
     GetConversation({ conversationId });
   }
   render() {
-    const { onBack } = this.props;
+    const { onBack, messages } = this.props;
     return (
       <React.Fragment>
         <ChatHeader>
@@ -123,7 +59,7 @@ class ChatContent extends React.Component {
           </BackButton>
         </ChatHeader>
         <MessageWrapper>
-          <MessageBox secondary chatHistory={history} />
+          <MessageBox secondary chatHistory={messages} />
         </MessageWrapper>
         <ChatBox secondary />
       </React.Fragment>
@@ -132,7 +68,7 @@ class ChatContent extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  
+  ...refinedMessageSelector(state)
 })
 
 const mapDispatchToProps = {

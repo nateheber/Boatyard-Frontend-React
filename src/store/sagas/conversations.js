@@ -47,10 +47,10 @@ function* getConversation(action) {
   const { conversationId, success, error } = action.payload;
   try {
     const result = yield call(apiClient.get, `/conversations/${conversationId}/messages`);
-    const { data: conversation } = result;
+    const { data, included } = result;
     yield put({
       type: actionTypes.GET_CONVERSATION_SUCCESS,
-      payload: conversation
+      payload: { data, included }
     });
     if (success) {
       yield call(success);
