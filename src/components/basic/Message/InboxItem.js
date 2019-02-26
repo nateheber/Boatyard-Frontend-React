@@ -27,12 +27,6 @@ const Title = styled.div`
   color: rgb(7, 56, 75);
 `;
 
-const Subject = styled.div`
-  font-size: 12px;
-  font-family: 'Source Sans Pro', sans-serif;
-  color: rgb(137, 137, 137);
-`;
-
 const TextBody = styled.div`
   font-size: 14px;
   font-family: 'Source Sans Pro', sans-serif;
@@ -45,22 +39,6 @@ const RightBody = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-`;
-
-const UnreadCount = styled.span`
-  background-color: rgb(247, 148, 30);
-  color: rgb(234, 234, 234);
-  font-size: 12px;
-  float: right;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  flex-direction: row;
-  padding: 0px 8px;
-  border-radius: 50% !important;
-  box-sizing: border-box;
 `;
 
 const DateTime = styled.div`

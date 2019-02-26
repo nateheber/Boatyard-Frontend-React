@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 export const MessageBox = ({ chatHistory, secondary }) => (
   <Wrapper>
     {chatHistory.map((chat, key) => (
-      <ChatItem secondary {...chat} key={`chat_${key}`} />
+      <ChatItem secondary={secondary} {...chat} key={`chat_${key}`} />
     ))}
   </Wrapper>
 );

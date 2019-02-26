@@ -16,10 +16,12 @@ const DisplayName = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px !important;
   font-weight: bold;
-  color: #07384b;
   margin-bottom: 15px;
   &.own {
     text-align: right;
+  }
+  &.primary {
+    color: #07384b;
   }
   &.secondary {
     color: #E6E6E6;
