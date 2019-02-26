@@ -32,19 +32,10 @@ export const refinedConversationSelector = createSelector(
 );
 
 const getProfileData = (included, profileId) => {
-  const providerProfile = get(included, `[provider_profiles][${profileId}]`, {});
-  const userProfile = get(included, `[user_profiles][${profileId}]`, {});
-  if (!isEmpty(providerProfile)) {
-    const type = get(providerProfile, `relationships.owner.data.type`);
-    const id = get(providerProfile, `relationships.owner.data.id`);
-    return get(included, `[${type}][${id}]`)
-  }
-  if (!isEmpty(userProfile)) {
-    const type = get(userProfile, `relationships.owner.data.type`);
-    const id = get(userProfile, `relationships.owner.data.id`);
-    return get(included, `[${type}][${id}]`)
-  }
-  return {}
+  const profileData = get(included, `[profiles][${profileId}]`, {});
+  const type = get(profileData, `relationships.owner.data.type`);
+  const id = get(profileData, `relationships.owner.data.id`);
+  return get(included, `[${type}][${id}]`);
 }
 
 const getOwnership = (profile, privilege, senderProfile, loggedInProvider) => {
@@ -64,7 +55,11 @@ const parseIncluded = (included) => {
   return included.reduce((prev, item) => {
     const { id, type, attributes, relationships } = item;
     const target = {...prev};
-    set(target, `${type}[${id}]`, { id, type, attributes, relationships });
+    if (type === 'provider_profiles' || type === 'user_profiles') {
+      set(target, `[profiles][${id}]`, { id, type, attributes, relationships });
+    } else {
+      set(target, `${type}[${id}]`, { id, type, attributes, relationships });
+    }
     return target;
   }, {});
 }
@@ -95,6 +90,6 @@ export const refinedMessageSelector = createSelector(
         time: sentAt
       })
     })
-    return { messages: reverse(messages) };
+    return { messages: reverse(messages), included: parsedIncluded };
   }
 );

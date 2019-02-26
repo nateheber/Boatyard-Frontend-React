@@ -51,9 +51,11 @@ export default handleActions(
 
     [actionTypes.GET_CONVERSATION]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload: { first } } = action;
         draft.currentStatus = type;
-        draft.currentConversation = {};
+        if (first) {
+          draft.currentConversation = {};
+        }
         draft.errors = null;
       }),
     [actionTypes.GET_CONVERSATION_SUCCESS]: (state, action) =>
