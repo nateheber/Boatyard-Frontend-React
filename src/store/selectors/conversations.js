@@ -1,4 +1,4 @@
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import { createSelector } from 'reselect';
 
 export const conversationsSelector = (state) => state.conversation.conversations;
@@ -28,19 +28,19 @@ export const refinedConversationSelector = createSelector(
   }
 );
 
-export const refinedMessageSelector = createSelector(
-  refinedConversationSelector,
-  currentConversationSelector,
-  (conversations, currentConversation) => {
-    if(isEmpty(currentConversation))
-      return { messages: [] };
-    const messages = currentConversation.map((message) => {
-      const file = get(message, 'attributes.file.url');
-      const profileId = get(message, 'attributes.profileId');
-      const content = get(message, 'attributes.content', '');
-      const sentAt = get(message, 'attributes.data.sentAt');
-      
-    })
-    return { messages };
-  }
-);
+// export const refinedMessageSelector = createSelector(
+//   refinedConversationSelector,
+//   currentConversationSelector,
+//   (conversations, currentConversation) => {
+//     if(isEmpty(currentConversation))
+//       return { messages: [] };
+//     const messages = currentConversation.map((message) => {
+//       const file = get(message, 'attributes.file.url');
+//       const profileId = get(message, 'attributes.profileId');
+//       const content = get(message, 'attributes.content', '');
+//       const sentAt = get(message, 'attributes.data.sentAt');
+
+//     })
+//     return { messages };
+//   }
+// );
