@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
 import { ChatBox } from 'components/compound/Message/ChatBox';
@@ -174,8 +174,14 @@ class NewMessage extends React.Component {
   sendMessage = (data, recipientInfo) => () => {
     this.props.CreateMessage({
       data: {
-        message: {
+        message: isEmpty(data.images) ? {
           content: data.text,
+          ...recipientInfo,
+        } : {
+          content: data.text,
+          file: {
+            url: get(data, 'images[0]')
+          },
           ...recipientInfo,
         }
       },
