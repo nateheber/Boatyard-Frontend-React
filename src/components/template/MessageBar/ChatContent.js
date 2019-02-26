@@ -45,10 +45,23 @@ const BackImg = styled.div`
 `;
 
 class ChatContent extends React.Component {
+  state = {
+    timerId: -1,
+  }
+
   componentDidMount() {
     const { conversationId, GetConversation } = this.props;
-    GetConversation({ conversationId });
+    const timerId = setInterval(() => {
+      GetConversation({ conversationId });
+    }, 2000);
+    this.setState({ timerId });
   }
+
+  componentWillUnmount() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
+  }
+
   render() {
     const { onBack, messages } = this.props;
     return (
