@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
+import { hasIn, get } from 'lodash';
 
 import { CheckBox } from '../Input';
 
@@ -69,11 +70,7 @@ const DateTime = styled.div`
 `;
 
 export const InboxItem = ({
-  subject,
-  sender,
-  textBody,
-  unread,
-  dateTime,
+  conversation: { id }, messages, recipientProfile,
   selected,
   onCheck,
   onSelect
@@ -82,16 +79,20 @@ export const InboxItem = ({
     <CheckBox checked={selected} onClick={onCheck} />
     <Content>
       <LeftBody>
-        <Title>{sender}</Title>
-        <Subject>{subject}</Subject>
+        {
+          hasIn(recipientProfile, 'attributes.name') ? (
+            <Title>{get(recipientProfile, 'attributes.name')}}</Title>
+          ) : (
+            <Title>{get(recipientProfile, 'attributes.firstName')} {get(recipientProfile, 'attributes.lastName')}</Title>
+          )
+        }
         <TextBody>
-          {textBody.slice(0, 3)}
+          {get(messages, '[0].attributes.content').slice(0, 3)}
           ...
         </TextBody>
       </LeftBody>
       <RightBody>
-        {unread > 0 && <UnreadCount>{unread}</UnreadCount>}
-        <DateTime>{moment(dateTime).format('MMM D')}</DateTime>
+        <DateTime>{moment(get(messages, '[0].attributes.data.sentAt')).format('MMM D')}</DateTime>
       </RightBody>
     </Content>
   </Wrapper>

@@ -38,14 +38,8 @@ const TextArea = styled.textarea`
   overflow: auto;
   outline: none;
   box-shadow: none;
-  .secondary & {
-    padding: 2px;
-    min-height: 100px;
-  }
-  .third & {
-    padding: 2px;
-    min-height: 100px;
-  }
+  min-height: 100px;
+  padding: 2px;
 `;
 
 const InputView = styled.div`
