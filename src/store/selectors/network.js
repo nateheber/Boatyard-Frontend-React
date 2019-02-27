@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { createSelector } from 'reselect';
 
 export const networksSelector = (state) => state.network.networks;
@@ -9,11 +9,14 @@ export const refinedNetworkSelector = createSelector(
   (networks, included) => {
     const parsedData = networks.map((network) => {
       const ownerInfo = get(network, 'relationships.owner.data');
-      const ownerDetail = get(included, `[${ownerInfo.type}][${ownerInfo.id}]`);
+      let ownerDetail = {};
+      if (ownerInfo && !isEmpty(ownerInfo)) {
+        ownerDetail = get(included, `[${ownerInfo.type}][${ownerInfo.id}]`);
+      }
       return ({
         id: network.id,
         owner: ownerDetail
-      });
+      });  
     });
     return {networks: parsedData};
   }

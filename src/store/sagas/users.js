@@ -56,10 +56,15 @@ function* getUser(action) {
   const { userId, success, error } = action.payload;
   try {
     const result = yield call(userClient.read, userId);
-    const { data: user } = result;
+    const { data } = result;
     yield put({
       type: actionTypes.GET_USER_SUCCESS,
-      payload: user
+      payload: {
+        id: data.id,
+        type: data.type,
+        ...data.attributes,
+        ...data.relationships
+      }
     });
     if (success) {
       yield call(success);
