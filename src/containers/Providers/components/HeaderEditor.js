@@ -49,7 +49,6 @@ export class HeaderEditor extends React.Component {
   renderFields = () => {
     const { homeImages, homeImage, banner } = this.state;
     const { name } = this.props;
-    console.log(homeImages);
     return (
       <React.Fragment>
         <Row>
