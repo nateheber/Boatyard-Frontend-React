@@ -1,4 +1,4 @@
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import { createSelector } from 'reselect';
 
 export const networksSelector = (state) => state.network.networks;
