@@ -69,7 +69,6 @@ const MessageBody = styled.div`
 `;
 
 export const ChatItem = ({ name, time, body, own, secondary, file }) => {
-  console.log(file);
   return (
     <div>
       <Wrapper className={own ? 'own' : 'op'}>
