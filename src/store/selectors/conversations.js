@@ -6,7 +6,7 @@ export const includedSelector = (state) => state.conversation.included;
 export const currentConversationSelector = (state) => state.conversation.currentConversation;
 export const privilegeSelector = (state) => state.auth.privilege;
 export const profileSelector = (state) => state.profile;
-export const loggedInProviderSelector = (state) => state.provider.loggedInProvider.data;
+export const loggedInProviderSelector = (state) => get(state, 'provider.loggedInProvider.data');
 
 export const refinedConversationSelector = createSelector(
   conversationsSelector, includedSelector,
