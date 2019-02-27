@@ -78,14 +78,12 @@ class InboxContent extends React.Component {
     const recipientInfo = this.getRecipientInfo();
     this.props.CreateMessage({
       data: {
-        message: isEmpty(data.images) ? {
+        message: isEmpty(data.image) ? {
           content: data.text,
           ...recipientInfo,
         } : {
           content: data.text,
-          file: {
-            url: get(data, 'images[0]')
-          },
+          file: get(data, 'image'),
           ...recipientInfo,
         }
       },
