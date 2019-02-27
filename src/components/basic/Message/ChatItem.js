@@ -16,10 +16,12 @@ const DisplayName = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px !important;
   font-weight: bold;
-  color: #07384b;
   margin-bottom: 15px;
   &.own {
     text-align: right;
+  }
+  &.primary {
+    color: #07384b;
   }
   &.secondary {
     color: #E6E6E6;
@@ -66,12 +68,14 @@ const MessageBody = styled.div`
   }
 `;
 
-export const ChatItem = ({ name, time, body, own, secondary }) => (
-  <div>
-    <Wrapper className={own ? 'own' : 'op'}>
-      <DisplayName className={secondary ? 'secondary' : 'primary'}>{name}</DisplayName>
-      <MessageBody className={own ? 'own' : 'op'}>{body}</MessageBody>
-      <DateTime>{moment(time).format('MMM D, YYYY h:m A')}</DateTime>
-    </Wrapper>
-  </div>
-);
+export const ChatItem = ({ name, time, body, own, secondary, file }) => {
+  return (
+    <div>
+      <Wrapper className={own ? 'own' : 'op'}>
+        <DisplayName className={secondary ? 'secondary' : 'primary'}>{name}</DisplayName>
+        <MessageBody className={own ? 'own' : 'op'}>{body}</MessageBody>
+        <DateTime>{moment(time).format('MMM D, YYYY h:m A')}</DateTime>
+      </Wrapper>
+    </div>
+  );
+};

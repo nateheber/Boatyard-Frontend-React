@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
+import { hasIn, get } from 'lodash';
 
 import { CheckBox } from '../Input';
 
@@ -26,12 +27,6 @@ const Title = styled.div`
   color: rgb(7, 56, 75);
 `;
 
-const Subject = styled.div`
-  font-size: 12px;
-  font-family: 'Source Sans Pro', sans-serif;
-  color: rgb(137, 137, 137);
-`;
-
 const TextBody = styled.div`
   font-size: 14px;
   font-family: 'Source Sans Pro', sans-serif;
@@ -46,22 +41,6 @@ const RightBody = styled.div`
   justify-content: space-between;
 `;
 
-const UnreadCount = styled.span`
-  background-color: rgb(247, 148, 30);
-  color: rgb(234, 234, 234);
-  font-size: 12px;
-  float: right;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  flex-direction: row;
-  padding: 0px 8px;
-  border-radius: 50% !important;
-  box-sizing: border-box;
-`;
-
 const DateTime = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
   color: rgb(137, 137, 137);
@@ -69,11 +48,7 @@ const DateTime = styled.div`
 `;
 
 export const InboxItem = ({
-  subject,
-  sender,
-  textBody,
-  unread,
-  dateTime,
+  conversation: { id }, messages, recipientProfile,
   selected,
   onCheck,
   onSelect
@@ -82,16 +57,20 @@ export const InboxItem = ({
     <CheckBox checked={selected} onClick={onCheck} />
     <Content>
       <LeftBody>
-        <Title>{sender}</Title>
-        <Subject>{subject}</Subject>
+        {
+          hasIn(recipientProfile, 'attributes.name') ? (
+            <Title>{get(recipientProfile, 'attributes.name')}}</Title>
+          ) : (
+            <Title>{get(recipientProfile, 'attributes.firstName')} {get(recipientProfile, 'attributes.lastName')}</Title>
+          )
+        }
         <TextBody>
-          {textBody.slice(0, 3)}
+          {get(messages, '[0].attributes.content').slice(0, 3)}
           ...
         </TextBody>
       </LeftBody>
       <RightBody>
-        {unread > 0 && <UnreadCount>{unread}</UnreadCount>}
-        <DateTime>{moment(dateTime).format('MMM D')}</DateTime>
+        <DateTime>{moment(get(messages, '[0].attributes.data.sentAt')).format('MMM D')}</DateTime>
       </RightBody>
     </Content>
   </Wrapper>

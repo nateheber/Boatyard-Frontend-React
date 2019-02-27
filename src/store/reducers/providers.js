@@ -8,6 +8,7 @@ const initialState = {
   providers: [],
   filteredProviders: [],
   currentProvider: {},
+  loggedInProvider: {},
   page: 0,
   perPage: 20,
   total: 0,
@@ -73,7 +74,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.currentProvider = payload;
+        draft.loggedInProvider = payload;
       }),
     [actionTypes.LOGIN_WITH_PROVIDER_FAILURE]: (state, action) =>
       produce(state, draft => {

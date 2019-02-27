@@ -109,17 +109,17 @@ export class InboxSelector extends React.Component {
           {items.map((item, key) => (
             <MessageItem
               onClick={() => {
-                onSelect(item.id);
+                onSelect(item.conversation.id);
               }}
               key={`QR_${key}`}
             >
               <InboxItem
-                selected={this.isSelected(item.id)}
+                selected={this.isSelected(item.conversation.id)}
                 onSelect={() => {
-                  onSelect(item.id);
+                  onSelect(item.conversation.id);
                 }}
                 onCheck={() => {
-                  this.onCheck(item.id);
+                  this.onCheck(item.conversation.id);
                 }}
                 {...item}
               />
