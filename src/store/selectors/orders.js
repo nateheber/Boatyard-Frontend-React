@@ -5,9 +5,9 @@ const setLineItemRelationships = (lineItem, included) => {
   const resultData = {...lineItem};
   const { relationships } = lineItem;
   for(const key in relationships) {
-    let value = relationships[key].data;
+    let value = get(relationships, `[${key}].data`);
     if (value && !isEmpty(value)) {
-      resultData.relationships[key] = included[value.type][value.id];
+      set(resultData, `relationships[${key}]`, get(included, `[${value.type}][${value.id}]`));
     }
   }
   return lineItem;
