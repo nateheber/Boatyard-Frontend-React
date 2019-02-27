@@ -18,9 +18,11 @@ const Wrapper = styled.div`
 const InputGroup = styled.div`
   border: 1px solid #e6e6e6;
   border-radius: 6px !important;
+  overflow-y: scroll;
   margin: 30px 30px 0 30px;
   .secondary & {
     border: none;
+    background-color: transparent;
   }
   .noBorder * {
     border: none;
@@ -39,7 +41,7 @@ const TextArea = styled.textarea`
   outline: none;
   box-shadow: none;
   min-height: 100px;
-  padding: 2px;
+  padding: 10px;
 `;
 
 const InputView = styled.div`

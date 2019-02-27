@@ -68,12 +68,15 @@ const MessageBody = styled.div`
   }
 `;
 
-export const ChatItem = ({ name, time, body, own, secondary }) => (
-  <div>
-    <Wrapper className={own ? 'own' : 'op'}>
-      <DisplayName className={secondary ? 'secondary' : 'primary'}>{name}</DisplayName>
-      <MessageBody className={own ? 'own' : 'op'}>{body}</MessageBody>
-      <DateTime>{moment(time).format('MMM D, YYYY h:m A')}</DateTime>
-    </Wrapper>
-  </div>
-);
+export const ChatItem = ({ name, time, body, own, secondary, file }) => {
+  console.log(file);
+  return (
+    <div>
+      <Wrapper className={own ? 'own' : 'op'}>
+        <DisplayName className={secondary ? 'secondary' : 'primary'}>{name}</DisplayName>
+        <MessageBody className={own ? 'own' : 'op'}>{body}</MessageBody>
+        <DateTime>{moment(time).format('MMM D, YYYY h:m A')}</DateTime>
+      </Wrapper>
+    </div>
+  );
+};
