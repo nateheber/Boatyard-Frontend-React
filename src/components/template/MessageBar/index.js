@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { GetNetworks } from 'store/actions/networks';
-import { refinedNetworkSelector } from 'store/selectors/network';
+import { GetConversations, GetConversation } from 'store/actions/conversations';
+import { refinedConversationSelector } from 'store/selectors/conversations';
 
 import NewMessage from './NewMessage';
 import ChatHistory from './ChatHistory';
@@ -33,6 +34,7 @@ class MessageBar extends React.Component {
 
   componentDidMount() {
     this.props.GetNetworks({ page: 1 });
+    this.props.GetConversations({ page: 1 });
   }
 
   onNew = () => {
@@ -44,7 +46,8 @@ class MessageBar extends React.Component {
   }
 
   onSelect = id => () => {
-    this.setState({ selected: id });
+    this.props.GetConversation({ conversationId: id });
+    this.setState({ selected: id, newMessage: false });
   }
 
   onBack = () => {
@@ -52,22 +55,26 @@ class MessageBar extends React.Component {
   }
 
   render() {
-    const { show, networks } = this.props;
+    const { show, conversations } = this.props;
     const { selected, newMessage } = this.state;
     return (
       <Wrapper className={show ? 'show' : 'hide'}>
         { newMessage &&
-          <NewMessage onCancel={this.onCancelNew} />
+          <NewMessage
+            onCancel={this.onCancelNew}
+            onCreationSuccess={this.onSelect}
+          />
         }
         {selected === -1 && !newMessage && 
           <ChatHistory
             onNew={this.onNew}
             onSelect={this.onSelect}
-            networks={networks}
+            conversations={conversations}
           />
         }
         {selected !== -1 && !newMessage &&
           <ChatContent
+            conversationId={selected}
             onBack={this.onBack}
           />
         }
@@ -77,11 +84,13 @@ class MessageBar extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  ...refinedNetworkSelector(state)
+  ...refinedConversationSelector(state),
 })
 
 const mapDispatchToProps = {
-  GetNetworks
+  GetNetworks,
+  GetConversations,
+  GetConversation,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageBar);

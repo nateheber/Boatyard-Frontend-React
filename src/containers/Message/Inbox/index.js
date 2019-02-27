@@ -2,7 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { GetNetworks } from 'store/actions/networks';
+import { GetConversations, GetConversation } from 'store/actions/conversations';
 import { refinedNetworkSelector } from 'store/selectors/network';
+import { refinedConversationSelector } from 'store/selectors/conversations';
 
 import MessageBasic from '../MessageBasic';
 import InboxLeft from './InboxLeft';
@@ -18,122 +20,40 @@ class Inbox extends React.Component {
 
   componentDidMount() {
     this.props.GetNetworks({ page: 1 });
+    this.props.GetConversations({ page: 1 });
+  }
+
+  onCompose = () => {
+    this.setState({
+      createNew: true
+    });
+  }
+
+  onShowItem = id => {
+    this.props.GetConversation({ conversationId: id });
+    this.setState({
+      createNew: false,
+      showContent: true,
+      showing: id
+    });
+  }
+
+  onBack = () => {
+    this.setState({
+      showContent: false
+    });
   }
 
   render() {
     const { showContent, showing, createNew } = this.state;
-    const items = [
-      {
-        id: 1,
-        subject: 'test',
-        sender: 'Test Sender',
-        textBody: 'test',
-        unread: 0,
-        dateTime: new Date('2018/10/1')
-      },
-      {
-        id: 2,
-        subject: 'test',
-        sender: 'Test Sender',
-        textBody: 'test',
-        unread: 1,
-        dateTime: new Date('2018/10/2')
-      },
-      {
-        id: 3,
-        subject: 'test',
-        sender: 'Test Sender',
-        textBody: 'test',
-        unread: 0,
-        dateTime: new Date('2018/10/21')
-      }
-    ];
-    const chatHistory = {
-      opponent: 'Brock Prod Test 9',
-      opponentType: 'test',
-      history: [
-        {
-          name: 'Daniel',
-          time: '2018/10/21 23:20:10',
-          body: 'test',
-          own: true
-        },
-        {
-          name: 'Daniel',
-          time: '2018/10/21 23:20:10',
-          body:
-            'test test test test test test test stest teste set set set set',
-          own: true
-        },
-        {
-          name: 'Brock Prod Test 9 Donnelly',
-          time: '2018/10/21 23:20:10',
-          body: 'test',
-          own: false
-        },
-        {
-          name: 'Daniel',
-          time: '2018/10/21 23:20:10',
-          body: 'test',
-          own: true
-        },
-        {
-          name: 'Daniel',
-          time: '2018/10/21 23:20:10',
-          body: 'test',
-          own: true
-        },
-        {
-          name: 'Brock Prod Test 9 Donnelly',
-          time: '2018/10/21 23:20:10',
-          body:
-            'test test test test test test test stest teste set set set set',
-          own: false
-        },
-        {
-          name: 'Daniel',
-          time: '2018/10/21 23:20:10',
-          body: 'test',
-          own: true
-        },
-        {
-          name: 'Daniel',
-          time: '2018/10/21 23:20:10',
-          body: 'test',
-          own: true
-        },
-        {
-          name: 'Daniel',
-          time: '2018/10/21 23:20:10',
-          body: 'test',
-          own: true
-        },
-        {
-          name: 'Brock Prod Test 9 Donnelly',
-          time: '2018/10/21 23:20:10',
-          body: 'test',
-          own: false
-        },
-        { name: 'Daniel', time: '2018/10/21 23:20:10', body: 'test', own: true }
-      ]
-    };
+    const { conversations } = this.props;
     return (
       <MessageBasic
         left={
           <InboxLeft
-            items={items}
-            onCompose={() => {
-              this.setState({
-                createNew: true
-              });
-            }}
-            onShowItem={id => {
-              this.setState({
-                createNew: false,
-                showContent: true,
-                showing: id
-              });
-            }}
+            items={conversations}
+            onCompose={this.onCompose}
+            onShowItem={this.onShowItem}
             onDeleteItem={ids => {
               this.setState({
                 selected: ids
@@ -144,13 +64,10 @@ class Inbox extends React.Component {
         right={
           <InboxContent
             createNew={createNew}
-            data={chatHistory}
             empty={!(showing >= 0)}
-            onBack={() => {
-              this.setState({
-                showContent: false
-              });
-            }}
+            conversationId={showing}
+            onBack={this.onBack}
+            onSelect={this.onShowItem}
           />
         }
         showContent={showContent}
@@ -161,10 +78,13 @@ class Inbox extends React.Component {
 
 const mapStateToProps = (state) => ({
   ...refinedNetworkSelector(state),
+  ...refinedConversationSelector(state),
 })
 
 const mapDispatchToProps = {
-  GetNetworks
+  GetNetworks,
+  GetConversations,
+  GetConversation
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Inbox);

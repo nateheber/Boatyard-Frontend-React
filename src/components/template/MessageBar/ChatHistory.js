@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { SearchBox } from 'components/basic/Input';
 import { OrangeButton } from 'components/basic/Buttons';
 
-import Network from './Network';
+import Conversation from './Conversation';
 
 const SearchWrapper = styled.div`
   display: flex;
@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   height: 100%;
 `
 
-const NetworkListWrapper = styled.div`
+const ConversationListWrapper = styled.div`
   height: 60%;
   overflow-y: scroll;
 `
@@ -27,20 +27,20 @@ const NetworkListWrapper = styled.div`
 export default class ChatHistory extends React.Component {
 
   render() {
-    const { networks, onSelect, onNew } = this.props;
+    const { conversations, onSelect, onNew } = this.props;
     return (
       <Wrapper>
         <SearchWrapper>
           <SearchBox style={{ marginBottom: '15px' }} />
           <OrangeButton  style={{ width: '100%' }} onClick={onNew} >Compose</OrangeButton>
         </SearchWrapper>
-        <NetworkListWrapper>
+        <ConversationListWrapper>
           {
-            networks.map((network, idx) => (
-              <Network network={network} onClick={onSelect} key={`item_${idx}`} />
+            conversations.map((conversation, idx) => (
+              <Conversation conversation={conversation} onClick={onSelect} key={`item_${idx}`} />
             ))
           }
-        </NetworkListWrapper>
+        </ConversationListWrapper>
       </Wrapper>
     )
   }

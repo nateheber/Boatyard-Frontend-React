@@ -20,6 +20,7 @@ import childAccount from './child-accounts';
 import paymentGateway from './paymentGateway';
 import icon from './icons';
 import network from './networks';
+import conversation from './conversations';
 
 const rootReducer = combineReducers({
   navigation,
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
   paymentGateway,
   icon,
   network,
+  conversation,
 });
 
 export default rootReducer;

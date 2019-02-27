@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
+import { Row, Col } from 'react-flexbox-grid';
 
-import { OrangeButton } from 'components/basic/Buttons';
 import { ChatBox } from 'components/compound/Message/ChatBox';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 import CustomerOption from 'components/basic/CustomerOption';
@@ -15,17 +15,7 @@ import {
   FilterUsers,
 } from 'store/actions/users';
 
-const ChatHeader = styled.div`
-  background-color: #07384b;
-  border-bottom: 1px solid #aaa2aa;
-  padding: 15px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const InputWrapper = styled.div`
+const InputWrapper = styled(Row)`
   display: flex;
   padding: 30px;
   flex-direction: row;
@@ -33,21 +23,17 @@ const InputWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const InputLabel = styled.div`
-  color: #E6E6E6;
-  font-family: "Source Sans",sans-serif !important;
+const InputLabel = styled(Col)`
+  color: #333;
+  font-family: "Source Sans Pro",sans-serif !important;
   font-size: 14px;
 `;
 
-const Select = styled(BoatyardSelect)`
-  width: 220px;
+const InputField = styled(Col)`
 `;
 
-const HeaderTitle = styled.div`
-  padding: 15px;
-  font-size: 18px;
-  font-family: 'Montserrat', sans-serif !important;
-  color: #e6e6e6;
+const Select = styled(BoatyardSelect)`
+  width: 100%;
 `;
 
 const ValueLabel = styled.div`
@@ -168,7 +154,7 @@ class NewMessage extends React.Component {
 
   onSendingSuccess = (result) => {
     const conversationId = get(result, 'attributes.conversationId', -1);
-    this.props.onCreationSuccess(conversationId)();
+    this.props.onCreationSuccess(conversationId);
   }
 
   sendMessage = (data, recipientInfo) => () => {
@@ -199,29 +185,27 @@ class NewMessage extends React.Component {
     const { users, defaultOptions } = this.state;
     return (
       <React.Fragment>
-        <ChatHeader>
-          <HeaderTitle>New Messages</HeaderTitle>
-          <OrangeButton onClick={this.props.onCancel}>Cancel</OrangeButton>
-        </ChatHeader>
         <InputWrapper>
-          <InputLabel>To:</InputLabel>
-          <Select
-            placeholder="Choose a recipient"
-            components={{
-              Option: CustomerOption,
-              MultiValueLabel,
-            }}
-            cacheOptions
-            defaultOptions={defaultOptions}
-            isMulti
-            onInputChange={this.onChangeUserFilter}
-            loadOptions={this.loadOptions}
-            onChange={this.onChangeUser}
-            styles={selectorStyle}
-            value={users}
-          />
+          <InputLabel xs={2}>To</InputLabel>
+          <InputField xs={10}>
+            <Select
+              placeholder="Choose a recipient"
+              components={{
+                Option: CustomerOption,
+                MultiValueLabel,
+              }}
+              cacheOptions
+              defaultOptions={defaultOptions}
+              isMulti
+              onInputChange={this.onChangeUserFilter}
+              loadOptions={this.loadOptions}
+              onChange={this.onChangeUser}
+              styles={selectorStyle}
+              value={users}
+            />
+          </InputField>
         </InputWrapper>
-        <ChatBox third noBorder onSend={this.onSend} />
+        <ChatBox onSend={this.onSend} />
       </React.Fragment>
     )
   }

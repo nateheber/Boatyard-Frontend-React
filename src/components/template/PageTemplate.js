@@ -23,6 +23,8 @@ const PageContent = styled.div`
   height: 100%;
   width: 100vw;
   background-color: #e6e6e6;
+  overflow: hidden;
+  position: relative;
 `;
 
 const ContentWrapper = styled.div`

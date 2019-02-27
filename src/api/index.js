@@ -81,12 +81,20 @@ export const createPaymentGatewayClient = authType => {
   return new CRUDClient('gateways', authType);
 };
 
+export const createConversationsClient = authType => {
+  return new CRUDClient('conversations', authType);
+};
+
 export const createIconClient = authType => {
   return new CRUDClient('icons', authType);
 }
 
 export const createDispatchedOrderClient = authType => {
   return new CRUDClient('dispatched_orders', authType);
+}
+
+export const createMessageClient = authType => {
+  return new CRUDClient('messages', authType);
 }
 
 export const customApiClient = authType => {

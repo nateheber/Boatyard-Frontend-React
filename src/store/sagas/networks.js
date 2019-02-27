@@ -77,7 +77,7 @@ function* createNetwork(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_NETWORK_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

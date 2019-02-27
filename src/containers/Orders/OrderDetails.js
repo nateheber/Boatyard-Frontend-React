@@ -231,7 +231,7 @@ const mapStateToProps = state => ({
   currentStatus: state.order.currentStatus,
   boatStatus: state.boat.currentStatus,
   privilege: state.auth.privilege,
-  provider: state.provider.currentProvider,
+  provider: state.provider.loggedInProvider,
 });
 
 const mapDispatchToProps = {

@@ -8,15 +8,15 @@ export const refinedNetworkSelector = createSelector(
   networksSelector, includedSelector,
   (networks, included) => {
     const parsedData = networks.map((network) => {
-      const ownerInfo = get(network, 'relationships.owner.data');
-      let ownerDetail = {};
-      if (ownerInfo && !isEmpty(ownerInfo)) {
-        ownerDetail = get(included, `[${ownerInfo.type}][${ownerInfo.id}]`);
-      }
+      const senderInfo = get(network, 'relationships.sender.data');
+      const senderDetail = get(included, `[${senderInfo.type}][${senderInfo.id}]`);
+      const recipientInfo = get(network, 'relationships.recipient.data');
+      const recipientDetail = get(included, `[${recipientInfo.type}][${recipientInfo.id}]`);
       return ({
         id: network.id,
-        owner: ownerDetail
-      });  
+        sender: senderDetail,
+        recipient: recipientDetail,
+      });
     });
     return {networks: parsedData};
   }
