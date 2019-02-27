@@ -168,6 +168,7 @@ export class ChatBox extends React.Component {
     const { onSend } = this.props;
     const { text, image } = this.state;
     onSend({text, image});
+    this.setState({ text: '', image: '' });
   }
 
   render() {
