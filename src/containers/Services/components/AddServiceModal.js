@@ -80,9 +80,9 @@ class AddServiceModal extends React.Component {
       {
         field: 'cost',
         label: 'Price',
-        type: 'text_field',
+        type: 'currency_field',
         defaultValue: cost,
-        placeholder: 'e.g., 35.00',
+        placeholder: '$0.00',
         xs: 12,
         sm: 12,
         md: 6,
@@ -172,11 +172,15 @@ class AddServiceModal extends React.Component {
     const { category, onSave } = this.props;
     const { serviceValues } = this.state;
     if (this.mainFields.validateFields() && this.descriptionField.validateFields()) {
-      const mainValues = {
+      let mainValues = {
         category_id: get(category, 'id'),
         ...this.mainFields.getFieldValues(),
         ...this.descriptionField.getFieldValues(),
         properties: serviceValues
+      };
+      mainValues = {
+        ...mainValues,
+        cost: mainValues.cost || '0'
       };
       onSave(mainValues);
     } else {
