@@ -174,7 +174,7 @@ export default class FormFields extends React.Component {
             prefix='$'
             errorMessage={errorMessage}
             value={fieldValue}
-            onChange={evt => this.onChangeValue(field, evt.target.value)} />
+            onValueChange={values => this.onChangeValue(field, values.value)} />
         );
       default:
         return null;
