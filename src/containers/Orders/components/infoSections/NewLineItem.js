@@ -1,11 +1,11 @@
-import React from 'react'
-import { Row, Col } from 'react-flexbox-grid'
-import { connect } from 'react-redux'
+import React from 'react';
+import { Row, Col } from 'react-flexbox-grid';
+import { connect } from 'react-redux';
 
-import { FilterServices } from 'store/actions/services'
+import { FilterServices } from 'store/actions/services';
 
-import { Input, TextArea } from 'components/basic/Input'
-import RemoveButton from '../basic/RemoveButton'
+import { Input, TextArea } from 'components/basic/Input';
+import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 
 class NewLineItem extends React.Component {
@@ -14,14 +14,20 @@ class NewLineItem extends React.Component {
     cost: '0',
     serviceId: -1,
     comment: '',
-  }
+  };
 
   onChangeFilter = (val) =>  new Promise((resolve, reject) => {
-    if (val === '') {
-      this.props.FilterServices({ success: resolve, error: resolve });
-    } else {
-      this.props.FilterServices({ params: { 'service[name]': val }, success: resolve, error: resolve });
+    const { privilege } = this.props;
+    let params = {
+      'service[discarded_at]': null
+    };
+    if (val && val.trim().length > 0) {
+      params['search_by_name'] = val;
     }
+    if (privilege === 'admin') {
+      params['service[provider_id]'] = 1;
+    }
+    this.props.FilterServices({ params, success: resolve, error: reject });
   }).then((services) =>
     services.map(option => ({
       value: option.id,
@@ -30,23 +36,29 @@ class NewLineItem extends React.Component {
     }))
   ).catch(err => {
     return [];
-  })
+  });
 
   onChangeQuantity = (evt) => {
-    this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) })
-  }
+    this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) });
+  };
 
   onChangeCost = (evt) => {
-    this.setState({ cost: evt.target.value }, () => { this.props.onChange(this.state) })
-  }
+    this.setState({ cost: evt.target.value }, () => { this.props.onChange(this.state) });
+  };
 
   onChangeService = (service) => {
-    this.setState({ serviceId: service.value, cost: service.cost, quantity: 1 }, () => { this.props.onChange(this.state) })
-  }
+    this.setState({
+      serviceId: service.value,
+      cost: service.cost,
+      quantity: 1
+    }, () => {
+      this.props.onChange(this.state);
+    });
+  };
 
   onChangeComment = (evt) => {
-    this.setState({ comment: evt.target.value }, () => { this.props.onChange(this.state) })
-  }
+    this.setState({ comment: evt.target.value }, () => { this.props.onChange(this.state) });
+  };
 
   render() {
     const { quantity, cost, comment } = this.state;
@@ -90,8 +102,12 @@ class NewLineItem extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  privilege: state.auth.privilege
+});
+
 const mapDispatchToProps = {
   FilterServices
-}
+};
 
-export default connect(null, mapDispatchToProps)(NewLineItem)
+export default connect(mapStateToProps, mapDispatchToProps)(NewLineItem);

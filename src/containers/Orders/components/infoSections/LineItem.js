@@ -1,18 +1,18 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import deepEqual from 'deep-equal'
-import styled from 'styled-components'
+import React from 'react';
+import { connect } from 'react-redux';
+import deepEqual from 'deep-equal';
+import styled from 'styled-components';
 import { set, get } from 'lodash';
-import { Row, Col } from 'react-flexbox-grid'
+import { Row, Col } from 'react-flexbox-grid';
 
-import { FilterServices } from 'store/actions/services'
-import { Input, TextArea } from 'components/basic/Input'
-import RemoveButton from '../basic/RemoveButton'
+import { FilterServices } from 'store/actions/services';
+import { Input, TextArea } from 'components/basic/Input';
+import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 
 const Record = styled.div`
   padding: 15px 0px;
-`
+`;
 
 const Line = styled(Row)`
   padding: 10px 0px;
@@ -31,14 +31,14 @@ const Value = styled.div`
   font-size: 16px;
   font-weight: 400px;
   color: #07384b;
-`
+`;
 
 const Comment = styled.div`
   font-family: "Source Sans Pro";
   font-size: 16px;
   font-weight: 400px;
   color: #07384b;
-`
+`;
 
 class LineItem extends React.Component {
   constructor(props) {
@@ -48,7 +48,7 @@ class LineItem extends React.Component {
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
-    }
+    };
   }
 
   componentDidUpdate(prevProps) {
@@ -58,24 +58,26 @@ class LineItem extends React.Component {
         quantity: this.props.attributes.quantity,
         cost: this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
-      })
+      });
     }
-  }
-
-  componentDidMount() {
-    this.props.FilterServices({ params: {} });
   }
 
   onChangeFilter = (val) =>  new Promise((resolve, reject) => {
-    if (val === '') {
-      this.props.FilterServices({ success: resolve, error: resolve });
-    } else {
-      this.props.FilterServices({ params: { 'service[name]': val }, success: resolve, error: resolve });
+    const { privilege } = this.props;
+    let params = {
+      'service[discarded_at]': null
+    };
+    if (val && val.trim().length > 0) {
+      params['search_by_name'] = val;
     }
+    if (privilege === 'admin') {
+      params['service[provider_id]'] = 1;
+    }
+    this.props.FilterServices({ params, success: resolve, error: reject });
   }).then((services) => this.filterOptions(services)
   ).catch(err => {
     return [];
-  })
+  });
 
   onChange = (evt, field) => {
     const changeVal = {};
@@ -83,37 +85,37 @@ class LineItem extends React.Component {
     this.setState(changeVal, () => {
       this.props.onChange(this.state);
     });
-  }
+  };
 
   onChangeService = (service) => {
     const serviceId = service.value;
     this.setState({ serviceId }, () => {
       this.props.onChange(this.state)
-    })
-  }
+    });
+  };
 
   getServiceName = () => {
     const serviceName = get(this.props, 'relationships.service.attributes.name');
     return serviceName;
-  }
+  };
 
   getServiceId = () => {
     const { serviceId } = this.props;
     return serviceId;
-  }
+  };
 
-  getCurrentOption = () => ({ value: this.getServiceId(), label: this.getServiceName() })
+  getCurrentOption = () => ({ value: this.getServiceId(), label: this.getServiceName() });
 
   filterOptions = (filteredServices) => {
     const services = filteredServices || [];
     const options = services.map(option => ({
       value: option.id,
       label: option.name
-    }))
+    }));
     const currentOption = { value: this.getServiceId(), label: this.getServiceName() };
     const result = options.filter(option => option.value !== currentOption.value);
     return [currentOption, ...result];
-  }
+  };
 
   render() {
     const { mode, onRemove } = this.props;
@@ -169,8 +171,12 @@ class LineItem extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  privilege: state.auth.privilege
+});
+
 const mapDispatchToProps = {
   FilterServices
-}
+};
 
-export default connect(null, mapDispatchToProps)(LineItem);
+export default connect(mapStateToProps, mapDispatchToProps)(LineItem);
