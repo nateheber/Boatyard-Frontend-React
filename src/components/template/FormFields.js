@@ -10,7 +10,8 @@ import {
   CheckBox,
   TextArea,
   Select,
-  DateSelector
+  DateSelector,
+  CurrencyInput
 } from 'components/basic/Input';
 
 export default class FormFields extends React.Component {
@@ -163,6 +164,17 @@ export default class FormFields extends React.Component {
             placeholder={placeholder}
             errorMessage={errorMessage}
           />
+        );
+      case 'currency_field':
+        return (
+          <CurrencyInput
+            fixedDecimalScale
+            placeholder={placeholder}
+            decimalScale={2}
+            prefix='$'
+            errorMessage={errorMessage}
+            value={fieldValue}
+            onChange={evt => this.onChangeValue(field, evt.target.value)} />
         );
       default:
         return null;
