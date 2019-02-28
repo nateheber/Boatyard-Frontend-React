@@ -104,4 +104,4 @@ const mapDispatchToProps = {
   FilterServices
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewLineItem)
+export default connect(mapStateToProps, mapDispatchToProps)(NewLineItem);
