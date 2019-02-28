@@ -62,16 +62,18 @@ class LineItem extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.props.FilterServices({ params: {} });
-  }
-
   onChangeFilter = (val) =>  new Promise((resolve, reject) => {
-    if (val === '') {
-      this.props.FilterServices({ success: resolve, error: resolve });
-    } else {
-      this.props.FilterServices({ params: { 'service[name]': val }, success: resolve, error: resolve });
+    const { privilege } = this.props;
+    let params = {
+      'service[discarded_at]': null
+    };
+    if (val && val.trim().length > 0) {
+      params['search_by_name'] = val;
     }
+    if (privilege === 'admin') {
+      params['service[provider_id]'] = 1;
+    }
+    this.props.FilterServices({ params, success: resolve, error: reject });
   }).then((services) => this.filterOptions(services)
   ).catch(err => {
     return [];
@@ -169,8 +171,12 @@ class LineItem extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  privilege: state.auth.privilege
+});
+
 const mapDispatchToProps = {
   FilterServices
 }
 
-export default connect(null, mapDispatchToProps)(LineItem);
+export default connect(mapStateToProps, mapDispatchToProps)(LineItem);
