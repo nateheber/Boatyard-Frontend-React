@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import FlagImage from '../assets/flgIcon.png';
+import FlagImage from '../../assets/flgIcon.png';
 
 const Wrapper = styled.div`
   padding: 20px 30px;

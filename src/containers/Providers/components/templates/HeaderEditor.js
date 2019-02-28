@@ -11,8 +11,8 @@ import {
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 
-import { HomeImagePreview } from './HomeImagePreview';
-import { BannerImagePreview } from './BannerImagePreview';
+import { HomeImagePreview } from '../basic/HomeImagePreview';
+import { BannerImagePreview } from '../basic/BannerImagePreview';
 
 export class HeaderEditor extends React.Component {
   constructor(props) {

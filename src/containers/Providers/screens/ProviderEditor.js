@@ -8,6 +8,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { CreateProvider, UpdateProvider } from 'store/actions/providers';
 
 import { AccountEditor, AccountCreator, HeaderEditor } from '../components';
+import AppEditor from '../components/templates/AppEditor';
 
 import './style.css';
 
@@ -77,6 +78,7 @@ class ProviderEditFlow extends React.Component {
         <TabList>
           <Tab>Account</Tab>
           <Tab disabled={id === -1}>Header</Tab>
+          <Tab>APP</Tab>
         </TabList>
         <TabPanel>
           {id === -1 ? (
@@ -93,6 +95,9 @@ class ProviderEditFlow extends React.Component {
         </TabPanel>
         <TabPanel>
           <HeaderEditor {...this.state} save={this.onSave} />
+        </TabPanel>
+        <TabPanel>
+          <AppEditor />
         </TabPanel>
       </Tabs>
     );
