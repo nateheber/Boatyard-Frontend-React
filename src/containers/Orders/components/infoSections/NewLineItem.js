@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { FilterServices } from 'store/actions/services';
 
-import { Input, TextArea } from 'components/basic/Input';
+import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 
@@ -38,12 +38,12 @@ class NewLineItem extends React.Component {
     return [];
   });
 
-  onChangeQuantity = (evt) => {
-    this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) });
+  onChangeQuantity = (value) => {
+    this.setState({ quantity: value }, () => { this.props.onChange(this.state) });
   };
 
-  onChangeCost = (evt) => {
-    this.setState({ cost: evt.target.value }, () => { this.props.onChange(this.state) });
+  onChangeCost = (value) => {
+    this.setState({ cost: value }, () => { this.props.onChange(this.state) });
   };
 
   onChangeService = (service) => {
@@ -78,10 +78,23 @@ class NewLineItem extends React.Component {
                 />
               </Col>
               <Col lg={3} sm={3} xs={3} md={3} xl={3}>
-                <Input type="text" value={quantity} onChange={this.onChangeQuantity} />
+                <CurrencyInput
+                  fixedDecimalScale
+                  decimalScale={0}
+                  value={quantity}
+                  onChangeValue={values => this.onChangeQuantity(values.value)}
+                  hideError
+                />
               </Col>
               <Col lg={3} sm={3} xs={3} md={3} xl={3}>
-                <Input type="text" value={cost} onChange={this.onChangeCost} />
+                <CurrencyInput
+                  fixedDecimalScale
+                  prefix='$'
+                  decimalScale={2}
+                  value={cost}
+                  onChangeValue={values => this.onChangeCost(values.value)}
+                  hideError
+                />
               </Col>
             </Row>
           </Col>
