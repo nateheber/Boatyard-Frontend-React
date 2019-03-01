@@ -107,7 +107,7 @@ class OrderDetailHeader extends React.Component {
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
-          <PageTitle>Orders #{orderId}</PageTitle>
+          <PageTitle>Order #{orderId}</PageTitle>
           <ActionDropdown
             items={[
               {

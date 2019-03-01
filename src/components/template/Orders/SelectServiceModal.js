@@ -62,7 +62,12 @@ class SelectServiceModal extends React.Component {
   onChangeServiceFilter = val => {
     const { privilege } = this.props;
     return new Promise((resolve, reject) => {
-      let params = { 'search_by_name': val };
+      let params = {
+        'service[discarded_at]': null
+      };
+      if (val && val.trim().length > 0) {
+        params['search_by_name'] = val;
+      }
       if (privilege === 'admin') {
         params['service[provider_id]'] = 1;
       }

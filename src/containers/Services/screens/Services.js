@@ -49,12 +49,14 @@ class Services extends React.Component {
     const { sort } = this.state;
     const params = isEmpty(keyword) ? {
       page: page,
+      'service[discarded_at]': null,
       'service[sort]': sort.direction,
       'service[order]': sort.col
     } : {
       page: page,
       'service[sort]': sort.direction,
       'service[order]': sort.col,
+      'service[discarded_at]': null,
       search_by_name: keyword
     };
     GetServices({ params });
