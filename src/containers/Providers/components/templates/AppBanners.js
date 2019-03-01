@@ -29,6 +29,11 @@ class AppBanners extends React.Component {
     image: imageList[0]
   }
 
+  componentDidMount() {
+    const { image } = this.state;
+    this.props.onChangeImage(image);
+  }
+
   onSelectImage = (image) => {
     this.setState({ image });
   }

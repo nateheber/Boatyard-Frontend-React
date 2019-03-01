@@ -74,7 +74,7 @@ class ProviderEditFlow extends React.Component {
   render() {
     const { id } = this.state;
     return (
-      <Tabs selectedIndex={2}>
+      <Tabs>
         <TabList>
           <Tab>Account</Tab>
           <Tab disabled={id === -1}>Header</Tab>

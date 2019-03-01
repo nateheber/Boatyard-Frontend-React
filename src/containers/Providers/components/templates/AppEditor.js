@@ -40,21 +40,31 @@ const Right = styled.div`
 export default class AppEditor extends React.Component {
   state = {
     step: 0,
+    image: {},
+    services: [],
   }
 
   onChangeStep = (step) => {
     this.setState({ step });
   }
 
+  setImage = (image) => {
+    this.setState({ image });
+  }
+
+  setServices = (services) => {
+    this.setState({ services });
+  }
+
   renderSteps = () => {
-    const { step } = this.state;
+    const { step, image } = this.state;
     switch(step) {
       case 0:
-        return <AppBanners />
+        return <AppBanners onChangeImage={this.setImage} />
       case 1:
         return <AppServiceCategories />
       case 2:
-        return <AppServices />
+        return <AppServices image={image} onChangeServices={this.setServices} />
       case 3:
       default:
         return <ServiceTemplates />
