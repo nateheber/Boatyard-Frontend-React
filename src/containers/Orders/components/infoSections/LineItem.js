@@ -81,6 +81,9 @@ class LineItem extends React.Component {
 
   onChange = (value, field) => {
     const changeVal = {};
+    if (field === 'cost') {
+      value = value && value.replace('$', '');
+    }
     set(changeVal, field, value);
     this.setState(changeVal, () => {
       this.props.onChange(this.state);
@@ -146,7 +149,7 @@ class LineItem extends React.Component {
                 fixedDecimalScale
                 decimalScale={0}
                 value={quantity}
-                onChangeValue={values => this.onChange(values.value, 'quantity')}
+                onChange={evt => this.onChange(evt.target.value, 'quantity')}
                 hideError
               />
             :
@@ -160,7 +163,7 @@ class LineItem extends React.Component {
                 prefix='$'
                 decimalScale={2}
                 value={cost}
-                onChangeValue={values => this.onChange(values.value, 'cost')}
+                onChange={evt => this.onChange(evt.target.value, 'cost')}
                 hideError
               />
             : 
