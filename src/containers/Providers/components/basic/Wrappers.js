@@ -14,5 +14,5 @@ export const SelectorWrapper = styled.div`
 
 export const PreviewWrapper = styled.div`
   display: flex;
-  flex: 1;
+  width: 303px;
 `
