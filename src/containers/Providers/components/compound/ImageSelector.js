@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { BoatyardSelect } from 'components/basic/Dropdown';
+import { SearchBox } from 'components/basic/Input';
 import { HollowButton } from 'components/basic/Buttons';
 
 const Wrapper = styled.div`
@@ -16,14 +16,16 @@ const HeaderWrapper = styled.div`
   align-items: center;
 `;
 
-const Selector = styled(BoatyardSelect)`
+const SearchInput = styled(SearchBox)`
   display: inline-block;
-  width: 280px;
+  box-sizing: border-box;
+  width: 253px;
   margin-right: 27px;
 `;
 
 const UploadButton = styled(HollowButton)`
   width: 144px;
+  margin-left: 27px;
 `;
 
 const ImageWrapper = styled.div`
@@ -58,7 +60,7 @@ export default class ImageSelector extends React.Component {
     return (
       <Wrapper>
         <HeaderWrapper>
-          <Selector />
+          <SearchInput placeholder="SEARCH" />
           <UploadButton>Upload Image</UploadButton>
         </HeaderWrapper>
         <ImageWrapper>

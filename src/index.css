@@ -11,3 +11,37 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: "DIN";
+  /* src: url('./resources/DIN/DINBd___.TTF') format("ttf");
+  src: url('./resources/DIN/DINBD__.TTF') format("ttf");
+  src: url('./resources/DIN/DINBdA__.TTF') format("ttf");
+  src: url('./resources/DIN/DINBDA_.TTF') format("ttf");
+  src: url('./resources/DIN/DINBdEp_.TTF') format("ttf");
+  src: url('./resources/DIN/DINBDEP.TTF') format("ttf");
+  src: url('./resources/DIN/DINBk___.TTF') format("ttf");
+  src: url('./resources/DIN/DINBK__.TTF') format("ttf");
+  src: url('./resources/DIN/DINBkA__.TTF') format("ttf");
+  src: url('./resources/DIN/DINBKA_.TTF') format("ttf");
+  src: url('./resources/DIN/DINBkEp_.TTF') format("ttf");
+  src: url('./resources/DIN/DINBKEP.TTF') format("ttf");
+  src: url('./resources/DIN/DINLi___.TTF') format("ttf");
+  src: url('./resources/DIN/DINLI__.TTF') format("ttf");
+  src: url('./resources/DIN/DINLiA__.TTF') format("ttf");
+  src: url('./resources/DIN/DINLIA_.TTF') format("ttf");
+  src: url('./resources/DIN/DINLiEp_.TTF') format("ttf");
+  src: url('./resources/DIN/DINLIEP.TTF') format("ttf"); */
+  src: url('./resources/DIN/DINMd___.ttf') format("ttf");
+  /* src: url('./resources/DIN/DINMD__.TTF') format("ttf");
+  src: url('./resources/DIN/DINMdA__.TTF') format("ttf");
+  src: url('./resources/DIN/DINMDA_.TTF') format("ttf");
+  src: url('./resources/DIN/DINMdEp_.TTF') format("ttf");
+  src: url('./resources/DIN/DINMDEP.TTF') format("ttf");
+  src: url('./resources/DIN/DINRg___.TTF') format("ttf");
+  src: url('./resources/DIN/DINRG__.TTF') format("ttf");
+  src: url('./resources/DIN/DINRgA__.TTF') format("ttf");
+  src: url('./resources/DIN/DINRGA_.TTF') format("ttf");
+  src: url('./resources/DIN/DINRgEp_.TTF') format("ttf");
+  src: url('./resources/DIN/DINRGEP.TTF') format("ttf"); */
+}

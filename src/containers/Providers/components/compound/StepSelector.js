@@ -84,7 +84,7 @@ export default class StepSelector extends React.Component {
         <StepWrapper>
           {
             steps.map((step, idx) => (
-              <Step className={classNames({ active: curStep === idx })} onClick={() => onChange(idx)}>
+              <Step className={classNames({ active: curStep === idx })} onClick={() => onChange(idx)} key={`step_${idx}`}>
                 <StepIconWrapper>
                   <StepIcon src={step.icon} />
                 </StepIconWrapper>

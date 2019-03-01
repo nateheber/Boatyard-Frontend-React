@@ -5,6 +5,7 @@ import { get } from 'lodash';
 import PhonePreview from '../basic/PhonePreview';
 import PhoneBanner from '../basic/PhoneBanner';
 import ServiceSelector from '../compound/ServiceSelector';
+import ServicePreview from '../compound/ServicePreview';
 
 import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../basic/Wrappers';
 
@@ -23,7 +24,7 @@ class AppServices extends React.Component {
   }
 
   render() {
-    const { services } = this.services;
+    const { services } = this.state;
     const { image } = this.props;
     const providerName = this.getProviderName();
     return (
@@ -34,6 +35,7 @@ class AppServices extends React.Component {
         <PreviewWrapper>
           <PhonePreview>
             <PhoneBanner image={image} providerName={providerName} />
+            <ServicePreview services={services} />
           </PhonePreview>
         </PreviewWrapper>
       </ContentWrapper>
