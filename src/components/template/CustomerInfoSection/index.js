@@ -66,13 +66,13 @@ class CustomerInfoSection extends React.Component {
   };
 
   render() {
-    const { customerInfo, childStatus, userStatus } = this.props;
+    const { type, customerInfo, childStatus, userStatus } = this.props;
     const { edit } = this.state;
     return (
       <React.Fragment>
         <InfoSection {...customerInfo} onEdit={this.showModal} />
         <CustomerModal
-          title="Edit Customer"
+          title={type === 'user' ? 'Edit User' : 'Edit Customer'}
           open={edit}
           loading={childStatus === childActions.UPDATE_CHILD_ACCOUNT || userStatus === userActions.UPDATE_USER}
           customerInfo={customerInfo}

@@ -23,8 +23,7 @@ import Categories from 'containers/Categories/screens/Categories';
 import CategoryDetails from 'containers/Categories/screens/CategoryDetails';
 import Inbox from 'containers/Message/Inbox';
 import { QRBox, TemplateBox } from 'containers/Message';
-import Users from 'components/template/Users';
-import UserDetails from 'components/template/UserDetails';
+import { Users, UserDetails } from 'containers/Users';
 
 const MainRoutes = ({ privilege }) => (
   <Router>

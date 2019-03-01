@@ -4,7 +4,7 @@ import { get, isEmpty, filter } from 'lodash';
 import { actionTypes } from '../actions/providers';
 import { actions as authActions } from '../reducers/auth';
 
-import { customApiClient, createProviderClient } from '../../api';
+import { customApiClient, createProviderClient, createPreferredProviderClient } from '../../api';
 
 import { getCustomApiClient } from './sagaSelectors';
 import { getProvidersSelector } from '../selectors/providers';
@@ -13,7 +13,8 @@ const refineProviders = (providers) => {
   return providers.map(provider => {
     return {
       id: provider.id,
-      ...provider.attributes
+      ...provider.attributes,
+      relationships: provider.relationships
     };
   });
 };
@@ -21,6 +22,7 @@ const refineProviders = (providers) => {
 const adminApiClient = createProviderClient('admin');
 const basicProviderClient = createProviderClient('basic');
 const customManagement = customApiClient('admin');
+const adminPreferredApiClient = createPreferredProviderClient('admin');
 
 function* getProviders(action) {
   let successType = actionTypes.GET_PROVIDERS_SUCCESS;
@@ -54,6 +56,36 @@ function* getProviders(action) {
     }
   } catch (e) {
     yield put({ type: failureType, payload: e });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
+function* getPreferredProviders(action) {
+  const { params, success, error } = action.payload;
+  try {
+    const result = yield call(adminPreferredApiClient.list, params);
+    const providers = get(result, 'data', []);
+    const included = get(result, 'included', []);
+    const { perPage, total } = result;
+    const refinedProviders = refineProviders(providers);
+    const page = get(params, 'page', 1);
+    yield put({
+      type: actionTypes.GET_PREFERRED_PROVIDERS_SUCCESS,
+      payload: {
+        providers: refinedProviders,
+        included,
+        perPage,
+        page,
+        total
+      }
+    });
+    if (success) {
+      yield call(success, refinedProviders, page);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.GET_PREFERRED_PROVIDERS_FAILURE, payload: e });
     if (error) {
       yield call(error);
     }
@@ -162,6 +194,24 @@ function* createProvider(action) {
   }
 }
 
+function* addPreferredProvider(action) {
+  const { data, success, error } = action.payload;
+  try {
+    yield call(adminPreferredApiClient.create, data);
+    yield put({
+      type: actionTypes.CREATE_PROVIDER_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.CREATE_PROVIDER_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
 function* updateProvider(action) {
   const { providerId, data, success, error } = action.payload;
   try {
@@ -200,12 +250,33 @@ function* deleteProvider(action) {
   }
 }
 
+function* deletePreferredProvider(action) {
+  const { providerId, success, error } = action.payload;
+  try {
+    yield call(adminApiClient.delete, providerId);
+    yield put({
+      type: actionTypes.DELETE_PROVIDER_SUCCESS,
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.DELETE_PROVIDER_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
 export default function* Profile() {
   yield takeEvery(actionTypes.GET_PROVIDERS, getProviders);
   yield takeEvery(actionTypes.FILTER_PROVIDERS, getProviders);
+  yield takeEvery(actionTypes.GET_PREFERRED_PROVIDERS, getPreferredProviders);
   yield takeEvery(actionTypes.LOGIN_WITH_PROVIDER, loginWithProvider);
   yield takeEvery(actionTypes.GET_PROVIDER, getProvider);
   yield takeEvery(actionTypes.CREATE_PROVIDER, createProvider);
+  yield takeEvery(actionTypes.ADD_PREFERRED_PROVIDER, addPreferredProvider);
   yield takeEvery(actionTypes.UPDATE_PROVIDER, updateProvider);
   yield takeEvery(actionTypes.DELETE_PROVIDER, deleteProvider);
+  yield takeEvery(actionTypes.DELETE_PREFERRED_PROVIDER, deletePreferredProvider);
 }
