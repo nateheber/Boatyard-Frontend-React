@@ -6,7 +6,7 @@ import { set, get } from 'lodash';
 import { Row, Col } from 'react-flexbox-grid';
 
 import { FilterServices } from 'store/actions/services';
-import { Input, TextArea } from 'components/basic/Input';
+import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 
@@ -79,9 +79,9 @@ class LineItem extends React.Component {
     return [];
   });
 
-  onChange = (evt, field) => {
+  onChange = (value, field) => {
     const changeVal = {};
-    set(changeVal, field, evt.target.value);
+    set(changeVal, field, value);
     this.setState(changeVal, () => {
       this.props.onChange(this.state);
     });
@@ -141,10 +141,31 @@ class LineItem extends React.Component {
             )}
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-            {mode === 'edit' ? <Input type="text" value={quantity} onChange={(evt) => this.onChange(evt, 'quantity')} hideError /> : <Value>{parseInt(quantity)}</Value>}
+            {mode === 'edit' ?
+              <CurrencyInput
+                fixedDecimalScale
+                decimalScale={0}
+                value={quantity}
+                onChangeValue={values => this.onChange(values.value, 'quantity')}
+                hideError
+              />
+            :
+              <Value>{parseInt(quantity)}</Value>
+            }
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-            {mode === 'edit' ? <Input type="text" value={cost} onChange={(evt) => this.onChange(evt, 'cost')} hideError /> : <Value>${parseFloat(cost).toFixed(2)}</Value>}
+            {mode === 'edit' ?
+              <CurrencyInput
+                fixedDecimalScale
+                prefix='$'
+                decimalScale={2}
+                value={cost}
+                onChangeValue={values => this.onChange(values.value, 'cost')}
+                hideError
+              />
+            : 
+              <Value>${parseFloat(cost).toFixed(2)}</Value>
+            }
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
             <Value>${(parseFloat(parseFloat(quantity) * parseFloat(parseFloat(cost)).toFixed(2))).toFixed(2)}</Value>

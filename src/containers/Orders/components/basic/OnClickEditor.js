@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { isEmpty } from 'lodash'
 import { Row, Col } from 'react-flexbox-grid'
 
-import { Input } from 'components/basic/Input';
+import { CurrencyInput } from 'components/basic/Input';
 
 const Label = styled.div`
   color: #8f8f8f;
@@ -46,11 +46,11 @@ export default class OnClickEditor extends React.Component {
   }
 
   onChange = (evt) => {
-    this.setState({ value: evt.target.value })
-    this.props.onChange(evt.target.value);
+    const value = evt.target.value && evt.target.value.replace('$', '');
+    this.setState({ value });
+    this.props.onChange(value);
   }
   
-
   render() {
     const { edit, value } = this.state;
     const { label } = this.props;
@@ -60,7 +60,16 @@ export default class OnClickEditor extends React.Component {
           <Label>{label}:</Label>
         </Col>
         <Col sm={6}>
-          <Input autoFocus type="text" pattern="[0-9]*" value={value} onChange={this.onChange} onBlur={this.resetEdit} />
+          <CurrencyInput
+            autoFocus
+            fixedDecimalScale
+            prefix='$'
+            decimalScale={2}
+            value={value}
+            onChange={this.onChange}
+            onBlur={this.resetEdit}
+            hideError
+          />
         </Col>
       </Row>
     ) : (
