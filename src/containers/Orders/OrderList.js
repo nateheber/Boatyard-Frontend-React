@@ -129,11 +129,17 @@ class OrderList extends React.Component {
   render() {
     const { orders, page, privilege } = this.props;
     const pageCount = this.getPageCount();
-    const processedOrders = (orders || []).map(order => ({
+    const processedOrders = (orders || []).map(order => {
+      let name = `Order #${order.id}`;
+      if (privilege === 'provider' && order.providerOrderSequence) {
+        name = `Order #${order.providerOrderSequence}`;
+      }  
+      return {
       ...order,
-      name: `Order #${order.id}`,
+      name,
       createdAt: `${moment(order.createdAt).format('MMM DD, YYYY')}`
-    }));
+      };
+    });
     const { tab } = this.state;
     return (
       <Wrapper>
@@ -144,7 +150,6 @@ class OrderList extends React.Component {
             <Table
               columns={columns}
               records={processedOrders}
-              sortColumn="order"
               toDetails={this.toDetails}
               page={page}
               pageCount={pageCount}

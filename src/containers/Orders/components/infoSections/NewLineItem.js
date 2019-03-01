@@ -38,11 +38,12 @@ class NewLineItem extends React.Component {
     return [];
   });
 
-  onChangeQuantity = (value) => {
-    this.setState({ quantity: value }, () => { this.props.onChange(this.state) });
+  onChangeQuantity = (evt) => {
+    this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) });
   };
 
-  onChangeCost = (value) => {
+  onChangeCost = (evt) => {
+    const value = evt.target.value && evt.target.value.replace('$', '');
     this.setState({ cost: value }, () => { this.props.onChange(this.state) });
   };
 
@@ -82,7 +83,7 @@ class NewLineItem extends React.Component {
                   fixedDecimalScale
                   decimalScale={0}
                   value={quantity}
-                  onChangeValue={values => this.onChangeQuantity(values.value)}
+                  onChange={this.onChangeQuantity}
                   hideError
                 />
               </Col>
@@ -92,7 +93,7 @@ class NewLineItem extends React.Component {
                   prefix='$'
                   decimalScale={2}
                   value={cost}
-                  onChangeValue={values => this.onChangeCost(values.value)}
+                  onChange={this.onChangeCost}
                   hideError
                 />
               </Col>
