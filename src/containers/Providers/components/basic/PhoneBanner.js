@@ -35,6 +35,7 @@ const Flag = styled.div`
 const Title = styled.div`
   font-size: 18px;
   color: white;
+  text-transform: uppercase;
 `
 
 export default ({ providerName, image }) => (

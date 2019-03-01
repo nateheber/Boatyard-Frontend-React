@@ -17,6 +17,7 @@ const Title = styled.div`
   font-size: 29px;
   color: #003247;
   margin-bottom: 22px;
+  font-family: "Open Sans";
 `
 
 const StepWrapper = styled.div`
@@ -64,6 +65,7 @@ const StepLabel = styled.div`
   color: #003247;
   font-size: 18px;
   text-transform: uppercase;
+  font-family: "Open Sans";
 `
 
 const steps = [

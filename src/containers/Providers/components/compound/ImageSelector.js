@@ -36,7 +36,7 @@ const ImageWrapper = styled.div`
 
 const Image = styled.div`
   display: inline-block;
-  width: calc(50% - 24px);
+  width: 282px;
   margin-right: 24px;
   margin-bottom: 20px;
   height: 80px;
