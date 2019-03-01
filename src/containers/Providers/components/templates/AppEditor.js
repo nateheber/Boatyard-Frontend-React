@@ -3,6 +3,10 @@ import styled from 'styled-components';
 
 import AppHeader from '../basic/AppHeader';
 import StepSelector from '../compound/StepSelector';
+import AppBanners from './AppBanners';
+import AppServiceCategories from './AppServiceCategories';
+import AppServices from './AppServices';
+import ServiceTemplates from './ServiceTemplates';
 
 const Wrapper = styled.div`
   display: flex;
@@ -42,6 +46,21 @@ export default class AppEditor extends React.Component {
     this.setState({ step });
   }
 
+  renderSteps = () => {
+    const { step } = this.state;
+    switch(step) {
+      case 0:
+        return <AppBanners />
+      case 1:
+        return <AppServiceCategories />
+      case 2:
+        return <AppServices />
+      case 3:
+      default:
+        return <ServiceTemplates />
+    }
+  }
+
   render() {
     const { step } = this.state;
     return (
@@ -54,7 +73,9 @@ export default class AppEditor extends React.Component {
               onChange={this.onChangeStep}
             />
           </Left>
-          <Right></Right>
+          <Right>
+            { this.renderSteps() }
+          </Right>
         </Content>
       </Wrapper>
     )
