@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  max-height: 170px;
+  max-height: 220px;
   overflow: auto;
   margin: -30px -20px;
 `;
