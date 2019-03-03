@@ -9,10 +9,11 @@ export const ContentWrapper = styled.div`
 
 export const SelectorWrapper = styled.div`
   display: flex;
-  flex: 1;
+  width: 700px;
 `;
 
 export const PreviewWrapper = styled.div`
   display: flex;
   width: 303px;
+  margin-left: 60px;
 `
