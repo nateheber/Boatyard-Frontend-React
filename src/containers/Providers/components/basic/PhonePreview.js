@@ -31,7 +31,11 @@ const Wrapper = styled.div`
 
 const ContentHolder = styled.div`
   display: flex;
+  height: 100%;
   flex-direction: column;
+  border-bottom-right-radius: 38.5px;
+  border-bottom-left-radius: 38.5px;
+  overflow: hidden;
 `
 
 export default ({ children }) => (

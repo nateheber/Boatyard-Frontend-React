@@ -7,6 +7,8 @@ const Wrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  overflow-y: scroll;
+  margin-bottom: 35px;
 `;
 
 export default class ServicePreview extends React.Component {
@@ -15,7 +17,7 @@ export default class ServicePreview extends React.Component {
     return (
       <Wrapper>
         { services.map(service => (
-          <ServiceItem id={service} key={`service_preview${service}`} />
+          <ServiceItem service={service} key={`service_preview${service.id}`} />
         )) }
       </Wrapper>
     );

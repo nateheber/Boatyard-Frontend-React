@@ -5,7 +5,7 @@ import { get, isEmpty, findIndex, remove } from 'lodash';
 
 import { SearchBox } from 'components/basic/Input';
 
-import { actionTypes, GetServices, UpdateService } from 'store/actions/services';
+import { GetServices, UpdateService } from 'store/actions/services';
 import { refinedServicesSelector } from 'store/selectors/services';
 
 const HeaderWrapper = styled.div`
@@ -65,13 +65,13 @@ const SearchWrapper = styled.div`
 
 class ServiceSelector extends React.Component {
   static getDerivedStateFromProps(props) {
-    const { services } = props;
-    return { services };
+    const { selected } = props;
+    return { selected };
   }
 
   state = {
     keyword: '',
-    services: [],
+    selected: [],
   }
 
   componentDidMount() {
@@ -89,17 +89,15 @@ class ServiceSelector extends React.Component {
   }
 
   onSelect = service => () => {
-    const { id, name } = item;
-    const defaultIcon = get(item, 'relationships.icon.attributes.icon.button3X.url');
-    const customIcon = get(item, 'customIcon.button3X.url');
-    const { services } = this.state;
-    const idx = findIndex(services, item => item === id);
+    const { selected } = this.state;
+    const result = selected.map(service => ({ ...service }));
+    const idx = findIndex(result, item => item.id === service.id);
     if (idx >= 0) {
-      remove(services, item => item === id);
+      remove(result, item => item.id === service.id);
     } else {
-      services.push(id);
+      result.push(service);
     }
-    this.props.onChange(services);
+    this.props.onChange(result);
   }
 
   loadPage = (page) => {
