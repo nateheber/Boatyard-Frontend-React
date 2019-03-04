@@ -69,6 +69,7 @@ const Label = styled.span`
 `
 
 export default class SwitchInput extends React.Component {
+  onChange = () => {}
   render() {
     const { label } = this.props;
     return (
@@ -90,6 +91,8 @@ export default class SwitchInput extends React.Component {
             width={36}
             className="react-switch"
             id="material-switch"
+            onChange={this.onChange}
+            disabled
           />
           <Label>NO</Label>
         </RightPart>

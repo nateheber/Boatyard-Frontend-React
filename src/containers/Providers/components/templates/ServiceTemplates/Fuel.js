@@ -64,9 +64,11 @@ export default class Fuel extends React.Component {
         <TextInput label="GALLONS" />
         <SelectorInput label="AMOUNT" />
         <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
-        <DescriptionInput style={{ marginTop: '20px' }} onChange={this.onChange('description')}>
-          {description}
-        </DescriptionInput>
+        <DescriptionInput
+          style={{ marginTop: '20px' }}
+          value={description}
+          onChange={this.onChange('description')}
+        />
       </Wrapper>
     )
   }

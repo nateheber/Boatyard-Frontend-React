@@ -62,31 +62,31 @@ export default class TemplateSelector extends React.Component {
       switch (item) {
         case 'lineHandling':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
+            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <LineHandling { ...templateDefValues } disabled />
             </TemplateOption>
           );
         case 'trashPickup':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
+            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <TrashPickup {...templateDefValues} disabled />
             </TemplateOption>
           );
         case 'pumpOut':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
+            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <PumpOut {...templateDefValues} disabled />
             </TemplateOption>
           );
         case 'fuel':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
+            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <Fuel {...templateDefValues} disabled />
             </TemplateOption>
           );
         case 'boatWash':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
+            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <BoatWash {...templateDefValues} disabled />
             </TemplateOption>
           );

@@ -70,8 +70,17 @@ export default class BoatWash extends React.Component {
       <Wrapper>
         <PriceUnitInput disabled={disabled} unit={unit} price={price} onChange={this.onChangePrice} />
         <TitleInput disabled={disabled} value={title} onChange={this.onChange('title')} />
-        <DescriptionInput disabled={disabled} style={{ marginBottom: '20px' }} onChange={this.onChange('description')}>{description}</DescriptionInput>
-        <DescriptionInput className="list" onChange={this.onChange('listDescription')}>{listDescription}</DescriptionInput>
+        <DescriptionInput
+          disabled={disabled}
+          value={description}
+          style={{ marginBottom: '20px' }}
+          onChange={this.onChange('description')}
+        />
+        <DescriptionInput
+          className="list"
+          value={listDescription}
+          onChange={this.onChange('listDescription')}
+        />
         <ListInput items={listItems} />
         <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>

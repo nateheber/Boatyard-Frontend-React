@@ -67,7 +67,11 @@ export default class PumpOut extends React.Component {
       <Wrapper>
         <PriceUnitInput disabled={disabled} unit={unit} price={price} onChange={this.onChangePrice} />
         <TitleInput disabled={disabled} value={title} onChange={this.onChange('title')} />
-        <DescriptionInput disabled={disabled} onChange={this.onChange('description')}>{description}</DescriptionInput>
+        <DescriptionInput
+          disabled={disabled}
+          value={description}
+          onChange={this.onChange('description')}
+        />
         <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} />
         <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
