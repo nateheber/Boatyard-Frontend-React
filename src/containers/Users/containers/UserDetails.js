@@ -138,7 +138,7 @@ class UserDetails extends React.Component {
         success: (currentUser) => {
           this.setState({ currentUser });
         }
-      });  
+      });
     }
     this.props.GetOrders({ params: { 'order[user_id]': userId, page: 1, per_page: 10 } });
     this.props.GetCreditCards({
