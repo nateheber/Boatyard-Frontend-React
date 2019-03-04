@@ -28,17 +28,17 @@ function* getCreditCards(action) {
 
 function* createCreditCard(action) {
   const { data, success, error } = action.payload;
-  const { cardNumber, cvv, year, month, firstName, lastName } = data;
+  const { card_number, cvv, year, month, first_name, last_name } = data;
   const spreedlyClient = createSpreedlyClient();
   const creditCardClient = yield select(getCreditCardClient);
   try {
     const result = yield call(spreedlyClient.post, '', {
-      paymentMethod: {
-        creditCard: {
-          firstName,
-          lastName,
-          number: cardNumber,
-          verificationValue: cvv,
+      payment_method: {
+        credit_card: {
+          first_name,
+          last_name,
+          number: card_number,
+          verification_value: cvv,
           month: parseInt(month),
           year: parseInt(year)
         },
@@ -48,39 +48,39 @@ function* createCreditCard(action) {
       transaction: {
         paymentMethod: {
           cardType: name,
-          month: expirationMonth,
-          year: expirationYear,
+          month: expiration_month,
+          year: expiration_year,
           token: response,
           lastFourDigits: last4
         }
       }
     } = result;
-    const { userId, childAccountId } = data;
-    const passData = userId ? {
-      userId,
+    const { user_id, child_account_id } = data;
+    const passData = user_id ? {
+      user_id,
       name,
-      expirationMonth,
-      expirationYear,
+      expiration_month,
+      expiration_year,
       response,
       last4,
-      isDefault: false
-    }: childAccountId ? {
-      childAccountId,
+      is_default: false
+    }: child_account_id ? {
+      child_account_id,
       name,
-      expirationMonth,
-      expirationYear,
+      expiration_month,
+      expiration_year,
       response,
       last4,
-      isDefault: false
+      is_default: false
     }: {
       name,
-      expirationMonth,
-      expirationYear,
+      expiration_month,
+      expiration_year,
       response,
       last4,
-      isDefault: false
+      is_default: false
     };
-    yield call(creditCardClient.create, { creditCard: passData });
+    yield call(creditCardClient.create, { credit_card: passData });
     yield put({
       type: actionTypes.CREATE_CREDIT_CARD_SUCCESS,
     });

@@ -1,7 +1,17 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get } from 'lodash';
+import { get, set } from 'lodash';
 import { actionTypes } from '../actions/providers';
+
+function refactorIncluded(included) {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i]
+    set(refactored, `${type}.${id}`, {...included[i]})
+  }
+  return refactored;
+}
+
 
 const initialState = {
   currentStatus: '',
@@ -12,7 +22,9 @@ const initialState = {
   page: 0,
   perPage: 20,
   total: 0,
-  errors: null
+  errors: null,
+  preferredProviders: [],
+  included: []
 };
 
 
@@ -58,6 +70,30 @@ export default handleActions(
         draft.filteredProviders = providers;
       }),
     [actionTypes.FILTER_PROVIDERS_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.GET_PREFERRED_PROVIDERS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.GET_PREFERRED_PROVIDERS_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { total, perPage, providers, page, included } = payload;
+        draft.currentStatus = type;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.page = page;
+        draft.preferredProviders = providers;
+        draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.GET_PREFERRED_PROVIDERS_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
@@ -115,6 +151,24 @@ export default handleActions(
         draft.currentProvider = payload;
       }),
     [actionTypes.CREATE_PROVIDER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.ADD_PREFERRED_PROVIDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.ADD_PREFERRED_PROVIDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.ADD_PREFERRED_PROVIDER_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;

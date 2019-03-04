@@ -171,7 +171,6 @@ export default class CustomerModal extends React.Component {
     }
   }
 
-  
   render() {
     const fields = this.getFormFieldInfo();
     const { title, open, onClose, loading } = this.props;

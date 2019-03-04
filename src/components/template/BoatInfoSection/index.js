@@ -88,6 +88,7 @@ class BoatInfoSection extends React.Component {
       <React.Fragment>
         {boats.map((boat, index) => (
           <InfoSection
+            disbled={user.isDisabled}
             opened={openedBoatIdx === index || boats.length === 1}
             onEdit={() => this.editBoat(index)}
             onDelete={() => this.deleteBoat(index)}

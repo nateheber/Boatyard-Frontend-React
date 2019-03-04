@@ -262,9 +262,9 @@ const mapStateToProps = state => ({
   boatStatus: state.boat.currentStatus,
   paymentStatus: state.payment.currentStatus,
   currentChildAccount: state.childAccount.currentChildAccount,
-  page: state.order.newOrders.total,
-  perPage: state.order.newOrders.total,
-  total: state.order.newOrders.total,
+  page: state.order.orders.page,
+  perPage: state.order.orders.perPage,
+  total: state.order.orders.total,
   orders: refinedOrdersSelector(state)
 });
 
