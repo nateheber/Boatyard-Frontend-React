@@ -6,7 +6,7 @@ import { Row, Col } from 'react-flexbox-grid';
 import { get, isEmpty } from 'lodash';
 import styled from 'styled-components';
 
-import { actionTypes as userActions, GetUser, DeleteUser } from 'store/actions/users';
+import { actionTypes as userActions, GetUser, UpdateUser } from 'store/actions/users';
 import { actionTypes as customerActions, GetChildAccounts } from 'store/actions/child-accounts';
 import { actionTypes as orderActions, GetOrders } from 'store/actions/orders';
 import {
@@ -64,6 +64,7 @@ class UserDetails extends React.Component {
     const userId = query.user;
     this.state = {
       userId,
+      currentUser: null,
       isFirstLoadUser: true,
       isFirstLoadOrders: true,
       isFirstLoadCustomers: true,
@@ -77,8 +78,8 @@ class UserDetails extends React.Component {
     const { GetUser, GetChildAccounts, GetOrders, GetBoats, GetCreditCards, GetPreferredProviders } = this.props;
     GetUser({
       userId: userId,
-      success: () => {
-        this.setState({ isFirstLoadUser: false });
+      success: (currentUser) => {
+        this.setState({ isFirstLoadUser: false, currentUser });
       }
     });
     GetOrders({
@@ -243,16 +244,21 @@ class UserDetails extends React.Component {
     });
   };
 
-  deleteCustomer = () => {
-    const { DeleteUser } = this.props;
-    const { userId } = this.state;
-    this.hideDeleteModal();
-    DeleteUser({
-      userId: userId,
-      success: () => {
-        this.props.history.push('/users');
+  toggleDisableUser = () => {
+    const { UpdateUser } = this.props;
+    const { currentUser } = this.state;
+    UpdateUser({
+      userId: currentUser.id,
+      data: {
+        user: {
+          is_disabled: !currentUser.isDisabled
+        }
+      },
+      success: (currentUser) => {
+        this.setState({ currentUser });
+        this.hideDeleteModal();
       }
-    })
+    });
   };
 
   loadOptions = val => {
@@ -298,7 +304,6 @@ class UserDetails extends React.Component {
 
   render() {
     const {
-      currentUser,
       customers,
       page,
       orders,
@@ -311,6 +316,7 @@ class UserDetails extends React.Component {
       paymentStatus
     } = this.props
     const {
+      currentUser,
       isFirstLoadUser,
       isFirstLoadCustomers,
       isFirstLoadOrders,
@@ -333,7 +339,7 @@ class UserDetails extends React.Component {
     const pageCount = this.getPageCount();
     const actions = [
       <HollowButton onClick={this.hideDeleteModal} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.deleteCustomer} key="modal_btn_save">Confirm</OrangeButton>
+      <OrangeButton onClick={this.toggleDisableUser} key="modal_btn_save">Confirm</OrangeButton>
     ];
     const loadingUser = userStatus === userActions.GET_USER;
     const loadingOrders = orderStatus === orderActions.GET_ORDERS;
@@ -348,7 +354,7 @@ class UserDetails extends React.Component {
           <LoadingSpinner loading={true} />
         ) : (
           <React.Fragment>
-            <UserDetailsHeader name={userName} onDelete={this.showDeleteModal} />
+            <UserDetailsHeader user={currentUser} onDelete={this.showDeleteModal} />
             <PageContent>
               <Col sm={12} md={8} lg={8} xl={8} >
                 {!(loadingOrders && isFirstLoadOrders) && <Table
@@ -368,9 +374,9 @@ class UserDetails extends React.Component {
                   </Col>}
                   {!(loadingPreferredProviders && isFirstLoadPreferredProviders) && <Col sm={12} md={12} lg={6} xl={6}  style={{ marginTop: 15, marginBottom: 15 }}>
                     <Section title={"Preferred Providers"}>
-                      <PreferredProvidersSection providers={preferredProviders} onRemove={this.removePreferredProvider} />
+                      <PreferredProvidersSection user={currentUser} providers={preferredProviders} onRemove={this.removePreferredProvider} />
                     </Section>
-                    <ActionSection>
+                    {!currentUser.isDisabled && <ActionSection>
                       <Col sm={8} md={8} lg={8}>
                         <BoatyardSelect
                           ref={this.setProviderSelectRef}
@@ -385,7 +391,7 @@ class UserDetails extends React.Component {
                         />
                       </Col>
                       <HollowButton onClick={this.addPreferredProvider} style={{minWidth: 'inherit'}}>Add</HollowButton>
-                    </ActionSection>
+                    </ActionSection>}
                   </Col>}
                 </Row>
               </Col>
@@ -394,7 +400,7 @@ class UserDetails extends React.Component {
                   <Section title={"User & Boat Info"}>
                     <CustomerInfoSection type="user" customerInfo={currentUser} refreshInfo={this.refreshInfo} />
                     {!(loadingBoats && isFirstLoadBoats) && <BoatInfoSection user={currentUser} />}
-                    <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>
+                    {!currentUser.isDisabled && <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>}
                   </Section>
                 </SectionGroup>
                 <SectionGroup>
@@ -417,7 +423,8 @@ class UserDetails extends React.Component {
               open={visibleofDeleteModal}
               onClose={this.hideDeleteModal}
             >
-              <Label>Deleting {userName}&#39;s account is permanent and cannot be undone.</Label>
+              {currentUser.isDisabled && <Label>Do you want to restore &#39;{userName}&#39;?</Label>}
+              {!currentUser.isDisabled && <Label>Do you want to suspend &#39;{userName}&#39;?</Label>}
             </Modal>
             {userStatus === userActions.DELETE_USER && <LoadingSpinner
               loading={userStatus === userActions.DELETE_USER}
@@ -435,7 +442,6 @@ const mapStateToProps = state => ({
   boatStatus: state.boat.currentStatus,
   paymentStatus: state.payment.currentStatus,
   providerStatus: state.provider.currentStatus,
-  currentUser: state.user.currentUser,
   page: state.order.orders.page,
   perPage: state.order.orders.perPage,
   total: state.order.orders.total,
@@ -449,7 +455,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   GetUser,
   GetChildAccounts,
-  DeleteUser,
+  UpdateUser,
   GetBoats,
   CreateBoat,
   GetOrders,

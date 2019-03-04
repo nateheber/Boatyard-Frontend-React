@@ -34,14 +34,14 @@ const NoProviders = styled(NormalText)`
   text-align: center;
 `;
 
-export default ({ providers, onRemove }) => (
+export default ({ user, providers, onRemove }) => (
   <Wrapper>
     {isEmpty(providers) && <NoProviders>There are no preferred providers.</NoProviders>}
     {providers.map((provider, index) => {
       return (
         <Provider key={`providers-${index}`}>
           <Name>{get(provider, 'relationships.provider.attributes.name')}</Name>
-          <RemoveButton onClick={evt => onRemove(provider)} />
+          {!user.isDisabled && <RemoveButton onClick={evt => onRemove(provider)} />}
         </Provider>
       )
     })}

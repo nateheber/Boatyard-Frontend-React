@@ -55,7 +55,7 @@ class CreditCardSection extends React.Component {
     const { user } = this.props;
     return (
       <React.Fragment>
-        <Section title="Payment Methods" mode="view" onEdit={this.showListModal} >
+        <Section title="Payment Methods" mode="view" disabled={user.isDisabled} onEdit={this.showListModal} >
           {!isEmpty(card) ?
            <InfoSection creditCard={card} />
            :

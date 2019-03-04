@@ -47,7 +47,7 @@ const HidingPart = styled.div`
 `
 export default class InfoSection extends React.Component {
   render () {
-    const { boatInfo, onEdit, opened, toggleSection } = this.props;
+    const { disbled, boatInfo, onEdit, opened, toggleSection } = this.props;
     const street = get(boatInfo, 'relationships.location.relationships.address.data.street', '');
     const city = get(boatInfo, 'relationships.location.relationships.address.data.city', '');
     const state = get(boatInfo, 'relationships.location.relationships.address.data.state', '');
@@ -63,7 +63,7 @@ export default class InfoSection extends React.Component {
         <Field>
           <EditWrapper>
             <Label>BOAT NAME</Label>
-            <EditButton onClick={onEdit} />
+            {!disbled && <EditButton onClick={onEdit} />}
           </EditWrapper>
           <FieldValue>{get(boatInfo, 'name', '')}</FieldValue>
         </Field>

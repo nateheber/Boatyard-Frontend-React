@@ -1,4 +1,5 @@
 import React from 'react';
+import { get } from 'lodash';
 
 import { SectionHeaderWrapper, LeftPart, RightPart } from 'components/basic/Header';
 import { HollowButton } from 'components/basic/Buttons';
@@ -23,14 +24,14 @@ const Label = styled.span`
   font-weight: 500;
 `;
 
-export default ({ name, onDelete }) => (
+export default ({ user, onDelete }) => (
   <SectionHeaderWrapper>
     <LeftPart>
-      <TitleSection>{name}<Icon src={BoatFlag}/><Label>App User</Label></TitleSection>
+      <TitleSection>{`${get(user, 'firstName')} ${get(user, 'lastName')}`}<Icon src={BoatFlag}/><Label>App User</Label></TitleSection>
     </LeftPart>
     <RightPart>
       <HollowButton onClick={onDelete}>
-        Suspend
+        {user.isDisabled ? 'Restore' : 'Suspend'}
       </HollowButton>
     </RightPart>
   </SectionHeaderWrapper>

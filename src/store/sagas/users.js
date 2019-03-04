@@ -57,17 +57,18 @@ function* getUser(action) {
   try {
     const result = yield call(userClient.read, userId);
     const { data } = result;
+    const payload = {
+      id: data.id,
+      type: data.type,
+      ...data.attributes,
+      ...data.relationships
+    };
     yield put({
       type: actionTypes.GET_USER_SUCCESS,
-      payload: {
-        id: data.id,
-        type: data.type,
-        ...data.attributes,
-        ...data.relationships
-      }
+      payload
     });
     if (success) {
-      yield call(success);
+      yield call(success, payload);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_USER_FAILURE, payload: e });
@@ -100,12 +101,24 @@ function* updateUser(action) {
   const userClient = yield select(getUserClient);
   const { userId, data, success, error } = action.payload;
   try {
-    yield call(userClient.update, userId, data);
+    const result = yield call(userClient.update, userId, data);
+    const user = get(result, 'data');
+    const payload = {
+      id: user.id,
+      type: user.type,
+      ...user.attributes,
+      ...user.relationships
+    };
+
+    yield put({
+      type: actionTypes.UPDATE_USER_SUCCESS,
+      payload
+    });
     yield put({
       type: actionTypes.UPDATE_USER_SUCCESS,
     });
     if (success) {
-      yield call(success);
+      yield call(success, payload);
     }
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_USER_FAILURE, payload: e });

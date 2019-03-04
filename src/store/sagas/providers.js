@@ -253,7 +253,7 @@ function* deleteProvider(action) {
 function* deletePreferredProvider(action) {
   const { providerId, success, error } = action.payload;
   try {
-    yield call(adminApiClient.delete, providerId);
+    yield call(adminPreferredApiClient.delete, providerId);
     yield put({
       type: actionTypes.DELETE_PROVIDER_SUCCESS,
     });
