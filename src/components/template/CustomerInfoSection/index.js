@@ -15,11 +15,15 @@ class CustomerInfoSection extends React.Component {
   onSave = (data) => {
     const { customerInfo: { id, type }, refreshInfo, UpdateChildAccount, UpdateUser } = this.props;
     if (type === 'users') {
+      const user = data.user;
+      if (user.hasOwnProperty('locations_attributes')) {
+        delete user['locations_attributes'];
+      }
       UpdateUser({
-        userId: id, data: { user: { ...data.user } },
-        success: () => {
+        userId: id, data: { user },
+        success: (currentUser) => {
           this.hideModal();
-          refreshInfo();
+          refreshInfo(currentUser);
         },
         error: () => {
           const { userErrors } = this.props;

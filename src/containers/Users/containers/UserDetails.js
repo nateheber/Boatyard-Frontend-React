@@ -128,9 +128,18 @@ class UserDetails extends React.Component {
     return Math.ceil(total/perPage);
   };
 
-  refreshInfo = () => {
+  refreshInfo = (currentUser) => {
     const { userId } = this.state;
-    this.props.GetUser({ userId: userId });
+    if (currentUser) {
+      this.setState({ currentUser });
+    } else {
+      GetUser({
+        userId: userId,
+        success: (currentUser) => {
+          this.setState({ currentUser });
+        }
+      });  
+    }
     this.props.GetOrders({ params: { 'order[user_id]': userId, page: 1, per_page: 10 } });
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': userId }
