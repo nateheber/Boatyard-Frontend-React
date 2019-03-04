@@ -43,6 +43,7 @@ export default class AppEditor extends React.Component {
     step: 0,
     image: {},
     services: [],
+    currentService: {},
   }
 
   onChangeStep = (step) => {

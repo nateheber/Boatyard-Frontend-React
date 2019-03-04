@@ -1,10 +1,10 @@
 import styled from 'styled-components';
+import TextareaAutosize from 'react-autosize-textarea';
 
-const DescriptionInput = styled.textarea`
+const DescriptionInput = styled(TextareaAutosize)`
   width: 223px;
   padding: 10px;
   padding-top: 0px;
-  min-height: 60px;
   height: auto;
   background: transparent;
   font-size: 8.4px;
@@ -19,6 +19,10 @@ const DescriptionInput = styled.textarea`
   outline: none;
   &:focus {
     background-color: rgba(255, 255, 255, 0.5);
+  }
+  &.list {
+    font-size: 9.6px;
+    text-transform: uppercase;
   }
 `;
 

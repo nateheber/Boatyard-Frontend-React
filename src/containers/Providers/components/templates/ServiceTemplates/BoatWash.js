@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { set } from 'lodash';
 
 import TitleInput from '../../basic/ServiceTemplate/TitleInput';
-import SwitchInput from '../../basic/ServiceTemplate/SwitchInput';
 import DescriptionInput from '../../basic/ServiceTemplate/DescriptionInput';
 import Button from '../../basic/ServiceTemplate/ButtonInput';
 import PriceUnitInput from '../../basic/ServiceTemplate/PriceUnitInput';
+import ListInput from '../../basic/ServiceTemplate/ListInput';
 
 const Wrapper = styled.div`
   display: flex;
@@ -61,6 +61,8 @@ export default class BoatWash extends React.Component {
       unit,
       title,
       description,
+      listDescription,
+      listItems,
       buttonText,
     } = this.state;
     const { disabled } = this.props;
@@ -68,7 +70,9 @@ export default class BoatWash extends React.Component {
       <Wrapper>
         <PriceUnitInput disabled={disabled} unit={unit} price={price} onChange={this.onChangePrice} />
         <TitleInput disabled={disabled} value={title} onChange={this.onChange('title')} />
-        <DescriptionInput disabled={disabled} onChange={this.onChange('description')}>{description}</DescriptionInput>
+        <DescriptionInput disabled={disabled} style={{ marginBottom: '20px' }} onChange={this.onChange('description')}>{description}</DescriptionInput>
+        <DescriptionInput className="list" onChange={this.onChange('listDescription')}>{listDescription}</DescriptionInput>
+        <ListInput items={listItems} />
         <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
