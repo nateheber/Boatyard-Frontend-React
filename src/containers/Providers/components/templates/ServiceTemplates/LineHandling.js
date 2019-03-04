@@ -28,9 +28,9 @@ export default class LineHandling extends React.Component {
     this.state = { description, textAreaLabel, buttonText };
   }
 
-  onChange = field => (value) => {
+  onChange = field => (e) => {
     const updateObject = {};
-    set(updateObject, field, value);
+    set(updateObject, field, e.target.value);
     this.setState(updateObject);
   }
 
@@ -42,7 +42,7 @@ export default class LineHandling extends React.Component {
         <Image src={Icon} />
         <DescriptionInput disabled={disabled} onChange={this.onChange('description')}>{description}</DescriptionInput>
         <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
-        <Button disabled={disabled} title={buttonText} onChange={this.onChange(buttonText)} />
+        <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
   }

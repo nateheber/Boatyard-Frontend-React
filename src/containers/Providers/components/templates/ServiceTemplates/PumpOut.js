@@ -47,9 +47,9 @@ export default class PumpOut extends React.Component {
     this.setState(updateObject);
   }
 
-  onChange = field => (value) => {
+  onChange = field => (e) => {
     const updateObject = {};
-    set(updateObject, field, value);
+    set(updateObject, field, e.target.value);
     this.setState(updateObject);
   }
 
@@ -69,7 +69,7 @@ export default class PumpOut extends React.Component {
         <TitleInput disabled={disabled} value={title} onChange={this.onChange('title')} />
         <DescriptionInput disabled={disabled} onChange={this.onChange('description')}>{description}</DescriptionInput>
         <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} />
-        <Button disabled={disabled} title={buttonText} onChange={this.onChange(buttonText)} />
+        <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
   }

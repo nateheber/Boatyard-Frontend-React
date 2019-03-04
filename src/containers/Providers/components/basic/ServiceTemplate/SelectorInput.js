@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Switch from 'react-switch';
 
-import './style.css';
+import BackArrow from 'resources/serviceTemplate/backArrow.png';
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,9 +26,14 @@ const LeftPart = styled.div`
 
 const RightPart = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: row;
   align-items: center;
   padding: 7px;
+  background-image: url(${BackArrow});
+  background-size: 4px 7px;
+  background-repeat: no-repeat;
+  background-position: center right 15px;
 `;
 
 const LabelInput = styled.textarea`
@@ -53,19 +57,7 @@ const LabelInput = styled.textarea`
   width: 100%;
 `;
 
-const Label = styled.span`
-  font-family: DIN;
-  font-size: 7.2px;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  color: #094359;
-  margin-left: 6px;
-`
-
-export default class SwitchInput extends React.Component {
+export default class SelectorInput extends React.Component {
   render() {
     const { label, onChange } = this.props;
     return (
@@ -76,19 +68,6 @@ export default class SwitchInput extends React.Component {
           </LabelInput>
         </LeftPart>
         <RightPart>
-          <Switch
-            checked={false}
-            handleDiameter={16}
-            uncheckedIcon={false}
-            checkedIcon={false}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-            height={14}
-            width={36}
-            className="react-switch"
-            id="material-switch"
-          />
-          <Label>NO</Label>
         </RightPart>
       </Wrapper>
     )

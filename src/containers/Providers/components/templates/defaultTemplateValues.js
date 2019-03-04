@@ -32,6 +32,17 @@ Does your holding tank require a special fitting for pump-outs?`,
       buttonText: 'Schedule'
     }
   },
+  fuel: {
+    templateTitle: 'Fuel',
+    data: {
+      price: '3.50',
+      unit: 'gal',
+      buttonText: 'schedule',
+      description: `Our fuel prices include all taxes and fees.
+
+Fuel prices fluctuate daily. If there is a change in price, a confirmation will be sent on the day of delivery with a final price for your approval. Your credit card will not be charged until your delivery is completed.`
+    }
+  }
   // boatWash: {
   //   price: '4.00',
   //   unit: 'ft',

@@ -47,9 +47,9 @@ export default class TrashPickup extends React.Component {
     this.setState(updateObject);
   }
 
-  onChange = field => (value) => {
+  onChange = field => (e) => {
     const updateObject = {};
-    set(updateObject, field, value);
+    set(updateObject, field, e.target.value);
     this.setState(updateObject);
   }
 
@@ -68,7 +68,7 @@ export default class TrashPickup extends React.Component {
         <PriceUnitInput disabled={disabled} unit={unit} price={price} style={{ marginBottom: '18px' }} onChange={this.onChangePrice} />
         <DescriptionInput disabled={disabled} onChange={this.onChange('description')}>{description}</DescriptionInput>
         <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
-        <Button disabled={disabled} title={buttonText} onChange={this.onChange(buttonText)} />
+        <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
   }

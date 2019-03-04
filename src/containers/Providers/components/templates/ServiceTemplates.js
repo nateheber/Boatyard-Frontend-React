@@ -7,6 +7,7 @@ import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../basic/Wrappe
 import LineHandling from './ServiceTemplates/LineHandling';
 import PumpOut from './ServiceTemplates/PumpOut';
 import TrashPickup from './ServiceTemplates/TrashPickup';
+import Fuel from './ServiceTemplates/Fuel';
 
 import defaultTemplateInfos from './defaultTemplateValues';
 
@@ -34,6 +35,10 @@ export default class ServiceTemplates extends React.Component {
       case 'pumpOut':
         return (
           <PumpOut {...data} />
+        );
+      case 'fuel':
+        return (
+          <Fuel {...data} />
         );
       default:
         return false;

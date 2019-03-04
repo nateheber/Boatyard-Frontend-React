@@ -7,6 +7,7 @@ import templatesInfo from './defaultTemplateValues' ;
 import LineHandling from './ServiceTemplates/LineHandling';
 import PumpOut from './ServiceTemplates/PumpOut';
 import TrashPickup from './ServiceTemplates/TrashPickup';
+import Fuel from './ServiceTemplates/Fuel';
 import TemplateOption from './ServiceTemplates/TemplateOption';
 
 const HeaderWrapper = styled.div`
@@ -74,6 +75,12 @@ export default class TemplateSelector extends React.Component {
           return (
             <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
               <PumpOut {...templateDefValues} disabled />
+            </TemplateOption>
+          );
+        case 'fuel':
+          return (
+            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
+              <Fuel {...templateDefValues} disabled />
             </TemplateOption>
           );
         default:
