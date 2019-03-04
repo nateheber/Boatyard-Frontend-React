@@ -8,6 +8,7 @@ import LineHandling from './ServiceTemplates/LineHandling';
 import PumpOut from './ServiceTemplates/PumpOut';
 import TrashPickup from './ServiceTemplates/TrashPickup';
 import Fuel from './ServiceTemplates/Fuel';
+import BoatWash from './ServiceTemplates/BoatWash';
 
 import defaultTemplateInfos from './defaultTemplateValues';
 
@@ -39,6 +40,10 @@ export default class ServiceTemplates extends React.Component {
       case 'fuel':
         return (
           <Fuel {...data} />
+        );
+      case 'boatWash':
+        return (
+          <BoatWash {...data} />
         );
       default:
         return false;

@@ -8,6 +8,7 @@ import LineHandling from './ServiceTemplates/LineHandling';
 import PumpOut from './ServiceTemplates/PumpOut';
 import TrashPickup from './ServiceTemplates/TrashPickup';
 import Fuel from './ServiceTemplates/Fuel';
+import BoatWash from './ServiceTemplates/BoatWash';
 import TemplateOption from './ServiceTemplates/TemplateOption';
 
 const HeaderWrapper = styled.div`
@@ -81,6 +82,12 @@ export default class TemplateSelector extends React.Component {
           return (
             <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
               <Fuel {...templateDefValues} disabled />
+            </TemplateOption>
+          );
+        case 'boatWash':
+          return (
+            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
+              <BoatWash {...templateDefValues} disabled />
             </TemplateOption>
           );
         default:
