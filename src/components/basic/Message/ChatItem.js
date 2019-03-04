@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
+import { isEmpty } from 'lodash';
 
 const Wrapper = styled.div`
   display: flex;
@@ -48,6 +49,7 @@ const MessageBody = styled.div`
   background-color: #f6f6f6;
   &.own {
     background-color: #ffd4aa;
+    text-align: right;
   }
   &:before {
     content: ' ';
@@ -68,12 +70,21 @@ const MessageBody = styled.div`
   }
 `;
 
+const Image = styled.img`
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+`
+
 export const ChatItem = ({ name, time, body, own, secondary, file }) => {
   return (
     <div>
       <Wrapper className={own ? 'own' : 'op'}>
         <DisplayName className={secondary ? 'secondary' : 'primary'}>{name}</DisplayName>
-        <MessageBody className={own ? 'own' : 'op'}>{body}</MessageBody>
+        <MessageBody className={own ? 'own' : 'op'}>
+          {body}
+          { !isEmpty(file) && <Image src={file} /> }
+        </MessageBody>
         <DateTime>{moment(time).format('MMM D, YYYY h:m A')}</DateTime>
       </Wrapper>
     </div>

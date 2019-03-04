@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
 
@@ -136,15 +137,14 @@ const ButtonIcon = styled.div`
 export class ChatBox extends React.Component {
   state = {
     text: '',
-    images: []
+    image: '',
   };
 
   handleChange = event => {
-    const { images } = this.state;
     const reader = new FileReader();
     reader.onloadend = () => {
       this.setState({
-        images: [...images, reader.result]
+        image: reader.result
       });
     }
     reader.readAsDataURL(event.target.files[0]);
@@ -156,23 +156,8 @@ export class ChatBox extends React.Component {
     });
   };
 
-  removeImage = idx => {
-    const { images } = this.state;
-    if (idx === 0) {
-      this.setState({
-        images: images.slice(1)
-      });
-    } else if (idx === images.length) {
-      this.setState({
-        images: images.slice(images.length - 1)
-      });
-    } else {
-      const fPart = images.slice(0, idx - 1);
-      const sPart = images.slice(idx + 1);
-      this.setState({
-        images: [...fPart, ...sPart]
-      });
-    }
+  removeImage = () => {
+    this.setState({ image: '' });
   };
 
   showInput = () => {
@@ -181,32 +166,29 @@ export class ChatBox extends React.Component {
 
   onSend = () => {
     const { onSend } = this.props;
-    const { text, images } = this.state;
-    onSend({text, images});
+    const { text, image } = this.state;
+    onSend({text, image});
+    this.setState({ text: '', image: '' });
   }
 
   render() {
     const { secondary, third, noBorder } = this.props;
-    const { text, images } = this.state;
+    const { text, image } = this.state;
     return (
       <Wrapper className={classNames({ secondary, third, noBorder })}>
         <InputGroup>
           <InputView>
             <TextArea value={text} onChange={this.onChangeText} />
-            {images.length > 0 && (
+            {!isEmpty(image) && (
               <ImageArea>
-                {images.map((image, key) => (
-                  <ImageContainer key={`img_${key}`}>
+                  <ImageContainer>
                     <Image src={image} />
                     <CloseButton
-                      onClick={() => {
-                        this.removeImage(key);
-                      }}
+                      onClick={this.removeImage}
                     >
                       <EvilIcon name="ei-close-o" size="s" />
                     </CloseButton>
                   </ImageContainer>
-                ))}
               </ImageArea>
             )}
           </InputView>
@@ -228,6 +210,7 @@ export class ChatBox extends React.Component {
             type="file"
             style={{ display: 'none' }}
             onChange={this.handleChange}
+            key={isEmpty(image)}
           />
         </InputGroup>
       </Wrapper>
