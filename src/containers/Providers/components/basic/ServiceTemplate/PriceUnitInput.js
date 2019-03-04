@@ -60,15 +60,15 @@ export default class PriceUnitInput extends React.Component {
   }
 
   render () {
-    const { style } = this.props;
+    const { style, disabled } = this.props;
     const { unit, price } = this.state;
     return (
       <Wrapper style={style}>
         <PriceWrapper>
-          $<AutoResize value={price} inputStyle={priceInputStyle} onChange={this.onChange('price')} />
+          $<AutoResize disabled={disabled} value={price} inputStyle={priceInputStyle} onChange={this.onChange('price')} />
         </PriceWrapper>
         <UnitWrapper>
-          /<AutoResize value={unit} inputStyle={unitInputStyle} onChange={this.onChange('unit')} />
+          /<AutoResize disabled={disabled} value={unit} inputStyle={unitInputStyle} onChange={this.onChange('unit')} />
         </UnitWrapper>
       </Wrapper>
     )

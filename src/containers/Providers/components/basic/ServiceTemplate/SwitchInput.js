@@ -67,11 +67,11 @@ const Label = styled.span`
 
 export default class SwitchInput extends React.Component {
   render() {
-    const { label, onChange } = this.props;
+    const { label, onChange, disabled } = this.props;
     return (
       <Wrapper>
         <LeftPart>
-          <LabelInput onChange={onChange}>
+          <LabelInput disabled={disabled} onChange={onChange}>
             {label}
           </LabelInput>
         </LeftPart>

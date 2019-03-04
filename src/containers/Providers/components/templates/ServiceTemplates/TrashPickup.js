@@ -61,13 +61,14 @@ export default class TrashPickup extends React.Component {
       textAreaLabel,
       buttonText,
     } = this.state;
+    const { disabled } = this.props;
     return (
       <Wrapper>
         <Image src={Icon} />
-        <PriceUnitInput unit={unit} price={price} style={{ marginBottom: '18px' }} onChange={this.onChangePrice} />
-        <DescriptionInput onChange={this.onChange('description')}>{description}</DescriptionInput>
-        <TextAreaInput label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
-        <Button title={buttonText} onChange={this.onChange(buttonText)} />
+        <PriceUnitInput disabled={disabled} unit={unit} price={price} style={{ marginBottom: '18px' }} onChange={this.onChangePrice} />
+        <DescriptionInput disabled={disabled} onChange={this.onChange('description')}>{description}</DescriptionInput>
+        <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
+        <Button disabled={disabled} title={buttonText} onChange={this.onChange(buttonText)} />
       </Wrapper>
     )
   }

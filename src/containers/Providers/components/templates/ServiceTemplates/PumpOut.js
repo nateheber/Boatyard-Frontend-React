@@ -62,13 +62,14 @@ export default class PumpOut extends React.Component {
       inputLabel,
       buttonText,
     } = this.state;
+    const { disabled } = this.props;
     return (
       <Wrapper>
-        <PriceUnitInput unit={unit} price={price} onChange={this.onChangePrice} />
-        <TitleInput value={title} onChange={this.onChange('title')} />
-        <DescriptionInput onChange={this.onChange('description')}>{description}</DescriptionInput>
-        <SwitchInput label={inputLabel} onChange={this.onChange('inputLabel')} />
-        <Button title={buttonText} onChange={this.onChange(buttonText)} />
+        <PriceUnitInput disabled={disabled} unit={unit} price={price} onChange={this.onChangePrice} />
+        <TitleInput disabled={disabled} value={title} onChange={this.onChange('title')} />
+        <DescriptionInput disabled={disabled} onChange={this.onChange('description')}>{description}</DescriptionInput>
+        <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} />
+        <Button disabled={disabled} title={buttonText} onChange={this.onChange(buttonText)} />
       </Wrapper>
     )
   }

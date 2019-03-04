@@ -15,8 +15,8 @@ const Wrapper = styled.div`
   padding-right: 10px;
 `;
 
-export default ({ title, onChange }) => (
+export default ({ title, disabled, onChange }) => (
   <Wrapper>
-    <LabelInput className="button" value={title} onChange={onChange} />
+    <LabelInput disabled={disabled} className="button" value={title} onChange={onChange} />
   </Wrapper>
 )

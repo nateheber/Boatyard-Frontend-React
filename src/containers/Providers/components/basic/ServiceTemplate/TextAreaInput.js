@@ -22,11 +22,11 @@ const Header = styled.div`
 
 export default class TextAreaInput extends React.Component {
   render() {
-    const { label, onChange } = this.props;
+    const { label, onChange, disabled } = this.props;
     return (
       <Wrapper>
         <Header>
-          <LabelInput value={label} onChange={onChange} />
+          <LabelInput disabled={disabled} value={label} onChange={onChange} />
         </Header>
       </Wrapper>
     )

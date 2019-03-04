@@ -36,12 +36,13 @@ export default class LineHandling extends React.Component {
 
   render() {
     const { description, textAreaLabel, buttonText } = this.state;
+    const { disabled } = this.props;
     return (
       <Wrapper>
         <Image src={Icon} />
-        <DescriptionInput onChange={this.onChange('description')}>{description}</DescriptionInput>
-        <TextAreaInput label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
-        <Button title={buttonText} onChange={this.onChange(buttonText)} />
+        <DescriptionInput disabled={disabled} onChange={this.onChange('description')}>{description}</DescriptionInput>
+        <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
+        <Button disabled={disabled} title={buttonText} onChange={this.onChange(buttonText)} />
       </Wrapper>
     )
   }

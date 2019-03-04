@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { CheckField } from 'components/basic/Input';
 
+import HeaderImage from 'resources/preview_header_type2.png';
+
 const Wrapper = styled.div`
   display: flex;
   width: 50%;
@@ -11,16 +13,35 @@ const Wrapper = styled.div`
 `;
 
 const Content = styled.div`
+  position: relative;
   display: flex;
-  width: 225px;
+  flex-direction: column;
+  width: 245px;
   height: 487px;
   margin-top: 30px;
 `;
+
+const Title = styled.div`
+  position: absolute;
+  width: 150px;
+  top: 28px;
+  left: 50%;
+  margin-left: -75px;
+  color: white;
+  font-size: 13.2px;
+  text-align: center;
+`;
+
+const Header = styled.img`
+  width: 100%;
+`
 
 export default ({ selected, title, onClick, children }) => (
   <Wrapper>
     <CheckField title={title} checked={selected} onClick={onClick} />
     <Content>
+      <Header src={HeaderImage} />
+      <Title>{title}</Title>
       {children}
     </Content>
   </Wrapper>

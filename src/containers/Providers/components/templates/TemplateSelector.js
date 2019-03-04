@@ -61,25 +61,25 @@ export default class TemplateSelector extends React.Component {
         case 'lineHandling':
           return (
             <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
-              <LineHandling { ...templateDefValues } />
+              <LineHandling { ...templateDefValues } disabled />
             </TemplateOption>
           );
         case 'trashPickup':
           return (
             <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
-              <TrashPickup {...templateDefValues} />
+              <TrashPickup {...templateDefValues} disabled />
             </TemplateOption>
           );
         case 'pumpOut':
           return (
             <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)}>
-              <PumpOut {...templateDefValues} />
+              <PumpOut {...templateDefValues} disabled />
             </TemplateOption>
           );
         default:
           return false;
       }
-    })
+    });
   }
 
   render() {
