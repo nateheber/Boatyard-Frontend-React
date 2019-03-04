@@ -174,14 +174,12 @@ class NewMessage extends React.Component {
   sendMessage = (data, recipientInfo) => () => {
     this.props.CreateMessage({
       data: {
-        message: isEmpty(data.images) ? {
+        message: isEmpty(data.image) ? {
           content: data.text,
           ...recipientInfo,
         } : {
           content: data.text,
-          file: {
-            url: get(data, 'images[0]')
-          },
+          file: get(data, 'image'),
           ...recipientInfo,
         }
       },

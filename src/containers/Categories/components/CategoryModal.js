@@ -221,8 +221,9 @@ class CategoryModal extends React.Component {
       {
         field: 'cost',
         label: 'Price',
-        type: 'text_field',
+        type: 'currency_field',
         required: false,
+        placeholder: '$0.00',
         defaultValue: cost,
         xs: 12,
         sm: 12,
@@ -313,7 +314,11 @@ class CategoryModal extends React.Component {
     if (this.categoryFields.validateFields()) {
       let values = {
         ...this.categoryFields.getFieldValues(),
-        ...this.descriptionField.getFieldValues()
+        ...this.descriptionField.getFieldValues(),
+      };
+      values = {
+        ...values,
+        cost: values.cost || '0'
       };
       if (defaultIcon) {
         values = {

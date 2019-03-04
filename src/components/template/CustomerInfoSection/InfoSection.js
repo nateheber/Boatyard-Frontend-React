@@ -26,13 +26,13 @@ const EditWrapper = styled.div`
   justify-content: space-between;
 `
 
-export default ({ firstName, lastName, email, phoneNumber, onEdit }) => (
+export default ({ firstName, lastName, email, phoneNumber, isDisabled, onEdit }) => (
   <Wrapper>
     <EditWrapper>
       <Name>
         {firstName} {lastName}
       </Name>
-      {onEdit && <EditButton onClick={onEdit} />}
+      {onEdit && !isDisabled && <EditButton onClick={onEdit} />}
     </EditWrapper>
     <FieldValue>{phoneNumber}</FieldValue>
     <FieldValue>{email}</FieldValue>
