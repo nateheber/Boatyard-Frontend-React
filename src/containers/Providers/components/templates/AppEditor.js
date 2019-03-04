@@ -10,6 +10,7 @@ import ServiceTemplates from './ServiceTemplates';
 
 const Wrapper = styled.div`
   display: flex;
+  font-family: DIN;
   flex-direction: column;
   flex: 1;
   height: calc(100% - 20px);

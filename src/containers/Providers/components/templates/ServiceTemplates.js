@@ -1,17 +1,58 @@
 import React from 'react';
 
-import ImageSelector from '../compound/ImageSelector';
+import TemplateSelector from './TemplateSelector';
+import PhonePreview from '../basic/PhonePreview';
 
 import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../basic/Wrappers';
+import LineHandling from './ServiceTemplates/LineHandling';
+import PumpOut from './ServiceTemplates/PumpOut';
+import TrashPickup from './ServiceTemplates/TrashPickup';
+
+import defaultTemplateInfos from './defaultTemplateValues';
 
 export default class ServiceTemplates extends React.Component {
+  state = {
+    selected: 'lineHandling',
+  }
+
+  onChange = (selected) => {
+    this.setState({ selected });
+  }
+
+  renderPreviewer = () => {
+    const { selected } = this.state;
+    const { data } = defaultTemplateInfos[selected];
+    switch (selected) {
+      case 'lineHandling':
+        return (
+          <LineHandling { ...data } />
+        );
+      case 'trashPickup':
+        return (
+          <TrashPickup {...data} />
+        );
+      case 'pumpOut':
+        return (
+          <PumpOut {...data} />
+        );
+      default:
+        return false;
+    }
+  }
+
   render() {
+    const { selected } = this.state;
+    const { templateTitle } = defaultTemplateInfos[selected];
     return (
       <ContentWrapper>
         <SelectorWrapper>
-          <ImageSelector />
+          <TemplateSelector selected={selected} onChange={this.onChange} />
         </SelectorWrapper>
-        <PreviewWrapper />
+        <PreviewWrapper>
+          <PhonePreview secondary title={templateTitle}>
+            {this.renderPreviewer()}
+          </PhonePreview>
+        </PreviewWrapper>
       </ContentWrapper>
     )
   }
