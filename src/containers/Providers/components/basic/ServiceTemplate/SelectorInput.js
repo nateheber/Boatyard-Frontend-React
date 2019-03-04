@@ -36,8 +36,12 @@ const RightPart = styled.div`
   background-position: center right 15px;
 `;
 
-const LabelInput = styled.textarea`
+const LabelInput = styled.div`
   width: 50px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   background: transparent;
   font-size: 7.2px;
   font-style: normal;
@@ -54,16 +58,15 @@ const LabelInput = styled.textarea`
   text-align: right;
   text-transform: uppercase;
   color: white;
-  width: 100%;
 `;
 
 export default class SelectorInput extends React.Component {
   render() {
-    const { label, onChange } = this.props;
+    const { label } = this.props;
     return (
       <Wrapper>
         <LeftPart>
-          <LabelInput disabled onChange={onChange}>
+          <LabelInput>
             {label}
           </LabelInput>
         </LeftPart>

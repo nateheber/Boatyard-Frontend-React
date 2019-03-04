@@ -29,8 +29,12 @@ const RightPart = styled.div`
   padding: 7px;
 `;
 
-const LabelInput = styled.textarea`
+const LabelInput = styled.div`
   width: 50px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   background: transparent;
   font-size: 7.2px;
   font-style: normal;
