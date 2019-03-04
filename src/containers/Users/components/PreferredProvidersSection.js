@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import RemoveButton from '../../Orders/components/basic/RemoveButton';
+import { NormalText } from 'components/basic/Typho'
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,15 +28,22 @@ const Provider = styled.div`
   align-items: center;
 `;
 
+const NoProviders = styled(NormalText)`
+  padding: 20px;
+  width: 100%;
+  text-align: center;
+`;
+
 export default ({ providers, onRemove }) => (
   <Wrapper>
-        {providers.map((provider, index) => {
-          return (
-            <Provider key={`providers-${index}`}>
-              <Name>{get(provider, 'relationships.provider.attributes.name')}</Name>
-              <RemoveButton onClick={evt => onRemove(provider)} />
-            </Provider>
-          )
-        })}
+    {isEmpty(providers) && <NoProviders>There are no preferred providers.</NoProviders>}
+    {providers.map((provider, index) => {
+      return (
+        <Provider key={`providers-${index}`}>
+          <Name>{get(provider, 'relationships.provider.attributes.name')}</Name>
+          <RemoveButton onClick={evt => onRemove(provider)} />
+        </Provider>
+      )
+    })}
   </Wrapper>
 );

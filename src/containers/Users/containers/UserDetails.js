@@ -9,7 +9,13 @@ import styled from 'styled-components';
 import { actionTypes as userActions, GetUser, DeleteUser } from 'store/actions/users';
 import { actionTypes as customerActions, GetChildAccounts } from 'store/actions/child-accounts';
 import { actionTypes as orderActions, GetOrders } from 'store/actions/orders';
-import { actionTypes as providerActions, GetProviders, GetPreferredProviders } from 'store/actions/providers';
+import {
+  actionTypes as providerActions,
+  GetProviders,
+  GetPreferredProviders,
+  AddPreferredProvider,
+  DeletePreferredProvider
+} from 'store/actions/providers';
 import { actionTypes as boatActions, GetBoats, CreateBoat } from 'store/actions/boats';
 import { actionTypes as paymentActions, GetCreditCards } from 'store/actions/credit-cards';
 import { refinedOrdersSelector } from 'store/selectors/orders';
@@ -21,11 +27,18 @@ import Table from 'components/basic/Table';
 import CustomerInfoSection from 'components/template/CustomerInfoSection';
 import BoatInfoSection from 'components/template/BoatInfoSection';
 import CreditCardSection from 'components/template/CreditCardSection';
-import { CustomersSection, UserDetailsHeader, PreferredProvidersSection } from '../components';
+import {
+  CustomersSection,
+  UserDetailsHeader,
+  PreferredProvidersSection,
+  ProviderOption,
+  ProviderOptionValue
+} from '../components';
 import Modal from 'components/compound/Modal';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { NormalText } from 'components/basic/Typho'
+import { BoatyardSelect } from 'components/basic/Dropdown';
 
 export const Label = styled(NormalText)`
   font-family: 'Open sans-serif', sans-serif;
@@ -37,6 +50,9 @@ const PageContent = styled(Row)`
 `;
 
 const ActionSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background-color: white;
   padding: 25px 15px;
 `;
@@ -55,7 +71,8 @@ class UserDetails extends React.Component {
       isFirstLoadBoats: true,
       isFirstLoadPayments: true,
       visibleOfBoatModal: false,
-      visibleofDeleteModal: false
+      visibleofDeleteModal: false,
+      selectedProvider: {},
     };
     const { GetUser, GetChildAccounts, GetOrders, GetBoats, GetCreditCards, GetPreferredProviders } = this.props;
     GetUser({
@@ -94,17 +111,22 @@ class UserDetails extends React.Component {
         this.setState({ isFirstLoadPayments: false });
       }
     });
-  }
+  };
+
+  setProviderSelectRef = (ref) => {
+    this.providerSelect = ref;
+  };
 
   changePage = (page) => {
     const { userId } = this.state;
     this.props.GetOrders({ params: { 'order[user_id]': userId, page: page, per_page: 10 } });
-  }
+  };
 
   getPageCount = () => {
     const { perPage, total } = this.props;
     return Math.ceil(total/perPage);
-  }
+  };
+
   refreshInfo = () => {
     const { userId } = this.state;
     this.props.GetUser({ userId: userId });
@@ -115,17 +137,18 @@ class UserDetails extends React.Component {
     this.setState({
       userId,
     });
-  }
+  };
+
   refreshCards = () => {
     const { userId } = this.state;
     this.props.GetCreditCards({
       params: { 'credit_card[user_id]': userId }
     });
-  }
+  };
 
   toDetails = order => {
     this.props.history.push(`/order-details/?order=${order.id}`);
-  }
+  };
 
   showBoatModal = () => {
     this.setState({
@@ -171,10 +194,53 @@ class UserDetails extends React.Component {
   };
 
   addPreferredProvider = () => {
+    const { userId, selectedProvider } = this.state;
+    const { AddPreferredProvider, GetPreferredProviders } = this.props;
+    if (!isEmpty(selectedProvider)) {
+      AddPreferredProvider({
+        data: {
+          preferred_provider: {
+            user_id: userId,
+            provider_id: selectedProvider.id
+          }
+        },
+        success: () => {
+          this.setState({
+            selectedProvider: {}
+          });
+          GetPreferredProviders({
+            params: { 'preferred_provider[user_id]': userId, per_page: 1000 },
+            success: () => {
+              const { providers, preferredProviders } = this.props;
+              const options = providers.filter(o1 => preferredProviders.filter(o2 => o2.providerId.toString() === o1.id.toString()).length === 0);
+              this.providerSelect.setState({
+                defaultOptions: options
+              });      
+            }
+          });      
+        }
+      });
+    }
   };
 
   removePreferredProvider = (provider) => {
-    console.log('----------preferred----------', provider);
+    const { userId } = this.state;
+    const { DeletePreferredProvider, GetPreferredProviders } = this.props;
+    DeletePreferredProvider({
+      providerId: provider.id,
+      success: () => {
+        GetPreferredProviders({
+          params: { 'preferred_provider[user_id]': userId, per_page: 1000 },
+          success: () => {
+            const { providers, preferredProviders } = this.props;
+            const options = providers.filter(o1 => preferredProviders.filter(o2 => o2.providerId.toString() === o1.id.toString()).length === 0);
+            this.providerSelect.setState({
+              defaultOptions: options
+            });      
+          }
+        });      
+      }
+    });
   };
 
   deleteCustomer = () => {
@@ -187,6 +253,47 @@ class UserDetails extends React.Component {
         this.props.history.push('/users');
       }
     })
+  };
+
+  loadOptions = val => {
+    return this.onChangeUserFilter(val)
+      .then((filtered) => {
+        const { isFirstLoadPreferredProviders } = this.state;
+        if (isFirstLoadPreferredProviders) {
+          return filtered;
+        } else {
+          const { preferredProviders } = this.props;
+          return filtered.filter(o1 => preferredProviders.filter(o2 => o2.providerId.toString() === o1.id.toString()).length === 0);  
+        }
+      }, () => {
+        return [];
+      });
+  };
+
+  onChangeUserFilter = val => {
+    const { GetProviders } = this.props;
+    return new Promise((resolve, reject) => {
+      const params = isEmpty(val) ? {
+        'user[sort]': 'asc',
+        'user[order]': 'last_name'
+      } : {
+        'search_by_full_name': val,
+        'user[sort]': 'asc',
+        'user[order]': 'last_name'
+      };
+      GetProviders({
+        params,
+        success: resolve,
+        error: reject
+      });
+    });
+  };
+
+
+  onChangeProvider = user => {
+    this.setState({
+      selectedProvider: user,
+    });
   };
 
   render() {
@@ -211,7 +318,8 @@ class UserDetails extends React.Component {
       isFirstLoadBoats,
       isFirstLoadPayments,
       visibleOfBoatModal,
-      visibleofDeleteModal
+      visibleofDeleteModal,
+      selectedProvider
     } = this.state;
     const userName = `${get(currentUser, 'firstName')} ${get(currentUser, 'lastName')}`;
     const columns = [
@@ -263,7 +371,20 @@ class UserDetails extends React.Component {
                       <PreferredProvidersSection providers={preferredProviders} onRemove={this.removePreferredProvider} />
                     </Section>
                     <ActionSection>
-                      <HollowButton onClick={this.addPreferredProvider}>Add Provider</HollowButton>
+                      <Col sm={8} md={8} lg={8}>
+                        <BoatyardSelect
+                          ref={this.setProviderSelectRef}
+                          components={{
+                            Option: ProviderOption,
+                            SingleValue: ProviderOptionValue
+                          }}
+                          defaultOptions
+                          loadOptions={this.loadOptions}
+                          onChange={this.onChangeProvider}
+                          value={selectedProvider}
+                        />
+                      </Col>
+                      <HollowButton onClick={this.addPreferredProvider} style={{minWidth: 'inherit'}}>Add</HollowButton>
                     </ActionSection>
                   </Col>}
                 </Row>
@@ -322,7 +443,7 @@ const mapStateToProps = state => ({
   customerStatus: state.childAccount.currentStatus,
   customers: state.childAccount.childAccounts,
   preferredProviders: refinedPreferredProvidersSelector(state),
-  providers: state.provider.Providers
+  providers: state.provider.providers
 });
 
 const mapDispatchToProps = {
@@ -334,6 +455,8 @@ const mapDispatchToProps = {
   GetOrders,
   GetCreditCards,
   GetPreferredProviders,
+  AddPreferredProvider,
+  DeletePreferredProvider,
   GetProviders
 }
 

@@ -21,7 +21,7 @@ export default ({ customers }) => (
   <Wrapper>
         {customers.map((customer, index) => {
           return (
-            <Col xs={12} sm={12} md={12} lg={12} key={`customer-${index}`}>
+            <Col xs={12} sm={6} md={6} lg={6} key={`customer-${index}`}>
               <Name>{`${customer.firstName} ${customer.lastName}`}</Name>
             </Col>
           )
