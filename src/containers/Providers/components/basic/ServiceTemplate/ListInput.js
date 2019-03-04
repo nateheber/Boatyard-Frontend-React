@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import TextareaAutosize from 'react-autosize-textarea';
+import { isEmpty } from 'lodash';
 
 const Wrapper = styled.div`
   margin-bottom: 30px;
@@ -52,11 +53,38 @@ export default class ListInput extends React.Component {
   onChange = idx => (e) => {
     const newItems = [...this.state.items];
     newItems[idx] = e.target.value;
-    this.setState({ items: newItems });
+    this.setState({ items: newItems }, this.submitChange);
   }
   
   onKeyPress = idx => (e) => {
-    console.log(e.keyCode);
+    if (e.keyCode === 13) {
+      if (!isEmpty(this.list[idx + 1])) {
+        this.list[idx + 1].focus();
+        this.submitChange();
+      } else {
+        const { items } = this.state;
+        this.setState({ items: [...items, ''] }, this.submitChange);
+      }
+    } else if (e.keyCode === 8) {
+      const { items } = this.state;
+      if (isEmpty(items[idx])) {
+        const newItems = [...items];
+        newItems.splice(idx, 1);
+        this.setState({
+          items: newItems
+        }, () => {
+          if (!isEmpty(this.list[idx - 1])) {
+            this.list[idx - 1].focus();
+          }
+          this.submitChange();
+        })
+      }
+    }
+  }
+
+  submitChange = () => {
+    const { items } = this.state;
+    this.props.onChange(items);
   }
 
   setRef = idx => (ref) => {
@@ -65,16 +93,19 @@ export default class ListInput extends React.Component {
 
   render() {
     const { items } = this.state;
+    const { disabled } = this.props;
     return (
       <Wrapper>
         {
           items.map((item, idx) => (
             <ItemWrapper key={`list_item_${idx}`}>
               <ListItemText
-                ref={this.setRef(idx)}
+                disabled={disabled}
+                innerRef={this.setRef(idx)}
                 value={item}
                 onChange={this.onChange(idx)}
                 onKeyDown={this.onKeyPress(idx)}
+                autoFocus={idx === items.length - 1}
               />
             </ItemWrapper>
           ))

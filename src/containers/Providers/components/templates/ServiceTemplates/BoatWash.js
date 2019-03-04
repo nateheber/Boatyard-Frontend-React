@@ -55,6 +55,10 @@ export default class BoatWash extends React.Component {
     this.setState(updateObject);
   }
 
+  onChangeList = (listItems) => {
+    this.setState({ listItems });
+  }
+
   render() {
     const {
       price,
@@ -77,11 +81,12 @@ export default class BoatWash extends React.Component {
           onChange={this.onChange('description')}
         />
         <DescriptionInput
+          disabled={disabled}
           className="list"
           value={listDescription}
           onChange={this.onChange('listDescription')}
         />
-        <ListInput items={listItems} />
+        <ListInput disabled={disabled} items={listItems} onChange={this.onChangeList} />
         <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
