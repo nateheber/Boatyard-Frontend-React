@@ -47,10 +47,12 @@ const BackImg = styled.div`
 
 const RecipientName = styled.div`
   display: flex;
+  flex: 1;
+  padding-right: 36px;
   justify-content: center;
   color: white;
   font-size: 22px;
-  margin-left: 15px;
+  text-align: center;
 `;
 
 class ChatContent extends React.Component {
@@ -94,8 +96,8 @@ class ChatContent extends React.Component {
     const recipientId = get(info, 'id');
     const profileInfo = get(included, `[${recipientType}][${recipientId}].attributes`);
     if (recipientType === 'users') {
-      const firstName = get(profileInfo, 'firstName', '');
-      const lastName = get(profileInfo, 'lastName', '');
+      const firstName = get(profileInfo, 'firstName', '') || '';
+      const lastName = get(profileInfo, 'lastName', '') || '';
       return `${firstName} ${lastName}`;
     } else if (recipientType === 'providers') {
       return get(profileInfo, 'name', '');
