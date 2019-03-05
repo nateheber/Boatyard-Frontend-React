@@ -142,7 +142,7 @@ const FieldLabel = styled.div`
 
 const FieldValue = styled.div`
   color: #898889;
-  word-break: break-all;
+  word-break: break-word;
 `;
 
 const LocationFieldValue = styled.div`
