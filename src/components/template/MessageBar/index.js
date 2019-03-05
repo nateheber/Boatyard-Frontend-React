@@ -11,7 +11,7 @@ import ChatHistory from './ChatHistory';
 import ChatContent from './ChatContent';
 
 const Wrapper = styled.div`
-  position: absolute;
+  position: fixed;
   height: calc(100vh - 68px) !important;
   width: 350px;
   background-color: #01556d;
