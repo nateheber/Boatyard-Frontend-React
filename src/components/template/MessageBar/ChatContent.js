@@ -18,7 +18,7 @@ const ChatHeader = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
 `;
 
 const MessageWrapper = styled.div`
@@ -43,6 +43,14 @@ const BackImg = styled.div`
   mask-repeat: no-repeat;
   mask-size: 13px 22px;
   background-color: white;
+`;
+
+const RecipientName = styled.div`
+  display: flex;
+  justify-content: center;
+  color: white;
+  font-size: 22px;
+  margin-left: 15px;
 `;
 
 class ChatContent extends React.Component {
@@ -75,6 +83,26 @@ class ChatContent extends React.Component {
     return { recipient_type, recipient_id: info.id };
   }
 
+  getRecipientName = () => {
+    const { included, conversationId } = this.props;
+    const conversationInfo = get(included, `[conversations][${conversationId}]`);
+    const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
+    const id = get(recipientInfo, 'id');
+    const recipientData = get(included, `[profiles][${id}]`); 
+    const info = get(recipientData, 'relationships.owner.data');
+    const recipientType = get(info, 'type');
+    const recipientId = get(info, 'id');
+    const profileInfo = get(included, `[${recipientType}][${recipientId}].attributes`);
+    if (recipientType === 'users') {
+      const firstName = get(profileInfo, 'firstName', '');
+      const lastName = get(profileInfo, 'lastName', '');
+      return `${firstName} ${lastName}`;
+    } else if (recipientType === 'providers') {
+      return get(profileInfo, 'name', '');
+    }
+    return '';
+  }
+
   onSendingSuccess = () => {
     const { conversationId, GetConversation } = this.props;
     GetConversation({ conversationId, first: false });
@@ -99,12 +127,14 @@ class ChatContent extends React.Component {
 
   render() {
     const { onBack, messages } = this.props;
+    const recipientName = this.getRecipientName();
     return (
       <React.Fragment>
         <ChatHeader>
           <BackButton onClick={onBack}>
             <BackImg src={BackImage} alt="back" />
           </BackButton>
+          <RecipientName>{recipientName}</RecipientName>
         </ChatHeader>
         <MessageWrapper>
           <MessageBox secondary chatHistory={messages} />
