@@ -17,6 +17,10 @@ const Wrapper = styled.div`
   width: 100%;
   overflow-x: scroll;
   padding-bottom: 10px;
+  &::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+  }
 `;
 
 const TableWrapper = styled.div`
