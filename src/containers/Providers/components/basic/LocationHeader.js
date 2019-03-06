@@ -41,7 +41,7 @@ export default ({ onAdd }) => (
   <Wrapper>
     <Title>Locations</Title>
     <ButtonWrapper>
-      <HollowButton onClick={onAdd}>ADD LOCATION</HollowButton>
+      <HollowButton className="thin-font" onClick={onAdd}>ADD LOCATION</HollowButton>
     </ButtonWrapper>
   </Wrapper>
 )

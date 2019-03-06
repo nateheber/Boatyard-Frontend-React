@@ -1,4 +1,3 @@
-export * from './basic/ProviderDetails';
+export * from './basic';
 export * from './templates/HeaderEditor';
 export * from './templates/AccountCreator';
-export * from './basic/ProviderHeader';

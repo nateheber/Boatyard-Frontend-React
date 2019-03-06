@@ -4,11 +4,11 @@ import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
 
 import { actionTypes, LoginWithProvider, DeleteProvider } from 'store/actions/providers';
-import { ProviderDetails, ProviderHeader } from '../components';
+import { ProviderInfo, ProviderHeader } from '../components';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 
 
-class ServiceDetails extends React.Component {
+class ProviderDetails extends React.Component {
   onCancel = () => {
     this.props.history.goBack();
   };
@@ -54,7 +54,7 @@ class ServiceDetails extends React.Component {
           selectProvider={this.selectProvider}
           deleteProvider={this.deleteProvider}
         />
-        <ProviderDetails
+        <ProviderInfo
           {...provider}
           onCancel={this.onCancel}
           onEdit={this.onEdit}
@@ -79,5 +79,5 @@ export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(ServiceDetails)
+  )(ProviderDetails)
 );

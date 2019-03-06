@@ -41,8 +41,8 @@ export default ({ name, onLogin, onSuspend }) => (
   <Wrapper>
     <Title>{name}</Title>
     <ButtonWrapper>
-      <HollowButton onClick={onLogin}>LOGIN</HollowButton>
-      <HollowButton onClick={onSuspend}>SUSPEND</HollowButton>
+      <HollowButton className="thin-font" onClick={onLogin}>LOGIN</HollowButton>
+      <HollowButton className="thin-font" onClick={onSuspend}>SUSPEND</HollowButton>
     </ButtonWrapper>
   </Wrapper>
 )

@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   margin: 30px;
 `;
 
-export class ProviderDetails extends React.Component {
+export default class ProviderInfo extends React.Component {
   render() {
     const {
       name,

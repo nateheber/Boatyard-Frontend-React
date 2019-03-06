@@ -5,7 +5,7 @@ import { get } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
 
-import AccountHeader from '../basic/AccountHeader';
+import { AccountHeader } from '../basic';
 import CompanyInfo from '../compound/CompanyInfo';
 import ContactInfo from '../compound/ContactInfo';
 

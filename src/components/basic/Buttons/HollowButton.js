@@ -3,9 +3,7 @@ import styled from 'styled-components';
 export const HollowButton = styled.button`
   min-width: 120px;
   position: relative;
-  border-width: 1px;
-  border-style: solid;
-  border-color: rgb(169, 181, 187);
+  border: 1px solid #a9b5bb;
   border-image: initial;
   border-radius: 6px;
   cursor: pointer;
@@ -23,7 +21,14 @@ export const HollowButton = styled.button`
   display: inline-block;
   &:disabled {
     background: #9e9e9e;
-    border: 1.5px solid #9e9e9e !important;
+    border: 1px solid #9e9e9e !important;
     color: #07384b;
+  }
+  &.big {
+    height: 48px;
+    border-radius: 6px;
+  }
+  &.thin-font {
+    font-weight: 500;
   }
 `;
