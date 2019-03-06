@@ -38,6 +38,17 @@ export const InputWrapper = styled.div`
   &:last-child {
     margin-right: 0px;
   }
+  &.size-big {
+    margin-bottom: 22px;
+  }
+  &.size-big > ${InputLabel} {
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 500;
+    color: #003247;
+    margin-bottom: 21px;
+    text-transform: none;
+  }
 `;
 
 export const InputRow = styled.div`

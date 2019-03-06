@@ -1,146 +1,66 @@
 import React from 'react';
-import { toastr } from 'react-redux-toastr';
+import { connect } from 'react-redux';
+import styled from 'styled-components';
+import { get } from 'lodash';
 
-import { OrangeButton, HollowButton } from 'components/basic/Buttons';
-import { EditorSection } from 'components/compound/SubSections';
-import FormFields from 'components/template/FormFields';
+import { OrangeButton } from 'components/basic/Buttons';
 
-export class AccountEditor extends React.Component {
-  save = () => {
-    if (this.fields.validateFields()) {
-      const {
-        name,
-        phone_number,
-        website_url,
-        tax_rate,
-        subscription_fee,
-        transaction_fee
-      } = this.fields.getFieldValues();
-      this.props.save({
-        name,
-        phone_number,
-        website_url,
-        tax_rate: parseFloat(tax_rate),
-        subscription_fee: parseFloat(subscription_fee),
-        transaction_fee: parseFloat(transaction_fee)
-      });
-    } else {
-      toastr.clean()
-      toastr.error('Please fill out all the required fields')
-    }
-  };
-  getFormFieldsInfo = () => {
-    const {
-      name,
-      phoneNumber,
-      websiteUrl,
-      taxRate,
-      subscriptionFee,
-      transactionFee
-    } = this.props;
-    return [
-      {
-        field: 'name',
-        label: 'Name',
-        type: 'text_field',
-        errorMessage: 'Enter the company name',
-        required: true,
-        defaultValue: name,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'phone_number',
-        label: 'Phone',
-        type: 'text_field',
-        mask: '(999) 999-9999',
-        maskChar: '_',
-        required: true,
-        errorMessage: 'Enter a phone number',
-        defaultValue: phoneNumber,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'website_url',
-        label: 'Website URL',
-        type: 'text_field',
-        defaultValue: websiteUrl,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'subscription_fee',
-        label: 'Monthly Subscription Fee',
-        type: 'text_field',
-        required: true,
-        errorMessage: 'Subscription Fee Must have at least 1 digit',
-        defaultValue: subscriptionFee,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'transaction_fee',
-        label: 'Transaction Fee',
-        type: 'text_field',
-        required: true,
-        errorMessage: 'Transaction Fee Must have at least 1 digit',
-        defaultValue: transactionFee,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      },
-      {
-        field: 'tax_rate',
-        label: 'Tax Rate',
-        type: 'text_field',
-        required: true,
-        errorMessage: 'Tax Rate Must have at least 1 digit',
-        defaultValue: taxRate,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 6,
-        xl: 6
-      }
-    ];
-  };
-  setFormFieldsRef = ref => {
-    this.fields = ref;
-  };
-  renderFields = () => {
-    const formFieldInfo = this.getFormFieldsInfo();
-    return <FormFields ref={this.setFormFieldsRef} fields={formFieldInfo} />;
-  };
-  renderActions = () => {
-    const { next } = this.props;
-    return (
-      <React.Fragment>
-        <HollowButton onClick={this.save}>SAVE</HollowButton>
-        <OrangeButton onClick={next}>NEXT</OrangeButton>
-      </React.Fragment>
-    );
-  };
+import AccountHeader from '../basic/AccountHeader';
+import CompanyInfo from '../compound/CompanyInfo';
+import ContactInfo from '../compound/ContactInfo';
+
+const Wrapper = styled.div`
+  padding-top: 18px;
+`;
+
+const EditorWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  background-color: white;
+  box-sizing: border-box;
+  margin: 27px 24px;
+  padding: 38px 77px 26px;
+`;
+
+const EditorContent = styled.div`
+  border-bottom: 1px solid #dfdfdf;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 24px;
+`
+
+class AccountEditor extends React.Component {
+  getName = () => {
+    const { provider } = this.props;
+    return get(provider, 'attributes.name', '');
+  }
   render() {
+    const name = this.getName();
     return (
-      <EditorSection
-        content={this.renderFields()}
-        actions={this.renderActions()}
-      />
-    );
+      <Wrapper>
+        <AccountHeader name={name} />
+        <EditorWrapper>
+          <EditorContent>
+            <CompanyInfo />
+            <ContactInfo />
+          </EditorContent>
+          <ButtonWrapper>
+            <OrangeButton>SAVE</OrangeButton>
+          </ButtonWrapper>
+        </EditorWrapper>
+      </Wrapper>
+    )
   }
 }
+
+const mapStateToProps = (state) => ({
+  provider: state.provider.currentProvider.data
+});
+
+export default connect(mapStateToProps)(AccountEditor);

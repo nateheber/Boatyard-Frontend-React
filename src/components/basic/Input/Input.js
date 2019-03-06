@@ -37,6 +37,9 @@ const MaskInput = styled(InputMask)`
   &:disabled {
     background: #f1f1f1;
   }
+  &.size-big {
+    height: 36px;
+  }
 `;
 
 export class Input extends React.Component {

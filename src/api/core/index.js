@@ -141,18 +141,39 @@ export class MultiLayerCRUDClient {
   generateUrl = params => {
     let url = apiBaseUrl;
     for (let i = 0; i < params.length; i += 1) {
-      url = `${url}${this.layers[i]}/${params[i]}/`;
+      url = `${url}/${this.layers[i]}/${params[i]}`;
     }
     if (params.length + 1 === this.layers.length) {
       url = `${url}/${this.layers[this.layers.length - 1]}/`;
+      return url;
     } else if (params.length === this.layers.length) {
       return url;
     }
     throw new Error('Invalid params configuration');
   };
-  list = params => {
-    const url = this.generateUrl(params);
-    return this.client.get(url);
+  list = (baseParams, params) => {
+    const url = this.generateUrl(baseParams);
+    let paramsString = '';
+
+    if (params) {
+      params = {
+        page: 1,
+        ...params
+      };
+    } else {
+      params = {
+        page: 1
+      };
+    }
+
+    const array = [];
+    for  (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        array.push(`${key}=${params[key]}`);
+      }
+    }
+    paramsString = array.join('&');
+    return this.client.get(`${url}?${paramsString}`);
   };
   create = (params, data) => {
     const url = this.generateUrl(params);
