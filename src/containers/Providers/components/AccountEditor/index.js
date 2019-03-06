@@ -4,10 +4,7 @@ import styled from 'styled-components';
 import { get } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
-
-import AccountHeader from './AccountHeader';
-import CompanyInfo from './CompanyInfo';
-import ContactInfo from './ContactInfo';
+import { AccountHeader, CompanyInfo, ContactInfo } from './components';
 
 const Wrapper = styled.div`
   padding-top: 18px;

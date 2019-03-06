@@ -3,12 +3,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get } from 'lodash';
 
-import { SearchBox } from 'components/basic/Input';
-
 import { GetProviderLocations } from 'store/actions/providerLocations';
-
-import LocationHeader from './LocationHeader';
-import AddLocationModal from './AddLocationModal';
+import { SearchBox } from 'components/basic/Input';
+import { LocationHeader, AddLocationModal } from './components';
 
 const Wrapper = styled.div`
   padding-top: 18px;

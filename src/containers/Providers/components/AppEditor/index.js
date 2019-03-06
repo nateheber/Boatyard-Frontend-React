@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import AppHeader from './AppHeader';
-import StepSelector from './StepSelector';
-import AppBanners from './AppBanners';
-import AppServiceCategories from './AppServiceCategories';
-import AppServices from './AppServices';
-import ServiceTemplates from './ServiceTemplates';
+import {
+  AppHeader,
+  StepSelector,
+  AppBanners,
+  AppServiceCategories,
+  AppServices,
+  ServiceTemplates
+} from './components';
 
 const Wrapper = styled.div`
   display: flex;
