@@ -2,11 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import TitleInput from '../../basic/ServiceTemplate/TitleInput';
-import SwitchInput from '../../basic/ServiceTemplate/SwitchInput';
-import DescriptionInput from '../../basic/ServiceTemplate/DescriptionInput';
-import Button from '../../basic/ServiceTemplate/ButtonInput';
-import PriceUnitInput from '../../basic/ServiceTemplate/PriceUnitInput';
+import { ButtonInput, DescriptionInput, FuelPriceInput, TextInput, SelectorInput } from '../../../basic';
 
 const Wrapper = styled.div`
   display: flex;
@@ -20,23 +16,19 @@ const Wrapper = styled.div`
 
 
 
-export default class PumpOut extends React.Component {
+export default class Fuel extends React.Component {
   constructor(props) {
     super(props);
     const {
       price,
       unit,
-      title,
       description,
-      inputLabel,
       buttonText,
     } = props;
     this.state = {
       price,
       unit,
-      title,
       description,
-      inputLabel,
       buttonText,
     };
   }
@@ -57,23 +49,23 @@ export default class PumpOut extends React.Component {
     const {
       price,
       unit,
-      title,
-      description,
-      inputLabel,
       buttonText,
+      description
     } = this.state;
     const { disabled } = this.props;
     return (
       <Wrapper>
-        <PriceUnitInput disabled={disabled} unit={unit} price={price} onChange={this.onChangePrice} />
-        <TitleInput disabled={disabled} value={title} onChange={this.onChange('title')} />
+        <FuelPriceInput disabled={disabled} price={price} unit={unit} onChange={this.onChangePrice} />
+        <SelectorInput label="FUEL TYPE" />
+        <TextInput label="GALLONS" />
+        <SelectorInput label="AMOUNT" />
+        <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
         <DescriptionInput
           disabled={disabled}
+          style={{ marginTop: '20px' }}
           value={description}
           onChange={this.onChange('description')}
         />
-        <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} />
-        <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import ServiceItem from '../basic/ServiceItem';
+import ServiceItem from '../../basic/ServiceItem';
 
 const Wrapper = styled.div`
   display: flex;

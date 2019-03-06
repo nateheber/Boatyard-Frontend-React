@@ -4,12 +4,7 @@ import styled from 'styled-components';
 import { SearchBox } from 'components/basic/Input';
 
 import templatesInfo from './defaultTemplateValues' ;
-import LineHandling from './ServiceTemplates/LineHandling';
-import PumpOut from './ServiceTemplates/PumpOut';
-import TrashPickup from './ServiceTemplates/TrashPickup';
-import Fuel from './ServiceTemplates/Fuel';
-import BoatWash from './ServiceTemplates/BoatWash';
-import TemplateOption from './ServiceTemplates/TemplateOption';
+import { BoatWash, Fuel, LineHandling, PumpOut, TrashPickup, TemplateOption } from './templates';
 
 const HeaderWrapper = styled.div`
   dispaly: flex;

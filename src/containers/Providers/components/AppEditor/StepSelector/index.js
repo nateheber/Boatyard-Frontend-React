@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
-import FolderIcon from '../../assets/folder.png';
-import ImageIcon from '../../assets/image.png';
-import SuitecaseIcon from '../../assets/suitecase.png';
-import TemplateIcon from '../../assets/template.png';
+import FolderIcon from './assets/folder.png';
+import ImageIcon from './assets/image.png';
+import SuitecaseIcon from './assets/suitecase.png';
+import TemplateIcon from './assets/template.png';
 
 const Wrapper = styled.div`
   background: white;

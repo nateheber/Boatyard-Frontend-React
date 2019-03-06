@@ -2,11 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import TitleInput from '../../basic/ServiceTemplate/TitleInput';
-import DescriptionInput from '../../basic/ServiceTemplate/DescriptionInput';
-import Button from '../../basic/ServiceTemplate/ButtonInput';
-import PriceUnitInput from '../../basic/ServiceTemplate/PriceUnitInput';
-import ListInput from '../../basic/ServiceTemplate/ListInput';
+import { ButtonInput, DescriptionInput, PriceUnitInput, SwitchInput, TitleInput } from '../../../basic';
 
 const Wrapper = styled.div`
   display: flex;
@@ -20,7 +16,7 @@ const Wrapper = styled.div`
 
 
 
-export default class BoatWash extends React.Component {
+export default class PumpOut extends React.Component {
   constructor(props) {
     super(props);
     const {
@@ -28,8 +24,7 @@ export default class BoatWash extends React.Component {
       unit,
       title,
       description,
-      listDescription,
-      listItems,
+      inputLabel,
       buttonText,
     } = props;
     this.state = {
@@ -37,8 +32,7 @@ export default class BoatWash extends React.Component {
       unit,
       title,
       description,
-      listDescription,
-      listItems,
+      inputLabel,
       buttonText,
     };
   }
@@ -55,18 +49,13 @@ export default class BoatWash extends React.Component {
     this.setState(updateObject);
   }
 
-  onChangeList = (listItems) => {
-    this.setState({ listItems });
-  }
-
   render() {
     const {
       price,
       unit,
       title,
       description,
-      listDescription,
-      listItems,
+      inputLabel,
       buttonText,
     } = this.state;
     const { disabled } = this.props;
@@ -77,17 +66,10 @@ export default class BoatWash extends React.Component {
         <DescriptionInput
           disabled={disabled}
           value={description}
-          style={{ marginBottom: '20px' }}
           onChange={this.onChange('description')}
         />
-        <DescriptionInput
-          disabled={disabled}
-          className="list"
-          value={listDescription}
-          onChange={this.onChange('listDescription')}
-        />
-        <ListInput disabled={disabled} items={listItems} onChange={this.onChangeList} />
-        <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
+        <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} />
+        <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
   }

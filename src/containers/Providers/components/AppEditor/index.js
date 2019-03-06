@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import AppHeader from '../basic/AppHeader';
-import StepSelector from '../compound/StepSelector';
+import AppHeader from './AppHeader';
+import StepSelector from './StepSelector';
 import AppBanners from './AppBanners';
 import AppServiceCategories from './AppServiceCategories';
 import AppServices from './AppServices';

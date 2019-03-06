@@ -4,10 +4,7 @@ import { set } from 'lodash';
 
 import Icon from 'resources/serviceTemplate/lineHandling.png';
 
-import Image from '../../basic/ServiceTemplate/Image';
-import DescriptionInput from '../../basic/ServiceTemplate/DescriptionInput';
-import TextAreaInput from '../../basic/ServiceTemplate/TextAreaInput';
-import Button from '../../basic/ServiceTemplate/ButtonInput';
+import { ButtonInput, DescriptionInput, Image, TextAreaInput } from '../../../basic';
 
 const Wrapper = styled.div`
   display: flex;
@@ -46,7 +43,7 @@ export default class LineHandling extends React.Component {
           onChange={this.onChange('description')}
         />
         <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
-        <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
+        <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
   }

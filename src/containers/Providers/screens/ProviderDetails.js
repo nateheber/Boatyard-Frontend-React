@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
 
 import { actionTypes, LoginWithProvider, DeleteProvider } from 'store/actions/providers';
-import { ProviderInfo, ProviderHeader } from '../components';
+import { ProviderInfo, ProviderDetailHeader } from '../components';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 
 
@@ -49,7 +49,7 @@ class ProviderDetails extends React.Component {
     const { currentStatus } = this.props;
     return (
       <div>
-        <ProviderHeader
+        <ProviderDetailHeader
           title={name}
           selectProvider={this.selectProvider}
           deleteProvider={this.deleteProvider}

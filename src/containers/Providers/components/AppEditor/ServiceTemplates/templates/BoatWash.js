@@ -2,18 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import Icon from 'resources/serviceTemplate/trashPickup.png';
-
-import Image from '../../basic/ServiceTemplate/Image';
-import DescriptionInput from '../../basic/ServiceTemplate/DescriptionInput';
-import TextAreaInput from '../../basic/ServiceTemplate/TextAreaInput';
-import Button from '../../basic/ServiceTemplate/ButtonInput';
-import PriceUnitInput from '../../basic/ServiceTemplate/PriceUnitInput';
+import { ButtonInput, DescriptionInput, ListInput, PriceUnitInput, TitleInput } from '../../../basic';
 
 const Wrapper = styled.div`
   display: flex;
-  width: 225px;
   flex: 1;
+  width: 225px;
   flex-direction: column;
   align-items: center;
   padding: 18px 10px;
@@ -22,21 +16,25 @@ const Wrapper = styled.div`
 
 
 
-export default class TrashPickup extends React.Component {
+export default class BoatWash extends React.Component {
   constructor(props) {
     super(props);
     const {
       price,
       unit,
+      title,
       description,
-      textAreaLabel,
+      listDescription,
+      listItems,
       buttonText,
     } = props;
     this.state = {
       price,
       unit,
+      title,
       description,
-      textAreaLabel,
+      listDescription,
+      listItems,
       buttonText,
     };
   }
@@ -53,26 +51,39 @@ export default class TrashPickup extends React.Component {
     this.setState(updateObject);
   }
 
+  onChangeList = (listItems) => {
+    this.setState({ listItems });
+  }
+
   render() {
     const {
       price,
       unit,
+      title,
       description,
-      textAreaLabel,
+      listDescription,
+      listItems,
       buttonText,
     } = this.state;
     const { disabled } = this.props;
     return (
       <Wrapper>
-        <Image src={Icon} />
-        <PriceUnitInput disabled={disabled} unit={unit} price={price} style={{ marginBottom: '18px' }} onChange={this.onChangePrice} />
+        <PriceUnitInput disabled={disabled} unit={unit} price={price} onChange={this.onChangePrice} />
+        <TitleInput disabled={disabled} value={title} onChange={this.onChange('title')} />
         <DescriptionInput
           disabled={disabled}
           value={description}
+          style={{ marginBottom: '20px' }}
           onChange={this.onChange('description')}
         />
-        <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
-        <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
+        <DescriptionInput
+          disabled={disabled}
+          className="list"
+          value={listDescription}
+          onChange={this.onChange('listDescription')}
+        />
+        <ListInput disabled={disabled} items={listItems} onChange={this.onChangeList} />
+        <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
   }

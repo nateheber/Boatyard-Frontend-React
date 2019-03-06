@@ -4,7 +4,7 @@ import { SectionHeaderWrapper, LeftPart } from 'components/basic/Header';
 import { ActionDropdown } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
-export default class ProviderHeader extends React.PureComponent {
+export default class ProviderDetailHeader extends React.PureComponent {
   render() {
     const { title, deleteProvider, selectProvider } = this.props;
     const actionItems = [

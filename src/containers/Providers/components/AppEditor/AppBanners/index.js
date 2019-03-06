@@ -2,11 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
-import ImageSelector from '../compound/ImageSelector';
-import PhonePreview from '../basic/PhonePreview';
-import PhoneBanner from '../basic/PhoneBanner';
-
-import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../basic/Wrappers';
+import ImageSelector from './ImageSelector';
+import {
+  PhonePreview, PhoneBanner,
+  ContentWrapper, SelectorWrapper, PreviewWrapper,
+} from '../../basic';
 
 import Image1 from 'resources/test_images/1.png';
 import Image2 from 'resources/test_images/2.png';

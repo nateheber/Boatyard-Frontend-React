@@ -2,12 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 
-import PhonePreview from '../basic/PhonePreview';
-import PhoneBanner from '../basic/PhoneBanner';
-import ServiceSelector from '../compound/ServiceSelector';
-import ServicePreview from '../compound/ServicePreview';
+import PhonePreview from '../../basic/PhonePreview';
+import PhoneBanner from '../../basic/PhoneBanner';
+import ServiceSelector from './ServiceSelector';
+import ServicePreview from './ServicePreview';
 
-import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../basic/Wrappers';
+import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../basic/Wrappers';
 
 class AppServices extends React.Component {
   state = {

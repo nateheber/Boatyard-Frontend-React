@@ -7,8 +7,8 @@ import { SearchBox } from 'components/basic/Input';
 
 import { GetProviderLocations } from 'store/actions/providerLocations';
 
-import LocationHeader from '../basic/LocationHeader';
-import AddLocationModal from '../modals/AddLocationModal';
+import LocationHeader from './LocationHeader';
+import AddLocationModal from './AddLocationModal';
 
 const Wrapper = styled.div`
   padding-top: 18px;

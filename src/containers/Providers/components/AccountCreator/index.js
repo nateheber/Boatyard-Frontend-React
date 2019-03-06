@@ -15,7 +15,7 @@ const ModalText = styled.div`
   margin: 20px 0px;
 `;
 
-export class AccountCreator extends React.Component {
+export default class AccountCreator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

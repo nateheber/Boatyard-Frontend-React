@@ -1,14 +1,10 @@
 import React from 'react';
 
 import TemplateSelector from './TemplateSelector';
-import PhonePreview from '../basic/PhonePreview';
+import PhonePreview from '../../basic/PhonePreview';
 
-import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../basic/Wrappers';
-import LineHandling from './ServiceTemplates/LineHandling';
-import PumpOut from './ServiceTemplates/PumpOut';
-import TrashPickup from './ServiceTemplates/TrashPickup';
-import Fuel from './ServiceTemplates/Fuel';
-import BoatWash from './ServiceTemplates/BoatWash';
+import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../basic/Wrappers';
+import { BoatWash, Fuel, LineHandling, PumpOut, TrashPickup } from './templates';
 
 import defaultTemplateInfos from './defaultTemplateValues';
 

@@ -2,16 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import SelectorInput from '../../basic/ServiceTemplate/SelectorInput';
-import TextInput from '../../basic/ServiceTemplate/TextInput';
-import DescriptionInput from '../../basic/ServiceTemplate/DescriptionInput';
-import Button from '../../basic/ServiceTemplate/ButtonInput';
-import FuelPriceInput from '../../basic/ServiceTemplate/FuelPriceInput';
+import Icon from 'resources/serviceTemplate/trashPickup.png';
+
+import { ButtonInput, DescriptionInput, Image, PriceUnitInput, TextAreaInput } from '../../../basic';
 
 const Wrapper = styled.div`
   display: flex;
-  flex: 1;
   width: 225px;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   padding: 18px 10px;
@@ -20,19 +18,21 @@ const Wrapper = styled.div`
 
 
 
-export default class Fuel extends React.Component {
+export default class TrashPickup extends React.Component {
   constructor(props) {
     super(props);
     const {
       price,
       unit,
       description,
+      textAreaLabel,
       buttonText,
     } = props;
     this.state = {
       price,
       unit,
       description,
+      textAreaLabel,
       buttonText,
     };
   }
@@ -53,23 +53,22 @@ export default class Fuel extends React.Component {
     const {
       price,
       unit,
+      description,
+      textAreaLabel,
       buttonText,
-      description
     } = this.state;
     const { disabled } = this.props;
     return (
       <Wrapper>
-        <FuelPriceInput disabled={disabled} price={price} unit={unit} onChange={this.onChangePrice} />
-        <SelectorInput label="FUEL TYPE" />
-        <TextInput label="GALLONS" />
-        <SelectorInput label="AMOUNT" />
-        <Button disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
+        <Image src={Icon} />
+        <PriceUnitInput disabled={disabled} unit={unit} price={price} style={{ marginBottom: '18px' }} onChange={this.onChangePrice} />
         <DescriptionInput
           disabled={disabled}
-          style={{ marginTop: '20px' }}
           value={description}
           onChange={this.onChange('description')}
         />
+        <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
+        <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
   }

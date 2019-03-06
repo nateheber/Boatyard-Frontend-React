@@ -7,10 +7,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import { CreateProvider, UpdateProvider } from 'store/actions/providers';
 
-import { AccountCreator } from '../components';
-import AccountEditor from '../components/templates/AccountEditor';
-import LocationEditor from '../components/templates/LocationEditor';
-import AppEditor from '../components/templates/AppEditor';
+import { LocationEditor, AccountCreator, AccountEditor, AppEditor } from '../components';
 
 import './style.css';
 
