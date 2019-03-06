@@ -60,7 +60,7 @@ class AccountEditor extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  provider: state.provider.currentProvider.data
+  provider: get(state, 'provider.currentProvider.data')
 });
 
 export default connect(mapStateToProps)(AccountEditor);

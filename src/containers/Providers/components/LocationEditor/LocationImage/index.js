@@ -7,6 +7,8 @@ export default class LocationImage extends React.Component {
     file: ''
   }
 
+  
+
   render () {
     return false;
   }
