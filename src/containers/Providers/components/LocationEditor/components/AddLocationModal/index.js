@@ -15,14 +15,6 @@ const InfoSection = styled.div`
   }
 `;
 
-const ButtonWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0px 7px;
-`;
-
 const ModalContent = styled.div`
   width: 382px;
   margin: auto;
@@ -166,11 +158,17 @@ export default class AddConfirmationModal extends React.Component {
     const { open, onClose } = this.props;
     const basicInfoFields = this.getBasicInfoFields();
     const addressFields = this.getAddressFields();
+    const actionButtons = [
+      <OrangeButton className="big thin-font" onClick={this.submitData} key="submit_data">
+        Add Location
+      </OrangeButton>
+    ]
     return (
       <Modal
         title="Add Location"
         open={open}
         onClose={onClose}
+        actions={actionButtons}
       >
         <ModalContent>
           <LocationImage onChange={this.onChangeImage} />
@@ -180,11 +178,6 @@ export default class AddConfirmationModal extends React.Component {
           <InfoSection>
             <FormFields fieldSize="big" fields={addressFields} ref={this.setAddressInfoRef} />
           </InfoSection>
-          <ButtonWrapper>
-            <OrangeButton className="big thin-font" onClick={this.submitData}>
-              Add Location
-            </OrangeButton>
-          </ButtonWrapper>
         </ModalContent>
       </Modal>
     );

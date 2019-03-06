@@ -81,8 +81,8 @@ class LocationEditor extends React.Component {
           </SearchWrapper>
           <LocationHolder>
             {
-              testData.map(location => (
-                <LocationCard providerName={name} locationInfo={location} />
+              testData.map((location, idx) => (
+                <LocationCard providerName={name} locationInfo={location} key={`provider_location_${idx}`} />
               ))
             }
           </LocationHolder>
