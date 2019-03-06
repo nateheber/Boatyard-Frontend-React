@@ -2,49 +2,26 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
-import { findIndex } from 'lodash';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-import { CreateProvider, UpdateProvider } from 'store/actions/providers';
+import { CreateProvider, UpdateProvider, GetProvider } from 'store/actions/providers';
 
 import { LocationEditor, AccountCreator, AccountEditor, AppEditor } from '../components';
 
 import './style.css';
 
 class ProviderEditFlow extends React.Component {
-  constructor(props) {
-    super(props);
-    const { providers } = props;
-    const query = queryString.parse(props.location.search);
+  state = {
+    id: -1,
+  };
+
+  componentDidMount() {
+    const query = queryString.parse(this.props.location.search);
     const providerId = query.provider;
-    if (providerId) {
-      const idx = findIndex(providers, provider => provider.id === providerId);
-      const providerDetail = providers[idx];
-      this.state = {
-        ...providerDetail,
-        step: 0
-      };
-    } else {
-      this.state = {
-        id: -1,
-        name: '',
-        icon: null,
-        logo: null,
-        banner: null,
-        homeImage: null,
-        customImage: null,
-        colorBrandingPrimary: '',
-        colorBrandingSecondary: '',
-        websiteUrl: '',
-        timeZone: '',
-        phoneNumber: '',
-        invoicePrefix: '',
-        taxRate: 0,
-        subscriptionFee: 0,
-        transactionFee: 0,
-        step: 0
-      };
-    }
+    this.props.GetProvider({ providerId });
+    this.setState({
+      id: providerId,
+    })
   }
 
   onSave = data => {
@@ -110,6 +87,7 @@ const mapStateToProps = ({ provider: { providers } }) => ({
 const mapDispatchToProps = {
   CreateProvider,
   UpdateProvider,
+  GetProvider,
 };
 
 export default withRouter(

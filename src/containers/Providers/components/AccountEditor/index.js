@@ -38,7 +38,7 @@ const ButtonWrapper = styled.div`
 class AccountEditor extends React.Component {
   getName = () => {
     const { provider } = this.props;
-    return get(provider, 'attributes.name', '');
+    return get(provider, 'name', '');
   }
   render() {
     const name = this.getName();
@@ -60,7 +60,7 @@ class AccountEditor extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  provider: get(state, 'provider.currentProvider.data')
+  provider: get(state, 'provider.currentProvider')
 });
 
 export default connect(mapStateToProps)(AccountEditor);
