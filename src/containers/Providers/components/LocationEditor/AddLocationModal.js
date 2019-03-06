@@ -115,7 +115,7 @@ export default class AddConfirmationModal extends React.Component {
   }
 
   render() {
-    const { open, onClose, onAddLocation } = this.props;
+    const { open, onClose } = this.props;
     const basicInfoFields = this.getBasicInfoFields();
     const addressFields = this.getAddressFields();
     return (
