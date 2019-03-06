@@ -5,6 +5,8 @@ import { OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 
+import LocationImage from './LocationImage';
+
 const InfoSection = styled.div`
   padding: 15px 7px;
   &:first-child {
@@ -124,6 +126,7 @@ export default class AddConfirmationModal extends React.Component {
         open={open}
         onClose={onClose}
       >
+        <LocationImage />
         <InfoSection>
           <FormFields fieldSize="big" fields={basicInfoFields} />
         </InfoSection>
