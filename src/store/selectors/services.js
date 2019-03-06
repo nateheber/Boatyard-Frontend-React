@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import { createSelector } from 'reselect';
 
 const allServicesSelector = (state) => {
-  return get(state, 'category.categories', []);
+  return get(state, 'service.services', []);
 };
 
 const includedSelector = (state) => get(state, 'service.included', []);
