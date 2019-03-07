@@ -27,26 +27,6 @@ const SectionName = styled.div`
   margin-bottom: 25px;
 `;
 
-const SliderNav = styled.div`
-  dispaly: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 40px;
-`;
-
-const NavDot = styled.div`
-  display: inline-block;
-  width: 13px;
-  height: 13px;
-  &.active {
-    background-color: #003247;
-  }
-  background-color: #d8d8d8;
-  border-radius: 6.5px;
-  margin: 0px 3.5px;
-`;
-
 const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -79,7 +59,7 @@ const Wrapper = styled.div`
     top: 53px;
     background-image: url(${ButtonSilhouette});
   }
-  margin-bottom: 13px;
+  margin-bottom: 40px;
 `;
 
 const ContentHolder = styled.div`
@@ -114,9 +94,6 @@ export default ({ secondary, title, children }) => (
         {children}
       </ContentHolder>
     </Wrapper>
-    <SliderNav>
-      <NavDot className="active" /><NavDot /><NavDot />
-    </SliderNav>
     <ButtonWrapper>
       <HollowButton className="thin-font">UNPUBLISH</HollowButton>
       <OrangeButton className="thin-font">PUBLISH</OrangeButton>
