@@ -43,7 +43,7 @@ const Title = styled.div`
   line-height: normal;
   letter-spacing: normal;
   color: #094359;
-  line-height: 14px;
+  line-height: 13px;
 `;
 
 const Description = styled.div`
@@ -51,7 +51,7 @@ const Description = styled.div`
   font-weight: normal;
   font-style: normal;
   font-stretch: normal;
-  line-height: normal;
+  line-height: 8px;
   letter-spacing: normal;
   color: #094359;
   margin-top: 3px;
