@@ -26,7 +26,6 @@ script:
     fi  
   - echo $NODE_ENV
   - echo $CLOUDFRONT_DIST_ID
-  - yarn test 
   - yarn build
 
 after_success:
