@@ -80,7 +80,7 @@ const HeaderSection = styled.div`
 const ContentSection = styled.div`
   position: relative;
   width: 100%;
-  height: 156px;
+  height: 200px;
   overflow: auto;
   margin: 10px 0 30px;
 `;
@@ -331,7 +331,7 @@ class CategoryModal extends React.Component {
       let values = {
         ...this.textFields.getFieldValues(),
       };
-      const icon = icons.find(icon => icon.id === defaultIcon);
+      const icon = icons.find(icon => parseInt(icon.id) === parseInt(defaultIcon));
       if (defaultIcon) {
         values = {
           ...values,
@@ -352,7 +352,7 @@ class CategoryModal extends React.Component {
       return customIcon;
     }
     const { icons } = this.props;
-    const icon = icons.find(icon => icon.id === defaultIcon);
+    const icon = icons.find(icon => parseInt(icon.id) === parseInt(defaultIcon));
     return get(icon, 'icon.url');
   }
 

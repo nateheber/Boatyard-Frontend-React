@@ -45,6 +45,7 @@ export default class AppEditor extends React.Component {
     step: 0,
     image: null,
     services: [],
+    categories: [],
     currentService: {},
   }
 
@@ -60,13 +61,17 @@ export default class AppEditor extends React.Component {
     this.setState({ services });
   }
 
+  setCategories = (categories) => {
+    this.setState({ categories });
+  }
+
   renderSteps = () => {
-    const { step, image, services } = this.state;
+    const { step, image, services, categories } = this.state;
     switch(step) {
       case 0:
         return <AppBanners image={image} onChangeImage={this.setImage} />
       case 1:
-        return <AppServiceCategories image={image} />
+        return <AppServiceCategories image={image} categories={categories} onChange={this.setCategories} />
       case 2:
         return <AppServices image={image} services={services} onChange={this.setServices} />
       case 3:
