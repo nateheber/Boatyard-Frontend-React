@@ -11,6 +11,10 @@ import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../../Wrappe
 import CategoryModal from '../CategoryModal';
 
 class AppServices extends React.Component {
+  static getDerivedStateFromProps(props) {
+    return ({ services: props.services });
+  }
+
   state = {
     services: [],
     currentService: {},
@@ -23,6 +27,7 @@ class AppServices extends React.Component {
   }
 
   setServices = (services) => {
+    this.props.onChange(services);
     this.setState({ services });
   }
 
@@ -47,12 +52,14 @@ class AppServices extends React.Component {
       ...(isEmpty(customIcon) ? {} : {customIcon})
     }
     this.setState({ services: newServices, showModal: false });
+    this.props.onChange(newServices);
   }
 
   deleteService = (id) => {
     const { services } = this.state;
     const newServices = filter(services, service => service.id !== id);
     this.setState({ services: newServices, showModal: false });
+    this.props.onChange(newServices);
   }
 
   render() {
