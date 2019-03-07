@@ -15,15 +15,20 @@ const InfoSection = styled.div`
   }
 `;
 
-const ButtonWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0px 7px;
-`;
+const ModalContent = styled.div`
+  width: 382px;
+  margin: auto;
+`
 
 export default class AddConfirmationModal extends React.Component {
+  state = {
+    image: '',
+  }
+
+  onChangeImage = (image) => {
+    this.setState({ image });
+  }
+
   getBasicInfoFields = () => {
     const { providerLocation } = this.props;
     if (providerLocation) {
@@ -116,28 +121,64 @@ export default class AddConfirmationModal extends React.Component {
     }
   }
 
+  setBasicInfoRef = (ref) => {
+    this.basicInfo = ref;
+  }
+
+  setAddressInfoRef = (ref) => {
+    this.addressInfo = ref;
+  }
+
+  submitData = () => {
+    const isBasicInfoValid = this.basicInfo.validateFields();
+    const isAddressInfoValid = this.addressInfo.validateFields();
+    if (isBasicInfoValid && isAddressInfoValid) {
+      // const { locationName, contactName, phoneNumber, email } = this.basicInfo.getFieldValues();
+      const { address, city, state, zipCode } = this.addressInfo.getFieldValues();
+      const { image } = this.state;
+      const data = {
+        provider_location: {
+          home_image: image,
+          location_attributes: {
+            address_attributes: {
+              street: address,
+              city,
+              state,
+              zip: zipCode,
+              country: 'USA'
+            }
+          }
+        }
+      };
+      this.props.onAddLocation(data);
+    }
+  }
+
   render() {
     const { open, onClose } = this.props;
     const basicInfoFields = this.getBasicInfoFields();
     const addressFields = this.getAddressFields();
+    const actionButtons = [
+      <OrangeButton className="big thin-font" onClick={this.submitData} key="submit_data">
+        Add Location
+      </OrangeButton>
+    ]
     return (
       <Modal
         title="Add Location"
         open={open}
         onClose={onClose}
+        actions={actionButtons}
       >
-        <LocationImage />
-        <InfoSection>
-          <FormFields fieldSize="big" fields={basicInfoFields} />
-        </InfoSection>
-        <InfoSection>
-          <FormFields fieldSize="big" fields={addressFields} />
-        </InfoSection>
-        <ButtonWrapper>
-          <OrangeButton className="big thin-font">
-            Add Location
-          </OrangeButton>
-        </ButtonWrapper>
+        <ModalContent>
+          <LocationImage onChange={this.onChangeImage} />
+          <InfoSection>
+            <FormFields fieldSize="big" fields={basicInfoFields} ref={this.setBasicInfoRef} />
+          </InfoSection>
+          <InfoSection>
+            <FormFields fieldSize="big" fields={addressFields} ref={this.setAddressInfoRef} />
+          </InfoSection>
+        </ModalContent>
       </Modal>
     );
   }

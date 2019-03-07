@@ -3,9 +3,11 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get } from 'lodash';
 
-import { GetProviderLocations } from 'store/actions/providerLocations';
+import { GetProviderLocations, CreateProviderLocation } from 'store/actions/providerLocations';
 import { SearchBox } from 'components/basic/Input';
-import { LocationHeader, AddLocationModal } from './components';
+import { LocationHeader, AddLocationModal, LocationCard } from './components';
+
+import { testData } from './testData';
 
 const Wrapper = styled.div`
   padding-top: 18px;
@@ -32,6 +34,7 @@ const LocationHolder = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: flex-start;
 `;
 
 
@@ -46,6 +49,10 @@ class LocationEditor extends React.Component {
     GetProviderLocations({ providerId });
   }
 
+  onSuccess = (result) => {
+    console.log(result);
+  }
+
   showLocationModal = () => {
     this.setState({ showNewLocation: true });
   }
@@ -54,8 +61,17 @@ class LocationEditor extends React.Component {
     this.setState({ showNewLocation: false });
   }
 
+  addLocation = (data) => {
+    const { provider, CreateProviderLocation } = this.props;
+    const providerId = get(provider, 'id');
+    console.log(providerId);
+    CreateProviderLocation({ providerId, data, onSuccess: this.onSuccess });
+  }
+
   render() {
     const { showNewLocation } = this.state;
+    const { provider } = this.props;
+    const name = get(provider, 'name');
     return (
       <Wrapper>
         <LocationHeader onAdd={this.showLocationModal} />
@@ -63,20 +79,27 @@ class LocationEditor extends React.Component {
           <SearchWrapper>
             <SearchBox />
           </SearchWrapper>
-          <LocationHolder />
+          <LocationHolder>
+            {
+              testData.map((location, idx) => (
+                <LocationCard providerName={name} locationInfo={location} key={`provider_location_${idx}`} />
+              ))
+            }
+          </LocationHolder>
         </EditorWrapper>
-        <AddLocationModal open={showNewLocation} onClose={this.hideLocationModal} />
+        <AddLocationModal open={showNewLocation} onClose={this.hideLocationModal} onAddLocation={this.addLocation} />
       </Wrapper>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  provider: state.provider.currentProvider.data
+  provider: state.provider.currentProvider
 });
 
 const mapDispatchToProps = {
   GetProviderLocations,
-}
+  CreateProviderLocation,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(LocationEditor);

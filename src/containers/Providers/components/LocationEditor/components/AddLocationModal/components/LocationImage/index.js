@@ -57,6 +57,7 @@ export default class LocationImage extends React.Component {
       this.setState({
         file: reader.result
       });
+      this.props.onChange(reader.result);
     }
     reader.readAsDataURL(event.target.files[0]);
   };
