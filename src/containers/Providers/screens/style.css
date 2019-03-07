@@ -17,9 +17,8 @@
   display: flex;
   color: #909090;
   padding: 0 45px;
-  font-size: 22;
-  font-weight: 700;
-  position: relative;
+  font-size: 18px;
+  font-weight: 500;
   height: 55px;
   align-items: center;
   border-left: 1px solid #dfdfdf;
@@ -45,5 +44,5 @@
 }
 
 .react-tabs__tab-panel.react-tabs__tab-panel--selected {
-  flex: 1;
+  height: calc(100% - 70px);
 }

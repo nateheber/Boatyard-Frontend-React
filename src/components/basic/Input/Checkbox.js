@@ -10,9 +10,12 @@ const Check = styled.button`
     width: 15px;
     height: 15px;
   }
-  border-width: 1px;
-  border-style: solid;
-  border-color: rgb(199, 199, 199);
+  &.big {
+    width: 36px;
+    height: 36px;
+    margin-top: 0px;
+  }
+  border: 1px solid #dfdfdf;
   border-image: initial;
   border-radius: 4px !important;
   cursor: pointer;
@@ -44,6 +47,15 @@ const Check = styled.button`
       height: 7px;
     }
   }
+  &.big {
+    &.checked::after {
+      top: 1px;
+      left: 10px;
+      width: 10px;
+      height: 19px;
+      border-width: 0px 4px 4px 0px;
+    }
+  }
   outline: none;
 `;
 
@@ -57,22 +69,24 @@ const Wrapper = styled.div`
   cursor: pointer;
 `;
 
-export const CheckBox = ({ small, checked, onClick }) => (
+export const CheckBox = ({ big, small, checked, onClick }) => (
   <Check
     className={className({
       checked: checked,
-      small: small
+      small: small,
+      big: big
     })}
     onClick={onClick}
   />
 );
 
-export const CheckField = ({ title, small, checked, onClick, color }) => (
+export const CheckField = ({ title, big, small, checked, onClick, color }) => (
   <Wrapper color={color} onClick={onClick}>
     <Check
       className={className({
         checked: checked,
-        small: small
+        small: small,
+        big,
       })}
       onClick={onClick}
     />

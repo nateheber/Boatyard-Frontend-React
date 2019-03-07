@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col } from 'react-flexbox-grid';
 import { isEmpty, set, get, findIndex } from 'lodash';
 import deepEqual from 'deep-equal';
+import classNames from 'classnames';
 
 import {
   InputWrapper,
@@ -94,7 +95,7 @@ export default class FormFields extends React.Component {
 
   getFieldValues = () => this.state.value;
 
-  renderInputField = (field, type, mask, maskChar, placeholder, dateFormat, errorMessage, options) => {
+  renderInputField = (field, type, mask, maskChar, placeholder, dateFormat, errorMessage, options, size) => {
     const { value, errors } = this.state;
     let fieldValue = '';
       if (type === 'check_box') {
@@ -111,6 +112,7 @@ export default class FormFields extends React.Component {
       case 'check_box':
         return (
           <CheckBox
+            big={size === 'big'}
             checked={fieldValue}
             onClick={() => this.onChangeValue(field, !fieldValue)}
           />
@@ -156,6 +158,7 @@ export default class FormFields extends React.Component {
       case 'text_field':
         return (
           <Input
+            className={`size-${size}`}
             mask={mask}
             maskChar={maskChar}
             value={fieldValue}
@@ -182,7 +185,7 @@ export default class FormFields extends React.Component {
   };
 
   render() {
-    const { fields } = this.props;
+    const { fields, fieldSize } = this.props;
     return (
       <Row>
         {fields.map(
@@ -202,7 +205,7 @@ export default class FormFields extends React.Component {
             idx
           ) => (
             <Col {...posInfo} key={`field_${idx}`}>
-              <InputWrapper className="secondary">
+              <InputWrapper className={classNames("secondary", `size-${fieldSize}`)}>
                 <InputLabel>{label}</InputLabel>
                 {this.renderInputField(
                   field,
@@ -212,7 +215,8 @@ export default class FormFields extends React.Component {
                   placeholder,
                   dateFormat,
                   errorMessage,
-                  options
+                  options,
+                  fieldSize,
                 )}
               </InputWrapper>
             </Col>

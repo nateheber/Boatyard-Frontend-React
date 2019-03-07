@@ -74,7 +74,7 @@ export const createProviderLocationServiceClient = authType => {
 };
 
 export const createProviderLocationClient = authType => {
-  return new CRUDClient('provider_locations', authType);
+  return new MultiLayerCRUDClient(['providers', 'locations'], authType);
 };
 
 export const createPaymentGatewayClient = authType => {

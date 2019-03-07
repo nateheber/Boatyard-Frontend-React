@@ -1,32 +1,150 @@
-import { createAction, handleActions } from 'redux-actions';
+import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
+import { get, set } from 'lodash';
+import { actionTypes } from '../actions/providerLocations';
 
-export const actions = {
-  createProviderLocation: 'PROVIDER_LOCATION/CREATE',
-  fetchProviderLocations: 'PROVIDER_LOCATION/FETCH',
-  updateProviderLocation: 'PROVIDER_LOCATION/UPDATE',
-  deleteProviderLocation: 'PROVIDER_LOCATION/DELETE',
-  setProviderLocations: 'PROVIDER_LOCATION/SET'
-};
-
-export const createProviderLocation = createAction(actions.createProviderLocation);
-export const fetchProviderLocations = createAction(actions.fetchProviderLocations);
-export const updateProviderLocation = createAction(actions.updateProviderLocation);
-export const deleteProviderLocation = createAction(actions.deleteProviderLocation);
-
+function refactorIncluded(included) {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i]
+    set(refactored, `${type}.${id}`, {...included[i]})
+  }
+  return refactored;
+}
 const initialState = {
+  currentStatus: '',
   providerLocations: [],
-  included: [],
+  currentProviderLocation: {},
+  included: {},
+  page: 1,
+  perPage: 20,
+  total: 0,
+  errors: null
 };
+
 
 export default handleActions(
   {
-    [actions.setProviderLocations]: (state, { payload }) =>
+    [actionTypes.GET_PROVIDER_LOCATIONS]: (state, action) =>
       produce(state, draft => {
-        const { data, included } = payload;
-        draft.providerLocations = data;
-        draft.included = included;
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'params.page', 0);
+        draft.errors = null;
       }),
-  },
+    [actionTypes.GET_PROVIDER_LOCATIONS_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { total, perPage, providerLocations, included } = payload;
+        draft.currentStatus = type;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.categories = providerLocations;
+        draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.GET_PROVIDER_LOCATIONS_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.FILTER_PROVIDER_LOCATIONS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'params.page', 1);
+        draft.errors = null;
+      }),
+    [actionTypes.FILTER_PROVIDER_LOCATIONS_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { total, perPage, providerLocations } = payload;
+        draft.currentStatus = type;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.filteredCategories = providerLocations;
+      }),
+    [actionTypes.FILTER_PROVIDER_LOCATIONS_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.CREATE_PROVIDER_LOCATION]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.CREATE_PROVIDER_LOCATION_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.currentProviderLocation = payload;
+      }),
+    [actionTypes.CREATE_PROVIDER_LOCATION_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.UPDATE_PROVIDER_LOCATION]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.UPDATE_PROVIDER_LOCATION_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.UPDATE_PROVIDER_LOCATION_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.GET_PROVIDER_LOCATION]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.GET_PROVIDER_LOCATION_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.currentCategory = payload;
+      }),
+    [actionTypes.GET_PROVIDER_LOCATION_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.DELETE_PROVIDER_LOCATION]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.DELETE_PROVIDER_LOCATION_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.DELETE_PROVIDER_LOCATION_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      })
+    },
   initialState
 );

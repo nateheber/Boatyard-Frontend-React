@@ -16,3 +16,13 @@ code {
   font-family: "DIN";
   src: url('./resources/DIN/DINMd___.ttf') format("truetype");
 }
+
+@font-face {
+  font-family: "DIN-Regular";
+  src: url('./resources/DIN/DINRG__.TTF') format("truetype");
+}
+
+@font-face {
+  font-family: "DIN-Light";
+  src: url('./resources/DIN/DINLi___.ttf') format("truetype");
+}
