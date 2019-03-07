@@ -169,7 +169,7 @@ const PreviewTextWrapper = styled.div`
 const PreviewName = styled.div`
   font-size: 32px;
   font-weight: bold;
-  line-height: 21px;
+  line-height: 32px;
 `;
 
 const PreviewDescription = styled.div`
