@@ -1,9 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 
 import { OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
+
+import { CreateProviderLocation } from 'store/actions/providerLocations';
 
 import { LocationImage } from './components';
 
@@ -20,7 +23,7 @@ const ModalContent = styled.div`
   margin: auto;
 `
 
-export default class AddConfirmationModal extends React.Component {
+class AddLocationModal extends React.Component {
   state = {
     image: '',
   }
@@ -130,6 +133,7 @@ export default class AddConfirmationModal extends React.Component {
   }
 
   submitData = () => {
+    const { providerId, privilege } = this.props;
     const isBasicInfoValid = this.basicInfo.validateFields();
     const isAddressInfoValid = this.addressInfo.validateFields();
     if (isBasicInfoValid && isAddressInfoValid) {
@@ -139,7 +143,16 @@ export default class AddConfirmationModal extends React.Component {
       const data = {
         provider_location: {
           home_image: image,
+          zone_attributes: {
+            name: locationName
+          },
           location_attributes: {
+            ...(privilege === 'admin' ? {
+              locatable: {
+                locatable_type: 'provider',
+                locatable_id: providerId,
+              }
+            } : {}),
             location_type: 'business_address',
             name: locationName,
             address_attributes: {
@@ -152,8 +165,13 @@ export default class AddConfirmationModal extends React.Component {
           }
         }
       };
-      this.props.onAddLocation(data);
+      this.addLocation(data);
     }
+  }
+
+  addLocation = (data) => {
+    const { providerId, CreateProviderLocation } = this.props;
+    CreateProviderLocation({ providerId, data, onSuccess: this.onSuccess });
   }
 
   render() {
@@ -185,3 +203,13 @@ export default class AddConfirmationModal extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  privilege: state.auth.privilege,
+});
+
+const mapDispatchToProps = {
+  CreateProviderLocation,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddLocationModal);

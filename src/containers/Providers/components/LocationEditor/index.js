@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get } from 'lodash';
 
-import { GetProviderLocations, CreateProviderLocation } from 'store/actions/providerLocations';
+import { GetProviderLocations } from 'store/actions/providerLocations';
 import { SearchBox } from 'components/basic/Input';
 import { LocationHeader, AddLocationModal, LocationCard } from './components';
 
@@ -61,17 +61,11 @@ class LocationEditor extends React.Component {
     this.setState({ showNewLocation: false });
   }
 
-  addLocation = (data) => {
-    const { provider, CreateProviderLocation } = this.props;
-    const providerId = get(provider, 'id');
-    console.log(providerId);
-    CreateProviderLocation({ providerId, data, onSuccess: this.onSuccess });
-  }
-
   render() {
     const { showNewLocation } = this.state;
     const { provider } = this.props;
     const name = get(provider, 'name');
+    const providerId = get(provider, 'id');
     return (
       <Wrapper>
         <LocationHeader onAdd={this.showLocationModal} />
@@ -87,7 +81,7 @@ class LocationEditor extends React.Component {
             }
           </LocationHolder>
         </EditorWrapper>
-        <AddLocationModal open={showNewLocation} onClose={this.hideLocationModal} onAddLocation={this.addLocation} />
+        <AddLocationModal providerId={providerId} open={showNewLocation} onClose={this.hideLocationModal} />
       </Wrapper>
     )
   }
@@ -99,7 +93,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   GetProviderLocations,
-  CreateProviderLocation,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LocationEditor);
