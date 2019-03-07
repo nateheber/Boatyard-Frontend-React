@@ -133,13 +133,15 @@ export default class AddConfirmationModal extends React.Component {
     const isBasicInfoValid = this.basicInfo.validateFields();
     const isAddressInfoValid = this.addressInfo.validateFields();
     if (isBasicInfoValid && isAddressInfoValid) {
-      // const { locationName, contactName, phoneNumber, email } = this.basicInfo.getFieldValues();
+      const { locationName } = this.basicInfo.getFieldValues();
       const { address, city, state, zipCode } = this.addressInfo.getFieldValues();
       const { image } = this.state;
       const data = {
         provider_location: {
           home_image: image,
           location_attributes: {
+            location_type: 'business_address',
+            name: locationName,
             address_attributes: {
               street: address,
               city,
