@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   flex: 1;
   flex-direction: column;
   overflow-y: scroll;
-  margin-bottom: 35px;
+  padding-bottom: 35px;
 `;
 
 export default class ServicePreview extends React.Component {

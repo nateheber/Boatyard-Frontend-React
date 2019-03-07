@@ -8,9 +8,8 @@ import ButtonSilhouette from 'resources/phoneButtons.png';
 
 const Wrapper = styled.div`
   position: relative;
-  width: 247px;
-  height: 464px;
-  border-radius: 44.5px;
+  width: 223px;
+  height: 415px;
   background-color: white;
   background-image: url(${Silhouette});
   &.secondary {
@@ -18,10 +17,10 @@ const Wrapper = styled.div`
   }
   background-repeat: no-repeat;
   background-size: 100%;
-  padding-left: 13px;
-  padding-right: 13px;
-  padding-bottom: 12px;
-  padding-top: 80px;
+  padding-left: 11px;
+  padding-right: 11px;
+  padding-bottom: 11px;
+  padding-top: 72px;
   &::after {
     content: '';
     position: absolute;
@@ -38,8 +37,9 @@ const ContentHolder = styled.div`
   display: flex;
   height: 100%;
   flex-direction: column;
-  border-bottom-right-radius: 38.5px;
-  border-bottom-left-radius: 38.5px;
+  border-bottom-right-radius: 35px;
+  border-bottom-left-radius: 35px;
+  padding: 0 1px;
   overflow: hidden;
 `;
 

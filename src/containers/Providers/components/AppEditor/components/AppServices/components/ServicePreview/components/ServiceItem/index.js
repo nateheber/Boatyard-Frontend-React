@@ -8,7 +8,7 @@ import Pencil from 'resources/edit.svg';
 const Wrapper = styled.div`
   display: block;
   position: relative;
-  height: 59px;
+  min-height: 59px;
   cursor: pointer;
 `;
 
@@ -20,20 +20,19 @@ const Container = styled.div`
   align-items: center;
   border-bottom: solid 0.5px #979797;
   background-color: #d8d8d8;
-  padding-left: 20px;
-  padding-top: 14px;
-  padding-bottom: 11px;
-`
+  padding: 10px 15px;
+`;
 
 const Icon = styled.img`
-  width: 28px;
-  height: 28px;
+  object-fit: cover;
+  width: 24px;
+  height: 24px;
 `;
 
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 14px;
+  margin-left: 12px;
 `;
 
 const Title = styled.div`
@@ -44,6 +43,7 @@ const Title = styled.div`
   line-height: normal;
   letter-spacing: normal;
   color: #094359;
+  line-height: 14px;
 `;
 
 const Description = styled.div`
@@ -54,6 +54,7 @@ const Description = styled.div`
   line-height: normal;
   letter-spacing: normal;
   color: #094359;
+  margin-top: 3px;
 `;
 
 const EditWrapper = styled.div`

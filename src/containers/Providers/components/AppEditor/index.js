@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   font-family: DIN;
   flex-direction: column;
   flex: 1;
-  height: calc(100% - 20px);
+  height: calc(100% - 5px);
   margin-top: 20px;
   background-color: white;
 `;
