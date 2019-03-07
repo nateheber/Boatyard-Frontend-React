@@ -13,6 +13,7 @@ const Wrapper = styled.div`
   background-color: #f7941e;
   padding-left: 10px;
   padding-right: 10px;
+  box-sizing: border-box;
 `;
 
 export default ({ title, disabled, onChange }) => (

@@ -6,6 +6,54 @@ import Silhouette from 'resources/phone_silhouette.png';
 import Silhouette2 from 'resources/phone_silhouette_type2.png';
 import ButtonSilhouette from 'resources/phoneButtons.png';
 
+import { HollowButton, OrangeButton } from 'components/basic/Buttons';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const SectionName = styled.div`
+  font-family: Montserrat;
+  font-size: 18px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #003247;
+  margin-bottom: 25px;
+`;
+
+const SliderNav = styled.div`
+  dispaly: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+`;
+
+const NavDot = styled.div`
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  &.active {
+    background-color: #003247;
+  }
+  background-color: #d8d8d8;
+  border-radius: 6.5px;
+  margin: 0px 3.5px;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const Wrapper = styled.div`
   position: relative;
   width: 223px;
@@ -31,6 +79,7 @@ const Wrapper = styled.div`
     top: 53px;
     background-image: url(${ButtonSilhouette});
   }
+  margin-bottom: 13px;
 `;
 
 const ContentHolder = styled.div`
@@ -55,12 +104,22 @@ const Title = styled.div`
 `;
 
 export default ({ secondary, title, children }) => (
-  <Wrapper className={classNames({ secondary })} >
-    {
-      secondary && <Title>{title}</Title>
-    }
-    <ContentHolder>
-      {children}
-    </ContentHolder>
-  </Wrapper>
-)
+  <Container>
+    <SectionName>Home</SectionName>
+    <Wrapper className={classNames({ secondary })} >
+      {
+        secondary && <Title>{title}</Title>
+      }
+      <ContentHolder>
+        {children}
+      </ContentHolder>
+    </Wrapper>
+    <SliderNav>
+      <NavDot className="active" /><NavDot /><NavDot />
+    </SliderNav>
+    <ButtonWrapper>
+      <HollowButton className="thin-font">UNPUBLISH</HollowButton>
+      <OrangeButton className="thin-font">PUBLISH</OrangeButton>
+    </ButtonWrapper>
+  </Container>
+);
