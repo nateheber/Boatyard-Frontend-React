@@ -16,11 +16,6 @@ import { NormalText } from 'components/basic/Typho'
 
 import BackIcon from 'resources/back.svg';
 
-const Divider = styled.div`
-  height: 20px;
-  width: 100%;
-`;
-
 const IconSection = styled.div`
 `;
 

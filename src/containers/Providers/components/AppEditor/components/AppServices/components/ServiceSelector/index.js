@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { get, isEmpty, findIndex, remove } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { SearchBox } from 'components/basic/Input';
 
