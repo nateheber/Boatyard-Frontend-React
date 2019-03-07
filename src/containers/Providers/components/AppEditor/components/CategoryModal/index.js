@@ -169,10 +169,13 @@ const PreviewTextWrapper = styled.div`
 const PreviewName = styled.div`
   font-size: 32px;
   font-weight: bold;
+  line-height: 21px;
 `;
 
 const PreviewDescription = styled.div`
   font-size: 20px;
+  line-height: 18px;
+  margin-top: 15px;
 `;
 
 const PreviewNextIcon = styled.img`
