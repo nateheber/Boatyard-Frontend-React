@@ -95,7 +95,7 @@ class Categories extends React.Component {
     this.setState({ visibleOfCategoryModal: false });
   };
 
-  onSave = (data, iconFile, customIcon) => {
+  onSave = (data, iconFile, customIcon = null) => {
     const { CreateIcon } = this.props;
     if (customIcon) {
       CreateIcon({
