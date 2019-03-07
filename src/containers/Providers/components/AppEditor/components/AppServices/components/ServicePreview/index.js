@@ -16,8 +16,8 @@ export default class ServicePreview extends React.Component {
     const { services, onEdit } = this.props;
     return (
       <Wrapper>
-        { services.map(service => (
-          <ServiceItem service={service} key={`service_preview${service.id}`} onEdit={onEdit} />
+        { services.map((service, idx) => (
+          <ServiceItem service={service} key={`service_preview${idx}`} onEdit={onEdit} />
         )) }
       </Wrapper>
     );

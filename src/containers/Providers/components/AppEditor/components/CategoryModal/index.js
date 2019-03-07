@@ -10,7 +10,7 @@ import deepEqual from 'deep-equal';
 import { actionTypes, GetIcons } from 'store/actions/icons';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
-import { OrangeButton, UploadButton } from 'components/basic/Buttons';
+import { OrangeButton, HollowButton, UploadButton } from 'components/basic/Buttons';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { NormalText } from 'components/basic/Typho'
 
@@ -190,8 +190,7 @@ class CategoryModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      categoryFields: [],
-      descriptionField: [],
+      fields: [],
       name: '',
       description: '',
       iconFile: null,
@@ -202,9 +201,9 @@ class CategoryModal extends React.Component {
   }
 
   componentDidMount() {
-    const { category } = this.props;
-    const defaultIcon = get(category, 'iconId');
-    const customIcon = get(category, 'customIcon.url');
+    const { baseData } = this.props;
+    const defaultIcon = get(baseData, 'iconId');
+    const customIcon = get(baseData, 'customIcon');
     this.setState({ defaultIcon, customIcon }, () => {
       if (!defaultIcon) {
         if (!isEmpty(customIcon)) {
@@ -212,17 +211,16 @@ class CategoryModal extends React.Component {
           this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
         }
       }
-      this.getCategoryFields();
-      this.getDescriptionField();
+      this.getTextFields();
       this.loadIcons();
     });
   }
 
   componentDidUpdate(prevProps) {
-    if (!deepEqual(this.props.category, prevProps.category)) {
-      const { category } = this.props;
-      const defaultIcon = get(category, 'iconId');
-      const customIcon = get(category, 'customIcon.url');
+    if (!deepEqual(this.props.baseData, prevProps.baseData)) {
+      const { baseData } = this.props;
+      const defaultIcon = get(baseData, 'iconId');
+      const customIcon = get(baseData, 'customIcon');
       this.setState({ defaultIcon, customIcon }, () => {
         if (!defaultIcon) {
           if (!isEmpty(customIcon)) {
@@ -230,8 +228,7 @@ class CategoryModal extends React.Component {
             this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
           }
         }
-        this.getCategoryFields();
-        this.getDescriptionField();
+        this.getTextFields();
       });
     }
   }
@@ -266,29 +263,21 @@ class CategoryModal extends React.Component {
     }
   };
 
-  getCategoryFields = () => {
-    const { category } = this.props;
-    const name = get(category, 'name');
+  getTextFields = () => {
+    const { baseData } = this.props;
+    const name = get(baseData, 'name');
+    const description = get(baseData, 'description');
     
-    const categoryFields = [
+    const fields = [
       {
         field: 'name',
-        label: isEmpty(category) ? 'Category Name' : 'Service Name',
+        label: isEmpty(baseData) ? 'Category Name' : 'Service Name',
         type: 'text_field',
         errorMessage: 'Enter Category name',
         required: true,
         defaultValue: name,
         xs: 12,
       },
-    ];
-
-    this.setState({ categoryFields, name, });
-  };
-
-  getDescriptionField = () => {
-    const { category } = this.props;
-    const description = get(category, 'description');
-    const descriptionField = [
       {
         field: 'description',
         label: 'Button Sub Copy',
@@ -298,16 +287,12 @@ class CategoryModal extends React.Component {
       }
     ];
 
-    this.setState({ descriptionField, description });
+    this.setState({ fields, name, description });
   };
 
-  setCategoryFieldsRef = ref => {
-    this.categoryFields = ref;
+  setTextFields = ref => {
+    this.textFields = ref;
   };
-
-  setDescriptionFieldRef = ref => {
-    this.descriptionField = ref;
-  }
 
   handleChangeField = (value, field) => {
     const updateObj = {};
@@ -336,22 +321,24 @@ class CategoryModal extends React.Component {
     this.setState({ defaultIcon: icon.id });
   };
 
+  onDelete = () => {
+    const { baseData, onDelete } = this.props;
+    onDelete(baseData.id);
+  }
+
   onSave = () => {
-    const { onSave } = this.props;
+    const { onSave, icons } = this.props;
     const { defaultIcon, iconFile, customIcon } = this.state;
-    if (this.categoryFields.validateFields()) {
+    if (this.textFields.validateFields()) {
       let values = {
-        ...this.categoryFields.getFieldValues(),
-        ...this.descriptionField.getFieldValues(),
+        ...this.textFields.getFieldValues(),
       };
-      values = {
-        ...values,
-        cost: values.cost || '0'
-      };
+      const icon = icons.find(icon => icon.id === defaultIcon);
       if (defaultIcon) {
         values = {
           ...values,
-          icon_id: defaultIcon
+          iconId: parseInt(defaultIcon),
+          defaultIcon: get(icon, 'icon.url'),
         };
       }
       onSave(values, iconFile, customIcon);
@@ -373,8 +360,11 @@ class CategoryModal extends React.Component {
 
   render() {
     const { loading, title, open, onClose, currentStatus } = this.props;
-    const { categoryFields, descriptionField, customIcon, name, description } = this.state;
-    const actions = [<OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>];
+    const { fields, customIcon, name, description } = this.state;
+    const actions = [
+      <HollowButton onClick={this.onDelete} key="modal_btn_delete">Delete</HollowButton>,
+      <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>
+    ];
     const iconSrc = this.getIcon();
     return (
       <Modal
@@ -408,14 +398,8 @@ class CategoryModal extends React.Component {
         <EditorSection>
           <EditorArea>
             <FormFields
-              ref={this.setCategoryFieldsRef}
-              fields={categoryFields}
-              onChange={this.handleChangeField}
-            />
-            <Divider />
-            <FormFields
-              ref={this.setDescriptionFieldRef}
-              fields={descriptionField}
+              ref={this.setTextFields}
+              fields={fields}
               onChange={this.handleChangeField}
             />
           </EditorArea>

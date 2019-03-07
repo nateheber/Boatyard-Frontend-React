@@ -107,15 +107,19 @@ class ServiceSelector extends React.Component {
     })
   }
 
-  onSelect = service => () => {
+  onSelect = category => () => {
     const { selected } = this.state;
     const result = selected.map(service => ({ ...service }));
-    const idx = findIndex(result, item => item.id === service.id);
-    if (idx >= 0) {
-      remove(result, item => item.id === service.id);
-    } else {
-      result.push(service);
-    }
+    const lastIndex = get(result, `[${result.length - 1}].id`, -1);
+    result.push({
+      id: lastIndex + 1,
+      categoryId: category.id,
+      iconId: category.iconId,
+      defaultIcon: get(category, 'relationships.icon.attributes.icon.url'),
+      customIcon: category.customIcon.url,
+      name: category.name,
+      description: category.description,
+    });
     this.props.onChange(result);
   }
 
@@ -147,8 +151,8 @@ class ServiceSelector extends React.Component {
           {
             categories.map((item) => {
               const { id, name } = item;
-              const defaultIcon = get(item, 'relationships.icon.attributes.icon.button3X.url');
-              const customIcon = get(item, 'customIcon.button3X.url');
+              const defaultIcon = get(item, 'relationships.icon.attributes.icon.url');
+              const customIcon = get(item, 'customIcon.url');
               return (
                 <Tile key={`service_${id}`} onClick={this.onSelect(item)}>
                   <div className="tile-content" onClick={this.onGoToDetails}>

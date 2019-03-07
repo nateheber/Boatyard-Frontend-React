@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, isEmpty, filter } from 'lodash';
 
 import PhonePreview from '../../../PhonePreview';
 import PhoneBanner from '../../../PhoneBanner';
@@ -31,11 +31,28 @@ class AppServices extends React.Component {
   }
 
   onEdit = (service) => {
-    console.log(service);
     this.setState({
       currentService: service,
       showModal: true,
     })
+  }
+
+  updateService = (values, iconFile, customIcon) => {
+    const { services, currentService } = this.state;
+    const idx = services.findIndex(service => service.id === currentService.id);
+    const newServices = services.map(service => ({...service}));
+    newServices[idx] = {
+      ...newServices[idx],
+      ...values,
+      ...(isEmpty(customIcon) ? {} : {customIcon})
+    }
+    this.setState({ services: newServices, showModal: false });
+  }
+
+  deleteService = (id) => {
+    const { services } = this.state;
+    const newServices = filter(services, service => service.id !== id);
+    this.setState({ services: newServices, showModal: false });
   }
 
   render() {
@@ -53,7 +70,14 @@ class AppServices extends React.Component {
             <ServicePreview services={services} onEdit={this.onEdit} />
           </PhonePreview>
         </PreviewWrapper>
-        <CategoryModal title="Customize Service" category={currentService} open={showModal} onClose={this.hideModal} />
+        <CategoryModal
+          title="Customize Service"
+          baseData={currentService}
+          open={showModal}
+          onClose={this.hideModal}
+          onSave={this.updateService}
+          onDelete={this.deleteService}
+        />
       </ContentWrapper>
     )
   }
