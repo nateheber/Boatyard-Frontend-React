@@ -13,11 +13,11 @@ const Wrapper = styled.div`
 
 export default class ServicePreview extends React.Component {
   render() {
-    const { services } = this.props;
+    const { services, onEdit } = this.props;
     return (
       <Wrapper>
         { services.map(service => (
-          <ServiceItem service={service} key={`service_preview${service.id}`} />
+          <ServiceItem service={service} key={`service_preview${service.id}`} onEdit={onEdit} />
         )) }
       </Wrapper>
     );

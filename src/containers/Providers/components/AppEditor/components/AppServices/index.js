@@ -8,9 +8,13 @@ import { ServiceSelector, ServicePreview} from './components';
 
 import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../../Wrappers';
 
+import CategoryModal from '../CategoryModal';
+
 class AppServices extends React.Component {
   state = {
-    services: []
+    services: [],
+    currentService: {},
+    showModal: false,
   };
 
   getProviderName = () => {
@@ -22,8 +26,20 @@ class AppServices extends React.Component {
     this.setState({ services });
   }
 
+  hideModal = () => {
+    this.setState({ showModal: false });
+  }
+
+  onEdit = (service) => {
+    console.log(service);
+    this.setState({
+      currentService: service,
+      showModal: true,
+    })
+  }
+
   render() {
-    const { services } = this.state;
+    const { services, currentService, showModal } = this.state;
     const { image } = this.props;
     const providerName = this.getProviderName();
     return (
@@ -34,9 +50,10 @@ class AppServices extends React.Component {
         <PreviewWrapper>
           <PhonePreview>
             <PhoneBanner image={image} providerName={providerName} />
-            <ServicePreview services={services} />
+            <ServicePreview services={services} onEdit={this.onEdit} />
           </PhonePreview>
         </PreviewWrapper>
+        <CategoryModal title="Customize Service" category={currentService} open={showModal} onClose={this.hideModal} />
       </ContentWrapper>
     )
   }

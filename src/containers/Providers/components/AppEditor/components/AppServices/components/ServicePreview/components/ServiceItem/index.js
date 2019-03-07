@@ -121,7 +121,8 @@ export default class ServiceItem extends React.Component {
 
   onEdit = (evt) => {
     evt.stopPropagation();
-    console.log('toEditService');
+    const { service, onEdit } = this.props;
+    onEdit(service);
   }
 
   render () {
