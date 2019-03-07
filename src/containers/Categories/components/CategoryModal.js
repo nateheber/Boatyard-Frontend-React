@@ -325,8 +325,10 @@ class CategoryModal extends React.Component {
           ...values,
           icon_id: defaultIcon
         };
+        onSave(values, iconFile);
+      } else {
+        onSave(values, iconFile, customIcon);
       }
-      onSave(values, iconFile, customIcon);
     } else {
       toastr.clean()
       toastr.error('Please fill out all the required fields')
