@@ -39,7 +39,7 @@ class AppBanners extends React.Component {
 
   getProviderName = () => {
     const { currentProvider } = this.props;
-    return get(currentProvider, 'data.attributes.name', '');
+    return get(currentProvider, 'name', '');
   }
 
   render() {
