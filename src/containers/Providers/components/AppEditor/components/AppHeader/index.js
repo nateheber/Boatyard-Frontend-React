@@ -10,14 +10,16 @@ const Wrapper = styled.div`
   justify-content: space-between;
   box-sizing: border-box;
   height: 90px;
-  padding: 22px 178px 22px 25px;
+  padding: 22px 90px 22px 25px;
   border-bottom: 1px solid #E6E6E6;
 `;
 
 const Header = styled.div`
   display: inline-block;
-  font-size: 38px;
   color: #003247;
+  font-family: Helvetica;
+  font-size: 32px;
+  text-align: left;
 `
 
 export default ({ onDraft }) => (

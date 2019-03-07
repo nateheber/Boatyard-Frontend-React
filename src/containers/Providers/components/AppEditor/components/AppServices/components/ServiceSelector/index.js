@@ -76,7 +76,7 @@ class ServiceSelector extends React.Component {
 
   componentDidMount() {
     const { provider, GetServices } = this.props;
-    const providerId = get(provider, 'data.id');
+    const providerId = get(provider, 'id');
     GetServices({ params: { 'service[provider_id]': providerId } });
   }
 
@@ -103,7 +103,7 @@ class ServiceSelector extends React.Component {
   loadPage = (page) => {
     const { keyword } = this.state;
     const { provider, GetServices } = this.props;
-    const providerId = get(provider, 'data.id');
+    const providerId = get(provider, 'id');
     const params = isEmpty(keyword) ? {
       page: page,
       per_page: 24,
@@ -146,6 +146,7 @@ class ServiceSelector extends React.Component {
 
 const mapStateToProps = (state) => ({
   services: refinedServicesSelector(state),
+  categories: state.category.categories,
   provider: state.provider.currentProvider,
   currentStatus: state.service.currentStatus,
   page: state.service.page,

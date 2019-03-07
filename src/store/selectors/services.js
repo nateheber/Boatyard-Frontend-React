@@ -1,8 +1,8 @@
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { createSelector } from 'reselect';
 
 const allServicesSelector = (state) => {
-  return get(state, 'category.categories', []);
+  return get(state, 'service.services', []);
 };
 
 const includedSelector = (state) => get(state, 'service.included', []);
@@ -14,7 +14,7 @@ export const refinedServicesSelector = createSelector(
     return allServices.map(service => {
       for(const key in service.relationships) {
         let value = service.relationships[key].data;
-        if(value) {
+        if(!isEmpty(value) && value.hasOwnProperty('type')) {
           service.relationships[key] = included[value.type][value.id];
         }
       }

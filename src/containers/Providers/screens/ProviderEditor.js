@@ -80,7 +80,8 @@ class ProviderEditFlow extends React.Component {
   }
 }
 
-const mapStateToProps = ({ provider: { providers } }) => ({
+const mapStateToProps = ({ provider: { providers, currentProvider } }) => ({
+  currentProvider,
   providers
 });
 
