@@ -8,7 +8,7 @@ import Pencil from 'resources/edit.svg';
 const Wrapper = styled.div`
   display: block;
   position: relative;
-  min-height: 59px;
+  height: 59px;
   cursor: pointer;
 `;
 
