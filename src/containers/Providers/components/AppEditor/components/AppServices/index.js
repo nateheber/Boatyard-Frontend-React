@@ -27,7 +27,6 @@ class AppServices extends React.Component {
   }
 
   setServices = (services) => {
-    console.log(services);
     this.props.onChange(services);
     this.setState({ services });
   }
