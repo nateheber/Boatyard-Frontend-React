@@ -19,14 +19,14 @@ const EditorWrapper = styled.div`
   flex-direction: column;
   background-color: white;
   box-sizing: border-box;
-  padding: 24px 26px;
+  padding: 14px 16px;
   border-top: 1px solid #dfdfdf;
 `;
 
 const SearchWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 22px 0px;
+  padding: 10px;
   width: 280px;
 `;
 
@@ -35,6 +35,7 @@ const LocationHolder = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
+  padding: 10px;
 `;
 
 
