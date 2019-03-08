@@ -165,6 +165,7 @@ class AddLocationModal extends React.Component {
           }
         }
       };
+      console.log(JSON.stringify(data))
       this.addLocation(data);
     }
   }
