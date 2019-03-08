@@ -1,25 +1,69 @@
 import React from 'react';
-import styled from 'styled-components';
+import update from 'immutability-helper';
+import { DropTarget, DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
+import _ from 'lodash';
 
-import { ServiceItem } from './components';
+import { ServiceDNDCard } from './components';
 
-const Wrapper = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  overflow-y: scroll;
-  padding-bottom: 35px;
-`;
+const wrapperStyle = {
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
+  overflowY: 'scroll',
+  paddingBottom: '35px',
+}
 
-export default class ServicePreview extends React.Component {
+const ItemTypes = {
+  CARD: 'card'
+};
+
+const cardTarget = {
+	drop() {},
+}
+
+class ServicePreview extends React.Component {
+  moveCard = (id, atIndex) => {
+    const { service, index } = this.findCard(id)
+    const { services } = this.props;
+    const newServices = update(services, {
+      $splice: [[index, 1], [atIndex, 0, service]],
+    });
+    this.props.onChangeOrder(newServices);
+	}
+
+	findCard = (id) => {
+    const { services } = this.props;
+    const service = services.filter(s => s.id === id)[0];
+
+		return {
+			service,
+			index: services.indexOf(service),
+		}
+	}
+
   render() {
-    const { services, onEdit } = this.props;
-    return (
-      <Wrapper>
+    const { services, onEdit, connectDropTarget } = this.props;
+    return connectDropTarget(
+      <div style={wrapperStyle}>
         { services.map((service, idx) => (
-          <ServiceItem service={service} key={`service_preview${idx}`} onEdit={onEdit} />
+          <ServiceDNDCard
+            id={service.id}
+            service={service}
+            key={`service_preview${idx}`}
+            onEdit={onEdit}
+            moveCard={this.moveCard}
+						findCard={this.findCard}
+          />
         )) }
-      </Wrapper>
+      </div>
     );
   }
 }
+
+export default _.flow(
+  DropTarget(ItemTypes.CARD, cardTarget, connect => ({
+    connectDropTarget: connect.dropTarget(),
+  })),
+  DragDropContext(HTML5Backend),
+)(ServicePreview);
