@@ -1,8 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get, set, isEmpty, take } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
+import { GetProviderLocations } from 'store/actions/providerLocations';
+import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 import {
   AppHeader,
   StepSelector,
@@ -13,7 +16,6 @@ import {
   Phone,
   CategoryModal
 } from './components';
-
 import { ContentWrapper, PreviewWrapper } from '../Wrappers';
 
 const Wrapper = styled.div`
@@ -46,7 +48,7 @@ const Right = styled.div`
   overflow-y: scroll;
 `
 
-export default class AppEditor extends React.Component {
+class AppEditor extends React.Component {
   state = {
     step: 0,
     image: null,
@@ -58,6 +60,7 @@ export default class AppEditor extends React.Component {
     currentScreen: '',
     currentItem: {},
     showModal: false,
+    selectedLocation: {}
   }
 
   onChangeStep = (step) => {
@@ -317,13 +320,26 @@ export default class AppEditor extends React.Component {
     }
   }
 
+  handleChangeLocation = (locationId) => {
+    const { providerLocations } = this.props;
+    const selectedLocation = providerLocations.find(locations => locations.id === locationId);
+    this.setState({
+      selectedLocation
+    });
+  }
+
   render() {
-    const { step, image, showModal, currentItem, currentScreen } = this.state;
+    const { step, image, showModal, currentItem, currentScreen, selectedLocation } = this.state;
     const renderingData = this.getRenderingData();
     const { info, type } = currentItem;
+    const { providerLocations } = this.props;
     return (
       <Wrapper>
-        <AppHeader />
+        <AppHeader
+          selected={selectedLocation}
+          locations={providerLocations}
+          onChangeLocation={this.handleChangeLocation}
+        />
         <Content>
           <Left>
             <StepSelector
@@ -364,3 +380,14 @@ export default class AppEditor extends React.Component {
     )
   }
 }
+
+const mapStateToProps = (state) => ({
+  provider: state.provider.currentProvider,
+  ...refinedProviderLocationSelector(state)
+});
+
+const mapDispatchToProps = {
+  GetProviderLocations
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppEditor);

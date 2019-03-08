@@ -90,11 +90,11 @@ class LocationEditor extends React.Component {
 
 const mapStateToProps = (state) => ({
   provider: state.provider.currentProvider,
-  ...refinedProviderLocationSelector(state),
+  ...refinedProviderLocationSelector(state)
 });
 
 const mapDispatchToProps = {
-  GetProviderLocations,
+  GetProviderLocations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LocationEditor);
