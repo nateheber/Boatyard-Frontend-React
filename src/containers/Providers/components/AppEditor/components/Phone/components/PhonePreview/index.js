@@ -83,12 +83,46 @@ const Title = styled.div`
   text-align: center;
 `;
 
-export default ({ screenTitle, secondary, title, children }) => (
+const BackButton = styled.button`
+  position: absolute;
+  z-index: 999;
+  height: 24px;
+  top: 45px;
+  left: 18px;
+  padding-left: 17px;
+  background-color: #094359;
+  font-family: DIN;
+  font-size: 9.6px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #ffffff;
+  outline: none;
+  border: none;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+    transform: rotate(45deg);
+  }
+`;
+
+export default ({ hasBack, onBack, screenTitle, secondary, title, children }) => (
   <Container>
     <SectionName>{screenTitle}</SectionName>
     <Wrapper className={classNames({ secondary })} >
       {
         secondary && <Title>{title}</Title>
+      }
+      {
+        hasBack && <BackButton onClick={onBack}>Back</BackButton> 
       }
       <ContentHolder>
         {children}

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { DragSource, DropTarget } from 'react-dnd';
 import _ from 'lodash';
 
@@ -44,30 +43,21 @@ const cardTarget = {
 }
 
 class ItemDNDCard extends React.Component {
-	static propTypes = {
-		connectDragSource: PropTypes.func.isRequired,
-		connectDropTarget: PropTypes.func.isRequired,
-		isDragging: PropTypes.bool.isRequired,
-		id: PropTypes.any.isRequired,
-		moveCard: PropTypes.func.isRequired,
-		findCard: PropTypes.func.isRequired,
-		onEdit: PropTypes.func.isRequired,
-	}
-
 	render() {
 		const {
 			isDragging,
 			connectDragSource,
 			connectDropTarget,
 			item,
-			onEdit
+			onEdit,
+			onClickItem
 		} = this.props;
 		const opacity = isDragging ? 0 : 1;
 
 		return connectDragSource(
 			connectDropTarget(
 				<div>
-					<ListItem item={item} onEdit={onEdit} style={{ opacity }}/>
+					<ListItem item={item} onClickItem={onClickItem} onEdit={onEdit} style={{ opacity }}/>
 				</div>
 			)
 		);

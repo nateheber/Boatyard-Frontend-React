@@ -206,7 +206,9 @@ class CategoryModal extends React.Component {
       if (!defaultIcon) {
         if (!isEmpty(customIcon)) {
           this.setState({ customIcon });
-          this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
+          if (this.refs.selectedIconContainer) {
+            this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
+          }
         }
       }
       this.getTextFields();
@@ -223,7 +225,9 @@ class CategoryModal extends React.Component {
         if (!defaultIcon) {
           if (!isEmpty(customIcon)) {
             this.setState({ customIcon });
-            this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
+            if (this.refs.selectedIconContainer) {
+              this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
+            }
           }
         }
         this.getTextFields();
@@ -356,9 +360,18 @@ class CategoryModal extends React.Component {
     return get(icon, 'icon.url');
   }
 
+  getCustomIcon = () => {
+    const { customIcon } = this.state;
+    if (!isEmpty(customIcon)) {
+      return customIcon;
+    }
+    return null;
+  }
+
   render() {
     const { loading, title, open, onClose, currentStatus } = this.props;
-    const { fields, customIcon, name, description } = this.state;
+    const { fields, name, description } = this.state;
+    const customIcon = this.getCustomIcon();
     const actions = [
       <HollowButton onClick={this.onDelete} key="modal_btn_delete">Delete</HollowButton>,
       <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>

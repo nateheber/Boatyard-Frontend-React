@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { get, set } from 'lodash';
+import { get, set, isEmpty, take } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import {
   AppHeader,
@@ -85,6 +86,19 @@ export default class AppEditor extends React.Component {
     return pathParts.join('.');
   }
 
+  getParentPath = () => {
+    const { currentScreen } = this.state;
+    const parts = currentScreen.split('/');
+    if (parts.length === 1) {
+      return '';
+    }
+    const pathParts = [];
+    for(let i = 0; i < parts.length - 1; i += 1) {
+      pathParts.push(`items[${parts[i]}]`);
+    }
+    return pathParts.join('.');
+  }
+
   getRenderingData = () => {
     const path = this.getEditingPath();
     const { data } = this.state;
@@ -104,12 +118,52 @@ export default class AppEditor extends React.Component {
     return id;
   }
 
+  getStep = (type) => {
+    switch(type) {
+      case 'category':
+        return 2;
+      case 'service':
+        return 3;
+      default:
+        return 0;
+    }
+  }
+
+  getSelectedTemplate = () => {
+    const { currentItem } = this.state;
+    const { data } = this.state;
+    const path = this.getParentPath();
+    if (path === '') {
+      const idx = data.items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+      return get(data.items[idx], 'template.templateType', '');
+    } else {
+      const items = get(data, `${path}.items`, []);
+      const idx = items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+      return get(items[idx], 'template.templateType', '');
+    }
+  }
+
   addCategories = (category) => {
-    this.addItem(category, 'category');
+    const { currentItem } = this.state;
+    if (get(currentItem, 'type') === 'category') {
+      toastr.clean()
+      toastr.error('Cannot add category under category');
+    } else if (get(currentItem, 'type') === 'service') {
+      toastr.clean()
+      toastr.error('Cannot add category under service');
+    } else {
+      this.addItem(category, 'category');
+    }
   }
 
   addServices = (service) => {
-    this.addItem(service, 'service');
+    const { currentItem } = this.state;
+    if (get(currentItem, 'type') === 'service') {
+      toastr.clean()
+      toastr.error('Cannot add service under service');
+    } else {
+      this.addItem(service, 'service');
+    }
   }
 
   addItem = (item, type) => {
@@ -138,6 +192,67 @@ export default class AppEditor extends React.Component {
     });
   }
 
+  deleteItem = () => {
+    const { currentItem } = this.state;
+    const { data } = this.state;
+    const newData = JSON.parse(JSON.stringify(data));
+    const path = this.getEditingPath();
+    if (path === '') {
+      const { items } = newData;
+      const newItems = items.filter(item => item.type !== currentItem.type || item.id !== currentItem.id);
+      newData.items = newItems;
+      this.setState({ data: newData, showModal: false });
+    } else {
+      const items = get(newData, `${path}.items`);
+      items.filter(item => item.type !== currentItem.type || item.id !== currentItem.id);
+      set(newData, `${path}.items`, items);
+      this.setState({ data: newData, showModal: false });
+    }
+  }
+
+  updateItem = (info, file, customIcon) => {
+    const { currentItem } = this.state;
+    const updatedItem = JSON.parse(JSON.stringify(currentItem));
+    set(updatedItem, 'info', {...currentItem.info, ...info, ...(isEmpty(customIcon) ? {} : {customIcon})});
+    const { data } = this.state;
+    const newData = JSON.parse(JSON.stringify(data));
+    const path = this.getEditingPath();
+    if (path === '') {
+      const idx = newData.items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+      newData.items[idx] = updatedItem;
+      this.setState({ data: newData, showModal: false });
+    } else {
+      const items = get(newData, `${path}.items`);
+      const idx = items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+      items[idx] = updatedItem;
+      set(newData, `${path}.items`, items);
+      this.setState({ data: newData, showModal: false });
+    }
+  }
+
+  setServiceTemplate = (templateInfo) => {
+    const { currentItem } = this.state;
+    if (get(currentItem, 'type') === 'service') {
+      const { data } = this.state;
+      const newData = JSON.parse(JSON.stringify(data));
+      const path = this.getParentPath();
+      if (path === '') {
+        const idx = newData.items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+        newData.items[idx].template = templateInfo;
+        this.setState({ data: newData, showModal: false });
+      } else {
+        const items = get(newData, `${path}.items`);
+        const idx = items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+        items[idx].template = templateInfo;
+        set(newData, `${path}.items`, items);
+        this.setState({ data: newData, showModal: false });
+      }
+    } else {
+      toastr.clean()
+      toastr.error('Cannot set template to service');
+    }
+  }
+
   onChangeOrder = (items) => {
     const { data } = this.state;
     const newData = JSON.parse(JSON.stringify(data));
@@ -156,6 +271,33 @@ export default class AppEditor extends React.Component {
     this.setState({ currentItem: item, showModal: true });
   }
 
+  onClickItem = (item) => {
+    const { currentScreen } = this.state;
+    const path = this.getEditingPath();
+    const { data } = this.state;
+    const step = this.getStep(item.type);
+    if (path === '') {
+      const { items } = data;
+      const idx = items.findIndex(i => i.id === item.id && i.type === item.type);
+      this.setState({ currentItem: item, currentScreen: `${idx}`, step });
+    } else {
+      const items = get(data, `${path}.items`, []);
+      const idx = items.findIndex(i => i.id === item.id && i.type === item.type);
+      this.setState({ currentItem: item, currentScreen: `${currentScreen}/${idx}` }, () => {
+        this.setState({ step })
+      });
+    }
+  }
+
+  onBack = () => {
+    const { currentScreen } = this.state;
+    const parts = currentScreen.split('/');
+    const prevPart = take(parts, parts.length - 1);
+    this.setState({
+      currentScreen: prevPart.join('/')
+    });
+  }
+
   hideModal = () => {
     this.setState({ showModal: false });
   }
@@ -171,12 +313,12 @@ export default class AppEditor extends React.Component {
         return <AppServices image={image} services={services} onAdd={this.addServices} />
       case 3:
       default:
-        return <ServiceTemplates />
+        return <ServiceTemplates selected={this.getSelectedTemplate()} onChange={this.setServiceTemplate} />
     }
   }
 
   render() {
-    const { step, image, showModal, currentItem } = this.state;
+    const { step, image, showModal, currentItem, currentScreen } = this.state;
     const renderingData = this.getRenderingData();
     const { info, type } = currentItem;
     return (
@@ -193,17 +335,29 @@ export default class AppEditor extends React.Component {
             <ContentWrapper>
               { this.renderSteps() }
               <PreviewWrapper>
-                <Phone renderingData={renderingData} image={image} onEdit={this.onEdit} onChangeOrder={this.onChangeOrder} />
+                <Phone
+                  hasBack={currentScreen !== ''}
+                  renderingData={renderingData}
+                  image={image}
+                  onEdit={this.onEdit}
+                  onChangeOrder={this.onChangeOrder}
+                  onClickItem={this.onClickItem}
+                  onBack={this.onBack}
+                />
               </PreviewWrapper>
             </ContentWrapper>
-            <CategoryModal
-              title={type === 'category' ? 'Customize Category' : 'Customize Service'}
-              baseData={info}
-              open={showModal}
-              onClose={this.hideModal}
-              onSave={this.updateItem}
-              onDelete={this.deleteItem}
-            />
+            {
+              (type === 'category' || type === 'service') && (
+                <CategoryModal
+                  title={type === 'category' ? 'Customize Category' : 'Customize Service'}
+                  baseData={info}
+                  open={showModal}
+                  onClose={this.hideModal}
+                  onSave={this.updateItem}
+                  onDelete={this.deleteItem}
+                />
+              )
+            }
           </Right>
         </Content>
       </Wrapper>

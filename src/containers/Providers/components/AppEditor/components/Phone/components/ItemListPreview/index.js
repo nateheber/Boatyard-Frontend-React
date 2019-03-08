@@ -45,7 +45,7 @@ class ItemListPreview extends React.Component {
 	}
 
   render() {
-    const { items, onEdit, connectDropTarget } = this.props;
+    const { items, onEdit, onClickItem, connectDropTarget } = this.props;
     return connectDropTarget(
       <div style={wrapperStyle}>
         { items.map((item) => (
@@ -54,6 +54,7 @@ class ItemListPreview extends React.Component {
             item={item}
             key={item.id}
             onEdit={onEdit}
+            onClickItem={onClickItem}
             moveCard={this.moveCard}
 						findCard={this.findCard}
           />

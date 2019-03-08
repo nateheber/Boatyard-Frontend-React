@@ -47,10 +47,12 @@ const ListWrapper = styled.div`
 
 
 export default class TemplateSelector extends React.Component {
-  constructor(props) {
-    super(props);
-    const { selected } = props;
-    this.state = { selected };
+  static getDerivedStateFromProps(props) {
+    return { selected: props.selected }
+  }
+
+  state = {
+    selected: ''
   }
 
   onChange = item => () => {

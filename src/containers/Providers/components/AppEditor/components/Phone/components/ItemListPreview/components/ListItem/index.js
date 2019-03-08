@@ -116,8 +116,9 @@ export default class ListItem extends React.Component {
     this.setState({ showEditWrapper: false });
   }
 
-  onSetTemplate = () => {
-    console.log('toTemplate');
+  onClickItem = () => {
+    const { item, onClickItem } = this.props;
+    onClickItem(item);
   }
 
   onEdit = (evt) => {
@@ -127,16 +128,10 @@ export default class ListItem extends React.Component {
   }
 
   getIcon = () => {
-    const { item: { type, info } } = this.props;
-    if (type === 'category') {
-      const defaultIcon = get(info, 'defaultIcon');
-      const customIcon = get(info, 'customIcon');
-      return defaultIcon || customIcon;
-    } else {
-      const customIcon = get(info, 'customIcon.url');
-      const defaultIcon = get(info, 'relationships.icon.attributes.icon.url');
-      return defaultIcon || customIcon;
-    }
+    const { item: { info } } = this.props;
+    const defaultIcon = get(info, 'defaultIcon');
+    const customIcon = get(info, 'customIcon');
+    return defaultIcon || customIcon;
   }
 
   render () {
@@ -145,7 +140,7 @@ export default class ListItem extends React.Component {
     const { info: { name, description } } = item;
     const icon = this.getIcon();
     return (
-      <Wrapper onClick={this.onSetTemplate} style={style}>
+      <Wrapper onClick={this.onClickItem} style={style}>
         <Container>
           <Icon src={icon} />
           <ContentWrapper>
