@@ -8,6 +8,7 @@ import HeaderImage from 'resources/preview_header_type2.png';
 const Wrapper = styled.div`
   display: flex;
   width: 50%;
+  min-width: 260px;
   flex-direction: column;
   margin-bottom: 60px;
 `;
@@ -16,9 +17,11 @@ const Content = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 245px;
+  width: 221px;
   height: 487px;
   margin-top: 30px;
+  border: 1px solid #979797;
+  border-top: none;
 `;
 
 const Title = styled.div`

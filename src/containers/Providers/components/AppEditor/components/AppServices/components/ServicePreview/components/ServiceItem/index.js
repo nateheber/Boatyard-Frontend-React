@@ -33,6 +33,7 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 12px;
+  max-width: 135px;
 `;
 
 const Title = styled.div`

@@ -4,6 +4,7 @@ import { get, set } from 'lodash';
 export const getProvidersSelector = state => state.provider.providers;
 export const getPreferredProvidersSelector = state => state.provider.preferredProviders;
 export const includedSelector = state => state.provider.included;
+export const getCurrentProviderSelector = state => state.provider.currentProvider;
 
 export const refinedPreferredProvidersSelector = createSelector(
   getPreferredProvidersSelector,

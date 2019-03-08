@@ -2,7 +2,6 @@ import React from 'react';
 import update from 'immutability-helper';
 import { DropTarget, DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import _ from 'lodash';
 
 import { ServiceDNDCard } from './components';
 
@@ -12,7 +11,10 @@ const wrapperStyle = {
   flexDirection: 'column',
   overflowY: 'scroll',
   paddingBottom: '35px',
-}
+  borderBottomRightRadius: '35px',
+  borderBottomLeftRadius: '35px',
+  zIndex: 999
+};
 
 const ItemTypes = {
   CARD: 'card'
@@ -46,11 +48,11 @@ class ServicePreview extends React.Component {
     const { services, onEdit, connectDropTarget } = this.props;
     return connectDropTarget(
       <div style={wrapperStyle}>
-        { services.map((service, idx) => (
+        { services.map((service) => (
           <ServiceDNDCard
             id={service.id}
             service={service}
-            key={`service_preview${idx}`}
+            key={service.id}
             onEdit={onEdit}
             moveCard={this.moveCard}
 						findCard={this.findCard}
@@ -61,9 +63,8 @@ class ServicePreview extends React.Component {
   }
 }
 
-export default _.flow(
-  DropTarget(ItemTypes.CARD, cardTarget, connect => ({
+const DropTargetContainer = DropTarget(ItemTypes.CARD, cardTarget, connect => ({
     connectDropTarget: connect.dropTarget(),
-  })),
-  DragDropContext(HTML5Backend),
-)(ServicePreview);
+  }))(ServicePreview);
+
+export default DragDropContext(HTML5Backend)(DropTargetContainer);

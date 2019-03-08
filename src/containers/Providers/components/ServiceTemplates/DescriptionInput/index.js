@@ -4,7 +4,7 @@ import TextareaAutosize from 'react-autosize-textarea';
 const DescriptionInput = styled(TextareaAutosize)`
   box-sizing: border-box;
   width: 223px;
-  padding: 10px;
+  padding: 10px 15px;
   padding-top: 0px;
   height: auto;
   background: transparent;

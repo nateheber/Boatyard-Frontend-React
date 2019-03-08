@@ -6,7 +6,7 @@ import LabelInput from '../LabelInput';
 const Wrapper = styled.div`
   width: 203px;
   height: 107px;
-  border-radius: 16px;
+  border-radius: 10px;
   border: solid 1px #bebebe;
   background-color: #ffffff;
   overflow: hidden;
@@ -15,9 +15,12 @@ const Wrapper = styled.div`
 
 const Header = styled.div`
   height: 23px;
+  display: flex;
+  align-items: center;
   background-color: #bebebe;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding: 0 10px;
+  font-family: Helvetica;
+  font-size: 12px;
 `;
 
 export default class TextAreaInput extends React.Component {

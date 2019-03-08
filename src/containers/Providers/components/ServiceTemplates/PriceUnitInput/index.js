@@ -25,6 +25,7 @@ const priceInputStyle = {
   background: 'transparent',
   outline: 'none',
   border: 'none',
+  marginLeft: 3
 };
 
 const UnitWrapper = styled.div`
