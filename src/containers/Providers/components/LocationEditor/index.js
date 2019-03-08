@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import { get } from 'lodash';
 
 import { GetProviderLocations } from 'store/actions/providerLocations';
+import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 import { SearchBox } from 'components/basic/Input';
-import { LocationHeader, AddLocationModal, LocationCard } from './components';
 
-import { testData } from './testData';
+import { LocationHeader, AddLocationModal, LocationCard } from './components';
 
 const Wrapper = styled.div`
   padding-top: 18px;
@@ -63,7 +63,7 @@ class LocationEditor extends React.Component {
 
   render() {
     const { showNewLocation } = this.state;
-    const { provider } = this.props;
+    const { provider, providerLocations } = this.props;
     const name = get(provider, 'name');
     const providerId = get(provider, 'id');
     return (
@@ -75,8 +75,8 @@ class LocationEditor extends React.Component {
           </SearchWrapper>
           <LocationHolder>
             {
-              testData.map((location, idx) => (
-                <LocationCard providerName={name} locationInfo={location} key={`provider_location_${idx}`} />
+              providerLocations.map((location, idx) => (
+                <LocationCard providerName={name} location={location} key={`provider_location_${idx}`} />
               ))
             }
           </LocationHolder>
@@ -88,7 +88,8 @@ class LocationEditor extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  provider: state.provider.currentProvider
+  provider: state.provider.currentProvider,
+  ...refinedProviderLocationSelector(state),
 });
 
 const mapDispatchToProps = {

@@ -5,8 +5,9 @@ import { connect } from 'react-redux';
 import { OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 
-import { CreateProviderLocation } from 'store/actions/providerLocations';
+import { actionTypes, GetProviderLocations, CreateProviderLocation } from 'store/actions/providerLocations';
 
 import { LocationImage } from './components';
 
@@ -30,6 +31,12 @@ class AddLocationModal extends React.Component {
 
   onChangeImage = (image) => {
     this.setState({ image });
+  }
+
+  onSuccess = () => {
+    const { GetProviderLocations, onClose, providerId } = this.props;
+    GetProviderLocations({ providerId });
+    onClose();
   }
 
   getBasicInfoFields = () => {
@@ -133,26 +140,19 @@ class AddLocationModal extends React.Component {
   }
 
   submitData = () => {
-    const { providerId, privilege } = this.props;
     const isBasicInfoValid = this.basicInfo.validateFields();
     const isAddressInfoValid = this.addressInfo.validateFields();
     if (isBasicInfoValid && isAddressInfoValid) {
-      const { locationName } = this.basicInfo.getFieldValues();
+      const { locationName, contactName, phoneNumber, email } = this.basicInfo.getFieldValues();
       const { address, city, state, zipCode } = this.addressInfo.getFieldValues();
       const { image } = this.state;
       const data = {
         provider_location: {
           home_image: image,
-          zone_attributes: {
-            name: locationName
-          },
+          contact_name: contactName,
+          contact_phone: phoneNumber,
+          contact_email: email,
           location_attributes: {
-            ...(privilege === 'admin' ? {
-              locatable: {
-                locatable_type: 'provider',
-                locatable_id: providerId,
-              }
-            } : {}),
             location_type: 'business_address',
             name: locationName,
             address_attributes: {
@@ -165,18 +165,17 @@ class AddLocationModal extends React.Component {
           }
         }
       };
-      console.log(JSON.stringify(data))
       this.addLocation(data);
     }
   }
 
   addLocation = (data) => {
     const { providerId, CreateProviderLocation } = this.props;
-    CreateProviderLocation({ providerId, data, onSuccess: this.onSuccess });
+    CreateProviderLocation({ providerId, data, success: this.onSuccess });
   }
 
   render() {
-    const { open, onClose } = this.props;
+    const { open, onClose, currentStatus } = this.props;
     const basicInfoFields = this.getBasicInfoFields();
     const addressFields = this.getAddressFields();
     const actionButtons = [
@@ -200,6 +199,9 @@ class AddLocationModal extends React.Component {
             <FormFields fieldSize="big" fields={addressFields} ref={this.setAddressInfoRef} />
           </InfoSection>
         </ModalContent>
+        { currentStatus === actionTypes.CREATE_PROVIDER_LOCATION && (
+          <LoadingSpinner loading={true} />
+        )}
       </Modal>
     );
   }
@@ -207,10 +209,12 @@ class AddLocationModal extends React.Component {
 
 const mapStateToProps = (state) => ({
   privilege: state.auth.privilege,
+  currentStatus: state.providerLocation.currentStatus,
 });
 
 const mapDispatchToProps = {
   CreateProviderLocation,
+  GetProviderLocations
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddLocationModal);

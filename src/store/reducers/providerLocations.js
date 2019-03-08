@@ -39,7 +39,7 @@ export default handleActions(
         draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
-        draft.categories = providerLocations;
+        draft.providerLocations = providerLocations;
         draft.included = refactorIncluded(included);
       }),
     [actionTypes.GET_PROVIDER_LOCATIONS_FAILURE]: (state, action) =>
@@ -63,7 +63,7 @@ export default handleActions(
         draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
-        draft.filteredCategories = providerLocations;
+        draft.filteredProviderLocations = providerLocations;
       }),
     [actionTypes.FILTER_PROVIDER_LOCATIONS_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -119,7 +119,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.currentCategory = payload;
+        draft.currentProviderLocation = payload;
       }),
     [actionTypes.GET_PROVIDER_LOCATION_FAILURE]: (state, action) =>
       produce(state, draft => {
