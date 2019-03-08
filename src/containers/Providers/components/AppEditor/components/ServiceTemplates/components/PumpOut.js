@@ -14,6 +14,9 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 
+const Spacer = styled.div`
+  height: 15px;
+`;
 
 
 export default class PumpOut extends React.Component {
@@ -68,6 +71,7 @@ export default class PumpOut extends React.Component {
           value={description}
           onChange={this.onChange('description')}
         />
+        <Spacer />
         <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} />
         <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>

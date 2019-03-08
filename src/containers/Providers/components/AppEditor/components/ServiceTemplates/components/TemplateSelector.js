@@ -13,22 +13,36 @@ const HeaderWrapper = styled.div`
   align-items: center;
 `;
 
+const SearchWrapper = styled.div`
+  display: inline-block;
+  box-sizing: border-box;
+  width: 282px;
+  margin: 10px;
+`;
+
 const SearchInput = styled(SearchBox)`
   display: inline-block;
   box-sizing: border-box;
-  width: 253px;
-  margin-right: 27px;
+  width: 282px;
 `;
 
-const SearchWrapper = styled.div`
+const ListTitle = styled.div`
+  padding: 10px;
+  margin: 5px 0;
+  font-family: Helvetica;
+  font-size: 24px;
+  color: #003247;
+  text-align: left;
+`;
+
+const ListWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  padding-right: 16px;
   width: 100%;
-  max-height: 580px;
+  max-height: 536px;
   overflow-y: scroll;
-  margin-top: 24px;
+  padding: 10px;
 `;
 
 
@@ -94,10 +108,13 @@ export default class TemplateSelector extends React.Component {
   render() {
     return (
       <HeaderWrapper>
-        <SearchInput onChange={this.onChangeKeyword} placeholder="SEARCH" />
         <SearchWrapper>
-          {this.renderTemplates()}          
+          <SearchInput onChange={this.onChangeKeyword} placeholder="SEARCH" />
         </SearchWrapper>
+        <ListTitle>Template Options</ListTitle>
+        <ListWrapper>
+          {this.renderTemplates()}          
+        </ListWrapper>
       </HeaderWrapper>
     );
   }
