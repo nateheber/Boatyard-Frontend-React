@@ -9,15 +9,15 @@ import TemplateIcon from './assets/template.png';
 
 const Wrapper = styled.div`
   background: white;
-  padding-top: 90px;
 `;
 
 const Title = styled.div`
-  padding-left: 25px;
-  font-size: 29px;
+  padding: 80px 25px 0;
+  margin-bottom: 20px;
+  font-family: Helvetica;
+  font-size: 24px;
   color: #003247;
-  margin-bottom: 22px;
-  font-family: "Open Sans";
+  line-height: 26px;
 `
 
 const StepWrapper = styled.div`
@@ -63,10 +63,10 @@ const StepIcon = styled.img`
 const StepLabel = styled.div`
   margin-left: 18px;
   color: #003247;
-  font-size: 18px;
   text-transform: uppercase;
-  font-family: "Open Sans";
-`
+  font-family: Helvetica;
+  font-size: 16px;
+`;
 
 const steps = [
   { title: 'header images', icon: ImageIcon },

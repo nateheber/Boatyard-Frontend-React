@@ -20,20 +20,20 @@ const Container = styled.div`
   align-items: center;
   border-bottom: solid 0.5px #979797;
   background-color: #d8d8d8;
-  padding-left: 20px;
-  padding-top: 14px;
-  padding-bottom: 11px;
-`
+  padding: 10px 15px;
+`;
 
 const Icon = styled.img`
-  width: 28px;
-  height: 28px;
+  object-fit: cover;
+  width: 24px;
+  height: 24px;
 `;
 
 const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 14px;
+  margin-left: 12px;
+  max-width: 135px;
 `;
 
 const Title = styled.div`
@@ -44,6 +44,7 @@ const Title = styled.div`
   line-height: normal;
   letter-spacing: normal;
   color: #094359;
+  line-height: 13px;
 `;
 
 const Description = styled.div`
@@ -51,9 +52,10 @@ const Description = styled.div`
   font-weight: normal;
   font-style: normal;
   font-stretch: normal;
-  line-height: normal;
+  line-height: 8px;
   letter-spacing: normal;
   color: #094359;
+  margin-top: 3px;
 `;
 
 const EditWrapper = styled.div`
@@ -120,17 +122,18 @@ export default class ServiceItem extends React.Component {
 
   onEdit = (evt) => {
     evt.stopPropagation();
-    console.log('toEditService');
+    const { service, onEdit } = this.props;
+    onEdit(service);
   }
 
   render () {
-    const { service } = this.props;
+    const { service, style } = this.props;
     const { showEditWrapper } = this.state;
     const { name, description } = service;
-    const defaultIcon = get(service, 'relationships.icon.attributes.icon.button3X.url');
-    const customIcon = get(service, 'customIcon.button3X.url');
+    const defaultIcon = get(service, 'defaultIcon');
+    const customIcon = get(service, 'customIcon');
     return (
-      <Wrapper onClick={this.onSetTemplate}>
+      <Wrapper onClick={this.onSetTemplate} style={style}>
         <Container>
           <Icon src={defaultIcon||customIcon} />
           <ContentWrapper>

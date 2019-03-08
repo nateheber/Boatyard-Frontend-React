@@ -16,6 +16,7 @@
 .react-tabs__tab {
   display: flex;
   color: #909090;
+  font-family: Helvetica;
   padding: 0 45px;
   font-size: 18px;
   font-weight: 500;

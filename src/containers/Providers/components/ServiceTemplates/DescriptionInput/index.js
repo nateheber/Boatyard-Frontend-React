@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import TextareaAutosize from 'react-autosize-textarea';
 
 const DescriptionInput = styled(TextareaAutosize)`
+  box-sizing: border-box;
   width: 223px;
   padding: 10px;
   padding-top: 0px;

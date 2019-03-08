@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, set } from 'lodash';
 import EvilIcon from 'react-evil-icons';
+import deepEqual from 'deep-equal';
 
 import { actionTypes, GetIcons } from 'store/actions/icons';
 import Modal from 'components/compound/Modal';
@@ -13,10 +14,7 @@ import { OrangeButton, HollowButton, UploadButton } from 'components/basic/Butto
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { NormalText } from 'components/basic/Typho'
 
-const Divider = styled.div`
-  height: 20px;
-  width: 100%;
-`;
+import BackIcon from 'resources/back.svg';
 
 const IconSection = styled.div`
 `;
@@ -84,7 +82,6 @@ const ContentSection = styled.div`
   width: 100%;
   height: 156px;
   overflow: auto;
-  border: 1px solid #dfdfdf;
   margin: 10px 0 30px;
 `;
 const IconsContainer = styled.div`
@@ -95,18 +92,20 @@ const IconsContainer = styled.div`
   overflow: visible;
 
   .service-icon-wrapper {
-    width: 30px;
-    height: 30px;
-    margin: 2px;
-    padding:3px;
+    width: 68px;
+    height: 68px;
+    margin: 10px;
+    padding: 3px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid #dfdfdf;
+    background-color: #eeeeee;
+    border-radius: 8px;
     &:hover, &.-selected {
-      padding:2px;
-      border: 1px solid #dfdfdf;
-      border-radius: 8px;  
+      padding:3px;
+      background-color: white;
     }
     > img {
       width: 100%;
@@ -114,12 +113,84 @@ const IconsContainer = styled.div`
   }
 `;
 
+const EditorSection = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+`;
+
+const EditorArea = styled.div`
+  flex: 1;
+  box-sizing: border-box;
+  padding-right: 46px;
+`;
+
+const PreviewArea = styled.div`
+  flex: 2;
+`;
+
+const FieldName = styled.div`
+  color: #004258;
+  font-weight: 700;
+  margin-bottom: 5px;
+  font-size: 12px;
+  font-family: Montserrat,sans-serif;
+  margin-left: 10px;
+`;
+
+const PreviewContent = styled.div`
+  width: 100%;
+  height: 172px;
+  background-color: rgb(204, 204, 204);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 62px;
+  padding-right: 20px;
+`;
+
+const PreviewIcon = styled.img`
+  width: 100px;
+  height: 100px;
+  margin-right: 60px;
+  object-fit: cover;
+`;
+
+const PreviewTextWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: Montserrat, sans-serif;
+  color: #004258;
+`;
+
+const PreviewName = styled.div`
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 32px;
+`;
+
+const PreviewDescription = styled.div`
+  font-size: 20px;
+  line-height: 18px;
+  margin-top: 15px;
+`;
+
+const PreviewNextIcon = styled.img`
+  with: 30px;
+  height: 50px;
+  transform: rotate(180deg);
+`;
+
 class CategoryModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      categoryFields: [],
-      descriptionField: [],
+      fields: [],
+      name: '',
+      description: '',
       iconFile: null,
       iconRef: null,
       customIcon: null,
@@ -128,9 +199,9 @@ class CategoryModal extends React.Component {
   }
 
   componentDidMount() {
-    const { category } = this.props;
-    const defaultIcon = get(category, 'iconId');
-    const customIcon = get(category, 'customIcon.url');
+    const { baseData } = this.props;
+    const defaultIcon = get(baseData, 'iconId');
+    const customIcon = get(baseData, 'customIcon');
     this.setState({ defaultIcon, customIcon }, () => {
       if (!defaultIcon) {
         if (!isEmpty(customIcon)) {
@@ -138,10 +209,26 @@ class CategoryModal extends React.Component {
           this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
         }
       }
-      this.getCategoryFields();
-      this.getDescriptionField();
+      this.getTextFields();
       this.loadIcons();
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!deepEqual(this.props.baseData, prevProps.baseData)) {
+      const { baseData } = this.props;
+      const defaultIcon = get(baseData, 'iconId');
+      const customIcon = get(baseData, 'customIcon');
+      this.setState({ defaultIcon, customIcon }, () => {
+        if (!defaultIcon) {
+          if (!isEmpty(customIcon)) {
+            this.setState({ customIcon });
+            this.refs.selectedIconContainer.style.backgroundImage = `url(${customIcon})`;
+          }
+        }
+        this.getTextFields();
+      });
+    }
   }
 
   loadIcons = (page = 1) => {
@@ -174,117 +261,41 @@ class CategoryModal extends React.Component {
     }
   };
 
-  getCategoryFields = () => {
-    const { category } = this.props;
-    const name = get(category, 'name');
-    const cost = get(category, 'cost');
-    const costType = get(category, 'costType');
-    const isTaxable = get(category, 'isTaxable');
-
-    const priceTypes = [
-      {
-        value: null,
-        label: 'None'
-      },
-      {
-        value: 'Length',
-        label: 'Length'
-      },
-      {
-        value: 'Gallons',
-        label: 'Gallons'
-      },
-      {
-        value: 'Hour',
-        label: 'Hour'
-      },
-      {
-        value: 'Quantity',
-        label: 'Quantity'
-      }
-    ];
+  getTextFields = () => {
+    const { baseData } = this.props;
+    const name = get(baseData, 'name');
+    const description = get(baseData, 'description');
     
-    const categoryFields = [
+    const fields = [
       {
         field: 'name',
-        label: 'Name',
+        label: isEmpty(baseData) ? 'Category Name' : 'Service Name',
         type: 'text_field',
         errorMessage: 'Enter Category name',
         required: true,
         defaultValue: name,
         xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 4,
-        xl: 4
       },
-      {
-        field: 'cost',
-        label: 'Price',
-        type: 'currency_field',
-        required: false,
-        placeholder: '$0.00',
-        defaultValue: cost,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 3,
-        xl: 3
-      },
-      {
-        field: 'cost_type',
-        label: 'Price Type',
-        type: 'select_box',
-        options: priceTypes,
-        defaultValue: costType,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 3,
-        xl: 3
-      },
-      {
-        field: 'is_taxable',
-        label: 'Taxable',
-        type: 'check_box',
-        defaultValue: isTaxable,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 2,
-        xl: 2
-      }
-    ];
-
-    this.setState({ categoryFields });
-  };
-
-  getDescriptionField = () => {
-    const { category } = this.props;
-    const description = get(category, 'description');
-    const descriptionField = [
       {
         field: 'description',
-        label: 'Description',
+        label: 'Button Sub Copy',
         type: 'text_area',
         defaultValue: description,
         xs: 12,
-        sm: 12,
-        md: 12,
-        lg: 12,
-        xl: 12
       }
     ];
 
-    this.setState({ descriptionField });
+    this.setState({ fields, name, description });
   };
 
-  setCategoryFieldsRef = ref => {
-    this.categoryFields = ref;
+  setTextFields = ref => {
+    this.textFields = ref;
   };
 
-  setDescriptionFieldRef = ref => {
-    this.descriptionField = ref;
+  handleChangeField = (value, field) => {
+    const updateObj = {};
+    set(updateObj, field, value[field]);
+    this.setState(updateObj);
   }
 
   handleFileChange = (file, baseString, ref) => {
@@ -308,50 +319,59 @@ class CategoryModal extends React.Component {
     this.setState({ defaultIcon: icon.id });
   };
 
+  onDelete = () => {
+    const { baseData, onDelete } = this.props;
+    onDelete(baseData.id);
+  }
+
   onSave = () => {
-    const { onSave } = this.props;
+    const { onSave, icons } = this.props;
     const { defaultIcon, iconFile, customIcon } = this.state;
-    if (this.categoryFields.validateFields()) {
+    if (this.textFields.validateFields()) {
       let values = {
-        ...this.categoryFields.getFieldValues(),
-        ...this.descriptionField.getFieldValues(),
+        ...this.textFields.getFieldValues(),
       };
-      values = {
-        ...values,
-        cost: values.cost || '0'
-      };
+      const icon = icons.find(icon => icon.id === defaultIcon);
       if (defaultIcon) {
         values = {
           ...values,
-          icon_id: defaultIcon
+          iconId: parseInt(defaultIcon),
+          defaultIcon: get(icon, 'icon.url'),
         };
-        onSave(values, iconFile);
-      } else {
-        onSave(values, iconFile, customIcon);
       }
+      onSave(values, iconFile, customIcon);
     } else {
       toastr.clean()
       toastr.error('Please fill out all the required fields')
     }
   };
 
+  getIcon = () => {
+    const { defaultIcon, customIcon } = this.state;
+    if (!isEmpty(customIcon)) {
+      return customIcon;
+    }
+    const { icons } = this.props;
+    const icon = icons.find(icon => icon.id === defaultIcon);
+    return get(icon, 'icon.url');
+  }
+
   render() {
-    const { loading, title, category, open, onClose, onDelete, currentStatus } = this.props;
-    const { categoryFields, descriptionField, customIcon } = this.state;
-    const actions = isEmpty(category) ? 
-      [<OrangeButton onClick={this.onSave} key="modal_btn_save">Add Category</OrangeButton>]
-      :
-      [
-        <HollowButton onClick={onDelete} key="modal_btn_cancel">Delete</HollowButton>,
-        <OrangeButton onClick={this.onSave} key="modal_btn_save">Update Category</OrangeButton>
-      ];
+    const { loading, title, open, onClose, currentStatus } = this.props;
+    const { fields, customIcon, name, description } = this.state;
+    const actions = [
+      <HollowButton onClick={this.onDelete} key="modal_btn_delete">Delete</HollowButton>,
+      <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>
+    ];
+    const iconSrc = this.getIcon();
     return (
       <Modal
-        title={category.name || title}
+        title={title}
         loading={loading}
         actions={actions}
         open={open}
         onClose={onClose}
+        extraLarge
       >
         <IconSection>
           <HeaderSection>
@@ -373,15 +393,26 @@ class CategoryModal extends React.Component {
               }
           </ContentSection>
         </IconSection>
-        <FormFields
-          ref={this.setCategoryFieldsRef}
-          fields={categoryFields}
-        />
-        <Divider />
-        <FormFields
-          ref={this.setDescriptionFieldRef}
-          fields={descriptionField}
-        />
+        <EditorSection>
+          <EditorArea>
+            <FormFields
+              ref={this.setTextFields}
+              fields={fields}
+              onChange={this.handleChangeField}
+            />
+          </EditorArea>
+          <PreviewArea>
+            <FieldName>BUTTON PREVIEW</FieldName>
+            <PreviewContent>
+              <PreviewIcon src={iconSrc} />
+              <PreviewTextWrapper>
+                <PreviewName>{name}</PreviewName>
+                <PreviewDescription>{description}</PreviewDescription>
+              </PreviewTextWrapper>
+              <PreviewNextIcon src={BackIcon} />
+            </PreviewContent>
+          </PreviewArea>
+        </EditorSection>
       </Modal>
     );
   }

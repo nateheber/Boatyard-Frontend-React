@@ -8,12 +8,12 @@ import { ButtonInput, DescriptionInput, Image, PriceUnitInput, TextAreaInput } f
 
 const Wrapper = styled.div`
   display: flex;
-  width: 225px;
   flex: 1;
   flex-direction: column;
   align-items: center;
   padding: 18px 10px;
   background-color: #f2f2f2;
+  box-sizing: border-box;
 `;
 
 
