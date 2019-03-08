@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, find } from 'lodash';
+import { get } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
 import { AccountHeader, CompanyInfo, ContactInfo } from './components';
@@ -41,16 +41,6 @@ class AccountEditor extends React.Component {
   getName = () => {
     const { provider, newFlg } = this.props;
     return newFlg ? 'New Provider' : get(provider, 'name', '');
-  }
-
-  getUserEmail = () => {
-    const { provider, newFlg } = this.props;
-    if (newFlg)
-      return '';
-    const included = get(provider, 'included');
-    const userInfo = find(included, item => item.type === 'users');
-    const email = get(userInfo, 'attributes.email');
-    return email;
   }
 
   getDefaultCompanyInfo = () => {
