@@ -6,8 +6,6 @@ import Silhouette from 'resources/phone_silhouette.png';
 import Silhouette2 from 'resources/phone_silhouette_type2.png';
 import ButtonSilhouette from 'resources/phoneButtons.png';
 
-import { HollowButton, OrangeButton } from 'components/basic/Buttons';
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -25,13 +23,6 @@ const SectionName = styled.div`
   text-align: center;
   color: #003247;
   margin-bottom: 25px;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
 `;
 
 const Wrapper = styled.div`
@@ -94,9 +85,5 @@ export default ({ secondary, title, children }) => (
         {children}
       </ContentHolder>
     </Wrapper>
-    <ButtonWrapper>
-      <HollowButton className="thin-font">UNPUBLISH</HollowButton>
-      <OrangeButton className="thin-font">PUBLISH</OrangeButton>
-    </ButtonWrapper>
   </Container>
 );
