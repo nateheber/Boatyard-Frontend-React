@@ -9,7 +9,7 @@ const Wrapper = styled.div`
 
 const ItemWrapper = styled.div`
   position: relative;
-  width: 223px;
+  width: 200px;
   padding-left: 15px;
   padding-top: 0px;
   padding-bottom: 0px;

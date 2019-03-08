@@ -14,7 +14,9 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 
-
+const Spacer = styled.div`
+  height: 20px;
+`;
 
 export default class Fuel extends React.Component {
   constructor(props) {
@@ -59,7 +61,12 @@ export default class Fuel extends React.Component {
         <SelectorInput label="FUEL TYPE" />
         <TextInput label="GALLONS" />
         <SelectorInput label="AMOUNT" />
-        <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
+        <Spacer />
+        <ButtonInput
+          disabled={disabled}
+          title={buttonText}
+          onChange={this.onChange('buttonText')}
+        />
         <DescriptionInput
           disabled={disabled}
           style={{ marginTop: '20px' }}

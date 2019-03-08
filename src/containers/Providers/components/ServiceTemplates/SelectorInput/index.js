@@ -7,12 +7,12 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 203px;
-  border-radius: 16px;
+  width: 200px;
+  border-radius: 10px;
   border: solid 1px #bebebe;
   background-color: #ffffff;
   overflow: hidden;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 `;
 
 const LeftPart = styled.div`
