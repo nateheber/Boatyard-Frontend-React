@@ -51,6 +51,7 @@ class ServiceDNDCard extends React.Component {
 		id: PropTypes.any.isRequired,
 		moveCard: PropTypes.func.isRequired,
 		findCard: PropTypes.func.isRequired,
+		onEdit: PropTypes.func.isRequired,
 	}
 
 	render() {
@@ -59,13 +60,14 @@ class ServiceDNDCard extends React.Component {
 			connectDragSource,
 			connectDropTarget,
 			service,
+			onEdit
 		} = this.props;
 		const opacity = isDragging ? 0 : 1;
 
 		return connectDragSource(
 			connectDropTarget(
 				<div>
-					<ServiceItem service={service} style={{ opacity }}/>
+					<ServiceItem service={service} onEdit={onEdit} style={{ opacity }}/>
 				</div>
 			)
 		);
