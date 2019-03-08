@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { get, set } from 'lodash';
 
 import {
   AppHeader,
@@ -7,8 +8,12 @@ import {
   AppBanners,
   AppServiceCategories,
   AppServices,
-  ServiceTemplates
+  ServiceTemplates,
+  Phone,
+  CategoryModal
 } from './components';
+
+import { ContentWrapper, PreviewWrapper } from '../Wrappers';
 
 const Wrapper = styled.div`
   display: flex;
@@ -44,9 +49,14 @@ export default class AppEditor extends React.Component {
   state = {
     step: 0,
     image: null,
-    services: [],
-    categories: [],
-    currentService: {},
+    data: {
+      screen: 'Home',
+      type: 'homeScreen',
+      items: [],
+    },
+    currentScreen: '',
+    currentItem: {},
+    showModal: false,
   }
 
   onChangeStep = (step) => {
@@ -65,15 +75,86 @@ export default class AppEditor extends React.Component {
     this.setState({ categories });
   }
 
+  getEditingPath = () => {
+    const { currentScreen } = this.state;
+    const parts = currentScreen.split('/');
+    if (currentScreen === '') {
+      return '';
+    }
+    const pathParts = parts.map((part) => `items[${part}]`);
+    return pathParts.join('.');
+  }
+
+  getRenderingData = () => {
+    const path = this.getEditingPath();
+    const { data } = this.state;
+    if (path === '') {
+      return data;
+    }
+    return get(data, path);
+  }
+
+  addCategories = (category) => {
+    this.addItem(category, 'category');
+  }
+
+  addServices = (service) => {
+    this.addItem(service, 'service');
+  }
+
+  addItem = (item, type) => {
+    const { data } = this.state;
+    const newData = JSON.parse(JSON.stringify(data));
+    const path = this.getEditingPath();
+    if (path === '') {
+      const lastId = get(newData.items, `[${newData.items.length - 1}].id`, -1);
+      newData.items.push({
+        id: lastId + 1,
+        type,
+        info: item,
+      })
+    } else {
+      const items = get(newData, `${path}.items`, []);
+      const lastId = get(items, `[${items.length - 1}].id`, -1);
+      items.push({
+        id: lastId + 1,
+        type,
+        info: item,
+      });
+      set(newData, `${path}.items`, items);
+    }
+    this.setState({
+      data: newData
+    });
+  }
+
+  onChangeOrder = (items) => {
+    const { data } = this.state;
+    const newData = JSON.parse(JSON.stringify(data));
+    const path = this.getEditingPath();
+    if (path === '') {
+      set(newData, 'items', items);
+    } else {
+      set(newData, `${path}.items`, items);
+    }
+    this.setState({
+      data: newData
+    })
+  }
+
+  onEdit = (item) => {
+    this.setState({ currentItem: item });
+  }
+
   renderSteps = () => {
     const { step, image, services, categories } = this.state;
     switch(step) {
       case 0:
         return <AppBanners image={image} onChangeImage={this.setImage} />
       case 1:
-        return <AppServiceCategories image={image} categories={categories} onChange={this.setCategories} />
+        return <AppServiceCategories image={image} categories={categories} onAdd={this.addCategories} />
       case 2:
-        return <AppServices image={image} services={services} onChange={this.setServices} />
+        return <AppServices image={image} services={services} onAdd={this.addServices} />
       case 3:
       default:
         return <ServiceTemplates />
@@ -81,7 +162,8 @@ export default class AppEditor extends React.Component {
   }
 
   render() {
-    const { step } = this.state;
+    const { step, image, showModal, currentItem } = this.state;
+    const renderingData = this.getRenderingData();
     return (
       <Wrapper>
         <AppHeader />
@@ -93,7 +175,20 @@ export default class AppEditor extends React.Component {
             />
           </Left>
           <Right>
-            { this.renderSteps() }
+            <ContentWrapper>
+              { this.renderSteps() }
+              <PreviewWrapper>
+                <Phone renderingData={renderingData} image={image} onEdit={this.onEdit} onChangeOrder={this.onChangeOrder} />
+              </PreviewWrapper>
+            </ContentWrapper>
+            <CategoryModal
+              title="Customize Category"
+              baseData={currentItem}
+              open={showModal}
+              onClose={this.hideModal}
+              onSave={this.updateItem}
+              onDelete={this.deleteItem}
+            />
           </Right>
         </Content>
       </Wrapper>

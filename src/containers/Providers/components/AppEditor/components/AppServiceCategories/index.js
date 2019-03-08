@@ -2,14 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, isEmpty, filter } from 'lodash';
 
-import PhonePreview from '../../../PhonePreview';
-import PhoneBanner from '../../../PhoneBanner';
+import { ServiceCategorySelector } from './components';
 
-import { ServiceCategorySelector, ServiceCategoryPreview } from './components';
-
-import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../../Wrappers';
-
-import CategoryModal from '../CategoryModal';
+import { SelectorWrapper } from '../../../Wrappers';
 
 import categoryOptions from './defaultServiceCategories';
 
@@ -66,29 +61,13 @@ class AppServiceCategories extends React.Component {
   }
 
   render() {
-    const { categories, currentCategory, showModal } = this.state;
-    const { image } = this.props;
-    const providerName = this.getProviderName();
+    const { onAdd } = this.props;
     return (
-      <ContentWrapper>
+      <React.Fragment>
         <SelectorWrapper>
-          <ServiceCategorySelector selected={categories} categories={categoryOptions} onChange={this.setCategories} />
+          <ServiceCategorySelector categories={categoryOptions} onAdd={onAdd} />
         </SelectorWrapper>
-        <PreviewWrapper>
-          <PhonePreview>
-            <PhoneBanner image={image} providerName={providerName} />
-            <ServiceCategoryPreview categories={categories} onChangeOrder={this.setCategories} onEdit={this.onEdit} />
-          </PhonePreview>
-        </PreviewWrapper>
-        <CategoryModal
-          title="Customize Category"
-          baseData={currentCategory}
-          open={showModal}
-          onClose={this.hideModal}
-          onSave={this.updateCategory}
-          onDelete={this.deleteCategory}
-        />
-      </ContentWrapper>
+      </React.Fragment>
     )
   }
 }

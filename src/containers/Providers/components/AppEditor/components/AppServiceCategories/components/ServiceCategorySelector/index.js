@@ -48,25 +48,13 @@ const ListWrapper = styled.div`
 
 
 export default class ServiceCategorySelector extends React.Component {
-  static getDerivedStateFromProps(props) {
-    const { selected } = props;
-    return { selected };
-  }
-
   state = {
     keyword: '',
     selected: [],
   }
 
   onSelect = category => () => {
-    const { selected } = this.state;
-    const result = selected.map(category => ({ ...category }));
-    const lastIndex = get(result, `[${result.length - 1}].id`, -1);
-    result.push({
-      id: lastIndex + 1,
-      ...category,
-    });
-    this.props.onChange(result);
+    this.props.onAdd(category);
   }
 
   render() {

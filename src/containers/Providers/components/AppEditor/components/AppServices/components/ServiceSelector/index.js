@@ -108,19 +108,7 @@ class ServiceSelector extends React.Component {
   }
 
   onSelect = category => () => {
-    const { selected } = this.state;
-    const result = selected.map(service => ({ ...service }));
-    const lastIndex = get(result, `[${result.length - 1}].id`, -1);
-    result.push({
-      id: lastIndex + 1,
-      categoryId: category.id,
-      iconId: category.iconId,
-      defaultIcon: get(category, 'relationships.icon.attributes.icon.url'),
-      customIcon: category.customIcon.url,
-      name: category.name,
-      description: category.description,
-    });
-    this.props.onChange(result);
+    this.props.onAdd(category);
   }
 
   loadPage = (page) => {

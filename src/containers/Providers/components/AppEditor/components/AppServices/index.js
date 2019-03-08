@@ -2,13 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, isEmpty, filter } from 'lodash';
 
-import PhonePreview from '../../../PhonePreview';
-import PhoneBanner from '../../../PhoneBanner';
-import { ServiceSelector, ServicePreview} from './components';
+import { ServiceSelector} from './components';
 
-import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../../Wrappers';
-
-import CategoryModal from '../CategoryModal';
+import { ContentWrapper, SelectorWrapper } from '../../../Wrappers';
 
 class AppServices extends React.Component {
   static getDerivedStateFromProps(props) {
@@ -63,28 +59,12 @@ class AppServices extends React.Component {
   }
 
   render() {
-    const { services, currentService, showModal } = this.state;
-    const { image } = this.props;
-    const providerName = this.getProviderName();
+    const { onAdd } = this.props;
     return (
       <ContentWrapper>
         <SelectorWrapper>
-          <ServiceSelector selected={services} onChange={this.setServices} />
+          <ServiceSelector onAdd={onAdd} />
         </SelectorWrapper>
-        <PreviewWrapper>
-          <PhonePreview>
-            <PhoneBanner image={image} providerName={providerName} />
-            <ServicePreview services={services} onEdit={this.onEdit} onChangeOrder={this.setServices} />
-          </PhonePreview>
-        </PreviewWrapper>
-        <CategoryModal
-          title="Customize Service"
-          baseData={currentService}
-          open={showModal}
-          onClose={this.hideModal}
-          onSave={this.updateService}
-          onDelete={this.deleteService}
-        />
       </ContentWrapper>
     )
   }

@@ -3,7 +3,7 @@ import update from 'immutability-helper';
 import { DropTarget, DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
-import { ServiceDNDCard } from './components';
+import { ItemDNDCard } from './components';
 
 const wrapperStyle = {
   display: 'flex',
@@ -24,35 +24,35 @@ const cardTarget = {
 	drop() {},
 }
 
-class ServicePreview extends React.Component {
+class ItemListPreview extends React.Component {
   moveCard = (id, atIndex) => {
-    const { service, index } = this.findCard(id)
-    const { services } = this.props;
-    const newServices = update(services, {
-      $splice: [[index, 1], [atIndex, 0, service]],
+    const { item, index } = this.findCard(id)
+    const { items } = this.props;
+    const newItems = update(items, {
+      $splice: [[index, 1], [atIndex, 0, item]],
     });
-    this.props.onChangeOrder(newServices);
+    this.props.onChangeOrder(newItems);
 	}
 
 	findCard = (id) => {
-    const { services } = this.props;
-    const service = services.filter(s => s.id === id)[0];
+    const { items } = this.props;
+    const item = items.filter(s => s.id === id)[0];
 
 		return {
-			service,
-			index: services.indexOf(service),
+			item,
+			index: items.indexOf(item),
 		}
 	}
 
   render() {
-    const { services, onEdit, connectDropTarget } = this.props;
+    const { items, onEdit, connectDropTarget } = this.props;
     return connectDropTarget(
       <div style={wrapperStyle}>
-        { services.map((service) => (
-          <ServiceDNDCard
-            id={service.id}
-            service={service}
-            key={service.id}
+        { items.map((item) => (
+          <ItemDNDCard
+            id={item.id}
+            item={item}
+            key={item.id}
             onEdit={onEdit}
             moveCard={this.moveCard}
 						findCard={this.findCard}
@@ -65,6 +65,6 @@ class ServicePreview extends React.Component {
 
 const DropTargetContainer = DropTarget(ItemTypes.CARD, cardTarget, connect => ({
     connectDropTarget: connect.dropTarget(),
-  }))(ServicePreview);
+  }))(ItemListPreview);
 
 export default DragDropContext(HTML5Backend)(DropTargetContainer);

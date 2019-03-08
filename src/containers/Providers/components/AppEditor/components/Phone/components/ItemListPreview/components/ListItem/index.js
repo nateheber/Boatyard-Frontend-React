@@ -103,7 +103,7 @@ const EditButton = styled.div`
   cursor: pointer;
 `;
 
-export default class ServiceItem extends React.Component {
+export default class ListItem extends React.Component {
   state = {
     showEditWrapper: false
   }
@@ -122,20 +122,32 @@ export default class ServiceItem extends React.Component {
 
   onEdit = (evt) => {
     evt.stopPropagation();
-    const { service, onEdit } = this.props;
-    onEdit(service);
+    const { item, onEdit } = this.props;
+    onEdit(item);
+  }
+
+  getIcon = () => {
+    const { item: { type, info } } = this.props;
+    if (type === 'category') {
+      const defaultIcon = get(info, 'defaultIcon');
+      const customIcon = get(info, 'customIcon');
+      return defaultIcon || customIcon;
+    } else {
+      const customIcon = get(info, 'customIcon.url');
+      const defaultIcon = get(info, 'relationships.icon.attributes.icons.url');
+      return defaultIcon || customIcon;
+    }
   }
 
   render () {
-    const { service, style } = this.props;
+    const { item, style } = this.props;
     const { showEditWrapper } = this.state;
-    const { name, description } = service;
-    const defaultIcon = get(service, 'defaultIcon');
-    const customIcon = get(service, 'customIcon');
+    const { info: { name, description } } = item;
+    const icon = this.getIcon();
     return (
       <Wrapper onClick={this.onSetTemplate} style={style}>
         <Container>
-          <Icon src={defaultIcon||customIcon} />
+          <Icon src={icon} />
           <ContentWrapper>
             <Title>{name}</Title>
             <Description>{description}</Description>

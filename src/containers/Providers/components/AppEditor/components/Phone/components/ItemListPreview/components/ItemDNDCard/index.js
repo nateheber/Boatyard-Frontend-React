@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { DragSource, DropTarget } from 'react-dnd';
 import _ from 'lodash';
 
-import ServiceItem from '../ServiceItem';
+import ListItem from '../ListItem';
 
 const ItemTypes = {
   CARD: 'card'
@@ -43,7 +43,7 @@ const cardTarget = {
 	},
 }
 
-class ServiceDNDCard extends React.Component {
+class ItemDNDCard extends React.Component {
 	static propTypes = {
 		connectDragSource: PropTypes.func.isRequired,
 		connectDropTarget: PropTypes.func.isRequired,
@@ -59,7 +59,7 @@ class ServiceDNDCard extends React.Component {
 			isDragging,
 			connectDragSource,
 			connectDropTarget,
-			service,
+			item,
 			onEdit
 		} = this.props;
 		const opacity = isDragging ? 0 : 1;
@@ -67,7 +67,7 @@ class ServiceDNDCard extends React.Component {
 		return connectDragSource(
 			connectDropTarget(
 				<div>
-					<ServiceItem service={service} onEdit={onEdit} style={{ opacity }}/>
+					<ListItem item={item} onEdit={onEdit} style={{ opacity }}/>
 				</div>
 			)
 		);
@@ -82,4 +82,4 @@ export default _.flow(
 	DropTarget(ItemTypes.CARD, cardTarget, connect => ({
 		connectDropTarget: connect.dropTarget(),
 	})),
-)(ServiceDNDCard);
+)(ItemDNDCard);
