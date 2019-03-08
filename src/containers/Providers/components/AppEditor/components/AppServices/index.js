@@ -74,7 +74,7 @@ class AppServices extends React.Component {
         <PreviewWrapper>
           <PhonePreview>
             <PhoneBanner image={image} providerName={providerName} />
-            <ServicePreview services={services} onEdit={this.onEdit} />
+            <ServicePreview services={services} onEdit={this.onEdit} onChangeOrder={this.setServices} />
           </PhonePreview>
         </PreviewWrapper>
         <CategoryModal

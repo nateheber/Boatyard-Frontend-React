@@ -1,6 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types'
-import { DragSource, DropTarget } from 'react-dnd'
+import PropTypes from 'prop-types';
+import { DragSource, DropTarget } from 'react-dnd';
+import _ from 'lodash';
+
+import ServiceItem from '../ServiceItem';
 
 const ItemTypes = {
   CARD: 'card'
@@ -40,35 +43,41 @@ const cardTarget = {
 	},
 }
 
-@DropTarget(ItemTypes.CARD, cardTarget, connect => ({
-	connectDropTarget: connect.dropTarget(),
-}))
-@DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
-	connectDragSource: connect.dragSource(),
-	isDragging: monitor.isDragging(),
-}))
-export default class ServiceDNDCard extends Component {
+class ServiceDNDCard extends React.Component {
 	static propTypes = {
 		connectDragSource: PropTypes.func.isRequired,
 		connectDropTarget: PropTypes.func.isRequired,
 		isDragging: PropTypes.bool.isRequired,
 		id: PropTypes.any.isRequired,
-		text: PropTypes.string.isRequired,
 		moveCard: PropTypes.func.isRequired,
 		findCard: PropTypes.func.isRequired,
 	}
 
 	render() {
 		const {
-			text,
 			isDragging,
 			connectDragSource,
 			connectDropTarget,
-		} = this.props
-		const opacity = isDragging ? 0 : 1
+			service,
+		} = this.props;
+		const opacity = isDragging ? 0 : 1;
 
 		return connectDragSource(
-			connectDropTarget(<div style={{ ...style, opacity }}>{text}</div>),
-		)
+			connectDropTarget(
+				<div>
+					<ServiceItem service={service} style={{ opacity }}/>
+				</div>
+			)
+		);
 	}
 }
+
+export default _.flow(
+	DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
+		connectDragSource: connect.dragSource(),
+		isDragging: monitor.isDragging(),
+	})),
+	DropTarget(ItemTypes.CARD, cardTarget, connect => ({
+		connectDropTarget: connect.dropTarget(),
+	})),
+)(ServiceDNDCard);

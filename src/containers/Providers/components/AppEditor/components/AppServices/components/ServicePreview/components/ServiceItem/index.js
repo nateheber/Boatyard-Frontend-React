@@ -126,13 +126,13 @@ export default class ServiceItem extends React.Component {
   }
 
   render () {
-    const { service } = this.props;
+    const { service, style } = this.props;
     const { showEditWrapper } = this.state;
     const { name, description } = service;
     const defaultIcon = get(service, 'defaultIcon');
     const customIcon = get(service, 'customIcon');
     return (
-      <Wrapper onClick={this.onSetTemplate}>
+      <Wrapper onClick={this.onSetTemplate} style={style}>
         <Container>
           <Icon src={defaultIcon||customIcon} />
           <ContentWrapper>
