@@ -134,7 +134,7 @@ export default class ListItem extends React.Component {
       return defaultIcon || customIcon;
     } else {
       const customIcon = get(info, 'customIcon.url');
-      const defaultIcon = get(info, 'relationships.icon.attributes.icons.url');
+      const defaultIcon = get(info, 'relationships.icon.attributes.icon.url');
       return defaultIcon || customIcon;
     }
   }

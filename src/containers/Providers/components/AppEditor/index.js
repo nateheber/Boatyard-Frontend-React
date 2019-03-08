@@ -94,6 +94,16 @@ export default class AppEditor extends React.Component {
     return get(data, path);
   }
 
+  getLastId = (list) => {
+    let id = -1;
+    for (let i = 0; i < list.length; i += 1) {
+      if (id <= list[i].id) {
+        id = list[i].id
+      }
+    }
+    return id;
+  }
+
   addCategories = (category) => {
     this.addItem(category, 'category');
   }
@@ -107,7 +117,7 @@ export default class AppEditor extends React.Component {
     const newData = JSON.parse(JSON.stringify(data));
     const path = this.getEditingPath();
     if (path === '') {
-      const lastId = get(newData.items, `[${newData.items.length - 1}].id`, -1);
+      const lastId = this.getLastId(newData.items);
       newData.items.push({
         id: lastId + 1,
         type,
@@ -115,7 +125,7 @@ export default class AppEditor extends React.Component {
       })
     } else {
       const items = get(newData, `${path}.items`, []);
-      const lastId = get(items, `[${items.length - 1}].id`, -1);
+      const lastId = this.getLastId(items);
       items.push({
         id: lastId + 1,
         type,
@@ -143,7 +153,11 @@ export default class AppEditor extends React.Component {
   }
 
   onEdit = (item) => {
-    this.setState({ currentItem: item });
+    this.setState({ currentItem: item, showModal: true });
+  }
+
+  hideModal = () => {
+    this.setState({ showModal: false });
   }
 
   renderSteps = () => {
@@ -164,6 +178,7 @@ export default class AppEditor extends React.Component {
   render() {
     const { step, image, showModal, currentItem } = this.state;
     const renderingData = this.getRenderingData();
+    const { info, type } = currentItem;
     return (
       <Wrapper>
         <AppHeader />
@@ -182,8 +197,8 @@ export default class AppEditor extends React.Component {
               </PreviewWrapper>
             </ContentWrapper>
             <CategoryModal
-              title="Customize Category"
-              baseData={currentItem}
+              title={type === 'category' ? 'Customize Category' : 'Customize Service'}
+              baseData={info}
               open={showModal}
               onClose={this.hideModal}
               onSave={this.updateItem}
