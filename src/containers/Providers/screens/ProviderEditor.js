@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { get } from 'lodash';
 
 import { CreateProvider, UpdateProvider, GetProvider } from 'store/actions/providers';
 
-import { LocationEditor, AccountCreator, AccountEditor, AppEditor } from '../components';
+import { LocationEditor, AccountEditor, AppEditor } from '../components';
 
 import './style.css';
 
@@ -17,11 +18,26 @@ class ProviderEditFlow extends React.Component {
 
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
-    const providerId = query.provider;
-    this.props.GetProvider({ providerId });
+    const providerId = get(query, 'provider', -1);
+    if (providerId !== -1) {
+      this.props.GetProvider({ providerId });
+    }
     this.setState({
       id: providerId,
     })
+  }
+
+  onCreation = (providerId) => {
+    this.setState({
+      id: providerId
+    });
+    this.props.GetProvider({ providerId });
+  }
+
+  onUpdate = () => {
+    const { currentProvider } = this.props;
+    const providerId = get(currentProvider, 'id');
+    this.props.GetProvider({ providerId });
   }
 
   onSave = data => {
@@ -54,20 +70,16 @@ class ProviderEditFlow extends React.Component {
         <TabList>
           <Tab>ACCOUNT</Tab>
           <Tab disabled={id === -1}>LOCATIONS</Tab>
-          <Tab>APP</Tab>
+          <Tab disabled={id === -1}>APP</Tab>
         </TabList>
         <TabPanel>
-          {id === -1 ? (
-            <AccountCreator
-              {...this.state}
-              save={this.onSave}
-            />
-          ) : (
-            <AccountEditor
-              {...this.state}
-              save={this.onSave}
-            />
-          )}
+          <AccountEditor
+            newFlg={id === -1}
+            {...this.state}
+            onCreation={this.onCreation}
+            onUpdate={this.onUpdate}
+            save={this.onSave}
+          />
         </TabPanel>
         <TabPanel>
           <LocationEditor />
