@@ -29,47 +29,33 @@ const FieldWrapper = styled.div`
 
 export default class ContactInfo extends React.Component {
   getContactInfoField = () => {
+    const { defaultValues: { contactName, contactEmail, contactPhone } } = this.props;
     return [
       {
-        field: 'first_name',
-        label: 'Fist Name',
+        field: 'contactName',
+        label: 'Name',
         type: 'text_field',
+        defaultValue: contactName,
         errorMessage: 'Enter first name',
         required: true,
         xs: 12,
-        sm: 12,
-        md: 2,
-        lg: 2,
-        xl: 2
+        md: 4,
       },
       {
-        field: 'last_name',
-        label: 'Last Name',
-        type: 'text_field',
-        errorMessage: 'Enter last name',
-        required: true,
-        xs: 12,
-        sm: 12,
-        md: 2,
-        lg: 2,
-        xl: 2
-      },
-      {
-        field: 'email',
+        field: 'contactEmail',
         label: 'Email',
         type: 'text_field',
+        defaultValue: contactEmail,
         errorMessage: 'Enter email address',
         required: true,
         xs: 12,
-        sm: 12,
         md: 4,
-        lg: 4,
-        xl: 4
       },
       {
-        field: 'phone_number',
+        field: 'contactPhone',
         label: 'Phone',
         type: 'text_field',
+        defaultValue: contactPhone,
         errorMessage: 'Enter the phone number',
         mask: '(999)999-9999',
         required: true,
@@ -81,13 +67,22 @@ export default class ContactInfo extends React.Component {
       },
     ]
   }
+  setRef = (ref) => {
+    this.fields = ref;
+  }
+  getFieldValues = () => {
+    return this.fields.getFieldValues();
+  }
+  validateFields = () => {
+    return this.fields.validateFields();
+  }
   render() {
     const fields = this.getContactInfoField();
     return (
       <Wrapper>
         <Title>Contact</Title>
         <FieldWrapper>
-          <FormFields fieldSize="big" fields={fields} />
+          <FormFields ref={this.setRef} fieldSize="big" fields={fields} />
         </FieldWrapper>
       </Wrapper>
     )

@@ -95,7 +95,7 @@ export default class FormFields extends React.Component {
 
   getFieldValues = () => this.state.value;
 
-  renderInputField = (field, type, mask, maskChar, placeholder, dateFormat, errorMessage, options, size) => {
+  renderInputField = (field, type, mask, maskChar, placeholder, dateFormat, errorMessage, options, size, disabled) => {
     const { value, errors } = this.state;
     let fieldValue = '';
       if (type === 'check_box') {
@@ -112,6 +112,7 @@ export default class FormFields extends React.Component {
       case 'check_box':
         return (
           <CheckBox
+            disabled={disabled}
             big={size === 'big'}
             checked={fieldValue}
             onClick={() => this.onChangeValue(field, !fieldValue)}
@@ -120,6 +121,7 @@ export default class FormFields extends React.Component {
         case 'text_area':
         return (
           <TextArea
+            disabled={disabled}
             value={fieldValue}
             onChange={evt => this.onChangeValue(field, evt.target.value)}
             hasError={errorIdx >= 0}
@@ -130,6 +132,7 @@ export default class FormFields extends React.Component {
       case 'date':
         return (
           <DateSelector
+            disabled={disabled}
             dateFormat={dateFormat || 'dd/MM/yyyy'}
             selected={fieldValue}
             onChange={value => this.onChangeValue(field, value)}
@@ -141,6 +144,7 @@ export default class FormFields extends React.Component {
       case 'select_box':
         return (
           <Select
+            disabled={disabled}
             value={fieldValue}
             onChange={evt => this.onChangeValue(field, evt.target.value)}
             hasError={errorIdx >= 0}
@@ -158,6 +162,7 @@ export default class FormFields extends React.Component {
       case 'text_field':
         return (
           <Input
+            disabled={disabled}
             className={`size-${size}`}
             mask={mask}
             maskChar={maskChar}
@@ -171,6 +176,7 @@ export default class FormFields extends React.Component {
       case 'currency_field':
         return (
           <CurrencyInput
+            disabled={disabled}
             fixedDecimalScale
             placeholder={placeholder}
             decimalScale={2}
@@ -200,6 +206,7 @@ export default class FormFields extends React.Component {
               errorMessage,
               type,
               options,
+              disabled,
               ...posInfo
             },
             idx
@@ -217,6 +224,7 @@ export default class FormFields extends React.Component {
                   errorMessage,
                   options,
                   fieldSize,
+                  disabled,
                 )}
               </InputWrapper>
             </Col>

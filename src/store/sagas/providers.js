@@ -169,14 +169,14 @@ function* createProvider(action) {
     yield call(customManagement.post, '/managements/', {
       management: {
         email: data.email,
-        providerId: id
+        provider_id: id
       }
     });
     yield put({
       type: actionTypes.CREATE_PROVIDER_SUCCESS,
     });
     if (success) {
-      yield call(success);
+      yield call(success, result);
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_PROVIDER_FAILURE, payload: e });
