@@ -5,7 +5,7 @@ import { get, isEmpty, filter } from 'lodash';
 import PhonePreview from '../../../PhonePreview';
 import PhoneBanner from '../../../PhoneBanner';
 
-import { ServiceCategorySelector } from './components';
+import { ServiceCategorySelector, ServiceCategoryPreview } from './components';
 
 import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../../Wrappers';
 
@@ -77,6 +77,7 @@ class AppServiceCategories extends React.Component {
         <PreviewWrapper>
           <PhonePreview>
             <PhoneBanner image={image} providerName={providerName} />
+            <ServiceCategoryPreview categories={categories} onChangeOrder={this.setCategories} onEdit={this.onEdit} />
           </PhonePreview>
         </PreviewWrapper>
         <CategoryModal
