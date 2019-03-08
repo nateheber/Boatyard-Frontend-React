@@ -52,7 +52,7 @@ export default class ContactInfo extends React.Component {
         md: 4,
       },
       {
-        field: 'contact_phone',
+        field: 'contactPhone',
         label: 'Phone',
         type: 'text_field',
         defaultValue: contactPhone,

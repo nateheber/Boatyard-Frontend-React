@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get } from 'lodash';
+import { get, find } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
 import { AccountHeader, CompanyInfo, ContactInfo } from './components';
@@ -41,6 +41,16 @@ class AccountEditor extends React.Component {
   getName = () => {
     const { provider, newFlg } = this.props;
     return newFlg ? 'New Provider' : get(provider, 'name', '');
+  }
+
+  getUserEmail = () => {
+    const { provider, newFlg } = this.props;
+    if (newFlg)
+      return '';
+    const included = get(provider, 'included');
+    const userInfo = find(included, item => item.type === 'users');
+    const email = get(userInfo, 'attributes.email');
+    return email;
   }
 
   getDefaultCompanyInfo = () => {
@@ -83,10 +93,9 @@ class AccountEditor extends React.Component {
         contactPhone: '',
       };
     } else {
-      const locationInfo = getProviderPrimaryLocation(provider);
-      const contactName = get(locationInfo, 'contactName', '');
-      const contactEmail = get(locationInfo, 'contactEmail', '');
-      const contactPhone = get(locationInfo, 'contactPhone', '');
+      const contactName = get(provider, 'contactName', '');
+      const contactEmail = get(provider, 'contactEmail', '');
+      const contactPhone = get(provider, 'phoneNumber', '');
       return {
         contactName,
         contactEmail,
@@ -99,19 +108,21 @@ class AccountEditor extends React.Component {
     const companyInfo = this.companyFields.getFieldValues();
     const contactInfo = this.contactFields.getFieldValues();
     const { CreateProvider, onCreation } = this.props;
-    const { name, websiteUrl, street, city, state, zip } = companyInfo;
+    const { name, websiteUrl, street, city, state, zip, email } = companyInfo;
     const { contactName, contactPhone, contactEmail } = contactInfo;
     CreateProvider({
       data: {
-        name, website_url: websiteUrl, email: contactEmail,
-        primary_location_attributes: {
+        provider: {
+          name, website_url: websiteUrl, email,
+          phone_number: contactPhone,
           contact_name: contactName,
           contact_email: contactEmail,
-          contact_phone: contactPhone,
-          location_type: 'business_address',
-          name,
-          address_attributes: {
-            street, city, state, zip, country: 'USA'
+          primary_location_attributes: {
+            location_type: 'business_address',
+            name,
+            address_attributes: {
+              street, city, state, zip, country: 'USA'
+            }
           }
         }
       },
@@ -133,9 +144,6 @@ class AccountEditor extends React.Component {
     const locationInfo = providerLocation ? {
       primary_location_attributes: {
         id: providerLocation.id,
-        contact_name: contactName,
-        contact_email: contactEmail,
-        contact_phone: contactPhone,
         location_type: 'business_address',
         name,
         address_attributes: {
@@ -144,9 +152,6 @@ class AccountEditor extends React.Component {
       }
     } : {
       primary_location_attributes: {
-        contact_name: contactName,
-        contact_email: contactEmail,
-        contact_phone: contactPhone,
         location_type: 'business_address',
         name,
         address_attributes: {
@@ -156,10 +161,14 @@ class AccountEditor extends React.Component {
     };
     UpdateProvider({
       data: {
-        name,
-        website_url: websiteUrl,
-        email: contactEmail,
-        ...locationInfo,
+        provider: {
+          name,
+          website_url: websiteUrl,
+          contact_name: contactName,
+          contact_email: contactEmail,
+          phone_number: contactPhone,
+          ...locationInfo,
+        }
       },
       providerId,
       success: onUpdate
@@ -188,6 +197,7 @@ class AccountEditor extends React.Component {
   }
 
   render() {
+    const { newFlg } = this.props;
     const name = this.getName();
     const companyInfo = this.getDefaultCompanyInfo();
     const contactInfo = this.getDefaultContactInfo();
@@ -196,7 +206,7 @@ class AccountEditor extends React.Component {
         <AccountHeader name={name} />
         <EditorWrapper>
           <EditorContent>
-            <CompanyInfo ref={this.setCompanyFieldsRef} defaultValues={companyInfo} />
+            <CompanyInfo newFlg={newFlg} ref={this.setCompanyFieldsRef} defaultValues={companyInfo} />
             <ContactInfo ref={this.setContactFieldsRef} defaultValues={contactInfo} />
           </EditorContent>
           <ButtonWrapper>

@@ -80,8 +80,8 @@ export const CheckBox = ({ big, small, checked, onClick }) => (
   />
 );
 
-export const CheckField = ({ title, big, small, checked, onClick, color }) => (
-  <Wrapper color={color} onClick={onClick}>
+export const CheckField = ({ title, big, small, checked, onClick, color, disabled }) => (
+  <Wrapper color={color} onClick={!disabled && onClick}>
     <Check
       className={className({
         checked: checked,
