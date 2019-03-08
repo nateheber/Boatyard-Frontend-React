@@ -20,6 +20,8 @@ const Content = styled.div`
   width: 221px;
   height: 487px;
   margin-top: 30px;
+  border: 1px solid #979797;
+  border-top: none;
 `;
 
 const Title = styled.div`
