@@ -1,14 +1,25 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../../Wrappers';
+import { ServiceCategorySelector } from './components';
 
-export default class AppServiceCategories extends React.Component {
+import { SelectorWrapper } from '../../../Wrappers';
+
+import categoryOptions from './defaultServiceCategories';
+
+class AppServiceCategories extends React.Component {
   render() {
+    const { onAdd } = this.props;
     return (
-      <ContentWrapper>
-        <SelectorWrapper />
-        <PreviewWrapper />
-      </ContentWrapper>
+      <SelectorWrapper>
+        <ServiceCategorySelector categories={categoryOptions} onAdd={onAdd} />
+      </SelectorWrapper>
     )
   }
 }
+
+const mapStateToProps = (state) => ({
+  currentProvider: state.provider.currentProvider,
+})
+
+export default connect(mapStateToProps)(AppServiceCategories);

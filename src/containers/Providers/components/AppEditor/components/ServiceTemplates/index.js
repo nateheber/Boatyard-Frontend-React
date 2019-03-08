@@ -1,19 +1,24 @@
 import React from 'react';
 
-import PhonePreview from '../../../PhonePreview';
-
-import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../../Wrappers';
+import { SelectorWrapper } from '../../../Wrappers';
 import { BoatWash, Fuel, LineHandling, PumpOut, TrashPickup, TemplateSelector } from './components';
 
 import defaultTemplateInfos from './defaultTemplateValues';
 
 export default class ServiceTemplates extends React.Component {
+  static getDerivedStateFromProps(props) {
+    return { selected: props.selected };
+  }
   state = {
-    selected: 'lineHandling',
+    selected: '',
   }
 
   onChange = (selected) => {
     this.setState({ selected });
+    this.props.onChange({
+      templateType: selected,
+      data: defaultTemplateInfos[selected],
+    })
   }
 
   renderPreviewer = () => {
@@ -47,18 +52,10 @@ export default class ServiceTemplates extends React.Component {
 
   render() {
     const { selected } = this.state;
-    const { templateTitle } = defaultTemplateInfos[selected];
     return (
-      <ContentWrapper>
-        <SelectorWrapper>
-          <TemplateSelector selected={selected} onChange={this.onChange} />
-        </SelectorWrapper>
-        <PreviewWrapper>
-          <PhonePreview secondary title={templateTitle}>
-            {this.renderPreviewer()}
-          </PhonePreview>
-        </PreviewWrapper>
-      </ContentWrapper>
+      <SelectorWrapper>
+        <TemplateSelector selected={selected} onChange={this.onChange} />
+      </SelectorWrapper>
     )
   }
 }

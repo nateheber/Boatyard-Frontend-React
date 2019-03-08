@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import { get } from 'lodash';
 
 import { ImageSelector } from './components';
-import PhonePreview from '../../../PhonePreview';
-import PhoneBanner from '../../../PhoneBanner';
-import { ContentWrapper, SelectorWrapper, PreviewWrapper } from '../../../Wrappers';
+import { SelectorWrapper } from '../../../Wrappers';
 
 import Image1 from 'resources/test_images/1.png';
 import Image2 from 'resources/test_images/2.png';
@@ -48,19 +46,10 @@ class AppBanners extends React.Component {
   }
 
   render() {
-    const { image } = this.state;
-    const providerName = this.getProviderName();
     return (
-      <ContentWrapper>
-        <SelectorWrapper>
-          <ImageSelector imageList={imageList} onSelectImage={this.onSelectImage} />
-        </SelectorWrapper>
-        <PreviewWrapper>
-          <PhonePreview>
-            <PhoneBanner image={image} providerName={providerName} />
-          </PhonePreview>
-        </PreviewWrapper>
-      </ContentWrapper>
+      <SelectorWrapper>
+        <ImageSelector imageList={imageList} onSelectImage={this.onSelectImage} />
+      </SelectorWrapper>
     )
   }
 }
