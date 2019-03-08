@@ -77,7 +77,6 @@ class AppServiceCategories extends React.Component {
         <PreviewWrapper>
           <PhonePreview>
             <PhoneBanner image={image} providerName={providerName} />
-            
           </PhonePreview>
         </PreviewWrapper>
         <CategoryModal

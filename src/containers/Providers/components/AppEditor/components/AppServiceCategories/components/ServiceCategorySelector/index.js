@@ -75,12 +75,12 @@ export default class ServiceCategorySelector extends React.Component {
       <HeaderWrapper>
         <ListWrapper>
           {
-            categories.map((item) => {
-              const { id, name } = item;
+            categories.map((item, idx) => {
+              const { name } = item;
               const defaultIcon = get(item, 'defaultIcon');
               const customIcon = get(item, 'customIcon');
               return (
-                <Tile key={`service_${id}`} onClick={this.onSelect(item)}>
+                <Tile key={`category_${idx}`} onClick={this.onSelect(item)}>
                   <div className="tile-content" onClick={this.onGoToDetails}>
                     <img className="tile-image" src={defaultIcon || customIcon} alt={name} />
                     <p className="tile-name">{name}</p>
