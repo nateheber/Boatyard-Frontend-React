@@ -1,9 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 
 import { OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
+
+import { actionTypes, GetProviderLocations, CreateProviderLocation } from 'store/actions/providerLocations';
 
 import { LocationImage } from './components';
 
@@ -20,13 +24,19 @@ const ModalContent = styled.div`
   margin: auto;
 `
 
-export default class AddConfirmationModal extends React.Component {
+class AddLocationModal extends React.Component {
   state = {
     image: '',
   }
 
   onChangeImage = (image) => {
     this.setState({ image });
+  }
+
+  onSuccess = () => {
+    const { GetProviderLocations, onClose, providerId } = this.props;
+    GetProviderLocations({ providerId });
+    onClose();
   }
 
   getBasicInfoFields = () => {
@@ -133,13 +143,18 @@ export default class AddConfirmationModal extends React.Component {
     const isBasicInfoValid = this.basicInfo.validateFields();
     const isAddressInfoValid = this.addressInfo.validateFields();
     if (isBasicInfoValid && isAddressInfoValid) {
-      // const { locationName, contactName, phoneNumber, email } = this.basicInfo.getFieldValues();
+      const { locationName, contactName, phoneNumber, email } = this.basicInfo.getFieldValues();
       const { address, city, state, zipCode } = this.addressInfo.getFieldValues();
       const { image } = this.state;
       const data = {
         provider_location: {
           home_image: image,
+          contact_name: contactName,
+          contact_phone: phoneNumber,
+          contact_email: email,
           location_attributes: {
+            location_type: 'business_address',
+            name: locationName,
             address_attributes: {
               street: address,
               city,
@@ -150,12 +165,17 @@ export default class AddConfirmationModal extends React.Component {
           }
         }
       };
-      this.props.onAddLocation(data);
+      this.addLocation(data);
     }
   }
 
+  addLocation = (data) => {
+    const { providerId, CreateProviderLocation } = this.props;
+    CreateProviderLocation({ providerId, data, success: this.onSuccess });
+  }
+
   render() {
-    const { open, onClose } = this.props;
+    const { open, onClose, currentStatus } = this.props;
     const basicInfoFields = this.getBasicInfoFields();
     const addressFields = this.getAddressFields();
     const actionButtons = [
@@ -179,7 +199,22 @@ export default class AddConfirmationModal extends React.Component {
             <FormFields fieldSize="big" fields={addressFields} ref={this.setAddressInfoRef} />
           </InfoSection>
         </ModalContent>
+        { currentStatus === actionTypes.CREATE_PROVIDER_LOCATION && (
+          <LoadingSpinner loading={true} />
+        )}
       </Modal>
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  privilege: state.auth.privilege,
+  currentStatus: state.providerLocation.currentStatus,
+});
+
+const mapDispatchToProps = {
+  CreateProviderLocation,
+  GetProviderLocations
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddLocationModal);

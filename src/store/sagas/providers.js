@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty, filter } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { actionTypes } from '../actions/providers';
 import { actions as authActions } from '../reducers/auth';
@@ -7,7 +7,6 @@ import { actions as authActions } from '../reducers/auth';
 import { customApiClient, createProviderClient, createPreferredProviderClient } from '../../api';
 
 import { getCustomApiClient } from './sagaSelectors';
-import { getProvidersSelector } from '../selectors/providers';
 
 const refineProviders = (providers) => {
   return providers.map(provider => {
@@ -143,17 +142,10 @@ function* loginWithProvider(action) {
 
 function* getProvider(action) {
   const { providerId, success, error } = action.payload;
-  const providers = yield select(getProvidersSelector);
-  const filtered = filter(providers, provider => provider.id === providerId);
   try {
-    let provider = {};
-    if (!isEmpty(filtered)) {
-      provider = filtered[0];
-    } else {
-      const result = yield call(adminApiClient.read, providerId);
-      const { data } = result;
-      provider = { id: data.id, ...data.attributes };
-    }
+    const result = yield call(adminApiClient.read, providerId);
+    const { data: { id, attributes, relationships }, included } = result;
+    const provider = { id, ...attributes, relationships, included };
     yield put({
       type: actionTypes.GET_PROVIDER_SUCCESS,
       payload: provider

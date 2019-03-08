@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from  'styled-components';
+import { get, find } from 'lodash';
 
 import EditIcon from 'resources/edit.svg';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
@@ -152,10 +153,32 @@ const CreateButton = styled(OrangeButton)`
   width: 110px;
   padding: 5px;
   margin: 0px;
-`
+`;
 
-export default ({ providerName, locationInfo }) => {
-  const { headerImage, locationName, address: { street, city, state, zip }, contact: { name, phone, email } } = locationInfo;
+const getAddressInformation = (location) => {
+  const relationships = get(location, 'relationships');
+  const locationInfo = find(relationships, r => r.type === 'locations');
+  const locationName = get(locationInfo, 'attributes.name');
+  const address = get(locationInfo, 'relationships.address.data');
+  const street = get(address, 'street');
+  const city = get(address, 'city');
+  const state = get(address, 'state');
+  const zip = get(address, 'zip');
+  return ({
+    locationName,
+    street,
+    city,
+    state,
+    zip
+  });
+}
+
+export default ({ providerName, location }) => {
+  const headerImage = get(location, 'homeImage.url');
+  const contactName = get(location, 'contactName');
+  const contactPhone = get(location, 'contactPhone');
+  const contactEmail = get(location, 'contactEmail');
+  const { locationName, street, city, state, zip } = getAddressInformation(location);
   return (
     <Wrapper>
       <Header src={headerImage}>
@@ -169,13 +192,13 @@ export default ({ providerName, locationInfo }) => {
         </AddressWrapper>
         <ContactTrigger>CONTACT</ContactTrigger>
         <ContactField>
-          <ContactFieldLabel>Name:</ContactFieldLabel>{name}
+          <ContactFieldLabel>Name:</ContactFieldLabel>{contactName}
         </ContactField>
         <ContactField>
-          <ContactFieldLabel>Phone:</ContactFieldLabel>{phone}
+          <ContactFieldLabel>Phone:</ContactFieldLabel>{contactPhone}
         </ContactField>
         <ContactField>
-          <ContactFieldLabel>Email:</ContactFieldLabel>{email}
+          <ContactFieldLabel>Email:</ContactFieldLabel>{contactEmail}
         </ContactField>
         <ButtonWrapper>
           <LoginButton className="thin-font">LOGIN</LoginButton>
