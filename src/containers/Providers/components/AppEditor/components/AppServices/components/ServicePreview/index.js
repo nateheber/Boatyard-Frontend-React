@@ -11,7 +11,10 @@ const wrapperStyle = {
   flexDirection: 'column',
   overflowY: 'scroll',
   paddingBottom: '35px',
-}
+  borderBottomRightRadius: '35px',
+  borderBottomLeftRadius: '35px',
+  zIndex: 999
+};
 
 const ItemTypes = {
   CARD: 'card'
