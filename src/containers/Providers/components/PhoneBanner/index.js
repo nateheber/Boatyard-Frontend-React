@@ -15,6 +15,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  background-position: center center;
 `;
 
 const Flag = styled.div`

@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   font-family: DIN;
   flex-direction: column;
   flex: 1;
-  height: calc(100% - 20px);
+  height: calc(100% - 5px);
   margin-top: 20px;
   background-color: white;
 `;
@@ -43,7 +43,7 @@ const Right = styled.div`
 export default class AppEditor extends React.Component {
   state = {
     step: 0,
-    image: {},
+    image: null,
     services: [],
     currentService: {},
   }
@@ -61,14 +61,14 @@ export default class AppEditor extends React.Component {
   }
 
   renderSteps = () => {
-    const { step, image } = this.state;
+    const { step, image, services } = this.state;
     switch(step) {
       case 0:
-        return <AppBanners onChangeImage={this.setImage} />
+        return <AppBanners image={image} onChangeImage={this.setImage} />
       case 1:
-        return <AppServiceCategories />
+        return <AppServiceCategories image={image} />
       case 2:
-        return <AppServices image={image} onChangeServices={this.setServices} />
+        return <AppServices image={image} services={services} onChange={this.setServices} />
       case 3:
       default:
         return <ServiceTemplates />

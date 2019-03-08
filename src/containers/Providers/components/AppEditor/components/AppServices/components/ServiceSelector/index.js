@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { get, isEmpty, findIndex, remove } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { SearchBox } from 'components/basic/Input';
 
-import { GetServices, UpdateService } from 'store/actions/services';
-import { refinedServicesSelector } from 'store/selectors/services';
+import { GetServices, CreateService, UpdateService } from 'store/actions/services';
+import { GetCategories } from 'store/actions/categories';
+import { refinedCategoriesSelector } from 'store/selectors/categories';
 
 const HeaderWrapper = styled.div`
   dispaly: flex;
@@ -15,19 +16,23 @@ const HeaderWrapper = styled.div`
   align-items: center;
 `;
 
+const SearchWrapper = styled.div`
+  display: inline-block;
+  box-sizing: border-box;
+  width: 282px;
+  margin: 10px;
+`;
+
 const SearchInput = styled(SearchBox)`
   display: inline-block;
   box-sizing: border-box;
-  width: 253px;
-  margin-right: 27px;
+  width: 282px;
 `;
 
 const Tile = styled.div`
   display: inline-block;
-  width: 280px;
-  margin-right: 27px
-  padding: 0 12px;
-  margin-bottom: 20px;
+  width: 282px;
+  margin: 0 12px 18px;
   .tile-content {
     display: flex;
     background: #F8F8F8;
@@ -53,13 +58,12 @@ const Tile = styled.div`
   }
 `;
 
-const SearchWrapper = styled.div`
+const ListWrapper = styled.div`
   display: block;
-  padding-right: 16px;
   width: 100%;
-  max-height: 580px;
+  max-height: 536px;
   overflow-y: scroll;
-  margin-top: 24px;
+  margin-top: 13px;
 `
 
 
@@ -75,35 +79,54 @@ class ServiceSelector extends React.Component {
   }
 
   componentDidMount() {
-    const { provider, GetServices } = this.props;
-    const providerId = get(provider, 'data.id');
-    GetServices({ params: { 'service[provider_id]': providerId } });
+    // const { provider, GetCategories } = this.props;
+    // const providerId = get(provider, 'id');
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    const { GetCategories } = this.props;
+    const { keyword } = this.state;
+    const params = isEmpty(keyword) ? {
+      per_page: 1000,
+      'category[discarded_at]': null
+    } : {
+      per_page: 1000,
+      'category[discarded_at]': null,
+      search_by_name: keyword
+    };
+    GetCategories({ params });
+
   }
 
   onChangeKeyword = (keyword) => {
     this.setState({
       keyword,
     }, () => {
-      this.loadPage(1);
+      this.loadCategories();
     })
   }
 
-  onSelect = service => () => {
+  onSelect = category => () => {
     const { selected } = this.state;
     const result = selected.map(service => ({ ...service }));
-    const idx = findIndex(result, item => item.id === service.id);
-    if (idx >= 0) {
-      remove(result, item => item.id === service.id);
-    } else {
-      result.push(service);
-    }
+    const lastIndex = get(result, `[${result.length - 1}].id`, -1);
+    result.push({
+      id: lastIndex + 1,
+      categoryId: category.id,
+      iconId: category.iconId,
+      defaultIcon: get(category, 'relationships.icon.attributes.icon.url'),
+      customIcon: category.customIcon.url,
+      name: category.name,
+      description: category.description,
+    });
     this.props.onChange(result);
   }
 
   loadPage = (page) => {
     const { keyword } = this.state;
     const { provider, GetServices } = this.props;
-    const providerId = get(provider, 'data.id');
+    const providerId = get(provider, 'id');
     const params = isEmpty(keyword) ? {
       page: page,
       per_page: 24,
@@ -118,34 +141,36 @@ class ServiceSelector extends React.Component {
   };
 
   render() {
-    const { services } = this.props;
+    const { categories } = this.props;
     return (
       <HeaderWrapper>
-        <SearchInput onChange={this.onChangeKeyword} placeholder="SEARCH" />
         <SearchWrapper>
+          <SearchInput onChange={this.onChangeKeyword} placeholder="SEARCH" />
+        </SearchWrapper>
+        <ListWrapper>
           {
-            services.map((item) => {
+            categories.map((item) => {
               const { id, name } = item;
-              const defaultIcon = get(item, 'relationships.icon.attributes.icon.button3X.url');
-              const customIcon = get(item, 'customIcon.button3X.url');
+              const defaultIcon = get(item, 'relationships.icon.attributes.icon.url');
+              const customIcon = get(item, 'customIcon.url');
               return (
                 <Tile key={`service_${id}`} onClick={this.onSelect(item)}>
                   <div className="tile-content" onClick={this.onGoToDetails}>
-                    <img className="tile-image" src={customIcon || defaultIcon} alt={name} />
+                    <img className="tile-image" src={defaultIcon || customIcon} alt={name} />
                     <p className="tile-name">{name}</p>
                   </div>
                 </Tile>
               )
             })
           }
-        </SearchWrapper>
+        </ListWrapper>
       </HeaderWrapper>
     );
   }
 }
 
 const mapStateToProps = (state) => ({
-  services: refinedServicesSelector(state),
+  categories: refinedCategoriesSelector(state, ''),
   provider: state.provider.currentProvider,
   currentStatus: state.service.currentStatus,
   page: state.service.page,
@@ -155,7 +180,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   GetServices,
+  CreateService,
   UpdateService,
+  GetCategories
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);

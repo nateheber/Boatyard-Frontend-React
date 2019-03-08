@@ -6,11 +6,38 @@ import Silhouette from 'resources/phone_silhouette.png';
 import Silhouette2 from 'resources/phone_silhouette_type2.png';
 import ButtonSilhouette from 'resources/phoneButtons.png';
 
+import { HollowButton, OrangeButton } from 'components/basic/Buttons';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const SectionName = styled.div`
+  font-family: Montserrat;
+  font-size: 18px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #003247;
+  margin-bottom: 25px;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const Wrapper = styled.div`
   position: relative;
-  width: 247px;
-  height: 464px;
-  border-radius: 44.5px;
+  width: 223px;
+  height: 415px;
   background-color: white;
   background-image: url(${Silhouette});
   &.secondary {
@@ -18,10 +45,10 @@ const Wrapper = styled.div`
   }
   background-repeat: no-repeat;
   background-size: 100%;
-  padding-left: 13px;
-  padding-right: 13px;
-  padding-bottom: 12px;
-  padding-top: 80px;
+  padding-left: 11px;
+  padding-right: 11px;
+  padding-bottom: 11px;
+  padding-top: 72px;
   &::after {
     content: '';
     position: absolute;
@@ -32,14 +59,16 @@ const Wrapper = styled.div`
     top: 53px;
     background-image: url(${ButtonSilhouette});
   }
+  margin-bottom: 40px;
 `;
 
 const ContentHolder = styled.div`
   display: flex;
   height: 100%;
   flex-direction: column;
-  border-bottom-right-radius: 38.5px;
-  border-bottom-left-radius: 38.5px;
+  border-bottom-right-radius: 35px;
+  border-bottom-left-radius: 35px;
+  padding: 0 1px;
   overflow: hidden;
 `;
 
@@ -55,12 +84,19 @@ const Title = styled.div`
 `;
 
 export default ({ secondary, title, children }) => (
-  <Wrapper className={classNames({ secondary })} >
-    {
-      secondary && <Title>{title}</Title>
-    }
-    <ContentHolder>
-      {children}
-    </ContentHolder>
-  </Wrapper>
-)
+  <Container>
+    <SectionName>Home</SectionName>
+    <Wrapper className={classNames({ secondary })} >
+      {
+        secondary && <Title>{title}</Title>
+      }
+      <ContentHolder>
+        {children}
+      </ContentHolder>
+    </Wrapper>
+    <ButtonWrapper>
+      <HollowButton className="thin-font">UNPUBLISH</HollowButton>
+      <OrangeButton className="thin-font">PUBLISH</OrangeButton>
+    </ButtonWrapper>
+  </Container>
+);

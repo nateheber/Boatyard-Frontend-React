@@ -9,11 +9,11 @@ import { ButtonInput, DescriptionInput, Image, TextAreaInput } from '../../../..
 const Wrapper = styled.div`
   display: flex;
   flex: 1;
-  width: 225px;
   flex-direction: column;
   align-items: center;
   padding: 18px 10px;
   background-color: #f2f2f2;
+  box-sizing: border-box;
 `;
 
 

@@ -131,6 +131,23 @@ const modalStyles = {
       fill: '#003247'
     }
   },
+  extraLarge: {
+    overlay: {
+      background: 'transparent'
+    },
+    modal: {
+      padding: '0px',
+      width: '1080px',
+      maxWidth: '1080px',
+    },
+    closeButton: {
+      top: '25px',
+      right: '15px'
+    },
+    closeIcon: {
+      fill: '#003247'
+    }
+  },
   normal: {
     overlay: {
       background: 'transparent'
@@ -151,10 +168,10 @@ const modalStyles = {
 
 export default class CustomModal extends React.Component {
   render() {
-    const { open, onClose, classes, children, title, actions, small, normal, minHeight, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
+    const { open, onClose, classes, children, title, actions, small, normal, extraLarge, minHeight, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
     return (
       <Modal
-        styles={small ? modalStyles.small : normal ? modalStyles.normal : modalStyles.main}
+        styles={small ? modalStyles.small : normal ? modalStyles.normal : extraLarge ? modalStyles.extraLarge : modalStyles.main}
         open={open}
         onClose={onClose}
         style={{width: '300px'}}

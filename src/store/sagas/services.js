@@ -10,7 +10,8 @@ const refineServices = (services) => {
       id: service.id,
       type: service.type,
       ...service.attributes,
-      ...service.relationships
+      // ...service.relationships,
+      relationships: service.relationships
     };
   });
 };

@@ -24,8 +24,12 @@ const imageList = [
 ];
 
 class AppBanners extends React.Component {
+  static getDerivedStateFromProps(props) {
+    return ({ image: props.image || imageList[0] });
+  }
+
   state = {
-    image: imageList[0]
+    image: {}
   }
 
   componentDidMount() {
@@ -34,12 +38,13 @@ class AppBanners extends React.Component {
   }
 
   onSelectImage = (image) => {
+    this.props.onChangeImage(image);
     this.setState({ image });
   }
 
   getProviderName = () => {
     const { currentProvider } = this.props;
-    return get(currentProvider, 'data.attributes.name', '');
+    return get(currentProvider, 'name', '');
   }
 
   render() {
