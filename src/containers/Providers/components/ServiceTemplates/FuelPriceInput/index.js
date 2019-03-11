@@ -51,8 +51,8 @@ const editorStyle = {
 export default class FuelPriceInput extends React.Component {
   constructor(props) {
     super(props);
-    const { price, unit } = props;
-    this.state = { price, unit };
+    const { cost, unit } = props;
+    this.state = { cost, unit };
   }
 
   onChange = field => (e) => {
@@ -62,13 +62,13 @@ export default class FuelPriceInput extends React.Component {
   }
 
   render() {
-    const { price, unit } = this.state;
+    const { cost, unit } = this.state;
     const { disabled } = this.props;
     return (
       <Wrapper>
         <Image src={GasStationImage} />
         <PriceWrapper>
-          Price: <AutoResize disabled={disabled} value={price} inputStyle={editorStyle} onChange={this.onChange('price')} />/<AutoResize disabled={disabled} value={unit} inputStyle={editorStyle} onChange={this.onChange('unit')} />
+          Price: <AutoResize disabled={disabled} value={cost} inputStyle={editorStyle} onChange={this.onChange('cost')} />/<AutoResize disabled={disabled} value={unit} inputStyle={editorStyle} onChange={this.onChange('unit')} />
         </PriceWrapper>
       </Wrapper>
     )

@@ -28,7 +28,9 @@ export default class LineHandling extends React.Component {
   onChange = field => (e) => {
     const updateObject = {};
     set(updateObject, field, e.target.value);
-    this.setState(updateObject);
+    this.setState(updateObject, () => {
+      this.props.onChange(this.state)
+    });
   }
 
   render() {

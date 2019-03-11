@@ -22,15 +22,17 @@ export default class Fuel extends React.Component {
   constructor(props) {
     super(props);
     const {
-      price,
+      cost,
       unit,
       description,
+      secondaryDescription,
       buttonText,
     } = props;
     this.state = {
-      price,
+      cost,
       unit,
       description,
+      secondaryDescription,
       buttonText,
     };
   }
@@ -38,26 +40,31 @@ export default class Fuel extends React.Component {
   onChangePrice = (field, value) => {
     const updateObject = {};
     set(updateObject, field, value);
-    this.setState(updateObject);
+    this.setState(updateObject, () => {
+      this.props.onChange(this.state)
+    });
   }
 
   onChange = field => (e) => {
     const updateObject = {};
     set(updateObject, field, e.target.value);
-    this.setState(updateObject);
+    this.setState(updateObject, () => {
+      this.props.onChange(this.state)
+    });
   }
 
   render() {
     const {
-      price,
+      cost,
       unit,
       buttonText,
-      description
+      description,
+      secondaryDescription,
     } = this.state;
     const { disabled } = this.props;
     return (
       <Wrapper>
-        <FuelPriceInput disabled={disabled} price={price} unit={unit} onChange={this.onChangePrice} />
+        <FuelPriceInput disabled={disabled} cost={cost} unit={unit} onChange={this.onChangePrice} />
         <SelectorInput label="FUEL TYPE" />
         <TextInput label="GALLONS" />
         <SelectorInput label="AMOUNT" />
@@ -72,6 +79,11 @@ export default class Fuel extends React.Component {
           style={{ marginTop: '20px' }}
           value={description}
           onChange={this.onChange('description')}
+        />
+        <DescriptionInput
+          disabled={disabled}
+          value={secondaryDescription}
+          onChange={this.onChange('secondaryDescription')}
         />
       </Wrapper>
     )

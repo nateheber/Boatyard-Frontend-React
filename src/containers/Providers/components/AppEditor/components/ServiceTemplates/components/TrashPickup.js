@@ -22,17 +22,19 @@ export default class TrashPickup extends React.Component {
   constructor(props) {
     super(props);
     const {
-      price,
+      cost,
       unit,
       description,
+      secondaryDescription,
       textAreaLabel,
       buttonText,
     } = props;
     this.state = {
-      price,
+      cost,
       unit,
       description,
       textAreaLabel,
+      secondaryDescription,
       buttonText,
     };
   }
@@ -40,20 +42,25 @@ export default class TrashPickup extends React.Component {
   onChangePrice = (field, value) => {
     const updateObject = {};
     set(updateObject, field, value);
-    this.setState(updateObject);
+    this.setState(updateObject, () => {
+      this.props.onChange(this.state)
+    });
   }
 
   onChange = field => (e) => {
     const updateObject = {};
     set(updateObject, field, e.target.value);
-    this.setState(updateObject);
+    this.setState(updateObject, () => {
+      this.props.onChange(this.state)
+    });
   }
 
   render() {
     const {
-      price,
+      cost,
       unit,
       description,
+      secondaryDescription,
       textAreaLabel,
       buttonText,
     } = this.state;
@@ -61,11 +68,16 @@ export default class TrashPickup extends React.Component {
     return (
       <Wrapper>
         <Image src={Icon} />
-        <PriceUnitInput disabled={disabled} unit={unit} price={price} style={{ marginBottom: '18px' }} onChange={this.onChangePrice} />
+        <PriceUnitInput disabled={disabled} unit={unit} cost={cost} style={{ marginBottom: '18px' }} onChange={this.onChangePrice} />
         <DescriptionInput
           disabled={disabled}
           value={description}
           onChange={this.onChange('description')}
+        />
+        <DescriptionInput
+          disabled={disabled}
+          value={secondaryDescription}
+          onChange={this.onChange('secondaryDescription')}
         />
         <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
         <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />

@@ -23,18 +23,20 @@ export default class PumpOut extends React.Component {
   constructor(props) {
     super(props);
     const {
-      price,
+      cost,
       unit,
-      title,
+      subtitle,
       description,
+      secondaryDescription,
       inputLabel,
       buttonText,
     } = props;
     this.state = {
-      price,
+      cost,
       unit,
-      title,
+      subtitle,
       description,
+      secondaryDescription,
       inputLabel,
       buttonText,
     };
@@ -43,33 +45,43 @@ export default class PumpOut extends React.Component {
   onChangePrice = (field, value) => {
     const updateObject = {};
     set(updateObject, field, value);
-    this.setState(updateObject);
+    this.setState(updateObject, () => {
+      this.props.onChange(this.state)
+    });
   }
 
   onChange = field => (e) => {
     const updateObject = {};
     set(updateObject, field, e.target.value);
-    this.setState(updateObject);
+    this.setState(updateObject, () => {
+      this.props.onChange(this.state)
+    });
   }
 
   render() {
     const {
-      price,
+      cost,
       unit,
-      title,
+      subtitle,
       description,
+      secondaryDescription,
       inputLabel,
       buttonText,
     } = this.state;
     const { disabled } = this.props;
     return (
       <Wrapper>
-        <PriceUnitInput disabled={disabled} unit={unit} price={price} onChange={this.onChangePrice} />
-        <TitleInput disabled={disabled} value={title} onChange={this.onChange('title')} />
+        <PriceUnitInput disabled={disabled} unit={unit} cost={cost} onChange={this.onChangePrice} />
+        <TitleInput disabled={disabled} value={subtitle} onChange={this.onChange('subtitle')} />
         <DescriptionInput
           disabled={disabled}
           value={description}
           onChange={this.onChange('description')}
+        />
+        <DescriptionInput
+          disabled={disabled}
+          value={secondaryDescription}
+          onChange={this.onChange('secondaryDescription')}
         />
         <Spacer />
         <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} />

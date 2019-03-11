@@ -49,8 +49,8 @@ const unitInputStyle = {
 export default class PriceUnitInput extends React.Component {
   constructor(props) {
     super(props);
-    const { unit, price } = this.props;
-    this.state = { unit, price };
+    const { unit, cost } = this.props;
+    this.state = { unit, cost };
   }
 
   onChange = value => (e) => {
@@ -62,11 +62,11 @@ export default class PriceUnitInput extends React.Component {
 
   render () {
     const { style, disabled } = this.props;
-    const { unit, price } = this.state;
+    const { unit, cost } = this.state;
     return (
       <Wrapper style={style}>
         <PriceWrapper>
-          $<AutoResize disabled={disabled} value={price} inputStyle={priceInputStyle} onChange={this.onChange('price')} />
+          $<AutoResize disabled={disabled} value={cost} inputStyle={priceInputStyle} onChange={this.onChange('cost')} />
         </PriceWrapper>
         <UnitWrapper>
           /<AutoResize disabled={disabled} value={unit} inputStyle={unitInputStyle} onChange={this.onChange('unit')} />

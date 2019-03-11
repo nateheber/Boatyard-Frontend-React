@@ -38,29 +38,29 @@ class Phone extends React.Component {
   }
 
   renderServiceScreen = () => {
-    const { renderingData: { template } } = this.props;
+    const { renderingData: { template }, onChangeTemplateInfo } = this.props;
     if (template) {
       const { templateType, data } = template;
       switch (templateType) {
         case 'lineHandling':
           return (
-            <LineHandling { ...data.data } />
+            <LineHandling { ...data.data } onChange={onChangeTemplateInfo} />
           );
         case 'trashPickup':
           return (
-            <TrashPickup {...data.data} />
+            <TrashPickup {...data.data} onChange={onChangeTemplateInfo} />
           );
         case 'pumpOut':
           return (
-            <PumpOut {...data.data} />
+            <PumpOut {...data.data} onChange={onChangeTemplateInfo} />
           );
         case 'fuel':
           return (
-            <Fuel {...data.data} />
+            <Fuel {...data.data} onChange={onChangeTemplateInfo} />
           );
         case 'boatWash':
           return (
-            <BoatWash {...data.data} />
+            <BoatWash {...data.data} onChange={onChangeTemplateInfo} />
           );
         default:
           return false;
