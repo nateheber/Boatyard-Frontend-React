@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from  'styled-components';
-import { get, find } from 'lodash';
+import { get } from 'lodash';
 
 import EditIcon from 'resources/edit.svg';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
+
+import { getAddressInformation } from 'utils/location';
 
 const Wrapper = styled.div`
   width: 281px;
@@ -155,25 +157,7 @@ const CreateButton = styled(OrangeButton)`
   margin: 0px;
 `;
 
-const getAddressInformation = (location) => {
-  const relationships = get(location, 'relationships');
-  const locationInfo = find(relationships, r => r.type === 'locations');
-  const locationName = get(locationInfo, 'attributes.name');
-  const address = get(locationInfo, 'relationships.address.data');
-  const street = get(address, 'street');
-  const city = get(address, 'city');
-  const state = get(address, 'state');
-  const zip = get(address, 'zip');
-  return ({
-    locationName,
-    street,
-    city,
-    state,
-    zip
-  });
-}
-
-export default ({ providerName, location }) => {
+export default ({ providerName, location, onEdit }) => {
   const headerImage = get(location, 'homeImage.url');
   const contactName = get(location, 'contactName');
   const contactPhone = get(location, 'contactPhone');
@@ -190,7 +174,7 @@ export default ({ providerName, location }) => {
           <AddressLine1>{street}</AddressLine1>
           <AddressLine2>{city}, {state} {zip}</AddressLine2>
         </AddressWrapper>
-        <ContactTrigger>CONTACT</ContactTrigger>
+        <ContactTrigger onClick={onEdit}>CONTACT</ContactTrigger>
         <ContactField>
           <ContactFieldLabel>Name:</ContactFieldLabel>{contactName}
         </ContactField>

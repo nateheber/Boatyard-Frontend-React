@@ -47,16 +47,9 @@ const PreviewImage = styled.img`
 `
 
 export default class LocationImage extends React.Component {
-  state = {
-    file: ''
-  }
-
   handleChange = event => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      this.setState({
-        file: reader.result
-      });
       this.props.onChange(reader.result);
     }
     reader.readAsDataURL(event.target.files[0]);
@@ -71,22 +64,22 @@ export default class LocationImage extends React.Component {
   }
 
   render () {
-    const { file } = this.state;
+    const { image } = this.props;
     return (
       <Wrapper>
         <ControlPart>
           <FieldName>Location Image</FieldName>
           <HollowButton className="thin-font" onClick={this.uploadImage}>Upload Image</HollowButton>
         </ControlPart>
-        <PreviewWrapper className={classNames({ empty: isEmpty(file) })}>
-          {!isEmpty(file) && <PreviewImage src={file} alt="preview_image" />}
+        <PreviewWrapper className={classNames({ empty: isEmpty(image) })}>
+          {!isEmpty(image) && <PreviewImage src={image} alt="preview_image" />}
         </PreviewWrapper>
         <input
           ref={this.setFileRef}
           type="file"
           style={{ display: 'none' }}
           onChange={this.handleChange}
-          key={isEmpty(file)}
+          key={isEmpty(image)}
         />
       </Wrapper>
     )
