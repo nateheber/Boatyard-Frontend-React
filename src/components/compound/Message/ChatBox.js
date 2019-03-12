@@ -42,10 +42,14 @@ const TextArea = styled.textarea`
   outline: none;
   box-shadow: none;
   min-height: 100px;
-  padding: 10px;
+  font-size: 14px;
+  font-family: "Source Sans",sans-serif;
+  font-weight: 400;
+  color: #333333;
 `;
 
 const InputView = styled.div`
+  padding: 0px 15px;
   .secondary &{
     background-color: white;
     border-radius: 15px;
@@ -178,7 +182,7 @@ export class ChatBox extends React.Component {
       <Wrapper className={classNames({ secondary, third, noBorder })}>
         <InputGroup>
           <InputView>
-            <TextArea value={text} onChange={this.onChangeText} />
+            <TextArea value={text} onChange={this.onChangeText} placeholder="Write reply..." />
             {!isEmpty(image) && (
               <ImageArea>
                   <ImageContainer>

@@ -14,7 +14,7 @@ export const BoatyardSelect = styled(AsyncSelect)`
   .css-2o5izw,
   .css-vj8t7z {
     min-height: 30px;
-    height: 30px;
+    height: 34px;
     border-radius: 6px;
     border: 1px solid #dfdfdf !important;
     box-shadow: none;

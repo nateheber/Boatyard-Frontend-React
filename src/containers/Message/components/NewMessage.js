@@ -56,8 +56,10 @@ const selectorStyle = {
   }),
   multiValueRemove: (base) => ({
     ...base,
+    marginTop: '2px',
     backgroundColor: 'transparent !important',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    color: '#efefef',
   })
 }
 
@@ -83,22 +85,22 @@ const parseUserType = (type) => {
 
 class NewMessage extends React.Component {
   state = {
-    users: -1,
-    defaultOptions: []
+    users: [],
+    isMount: false,
   };
 
   componentDidMount() {
-    this.loadOptions('')
-      .then(result => {
-        this.setState({
-          defaultOptions: result,
-        })
-      })
+    this.setState({ isMount: true });
+  }
+
+  componentWillUnmount() {
+    this.setState({ isMount: false });
   }
 
   loadOptions = val => {
     return this.onChangeUserFilter(val)
       .then((filtered) => {
+        console.log(filtered);
         return filtered;
       }, () => {
         return [];
@@ -153,8 +155,12 @@ class NewMessage extends React.Component {
   }
 
   onSendingSuccess = (result) => {
-    const conversationId = get(result, 'attributes.conversationId', -1);
-    this.props.onCreationSuccess(conversationId);
+    const { isMount } = this.state;
+    if (isMount) {
+      const conversationId = get(result, 'attributes.conversationId', -1);
+      this.props.onCreationSuccess(conversationId);
+      this.setState({ isMount: false });
+    }
   }
 
   sendMessage = (data, recipientInfo) => () => {
@@ -180,7 +186,7 @@ class NewMessage extends React.Component {
   }
 
   render() {
-    const { users, defaultOptions } = this.state;
+    const { users } = this.state;
     return (
       <React.Fragment>
         <InputWrapper>
@@ -193,9 +199,8 @@ class NewMessage extends React.Component {
                 MultiValueLabel,
               }}
               cacheOptions
-              defaultOptions={defaultOptions}
               isMulti
-              onInputChange={this.onChangeUserFilter}
+              defaultOptions
               loadOptions={this.loadOptions}
               onChange={this.onChangeUser}
               styles={selectorStyle}
