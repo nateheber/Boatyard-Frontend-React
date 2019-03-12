@@ -108,15 +108,19 @@ class ServiceSelector extends React.Component {
   }
 
   onSelect = category => () => {
-    const { id, name, description, iconId, customIcon } = category;
+    const { id, name, description, secondaryDescription, cost, costType, subtitle, iconId, customIcon } = category;
     const defaultIcon = get(category, 'relationships.icon.attributes.icon.url');
     this.props.onAdd({
       categoryId: id,
       name,
+      subtitle,
       description,
+      secondaryDescription,
       iconId,
       defaultIcon,
-      customIcon: customIcon.url
+      customIcon: customIcon.url,
+      cost,
+      costType,
     });
   }
 

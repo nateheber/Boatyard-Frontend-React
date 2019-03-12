@@ -69,7 +69,7 @@ class Providers extends React.Component {
   };
 
   toDetails = provider => {
-    this.props.history.push(`/providers/${provider.id}/`);
+    this.props.history.push(`/provider-details?provider=${provider.id}`);
   };
 
   createNew = () => {

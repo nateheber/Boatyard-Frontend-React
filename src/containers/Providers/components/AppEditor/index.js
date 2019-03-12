@@ -1,11 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, set, isEmpty, take } from 'lodash';
+import { get, set, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { GetProviderLocations } from 'store/actions/providerLocations';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
+
+import { setServiceTemplateData } from 'utils/serviceTemplate';
+
 import {
   AppHeader,
   StepSelector,
@@ -102,8 +105,27 @@ class AppEditor extends React.Component {
     return pathParts.join('.');
   }
 
+  getParentScreen = () => {
+    const { currentScreen } = this.state;
+    const parts = currentScreen.split('/');
+    const parentParts = [];
+    for(let i = 0; i < parts.length - 1; i += 1) {
+      parentParts.push(parts[i]);
+    }
+    return parentParts.join('/');
+  }
+
   getRenderingData = () => {
     const path = this.getEditingPath();
+    const { data } = this.state;
+    if (path === '') {
+      return data;
+    }
+    return get(data, path);
+  }
+
+  getParentData = () => {
+    const path = this.getParentPath();
     const { data } = this.state;
     if (path === '') {
       return data;
@@ -204,12 +226,12 @@ class AppEditor extends React.Component {
       const { items } = newData;
       const newItems = items.filter(item => item.type !== currentItem.type || item.id !== currentItem.id);
       newData.items = newItems;
-      this.setState({ data: newData, showModal: false });
+      this.setState({ data: newData, showModal: false, currentItem: this.getRenderingData() });
     } else {
       const items = get(newData, `${path}.items`);
       items.filter(item => item.type !== currentItem.type || item.id !== currentItem.id);
       set(newData, `${path}.items`, items);
-      this.setState({ data: newData, showModal: false });
+      this.setState({ data: newData, showModal: false, currentItem: this.getRenderingData() });
     }
   }
 
@@ -223,13 +245,13 @@ class AppEditor extends React.Component {
     if (path === '') {
       const idx = newData.items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
       newData.items[idx] = updatedItem;
-      this.setState({ data: newData, showModal: false });
+      this.setState({ data: newData, showModal: false, currentItem: this.getRenderingData() });
     } else {
       const items = get(newData, `${path}.items`);
       const idx = items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
       items[idx] = updatedItem;
       set(newData, `${path}.items`, items);
-      this.setState({ data: newData, showModal: false });
+      this.setState({ data: newData, showModal: false, currentItem: this.getRenderingData() });
     }
   }
 
@@ -241,12 +263,14 @@ class AppEditor extends React.Component {
       const path = this.getParentPath();
       if (path === '') {
         const idx = newData.items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
-        newData.items[idx].template = templateInfo;
+        const serviceInfo = newData.items[idx].info;
+        newData.items[idx].template = setServiceTemplateData(serviceInfo, templateInfo);
         this.setState({ data: newData, showModal: false });
       } else {
         const items = get(newData, `${path}.items`);
         const idx = items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
-        items[idx].template = templateInfo;
+        const serviceInfo = items[idx].info;
+        items[idx].template = setServiceTemplateData(serviceInfo, templateInfo);
         set(newData, `${path}.items`, items);
         this.setState({ data: newData, showModal: false });
       }
@@ -254,6 +278,21 @@ class AppEditor extends React.Component {
       toastr.clean()
       toastr.error('Cannot set template to service');
     }
+  }
+
+  onChangeTemplate = (templateInfo) => {
+    const { data, currentItem } = this.state;
+    const newData = JSON.parse(JSON.stringify(data));
+    const path = this.getParentPath();
+    if (path === '') {
+      const idx = newData.items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+      set(newData.items[idx], 'template.data.data', templateInfo );
+    } else {
+      const items = get(newData, `${path}.items`);
+      const idx = items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+      set(items[idx], 'template.data.data', templateInfo );
+    }
+    this.setState({ data: newData });
   }
 
   onChangeOrder = (items) => {
@@ -265,9 +304,7 @@ class AppEditor extends React.Component {
     } else {
       set(newData, `${path}.items`, items);
     }
-    this.setState({
-      data: newData
-    })
+    this.setState({ data: newData });
   }
 
   onEdit = (item) => {
@@ -287,22 +324,20 @@ class AppEditor extends React.Component {
       const items = get(data, `${path}.items`, []);
       const idx = items.findIndex(i => i.id === item.id && i.type === item.type);
       this.setState({ currentItem: item, currentScreen: `${currentScreen}/${idx}` }, () => {
-        this.setState({ step })
+        this.setState({ step });
       });
     }
   }
 
   onBack = () => {
-    const { currentScreen } = this.state;
-    const parts = currentScreen.split('/');
-    const prevPart = take(parts, parts.length - 1);
-    this.setState({
-      currentScreen: prevPart.join('/')
-    });
+    const data = this.getParentData();
+    const parentScreen = this.getParentScreen();
+    this.setState({ currentScreen: parentScreen, currentItem: data });
   }
 
   hideModal = () => {
-    this.setState({ showModal: false });
+    const currentItem = this.getRenderingData();
+    this.setState({ showModal: false, currentItem });
   }
 
   renderSteps = () => {
@@ -357,6 +392,7 @@ class AppEditor extends React.Component {
                   image={image}
                   onEdit={this.onEdit}
                   onChangeOrder={this.onChangeOrder}
+                  onChangeTemplateInfo={this.onChangeTemplate}
                   onClickItem={this.onClickItem}
                   onBack={this.onBack}
                 />

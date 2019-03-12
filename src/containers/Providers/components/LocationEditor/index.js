@@ -50,12 +50,14 @@ class LocationEditor extends React.Component {
     GetProviderLocations({ providerId });
   }
 
-  onSuccess = (result) => {
-    console.log(result);
+  onEdit = locationId => () => {
+    const { providerLocations } = this.props;
+    const idx = providerLocations.findIndex(location => location.id === locationId);
+    this.setState({ location: { ...providerLocations[idx] }, showNewLocation: true });
   }
 
-  showLocationModal = () => {
-    this.setState({ showNewLocation: true });
+  createNew = () => {
+    this.setState({ showNewLocation: true, location: null });
   }
 
   hideLocationModal = () => {
@@ -63,13 +65,13 @@ class LocationEditor extends React.Component {
   }
 
   render() {
-    const { showNewLocation } = this.state;
+    const { showNewLocation, location } = this.state;
     const { provider, providerLocations } = this.props;
     const name = get(provider, 'name');
     const providerId = get(provider, 'id');
     return (
       <Wrapper>
-        <LocationHeader onAdd={this.showLocationModal} />
+        <LocationHeader onAdd={this.createNew} />
         <EditorWrapper>
           <SearchWrapper>
             <SearchBox />
@@ -77,12 +79,17 @@ class LocationEditor extends React.Component {
           <LocationHolder>
             {
               providerLocations.map((location, idx) => (
-                <LocationCard providerName={name} location={location} key={`provider_location_${idx}`} />
+                <LocationCard
+                  providerName={name}
+                  location={location}
+                  onEdit={this.onEdit(location.id)}
+                  key={`provider_location_${idx}`}
+                />
               ))
             }
           </LocationHolder>
         </EditorWrapper>
-        <AddLocationModal providerId={providerId} open={showNewLocation} onClose={this.hideLocationModal} />
+        <AddLocationModal providerId={providerId} location={location} open={showNewLocation} onClose={this.hideLocationModal} />
       </Wrapper>
     )
   }

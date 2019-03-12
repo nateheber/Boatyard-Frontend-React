@@ -10,11 +10,10 @@ const templatesInfo = {
   trashPickup: {
     templateTitle: 'TrashPickup',
     data: {
-      price: '10.00',
+      cost: '10.00',
       unit: 'bag',
-      description: `Our helpful staff will be happy to arrange pick up of regulated trash from your yacht at a time that is convenient for you.
-
-Please let us know how many bags of trash you need removed, and we will be in touch to schedule your service.`,
+      description: `Our helpful staff will be happy to arrange pick up of regulated trash from your yacht at a time that is convenient for you.`,
+      secondaryDescription: `Please let us know how many bags of trash you need removed, and we will be in touch to schedule your service.`,
       textAreaLabel: 'How many bags?',
       buttonText: 'Submit',
     }
@@ -22,12 +21,11 @@ Please let us know how many bags of trash you need removed, and we will be in to
   pumpOut: {
     templateTitle: 'Pump Out',
     data: {
-      price: '4.00',
+      cost: '4.00',
       unit: 'gallon',
-      title: 'Pump-Out',
-      description: `Our helpful staff is available upon request to provide marine pump-out services at your slip.
-
-Does your holding tank require a special fitting for pump-outs?`,
+      subtitle: 'Pump-Out',
+      description: `Our helpful staff is available upon request to provide marine pump-out services at your slip.`,
+      secondaryDescription: `Does your holding tank require a special fitting for pump-outs?`,
       inputLabel: 'Special  Fittings',
       buttonText: 'Schedule'
     }
@@ -35,9 +33,9 @@ Does your holding tank require a special fitting for pump-outs?`,
   boatWash: {
     templateTitle: 'Boat Wash',
     data: {
-      price: '4.00',
+      cost: '4.00',
       unit: 'ft',
-      title: 'Boat Wash',
+      subtitle: 'Boat Wash',
       description: 'Prevention is a lot cheaper than a cure. Keeping your boat properly cleaned will help you avoid costly compounding and wet sanding to restore your boat’s gel coat down the road. The best way to preserve your boat’s looks and shine is by washing it at least twice a month.',
       listDescription: 'Our Crew throughly washes and dries:',
       listItems: [
@@ -53,12 +51,11 @@ Does your holding tank require a special fitting for pump-outs?`,
   fuel: {
     templateTitle: 'Fuel',
     data: {
-      price: '3.50',
+      cost: '3.50',
       unit: 'gal',
       buttonText: 'schedule',
-      description: `Our fuel prices include all taxes and fees.
-
-Fuel prices fluctuate daily. If there is a change in price, a confirmation will be sent on the day of delivery with a final price for your approval. Your credit card will not be charged until your delivery is completed.`
+      description: `Our fuel prices include all taxes and fees.`,
+      secondaryDescription: `Fuel prices fluctuate daily. If there is a change in price, a confirmation will be sent on the day of delivery with a final price for your approval. Your credit card will not be charged until your delivery is completed.`
     }
   }
 };

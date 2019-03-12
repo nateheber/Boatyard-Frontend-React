@@ -11,7 +11,6 @@ import Customers from 'containers/Customers/screens/Customers';
 import CustomerDetails from 'containers/Customers/screens/CustomerDetails';
 import Calendar from 'components/template/Calendar';
 import Providers from 'containers/Providers/screens/Providers';
-import ProviderDetails from 'containers/Providers/screens/ProviderDetails';
 import ProviderEditor from 'containers/Providers/screens/ProviderEditor';
 import UpdateProfile from 'containers/Profiles/screens/UpdateProfile';
 import OpenedInvoices from 'containers/Invoices/OpenedInvoices';
@@ -45,7 +44,6 @@ const MainRoutes = ({ privilege }) => (
           }
         }}
       />
-      <Route exact path="/providers/:providerId/" component={ProviderDetails} />
       <Route exact path="/provider-details/" component={ProviderEditor} />
       <Route exact path="/invoices/"
         render={() => {
