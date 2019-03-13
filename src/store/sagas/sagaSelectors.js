@@ -222,7 +222,7 @@ export const getNetworkClient = state => {
     case 'basic':
       return APIGenerator.createNetworkClient('basic');
     case 'admin':
-      return APIGenerator.createNetworkClient('admin');
+      return APIGenerator.createNetworkClient('basic');
     case 'provider':
       return APIGenerator.createNetworkClient('provider');
     default:
@@ -235,7 +235,7 @@ export const getConversationClient = state => {
     case 'basic':
       return APIGenerator.createConversationsClient('basic');
     case 'admin':
-      return APIGenerator.createConversationsClient('admin');
+      return APIGenerator.createConversationsClient('basic');
     case 'provider':
       return APIGenerator.createConversationsClient('provider');
     default:
@@ -248,7 +248,7 @@ export const getMessageClient = state => {
     case 'basic':
       return APIGenerator.createMessageClient('basic');
     case 'admin':
-      return APIGenerator.createMessageClient('admin');
+      return APIGenerator.createMessageClient('basic');
     case 'provider':
       return APIGenerator.createMessageClient('provider');
     default:
