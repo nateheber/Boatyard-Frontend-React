@@ -17,12 +17,12 @@ const SearchWrapper = styled.div`
 
 const Wrapper = styled.div`
   height: 100%;
-`
+`;
 
 const ConversationListWrapper = styled.div`
   height: 60%;
   overflow-y: scroll;
-`
+`;
 
 export default class ChatHistory extends React.Component {
 
@@ -31,7 +31,7 @@ export default class ChatHistory extends React.Component {
     return (
       <Wrapper>
         <SearchWrapper>
-          <SearchBox style={{ marginBottom: '15px' }} />
+          <SearchBox style={{ marginBottom: '15px', width: '100%' }} />
           <OrangeButton  style={{ width: '100%' }} onClick={onNew} >Compose</OrangeButton>
         </SearchWrapper>
         <ConversationListWrapper>

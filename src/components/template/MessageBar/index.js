@@ -16,6 +16,7 @@ const Wrapper = styled.div`
   width: 350px;
   background-color: #01556d;
   transition: right 1s;
+  z-index: 10;
   &.show {
     right: 0px;
   }
