@@ -98,6 +98,7 @@ class NewMessage extends React.Component {
   }
 
   loadOptions = val => {
+    console.log(val);
     return this.onChangeUserFilter(val)
       .then((filtered) => {
         console.log(filtered);
