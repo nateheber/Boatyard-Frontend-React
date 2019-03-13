@@ -27,13 +27,13 @@ const TextBody = styled.div`
   color: rgb(137, 137, 137);
 `;
 
-export const QRItem = ({ title, textBody, selected, onCheck, onSelect }) => (
+export const QRItem = ({ attributes: { name, body }, selected, onCheck, onSelect }) => (
   <Wrapper onClick={onSelect}>
     <CheckBox checked={selected} onClick={onCheck} />
     <Content>
-      <Title>{title}</Title>
+      <Title>{name}</Title>
       <TextBody>
-        {textBody.slice(0, 3)}
+        {body.slice(0, 3)}
         ...
       </TextBody>
     </Content>

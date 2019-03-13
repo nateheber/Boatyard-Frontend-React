@@ -1,11 +1,14 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { findIndex } from 'lodash';
+
+import { GetQuickReplies, CreateQuickReply, UpdateQuickReply } from 'store/actions/quickReplies';
 
 import MessageBasic from '../MessageBasic';
 import QRLeft from './QRLeft';
 import QRContent from './QRContent';
 
-export class QRBox extends React.Component {
+class QRBox extends React.Component {
   state = {
     createNew: false,
     empty: true,
@@ -13,36 +16,74 @@ export class QRBox extends React.Component {
     showItem: -1,
     showContent: false
   };
+
+  componentDidMount() {
+    this.props.GetQuickReplies({ params: {} });
+  }
+
+  onAdd = () => {
+    this.setState({
+      empty: true,
+      createNew: true,
+      showContent: true,
+      showItem: -1
+    });
+  }
+
+  onSave = (data) => {
+    const { showItem } = this.state;
+    const { CreateQuickReply, UpdateQuickReply } = this.props;
+    if (showItem !== -1) {
+      UpdateQuickReply({ quickReplyId: showItem, data });
+    } else {
+      CreateQuickReply({ data });
+    }
+    this.setState({
+      empty: true,
+      createNew: false,
+    });
+  }
+
+  onCancel = () => {
+    this.setState({
+      empty: true,
+      createNew: false,
+      showContent: false,
+      showItem: -1,
+    });
+  }
+
+  onBack = () => {
+    this.setState({
+      showContent: false,
+      showItem: -1
+    });
+  }
+
+  onSelect = (selected) => {
+    this.setState({ selected });
+  }
+
+  onShowItem = (id) => {
+    this.setState({
+      empty: false,
+      showItem: id,
+      showContent: true
+    });
+  }
+
   render() {
-    const items = [
-      { id: 1, title: 'test', textBody: 'test test test test' },
-      { id: 2, title: 'test1', textBody: 'test test test test' },
-      { id: 3, title: 'test2', textBody: 'test test test test' }
-    ];
+    const { quickReplies } = this.props;
     const { createNew, empty, showItem, showContent } = this.state;
-    const idx = findIndex(items, o => o.id === showItem);
+    const idx = findIndex(quickReplies, o => o.id === showItem);
     return (
       <MessageBasic
         left={
           <QRLeft
-            items={items}
-            onAdd={() => {
-              this.setState({
-                empty: true,
-                createNew: true,
-                showContent: true
-              });
-            }}
-            onSelect={selected => {
-              this.setState({ selected });
-            }}
-            onShowItem={id => {
-              this.setState({
-                empty: false,
-                showItem: id,
-                showContent: true
-              });
-            }}
+            items={quickReplies}
+            onAdd={this.onAdd}
+            onSelect={this.onSelect}
+            onShowItem={this.onShowItem}
             onDeleteItems={() => {}}
           />
         }
@@ -50,23 +91,10 @@ export class QRBox extends React.Component {
           <QRContent
             createNew={createNew}
             empty={empty}
-            onCancel={() => {
-              this.setState({
-                empty: true,
-                showContent: false
-              });
-            }}
-            onSave={() => {
-              this.setState({
-                empty: true
-              });
-            }}
-            onBack={() => {
-              this.setState({
-                showContent: false
-              });
-            }}
-            showItem={items[idx]}
+            onCancel={this.onCancel}
+            onSave={this.onSave}
+            onBack={this.onBack}
+            showItem={quickReplies[idx]}
           />
         }
         showContent={showContent}
@@ -74,3 +102,9 @@ export class QRBox extends React.Component {
     );
   }
 }
+
+const mapStateToProps = ({ quickReply: { quickReplies, currentStatus } }) => ({ quickReplies, currentStatus });
+
+const mapDispatchToProps = { GetQuickReplies, CreateQuickReply, UpdateQuickReply };
+
+export default connect(mapStateToProps, mapDispatchToProps)(QRBox);

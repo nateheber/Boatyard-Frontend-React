@@ -255,3 +255,16 @@ export const getMessageClient = state => {
       return APIGenerator.createMessageClient('basic');
   }
 };
+
+export const getQuickRepliesClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createQuickReplyClient('basic');
+    case 'admin':
+      return APIGenerator.createQuickReplyClient('admin');
+    case 'provider':
+      return APIGenerator.createQuickReplyClient('provider');
+    default:
+      return APIGenerator.createQuickReplyClient('basic');
+  }
+};
