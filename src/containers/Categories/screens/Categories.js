@@ -97,7 +97,7 @@ class Categories extends React.Component {
 
   onSave = (data, iconFile, customIcon = null) => {
     const { CreateIcon } = this.props;
-    if (customIcon) {
+    if (customIcon && iconFile) {
       CreateIcon({
         data: {
           icon: {
