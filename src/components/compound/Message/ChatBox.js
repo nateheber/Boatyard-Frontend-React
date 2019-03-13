@@ -19,7 +19,6 @@ const Wrapper = styled.div`
 const InputGroup = styled.div`
   border: 1px solid #e6e6e6;
   border-radius: 6px !important;
-  // overflow-y: scroll;
   overflow: hidden;
   margin: 30px 30px 0 30px;
   .secondary & {
