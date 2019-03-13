@@ -1,10 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
+
+import { GetQuickReplies } from 'store/actions/quickReplies';
 
 import QuickReply from 'resources/quick-reply.svg';
 import Attach from 'resources/attach.svg';
@@ -138,11 +141,15 @@ const ButtonIcon = styled.div`
   }
 `;
 
-export class ChatBox extends React.Component {
+class ChatBox extends React.Component {
   state = {
     text: '',
     image: '',
   };
+
+  componentDidMount() {
+    this.props.GetQuickReplies({ params: {} });
+  }
 
   handleChange = event => {
     const reader = new FileReader();
@@ -221,3 +228,10 @@ export class ChatBox extends React.Component {
     );
   }
 }
+
+const mapStateToProps = ({ quickReply: { quickReplies } }) => ({ quickReplies });
+const mapDispatchToProps = {
+  GetQuickReplies,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatBox);

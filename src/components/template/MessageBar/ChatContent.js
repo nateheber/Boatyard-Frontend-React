@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { isEmpty, get } from 'lodash';
 
 import { MessageBox } from 'components/compound/Message/MessageBox';
-import { ChatBox } from 'components/compound/Message/ChatBox';
+import ChatBox from 'components/compound/Message/ChatBox';
 
 import { GetConversation, CreateMessage } from 'store/actions/conversations';
 import { refinedMessageSelector } from 'store/selectors/conversations';
