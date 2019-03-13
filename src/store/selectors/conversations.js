@@ -80,7 +80,7 @@ export const refinedMessageSelector = createSelector(
       const content = get(message, 'attributes.content', '');
       const sentAt = get(message, 'attributes.data.sentAt');
       const senderProfile = getProfileData(parsedIncluded, profileId);
-      const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName')} ${get(profile, 'attributes.lastName')}`;
+      const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName')} ${get(senderProfile, 'attributes.lastName')}`;
       const own = getOwnership(profile, privilege, senderProfile, loggedInProvider );
       return ({
         name: senderName,
