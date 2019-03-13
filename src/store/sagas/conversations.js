@@ -1,8 +1,9 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, sortBy } from 'lodash';
 
+import * as APIGenerator from '../../api';
 import { actionTypes } from '../actions/conversations';
-import { getConversationClient, getMessageClient, getCustomApiClient } from './sagaSelectors';
+import { getConversationClient, getMessageClient, getPrivilege } from './sagaSelectors';
 
 const refineConversations = (conversations) => {
   return conversations.map(conversation => {
@@ -43,7 +44,8 @@ function* getConversations(action) {
 }
 
 function* getConversation(action) {
-  const apiClient = yield select(getCustomApiClient);
+  const privilege = select(getPrivilege);
+  const apiClient = new APIGenerator.customApiClient(privilege === 'provider' ? 'provider' : 'basic');
   const { conversationId, success, error } = action.payload;
   try {
     const result = yield call(apiClient.get, `/conversations/${conversationId}/messages`);
