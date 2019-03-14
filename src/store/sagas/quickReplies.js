@@ -91,8 +91,45 @@ function* updateQuickReply(action) {
   }
 }
 
+function* deleteQuickReplies(action) {
+  const ids = get(action, 'payload', []);
+  for (let i = 0; i < ids.length; i += 1) {
+    yield put({
+      type: actionTypes.DELETE_QUICK_REPLY,
+      payload: { quickReplyId: ids[i] }
+    });
+  }
+}
+
+function* deleteQuickReply(action) {
+  const { quickReplyId, success, error } = action.payload;
+  const apiClient = yield select(getQuickRepliesClient);
+  try {
+    yield call(apiClient.delete, quickReplyId);
+    yield put({
+      type: actionTypes.DELETE_QUICK_REPLY_SUCCESS,
+    });
+    yield put({
+      type: actionTypes.GET_QUICK_REPLIES,
+      payload: {
+        params: {}
+      }
+    })
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.DELETE_QUICK_REPLY_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
 export default function* QuickReply() {
   yield takeEvery(actionTypes.GET_QUICK_REPLIES, getQuickReplies);
   yield takeEvery(actionTypes.CREATE_QUICK_REPLY, createQuickReply);
   yield takeEvery(actionTypes.UPDATE_QUICK_REPLY, updateQuickReply);
+  yield takeEvery(actionTypes.DELETE_QUICK_REPLIES, deleteQuickReplies);
+  yield takeEvery(actionTypes.DELETE_QUICK_REPLY, deleteQuickReply);
 }

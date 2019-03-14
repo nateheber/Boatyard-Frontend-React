@@ -10,23 +10,23 @@ export default class QRLeft extends React.Component {
   state = {
     selected: []
   };
+
+  onSelect = selected => {
+    this.setState(
+      { selected },
+      () => { this.props.onSelect(selected); }
+    );
+  }
+
+
   render() {
-    const { items, onAdd, onSelect, onShowItem, onDeleteItems } = this.props;
+    const { items, onAdd, onShowItem, onDeleteItems } = this.props;
     return (
       <Wrapper>
         <QRHeader onAdd={onAdd} />
         <QRSelector
           items={items}
-          onChangeSelection={selected => {
-            this.setState(
-              {
-                selected
-              },
-              () => {
-                onSelect(selected);
-              }
-            );
-          }}
+          onChangeSelection={this.onSelect}
           onSelect={onShowItem}
           onDelete={onDeleteItems}
         />

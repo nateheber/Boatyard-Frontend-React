@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { findIndex } from 'lodash';
 
-import { GetQuickReplies, CreateQuickReply, UpdateQuickReply } from 'store/actions/quickReplies';
+import { GetQuickReplies, CreateQuickReply, UpdateQuickReply, DeleteQuickReplies } from 'store/actions/quickReplies';
 
 import MessageBasic from '../MessageBasic';
 import QRLeft from './QRLeft';
@@ -64,6 +64,12 @@ class QRBox extends React.Component {
     this.setState({ selected });
   }
 
+  onDelete = () => {
+    const { selected } = this.state;
+    const { DeleteQuickReplies } = this.props;
+    DeleteQuickReplies(selected);
+  }
+
   onShowItem = (id) => {
     this.setState({
       empty: false,
@@ -84,7 +90,7 @@ class QRBox extends React.Component {
             onAdd={this.onAdd}
             onSelect={this.onSelect}
             onShowItem={this.onShowItem}
-            onDeleteItems={() => {}}
+            onDeleteItems={this.onDelete}
           />
         }
         right={
@@ -105,6 +111,6 @@ class QRBox extends React.Component {
 
 const mapStateToProps = ({ quickReply: { quickReplies, currentStatus } }) => ({ quickReplies, currentStatus });
 
-const mapDispatchToProps = { GetQuickReplies, CreateQuickReply, UpdateQuickReply };
+const mapDispatchToProps = { GetQuickReplies, CreateQuickReply, UpdateQuickReply, DeleteQuickReplies };
 
 export default connect(mapStateToProps, mapDispatchToProps)(QRBox);

@@ -28,17 +28,19 @@ export class QRSelector extends React.Component {
   };
   selectAll = () => {
     const { checkAll } = this.state;
-    const { items } = this.props;
+    const { items, onChangeSelection } = this.props;
     if (checkAll) {
       this.setState({
         selected: [],
         checkAll: false
       });
+      onChangeSelection([]);
     } else {
       this.setState({
         selected: items.map(item => item.id),
         checkAll: true
       });
+      onChangeSelection(items.map(item => item.id));
     }
   };
   isSelected = id => {
