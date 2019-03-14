@@ -6,7 +6,7 @@ import PageTemplate from 'components/template/PageTemplate';
 import Dashboard from 'components/template/Dashboard';
 import Order from 'containers/Orders/OrderList';
 import OrderDetails from 'containers/Orders/OrderDetails';
-import Team from 'components/template/Team';
+import { TeamList, TeamDetails } from 'containers/Teams/screens';
 import Customers from 'containers/Customers/screens/Customers';
 import CustomerDetails from 'containers/Customers/screens/CustomerDetails';
 import Calendar from 'components/template/Calendar';
@@ -117,7 +117,8 @@ const MainRoutes = ({ privilege }) => (
           }
         }}
       />
-      <Route exact path="/team/" component={Team} />
+      <Route exact path="/team/" component={TeamList} />
+      <Route exact path="/team-details/" component={TeamDetails} />
       <Route exact path="/customers/"
         render={() => {
           if(privilege === 'provider') {
