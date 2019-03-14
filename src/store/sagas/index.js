@@ -19,6 +19,7 @@ import PaymentGateway from './paymentGateway';
 import Icons from './icons';
 import Networks from './networks';
 import Conversations from './conversations';
+import QuickReply from './quickReplies';
 
 export default function* mainSaga() {
   yield all([
@@ -40,6 +41,7 @@ export default function* mainSaga() {
     fork(PaymentGateway),
     fork(Icons),
     fork(Networks),
-    fork(Conversations)
+    fork(Conversations),
+    fork(QuickReply),
   ]);
 }

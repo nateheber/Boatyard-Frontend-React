@@ -26,26 +26,37 @@ export class QRSelector extends React.Component {
     checkAll: false,
     keyword: ''
   };
+
   selectAll = () => {
     const { checkAll } = this.state;
-    const { items } = this.props;
+    const { items, onChangeSelection } = this.props;
     if (checkAll) {
       this.setState({
         selected: [],
         checkAll: false
       });
+      onChangeSelection([]);
     } else {
       this.setState({
         selected: items.map(item => item.id),
         checkAll: true
       });
+      onChangeSelection(items.map(item => item.id));
     }
   };
+  
   isSelected = id => {
     const { selected } = this.state;
     const idx = findIndex(selected, selectedItem => selectedItem === id);
     return idx >= 0;
   };
+
+  onDelete = () => {
+    this.props.onDelete();
+    this.setState({ selected: [] });
+    this.props.onChangeSelection([]);
+  }
+
   onCheck = id => {
     const { onChangeSelection } = this.props;
     const { selected } = this.state;
@@ -71,11 +82,13 @@ export class QRSelector extends React.Component {
       );
     }
   };
+
   setFilter = keyword => {
     this.setState({
       keyword
     });
   };
+
   filter = () => {
     const { items } = this.props;
     const { keyword } = this.state;
@@ -85,8 +98,9 @@ export class QRSelector extends React.Component {
       );
     });
   };
+
   render() {
-    const { onSelect, onDelete } = this.props;
+    const { onSelect } = this.props;
     const { checkAll, selected } = this.state;
     const items = this.filter();
     return (
@@ -94,7 +108,7 @@ export class QRSelector extends React.Component {
         <FilterWrapper>
           <CheckBox checked={checkAll} onClick={this.selectAll} />
           {selected.length > 0 ? (
-            <HollowButton onClick={onDelete}>
+            <HollowButton onClick={this.onDelete}>
               DELETE QUICK REPLIE(S)
             </HollowButton>
           ) : (
