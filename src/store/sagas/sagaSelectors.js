@@ -218,40 +218,13 @@ export const getIconClient = state => {
 };
 
 export const getNetworkClient = state => {
-  switch (state.auth.privilege) {
-    case 'basic':
-      return APIGenerator.createNetworkClient('basic');
-    case 'admin':
-      return APIGenerator.createNetworkClient('basic');
-    case 'provider':
-      return APIGenerator.createNetworkClient('provider');
-    default:
-      return APIGenerator.createNetworkClient('basic');
-  }
+  return APIGenerator.createNetworkClient('basic');
 };
 
 export const getConversationClient = state => {
-  switch (state.auth.privilege) {
-    case 'basic':
-      return APIGenerator.createConversationsClient('basic');
-    case 'admin':
-      return APIGenerator.createConversationsClient('basic');
-    case 'provider':
-      return APIGenerator.createConversationsClient('provider');
-    default:
-      return APIGenerator.createConversationsClient('basic');
-  }
+  return APIGenerator.createConversationsClient('basic');
 };
 
 export const getMessageClient = state => {
-  switch (state.auth.privilege) {
-    case 'basic':
-      return APIGenerator.createMessageClient('basic');
-    case 'admin':
-      return APIGenerator.createMessageClient('basic');
-    case 'provider':
-      return APIGenerator.createMessageClient('provider');
-    default:
-      return APIGenerator.createMessageClient('basic');
-  }
+  return APIGenerator.createMessageClient('basic');
 };
