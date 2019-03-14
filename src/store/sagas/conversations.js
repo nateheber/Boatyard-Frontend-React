@@ -46,19 +46,23 @@ function* getConversations(action) {
 function* getConversation(action) {
   const privilege = select(getPrivilege);
   const apiClient = new APIGenerator.customApiClient(privilege === 'provider' ? 'provider' : 'basic');
-  const { conversationId, success, error } = action.payload;
+  const { conversationId, onlyCallback, success, error } = action.payload;
   try {
     const result = yield call(apiClient.get, `/conversations/${conversationId}/messages`);
     const { data, included } = result;
-    yield put({
-      type: actionTypes.GET_CONVERSATION_SUCCESS,
-      payload: { data, included }
-    });
+    if (!onlyCallback) {
+      yield put({
+        type: actionTypes.GET_CONVERSATION_SUCCESS,
+        payload: { data, included }
+      });
+    }
     if (success) {
-      yield call(success);
+      yield call(success, { data, included });
     }
   } catch (e) {
-    yield put({ type: actionTypes.GET_CONVERSATION_FAILURE, payload: e });
+    if (!onlyCallback) {
+      yield put({ type: actionTypes.GET_CONVERSATION_FAILURE, payload: e });
+    }
     if (error) {
       yield call(error);
     }
