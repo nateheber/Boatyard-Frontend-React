@@ -1,12 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {
-  InputRow,
-  InputWrapper,
-  Input,
-  Select
-} from 'components/basic/Input';
+import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
 import { NormalText } from 'components/basic/Typho'
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
@@ -108,6 +103,10 @@ export default class TeamDetails extends React.Component {
     });
   };
 
+  onBack = () => {
+    this.props.history.push(`/team`);
+  }
+
   onSave = () => {
   };
 
@@ -116,10 +115,9 @@ export default class TeamDetails extends React.Component {
 
   render() {
     const { firstName, lastName, phoneNumber, email, permissions, visibleOfConfirmationModal } = this.state;
-    const { history } = this.props;
     const actions = (
       <React.Fragment>
-        <HollowButton onClick={() => history.goBack()} style={{ marginRight: 30 }}>Cancel</HollowButton>
+        <HollowButton onClick={this.onBack} style={{ marginRight: 30 }}>Cancel</HollowButton>
         <OrangeButton onClick={this.onSave} style={{ minWidth: 100 }}>Save</OrangeButton>
       </React.Fragment>
     );
