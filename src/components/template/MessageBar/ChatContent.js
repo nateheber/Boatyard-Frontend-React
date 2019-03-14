@@ -62,6 +62,7 @@ class ChatContent extends React.Component {
     messages: [],
     included: [],
     loading: false,
+    isMounted: false,
   }
 
   componentDidMount() {
@@ -69,27 +70,26 @@ class ChatContent extends React.Component {
     const timerId = setInterval(() => {
       this.updateConversation();
     }, 3000);
-    this.setState({ timerId });
+    this.setState({ timerId, isMounted: true });
   }
 
   componentWillUnmount() {
     const { timerId } = this.state;
+    this.setState({ isMounted: false });
     clearInterval(timerId);
   }
 
   updateConversation = (first = false) => {
     const { conversationId, GetConversation, profile } = this.props;
-    const { timerId } = this.state;
     if (first) {
-      this.setState({
-        loading: true,
-      })
+      this.setState({ loading: true });
     }
     GetConversation({
       conversationId,
       onlyCallback: true,
       success: (message) => {
-        if (timerId !== -1) {
+        const { isMounted } = this.state;
+        if (isMounted) {
           this.setState({ ...refineMessage(profile, message), loading: false });
         }
       }
