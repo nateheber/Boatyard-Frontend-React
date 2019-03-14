@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 
 class TeamList extends React.Component {
   toDetails = member => {
-    this.props.history.push(`/team-details/?${member.id}`);
+    this.props.history.push(`/team-details/?team=${member.id}`);
   };
   render() {
     const columns = [
@@ -23,12 +23,14 @@ class TeamList extends React.Component {
     ];
     const records = [
       {
+        id: '1',
         name: 'Detailer Brock Boatyard',
         phone_number: '(555) 555-555',
         email: 'brock+180_unlimited@boatyard',
         permissions: 'Provider Admin'
       },
       {
+        id: '2',
         name: 'Daniel Zheng',
         phone_number: '(555) 555-555',
         email: 'dannyzheng1993@gmail.com',
