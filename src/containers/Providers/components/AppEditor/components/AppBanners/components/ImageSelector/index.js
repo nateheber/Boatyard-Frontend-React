@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { SearchBox } from 'components/basic/Input';
-import { HollowButton } from 'components/basic/Buttons';
+import { UploadButton } from 'components/basic/Buttons';
 
 const Wrapper = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ const Wrapper = styled.div`
 `;
 
 const HeaderWrapper = styled.div`
-  dispaly: flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
 `;
@@ -27,12 +27,6 @@ const SearchInput = styled(SearchBox)`
   display: inline-block;
   box-sizing: border-box;
   width: 282px;
-`;
-
-const UploadButton = styled(HollowButton)`
-  width: 144px;
-  margin: 10px 0;
-  margin-left: 17px;
 `;
 
 const ImageWrapper = styled.div`
@@ -56,9 +50,24 @@ const Image = styled.div`
 `;
 
 export default class ImageSelector extends React.Component {
+  delayTimer = null;
   onSelectImage = image => () => {
     this.props.onSelectImage(image);
-  }
+  };
+
+  handleFileChange = (file, baseString, ref) => {
+    console.log('------------------file----------', file);
+    // this.setState({ defaultIcon: null, iconFile: file, iconRef: ref, customIcon: baseString });
+    // this.refs.selectedIconContainer.style.backgroundImage = `url(${baseString})`;
+  };
+
+  onChangeKeyword = (keyword) => {
+    if (this.delayTimer) clearTimeout(this.delayTimer);
+    this.delayTimer = setTimeout(function() {
+        // Do the ajax stuff
+        console.log('-------search--------', keyword);
+    }, 500);
+  };
 
   render() {
     const { imageList } = this.props;
@@ -66,9 +75,9 @@ export default class ImageSelector extends React.Component {
       <Wrapper>
         <HeaderWrapper>
           <SearchWrapper>
-            <SearchInput placeholder="SEARCH" />
+            <SearchInput placeholder="SEARCH" onChange={this.onChangeKeyword} />
           </SearchWrapper>
-          <UploadButton>Upload Image</UploadButton>
+          <UploadButton style={{ marginLeft: 17 }} title="Upload Image" accept="image/*" onFileChange={this.handleFileChange} />
         </HeaderWrapper>
         <ImageWrapper>
           {

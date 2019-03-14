@@ -149,7 +149,7 @@ function* deleteCategory(action) {
   }
 }
 
-export default function* Profile() {
+export default function* CategorySaga() {
   yield takeEvery(actionTypes.GET_CATEGORIES, getCategories);
   yield takeEvery(actionTypes.FILTER_CATEGORIES, getCategories);
   yield takeEvery(actionTypes.GET_CATEGORY, getCategory);

@@ -149,7 +149,7 @@ function* deleteProviderLocation(action) {
   }
 }
 
-export default function* Profile() {
+export default function* ProviderLocationSaga() {
   yield takeEvery(actionTypes.GET_PROVIDER_LOCATIONS, getProviderLocations);
   yield takeEvery(actionTypes.FILTER_PROVIDER_LOCATIONS, getProviderLocations);
   yield takeEvery(actionTypes.GET_PROVIDER_LOCATION, getProviderLocation);

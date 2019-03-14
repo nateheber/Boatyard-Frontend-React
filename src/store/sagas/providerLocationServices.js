@@ -25,7 +25,7 @@ function* fetchRequest(action) {
 // function* updateRequest(action) {
 // }
 
-export default function* ProviderLocations() {
+export default function* ProviderLocationServiceSaga() {
   // yield takeEvery(actions.createProviderLocation, createRequest);
   yield takeEvery(actions.fetchProviderLocationServices, fetchRequest);
   // yield takeEvery(actions.deleteProviderLocation, deleteRequest);

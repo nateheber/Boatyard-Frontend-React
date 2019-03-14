@@ -98,7 +98,7 @@ function* logoutRequest(action) {
   yield call(action.payload);
 }
 
-export default function* Auth() {
+export default function* AuthSaga() {
   yield takeEvery(actions.login, loginRequest);
   yield takeEvery(actions.signup, signupRequest);
   yield takeEvery(actions.logout, logoutRequest);

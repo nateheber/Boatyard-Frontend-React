@@ -260,7 +260,7 @@ function* deletePreferredProvider(action) {
   }
 }
 
-export default function* Profile() {
+export default function* ProviderSaga() {
   yield takeEvery(actionTypes.GET_PROVIDERS, getProviders);
   yield takeEvery(actionTypes.FILTER_PROVIDERS, getProviders);
   yield takeEvery(actionTypes.GET_PREFERRED_PROVIDERS, getPreferredProviders);
