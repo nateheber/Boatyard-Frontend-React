@@ -8,6 +8,7 @@ export const getServicesPageNumber = state => state.service.nextPage;
 export const getOrdersPageNumber = state => state.order.nextPage;
 export const getOrderDispatchedFlag = state => state.order.dispatched;
 export const getPrivilege = state => state.auth.privilege;
+export const getUserId = state => state.profile.id;
 
 export const getCategoryClient = state => {
   switch (state.auth.privilege) {
