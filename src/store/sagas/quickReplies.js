@@ -6,12 +6,23 @@ import { getQuickRepliesClient, getPrivilege, getUserId } from './sagaSelectors'
 
 function* getQuickReplies(action) {
   const apiClient = yield select(getQuickRepliesClient);
+  const privilege = yield select(getPrivilege);
   let successType = actionTypes.GET_QUICK_REPLIES_SUCCESS;
   let failureType = actionTypes.GET_QUICK_REPLIES_FAILURE;
   const { params, success, error } = action.payload;
   let result = null;
   try {
-    result = yield call(apiClient.list, params);
+    let sendingParam;
+    if (privilege === 'admin') {
+      const userId = yield select(getUserId);
+      sendingParam = {
+        ...params,
+        'quick_reply[user_id]': userId
+      }
+    } else {
+      sendingParam = params;
+    }
+    result = yield call(apiClient.list, sendingParam);
     const quickReplies = get(result, 'data', []);
     const { perPage, total } = result;
     switch (action.type) {
