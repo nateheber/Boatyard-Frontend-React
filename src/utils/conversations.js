@@ -39,7 +39,7 @@ export const refineMessage = (profile, currentConversation) => {
       const content = get(message, 'attributes.content', '');
       const sentAt = get(message, 'attributes.data.sentAt');
       const senderProfile = getProfileData(parsedIncluded, profileId);
-      const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName')} ${get(senderProfile, 'attributes.lastName')}`;
+      const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName') || ''} ${get(senderProfile, 'attributes.lastName') || ''}`;
       const own = getOwnership(profile, senderProfile );
       return ({
         name: senderName,

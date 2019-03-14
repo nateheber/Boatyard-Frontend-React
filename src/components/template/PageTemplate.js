@@ -57,15 +57,21 @@ class PageTemplate extends React.Component {
     });
   }
 
-  hideMessage = () => {
-    this.setState({ showMessage: false });
+  hideMessage = (e) => {
+    if (!(this.messageToggle && this.messageToggle.contains(e.target))) {
+      this.setState({ showMessage: false });
+    }
+  }
+
+  messageToggleRef = (ref) => {
+    this.messageToggle = ref;
   }
 
   render() {
     const { showSidebar, showMessage } = this.state;
     return (
       <Wrapper>
-        <Header onMenuToggle={this.toggleMenu} onToggleMessage={this.toggleMessage} />
+        <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={this.toggleMessage} />
         <PageContent>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>

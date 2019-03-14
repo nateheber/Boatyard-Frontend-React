@@ -36,11 +36,11 @@ class MessageBar extends React.Component {
   componentDidMount() {
     this.props.GetNetworks({ page: 1 });
     this.props.GetConversations({ page: 1 });
-    document.addEventListener('mousedown', this.handleClickOutside);
+    document.addEventListener('mouseup', this.handleClickOutside);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutside);
+    document.removeEventListener('mouseup', this.handleClickOutside);
   }
 
   onNew = () => {
@@ -66,7 +66,7 @@ class MessageBar extends React.Component {
 
   handleClickOutside = (event) => {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      this.props.onHide();
+      this.props.onHide(event);
     }
   }
 
