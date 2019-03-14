@@ -7,7 +7,8 @@ import { MessageBox } from 'components/compound/Message/MessageBox';
 import { ChatBox } from 'components/compound/Message/ChatBox';
 
 import { GetConversation, CreateMessage } from 'store/actions/conversations';
-import { refinedMessageSelector } from 'store/selectors/conversations';
+import { profileSelector } from 'store/selectors/conversations';
+import { refineMessage } from 'utils/conversations';
 
 import BackImage from 'resources/back.svg';
 
@@ -58,13 +59,15 @@ const RecipientName = styled.div`
 class ChatContent extends React.Component {
   state = {
     timerId: -1,
+    messages: [],
+    included: [],
+    loading: false,
   }
 
   componentDidMount() {
-    const { conversationId, GetConversation } = this.props;
-    GetConversation({ conversationId, first: true });
+    this.updateConversation(true);
     const timerId = setInterval(() => {
-      GetConversation({ conversationId });
+      this.updateConversation();
     }, 3000);
     this.setState({ timerId });
   }
@@ -74,8 +77,28 @@ class ChatContent extends React.Component {
     clearInterval(timerId);
   }
 
+  updateConversation = (first = false) => {
+    const { conversationId, GetConversation, profile } = this.props;
+    const { timerId } = this.state;
+    if (first) {
+      this.setState({
+        loading: true,
+      })
+    }
+    GetConversation({
+      conversationId,
+      onlyCallback: true,
+      success: (message) => {
+        if (timerId !== -1) {
+          this.setState({ ...refineMessage(profile, message), loading: false });
+        }
+      }
+    });
+  }
+
   getRecipientInfo = () => {
-    const { included, conversationId } = this.props;
+    const { conversationId } = this.props;
+    const { included } = this.state;
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const { id } = recipientInfo;
@@ -86,7 +109,8 @@ class ChatContent extends React.Component {
   }
 
   getRecipientName = () => {
-    const { included, conversationId } = this.props;
+    const { conversationId } = this.props;
+    const { included } = this.state;
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const id = get(recipientInfo, 'id');
@@ -128,7 +152,8 @@ class ChatContent extends React.Component {
   }
 
   render() {
-    const { onBack, messages } = this.props;
+    const { onBack } = this.props;
+    const { messages, loading } = this.state;
     const recipientName = this.getRecipientName();
     return (
       <React.Fragment>
@@ -139,7 +164,7 @@ class ChatContent extends React.Component {
           <RecipientName>{recipientName}</RecipientName>
         </ChatHeader>
         <MessageWrapper>
-          <MessageBox secondary chatHistory={messages} />
+          <MessageBox secondary loading={loading} chatHistory={messages} />
         </MessageWrapper>
         <ChatBox secondary onSend={this.onSend} />
       </React.Fragment>
@@ -148,7 +173,7 @@ class ChatContent extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ...refinedMessageSelector(state)
+  profile: profileSelector(state),
 })
 
 const mapDispatchToProps = {

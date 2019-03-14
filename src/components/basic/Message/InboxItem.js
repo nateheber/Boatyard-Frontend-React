@@ -59,7 +59,7 @@ export const InboxItem = ({
       <LeftBody>
         {
           hasIn(recipientProfile, 'attributes.name') ? (
-            <Title>{get(recipientProfile, 'attributes.name')}}</Title>
+            <Title>{get(recipientProfile, 'attributes.name')}</Title>
           ) : (
             <Title>{get(recipientProfile, 'attributes.firstName')} {get(recipientProfile, 'attributes.lastName')}</Title>
           )
