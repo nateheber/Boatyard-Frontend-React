@@ -112,6 +112,14 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
+      }),
+
+      [actionTypes.SET_SITE_BANNER]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.currentBanner = payload;
+        draft.errors = null;
       })
     },
   initialState

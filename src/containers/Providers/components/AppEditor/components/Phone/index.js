@@ -8,12 +8,12 @@ import { BoatWash, Fuel, LineHandling, PumpOut, TrashPickup } from '../ServiceTe
 
 class Phone extends React.Component {
   renderHomeScreen = () => {
-    const { image, provider, renderingData, onChangeOrder, onEdit, onClickItem } = this.props;
+    const { banner, provider, renderingData, onChangeOrder, onEdit, onClickItem } = this.props;
     const providerName = get(provider, 'name');
     const items = get(renderingData, 'items', []);
     return (
       <React.Fragment>
-        <PhoneBanner image={image} providerName={providerName} />
+        <PhoneBanner banner={banner} providerName={providerName} />
         <ItemListPreview
           items={items}
           onEdit={onEdit}

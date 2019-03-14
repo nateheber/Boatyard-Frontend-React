@@ -39,8 +39,8 @@ const Title = styled.div`
   text-transform: uppercase;
 `
 
-export default ({ providerName, image }) => (
-  <Wrapper src={get(image, 'src')}>
+export default ({ providerName, banner }) => (
+  <Wrapper src={get(banner, 'banner.url')}>
     <Flag>{get(providerName, '[0]')}</Flag>
     <Title>{providerName}</Title>
   </Wrapper>

@@ -20,6 +20,10 @@ export const actionTypes = {
   DELETE_SITE_BANNER: '[SITE BANNERS] - Delete site banner',
   DELETE_SITE_BANNER_SUCCESS: '[SITE BANNERS] - Delete site banner Success',
   DELETE_SITE_BANNER_FAILURE: '[SITE BANNERS] - Delete site banner Failure',
+
+  SET_SITE_BANNER: '[SITE BANNERS] - Set site banner',
+  SET_SITE_BANNER_SUCCESS: '[SITE BANNERS] - Set site banner Success',
+  SET_SITE_BANNER_FAILURE: '[SITE BANNERS] - Set site banner Failure',
 };
 
 export const GetSiteBanners = createAction(actionTypes.GET_SITE_BANNERS, payload => payload);
@@ -41,3 +45,5 @@ export const UpdateSiteBannerFailure = createAction(actionTypes.UPDATE_SITE_BANN
 export const DeleteSiteBanner = createAction(actionTypes.DELETE_SITE_BANNER, payload => payload);
 export const DeleteSiteBannerSuccess = createAction(actionTypes.DELETE_SITE_BANNER_SUCCESS);
 export const DeleteSiteBannerFailure = createAction(actionTypes.DELETE_SITE_BANNER_FAILURE);
+
+export const SetSiteBanner = createAction(actionTypes.DELETE_SITE_BANNER, payload => payload);

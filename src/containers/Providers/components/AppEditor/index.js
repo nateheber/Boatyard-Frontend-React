@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { get, set, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
-import { GetProviderLocations } from 'store/actions/providerLocations';
+import { GetSiteBanners, CreateSiteBanner } from 'store/actions/site-banners';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
 import { setServiceTemplateData } from 'utils/serviceTemplate';
@@ -52,35 +52,55 @@ const Right = styled.div`
 `
 
 class AppEditor extends React.Component {
-  state = {
-    step: 0,
-    image: null,
-    data: {
-      screen: 'Home',
-      type: 'homeScreen',
-      items: [],
-    },
-    currentScreen: '',
-    currentItem: {},
-    showModal: false,
-    selectedLocation: {}
+  constructor(props) {
+    super(props);
+    this.state = {
+      step: 0,
+      banner: null,
+      data: {
+        screen: 'Home',
+        type: 'homeScreen',
+        items: [],
+      },
+      currentScreen: '',
+      currentItem: {},
+      showModal: false,
+      selectedLocation: {}
+    };
+  }
+
+  componentDidMount() {
+    const { GetSiteBanners } = this.props;
+    GetSiteBanners({ params: { per_page: 1000 }});
+    const { selectedLocation } = this.state;
+    const { providerLocations } = this.props;
+    if (isEmpty(selectedLocation)) {
+      if (providerLocations.length > 0) {
+        const location = providerLocations[0];
+        const banner = this.getBanner(location);
+        this.setState({
+          selectedLocation: location,
+          banner
+        });
+      }
+    }
   }
 
   onChangeStep = (step) => {
     this.setState({ step });
-  }
+  };
 
-  setImage = (image) => {
-    this.setState({ image });
-  }
+  handleChangeBanner = (banner) => {
+    this.setState({ banner });
+  };
 
   setServices = (services) => {
     this.setState({ services });
-  }
+  };
 
   setCategories = (categories) => {
     this.setState({ categories });
-  }
+  };
 
   getEditingPath = () => {
     const { currentScreen } = this.state;
@@ -90,7 +110,7 @@ class AppEditor extends React.Component {
     }
     const pathParts = parts.map((part) => `items[${part}]`);
     return pathParts.join('.');
-  }
+  };
 
   getParentPath = () => {
     const { currentScreen } = this.state;
@@ -103,7 +123,7 @@ class AppEditor extends React.Component {
       pathParts.push(`items[${parts[i]}]`);
     }
     return pathParts.join('.');
-  }
+  };
 
   getParentScreen = () => {
     const { currentScreen } = this.state;
@@ -113,7 +133,7 @@ class AppEditor extends React.Component {
       parentParts.push(parts[i]);
     }
     return parentParts.join('/');
-  }
+  };
 
   getRenderingData = () => {
     const path = this.getEditingPath();
@@ -122,7 +142,7 @@ class AppEditor extends React.Component {
       return data;
     }
     return get(data, path);
-  }
+  };
 
   getParentData = () => {
     const path = this.getParentPath();
@@ -131,7 +151,7 @@ class AppEditor extends React.Component {
       return data;
     }
     return get(data, path);
-  }
+  };
 
   getLastId = (list) => {
     let id = -1;
@@ -141,7 +161,7 @@ class AppEditor extends React.Component {
       }
     }
     return id;
-  }
+  };
 
   getStep = (type) => {
     switch(type) {
@@ -152,7 +172,7 @@ class AppEditor extends React.Component {
       default:
         return 0;
     }
-  }
+  };
 
   getSelectedTemplate = () => {
     const { currentItem } = this.state;
@@ -166,7 +186,7 @@ class AppEditor extends React.Component {
       const idx = items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
       return get(items[idx], 'template.templateType', '');
     }
-  }
+  };
 
   addCategories = (category) => {
     const { currentItem } = this.state;
@@ -179,7 +199,7 @@ class AppEditor extends React.Component {
     } else {
       this.addItem(category, 'category');
     }
-  }
+  };
 
   addServices = (service) => {
     const { currentItem } = this.state;
@@ -189,7 +209,7 @@ class AppEditor extends React.Component {
     } else {
       this.addItem(service, 'service');
     }
-  }
+  };
 
   addItem = (item, type) => {
     const { data } = this.state;
@@ -215,7 +235,7 @@ class AppEditor extends React.Component {
     this.setState({
       data: newData
     });
-  }
+  };
 
   deleteItem = () => {
     const { currentItem } = this.state;
@@ -233,7 +253,7 @@ class AppEditor extends React.Component {
       set(newData, `${path}.items`, items);
       this.setState({ data: newData, showModal: false, currentItem: this.getRenderingData() });
     }
-  }
+  };
 
   updateItem = (info, file, customIcon) => {
     const { currentItem } = this.state;
@@ -253,7 +273,7 @@ class AppEditor extends React.Component {
       set(newData, `${path}.items`, items);
       this.setState({ data: newData, showModal: false, currentItem: this.getRenderingData() });
     }
-  }
+  };
 
   setServiceTemplate = (templateInfo) => {
     const { currentItem } = this.state;
@@ -278,7 +298,7 @@ class AppEditor extends React.Component {
       toastr.clean()
       toastr.error('Cannot set template to service');
     }
-  }
+  };
 
   onChangeTemplate = (templateInfo) => {
     const { data, currentItem } = this.state;
@@ -293,7 +313,7 @@ class AppEditor extends React.Component {
       set(items[idx], 'template.data.data', templateInfo );
     }
     this.setState({ data: newData });
-  }
+  };
 
   onChangeOrder = (items) => {
     const { data } = this.state;
@@ -305,11 +325,11 @@ class AppEditor extends React.Component {
       set(newData, `${path}.items`, items);
     }
     this.setState({ data: newData });
-  }
+  };
 
   onEdit = (item) => {
     this.setState({ currentItem: item, showModal: true });
-  }
+  };
 
   onClickItem = (item) => {
     const { currentScreen } = this.state;
@@ -327,44 +347,55 @@ class AppEditor extends React.Component {
         this.setState({ step });
       });
     }
-  }
+  };
 
   onBack = () => {
     const data = this.getParentData();
     const parentScreen = this.getParentScreen();
     this.setState({ currentScreen: parentScreen, currentItem: data });
-  }
+  };
 
   hideModal = () => {
     const currentItem = this.getRenderingData();
     this.setState({ showModal: false, currentItem });
-  }
+  };
 
   renderSteps = () => {
-    const { step, image, services, categories } = this.state;
+    const { step, banner, services, categories } = this.state;
     switch(step) {
       case 0:
-        return <AppBanners image={image} onChangeImage={this.setImage} />
+        return <AppBanners banner={banner} onChangeBanner={this.handleChangeBanner} />
       case 1:
-        return <AppServiceCategories image={image} categories={categories} onAdd={this.addCategories} />
+        return <AppServiceCategories image={banner} categories={categories} onAdd={this.addCategories} />
       case 2:
-        return <AppServices image={image} services={services} onAdd={this.addServices} />
+        return <AppServices image={banner} services={services} onAdd={this.addServices} />
       case 3:
       default:
         return <ServiceTemplates selected={this.getSelectedTemplate()} onChange={this.setServiceTemplate} />
     }
-  }
+  };
 
   handleChangeLocation = (locationId) => {
     const { providerLocations } = this.props;
     const selectedLocation = providerLocations.find(locations => locations.id === locationId);
-    this.setState({
-      selectedLocation
-    });
+    const banner = this.getBanner(selectedLocation);
+    this.setState({ selectedLocation, banner });
+  };
+
+  getBanner = (location) => {
+    let banner = null;
+    if (location.banner.url === null || isEmpty(location.banner.url)) {
+      if (location.relationships.hasOwnProperty('siteBanner')) {
+        banner = get(location, 'relationships.siteBanner');
+      }
+    } else {
+      banner = { banner: location.banner };
+    }
+    return banner;
   }
 
   render() {
-    const { step, image, showModal, currentItem, currentScreen, selectedLocation } = this.state;
+    const { step, banner, showModal, currentItem, currentScreen, selectedLocation } = this.state;
     const renderingData = this.getRenderingData();
     const { info, type } = currentItem;
     const { providerLocations } = this.props;
@@ -389,7 +420,7 @@ class AppEditor extends React.Component {
                 <Phone
                   hasBack={currentScreen !== ''}
                   renderingData={renderingData}
-                  image={image}
+                  banner={banner}
                   onEdit={this.onEdit}
                   onChangeOrder={this.onChangeOrder}
                   onChangeTemplateInfo={this.onChangeTemplate}
@@ -423,7 +454,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  GetProviderLocations
+  GetSiteBanners,
+  CreateSiteBanner
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppEditor);

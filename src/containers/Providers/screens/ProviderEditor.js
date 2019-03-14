@@ -6,7 +6,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { get } from 'lodash';
 
 import { CreateProvider, UpdateProvider, GetProvider } from 'store/actions/providers';
-
+import { GetProviderLocations } from 'store/actions/providerLocations';
 import { LocationEditor, AccountEditor, AppEditor } from '../components';
 
 import './style.css';
@@ -20,7 +20,9 @@ class ProviderEditFlow extends React.Component {
     const query = queryString.parse(this.props.location.search);
     const providerId = get(query, 'provider', -1);
     if (providerId !== -1) {
-      this.props.GetProvider({ providerId });
+      const { GetProvider, GetProviderLocations } = this.props;
+      GetProvider({ providerId });
+      GetProviderLocations({ providerId });
     }
     this.setState({
       id: providerId,
@@ -101,6 +103,7 @@ const mapDispatchToProps = {
   CreateProvider,
   UpdateProvider,
   GetProvider,
+  GetProviderLocations
 };
 
 export default withRouter(
