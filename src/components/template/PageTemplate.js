@@ -57,6 +57,10 @@ class PageTemplate extends React.Component {
     });
   }
 
+  hideMessage = () => {
+    this.setState({ showMessage: false });
+  }
+
   render() {
     const { showSidebar, showMessage } = this.state;
     return (
@@ -67,7 +71,7 @@ class PageTemplate extends React.Component {
           <ContentWrapper>
             {this.props.children}
           </ContentWrapper>
-          <MessageBar show={showMessage} />
+          <MessageBar show={showMessage} onHide={this.hideMessage} />
         </PageContent>
       </Wrapper>
     );
