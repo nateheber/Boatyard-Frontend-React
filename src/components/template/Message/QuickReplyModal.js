@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { set } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import { Input, TextArea, InputLabel, InputWrapper, InputRow } from 'components/basic/Input';
@@ -30,7 +31,7 @@ class QuickReplyModal extends React.Component {
   }
 
   onFail = () => {
-
+    toastr.error('Error', 'Error while creating new Quick Reply');
   }
 
   render() {

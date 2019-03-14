@@ -72,6 +72,11 @@ export default class QuickReplySelector extends React.Component {
     this.setState({ showMenu: false });
   }
 
+  onAddNewReply = () => {
+    this.setState({ showMenu: false });
+    this.props.onAddNewReply();
+  }
+
   showSelector = () => {
     this.setState({ showMenu: true });
   }
@@ -88,7 +93,7 @@ export default class QuickReplySelector extends React.Component {
 
   render() {
     const { showMenu } = this.state;
-    const { quickReplies, onAddNewReply } = this.props;
+    const { quickReplies } = this.props;
     return (
       <IconButton ref={this.setWrapperRef}>
         <ButtonIcon src={QuickReply} onClick={this.showSelector} />
@@ -96,7 +101,7 @@ export default class QuickReplySelector extends React.Component {
           {quickReplies.map((reply) => (
             <Item onClick={this.onSelect(reply)} key={`reply_${get(reply, 'id')}`}>{get(reply, 'attributes.name')}</Item>
           ))}
-          <Item onClick={onAddNewReply}> Add New Reply </Item>
+          <Item onClick={this.onAddNewReply}> Add New Reply </Item>
         </SelectorWrapper>
       </IconButton>
     );
