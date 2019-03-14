@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
-import { ChatBox } from 'components/compound/Message/ChatBox';
+import ChatBox from 'components/template/Message/ChatBox';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 import CustomerOption from 'components/basic/CustomerOption';
 

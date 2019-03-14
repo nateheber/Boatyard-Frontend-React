@@ -16,9 +16,14 @@ export const InputWrapper = styled.div`
   text-transform: uppercase;
   margin-bottom: 5px;
   &.primary,
-  &.secondary {
+  &.secondary,
+  &.third {
     flex-direction: column;
     align-items: flex-start;
+  }
+  &.primary > ${InputLabel} {
+    font-weight: 400;
+    margin-bottom: 5px;
   }
   &.primary > ${InputLabel} {
     font-weight: 400;
@@ -30,6 +35,14 @@ export const InputWrapper = styled.div`
     margin-bottom: 5px;
     font-size: 12px;
     font-family: Montserrat, sans-serif;
+  }
+  &.third > ${InputLabel} {
+    margin: 20px 0px;
+    color: #8f8f8f;
+    font-weight: 400;
+    font-size: 14px;
+    font-family: "Open sans-serif", sans-serif;
+    text-transform: none;
   }
   margin: 0px 10px;
   &:first-child {

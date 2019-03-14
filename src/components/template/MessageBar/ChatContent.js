@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { isEmpty, get } from 'lodash';
 
-import { MessageBox } from 'components/compound/Message/MessageBox';
-import { ChatBox } from 'components/compound/Message/ChatBox';
+import { MessageBox } from 'components/template/Message/MessageBox';
+import ChatBox from 'components/template/Message/ChatBox';
 
 import { GetConversation, CreateMessage } from 'store/actions/conversations';
 import { profileSelector } from 'store/selectors/conversations';

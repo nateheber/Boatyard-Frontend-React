@@ -8,6 +8,7 @@ export const getServicesPageNumber = state => state.service.nextPage;
 export const getOrdersPageNumber = state => state.order.nextPage;
 export const getOrderDispatchedFlag = state => state.order.dispatched;
 export const getPrivilege = state => state.auth.privilege;
+export const getUserId = state => state.profile.id;
 
 export const getCategoryClient = state => {
   switch (state.auth.privilege) {
@@ -242,3 +243,16 @@ export const getSiteBannerClient = state => {
   }
 };
 
+
+export const getQuickRepliesClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createQuickReplyClient('basic');
+    case 'admin':
+      return APIGenerator.createQuickReplyClient('admin');
+    case 'provider':
+      return APIGenerator.createQuickReplyClient('provider');
+    default:
+      return APIGenerator.createQuickReplyClient('basic');
+  }
+};

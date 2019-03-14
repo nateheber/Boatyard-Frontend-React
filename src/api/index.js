@@ -61,6 +61,10 @@ export const createOrderClient = authType => {
   return new CRUDClient('orders', authType);
 };
 
+export const createQuickReplyClient = authType => {
+  return new CRUDClient('quick_replies', authType);
+};
+
 export const createUserClient = authType => {
   return new CRUDClient('users', authType);
 };

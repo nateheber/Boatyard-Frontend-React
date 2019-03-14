@@ -36,7 +36,7 @@ const TimeStamp = styled.div`
 
 export default ({ conversation: { conversation: { id }, messages, recipientProfile }, onClick }) => {
   const name = recipientProfile.type === 'providers' ? get(recipientProfile, 'attributes.name') :
-    `${get(recipientProfile, 'attributes.firstName')} ${get(recipientProfile, 'attributes.lastName')}`;
+    `${get(recipientProfile, 'attributes.firstName') || ''} ${get(recipientProfile, 'attributes.lastName') || ''}`;
   return (
     <Wrapper onClick={onClick(id)}>
       <Label>{name}</Label>

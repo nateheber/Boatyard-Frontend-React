@@ -20,6 +20,7 @@ import Icons from './icons';
 import Networks from './networks';
 import Conversations from './conversations';
 import SiteBanners from './site-banners';
+import QuickReply from './quickReplies';
 
 export default function* mainSaga() {
   yield all([
@@ -42,6 +43,7 @@ export default function* mainSaga() {
     fork(Icons),
     fork(Networks),
     fork(Conversations),
-    fork(SiteBanners)
+    fork(SiteBanners),
+    fork(QuickReply)
   ]);
 }
