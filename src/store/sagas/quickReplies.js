@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
 import { actionTypes } from '../actions/quickReplies';
-import { getQuickRepliesClient } from './sagaSelectors';
+import { getQuickRepliesClient, getPrivilege, getUserId } from './sagaSelectors';
 
 function* getQuickReplies(action) {
   const apiClient = yield select(getQuickRepliesClient);
@@ -43,9 +43,20 @@ function* getQuickReplies(action) {
 
 function* createQuickReply(action) {
   const apiClient = yield select(getQuickRepliesClient);
+  const privilege = yield select(getPrivilege);
   const { data, success, error } = action.payload;
+  let sendingData;
+  if (privilege === 'admin') {
+    const userId = yield select(getUserId);
+    sendingData = {
+      ...data,
+      user_id: userId,
+    };
+  } else {
+    sendingData = data;
+  }
   try {
-    const result = yield call(apiClient.create, data);
+    const result = yield call(apiClient.create, sendingData);
     yield put({
       type: actionTypes.CREATE_QUICK_REPLY_SUCCESS,
     });
