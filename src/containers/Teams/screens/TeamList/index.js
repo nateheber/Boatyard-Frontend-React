@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 
 class TeamList extends React.Component {
   toDetails = member => {
-    this.props.history.push(`/team-details/${member.id}/`);
+    this.props.history.push(`/team-details/?${member.id}`);
   };
   render() {
     const columns = [
