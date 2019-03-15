@@ -142,7 +142,7 @@ function* deleteService(action) {
   }
 }
 
-export default function* Profile() {
+export default function* ServiceSaga() {
   yield takeEvery(actionTypes.GET_SERVICES, getServices);
   yield takeEvery(actionTypes.FILTER_SERVICES, getServices);
   yield takeEvery(actionTypes.GET_SERVICE, getService);

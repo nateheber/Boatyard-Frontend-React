@@ -104,3 +104,7 @@ export const createMessageClient = authType => {
 export const customApiClient = authType => {
   return new NormalClient(authType);
 };
+
+export const createSiteBannerClient = authType => {
+  return new CRUDClient('site_banners', authType);
+}

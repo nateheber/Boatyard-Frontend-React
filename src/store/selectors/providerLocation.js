@@ -22,8 +22,15 @@ export const refinedProviderLocationSelector = createSelector(
           const id = _.get(relation, 'id');
           return _.get(included, `[${type}][${id}]`);
         })
-      })
-      return { ...location, relationships: parsedRelationships };
+      });
+      const relations = {};
+      for (const index in parsedRelationships) {
+        const item = parsedRelationships[index];
+        if (!_.isEmpty(item)) {
+          relations[item.type] = item;
+        }
+      }
+      return { ...location, relationships: relations };
     });
     return {providerLocations: parsedData};
   }

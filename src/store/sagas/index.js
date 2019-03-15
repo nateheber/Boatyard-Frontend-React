@@ -19,6 +19,7 @@ import PaymentGateway from './paymentGateway';
 import Icons from './icons';
 import Networks from './networks';
 import Conversations from './conversations';
+import SiteBanners from './site-banners';
 import QuickReply from './quickReplies';
 
 export default function* mainSaga() {
@@ -42,6 +43,7 @@ export default function* mainSaga() {
     fork(Icons),
     fork(Networks),
     fork(Conversations),
-    fork(QuickReply),
+    fork(SiteBanners),
+    fork(QuickReply)
   ]);
 }

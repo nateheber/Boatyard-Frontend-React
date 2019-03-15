@@ -59,7 +59,7 @@ function* updateRequest(action) {
   });
 }
 
-export default function* Profile() {
+export default function* ManagementSaga() {
   yield takeEvery(actions.createManagements, createRequest);
   yield takeEvery(actions.fetchManagements, fetchRequest);
   yield takeEvery(actions.deleteManagements, deleteRequest);

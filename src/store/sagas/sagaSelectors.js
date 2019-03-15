@@ -230,6 +230,20 @@ export const getMessageClient = state => {
   return APIGenerator.createMessageClient('basic');
 };
 
+export const getSiteBannerClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createSiteBannerClient('basic');
+    case 'admin':
+      return APIGenerator.createSiteBannerClient('admin');
+    case 'provider':
+      return APIGenerator.createSiteBannerClient('provider');
+    default:
+      return APIGenerator.createSiteBannerClient('basic');
+  }
+};
+
+
 export const getQuickRepliesClient = state => {
   switch (state.auth.privilege) {
     case 'basic':
