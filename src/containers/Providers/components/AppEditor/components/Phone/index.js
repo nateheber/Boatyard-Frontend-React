@@ -70,11 +70,11 @@ class Phone extends React.Component {
           return <BookPriceList {...data} onChange={onChangeTemplateInfo} />;
         case 'pumpOut':
           return (
-            <PumpOut {...data.data} onChange={onChangeTemplateInfo} />
+            <PumpOut {...data} onChange={onChangeTemplateInfo} />
           );
         case 'fuel':
           return (
-            <Fuel {...data.data} onChange={onChangeTemplateInfo} />
+            <Fuel {...data} onChange={onChangeTemplateInfo} />
           );
         default:
           return false;
