@@ -123,10 +123,7 @@ function* loginWithProvider(action) {
         type: authActions.setPrivilege,
         payload: 'provider'
       });
-      const providerName = get(result, 'data.attributes.name', '');
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: result });
-      toastr.clean()
-      toastr.success('Auth Success', `Login As ${providerName}(provider)`);
       if (success) {
         yield call(success);
       }
