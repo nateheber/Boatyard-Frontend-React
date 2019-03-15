@@ -88,7 +88,7 @@ class AppEditor extends React.Component {
   }
 
   refreshData = () => {
-    const { providerId } = this.props;
+    const { providerId, GetProviderLocations } = this.props;
     GetProviderLocations({ providerId });
   };
 
@@ -390,9 +390,13 @@ class AppEditor extends React.Component {
 
   getBanner = (location) => {
     let banner = null;
-    if (location.relationships.hasOwnProperty('siteBanner')) {
-      if (get(banner, 'banner.url')) {
-        banner = get(location, 'relationships.siteBanner');
+    if (location.relationships.hasOwnProperty('site_banners')) {
+      banner = get(location, 'relationships.site_banners');
+      if (banner.id) {
+        banner = {
+          id: banner.id,
+          ...banner.attributes
+        };
       }
     } else {
       if (!(location.banner.url === null || isEmpty(location.banner.url))) {
@@ -409,7 +413,7 @@ class AppEditor extends React.Component {
     const { banner, selectedLocation } = this.state;
     const { UpdateProviderLocation } = this.props;
     if (banner.hasOwnProperty('id')) {
-      if (banner.id !== get(selectedLocation, 'relationships.siteBanner.banner.id')) {
+      if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
         UpdateProviderLocation({
           providerId: selectedLocation.providerId,
           providerLocationId: selectedLocation.id,
