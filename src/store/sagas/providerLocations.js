@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, hasIn } from 'lodash';
+import { get, hasIn, keys, isArray, isEmpty } from 'lodash';
 
 import { actionTypes } from '../actions/providerLocations';
 import { getProviderLocationClient } from './sagaSelectors';
@@ -13,6 +13,32 @@ const refineProviderLocations = (providerLocations) => {
       relationships: location.relationships
     };
   });
+};
+
+const refineProviderLocation = (location, included) => {
+  const relationships = get(location, 'relationships');
+  const relationKeys = keys(relationships);
+  const parsedRelationships = relationKeys.map((key) => {
+    const data = get(relationships, `[${key}].data`);
+    const type = get(data, 'type');
+    const id = get(data, 'id');
+    if (!isArray(data)) {
+      return get(included, `[${type}][${id}]`);
+    }
+    return data.map(relation => {
+      const type = get(relation, 'type');
+      const id = get(relation, 'id');
+      return get(included, `[${type}][${id}]`);
+    })
+  });
+  const relations = {};
+  for (const index in parsedRelationships) {
+    const item = parsedRelationships[index];
+    if (!isEmpty(item)) {
+      relations[item.type] = item;
+    }
+  }
+  return { ...location, relationships: relations };
 };
 
 function* getProviderLocations(action) {
@@ -72,17 +98,18 @@ function* getProviderLocation(action) {
   try {
     result = yield call(apiClient.read, [providerId, providerLocationId]);
     const { data, included } = result;
-    const location = {
-      id: data.id,
-      ...data.attributes,
-      ...data.relationships
-    };
+    // const location = {
+    //   id: data.id,
+    //   ...data.attributes,
+    //   ...data.relationships
+    // };
+    const location = refineProviderLocation(data, included);
     yield put({
       type: actionTypes.GET_PROVIDER_LOCATION_SUCCESS,
       payload: location
     });
     if (success) {
-      yield call(success, location, included);
+      yield call(success, location);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_PROVIDER_LOCATION_FAILURE, payload: e });
@@ -95,13 +122,16 @@ function* getProviderLocation(action) {
 function* createProviderLocation(action) {
   const apiClient = yield select(getProviderLocationClient);
   const { providerId, data, success, error } = action.payload;
+  let result = null;
   try {
-    const result = yield call(apiClient.create, [providerId], data);
+    result = yield call(apiClient.create, [providerId], data);
+    const { data: location, included } = result;
+    const refinedLocation = refineProviderLocation(location, included);
     yield put({
       type: actionTypes.CREATE_PROVIDER_LOCATION_SUCCESS,
     });
     if (success) {
-      yield call(success, get(result, 'data', {}));
+      yield call(success, refinedLocation);
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_PROVIDER_LOCATION_FAILURE, payload: e });
@@ -114,13 +144,16 @@ function* createProviderLocation(action) {
 function* updateProviderLocation(action) {
   const apiClient = yield select(getProviderLocationClient);
   const { providerId, providerLocationId, data, success, error } = action.payload;
+  let result = null;
   try {
-    yield call(apiClient.update, [providerId, providerLocationId], data);
+    result = yield call(apiClient.update, [providerId, providerLocationId], data);
+    const { data: location, included } = result;
+    const refinedLocation = refineProviderLocation(location, included);
     yield put({
       type: actionTypes.UPDATE_PROVIDER_LOCATION_SUCCESS,
     });
     if (success) {
-      yield call(success);
+      yield call(success, refinedLocation);
     }
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_PROVIDER_LOCATION_FAILURE, payload: e });

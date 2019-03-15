@@ -13,7 +13,7 @@ import './style.css';
 
 class ProviderEditFlow extends React.Component {
   state = {
-    id: -1,
+    providerId: -1,
   };
 
   componentDidMount() {
@@ -24,15 +24,11 @@ class ProviderEditFlow extends React.Component {
       GetProvider({ providerId });
       GetProviderLocations({ providerId });
     }
-    this.setState({
-      id: providerId,
-    })
+    this.setState({ providerId });
   }
 
   onCreation = (providerId) => {
-    this.setState({
-      id: providerId
-    });
+    this.setState({ providerId });
     this.props.GetProvider({ providerId });
   }
 
@@ -43,10 +39,10 @@ class ProviderEditFlow extends React.Component {
   }
 
   onSave = data => {
-    const { id } = this.state;
-    if (id !== -1) {
+    const { providerId } = this.state;
+    if (providerId !== -1) {
       this.props.UpdateProvider({
-        providerId: id,
+        providerId,
         data
       });
       this.setState({
@@ -57,7 +53,7 @@ class ProviderEditFlow extends React.Component {
         data,
         success: providerId => {
           this.setState({
-            id: providerId,
+            providerId,
             ...data
           });
         }
@@ -66,17 +62,17 @@ class ProviderEditFlow extends React.Component {
   };
 
   render() {
-    const { id } = this.state;
+    const { providerId } = this.state;
     return (
       <Tabs>
         <TabList>
           <Tab>ACCOUNT</Tab>
-          <Tab disabled={id === -1}>LOCATIONS</Tab>
-          <Tab disabled={id === -1}>APP</Tab>
+          <Tab disabled={providerId === -1}>LOCATIONS</Tab>
+          <Tab disabled={providerId === -1}>APP</Tab>
         </TabList>
         <TabPanel>
           <AccountEditor
-            newFlg={id === -1}
+            newFlg={providerId === -1}
             {...this.state}
             onCreation={this.onCreation}
             onUpdate={this.onUpdate}
@@ -87,7 +83,7 @@ class ProviderEditFlow extends React.Component {
           <LocationEditor />
         </TabPanel>
         <TabPanel>
-          <AppEditor />
+          <AppEditor providerId={providerId} />
         </TabPanel>
       </Tabs>
     );

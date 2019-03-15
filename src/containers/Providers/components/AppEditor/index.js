@@ -5,6 +5,7 @@ import { get, set, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { GetSiteBanners, CreateSiteBanner } from 'store/actions/site-banners';
+import { GetProviderLocations, UpdateProviderLocation } from 'store/actions/providerLocations';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
 import { setServiceTemplateData } from 'utils/serviceTemplate';
@@ -85,6 +86,11 @@ class AppEditor extends React.Component {
       }
     }
   }
+
+  refreshData = () => {
+    const { providerId } = this.props;
+    GetProviderLocations({ providerId });
+  };
 
   onChangeStep = (step) => {
     this.setState({ step });
@@ -384,14 +390,43 @@ class AppEditor extends React.Component {
 
   getBanner = (location) => {
     let banner = null;
-    if (location.banner.url === null || isEmpty(location.banner.url)) {
-      if (location.relationships.hasOwnProperty('siteBanner')) {
+    if (location.relationships.hasOwnProperty('siteBanner')) {
+      if (get(banner, 'banner.url')) {
         banner = get(location, 'relationships.siteBanner');
       }
     } else {
-      banner = { banner: location.banner };
+      if (!(location.banner.url === null || isEmpty(location.banner.url))) {
+        banner = { banner: location.banner };
+      }
+    }
+    if (banner === null) {
+      banner = { banner: { url: null }};
     }
     return banner;
+  }
+
+  handleSaveButtonClick = () => {
+    const { banner, selectedLocation } = this.state;
+    const { UpdateProviderLocation } = this.props;
+    if (banner.hasOwnProperty('id')) {
+      if (banner.id !== get(selectedLocation, 'relationships.siteBanner.banner.id')) {
+        UpdateProviderLocation({
+          providerId: selectedLocation.providerId,
+          providerLocationId: selectedLocation.id,
+          data: {
+            provider_location: {
+              site_banner_id: banner.id
+            }
+          },
+          success: () => {
+            this.refreshData();
+          }
+        });
+      }
+    }
+  };
+
+  handlePublishStatus = () => {
   }
 
   render() {
@@ -405,6 +440,8 @@ class AppEditor extends React.Component {
           selected={selectedLocation}
           locations={providerLocations}
           onChangeLocation={this.handleChangeLocation}
+          onSave={this.handleSaveButtonClick}
+          onChangePublishStatus={this.handlePublishStatus}
         />
         <Content>
           <Left>
@@ -455,7 +492,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   GetSiteBanners,
-  CreateSiteBanner
+  CreateSiteBanner,
+  GetProviderLocations,
+  UpdateProviderLocation
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppEditor);
