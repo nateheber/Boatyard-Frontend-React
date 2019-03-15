@@ -96,7 +96,7 @@ class AppBanners extends React.Component {
             {/* <SearchWrapper>
               <SearchInput placeholder="SEARCH" onChange={this.onChangeKeyword} />
             </SearchWrapper> */}
-            <UploadButton style={{ marginLeft: 17 }} title="Upload Image" accept="image/*" onFileChange={this.handleFileChange} />
+            <UploadButton style={{ marginLeft: 10 }} title="Upload Image" accept="image/*" onFileChange={this.handleFileChange} />
           </HeaderWrapper>
           <ImageWrapper>
             {

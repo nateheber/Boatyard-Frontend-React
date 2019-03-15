@@ -6,6 +6,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { get } from 'lodash';
 
 import { CreateProvider, UpdateProvider, GetProvider } from 'store/actions/providers';
+import { GetIcons } from 'store/actions/icons';
 import { GetProviderLocations } from 'store/actions/providerLocations';
 import { LocationEditor, AccountEditor, AppEditor } from '../components';
 
@@ -20,9 +21,10 @@ class ProviderEditFlow extends React.Component {
     const query = queryString.parse(this.props.location.search);
     const providerId = get(query, 'provider', -1);
     if (providerId !== -1) {
-      const { GetProvider, GetProviderLocations } = this.props;
+      const { GetProvider, GetProviderLocations, GetIcons } = this.props;
       GetProvider({ providerId });
       GetProviderLocations({ providerId });
+      GetIcons({ params: { per_page: 1000 } });
     }
     this.setState({ providerId });
   }
@@ -99,7 +101,8 @@ const mapDispatchToProps = {
   CreateProvider,
   UpdateProvider,
   GetProvider,
-  GetProviderLocations
+  GetProviderLocations,
+  GetIcons
 };
 
 export default withRouter(

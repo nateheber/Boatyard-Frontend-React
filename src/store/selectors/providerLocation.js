@@ -27,7 +27,16 @@ export const refinedProviderLocationSelector = createSelector(
       for (const index in parsedRelationships) {
         const item = parsedRelationships[index];
         if (!_.isEmpty(item)) {
-          relations[item.type] = item;
+          if (!_.isArray(item)) {
+            relations[item.type] = item;
+          } else {
+            for(const index in item) {
+              if (!relations[item[index].type]) {
+                relations[item[index].type] = [];
+              }
+              relations[item[index].type].push(item[index]);
+            }
+          }
         }
       }
       return { ...location, relationships: relations };
