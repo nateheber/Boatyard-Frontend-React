@@ -82,16 +82,16 @@ class OrderList extends React.Component {
 
   componentDidMount() {
     this.props.SetDispatchedFlag(false);
-    this.props.GetOrders({ params: { page: 1 } });
+    this.props.GetOrders({ params: { page: 1, per_page: 15 } });
   }
 
   onChangeTab = (tab) => {
     this.setState({ tab });
     this.props.SetDispatchedFlag(tab === 'dispatched');
     if (tab === 'needAssignment') {
-      this.props.GetOrders({ params: { page: 1, 'order[state]': 'draft' } })
+      this.props.GetOrders({ params: { page: 1, per_page: 15, 'order[state]': 'draft' } })
     } else {
-      this.props.GetOrders({ params: { page: 1 } });
+      this.props.GetOrders({ params: { page: 1, per_page: 15 } });
     }
   }
 
@@ -140,6 +140,7 @@ class OrderList extends React.Component {
       createdAt: `${moment(order.createdAt).format('MMM DD, YYYY')}`
       };
     });
+
     const { tab } = this.state;
     return (
       <Wrapper>
