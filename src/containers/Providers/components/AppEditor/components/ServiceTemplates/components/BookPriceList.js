@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import { ButtonInput, DescriptionInput, PriceUnitInput, SwitchInput, TitleInput, TextAreaInput } from '../../../../ServiceTemplates';
+import { ButtonInput, DescriptionInput, ListInput, PriceUnitInput, TitleInput } from '../../../../ServiceTemplates';
 
 const Wrapper = styled.div`
   display: flex;
@@ -14,12 +14,9 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 
-const Spacer = styled.div`
-  height: 15px;
-`;
 
 
-export default class PumpOut extends React.Component {
+export default class BookPriceList extends React.Component {
   constructor(props) {
     super(props);
     const {
@@ -27,34 +24,25 @@ export default class PumpOut extends React.Component {
       unit,
       subtitle,
       description,
-      secondaryDescription,
-      inputLabel,
+      listDescription,
+      listItems,
       buttonText,
-      textAreaLabel,
     } = props;
     this.state = {
       cost,
       unit,
       subtitle,
       description,
-      secondaryDescription,
-      inputLabel,
+      listDescription,
+      listItems,
       buttonText,
-      textAreaLabel,
-      showLabel: false,
     };
-  }
-
-  onToggle = (showLabel) => {
-    this.setState({ showLabel });
   }
 
   onChangePrice = (field, value) => {
     const updateObject = {};
     set(updateObject, field, value);
-    this.setState(updateObject, () => {
-      this.props.onChange(this.state)
-    });
+    this.setState(updateObject);
   }
 
   onChange = field => (e) => {
@@ -65,17 +53,21 @@ export default class PumpOut extends React.Component {
     });
   }
 
+  onChangeList = (listItems) => {
+    this.setState({ listItems }, () => {
+      this.props.onChange(this.state)
+    });
+  }
+
   render() {
     const {
       cost,
       unit,
       subtitle,
       description,
-      secondaryDescription,
-      inputLabel,
+      listDescription,
+      listItems,
       buttonText,
-      textAreaLabel,
-      showLabel,
     } = this.state;
     const { disabled } = this.props;
     return (
@@ -85,16 +77,16 @@ export default class PumpOut extends React.Component {
         <DescriptionInput
           disabled={disabled}
           value={description}
+          style={{ marginBottom: '20px' }}
           onChange={this.onChange('description')}
         />
         <DescriptionInput
           disabled={disabled}
-          value={secondaryDescription}
-          onChange={this.onChange('secondaryDescription')}
+          className="list"
+          value={listDescription}
+          onChange={this.onChange('listDescription')}
         />
-        <Spacer />
-        <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} onToggle={this.onToggle} />
-        {showLabel && <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />}
+        <ListInput disabled={disabled} items={listItems} onChange={this.onChangeList} />
         <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import TextareaAutosize from 'react-autosize-textarea';
 
 const DescriptionInput = styled(TextareaAutosize)`
+  position: relative;
   box-sizing: border-box;
   width: 223px;
   padding: 10px 15px;
@@ -24,6 +25,29 @@ const DescriptionInput = styled(TextareaAutosize)`
   &.list {
     font-size: 9.6px;
     text-transform: uppercase;
+  }
+  &.required {
+    padding-left: 20px;
+  }
+  &.required::before {
+    content: '*';
+    position: absolute;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    left: 0px;
+    top: 0px;
+    color: #094359;
+    font-size: 8.4px;
+  }
+  &.title {
+    font-family: Helvetica;
+    font-size: 20px;
+    color: #04416A;
+    text-align: center;
+    border: none;
+    margin-bottom: 30px;
+    width: 180px;
   }
 `;
 

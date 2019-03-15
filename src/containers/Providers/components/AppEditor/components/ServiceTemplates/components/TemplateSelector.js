@@ -4,7 +4,15 @@ import styled from 'styled-components';
 import { SearchBox } from 'components/basic/Input';
 
 import templatesInfo from '../defaultTemplateValues' ;
-import { BoatWash, Fuel, LineHandling, PumpOut, TrashPickup, TemplateOption } from './index';
+import {
+  BookPriceList, Fuel, PumpOut,
+  TemplateOption, CaptainService,
+  Request, RequestPrice, RequestList,
+  RequestPriceList, BookPrice,
+  Book,
+  BookList,
+  GetHelp,
+} from './index';
 
 const HeaderWrapper = styled.div`
   dispaly: flex;
@@ -68,39 +76,82 @@ export default class TemplateSelector extends React.Component {
     const { selected } = this.state;
     return keys.map((item) => {
       const templateDefValues = templatesInfo[item].data;
+      const name = templatesInfo[item].templateName;
       const title = templatesInfo[item].templateTitle;
       const isSelected = item === selected;
       switch (item) {
-        case 'lineHandling':
+        case 'request':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
-              <LineHandling { ...templateDefValues } disabled />
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <Request {...templateDefValues} disabled />
             </TemplateOption>
-          );
-        case 'trashPickup':
+          )
+        case 'requestPrice':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
-              <TrashPickup {...templateDefValues} disabled />
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <RequestPrice {...templateDefValues} disabled />
             </TemplateOption>
-          );
+          )
+        case 'requestList':
+          return (
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <RequestList {...templateDefValues} disabled />
+            </TemplateOption>
+          )
+        case 'requestPriceList':
+          return (
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <RequestPriceList {...templateDefValues} disabled />
+            </TemplateOption>
+          )
+        case 'bookPrice':
+          return (
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <BookPrice {...templateDefValues} disabled />
+            </TemplateOption>
+          )
+        case 'bookPriceList':
+          return (
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <BookPriceList {...templateDefValues} disabled />
+            </TemplateOption>
+          )
+        case 'book':
+          return (
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <Book {...templateDefValues} disabled />
+            </TemplateOption>
+          )
+        case 'getHelp':
+          return (
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <GetHelp {...templateDefValues} disabled />
+            </TemplateOption>
+          )
+        case 'bookList':
+          return (
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <BookList {...templateDefValues} disabled />
+            </TemplateOption>
+          )
         case 'pumpOut':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <PumpOut {...templateDefValues} disabled />
             </TemplateOption>
           );
         case 'fuel':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <Fuel {...templateDefValues} disabled />
             </TemplateOption>
           );
-        case 'boatWash':
+        case 'captainService':
           return (
-            <TemplateOption title={title} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
-              <BoatWash {...templateDefValues} disabled />
+            <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
+              <CaptainService {...templateDefValues} disabled />
             </TemplateOption>
-          );
+          )
         default:
           return false;
       }

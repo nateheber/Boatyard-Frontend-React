@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import Icon from 'resources/serviceTemplate/trashPickup.png';
+import Icon from 'resources/serviceTemplate/lighteningBolt.png';
 
-import { ButtonInput, DescriptionInput, Image, PriceUnitInput, TextAreaInput } from '../../../../ServiceTemplates';
+import { ButtonInput, DescriptionInput, Image, TextAreaInput } from '../../../../ServiceTemplates';
 
 const Wrapper = styled.div`
   display: flex;
@@ -18,33 +18,11 @@ const Wrapper = styled.div`
 
 
 
-export default class TrashPickup extends React.Component {
+export default class Request extends React.Component {
   constructor(props) {
     super(props);
-    const {
-      cost,
-      unit,
-      description,
-      secondaryDescription,
-      textAreaLabel,
-      buttonText,
-    } = props;
-    this.state = {
-      cost,
-      unit,
-      description,
-      textAreaLabel,
-      secondaryDescription,
-      buttonText,
-    };
-  }
-
-  onChangePrice = (field, value) => {
-    const updateObject = {};
-    set(updateObject, field, value);
-    this.setState(updateObject, () => {
-      this.props.onChange(this.state)
-    });
+    const { description, textAreaLabel, buttonText, secondaryDescription } = props;
+    this.state = { description, textAreaLabel, buttonText, secondaryDescription };
   }
 
   onChange = field => (e) => {
@@ -56,19 +34,11 @@ export default class TrashPickup extends React.Component {
   }
 
   render() {
-    const {
-      cost,
-      unit,
-      description,
-      secondaryDescription,
-      textAreaLabel,
-      buttonText,
-    } = this.state;
+    const { description, textAreaLabel, buttonText, secondaryDescription } = this.state;
     const { disabled } = this.props;
     return (
       <Wrapper>
         <Image src={Icon} />
-        <PriceUnitInput disabled={disabled} unit={unit} cost={cost} style={{ marginBottom: '18px' }} onChange={this.onChangePrice} />
         <DescriptionInput
           disabled={disabled}
           value={description}
@@ -78,6 +48,7 @@ export default class TrashPickup extends React.Component {
           disabled={disabled}
           value={secondaryDescription}
           onChange={this.onChange('secondaryDescription')}
+          style={{ marginBottom: '20px' }}
         />
         <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
         <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />

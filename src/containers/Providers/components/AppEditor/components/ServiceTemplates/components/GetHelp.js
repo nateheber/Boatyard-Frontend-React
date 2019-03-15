@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import Icon from 'resources/serviceTemplate/lineHandling.png';
+import Icon from 'resources/serviceTemplate/pushForHelp.png';
 
-import { ButtonInput, DescriptionInput, Image, TextAreaInput } from '../../../../ServiceTemplates';
+import { DescriptionInput, Image } from '../../../../ServiceTemplates';
 
 const Wrapper = styled.div`
   display: flex;
@@ -18,11 +18,11 @@ const Wrapper = styled.div`
 
 
 
-export default class LineHandling extends React.Component {
+export default class GetHelp extends React.Component {
   constructor(props) {
     super(props);
-    const { description, textAreaLabel, buttonText } = props;
-    this.state = { description, textAreaLabel, buttonText };
+    const { description, subtitle } = props;
+    this.state = { description, subtitle };
   }
 
   onChange = field => (e) => {
@@ -34,18 +34,23 @@ export default class LineHandling extends React.Component {
   }
 
   render() {
-    const { description, textAreaLabel, buttonText } = this.state;
+    const { description, subtitle } = this.state;
     const { disabled } = this.props;
     return (
       <Wrapper>
-        <Image src={Icon} />
+        <DescriptionInput
+          className="title"
+          disabled={disabled}
+          value={subtitle}
+          onChange={this.onChange('subtitle')}
+        />
+        <Image src={Icon} className="getHelp" />
         <DescriptionInput
           disabled={disabled}
           value={description}
+          style={{ marginBottom: '20px' }}
           onChange={this.onChange('description')}
         />
-        <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />
-        <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )
   }
