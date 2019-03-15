@@ -1,5 +1,6 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/providers';
 import { actions as authActions } from '../reducers/auth';
@@ -122,17 +123,24 @@ function* loginWithProvider(action) {
         type: authActions.setPrivilege,
         payload: 'provider'
       });
+      const providerName = get(result, 'data.attributes.name', '');
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: result });
+      toastr.clean()
+      toastr.success('Auth Success', `Login As ${providerName}(provider)`);
       if (success) {
         yield call(success);
       }
     } else {
+      toastr.clean()
+      toastr.error('Auth Failure', 'Invalid Credentials');
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE });
       if (error) {
         yield call(error, true);
       }
     }
   } catch (e) {
+    toastr.clean()
+    toastr.error('Auth Failure', 'Invalid Credentials');
     yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error);

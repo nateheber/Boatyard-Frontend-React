@@ -1,5 +1,6 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { actions } from '../reducers/auth';
 import { actions as ProfileActions } from '../reducers/profile';
@@ -49,6 +50,8 @@ function* loginRequest(action) {
       }
     });
   } catch (err) {
+    toastr.clean()
+    toastr.error('Auth Failure', 'Invalid username or password');
     yield put({
       type: actions.setAuthState,
       payload: {
@@ -74,6 +77,8 @@ function* userPermissionRequest(action) {
         type: actions.setPrivilege,
         payload: 'admin'
       });
+      toastr.clean()
+      toastr.success('Auth Success', 'Logged in As an Admin');
     } else {
       yield put({
         type: ProviderActions.LOGIN_WITH_PROVIDER,
