@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import { ButtonInput, DescriptionInput, PriceUnitInput, SwitchInput, TitleInput, TextAreaInput } from '../../../../ServiceTemplates';
+import { ButtonInput, DescriptionInput, TitleInput } from '../../../../ServiceTemplates';
 
 const Wrapper = styled.div`
   display: flex;
@@ -14,47 +14,29 @@ const Wrapper = styled.div`
   box-sizing: border-box;
 `;
 
-const Spacer = styled.div`
-  height: 15px;
-`;
 
 
-export default class PumpOut extends React.Component {
+export default class Book extends React.Component {
   constructor(props) {
     super(props);
     const {
-      cost,
-      unit,
       subtitle,
       description,
       secondaryDescription,
-      inputLabel,
       buttonText,
-      textAreaLabel,
     } = props;
     this.state = {
-      cost,
-      unit,
       subtitle,
       description,
       secondaryDescription,
-      inputLabel,
       buttonText,
-      textAreaLabel,
-      showLabel: false,
     };
-  }
-
-  onToggle = (showLabel) => {
-    this.setState({ showLabel });
   }
 
   onChangePrice = (field, value) => {
     const updateObject = {};
     set(updateObject, field, value);
-    this.setState(updateObject, () => {
-      this.props.onChange(this.state)
-    });
+    this.setState(updateObject);
   }
 
   onChange = field => (e) => {
@@ -67,24 +49,19 @@ export default class PumpOut extends React.Component {
 
   render() {
     const {
-      cost,
-      unit,
       subtitle,
       description,
       secondaryDescription,
-      inputLabel,
       buttonText,
-      textAreaLabel,
-      showLabel,
     } = this.state;
     const { disabled } = this.props;
     return (
       <Wrapper>
-        <PriceUnitInput disabled={disabled} unit={unit} cost={cost} onChange={this.onChangePrice} />
         <TitleInput disabled={disabled} value={subtitle} onChange={this.onChange('subtitle')} />
         <DescriptionInput
           disabled={disabled}
           value={description}
+          style={{ marginBottom: '20px' }}
           onChange={this.onChange('description')}
         />
         <DescriptionInput
@@ -92,9 +69,6 @@ export default class PumpOut extends React.Component {
           value={secondaryDescription}
           onChange={this.onChange('secondaryDescription')}
         />
-        <Spacer />
-        <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} onToggle={this.onToggle} />
-        {showLabel && <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />}
         <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )

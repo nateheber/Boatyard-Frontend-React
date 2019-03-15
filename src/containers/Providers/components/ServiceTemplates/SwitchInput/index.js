@@ -69,9 +69,19 @@ const Label = styled.span`
 `
 
 export default class SwitchInput extends React.Component {
-  onChange = () => {}
+  state = {
+    checked: false,
+  }
+  onChange = () => {
+    const { checked } = this.state;
+    this.setState({ checked: !checked });
+    if (this.props.onToggle) {
+      this.props.onToggle(!checked);
+    }
+  }
   render() {
-    const { label } = this.props;
+    const { label, disabled } = this.props;
+    const { checked } = this.state;
     return (
       <Wrapper>
         <LeftPart>
@@ -81,7 +91,7 @@ export default class SwitchInput extends React.Component {
         </LeftPart>
         <RightPart>
           <Switch
-            checked={false}
+            checked={checked}
             handleDiameter={16}
             uncheckedIcon={false}
             checkedIcon={false}
@@ -92,7 +102,7 @@ export default class SwitchInput extends React.Component {
             className="react-switch"
             id="material-switch"
             onChange={this.onChange}
-            disabled
+            disabled={disabled}
           />
           <Label>NO</Label>
         </RightPart>

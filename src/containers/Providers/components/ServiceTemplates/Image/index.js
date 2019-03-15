@@ -5,6 +5,10 @@ const Image = styled.img`
   height: 33.6px;
   object-fit: contain;
   margin-bottom: 18px;
+  &.getHelp {
+    width: 142px;
+    height: 177px;
+  }
 `;
 
 export default Image;

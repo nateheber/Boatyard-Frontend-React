@@ -39,9 +39,9 @@ const Header = styled.img`
   width: 100%;
 `
 
-export default ({ selected, title, onClick, children }) => (
+export default ({ selected, title, name, onClick, children }) => (
   <Wrapper>
-    <CheckField title={title} checked={selected} onClick={onClick} />
+    <CheckField title={name} checked={selected} onClick={onClick} />
     <Content>
       <Header src={HeaderImage} />
       <Title>{title}</Title>

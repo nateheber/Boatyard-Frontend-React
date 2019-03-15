@@ -93,9 +93,9 @@ export default class ListInput extends React.Component {
 
   render() {
     const { items } = this.state;
-    const { disabled } = this.props;
+    const { disabled, style } = this.props;
     return (
-      <Wrapper>
+      <Wrapper style={style}>
         {
           items.map((item, idx) => (
             <ItemWrapper key={`list_item_${idx}`}>

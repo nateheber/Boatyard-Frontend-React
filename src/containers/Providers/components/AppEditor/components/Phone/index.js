@@ -4,7 +4,13 @@ import { get } from 'lodash';
 
 import { PhoneBanner, PhonePreview, ItemListPreview } from './components';
 
-import { BoatWash, Fuel, LineHandling, PumpOut, TrashPickup } from '../ServiceTemplates/components';
+import {
+  BookPriceList, Fuel,
+  PumpOut, CaptainService,
+  Request, RequestPrice,
+  RequestList, RequestPriceList,
+  BookPrice, Book, BookList, GetHelp,
+} from '../ServiceTemplates/components';
 
 class Phone extends React.Component {
   renderHomeScreen = () => {
@@ -40,27 +46,35 @@ class Phone extends React.Component {
   renderServiceScreen = () => {
     const { renderingData: { template }, onChangeTemplateInfo } = this.props;
     if (template) {
-      const { templateType, data } = template;
+      const { templateType, data: { data } } = template;
       switch (templateType) {
-        case 'lineHandling':
-          return (
-            <LineHandling { ...data.data } onChange={onChangeTemplateInfo} />
-          );
-        case 'trashPickup':
-          return (
-            <TrashPickup {...data.data} onChange={onChangeTemplateInfo} />
-          );
+        case 'request':
+          return <Request {...data} onChange={onChangeTemplateInfo} />;
+        case 'requestPrice':
+          return <RequestPrice {...data} onChange={onChangeTemplateInfo} />;
+        case 'requestList':
+          return <RequestList {...data} onChange={onChangeTemplateInfo} />;
+        case 'requestPriceList':
+          return <RequestPriceList {...data} onChange={onChangeTemplateInfo} />;
+        case 'bookPrice':
+          return <BookPrice {...data} onChange={onChangeTemplateInfo} />;
+        case 'book':
+          return <Book {...data} onChange={onChangeTemplateInfo} />;
+        case 'bookList':
+          return <BookList {...data} onChange={onChangeTemplateInfo} />;
+        case 'getHelp':
+          return <GetHelp {...data} onChange={onChangeTemplateInfo} />;
+        case 'captainService':
+          return <CaptainService {...data} onChange={onChangeTemplateInfo} />;
+        case 'bookPriceList':
+          return <BookPriceList {...data} onChange={onChangeTemplateInfo} />;
         case 'pumpOut':
           return (
-            <PumpOut {...data.data} onChange={onChangeTemplateInfo} />
+            <PumpOut {...data} onChange={onChangeTemplateInfo} />
           );
         case 'fuel':
           return (
-            <Fuel {...data.data} onChange={onChangeTemplateInfo} />
-          );
-        case 'boatWash':
-          return (
-            <BoatWash {...data.data} onChange={onChangeTemplateInfo} />
+            <Fuel {...data} onChange={onChangeTemplateInfo} />
           );
         default:
           return false;

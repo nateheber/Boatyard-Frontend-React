@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import { ButtonInput, DescriptionInput, ListInput, PriceUnitInput, TitleInput } from '../../../../ServiceTemplates';
+import { ButtonInput, DescriptionInput, ListInput, TitleInput } from '../../../../ServiceTemplates';
 
 const Wrapper = styled.div`
   display: flex;
@@ -16,12 +16,10 @@ const Wrapper = styled.div`
 
 
 
-export default class BoatWash extends React.Component {
+export default class BookList extends React.Component {
   constructor(props) {
     super(props);
     const {
-      cost,
-      unit,
       subtitle,
       description,
       listDescription,
@@ -29,20 +27,12 @@ export default class BoatWash extends React.Component {
       buttonText,
     } = props;
     this.state = {
-      cost,
-      unit,
       subtitle,
       description,
       listDescription,
       listItems,
       buttonText,
     };
-  }
-
-  onChangePrice = (field, value) => {
-    const updateObject = {};
-    set(updateObject, field, value);
-    this.setState(updateObject);
   }
 
   onChange = field => (e) => {
@@ -61,8 +51,6 @@ export default class BoatWash extends React.Component {
 
   render() {
     const {
-      cost,
-      unit,
       subtitle,
       description,
       listDescription,
@@ -72,7 +60,6 @@ export default class BoatWash extends React.Component {
     const { disabled } = this.props;
     return (
       <Wrapper>
-        <PriceUnitInput disabled={disabled} unit={unit} cost={cost} onChange={this.onChangePrice} />
         <TitleInput disabled={disabled} value={subtitle} onChange={this.onChange('subtitle')} />
         <DescriptionInput
           disabled={disabled}
