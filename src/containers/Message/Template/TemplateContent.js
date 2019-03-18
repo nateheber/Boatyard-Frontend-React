@@ -1,6 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { isEmpty } from 'lodash';
+import { get, isEmpty, hasIn } from 'lodash';
 import changeCase from 'change-case';
 
 import { InboxContentHeader } from '../components/MessageHeader';
@@ -14,9 +15,18 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-export default class TemplateContent extends React.Component {
+class TemplateContent extends React.Component {
+  getTemplateInfo = () => {
+    const { selected, globalTemplates, localTemplates } = this.props;
+    if (hasIn(localTemplates, selected)) {
+      return get(localTemplates, selected);
+    }
+    return get(globalTemplates, selected);
+  }
   render() {
     const { selected, onCancel, onSave, onBack } = this.props;
+    const templateInfo = this.getTemplateInfo();
+    console.log(templateInfo);
     return isEmpty(selected) ? (
       false
     ) : (
@@ -34,3 +44,10 @@ export default class TemplateContent extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  globalTemplates: state.messageTemplate.globalTemplates,
+  localTemplates: state.messageTemplate.localTemplates,
+});
+
+export default connect(mapStateToProps)(TemplateContent);

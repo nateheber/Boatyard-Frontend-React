@@ -23,6 +23,7 @@ import network from './networks';
 import conversation from './conversations';
 import siteBanner from './site-banners';
 import quickReply from './quickReplies';
+import messageTemplate from './messageTemplates';
 
 const rootReducer = combineReducers({
   navigation,
@@ -47,7 +48,8 @@ const rootReducer = combineReducers({
   network,
   conversation,
   siteBanner,
-  quickReply
+  quickReply,
+  messageTemplate,
 });
 
 export default rootReducer;

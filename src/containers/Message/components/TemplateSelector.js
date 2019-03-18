@@ -1,44 +1,57 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { get, keys } from 'lodash';
 
 import { MessageItem, TemplateItem } from 'components/basic/Message';
 
 const Wrapper = styled.div``;
 
-export class TemplateSelector extends React.Component {
+class TemplateSelector extends React.Component {
   state = {
     selected: ''
   };
+  getOptions = () => {
+    const { globalTemplates } = this.props;
+    const triggerKeys = keys(globalTemplates);
+    const options = triggerKeys.map((triggerKey) => ({
+      triggerKey,
+      trigger: get(globalTemplates, `${triggerKey}.trigger`),
+      messageType: get(globalTemplates, `${triggerKey}.messageType`),
+    }));
+    return options;
+  }
   render() {
-    const { provider, onSelect } = this.props;
+    const { onSelect } = this.props;
     const { selected } = this.state;
+    const options = this.getOptions();
     return (
       <Wrapper>
-        <MessageItem
-          onClick={() => {
-            this.setState({ selected: 'quote' });
-            onSelect('quote');
-          }}
-          className={selected === 'quote' ? 'active' : 'detactive'}
-        >
-          <TemplateItem
-            type="Quote"
-            description={`Your Quote from ${provider}`}
-          />
-        </MessageItem>
-        <MessageItem
-          onClick={() => {
-            this.setState({ selected: 'invoice' });
-            onSelect('invoice');
-          }}
-          className={selected === 'invoice' ? 'active' : 'detactive'}
-        >
-          <TemplateItem
-            type="Invoice"
-            description={`Your Invoice from ${provider}`}
-          />
-        </MessageItem>
+        {
+          options.map(({ triggerKey, trigger, messageType }, idx) => (
+            <MessageItem
+              onClick={() => {
+                this.setState({ selected: triggerKey });
+                onSelect(triggerKey);
+              }}
+              className={selected === triggerKey ? 'active' : 'detactive'}
+              key={triggerKey}
+            >
+              <TemplateItem
+                type={messageType}
+                description={trigger}
+              />
+            </MessageItem>
+          ))
+        }
       </Wrapper>
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  globalTemplates: state.messageTemplate.globalTemplates,
+  localTemplates: state.messageTemplate.localTemplates,
+})
+
+export default connect(mapStateToProps)(TemplateSelector);

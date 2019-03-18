@@ -256,3 +256,29 @@ export const getQuickRepliesClient = state => {
       return APIGenerator.createQuickReplyClient('basic');
   }
 };
+
+export const getGlobalMessageTemplatesClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createGlobalMessageTemplateClient('basic');
+    case 'admin':
+      return APIGenerator.createGlobalMessageTemplateClient('admin');
+    case 'provider':
+      return APIGenerator.createGlobalMessageTemplateClient('provider');
+    default:
+      return APIGenerator.createGlobalMessageTemplateClient('basic');
+  }
+};
+
+export const getLocalMessageTemplatesClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createLocalMessageTemplateClient('basic');
+    case 'admin':
+      return APIGenerator.createLocalMessageTemplateClient('admin');
+    case 'provider':
+      return APIGenerator.createLocalMessageTemplateClient('provider');
+    default:
+      return APIGenerator.createLocalMessageTemplateClient('basic');
+  }
+};

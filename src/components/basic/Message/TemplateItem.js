@@ -11,6 +11,7 @@ const TypeText = styled.div`
   font-size: 18px;
   color: rgb(7, 56, 75);
   font-weight: bold;
+  text-transform: capitalize;
 `;
 
 const Description = styled.div`

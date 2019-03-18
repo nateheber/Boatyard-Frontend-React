@@ -108,3 +108,11 @@ export const customApiClient = authType => {
 export const createSiteBannerClient = authType => {
   return new CRUDClient('site_banners', authType);
 }
+
+export const createGlobalMessageTemplateClient = authType => {
+  return new CRUDClient('global_message_templates', authType);
+}
+
+export const createLocalMessageTemplateClient = authType => {
+  return new CRUDClient('message_templates', authType);
+}

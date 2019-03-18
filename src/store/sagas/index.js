@@ -21,6 +21,7 @@ import Networks from './networks';
 import Conversations from './conversations';
 import SiteBanners from './site-banners';
 import QuickReply from './quickReplies';
+import MessageTemplate from './messageTemplates';
 
 export default function* mainSaga() {
   yield all([
@@ -44,6 +45,7 @@ export default function* mainSaga() {
     fork(Networks),
     fork(Conversations),
     fork(SiteBanners),
-    fork(QuickReply)
+    fork(QuickReply),
+    fork(MessageTemplate),
   ]);
 }

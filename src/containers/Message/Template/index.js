@@ -1,14 +1,23 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { GetGlobalTemplates, GetLocalTemplates } from 'store/actions/messageTemplates';
 
 import MessageBasic from '../MessageBasic';
 import TemplateLeft from './TemplateLeft';
 import TemplateContent from './TemplateContent';
 
-export class TemplateBox extends React.Component {
+class TemplateBox extends React.Component {
   state = {
     selected: '',
     showContent: false
   };
+
+  componentDidMount() {
+    const { GetGlobalTemplates, GetLocalTemplates } = this.props;
+    GetGlobalTemplates({ params: { 'per_page': 200 } });
+    GetLocalTemplates({ params: { 'per_page': 200 } });
+  }
   render() {
     const { selected, showContent } = this.state;
     return (
@@ -47,3 +56,15 @@ export class TemplateBox extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  globalTemplates: state.messageTemplate.globalTemplates,
+  localTemplates: state.messageTemplate.localTemplates,
+});
+
+const mapDispatchToProps = {
+  GetGlobalTemplates,
+  GetLocalTemplates,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TemplateBox);

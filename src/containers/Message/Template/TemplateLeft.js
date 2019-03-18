@@ -8,11 +8,11 @@ const Wrapper = styled.div``;
 
 export default class QRLeft extends React.Component {
   render() {
-    const { provider, onSelect } = this.props;
+    const { onSelect } = this.props;
     return (
       <Wrapper>
         <TemplatesHeader />
-        <TemplateSelector provider={provider} onSelect={onSelect} />
+        <TemplateSelector onSelect={onSelect} />
       </Wrapper>
     );
   }
