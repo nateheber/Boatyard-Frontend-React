@@ -21,6 +21,8 @@ import paymentGateway from './paymentGateway';
 import icon from './icons';
 import network from './networks';
 import conversation from './conversations';
+import siteBanner from './site-banners';
+import quickReply from './quickReplies';
 
 const rootReducer = combineReducers({
   navigation,
@@ -44,6 +46,8 @@ const rootReducer = combineReducers({
   icon,
   network,
   conversation,
+  siteBanner,
+  quickReply
 });
 
 export default rootReducer;

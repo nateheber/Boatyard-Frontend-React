@@ -8,6 +8,7 @@ export const getServicesPageNumber = state => state.service.nextPage;
 export const getOrdersPageNumber = state => state.order.nextPage;
 export const getOrderDispatchedFlag = state => state.order.dispatched;
 export const getPrivilege = state => state.auth.privilege;
+export const getUserId = state => state.profile.id;
 
 export const getCategoryClient = state => {
   switch (state.auth.privilege) {
@@ -218,40 +219,40 @@ export const getIconClient = state => {
 };
 
 export const getNetworkClient = state => {
-  switch (state.auth.privilege) {
-    case 'basic':
-      return APIGenerator.createNetworkClient('basic');
-    case 'admin':
-      return APIGenerator.createNetworkClient('admin');
-    case 'provider':
-      return APIGenerator.createNetworkClient('provider');
-    default:
-      return APIGenerator.createNetworkClient('basic');
-  }
+  return APIGenerator.createNetworkClient('basic');
 };
 
 export const getConversationClient = state => {
-  switch (state.auth.privilege) {
-    case 'basic':
-      return APIGenerator.createConversationsClient('basic');
-    case 'admin':
-      return APIGenerator.createConversationsClient('admin');
-    case 'provider':
-      return APIGenerator.createConversationsClient('provider');
-    default:
-      return APIGenerator.createConversationsClient('basic');
-  }
+  return APIGenerator.createConversationsClient('basic');
 };
 
 export const getMessageClient = state => {
+  return APIGenerator.createMessageClient('basic');
+};
+
+export const getSiteBannerClient = state => {
   switch (state.auth.privilege) {
     case 'basic':
-      return APIGenerator.createMessageClient('basic');
+      return APIGenerator.createSiteBannerClient('basic');
     case 'admin':
-      return APIGenerator.createMessageClient('admin');
+      return APIGenerator.createSiteBannerClient('admin');
     case 'provider':
-      return APIGenerator.createMessageClient('provider');
+      return APIGenerator.createSiteBannerClient('provider');
     default:
-      return APIGenerator.createMessageClient('basic');
+      return APIGenerator.createSiteBannerClient('basic');
+  }
+};
+
+
+export const getQuickRepliesClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createQuickReplyClient('basic');
+    case 'admin':
+      return APIGenerator.createQuickReplyClient('admin');
+    case 'provider':
+      return APIGenerator.createQuickReplyClient('provider');
+    default:
+      return APIGenerator.createQuickReplyClient('basic');
   }
 };

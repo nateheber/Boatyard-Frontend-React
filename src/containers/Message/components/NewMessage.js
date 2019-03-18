@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
 import { Row, Col } from 'react-flexbox-grid';
 
-import { ChatBox } from 'components/compound/Message/ChatBox';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 import CustomerOption from 'components/basic/CustomerOption';
+import ChatBox from 'components/template/Message/ChatBox';
 
 import { refinedNetworkSelector } from 'store/selectors/network';
 import { CreateNetwork } from 'store/actions/networks';

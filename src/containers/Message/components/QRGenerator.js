@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { set, get } from 'lodash';
 
 import { Input, TextArea } from 'components/basic/Input';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
@@ -22,15 +23,44 @@ const ActionWrapper = styled.div`
 `;
 
 export class QRGenerator extends React.Component {
+  constructor(props) {
+    super(props);
+    const { showItem } = props;
+    const name = get(showItem, 'attributes.name', '');
+    const body = get(showItem, 'attributes.body', '');
+    this.state = { name, body };
+  }
+
+  componentDidUpdate(prevProps) {
+    const { showItem } = this.props;
+    if (get(showItem, 'id') !== get(prevProps, 'showItem.id')) {
+      const name = get(showItem, 'attributes.name', '');
+      const body = get(showItem, 'attributes.body', '');
+      this.setState({ name, body });
+    }
+  }
+
+  onChange = field => (e) => {
+    const updateObj = {};
+    set(updateObj, field, e.target.value);
+    this.setState(updateObj);
+  }
+
+  onSave = () => {
+    const { name, body } = this.state;
+    this.props.onSave({name, body})
+  }
+
   render() {
-    const { onCancel, onSave } = this.props;
+    const { onCancel } = this.props;
+    const { name, body } = this.state;
     return (
       <Wrapper>
-        <Input type="text" placeholder="Quick Reply Name" />
-        <TextArea />
+        <Input value={name} type="text" placeholder="Quick Reply Name" onChange={this.onChange('name')} />
+        <TextArea value={body} onChange={this.onChange('body')} />
         <ActionWrapper>
           <HollowButton onClick={onCancel}>CANCEL</HollowButton>
-          <OrangeButton onClick={onSave}>SAVE</OrangeButton>
+          <OrangeButton onClick={this.onSave}>SAVE</OrangeButton>
         </ActionWrapper>
       </Wrapper>
     );

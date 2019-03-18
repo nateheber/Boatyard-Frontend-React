@@ -61,6 +61,10 @@ export const createOrderClient = authType => {
   return new CRUDClient('orders', authType);
 };
 
+export const createQuickReplyClient = authType => {
+  return new CRUDClient('quick_replies', authType);
+};
+
 export const createUserClient = authType => {
   return new CRUDClient('users', authType);
 };
@@ -100,3 +104,7 @@ export const createMessageClient = authType => {
 export const customApiClient = authType => {
   return new NormalClient(authType);
 };
+
+export const createSiteBannerClient = authType => {
+  return new CRUDClient('site_banners', authType);
+}

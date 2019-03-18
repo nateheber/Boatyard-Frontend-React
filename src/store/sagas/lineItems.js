@@ -81,7 +81,7 @@ function* updateBatchRequest(action) {
   }
 }
 
-export default function* Profile() {
+export default function* LineItemSaga() {
   yield takeEvery(actions.createLineItem, createRequest);
   yield takeEvery(actions.createLineItems, createBatchRequest);
   yield takeEvery(actions.fetchLineItems, fetchRequest);

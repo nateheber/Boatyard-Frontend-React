@@ -3,16 +3,16 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 import Table from 'components/basic/Table';
-import { TeamMemberHeader } from 'components/compound/SectionHeader';
+import { TeamListHeader } from '../../components';
 
 const Wrapper = styled.div`
   height: 100%;
   background-color: white;
 `;
 
-class Team extends React.Component {
+class TeamList extends React.Component {
   toDetails = member => {
-    this.props.history.push(`/member-details/${member.id}/`);
+    this.props.history.push(`/team-details/?team=${member.id}`);
   };
   render() {
     const columns = [
@@ -23,12 +23,14 @@ class Team extends React.Component {
     ];
     const records = [
       {
+        id: '1',
         name: 'Detailer Brock Boatyard',
         phone_number: '(555) 555-555',
         email: 'brock+180_unlimited@boatyard',
         permissions: 'Provider Admin'
       },
       {
+        id: '2',
         name: 'Daniel Zheng',
         phone_number: '(555) 555-555',
         email: 'dannyzheng1993@gmail.com',
@@ -37,7 +39,7 @@ class Team extends React.Component {
     ];
     return (
       <Wrapper>
-        <TeamMemberHeader />
+        <TeamListHeader />
         <Table
           columns={columns}
           records={records}
@@ -49,4 +51,4 @@ class Team extends React.Component {
   }
 }
 
-export default withRouter(Team);
+export default withRouter(TeamList);

@@ -100,7 +100,7 @@ function* createIcon(action) {
   }
 }
 
-export default function* Profile() {
+export default function* IconSaga() {
   yield takeEvery(actionTypes.GET_ICONS, getIcons);
   yield takeEvery(actionTypes.GET_ICON, getIcon);
   yield takeEvery(actionTypes.CREATE_ICON, createIcon);

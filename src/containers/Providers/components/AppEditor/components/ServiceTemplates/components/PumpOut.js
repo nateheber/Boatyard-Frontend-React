@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { set } from 'lodash';
 
-import { ButtonInput, DescriptionInput, PriceUnitInput, SwitchInput, TitleInput } from '../../../../ServiceTemplates';
+import { ButtonInput, DescriptionInput, PriceUnitInput, SwitchInput, TitleInput, TextAreaInput } from '../../../../ServiceTemplates';
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,6 +30,7 @@ export default class PumpOut extends React.Component {
       secondaryDescription,
       inputLabel,
       buttonText,
+      textAreaLabel,
     } = props;
     this.state = {
       cost,
@@ -39,7 +40,13 @@ export default class PumpOut extends React.Component {
       secondaryDescription,
       inputLabel,
       buttonText,
+      textAreaLabel,
+      showLabel: false,
     };
+  }
+
+  onToggle = (showLabel) => {
+    this.setState({ showLabel });
   }
 
   onChangePrice = (field, value) => {
@@ -67,6 +74,8 @@ export default class PumpOut extends React.Component {
       secondaryDescription,
       inputLabel,
       buttonText,
+      textAreaLabel,
+      showLabel,
     } = this.state;
     const { disabled } = this.props;
     return (
@@ -84,7 +93,8 @@ export default class PumpOut extends React.Component {
           onChange={this.onChange('secondaryDescription')}
         />
         <Spacer />
-        <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} />
+        <SwitchInput disabled={disabled} label={inputLabel} onChange={this.onChange('inputLabel')} onToggle={this.onToggle} />
+        {showLabel && <TextAreaInput disabled={disabled} label={textAreaLabel} onChange={this.onChange('textAreaLabel')} />}
         <ButtonInput disabled={disabled} title={buttonText} onChange={this.onChange('buttonText')} />
       </Wrapper>
     )

@@ -1,54 +1,111 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import styled from 'styled-components';
 
-import { ImageSelector } from './components';
+import { GetSiteBanners, CreateSiteBanner } from 'store/actions/site-banners';
+import { UploadButton } from 'components/basic/Buttons';
+// import { SearchBox } from 'components/basic/Input';
 import { SelectorWrapper } from '../../../Wrappers';
 
-import Image1 from 'resources/test_images/1.png';
-import Image2 from 'resources/test_images/2.png';
-import Image3 from 'resources/test_images/3.png';
-import Image4 from 'resources/test_images/4.png';
-import Image5 from 'resources/test_images/5.png';
-import Image6 from 'resources/test_images/6.jpeg';
 
-const imageList = [
-  { title: 'Header 1', src: Image1 },
-  { title: 'Header 2', src: Image2 },
-  { title: 'Header 3', src: Image3 },
-  { title: 'Header 4', src: Image4 },
-  { title: 'Header 5', src: Image5 },
-  { title: 'Header 6', src: Image6 },
-];
+const Wrapper = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+`;
+
+const HeaderWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+// const SearchWrapper = styled.div`
+//   display: inline-block;
+//   box-sizing: border-box;
+//   width: 282px;
+//   margin: 10px;
+// `;
+
+// const SearchInput = styled(SearchBox)`
+//   display: inline-block;
+//   box-sizing: border-box;
+//   width: 282px;
+// `;
+
+const ImageWrapper = styled.div`
+  display: block;
+  max-height: 536px;
+  overflow-y: scroll;
+  margin-top: 13px;
+`;
+
+const Image = styled.div`
+  display: inline-block;
+  width: 282px;
+  height: 80px;
+  margin: 0 12px 14px;
+  background-image: url(${props => props.src});
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+`;
 
 class AppBanners extends React.Component {
-  static getDerivedStateFromProps(props) {
-    return ({ image: props.image || imageList[0] });
-  }
+  delayTimer = null;
 
-  state = {
-    image: {}
-  }
+  handleFileChange = (file, baseString, ref) => {
+    const { GetSiteBanners, CreateSiteBanner, onChangeBanner } = this.props;
+    if (file) {
+      CreateSiteBanner({
+        data: {
+          site_banner: {
+            name: file.name,
+            banner: baseString
+          }
+        },
+        success: (banner) => {
+          onChangeBanner(banner);
+          GetSiteBanners({ params: { per_page: 1000 }});
+        }
+      })  ;
+    }
+  };
 
-  componentDidMount() {
-    const { image } = this.state;
-    this.props.onChangeImage(image);
-  }
+  onChangeKeyword = (keyword) => {
+    if (this.delayTimer) clearTimeout(this.delayTimer);
+    this.delayTimer = setTimeout(function() {
+        // Do the ajax stuff
+        console.log('-------search--------', keyword);
+    }, 500);
+  };
 
-  onSelectImage = (image) => {
-    this.props.onChangeImage(image);
-    this.setState({ image });
-  }
-
-  getProviderName = () => {
-    const { currentProvider } = this.props;
-    return get(currentProvider, 'name', '');
-  }
+  handleChangeBanner = (banner) => () => {
+    const { onChangeBanner } = this.props;
+    onChangeBanner(banner);
+  };
 
   render() {
+    const { banners } = this.props;
     return (
       <SelectorWrapper>
-        <ImageSelector imageList={imageList} onSelectImage={this.onSelectImage} />
+        <Wrapper>
+          <HeaderWrapper>
+            {/* <SearchWrapper>
+              <SearchInput placeholder="SEARCH" onChange={this.onChangeKeyword} />
+            </SearchWrapper> */}
+            <UploadButton style={{ marginLeft: 17 }} title="Upload Image" accept="image/*" onFileChange={this.handleFileChange} />
+          </HeaderWrapper>
+          <ImageWrapper>
+            {
+              banners.map(banner => (
+                <Image src={banner.banner.url} key={`image_${banner.id}`} onClick={this.handleChangeBanner(banner)} />
+              ))
+            }
+          </ImageWrapper>
+        </Wrapper>
       </SelectorWrapper>
     )
   }
@@ -56,6 +113,12 @@ class AppBanners extends React.Component {
 
 const mapStateToProps = (state) => ({
   currentProvider: state.provider.currentProvider,
+  banners: state.siteBanner.banners
 });
 
-export default connect(mapStateToProps)(AppBanners);
+const mapDispatchToProps = {
+  GetSiteBanners,
+  CreateSiteBanner
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppBanners);

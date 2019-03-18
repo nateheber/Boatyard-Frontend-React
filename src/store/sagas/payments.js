@@ -109,7 +109,7 @@ function* deletePayment(action) {
   }
 }
 
-export default function* Profile() {
+export default function* PaymentSaga() {
   yield takeEvery(actionTypes.GET_PAYMENTS, getPayments);
   yield takeEvery(actionTypes.GET_PAYMENT, getPayment);
   yield takeEvery(actionTypes.CREATE_PAYMENT, createPayment);

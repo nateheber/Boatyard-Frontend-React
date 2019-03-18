@@ -1,13 +1,17 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
+import { GetQuickReplies } from 'store/actions/quickReplies';
 
-import QuickReply from 'resources/quick-reply.svg';
 import Attach from 'resources/attach.svg';
+
+import QuickReplySelector from './QuickReplySelector';
+import QuickReplyModal from './QuickReplyModal';
 
 const Wrapper = styled.div`
   border-top: 1px solid #e6e6e6;
@@ -19,7 +23,7 @@ const Wrapper = styled.div`
 const InputGroup = styled.div`
   border: 1px solid #e6e6e6;
   border-radius: 6px !important;
-  overflow-y: scroll;
+  overflow: hidden;
   margin: 30px 30px 0 30px;
   .secondary & {
     border: none;
@@ -138,10 +142,48 @@ const ButtonIcon = styled.div`
   }
 `;
 
-export class ChatBox extends React.Component {
+class ChatBox extends React.Component {
   state = {
     text: '',
     image: '',
+    showQRModal: false,
+  };
+
+  componentDidMount() {
+    this.props.GetQuickReplies({ params: {} });
+  }
+
+  onChangeText = evt => {
+    this.setState({
+      text: evt.target.value
+    });
+  };
+
+  onSend = () => {
+    const { onSend } = this.props;
+    const { text, image } = this.state;
+    onSend({text, image});
+    this.setState({ text: '', image: '' });
+  }
+
+  onAddNewReply = () => {
+    this.setState({ showQRModal: true });
+  }
+
+  hideQRModal = () => {
+    this.setState({ showQRModal: false });
+  }
+
+  applyQuickReply = (body) => {
+    this.setState({ text: body });
+  }
+
+  removeImage = () => {
+    this.setState({ image: '' });
+  };
+
+  showInput = () => {
+    this.fileInput.click();
   };
 
   handleChange = event => {
@@ -154,30 +196,9 @@ export class ChatBox extends React.Component {
     reader.readAsDataURL(event.target.files[0]);
   };
 
-  onChangeText = evt => {
-    this.setState({
-      text: evt.target.value
-    });
-  };
-
-  removeImage = () => {
-    this.setState({ image: '' });
-  };
-
-  showInput = () => {
-    this.fileInput.click();
-  };
-
-  onSend = () => {
-    const { onSend } = this.props;
-    const { text, image } = this.state;
-    onSend({text, image});
-    this.setState({ text: '', image: '' });
-  }
-
   render() {
-    const { secondary, third, noBorder } = this.props;
-    const { text, image } = this.state;
+    const { secondary, third, noBorder, quickReplies } = this.props;
+    const { text, image, showQRModal } = this.state;
     return (
       <Wrapper className={classNames({ secondary, third, noBorder })}>
         <InputGroup>
@@ -198,9 +219,7 @@ export class ChatBox extends React.Component {
           </InputView>
           <ChatBoxFooter>
             <IconWrapper>
-              <IconButton>
-                <ButtonIcon src={QuickReply} />
-              </IconButton>
+              <QuickReplySelector quickReplies={quickReplies} onSelect={this.applyQuickReply} onAddNewReply={this.onAddNewReply} />
               <IconButton className="right" onClick={this.showInput}>
                 <ButtonIcon src={Attach} />
               </IconButton>
@@ -217,7 +236,18 @@ export class ChatBox extends React.Component {
             key={isEmpty(image)}
           />
         </InputGroup>
+        <QuickReplyModal
+          open={showQRModal}
+          onClose={this.hideQRModal}
+        />
       </Wrapper>
     );
   }
 }
+
+const mapStateToProps = ({ quickReply: { quickReplies } }) => ({ quickReplies });
+const mapDispatchToProps = {
+  GetQuickReplies,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatBox);

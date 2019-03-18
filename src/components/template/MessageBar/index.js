@@ -16,6 +16,7 @@ const Wrapper = styled.div`
   width: 350px;
   background-color: #01556d;
   transition: right 1s;
+  z-index: 10;
   &.show {
     right: 0px;
   }
@@ -35,6 +36,11 @@ class MessageBar extends React.Component {
   componentDidMount() {
     this.props.GetNetworks({ page: 1 });
     this.props.GetConversations({ page: 1 });
+    document.addEventListener('mouseup', this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mouseup', this.handleClickOutside);
   }
 
   onNew = () => {
@@ -54,11 +60,21 @@ class MessageBar extends React.Component {
     this.setState({ selected: -1, newMessage: false });
   }
 
+  setWrapperRef = (node) => {
+    this.wrapperRef = node;
+  }
+
+  handleClickOutside = (event) => {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      this.props.onHide(event);
+    }
+  }
+
   render() {
     const { show, conversations } = this.props;
     const { selected, newMessage } = this.state;
     return (
-      <Wrapper className={show ? 'show' : 'hide'}>
+      <Wrapper ref={this.setWrapperRef} className={show ? 'show' : 'hide'}>
         { newMessage &&
           <NewMessage
             onCancel={this.onCancelNew}

@@ -34,12 +34,16 @@ const TimeStamp = styled.div`
   color: #688da0;
 `;
 
-export default ({ conversation: { conversation: { id }, messages, recipientProfile }, onClick }) => (
-  <Wrapper onClick={onClick(id)}>
-    <Label>{get(recipientProfile, 'attributes.firstName')} {get(recipientProfile, 'attributes.lastName')}</Label>
-    <InfoWrapper>
-      <History>{messages[messages.length - 1].attributes.content}</History>
-      <TimeStamp>{moment(messages[messages.length - 1].attributes.createdAt).format('MMM D')}</TimeStamp>
-    </InfoWrapper>
-  </Wrapper>
-);
+export default ({ conversation: { conversation: { id }, messages, recipientProfile }, onClick }) => {
+  const name = recipientProfile.type === 'providers' ? get(recipientProfile, 'attributes.name') :
+    `${get(recipientProfile, 'attributes.firstName') || ''} ${get(recipientProfile, 'attributes.lastName') || ''}`;
+  return (
+    <Wrapper onClick={onClick(id)}>
+      <Label>{name}</Label>
+      <InfoWrapper>
+        <History>{messages[messages.length - 1].attributes.content}</History>
+        <TimeStamp>{moment(messages[messages.length - 1].attributes.createdAt).format('MMM D')}</TimeStamp>
+      </InfoWrapper>
+    </Wrapper>
+  )
+};

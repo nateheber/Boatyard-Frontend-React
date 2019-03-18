@@ -1,5 +1,6 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { actions } from '../reducers/auth';
 import { actions as ProfileActions } from '../reducers/profile';
@@ -49,6 +50,8 @@ function* loginRequest(action) {
       }
     });
   } catch (err) {
+    toastr.clean()
+    toastr.error('Auth Failure', 'Invalid credentials');
     yield put({
       type: actions.setAuthState,
       payload: {
@@ -98,7 +101,7 @@ function* logoutRequest(action) {
   yield call(action.payload);
 }
 
-export default function* Auth() {
+export default function* AuthSaga() {
   yield takeEvery(actions.login, loginRequest);
   yield takeEvery(actions.signup, signupRequest);
   yield takeEvery(actions.logout, logoutRequest);

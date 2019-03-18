@@ -1,5 +1,6 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/providers';
 import { actions as authActions } from '../reducers/auth';
@@ -127,12 +128,16 @@ function* loginWithProvider(action) {
         yield call(success);
       }
     } else {
+      toastr.clean()
+      toastr.error('Auth Failure', 'Invalid Credentials');
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE });
       if (error) {
         yield call(error, true);
       }
     }
   } catch (e) {
+    toastr.clean()
+    toastr.error('Auth Failure', 'Invalid Credentials');
     yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error);
@@ -260,7 +265,7 @@ function* deletePreferredProvider(action) {
   }
 }
 
-export default function* Profile() {
+export default function* ProviderSaga() {
   yield takeEvery(actionTypes.GET_PROVIDERS, getProviders);
   yield takeEvery(actionTypes.FILTER_PROVIDERS, getProviders);
   yield takeEvery(actionTypes.GET_PREFERRED_PROVIDERS, getPreferredProviders);

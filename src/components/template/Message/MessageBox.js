@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import deepEqual from 'deep-equal';
 
 import { ChatItem } from 'components/basic/Message';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,8 +30,8 @@ export class MessageBox extends React.Component {
   }
 
   render() {
-    const { chatHistory, secondary } = this.props;
-    return (
+    const { chatHistory, secondary, loading } = this.props;
+    return loading ? <LoadingSpinner color="white" /> : (
       <Wrapper>
         {chatHistory.map((chat, key) => (
           <ChatItem secondary={secondary} {...chat} key={`chat_${key}`} />
