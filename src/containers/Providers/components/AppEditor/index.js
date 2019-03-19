@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, set, isEmpty } from 'lodash';
+import { get, set, isEmpty, sortBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { GetSiteBanners, CreateSiteBanner } from 'store/actions/site-banners';
@@ -102,6 +102,27 @@ class AppEditor extends React.Component {
   resetData = (location) => {
     const banner = this.getBanner(location);
     const categories = this.getCategories(location);
+    const { data } = this.state;
+    const newData = JSON.parse(JSON.stringify(data));
+    const path = this.getEditingPath();
+    if (path === '') {
+      const items = categories.map((category) => ({
+        id: category.attributes.position,
+        type: 'category',
+        info: category
+      }));
+      set(newData, 'items', sortBy(items, ['idx'], ['asc']));
+    } else {
+      const items = categories.map((category) => ({
+        id: category.attributes.position,
+        type: 'category',
+        info: category
+      }));
+      set(newData, `${path}.items`, sortBy(items, ['idx'], ['asc']));
+    }
+    this.setState({
+      data: newData
+    });
     this.setState({
       selectedLocation: location,
       banner,
@@ -212,6 +233,7 @@ class AppEditor extends React.Component {
   };
 
   addCategories = (category) => {
+
     const { currentItem } = this.state;
     if (get(currentItem, 'type') === 'category') {
       toastr.clean()
@@ -260,7 +282,7 @@ class AppEditor extends React.Component {
     });
   };
 
-  deleteItem = () => {
+  deleteItem = (baseData) => {
     const { currentItem } = this.state;
     const { data } = this.state;
     const newData = JSON.parse(JSON.stringify(data));
@@ -278,7 +300,7 @@ class AppEditor extends React.Component {
     }
   };
 
-  handleSave = (data, iconFile, customIcon = null) => {
+  handleSave = (baseData, data, iconFile, customIcon = null) => {
     const { CreateIcon } = this.props;
     const { type } = this.state;
     if (type === 'category') {
@@ -291,14 +313,33 @@ class AppEditor extends React.Component {
             }
           },
           success: (icon) => {
-            this.saveCategory({
-              ...data,
-              icon_id: icon.id
-            }, true);
+            // this.saveCategory({
+            //   ...data,
+            //   icon_id: icon.id
+            // }, true);
+            const info = {
+              attributes: {
+                ...data,
+                iconId: icon.id  
+              }
+            }
+            if (baseData) {
+              this.updateItem(info);
+            } else {
+              this.addCategories(info);
+            }
+            this.hideModal();
           }
         })
       } else {
-        this.saveCategory(data);
+        // this.saveCategory(data);
+        const info = { attributes: { ...data } };
+        if (baseData) {
+          this.updateItem(info);
+        } else {
+          this.addCategories(info);
+        }
+        this.hideModal();
       }
     } else {
 
@@ -315,25 +356,25 @@ class AppEditor extends React.Component {
     }, iconCreated);
   }
 
-  // handleSave = (info, file, customIcon) => {
-  //   const { currentItem } = this.state;
-  //   const updatedItem = JSON.parse(JSON.stringify(currentItem));
-  //   set(updatedItem, 'info', {...currentItem.info, ...info, ...(isEmpty(customIcon) ? {} : {customIcon})});
-  //   const { data } = this.state;
-  //   const newData = JSON.parse(JSON.stringify(data));
-  //   const path = this.getEditingPath();
-  //   if (path === '') {
-  //     const idx = newData.items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
-  //     newData.items[idx] = updatedItem;
-  //     this.setState({ data: newData, visibleOfModal: false, currentItem: this.getRenderingData() });
-  //   } else {
-  //     const items = get(newData, `${path}.items`);
-  //     const idx = items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
-  //     items[idx] = updatedItem;
-  //     set(newData, `${path}.items`, items);
-  //     this.setState({ data: newData, visibleOfModal: false, currentItem: this.getRenderingData() });
-  //   }
-  // };
+  updateItem = (info) => {
+    const { currentItem } = this.state;
+    const updatedItem = JSON.parse(JSON.stringify(currentItem));
+    set(updatedItem, 'info', {...currentItem.info, ...info });
+    const { data } = this.state;
+    const newData = JSON.parse(JSON.stringify(data));
+    const path = this.getEditingPath();
+    if (path === '') {
+      const idx = newData.items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+      newData.items[idx] = updatedItem;
+      this.setState({ data: newData, visibleOfModal: false, currentItem: this.getRenderingData() });
+    } else {
+      const items = get(newData, `${path}.items`);
+      const idx = items.findIndex(item => item.type === currentItem.type && item.id === currentItem.id);
+      items[idx] = updatedItem;
+      set(newData, `${path}.items`, items);
+      this.setState({ data: newData, visibleOfModal: false, currentItem: this.getRenderingData() });
+    }
+  };
 
   setServiceTemplate = (templateInfo) => {
     const { currentItem } = this.state;
@@ -443,7 +484,7 @@ class AppEditor extends React.Component {
             image={banner}
             categories={categories}
             onAdd={this.handleAddCategoryButtonClick}
-            onSelect={this.handleEditButtonClick}
+            onSelect={this.addCategories}
           />
         );
       case 2:

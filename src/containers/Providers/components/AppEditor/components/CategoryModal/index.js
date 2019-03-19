@@ -200,8 +200,8 @@ class CategoryModal extends React.Component {
 
   componentDidMount() {
     const { baseData } = this.props;
-    const defaultIcon = get(baseData, 'iconId');
-    const customIcon = get(baseData, 'customIcon');
+    const defaultIcon = get(baseData, 'attributes.iconId');
+    const customIcon = get(baseData, 'attributes.customIcon');
     this.setState({ defaultIcon, customIcon }, () => {
       if (!defaultIcon) {
         if (!isEmpty(customIcon)) {
@@ -219,8 +219,8 @@ class CategoryModal extends React.Component {
   componentDidUpdate(prevProps) {
     if (!deepEqual(this.props.baseData, prevProps.baseData)) {
       const { baseData } = this.props;
-      const defaultIcon = get(baseData, 'iconId');
-      const customIcon = get(baseData, 'customIcon');
+      const defaultIcon = get(baseData, 'attributes.iconId');
+      const customIcon = get(baseData, 'attributes.customIcon');
       this.setState({ defaultIcon, customIcon }, () => {
         if (!defaultIcon) {
           if (!isEmpty(customIcon)) {
@@ -266,9 +266,10 @@ class CategoryModal extends React.Component {
   };
 
   getTextFields = () => {
-    const { baseData, type } = this.props;
-    const name = get(baseData, 'name');
-    const description = get(baseData, 'description');
+    const { baseData } = this.props;
+    const type = this.getType();
+    const name = get(baseData, 'attributes.name');
+    const description = get(baseData, 'attributes.description');
     const fields = [
       {
         field: 'name',
@@ -326,12 +327,13 @@ class CategoryModal extends React.Component {
 
   onDelete = () => {
     const { baseData, onDelete } = this.props;
-    onDelete(baseData.id);
+    onDelete(baseData);
   }
 
   onSave = () => {
     const { onSave } = this.props;
     const { defaultIcon, iconFile, customIcon } = this.state;
+    const { baseData } = this.props;
     if (this.textFields.validateFields()) {
       let values = {
         ...this.textFields.getFieldValues()
@@ -339,11 +341,11 @@ class CategoryModal extends React.Component {
       if (defaultIcon) {
         values = {
           ...values,
-          icon_id: defaultIcon
+          iconId: defaultIcon
         };
-        onSave(values, iconFile);
+        onSave(baseData, values, iconFile);
       } else {
-        onSave(values, iconFile, customIcon);
+        onSave(baseData, values, iconFile, customIcon);
       }
     } else {
       toastr.clean()
@@ -352,10 +354,7 @@ class CategoryModal extends React.Component {
   };
 
   getIcon = () => {
-    const { defaultIcon, customIcon } = this.state;
-    if (!isEmpty(customIcon)) {
-      return customIcon;
-    }
+    const { defaultIcon } = this.state;
     const { icons } = this.props;
     const icon = icons.find(icon => parseInt(icon.id) === parseInt(defaultIcon));
     return get(icon, 'icon.url');
@@ -369,11 +368,25 @@ class CategoryModal extends React.Component {
     return null;
   }
 
+  getType = () => {
+    const { baseData, type } = this.props;
+    if (isEmpty(baseData)) {
+      return type;
+    }
+    if (baseData.type === 'service_categories') {
+      return 'category';
+    } else if (baseData.type === 'services' || baseData.type === 'provider_location_services') {
+      return 'service';
+    }
+    return baseData.type;
+  }
+
   render() {
-    const { loading, type, title, open, onClose, currentStatus, baseData } = this.props;
+    const { loading, title, open, onClose, currentStatus, baseData } = this.props;
     const { fields, name, description } = this.state;
     const customIcon = this.getCustomIcon();
     const actions = [];
+    const type = this.getType();
     if (baseData) {
       actions.push(<HollowButton onClick={this.onDelete} key="modal_btn_delete">Delete</HollowButton>);
     } else {

@@ -6,6 +6,8 @@ import { get } from 'lodash';
 import { HollowButton } from 'components/basic/Buttons';
 import { SelectorWrapper } from '../../../Wrappers';
 
+import categoryOptions from './defaultServiceCategories';
+
 const Wrapper = styled.div`
   display: flex;
   flex: 1;
@@ -70,11 +72,11 @@ class AppServiceCategories extends React.Component {
 
   getIcon = (iconId) => {
     const { icons } = this.props;
-    return icons.find(icon => icon.id.toString() === iconId.toString());
+    const icon = icons.find(icon => icon.id.toString() === iconId.toString());
+    return get(icon, 'icon.url');
   }
 
   render() {
-    const { categories } = this.props;
     return (
       <SelectorWrapper>
         <Wrapper>
@@ -83,13 +85,13 @@ class AppServiceCategories extends React.Component {
           </HeaderWrapper>
           <ListWrapper>
             {
-              categories.map((item, idx) => {
-                const { name, iconId } = item.attributes;
+              categoryOptions.map((item, idx) => {
+                const { attributes: { name, iconId } } = item;
                 const icon = this.getIcon(iconId);
                 return (
                   <Tile key={`category_${idx}`} onClick={this.onSelect(item)}>
                     <div className="tile-content" onClick={this.onGoToDetails}>
-                      <img className="tile-image" src={get(icon, 'icon.url')} alt={name} />
+                      <img className="tile-image" src={icon} alt={name} />
                       <p className="tile-name">{name}</p>
                     </div>
                   </Tile>
