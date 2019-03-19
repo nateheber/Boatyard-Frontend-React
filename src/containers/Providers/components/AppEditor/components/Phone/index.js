@@ -102,7 +102,7 @@ class Phone extends React.Component {
     if (type === 'homeScreen') {
       return get(renderingData, 'screen');
     } else if (type === 'category') {
-      return get(renderingData, 'info.name');
+      return get(renderingData, 'info.attributes.name');
     } else if (type === 'service') {
       return get(renderingData, 'info.name');
     }

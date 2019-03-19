@@ -1,7 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get } from 'lodash';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 import Pencil from 'resources/edit.svg';
 
@@ -103,7 +104,7 @@ const EditButton = styled.div`
   cursor: pointer;
 `;
 
-export default class ListItem extends React.Component {
+class ListItem extends React.Component {
   state = {
     showEditWrapper: false
   }
@@ -128,16 +129,32 @@ export default class ListItem extends React.Component {
   }
 
   getIcon = () => {
-    const { item: { info } } = this.props;
+    const { item } = this.props;
+    if (item.type === 'category') {
+      const iconId = get(item, 'info.attributes.iconId');
+      const { icons } = this.props;
+      return get(icons.find(icon => icon.id.toString() === iconId.toString()), 'icon.url');
+    }
+    const { info } = item;
     const defaultIcon = get(info, 'defaultIcon');
     const customIcon = get(info, 'customIcon');
     return defaultIcon || customIcon;
   }
 
-  render () {
-    const { item, style } = this.props;
-    const { showEditWrapper } = this.state;
+  getRenderingTexts = () => {
+    const { item } = this.props;
+    if (item.type === 'category') {
+      const { info: { attributes: { name, description } } } = item;  
+      return { name, description };
+    }
     const { info: { name, description } } = item;
+    return { name, description };
+  }
+
+  render () {
+    const { style } = this.props;
+    const { showEditWrapper } = this.state;
+    const { name, description } = this.getRenderingTexts();
     const icon = this.getIcon();
     return (
       <Wrapper onClick={this.onClickItem} style={style}>
@@ -157,3 +174,9 @@ export default class ListItem extends React.Component {
     )
   }
 };
+
+const mapStateToProps = (state) => ({
+  icons: state.icon.icons
+});
+
+export default connect(mapStateToProps)(ListItem);

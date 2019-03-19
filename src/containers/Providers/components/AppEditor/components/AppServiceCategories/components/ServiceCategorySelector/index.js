@@ -44,7 +44,7 @@ const ListWrapper = styled.div`
   max-height: 536px;
   overflow-y: scroll;
   margin-top: 13px;
-`
+`;
 
 
 export default class ServiceCategorySelector extends React.Component {

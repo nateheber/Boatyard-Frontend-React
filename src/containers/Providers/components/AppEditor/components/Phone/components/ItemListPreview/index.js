@@ -31,6 +31,9 @@ class ItemListPreview extends React.Component {
     const newItems = update(items, {
       $splice: [[index, 1], [atIndex, 0, item]],
     });
+    for (let i = 0; i < newItems.length; i += 1) {
+      newItems[i].info.attributes.position = i + 1;
+    }
     this.props.onChangeOrder(newItems);
 	}
 

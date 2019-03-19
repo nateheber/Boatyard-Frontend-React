@@ -98,11 +98,6 @@ function* getProviderLocation(action) {
   try {
     result = yield call(apiClient.read, [providerId, providerLocationId]);
     const { data, included } = result;
-    // const location = {
-    //   id: data.id,
-    //   ...data.attributes,
-    //   ...data.relationships
-    // };
     const location = refineProviderLocation(data, included);
     yield put({
       type: actionTypes.GET_PROVIDER_LOCATION_SUCCESS,
