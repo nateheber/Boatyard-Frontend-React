@@ -31,7 +31,7 @@ const LeftPart = styled.div`
 
 const RightPart = styled.div`
   width: calc(100% - 370px);
-  justify-content: space-between;
+  justify-content: flex-end;
   display: flex;
   align-items: center;
 `;
