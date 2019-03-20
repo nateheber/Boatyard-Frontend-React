@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col } from 'react-flexbox-grid';
+import { Row } from 'react-flexbox-grid';
 import { withRouter } from 'react-router-dom';
 import { get } from 'lodash';
 import styled from 'styled-components';
@@ -10,7 +10,7 @@ import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders';
 import { getCustomerName } from 'utils/order';
 
 import { ActionDropdown } from 'components/basic/Dropdown';
-import { OrangeButton } from 'components/basic/Buttons';
+import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { PageTitle } from 'components/basic/Typho';
 import OrderStatus from './OrderStatus';
 
@@ -19,6 +19,21 @@ const SectionHeaderWrapper = styled.div`
   box-sizing: border-box;
   background-color: #fff;
   width: 100%;
+  margin: 0;
+`;
+
+const LeftPart = styled.div`
+  min-width: 370px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const RightPart = styled.div`
+  width: calc(100% - 370px);
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
 `;
 
 class OrderDetailHeader extends React.Component {
@@ -55,6 +70,11 @@ class OrderDetailHeader extends React.Component {
     const { order } = this.props;
     const orderId = get(order, 'id');
     this.props.AcceptOrder({ orderId });
+  }
+
+  declineOrder = () => {
+    const { order } = this.props;
+    this.props.UpdateOrder({ order_id: order.id, data: { order: { state: 'declined' } } })
   }
 
   cancelOrder = () => {
@@ -107,25 +127,25 @@ class OrderDetailHeader extends React.Component {
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
-          <PageTitle>Order #{orderId}</PageTitle>
-          <ActionDropdown
-            items={[
-              {
-                title: 'Delete Order',
-                action: this.deleteOrder
-              },
-              {
-                title: 'Cancel Order',
-                action: this.cancelOrder,
-              }
-            ]}
-          />
-          <Col xs={12} sm={6} md={4} lg={3}>
-            {
-              canAcceptOrder &&
-              <OrangeButton onClick={this.acceptOrder} >Accept Order</OrangeButton>
-            }
-          </Col>
+          <LeftPart>
+            <PageTitle>Order #{orderId}</PageTitle>
+            <ActionDropdown
+              items={[
+                {
+                  title: 'Delete Order',
+                  action: this.deleteOrder
+                },
+                {
+                  title: 'Cancel Order',
+                  action: this.cancelOrder,
+                }
+              ]}
+            />
+          </LeftPart>
+          {canAcceptOrder && <RightPart>
+            <OrangeButton onClick={this.acceptOrder}>Accept Order</OrangeButton>
+            <HollowButton onClick={this.declineOrder}>Decline</HollowButton>
+          </RightPart>}
         </Row>
         {
           this.renderStatus()
