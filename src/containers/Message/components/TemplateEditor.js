@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import changeCase from 'change-case';
+import deepEqual from 'deep-equal';
+import { get } from 'lodash';
 
 import {
   Input,
@@ -13,6 +14,8 @@ import {
   OrangeButton,
   PurpleButton
 } from 'components/basic/Buttons';
+
+import { keyToSnakeCase } from 'utils/object';
 
 const Wrapper = styled.div`
   padding-left: 30px;
@@ -36,35 +39,55 @@ const ViewTemplateButtonWrapper = styled.div`
 `;
 
 export class TemplateEditor extends React.Component {
+  state = {
+    templateInfo: {}
+  }
+
+  componentDidMount() {
+    const { defaultTemplateInfo } = this.props;
+    this.setState({ templateInfo: {...defaultTemplateInfo} });
+  }
+
+  componentDidUpdate(prevProps) {
+    const { defaultTemplateInfo } = this.props;
+    if (!deepEqual(defaultTemplateInfo, prevProps.defaultTemplateInfo)) {
+      this.setState({ templateInfo: {...defaultTemplateInfo} });
+    }
+  }
+
+  onChangeBodyText = (evt) => {
+    const emailBody = evt.target.value;
+    const { templateInfo } = this.state;
+    this.setState({ templateInfo: { ...templateInfo, emailBody } });
+  }
+
+  onSave = () => {
+    const { templateInfo } = this.state;
+    this.props.onSave(keyToSnakeCase(templateInfo));
+  }
+
   render() {
-    const { selected, onCancel, onSave } = this.props;
+    const { onCancel } = this.props;
+    const { templateInfo } = this.state;
+    const emailGreeting = get(templateInfo, 'emailGreeting');
+    const buttonText = get(templateInfo, 'buttonText');
+    const emailBody = get(templateInfo, 'emailBody');
     return (
       <Wrapper>
         <InputWrapper className="primary">
           <InputLabel>Greeting</InputLabel>
-          <Input type="text" value="Hi [[CUSTOMER_FIRST_NAME]]" disabled />
+          <Input type="text" placeholder={emailGreeting} disabled />
         </InputWrapper>
         <InputWrapper className="primary">
-          <InputLabel>Email Body Section 1</InputLabel>
-          <TextArea value="Thank you for choosing Brock's Boat Detailing. To view your invoice, please click here:" />
+          <InputLabel>Email Body</InputLabel>
+          <TextArea value={emailBody} onChange={this.onChangeBodyText} />
         </InputWrapper>
         <ViewTemplateButtonWrapper>
-          <PurpleButton>VIEW {changeCase.upperCase(selected)}</PurpleButton>
+          <PurpleButton>{buttonText}</PurpleButton>
         </ViewTemplateButtonWrapper>
-        <InputWrapper className="primary">
-          <InputLabel>Email Body Section 2</InputLabel>
-          <TextArea
-            value="We appreciate your business and look forward to serving you again
-            soon.&#13;&#10;Thank you,"
-          />
-        </InputWrapper>
-        <TextArea
-          value="[[PROVIDER_USER_NAME]]&#13;&#10;Brock's Boat Detailing"
-          disabled
-        />
         <ActionWrapper>
           <HollowButton onClick={onCancel}>CANCEL</HollowButton>
-          <OrangeButton onClick={onSave}>SAVE</OrangeButton>
+          <OrangeButton onClick={this.onSave}>SAVE</OrangeButton>
         </ActionWrapper>
       </Wrapper>
     );

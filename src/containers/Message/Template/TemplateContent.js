@@ -16,29 +16,37 @@ const Wrapper = styled.div`
 `;
 
 class TemplateContent extends React.Component {
-  getTemplateInfo = () => {
-    const { selected, globalTemplates, localTemplates } = this.props;
-    if (hasIn(localTemplates, selected)) {
-      return get(localTemplates, selected);
-    }
-    return get(globalTemplates, selected);
+  onSave = (templateInfo) => {
+    const { onSave, selected } = this.props;
+    onSave({ triggerKey: selected, templateInfo });
   }
+
+  getTemplateInfo = () => {
+    const { selected, globalTemplates, localTemplates, privilege } = this.props;
+    if (hasIn(localTemplates, selected) && privilege !== 'admin') {
+      return get(localTemplates, `${selected}.attributes.emailOptions`);
+    }
+    return get(globalTemplates, `${selected}.attributes.emailOptions`);
+  }
+
   render() {
-    const { selected, onCancel, onSave, onBack } = this.props;
+    const { selected, onCancel, onBack } = this.props;
+    if (isEmpty(selected)) {
+      return false;
+    }
     const templateInfo = this.getTemplateInfo();
-    console.log(templateInfo);
-    return isEmpty(selected) ? (
-      false
-    ) : (
+    return (
       <Wrapper>
         <InboxContentHeader
           name={`Edit ${changeCase.ucFirst(selected)} Reply`}
           onBack={onBack}
         />
         <TemplateEditor
+          defaultTemplateInfo={templateInfo}
           selected={selected}
           onCancel={onCancel}
-          onSave={onSave}
+          onSave={this.onSave}
+          key={selected}
         />
       </Wrapper>
     );
@@ -48,6 +56,7 @@ class TemplateContent extends React.Component {
 const mapStateToProps = (state) => ({
   globalTemplates: state.messageTemplate.globalTemplates,
   localTemplates: state.messageTemplate.localTemplates,
+  privilege: state.auth.privilege,
 });
 
 export default connect(mapStateToProps)(TemplateContent);
