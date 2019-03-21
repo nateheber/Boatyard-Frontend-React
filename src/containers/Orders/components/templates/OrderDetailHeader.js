@@ -31,7 +31,7 @@ const LeftPart = styled.div`
 
 const RightPart = styled.div`
   width: calc(100% - 370px);
-  justify-content: space-between;
+  justify-content: flex-end;
   display: flex;
   align-items: center;
 `;
@@ -74,7 +74,7 @@ class OrderDetailHeader extends React.Component {
 
   declineOrder = () => {
     const { order } = this.props;
-    this.props.UpdateOrder({ order_id: order.id, data: { order: { state: 'declined' } } })
+    this.props.UpdateOrder({ order_id: order.id, data: { order: { state: 'rejected' } } })
   }
 
   cancelOrder = () => {
