@@ -19,7 +19,7 @@ class ProviderInfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      providerName: `Provider #${props.id}`
+      providerName: null //`Provider #${props.id}`
     };
     this._isMounted = false;
   }
@@ -43,9 +43,11 @@ class ProviderInfo extends React.Component {
   render() {
     const { providerName } = this.state;;
     return (
-      <Wrapper>
-        {providerName}
-      </Wrapper>
+      <div>
+        {providerName && <Wrapper>
+          {providerName}
+        </Wrapper>}
+      </div>
     )
   }
 }
