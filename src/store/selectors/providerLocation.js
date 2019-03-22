@@ -7,6 +7,7 @@ export const includedSelector = (state) => state.providerLocation.included;
 export const refinedProviderLocationSelector = createSelector(
   providerLocationsSelector, includedSelector,
   (providerLocations, included) => {
+    const services = [];
     const parsedData = providerLocations.map((location) => {
       const relationships = _.get(location, 'relationships');
       const relationKeys = _.keys(relationships);
@@ -20,6 +21,9 @@ export const refinedProviderLocationSelector = createSelector(
         return data.map(relation => {
           const type = _.get(relation, 'type');
           const id = _.get(relation, 'id');
+          if (type === 'services') {
+            services.push(_.get(included, `[${type}][${id}]`));
+          }
           return _.get(included, `[${type}][${id}]`);
         })
       });
@@ -34,7 +38,14 @@ export const refinedProviderLocationSelector = createSelector(
               if (!relations[item[index].type]) {
                 relations[item[index].type] = [];
               }
-              relations[item[index].type].push(item[index]);
+              if (item[index].type === 'provider_location_services') {
+                const refactoredItem = item[index];
+                const service = services.find(s => s.id === _.get(refactoredItem, 'attributes.serviceId', '').toString());
+                refactoredItem.attributes['iconId'] = _.get(service, 'attributes.iconId');
+                relations[item[index].type].push(refactoredItem);
+              } else {
+                relations[item[index].type].push(item[index]);
+              }
             }
           }
         }

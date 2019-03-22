@@ -201,7 +201,7 @@ class CategoryModal extends React.Component {
   componentDidMount() {
     const { baseData } = this.props;
     const defaultIcon = get(baseData, 'info.attributes.iconId');
-    const customIcon = get(baseData, 'info.attributes.customIcon');
+    const customIcon = get(baseData, 'info.attributes.customIcon.url');
     this.setState({ defaultIcon, customIcon }, () => {
       if (!defaultIcon) {
         if (!isEmpty(customIcon)) {
@@ -220,7 +220,7 @@ class CategoryModal extends React.Component {
     if (!deepEqual(this.props.baseData, prevProps.baseData)) {
       const { baseData } = this.props;
       const defaultIcon = get(baseData, 'info.attributes.iconId');
-      const customIcon = get(baseData, 'info.attributes.customIcon');
+      const customIcon = get(baseData, 'info.attributes.customIcon.url');
       this.setState({ defaultIcon, customIcon }, () => {
         if (!defaultIcon) {
           if (!isEmpty(customIcon)) {
@@ -354,10 +354,14 @@ class CategoryModal extends React.Component {
   };
 
   getIcon = () => {
-    const { defaultIcon } = this.state;
+    const { defaultIcon, customIcon } = this.state;
     const { icons } = this.props;
-    const icon = icons.find(icon => parseInt(icon.id) === parseInt(defaultIcon));
-    return get(icon, 'icon.url');
+    if (defaultIcon) {
+      const icon = icons.find(icon => parseInt(icon.id) === parseInt(defaultIcon));
+      return get(icon, 'icon.url');  
+    } else {
+      return customIcon;
+    }
   }
 
   getCustomIcon = () => {

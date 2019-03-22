@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, set, isEmpty, sortBy } from 'lodash';
+import { get, set, isEmpty, sortBy, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { GetSiteBanners, CreateSiteBanner } from 'store/actions/site-banners';
@@ -10,6 +10,7 @@ import { actionTypes as iconActions, CreateIcon, GetIcons } from 'store/actions/
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
 import { setServiceTemplateData } from 'utils/serviceTemplate';
+
 
 import {
   AppHeader,
@@ -102,7 +103,8 @@ class AppEditor extends React.Component {
     const categories = this.getCategories(location);
     const { data } = this.state;
     const newData = JSON.parse(JSON.stringify(data));
-    // const path = this.getEditingPath();
+    const services = this.getServices(location);
+    const path = this.getEditingPath();
     // if (path === '') {
     //   const items = categories.map((category) => ({
     //     id: category.attributes.position,
@@ -118,12 +120,29 @@ class AppEditor extends React.Component {
     //   }));
     //   set(newData, `${path}.items`, sortBy(items, ['idx'], ['asc']));
     // }
-    const items = categories.map((category) => ({
-      id: category.attributes.position,
-      type: 'category',
-      info: category
+    let items = categories.map((category) => {
+      let filtered = services.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
+      filtered = orderBy(filtered, ['attributes.position'], ['asc']);
+      const subItems = filtered.map((item) => ({
+        id: item.attributes.position,
+        type: 'service',
+        info: item
+      }));
+      return {
+        id: category.attributes.position,
+        type: 'category',
+        info: category,
+        items: subItems
+      };
+    });
+    const rootServices = services.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => ({
+      id: service.attributes.position,
+      type: 'service',
+      info: service
     }));
-    set(newData, 'items', sortBy(items, ['idx'], ['asc']));
+    items = orderBy(items.concat(rootServices), ['id'], ['asc']);
+    console.log('-----------------items----------', items);
+    set(newData, 'items', items);
     this.setState({
       data: newData,
       selectedLocation: location,
@@ -236,7 +255,6 @@ class AppEditor extends React.Component {
   };
 
   addCategories = (category) => {
-
     const { currentItem } = this.state;
     if (get(currentItem, 'type') === 'category') {
       toastr.clean()
@@ -256,6 +274,30 @@ class AppEditor extends React.Component {
       toastr.error('Cannot add service under service');
     } else {
       this.addItem(service, 'service');
+      // const { CreateService, providerId } = this.props;
+      // CreateService({ 
+      //   data: {
+      //     service: {
+      //       provider_id: providerId,
+      //       name: get(service, 'name'),
+      //       description: get(service, 'description'),
+      //       category_id: get(service, 'categoryId'),
+      //       icon_id: get(service, 'iconId'),
+      //       cost: get(service, 'cost'),
+      //       cost_type: get(service, 'costType')
+      //     },
+      //   },
+      //   success: (service) => {
+      //     const refactoredService = {
+      //       attributes: {
+      //         ...service.attributes,
+      //         serviceId: service.id
+      //       }
+      //     };
+      //     console.log('---------------------refactoredService------------', refactoredService);
+      //     this.addItem(refactoredService, 'service');
+      //   }
+      // });
     }
   };
 
@@ -325,7 +367,7 @@ class AppEditor extends React.Component {
   };
 
   handleSave = (baseData, data, iconFile, customIcon = null) => {
-    const { CreateIcon } = this.props;
+    const { CreateIcon, GetIcons } = this.props;
     let type = get(baseData, 'type');
     const currentInfo = get(baseData, 'info', {});
     if (isEmpty(currentInfo)) {
@@ -359,6 +401,8 @@ class AppEditor extends React.Component {
             }
           },
           success: (icon) => {
+            this.hideModal();
+            GetIcons({ params: { per_page: 1000 } });
             if (isEmpty(currentInfo)) {
               this.addCategories({
                 ...info,
@@ -370,6 +414,9 @@ class AppEditor extends React.Component {
             } else {
               this.updateItem(info);
             }
+          },
+          error: () => {
+            this.hideModal();
           }
         })
       } else {
@@ -378,22 +425,32 @@ class AppEditor extends React.Component {
         } else {
           this.updateItem(info);
         }
+        this.hideModal();
       }
     } else {
-      this.updateItem(info);
-    }
-    this.hideModal();
-  };
-
-  saveCategory = (data, iconCreated=false) => {
-    this.updateLocation({
-      provider_location: {
-        service_categories_attributes: [
-          { ...data }
-        ]
+      if (customIcon && iconFile) {
+        CreateIcon({
+          data: {
+            icon: {
+              name: iconFile.name,
+              icon: customIcon
+            }
+          },
+          success: (icon) => {
+            this.hideModal();
+            GetIcons({ params: { per_page: 1000 } });
+            this.updateItem(info);
+          },
+          error: () => {
+            this.hideModal();
+          }
+        })
+      } else {
+        this.updateItem(info);
+        this.hideModal();
       }
-    }, iconCreated);
-  }
+    }
+  };
 
   updateItem = (info) => {
     const { currentItem } = this.state;
@@ -556,9 +613,14 @@ class AppEditor extends React.Component {
     return get(location, 'relationships.service_categories', []);
   };
 
+  getServices = (location) => {
+    return get(location, 'relationships.provider_location_services', []);
+  };
+
   handleSaveButtonClick = () => {
     const { banner, selectedLocation, data } = this.state;
     const originCategries = get(selectedLocation, 'relationships.service_categories', []);
+    const originServices = get(selectedLocation, 'relationships.provider_location_services', []);
     const currentCategories = [];
     const currentCategoryIds = [];
     const currentServices = [];
@@ -569,6 +631,7 @@ class AppEditor extends React.Component {
       const item = items[index];
       const info = get(item, 'info');
       info.attributes.position = parseInt(index) + 1;
+      console.log('-----------item-----------', item);
       if (item.type === 'category') {
         currentCategories.push(info);
         if(info.hasOwnProperty('id')) {
@@ -577,10 +640,10 @@ class AppEditor extends React.Component {
         if (item.hasOwnProperty('items')) {
           const subItems = get(item, 'items');
           for(const subIdx in subItems) {
-            const subItem = subItems[index];
-            const position = parseInt(info.attributes.position) * 100 + subIdx + 1;
+            const subItem = subItems[subIdx];
+            const position = parseInt(info.attributes.position) * 100 + parseInt(subIdx) + 1;
             const subInfo = get(subItem, 'info');
-            subInfo.attributes.position = position;
+            subInfo.attributes['position'] = position;
             currentServices.push(subInfo);
             if(subInfo.hasOwnProperty('id')) {
               currentServiceIds.push(get(subInfo, 'id'));
@@ -594,11 +657,8 @@ class AppEditor extends React.Component {
         }
       }
     }
-    console.log('-------------originCategries----------------', originCategries);
-    // console.log('-------------currentCategories----------------', currentCategories);
-    // console.log('-------------currentCategoryIds----------------', currentCategoryIds);
-    // console.log('-------------currentServices----------------', currentServices);
-    // console.log('-------------currentServiceIds----------------', currentServiceIds);
+    console.log('------------currentCategories------------', currentCategories);
+    console.log('------------originCategries------------', originCategries);
     for (const index in currentCategories) {
       const category = currentCategories[index];
       const attributes = get(category, 'attributes');
@@ -613,19 +673,160 @@ class AppEditor extends React.Component {
       categoriesPayload.push(payload);
     }
 
+    for(const index in originCategries) {
+      const id = get(originCategries[index], 'id');
+      if (currentCategoryIds.indexOf(id) === -1) {
+        categoriesPayload.push({
+          id,
+          '_destroy': true
+        });
+      }
+    }
 
-    // if (banner.hasOwnProperty('id')) {
-    //   if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
-    //     this.updateLocation({
-    //       provider_location: {
-    //         site_banner_id: banner.id
-    //       }
-    //     });
-    //   }
-    // }
+    const { UpdateProviderLocation } = this.props;
+    let params = {};
+    if (banner.hasOwnProperty('id')) {
+      if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
+        params = {
+          site_banner_id: banner.id
+        };
+      }
+    }
+    console.log('------------categoriesPayload------------', categoriesPayload);
+    if (categoriesPayload.length > 0) {
+      params = {
+        ...params,
+        service_categories_attributes: categoriesPayload
+      };
+      UpdateProviderLocation({
+        providerId: selectedLocation.providerId,
+        providerLocationId: selectedLocation.id,
+        data: {
+          provider_location: { ...params }
+        },
+        success: (location) => {
+          const categories = get(location, 'relationships.service_categories', []);
+          this.updateLocationServices(categories, originServices, currentServiceIds, currentServices);
+        }
+      });
+    } else {
+      this.updateLocationServices(originCategries, originServices, currentServiceIds, currentServices, params);
+    }
   };
 
-  updateLocation = (data, iconCreated) => {
+  updateLocationServices = (categories, originServices, currentServiceIds, services, params = {}) => {
+    const { providerId } = this.props;
+    const { createServiceClient } = require('../../../../api');
+    const serviceClient = createServiceClient('admin');
+    const servicesPayload = [];
+    for (const index in services) {
+      const service = services[index];
+      const attributes = get(service, 'attributes');
+      const position = get(attributes, 'position');
+      const category = categories.find(item => parseInt(item.attributes.position) === Math.floor(position / 100));
+      const payload = {
+        category_id: get(attributes, 'categoryId'),
+        service_id: get(attributes, 'serviceId'),
+        name: get(attributes, 'name'),
+        description: get(attributes, 'description'),
+        icon_id: get(attributes, 'iconId'),
+        cost: get(attributes, 'cost') || 0,
+        cost_type: get(service, 'costType'),
+        service_category_id: get(service, 'serviceCategoryId'),
+        position
+      };
+      if (category) {
+        payload['service_category_id'] = get(category, 'id');
+      } else {
+        payload['service_category_id'] = null;
+      }
+      if (service.hasOwnProperty('id')) {
+        payload['id'] = service.id;
+      }
+      servicesPayload.push(payload);
+    }
+    const promises = [];
+    for(const index in servicesPayload) {
+      const service = servicesPayload[index];
+      if (service.service_id) {
+        const data = {
+          service: {
+            provider_id: providerId,
+            name: get(service, 'name'),
+            description: get(service, 'description'),
+            category_id: get(service, 'category_id'),
+            icon_id: get(service, 'icon_id'),
+            cost: get(service, 'cost'),
+            cost_type: get(service, 'cost_type'),
+            service_category_id: get(service, 'service_category_id'),
+            position: get(service, 'position')
+          }
+        };
+        promises.push(serviceClient.update(service.service_id, data));
+      } else {
+        const data = {
+          service: {
+            provider_id: providerId,
+            name: get(service, 'name'),
+            description: get(service, 'description'),
+            category_id: get(service, 'category_id'),
+            icon_id: get(service, 'icon_id'),
+            cost: get(service, 'cost'),
+            cost_type: get(service, 'cost_type'),
+            service_category_id: get(service, 'service_category_id'),
+            position: get(service, 'position')
+          }
+        };
+        promises.push(serviceClient.create(data));
+      }
+    }
+    if (promises.length > 0) {
+      Promise.all(promises).then(results => {
+        const payloads = results.map(result => {
+          const data = get(result, 'data', {});
+          const name = get(data, 'attributes.name');
+          const cost = get(data, 'attributes.cost');
+          const serviceId = get(data, 'id');
+          const locationService = servicesPayload.find(service => service.name === name);
+          const payload = {
+            name,
+            provider_id: providerId,
+            service_id: serviceId,
+            service_category_id: locationService.service_category_id,
+            position: locationService.position,
+            cost
+          };
+          if (locationService.hasOwnProperty('id')) {
+            payload['id'] = locationService.id;
+          }
+          return payload;
+        });
+        for(const index in originServices) {
+          const id = get(originServices[index], 'id');
+          if (currentServiceIds.indexOf(id) === -1) {
+            payloads.push({
+              id,
+              '_destroy': true
+            });
+          }
+        }
+        if (payloads.length > 0) {
+          this.updateLocation({
+            provider_location: {
+              ...params,
+              provider_location_services_attributes: payloads
+            }
+          });
+        } else {
+          if (!isEmpty(params)) {
+            this.updateLocation({ provider_location: { ...params } });
+          }
+        }
+      })
+    }
+  }
+
+  updateLocation = (data) => {
     const { selectedLocation } = this.state;
     const { UpdateProviderLocation } = this.props;
     UpdateProviderLocation({
@@ -633,17 +834,54 @@ class AppEditor extends React.Component {
       providerLocationId: selectedLocation.id,
       data,
       success: () => {
-        this.hideModal();
         this.refreshData();
-        if (iconCreated) {
-          const { GetIcons } = this.props;
-          GetIcons({ params: { per_page: 1000 } });
-        }
       }
     });
   };
 
-  handlePublishStatus = () => {
+  generatePayloadForServices = (categories, originServices, currentServiceIds, services) => {
+    const servicesPayload = [];
+    for (const index in services) {
+      const service = services[index];
+      const attributes = get(service, 'attributes');
+      const position = get(attributes, 'position');
+      const category = categories.find(item => parseInt(item.attributes.position) === Math.floor(position / 100));
+      const payload = {
+        category_id: get(attributes, 'categoryId'),
+        service_id: get(attributes, 'serviceId'),
+        name: get(attributes, 'name'),
+        description: get(attributes, 'description'),
+        icon_id: get(attributes, 'iconId'),
+        cost: get(attributes, 'cost'),
+        cost_type: get(service, 'costType'),
+        service_category_id: get(service, 'serviceCategoryId'),
+        position
+      };
+      if (category) {
+        payload['service_category_id'] = get(category, 'id');
+      } else {
+        payload['service_category_id'] = null;
+      }
+      if (service.hasOwnProperty('id')) {
+        payload['id'] = service.id;
+      }
+      servicesPayload.push(payload);
+    }
+
+    for(const index in originServices) {
+      const id = get(originServices[index], 'id');
+      if (currentServiceIds.indexOf(id) === -1) {
+        servicesPayload.push({
+          id,
+          '_destroy': true
+        });
+      }
+    }
+    return servicesPayload;
+  }
+
+  handlePublishStatus = (published) => {
+    this.updateLocation({ provider_location: { published } });
   }
 
   render() {

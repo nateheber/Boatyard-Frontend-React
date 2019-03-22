@@ -130,7 +130,7 @@ class ListItem extends React.Component {
 
   getIcon = () => {
     const { item } = this.props;
-    const iconId = get(item, 'info.attributes.iconId');
+    const iconId = get(item, 'info.attributes.iconId') || '';
     const { icons } = this.props;
     return get(icons.find(icon => icon.id.toString() === iconId.toString()), 'icon.url');
     // if (item.type === 'category') {
