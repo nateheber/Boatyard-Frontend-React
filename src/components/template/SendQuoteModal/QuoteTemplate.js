@@ -12,9 +12,10 @@ import { PurpleButton } from 'components/basic/Buttons';
 const Label = styled(InputLabel)`
   color: #8f8f8f;
   font-size: 14px;
+  font-weight: 400;
   font-family: "Open sans-serif", sans-serif;
   text-transform: capitalize;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 `
 
 const Wrapper = styled.div`
@@ -32,11 +33,13 @@ const BodyWrapper = styled.div`
 
 const BodyContent = styled.div`
   font-family: "Source Sans",sans-serif !important;
-  color: #333;
+  font-size: 14px;
+  font-wieght: 400;
+  color: #333333;
 `
 
 const ViewTemplateButtonWrapper = styled.div`
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `;
 
 const FieldWrapper = styled.div`
@@ -57,17 +60,19 @@ export default class TemplateEditor extends React.Component {
   }
 
   render() {
-    const { subject, body, quote } = this.props;
+    // const { subject, body, quote } = this.props;
     return (
       <Wrapper>
         <InputWrapper className="primary">
           <Label>Subject</Label>
-          <Input type="text" value={subject} onChange={this.changeSubject} />
+          <Input type="text" value="Your Quote from 181 Degrees Unlimited" onChange={this.changeSubject} />
         </InputWrapper>
         <BodyWrapper>
           <Label>Body</Label>
           <BodyContent>
-            {body}
+            Hi Brock Dev Test 44, <br/>
+            <br />
+            Thank you for the opportunity to provide you with our services. To view your quote, please click here:
           </BodyContent>
         </BodyWrapper>
         <br />
@@ -77,9 +82,20 @@ export default class TemplateEditor extends React.Component {
         </ViewTemplateButtonWrapper>
         <FieldWrapper>
           <TextArea
-            value={quote}
             onChange={this.changeQuote}
-          />
+          >
+          {`Once we receive your approval, we will contact you to schedule your service. If you have any questions, or if there is anything else I can do for you, please let me know.
+
+We appreciate your business and look forward to serving you.
+
+
+Thank you,
+
+
+Desire Radford
+
+181 Degrees Unlimited`}
+          </TextArea>
         </FieldWrapper>
       </Wrapper>
     );
