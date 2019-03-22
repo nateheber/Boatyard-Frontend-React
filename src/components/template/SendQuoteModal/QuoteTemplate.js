@@ -12,8 +12,7 @@ import { PurpleButton } from 'components/basic/Buttons';
 const Label = styled(InputLabel)`
   color: #8f8f8f;
   font-size: 14px;
-  font-weight: 400;
-  font-family: "Open sans-serif", sans-serif;
+  font-family: "Open sans-serif-Semi-bold", sans-serif;
   text-transform: capitalize;
   margin-bottom: 10px;
 `
@@ -21,7 +20,6 @@ const Label = styled(InputLabel)`
 const Wrapper = styled.div`
   padding-left: 30px;
   padding-right: 30px;
-  margin-top: 30px;
   align-self: flex-start;
   width: 100%;
   box-sizing: border-box;
@@ -34,7 +32,7 @@ const BodyWrapper = styled.div`
 const BodyContent = styled.div`
   font-family: "Source Sans",sans-serif !important;
   font-size: 14px;
-  font-wieght: 400;
+  font-weight: 400;
   color: #333333;
 `
 
@@ -44,7 +42,13 @@ const ViewTemplateButtonWrapper = styled.div`
 
 const FieldWrapper = styled.div`
   padding: 0px;
-`
+`;
+
+const TextInput = styled(TextArea)`
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+`;
 
 export default class TemplateEditor extends React.Component {
   changeSubject = (evt) => {
@@ -81,7 +85,7 @@ export default class TemplateEditor extends React.Component {
           <PurpleButton>VIEW QUOTE</PurpleButton>
         </ViewTemplateButtonWrapper>
         <FieldWrapper>
-          <TextArea
+          <TextInput
             onChange={this.changeQuote}
           >
           {`Once we receive your approval, we will contact you to schedule your service. If you have any questions, or if there is anything else I can do for you, please let me know.
@@ -95,7 +99,7 @@ Thank you,
 Desire Radford
 
 181 Degrees Unlimited`}
-          </TextArea>
+          </TextInput>
         </FieldWrapper>
       </Wrapper>
     );

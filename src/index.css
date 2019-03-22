@@ -26,3 +26,13 @@ code {
   font-family: "DIN-Light";
   src: url('./resources/DIN/DINLi___.ttf') format("truetype");
 }
+
+@font-face {
+  font-family: "Open sans-serif-Regular";
+  src: url('./resources/Open_sans/OpenSans-Regular.ttf') format("truetype");
+}
+
+@font-face {
+  font-family: "Open sans-serif-Semi-bold";
+  src: url('./resources/Open_sans/OpenSans-SemiBold.ttf') format("truetype");
+}
