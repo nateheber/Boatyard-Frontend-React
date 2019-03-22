@@ -64,12 +64,10 @@ class AppEditor extends React.Component {
         type: 'homeScreen',
         items: [],
       },
-      type: '',
       currentScreen: '',
       currentItem: {},
       visibleOfModal: false,
-      selectedLocation: {},
-      categories: []
+      selectedLocation: {}
     };
   }
 
@@ -104,29 +102,34 @@ class AppEditor extends React.Component {
     const categories = this.getCategories(location);
     const { data } = this.state;
     const newData = JSON.parse(JSON.stringify(data));
-    const path = this.getEditingPath();
-    if (path === '') {
-      const items = categories.map((category) => ({
-        id: category.attributes.position,
-        type: 'category',
-        info: category
-      }));
-      set(newData, 'items', sortBy(items, ['idx'], ['asc']));
-    } else {
-      const items = categories.map((category) => ({
-        id: category.attributes.position,
-        type: 'category',
-        info: category
-      }));
-      set(newData, `${path}.items`, sortBy(items, ['idx'], ['asc']));
-    }
+    // const path = this.getEditingPath();
+    // if (path === '') {
+    //   const items = categories.map((category) => ({
+    //     id: category.attributes.position,
+    //     type: 'category',
+    //     info: category
+    //   }));
+    //   set(newData, 'items', sortBy(items, ['idx'], ['asc']));
+    // } else {
+    //   const items = categories.map((category) => ({
+    //     id: category.attributes.position,
+    //     type: 'category',
+    //     info: category
+    //   }));
+    //   set(newData, `${path}.items`, sortBy(items, ['idx'], ['asc']));
+    // }
+    const items = categories.map((category) => ({
+      id: category.attributes.position,
+      type: 'category',
+      info: category
+    }));
+    set(newData, 'items', sortBy(items, ['idx'], ['asc']));
     this.setState({
-      data: newData
-    });
-    this.setState({
+      data: newData,
       selectedLocation: location,
       banner,
-      categories
+      currentScreen: '',
+      currentItem: {}
     });
   };
 
@@ -260,12 +263,27 @@ class AppEditor extends React.Component {
     const { data } = this.state;
     const newData = JSON.parse(JSON.stringify(data));
     const path = this.getEditingPath();
+    let info = item;
+    if (type === 'service') {
+      info = {
+        attributes: {
+          position: 0,
+          ...item
+        }
+      };
+    }
     if (path === '') {
       const lastId = this.getLastId(newData.items);
       newData.items.push({
         id: lastId + 1,
         type,
-        info: item,
+        info: {
+          ...info,
+          attributes: {
+            ...info.attributes,
+            position: lastId + 1
+          }  
+        }
       })
     } else {
       const items = get(newData, `${path}.items`, []);
@@ -273,7 +291,13 @@ class AppEditor extends React.Component {
       items.push({
         id: lastId + 1,
         type,
-        info: item,
+        info: {
+          ...info,
+          attributes: {
+            ...info.attributes,
+            position: lastId + 1
+          }  
+        }
       });
       set(newData, `${path}.items`, items);
     }
@@ -302,7 +326,29 @@ class AppEditor extends React.Component {
 
   handleSave = (baseData, data, iconFile, customIcon = null) => {
     const { CreateIcon } = this.props;
-    const { type } = this.state;
+    let type = get(baseData, 'type');
+    const currentInfo = get(baseData, 'info', {});
+    if (isEmpty(currentInfo)) {
+      type = 'category';
+    }
+    const attributes = get(currentInfo, 'attributes', {});
+    // const info = {
+    //   ...baseData,
+    //   info: {
+    //     ...currentInfo,
+    //     attributes: {
+    //       ...attributes,
+    //       ...data
+    //     }
+    //   }
+    // };  
+    const info = {
+      ...currentInfo,
+      attributes: {
+        ...attributes,
+        ...data
+      }
+    };  
     if (type === 'category') {
       if (customIcon && iconFile) {
         CreateIcon({
@@ -313,37 +359,30 @@ class AppEditor extends React.Component {
             }
           },
           success: (icon) => {
-            // this.saveCategory({
-            //   ...data,
-            //   icon_id: icon.id
-            // }, true);
-            const info = {
-              attributes: {
-                ...data,
-                iconId: icon.id  
-              }
-            }
-            if (baseData) {
-              this.updateItem(info);
+            if (isEmpty(currentInfo)) {
+              this.addCategories({
+                ...info,
+                attributes: {
+                  ...info.attributes,
+                  iconId: icon.id
+                }
+              });
             } else {
-              this.addCategories(info);
+              this.updateItem(info);
             }
-            this.hideModal();
           }
         })
       } else {
-        // this.saveCategory(data);
-        const info = { attributes: { ...data } };
-        if (baseData) {
-          this.updateItem(info);
-        } else {
+        if (isEmpty(currentInfo)) {
           this.addCategories(info);
+        } else {
+          this.updateItem(info);
         }
-        this.hideModal();
       }
     } else {
-
+      this.updateItem(info);
     }
+    this.hideModal();
   };
 
   saveCategory = (data, iconCreated=false) => {
@@ -465,16 +504,8 @@ class AppEditor extends React.Component {
     this.setState({ visibleOfModal: false, currentItem });
   };
 
-  handleAddCategoryButtonClick = () => {
-    this.setState({ type: 'category' });
-    this.showModal();
-  };
-
-  handleEditButtonClick = (category) => {
-  };
-
   renderSteps = () => {
-    const { step, banner, services, categories } = this.state;
+    const { step, banner, services } = this.state;
     switch(step) {
       case 0:
         return <AppBanners banner={banner} onChangeBanner={this.handleChangeBanner} />
@@ -482,8 +513,7 @@ class AppEditor extends React.Component {
         return (
           <AppServiceCategories
             image={banner}
-            categories={categories}
-            onAdd={this.handleAddCategoryButtonClick}
+            onAdd={this.showModal}
             onSelect={this.addCategories}
           />
         );
@@ -527,16 +557,72 @@ class AppEditor extends React.Component {
   };
 
   handleSaveButtonClick = () => {
-    const { banner, selectedLocation } = this.state;
-    if (banner.hasOwnProperty('id')) {
-      if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
-        this.updateLocation({
-          provider_location: {
-            site_banner_id: banner.id
+    const { banner, selectedLocation, data } = this.state;
+    const originCategries = get(selectedLocation, 'relationships.service_categories', []);
+    const currentCategories = [];
+    const currentCategoryIds = [];
+    const currentServices = [];
+    const currentServiceIds = [];
+    const { items } = data;
+    const categoriesPayload = [];
+    for(const index in items) {
+      const item = items[index];
+      const info = get(item, 'info');
+      info.attributes.position = parseInt(index) + 1;
+      if (item.type === 'category') {
+        currentCategories.push(info);
+        if(info.hasOwnProperty('id')) {
+          currentCategoryIds.push(get(info, 'id'));
+        }
+        if (item.hasOwnProperty('items')) {
+          const subItems = get(item, 'items');
+          for(const subIdx in subItems) {
+            const subItem = subItems[index];
+            const position = parseInt(info.attributes.position) * 100 + subIdx + 1;
+            const subInfo = get(subItem, 'info');
+            subInfo.attributes.position = position;
+            currentServices.push(subInfo);
+            if(subInfo.hasOwnProperty('id')) {
+              currentServiceIds.push(get(subInfo, 'id'));
+            }
           }
-        });
+        }
+      } else {
+        currentServices.push(info);
+        if(info.hasOwnProperty('id')) {
+          currentServiceIds.push(get(info, 'id'));
+        }
       }
     }
+    console.log('-------------originCategries----------------', originCategries);
+    // console.log('-------------currentCategories----------------', currentCategories);
+    // console.log('-------------currentCategoryIds----------------', currentCategoryIds);
+    // console.log('-------------currentServices----------------', currentServices);
+    // console.log('-------------currentServiceIds----------------', currentServiceIds);
+    for (const index in currentCategories) {
+      const category = currentCategories[index];
+      const attributes = get(category, 'attributes');
+      const payload = {
+        name: get(attributes, 'name'),
+        icon_id: get(attributes, 'iconId'),
+        position: get(attributes, 'position')
+      };
+      if (category.hasOwnProperty('id')) {
+        payload['id'] = category.id;
+      }
+      categoriesPayload.push(payload);
+    }
+
+
+    // if (banner.hasOwnProperty('id')) {
+    //   if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
+    //     this.updateLocation({
+    //       provider_location: {
+    //         site_banner_id: banner.id
+    //       }
+    //     });
+    //   }
+    // }
   };
 
   updateLocation = (data, iconCreated) => {
@@ -561,9 +647,8 @@ class AppEditor extends React.Component {
   }
 
   render() {
-    const { step, banner, visibleOfModal, currentItem, currentScreen, selectedLocation, type } = this.state;
+    const { step, banner, visibleOfModal, currentItem, currentScreen, selectedLocation } = this.state;
     const renderingData = this.getRenderingData();
-    const { info } = currentItem;
     const { providerLocations, iconStatus, locationStatus } = this.props;
     return (
       <Wrapper>
@@ -599,8 +684,7 @@ class AppEditor extends React.Component {
             </ContentWrapper>
             {visibleOfModal && <CategoryModal
               // title={type === 'category' ? 'Customize Category' : 'Customize Service'}
-              type={type}
-              baseData={info}
+              baseData={currentItem}
               loading={
                 iconStatus === iconActions.CREATE_ICON ||
                 locationStatus === locationActions.UPDATE_PROVIDER_LOCATION

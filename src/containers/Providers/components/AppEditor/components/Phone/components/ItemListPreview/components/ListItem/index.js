@@ -130,25 +130,30 @@ class ListItem extends React.Component {
 
   getIcon = () => {
     const { item } = this.props;
-    if (item.type === 'category') {
-      const iconId = get(item, 'info.attributes.iconId');
-      const { icons } = this.props;
-      return get(icons.find(icon => icon.id.toString() === iconId.toString()), 'icon.url');
-    }
-    const { info } = item;
-    const defaultIcon = get(info, 'defaultIcon');
-    const customIcon = get(info, 'customIcon');
-    return defaultIcon || customIcon;
+    const iconId = get(item, 'info.attributes.iconId');
+    const { icons } = this.props;
+    return get(icons.find(icon => icon.id.toString() === iconId.toString()), 'icon.url');
+    // if (item.type === 'category') {
+    //   const iconId = get(item, 'info.attributes.iconId');
+    //   const { icons } = this.props;
+    //   return get(icons.find(icon => icon.id.toString() === iconId.toString()), 'icon.url');
+    // }
+    // const { info } = item;
+    // const defaultIcon = get(info, 'defaultIcon');
+    // const customIcon = get(info, 'customIcon');
+    // return defaultIcon || customIcon;
   }
 
   getRenderingTexts = () => {
     const { item } = this.props;
-    if (item.type === 'category') {
-      const { info: { attributes: { name, description } } } = item;  
-      return { name, description };
-    }
-    const { info: { name, description } } = item;
+    const { info: { attributes: { name, description } } } = item;  
     return { name, description };
+    // if (item.type === 'category') {
+    //   const { info: { attributes: { name, description } } } = item;  
+    //   return { name, description };
+    // }
+    // const { info: { name, description } } = item;
+    // return { name, description };
   }
 
   render () {
