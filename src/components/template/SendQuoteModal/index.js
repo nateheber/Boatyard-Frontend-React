@@ -21,15 +21,16 @@ export default class SendQuoteModal extends React.Component {
   }
 
   sendQuote = (file) => {
-    console.log(file);
+    this.props.onSendQuote();
   }
   
   render() {
-    const { onClose, open } = this.props;
+    const { onClose, open, loading } = this.props;
     const action = [ <ActionFooter onCancel={onClose} onSend={this.sendQuote} key="action_footer" /> ];
     const { quote, body, subject } = this.state;
     return (
       <Modal
+        loading={loading}
         title="Send Quote"
         actions={action}
         open={open}

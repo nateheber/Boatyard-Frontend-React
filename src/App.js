@@ -12,7 +12,7 @@ import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 WebFont.load({
   google: {
     families: [
-      'Source+Sans+Pro:400,600,700,900',
+      'Source+Sans+Pro:400,500,600,700,900',
       'Montserrat:400,500,600,700',
       'Open+Sans:300i,400',
     ]

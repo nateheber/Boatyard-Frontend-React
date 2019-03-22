@@ -1,4 +1,4 @@
-export * from './TemplateSelector';
+export { default as TemplateSelector } from './TemplateSelector';
 export * from './QRSelector';
 export * from './InboxSelector';
 export * from 'components/template/Message/MessageBox';

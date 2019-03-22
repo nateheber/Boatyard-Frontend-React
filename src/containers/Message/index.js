@@ -1,2 +1,2 @@
 export { default as QRBox } from './QR';
-export * from './Template';
+export { default as TemplateBox } from './Template';

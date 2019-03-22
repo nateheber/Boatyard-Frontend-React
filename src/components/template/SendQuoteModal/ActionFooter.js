@@ -16,6 +16,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  padding-top: 30px;
 `;
 
 const LeftWrapper = styled.div`
@@ -77,8 +78,8 @@ export default class ActionFooter extends React.Component {
   }
 
   onSend = () => {
-    const { file } = this.props;
-    this.props.sendQuote(file);
+    const { file } = this.state;
+    this.props.onSend(file);
   }
 
   uploadFile = () => {

@@ -61,6 +61,7 @@
     "redux-persist": "^5.10.0",
     "redux-saga": "^0.16.2",
     "reselect": "^4.0.0",
+    "snakecase-keys": "^2.1.0",
     "styled-components": "^4.0.0",
     "switch": "^0.0.0",
     "webfontloader": "^1.6.28"

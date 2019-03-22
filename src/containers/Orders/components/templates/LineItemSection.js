@@ -9,7 +9,7 @@ import {
   deleteLineItem,
   createLineItems
 } from 'store/reducers/lineItems';
-import { GetOrder } from 'store/actions/orders';
+import { GetOrder, SendQuote, actionTypes } from 'store/actions/orders';
 import { orderSelector } from 'store/selectors/orders';
 import { Section } from 'components/basic/InfoSection';
 import SendQuoteModal from 'components/template/SendQuoteModal';
@@ -109,10 +109,12 @@ class LineItemSection extends React.Component {
       });
     }
   };
+
   addNewItem = () => {
     const { newItems } = this.state;
     this.setState({ newItems: [...newItems, {}] });
   };
+
   removeLineItem = itemId => {
     const { orderId, GetOrder } = this.props;
     this.props.deleteLineItem({
@@ -123,12 +125,14 @@ class LineItemSection extends React.Component {
       }
     });
   };
+
   removeNewItem = idx => {
     const { newItems } = this.state;
     this.setState({
       newItems: [...newItems.slice(0, idx), ...newItems.slice(idx + 1)]
     });
   };
+
   saveNewItems = () => {
     const { newItems } = this.state;
     const { orderId, GetOrder } = this.props;
@@ -141,9 +145,30 @@ class LineItemSection extends React.Component {
       }
     });
   };
+
+  canSendQuote = () => {
+    const { privilege, currentOrder } = this.props;
+    const orderState = get(currentOrder, 'attributes.state');
+    return privilege === 'provider' && orderState === 'accepted';
+  }
+
+  sendQuote = () => {
+    const { orderId, SendQuote, GetOrder } = this.props;
+    SendQuote({
+      orderId,
+      success: () => {
+        this.setState({ showQuote: false });
+        GetOrder({ orderId });
+      },
+      error: () => {
+        this.setState({ showQuote: false });
+      }
+    });
+  }
+
   render() {
     const { newItems, mode, lineItems, showQuote } = this.state;
-    const { updatedAt, privilege } = this.props;
+    const { updatedAt, privilege, currentStatus } = this.props;
     return (
       <Section
         title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`}
@@ -175,24 +200,34 @@ class LineItemSection extends React.Component {
           onAdd={this.addNewItem}
           showSave={newItems.length > 0 || mode === 'edit'}
           onSave={this.onSave}
-          showQuote={privilege === 'provider'}
+          showQuote={this.canSendQuote()}
           onSendQuote={this.onSendQuote}
         />
-        {
-          privilege === 'provider' && <SendQuoteModal open={showQuote} onClose={this.hideQuoteModal} />
-        }
+        {privilege === 'provider' && (
+          <SendQuoteModal
+            loading={currentStatus === actionTypes.SEND_QUOTE}
+            open={showQuote}
+            onClose={this.hideQuoteModal}
+            onSendQuote={this.sendQuote}
+          />
+        )}
       </Section>
     );
   }
 }
 
-const mapStateToProps = state => ({ ...orderSelector(state), privilege: state.auth.privilege })
+const mapStateToProps = state => ({
+  ...orderSelector(state),
+  privilege: state.auth.privilege,
+  currentStatus: state.order.currentStatus,
+})
 
 const mapDispatchToProps = {
   updateLineItems,
   deleteLineItem,
   createLineItems,
-  GetOrder
+  GetOrder,
+  SendQuote,
 };
 
 export default connect(

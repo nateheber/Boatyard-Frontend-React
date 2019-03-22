@@ -49,6 +49,10 @@ export const actionTypes = {
   ACCEPT_ORDER_SUCCESS: '[ORDERS] - Accept order success',
   ACCEPT_ORDER_FAILURE: '[ORDERS] - Accept order failure',
 
+  SEND_QUOTE: '[ORDERS] - Send quote',
+  SEND_QUOTE_SUCCESS: '[ORDERS] - Send quote success',
+  SEND_QUOTE_FAILURE: '[ORDERS] - Send quote failure',
+
   SET_DISPATCHED_FLAG: '[ORDERS] - Set Dispatched Flag',
 };
 
@@ -99,5 +103,9 @@ export const AcceptOrderFailure = createAction(actionTypes.ACCEPT_ORDER_FAILURE)
 export const DispatchOrder = createAction(actionTypes.DISPATCH_ORDER, payload => payload);
 export const DispatchOrderSuccess = createAction(actionTypes.DISPATCH_ORDER_SUCCESS);
 export const DispatchOrderFailure = createAction(actionTypes.DISPATCH_ORDER_FAILURE);
+
+export const SendQuote = createAction(actionTypes.SEND_QUOTE, payload => payload);
+export const SendQuoteSuccess = createAction(actionTypes.SEND_QUOTE_SUCCESS);
+export const SendQuoteFailure = createAction(actionTypes.SEND_QUOTE_FAILURE);
 
 export const SetDispatchedFlag = createAction(actionTypes.SET_DISPATCHED_FLAG);
