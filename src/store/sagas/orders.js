@@ -165,6 +165,29 @@ function* updateOrder(action) {
   }
 }
 
+function* sendQuote(action) {
+  const { orderId, success, error, dispatched } = action.payload;
+  const dispatchedFlg = yield select(getOrderDispatchedFlag) || dispatched;
+  let orderClient;
+  if (dispatchedFlg) {
+    orderClient = yield select(getDispatchedOrderClient);
+  } else {
+    orderClient = yield select(getOrderClient);
+  }
+  try {
+    yield call(orderClient.update, orderId, { order: { transition: 'provision' } });
+    yield put({ type: actionTypes.SEND_QUOTE_SUCCESS });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.SEND_QUOTE_FAILURE, payload: e });
+    if (error) {
+      yield call(error);
+    }
+  }
+}
+
 function* deleteOrder(action) {
   const { orderId, success, error } = action.payload;
   const dispatched = yield select(getOrderDispatchedFlag);
@@ -251,4 +274,5 @@ export default function* OrderSaga() {
   yield takeEvery(actionTypes.DELETE_ORDER, deleteOrder);
   yield takeEvery(actionTypes.DISPATCH_ORDER, dispatchOrder);
   yield takeEvery(actionTypes.ACCEPT_ORDER, acceptOrder);
+  yield takeEvery(actionTypes.SEND_QUOTE, sendQuote);
 }

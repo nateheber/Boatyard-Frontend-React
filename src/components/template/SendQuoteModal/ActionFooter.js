@@ -77,8 +77,8 @@ export default class ActionFooter extends React.Component {
   }
 
   onSend = () => {
-    const { file } = this.props;
-    this.props.sendQuote(file);
+    const { file } = this.state;
+    this.props.onSend(file);
   }
 
   uploadFile = () => {

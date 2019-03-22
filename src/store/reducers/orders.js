@@ -281,6 +281,25 @@ export default handleActions(
         draft.currentStatus = type;
         draft.errors = payload;
       }),
+
+    [actionTypes.SEND_QUOTE]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.SEND_QUOTE_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.SEND_QUOTE_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
     },
   initialState
 );
