@@ -356,7 +356,7 @@ class CategoryModal extends React.Component {
         <IconSection>
           <HeaderSection>
             <span>Choose Icon</span>
-            <UploadButton title="Upload Icon" accept="image/*" onFileChange={this.handleFileChange} />
+            <UploadButton title="Upload Icon" accept="image/*" onChange={this.handleFileChange} />
             <div className={classNames('selected-icon', !isEmpty(customIcon) && 'has-icon' )} ref="selectedIconContainer" onClick={this.deleteCustomIcon}>
               <EvilIcon name="ei-close-o" size="s" className="close-icon" />
             </div>

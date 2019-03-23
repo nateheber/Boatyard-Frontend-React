@@ -31,7 +31,7 @@ const Button = styled.label`
 
 export class UploadButton extends React.Component{
   handleChange = (e, file) => {
-    const { onFileChange } = this.props;
+    const { onChange } = this.props;
 
     const newFile = file || e.target.files[0],
           reader = new FileReader();
@@ -39,7 +39,7 @@ export class UploadButton extends React.Component{
       this.setState({ loaded: false });
 
       reader.onload = e => {
-        onFileChange(newFile, reader.result, this.refs.input);
+        onChange(newFile, reader.result, this.refs.input);
       };
   
       reader.readAsDataURL(newFile);  
