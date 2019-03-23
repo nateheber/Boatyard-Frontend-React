@@ -101,54 +101,59 @@ class AppEditor extends React.Component {
   resetData = (location) => {
     const banner = this.getBanner(location);
     const categories = this.getCategories(location);
-    const { data } = this.state;
+    const { data, currentItem } = this.state;
+    let updatedItem = {};
     const newData = JSON.parse(JSON.stringify(data));
     const services = this.getServices(location);
-    const path = this.getEditingPath();
-    // if (path === '') {
-    //   const items = categories.map((category) => ({
-    //     id: category.attributes.position,
-    //     type: 'category',
-    //     info: category
-    //   }));
-    //   set(newData, 'items', sortBy(items, ['idx'], ['asc']));
-    // } else {
-    //   const items = categories.map((category) => ({
-    //     id: category.attributes.position,
-    //     type: 'category',
-    //     info: category
-    //   }));
-    //   set(newData, `${path}.items`, sortBy(items, ['idx'], ['asc']));
-    // }
     let items = categories.map((category) => {
       let filtered = services.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
       filtered = orderBy(filtered, ['attributes.position'], ['asc']);
-      const subItems = filtered.map((item) => ({
-        id: item.attributes.position,
-        type: 'service',
-        info: item
-      }));
-      return {
+      const subItems = filtered.map((item) => {
+        const newItem = {
+          id: item.attributes.position,
+          type: 'service',
+          info: item
+        };
+        if (currentItem.type === 'service') {
+          if (get(currentItem, 'info.attributes.name') === get(newItem, 'info.attributes.name')) {
+            updatedItem = { ...newItem };
+          }
+        }
+        return newItem;
+      });
+      if (currentItem.type === 'category') {
+        if (get(currentItem, 'info.attributes.name') === get(category, 'info.attributes.name')) {
+          updatedItem = { ...category };
+        }
+      }
+      const item = {
         id: category.attributes.position,
         type: 'category',
         info: category,
         items: subItems
       };
+      return item;
     });
-    const rootServices = services.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => ({
-      id: service.attributes.position,
-      type: 'service',
-      info: service
-    }));
+    const rootServices = services.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => {
+      const item = {
+        id: service.attributes.position,
+        type: 'service',
+        info: service
+      };
+      if (currentItem.type === 'service') {
+        if (get(currentItem, 'info.attributes.name') === get(item, 'info.attributes.name')) {
+          updatedItem = { ...item };
+        }
+      }
+      return item;
+    });
     items = orderBy(items.concat(rootServices), ['id'], ['asc']);
-    console.log('-----------------items----------', items);
     set(newData, 'items', items);
     this.setState({
       data: newData,
       selectedLocation: location,
       banner,
-      currentScreen: '',
-      currentItem: {}
+      currentItem: updatedItem
     });
   };
 
@@ -274,30 +279,6 @@ class AppEditor extends React.Component {
       toastr.error('Cannot add service under service');
     } else {
       this.addItem(service, 'service');
-      // const { CreateService, providerId } = this.props;
-      // CreateService({ 
-      //   data: {
-      //     service: {
-      //       provider_id: providerId,
-      //       name: get(service, 'name'),
-      //       description: get(service, 'description'),
-      //       category_id: get(service, 'categoryId'),
-      //       icon_id: get(service, 'iconId'),
-      //       cost: get(service, 'cost'),
-      //       cost_type: get(service, 'costType')
-      //     },
-      //   },
-      //   success: (service) => {
-      //     const refactoredService = {
-      //       attributes: {
-      //         ...service.attributes,
-      //         serviceId: service.id
-      //       }
-      //     };
-      //     console.log('---------------------refactoredService------------', refactoredService);
-      //     this.addItem(refactoredService, 'service');
-      //   }
-      // });
     }
   };
 
@@ -348,7 +329,7 @@ class AppEditor extends React.Component {
     });
   };
 
-  deleteItem = (baseData) => {
+  deleteItem = () => {
     const { currentItem } = this.state;
     const { data } = this.state;
     const newData = JSON.parse(JSON.stringify(data));
@@ -359,9 +340,9 @@ class AppEditor extends React.Component {
       newData.items = newItems;
       this.setState({ data: newData, visibleOfModal: false, currentItem: this.getRenderingData() });
     } else {
-      const items = get(newData, `${path}.items`);
-      items.filter(item => item.type !== currentItem.type || item.id !== currentItem.id);
-      set(newData, `${path}.items`, items);
+      let newItems = JSON.parse(JSON.stringify(get(newData, `${path}.items`)));
+      newItems = newItems.filter(item => item.type !== currentItem.type || item.id !== currentItem.id);
+      set(newData, `${path}.items`, newItems);
       this.setState({ data: newData, visibleOfModal: false, currentItem: this.getRenderingData() });
     }
   };
@@ -374,16 +355,6 @@ class AppEditor extends React.Component {
       type = 'category';
     }
     const attributes = get(currentInfo, 'attributes', {});
-    // const info = {
-    //   ...baseData,
-    //   info: {
-    //     ...currentInfo,
-    //     attributes: {
-    //       ...attributes,
-    //       ...data
-    //     }
-    //   }
-    // };  
     const info = {
       ...currentInfo,
       attributes: {
@@ -631,7 +602,6 @@ class AppEditor extends React.Component {
       const item = items[index];
       const info = get(item, 'info');
       info.attributes.position = parseInt(index) + 1;
-      console.log('-----------item-----------', item);
       if (item.type === 'category') {
         currentCategories.push(info);
         if(info.hasOwnProperty('id')) {
@@ -657,8 +627,6 @@ class AppEditor extends React.Component {
         }
       }
     }
-    console.log('------------currentCategories------------', currentCategories);
-    console.log('------------originCategries------------', originCategries);
     for (const index in currentCategories) {
       const category = currentCategories[index];
       const attributes = get(category, 'attributes');
@@ -692,12 +660,12 @@ class AppEditor extends React.Component {
         };
       }
     }
-    console.log('------------categoriesPayload------------', categoriesPayload);
     if (categoriesPayload.length > 0) {
       params = {
         ...params,
         service_categories_attributes: categoriesPayload
       };
+      this.updateLocationServices(originCategries, originServices, currentServiceIds, currentServices, params);
       UpdateProviderLocation({
         providerId: selectedLocation.providerId,
         providerLocationId: selectedLocation.id,
@@ -790,6 +758,7 @@ class AppEditor extends React.Component {
           const locationService = servicesPayload.find(service => service.name === name);
           const payload = {
             name,
+            description: get(data, 'attributes.description'),
             provider_id: providerId,
             service_id: serviceId,
             service_category_id: locationService.service_category_id,
