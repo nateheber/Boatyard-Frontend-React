@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { get, isEmpty, set } from 'lodash';
+import { get, isEmpty, set, startCase } from 'lodash';
 import EvilIcon from 'react-evil-icons';
 import deepEqual from 'deep-equal';
 
@@ -200,8 +200,8 @@ class CategoryModal extends React.Component {
 
   componentDidMount() {
     const { baseData } = this.props;
-    const defaultIcon = get(baseData, 'attributes.iconId');
-    const customIcon = get(baseData, 'attributes.customIcon');
+    const defaultIcon = get(baseData, 'info.attributes.iconId');
+    const customIcon = get(baseData, 'info.attributes.customIcon.url');
     this.setState({ defaultIcon, customIcon }, () => {
       if (!defaultIcon) {
         if (!isEmpty(customIcon)) {
@@ -219,8 +219,8 @@ class CategoryModal extends React.Component {
   componentDidUpdate(prevProps) {
     if (!deepEqual(this.props.baseData, prevProps.baseData)) {
       const { baseData } = this.props;
-      const defaultIcon = get(baseData, 'attributes.iconId');
-      const customIcon = get(baseData, 'attributes.customIcon');
+      const defaultIcon = get(baseData, 'info.attributes.iconId');
+      const customIcon = get(baseData, 'info.attributes.customIcon.url');
       this.setState({ defaultIcon, customIcon }, () => {
         if (!defaultIcon) {
           if (!isEmpty(customIcon)) {
@@ -268,28 +268,26 @@ class CategoryModal extends React.Component {
   getTextFields = () => {
     const { baseData } = this.props;
     const type = this.getType();
-    const name = get(baseData, 'attributes.name');
-    const description = get(baseData, 'attributes.description');
+    const name = get(baseData, 'info.attributes.name');
+    const description = get(baseData, 'info.attributes.description');
     const fields = [
       {
         field: 'name',
-        label: isEmpty(baseData) ? 'Category Name' : 'Service Name',
+        label: `${startCase(type)} Name`,
         type: 'text_field',
-        errorMessage: 'Enter Category name',
+        errorMessage: `Enter ${startCase(type)} name`,
         required: true,
         defaultValue: name,
         xs: 12,
-      }
-    ];
-    if (type === 'service') {
-      fields.push({
+      },
+      {
         field: 'description',
         label: 'Button Sub Copy',
         type: 'text_area',
         defaultValue: description,
         xs: 12
-      });
-    }
+      }
+    ];
 
     this.setState({ fields, name, description });
   };
@@ -354,10 +352,14 @@ class CategoryModal extends React.Component {
   };
 
   getIcon = () => {
-    const { defaultIcon } = this.state;
+    const { defaultIcon, customIcon } = this.state;
     const { icons } = this.props;
-    const icon = icons.find(icon => parseInt(icon.id) === parseInt(defaultIcon));
-    return get(icon, 'icon.url');
+    if (defaultIcon) {
+      const icon = icons.find(icon => parseInt(icon.id) === parseInt(defaultIcon));
+      return get(icon, 'icon.url');  
+    } else {
+      return customIcon;
+    }
   }
 
   getCustomIcon = () => {
@@ -369,14 +371,9 @@ class CategoryModal extends React.Component {
   }
 
   getType = () => {
-    const { baseData, type } = this.props;
+    const { baseData } = this.props;
     if (isEmpty(baseData)) {
-      return type;
-    }
-    if (baseData.type === 'service_categories') {
       return 'category';
-    } else if (baseData.type === 'services' || baseData.type === 'provider_location_services') {
-      return 'service';
     }
     return baseData.type;
   }
@@ -407,7 +404,7 @@ class CategoryModal extends React.Component {
         <IconSection>
           <HeaderSection>
             <span>Choose Icon</span>
-            <UploadButton title="Upload Icon" accept="image/*" onFileChange={this.handleFileChange} />
+            <UploadButton title="Upload Icon" accept="image/*" onChange={this.handleFileChange} />
             <div className={classNames('selected-icon', !isEmpty(customIcon) && 'has-icon' )} ref="selectedIconContainer" onClick={this.deleteCustomIcon}>
               <EvilIcon name="ei-close-o" size="s" className="close-icon" />
             </div>

@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, hasIn, keys, isArray, isEmpty } from 'lodash';
+import { set, get, hasIn, keys, isArray, isEmpty } from 'lodash';
 
 import { actionTypes } from '../actions/providerLocations';
 import { getProviderLocationClient } from './sagaSelectors';
@@ -15,7 +15,18 @@ const refineProviderLocations = (providerLocations) => {
   });
 };
 
+function refactorIncluded(included) {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i]
+    set(refactored, `${type}.${id}`, {...included[i]})
+  }
+  return refactored;
+}
+
 const refineProviderLocation = (location, included) => {
+  const refactoredIncluded = refactorIncluded(included);
+  const services = [];
   const relationships = get(location, 'relationships');
   const relationKeys = keys(relationships);
   const parsedRelationships = relationKeys.map((key) => {
@@ -23,19 +34,38 @@ const refineProviderLocation = (location, included) => {
     const type = get(data, 'type');
     const id = get(data, 'id');
     if (!isArray(data)) {
-      return get(included, `[${type}][${id}]`);
+      return get(refactoredIncluded, `[${type}][${id}]`);
     }
     return data.map(relation => {
       const type = get(relation, 'type');
       const id = get(relation, 'id');
-      return get(included, `[${type}][${id}]`);
+      if (type === 'services') {
+        services.push(get(refactoredIncluded, `[${type}][${id}]`));
+      }
+      return get(refactoredIncluded, `[${type}][${id}]`);
     })
   });
   const relations = {};
   for (const index in parsedRelationships) {
     const item = parsedRelationships[index];
     if (!isEmpty(item)) {
-      relations[item.type] = item;
+      if (!isArray(item)) {
+        relations[item.type] = item;
+      } else {
+        for(const index in item) {
+          if (!relations[item[index].type]) {
+            relations[item[index].type] = [];
+          }
+          if (item[index].type === 'provider_location_services') {
+            const refactoredItem = item[index];
+            const service = services.find(s => s.id === get(refactoredItem, 'attributes.serviceId', '').toString());
+            refactoredItem.attributes['iconId'] = get(service, 'attributes.iconId');
+            relations[item[index].type].push(refactoredItem);
+          } else {
+            relations[item[index].type].push(item[index]);
+          }
+        }
+      }
     }
   }
   return { ...location, relationships: relations };

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import { Select } from 'components/basic/Input';
+import { get } from 'lodash';
 
 const Wrapper = styled.div`
   display: flex;
@@ -36,6 +37,10 @@ const ButtonsWrapper = styled.div`
   justify-content: flex-end;
 `;
 
+function getLocationName(location) {
+  return get(location ,'relationships.locations.attributes.name');
+}
+
 export default ({ selected, locations, onSave, onChangePublishStatus, onChangeLocation }) => (
   <Wrapper>
     <HeaderWrapper>
@@ -47,7 +52,7 @@ export default ({ selected, locations, onSave, onChangePublishStatus, onChangeLo
         <React.Fragment>
           {locations.map(val => (
             <option value={val.id} key={`location_${val.id}`}>
-              {val.contactName}
+              {getLocationName(val)}
             </option>
           ))}
         </React.Fragment>

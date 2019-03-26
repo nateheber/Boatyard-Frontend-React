@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, set, isEmpty, sortBy } from 'lodash';
+import { get, set, isEmpty, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { GetSiteBanners, CreateSiteBanner } from 'store/actions/site-banners';
@@ -10,6 +10,7 @@ import { actionTypes as iconActions, CreateIcon, GetIcons } from 'store/actions/
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
 import { setServiceTemplateData } from 'utils/serviceTemplate';
+import defaultTemplateInfos from './components/ServiceTemplates/defaultTemplateValues';
 
 import {
   AppHeader,
@@ -22,6 +23,8 @@ import {
   CategoryModal
 } from './components';
 import { ContentWrapper, PreviewWrapper } from '../Wrappers';
+
+const DEFAULT_TEMPLATE = 'request';
 
 const Wrapper = styled.div`
   display: flex;
@@ -64,12 +67,10 @@ class AppEditor extends React.Component {
         type: 'homeScreen',
         items: [],
       },
-      type: '',
       currentScreen: '',
       currentItem: {},
       visibleOfModal: false,
-      selectedLocation: {},
-      categories: []
+      selectedLocation: {}
     };
   }
 
@@ -102,31 +103,65 @@ class AppEditor extends React.Component {
   resetData = (location) => {
     const banner = this.getBanner(location);
     const categories = this.getCategories(location);
-    const { data } = this.state;
+    const { data, currentItem } = this.state;
+    let updatedItem = {};
     const newData = JSON.parse(JSON.stringify(data));
-    const path = this.getEditingPath();
-    if (path === '') {
-      const items = categories.map((category) => ({
+    const services = this.getServices(location);
+    let items = categories.map((category) => {
+      let filtered = services.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
+      filtered = orderBy(filtered, [function(o){ return o.attributes.position; }], ['asc']);
+      const subItems = filtered.map((item, index) => {
+        const newItem = {
+          id: index + 1,
+          type: 'service',
+          info: item,
+          template: setServiceTemplateData(item, this.getTemplateByType(get(item, 'attributes.emailTemplate')))
+        };
+        if (currentItem.type === 'service') {
+          if (get(currentItem, 'info.attributes.name') === get(newItem, 'info.attributes.name')) {
+            updatedItem = { ...newItem };
+          }
+        }
+        return newItem;
+      });
+      if (currentItem.type === 'category') {
+        if (get(currentItem, 'info.attributes.name') === get(category, 'info.attributes.name')) {
+          updatedItem = { ...category };
+        }
+      }
+      const item = {
         id: category.attributes.position,
         type: 'category',
-        info: category
-      }));
-      set(newData, 'items', sortBy(items, ['idx'], ['asc']));
-    } else {
-      const items = categories.map((category) => ({
-        id: category.attributes.position,
-        type: 'category',
-        info: category
-      }));
-      set(newData, `${path}.items`, sortBy(items, ['idx'], ['asc']));
-    }
-    this.setState({
-      data: newData
+        info: category,
+        items: subItems
+      };
+      return item;
     });
+    const rootServices = services.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => {
+      const item = {
+        id: service.attributes.position,
+        type: 'service',
+        info: service,
+        template: setServiceTemplateData(service, this.getTemplateByType(get(service, 'attributes.emailTemplate')))
+      };
+      if (currentItem.type === 'service') {
+        if (get(currentItem, 'info.attributes.name') === get(item, 'info.attributes.name')) {
+          updatedItem = { ...item };
+        }
+      }
+      return item;
+    });
+    items = orderBy(items.concat(rootServices), ['id'], ['asc']);
+    items = items.map((item, index) => {
+      item.id = index + 1;
+      return item;
+    })
+    set(newData, 'items', items);
     this.setState({
+      data: newData,
       selectedLocation: location,
       banner,
-      categories
+      currentItem: updatedItem
     });
   };
 
@@ -233,7 +268,6 @@ class AppEditor extends React.Component {
   };
 
   addCategories = (category) => {
-
     const { currentItem } = this.state;
     if (get(currentItem, 'type') === 'category') {
       toastr.clean()
@@ -260,21 +294,50 @@ class AppEditor extends React.Component {
     const { data } = this.state;
     const newData = JSON.parse(JSON.stringify(data));
     const path = this.getEditingPath();
+    let info = item;
+    if (type === 'service') {
+      info = {
+        attributes: {
+          position: 0,
+          ...item
+        }
+      };
+    }
     if (path === '') {
       const lastId = this.getLastId(newData.items);
-      newData.items.push({
+      const item = {
         id: lastId + 1,
         type,
-        info: item,
-      })
+        info: {
+          ...info,
+          attributes: {
+            ...info.attributes,
+            position: lastId + 1
+          }  
+        }
+      };
+      if(type === 'service') {
+        item['template'] = setServiceTemplateData(info, this.getTemplateByType(DEFAULT_TEMPLATE));
+      }
+      newData.items.push(item);
     } else {
       const items = get(newData, `${path}.items`, []);
       const lastId = this.getLastId(items);
-      items.push({
+      const item = {
         id: lastId + 1,
         type,
-        info: item,
-      });
+        info: {
+          ...info,
+          attributes: {
+            ...info.attributes,
+            position: lastId + 1
+          }  
+        }
+      };
+      if(type === 'service') {
+        item['template'] = setServiceTemplateData(info, this.getTemplateByType(DEFAULT_TEMPLATE));
+      }
+      items.push(item);
       set(newData, `${path}.items`, items);
     }
     this.setState({
@@ -282,7 +345,7 @@ class AppEditor extends React.Component {
     });
   };
 
-  deleteItem = (baseData) => {
+  deleteItem = () => {
     const { currentItem } = this.state;
     const { data } = this.state;
     const newData = JSON.parse(JSON.stringify(data));
@@ -293,16 +356,28 @@ class AppEditor extends React.Component {
       newData.items = newItems;
       this.setState({ data: newData, visibleOfModal: false, currentItem: this.getRenderingData() });
     } else {
-      const items = get(newData, `${path}.items`);
-      items.filter(item => item.type !== currentItem.type || item.id !== currentItem.id);
-      set(newData, `${path}.items`, items);
+      let newItems = JSON.parse(JSON.stringify(get(newData, `${path}.items`)));
+      newItems = newItems.filter(item => item.type !== currentItem.type || item.id !== currentItem.id);
+      set(newData, `${path}.items`, newItems);
       this.setState({ data: newData, visibleOfModal: false, currentItem: this.getRenderingData() });
     }
   };
 
   handleSave = (baseData, data, iconFile, customIcon = null) => {
-    const { CreateIcon } = this.props;
-    const { type } = this.state;
+    const { CreateIcon, GetIcons } = this.props;
+    let type = get(baseData, 'type');
+    const currentInfo = get(baseData, 'info', {});
+    if (isEmpty(currentInfo)) {
+      type = 'category';
+    }
+    const attributes = get(currentInfo, 'attributes', {});
+    const info = {
+      ...currentInfo,
+      attributes: {
+        ...attributes,
+        ...data
+      }
+    };  
     if (type === 'category') {
       if (customIcon && iconFile) {
         CreateIcon({
@@ -313,48 +388,56 @@ class AppEditor extends React.Component {
             }
           },
           success: (icon) => {
-            // this.saveCategory({
-            //   ...data,
-            //   icon_id: icon.id
-            // }, true);
-            const info = {
-              attributes: {
-                ...data,
-                iconId: icon.id  
-              }
-            }
-            if (baseData) {
-              this.updateItem(info);
+            this.hideModal();
+            GetIcons({ params: { per_page: 1000 } });
+            if (isEmpty(currentInfo)) {
+              this.addCategories({
+                ...info,
+                attributes: {
+                  ...info.attributes,
+                  iconId: icon.id
+                }
+              });
             } else {
-              this.addCategories(info);
+              this.updateItem(info);
             }
+          },
+          error: () => {
             this.hideModal();
           }
         })
       } else {
-        // this.saveCategory(data);
-        const info = { attributes: { ...data } };
-        if (baseData) {
-          this.updateItem(info);
-        } else {
+        if (isEmpty(currentInfo)) {
           this.addCategories(info);
+        } else {
+          this.updateItem(info);
         }
         this.hideModal();
       }
     } else {
-
+      if (customIcon && iconFile) {
+        CreateIcon({
+          data: {
+            icon: {
+              name: iconFile.name,
+              icon: customIcon
+            }
+          },
+          success: (icon) => {
+            this.hideModal();
+            GetIcons({ params: { per_page: 1000 } });
+            this.updateItem(info);
+          },
+          error: () => {
+            this.hideModal();
+          }
+        })
+      } else {
+        this.updateItem(info);
+        this.hideModal();
+      }
     }
   };
-
-  saveCategory = (data, iconCreated=false) => {
-    this.updateLocation({
-      provider_location: {
-        service_categories_attributes: [
-          { ...data }
-        ]
-      }
-    }, iconCreated);
-  }
 
   updateItem = (info) => {
     const { currentItem } = this.state;
@@ -397,7 +480,7 @@ class AppEditor extends React.Component {
       }
     } else {
       toastr.clean()
-      toastr.error('Cannot set template to service');
+      toastr.error('Cannot set template to service category');
     }
   };
 
@@ -465,16 +548,8 @@ class AppEditor extends React.Component {
     this.setState({ visibleOfModal: false, currentItem });
   };
 
-  handleAddCategoryButtonClick = () => {
-    this.setState({ type: 'category' });
-    this.showModal();
-  };
-
-  handleEditButtonClick = (category) => {
-  };
-
   renderSteps = () => {
-    const { step, banner, services, categories } = this.state;
+    const { step, banner, services } = this.state;
     switch(step) {
       case 0:
         return <AppBanners banner={banner} onChangeBanner={this.handleChangeBanner} />
@@ -482,8 +557,7 @@ class AppEditor extends React.Component {
         return (
           <AppServiceCategories
             image={banner}
-            categories={categories}
-            onAdd={this.handleAddCategoryButtonClick}
+            onAdd={this.showModal}
             onSelect={this.addCategories}
           />
         );
@@ -498,6 +572,7 @@ class AppEditor extends React.Component {
   handleChangeLocation = (locationId) => {
     const { providerLocations } = this.props;
     const selectedLocation = providerLocations.find(locations => locations.id === locationId);
+    this.setState({ currentScreen: '' });
     this.resetData(selectedLocation);
   };
 
@@ -526,20 +601,228 @@ class AppEditor extends React.Component {
     return get(location, 'relationships.service_categories', []);
   };
 
+  getServices = (location) => {
+    return get(location, 'relationships.provider_location_services', []);
+  };
+
+  getTemplateByType = (type) => {
+    return {
+      templateType: type,
+      data: defaultTemplateInfos[type]
+    };
+  }
+
   handleSaveButtonClick = () => {
-    const { banner, selectedLocation } = this.state;
-    if (banner.hasOwnProperty('id')) {
-      if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
-        this.updateLocation({
-          provider_location: {
-            site_banner_id: banner.id
+    const { banner, selectedLocation, data } = this.state;
+    const originCategries = get(selectedLocation, 'relationships.service_categories', []);
+    const originServices = get(selectedLocation, 'relationships.provider_location_services', []);
+    const currentCategories = [];
+    const currentCategoryIds = [];
+    const currentServices = [];
+    const currentServiceIds = [];
+    const { items } = data;
+    const categoriesPayload = [];
+    for(const index in items) {
+      const item = items[index];
+      const info = get(item, 'info');
+      info.attributes.position = parseInt(index) + 1;
+      if (item.type === 'category') {
+        currentCategories.push(info);
+        if(info.hasOwnProperty('id')) {
+          currentCategoryIds.push(get(info, 'id'));
+        }
+        if (item.hasOwnProperty('items')) {
+          const subItems = get(item, 'items');
+          for(const subIdx in subItems) {
+            const subItem = subItems[subIdx];
+            const position = parseInt(info.attributes.position) * 100 + parseInt(subIdx) + 1;
+            const subInfo = get(subItem, 'info');
+            subInfo.attributes.emailTemplate = get(subItem, 'template.templateType');
+            subInfo.attributes['position'] = position;
+            subInfo.attributes['serviceCategoryId'] = get(item, )
+            currentServices.push(subInfo);
+            if(subInfo.hasOwnProperty('id')) {
+              currentServiceIds.push(get(subInfo, 'id'));
+            }
           }
+        }
+      } else {
+        info.attributes.emailTemplate = get(item, 'template.templateType');
+        currentServices.push(info);
+        if(info.hasOwnProperty('id')) {
+          currentServiceIds.push(get(info, 'id'));
+        }
+      }
+    }
+    for (const index in currentCategories) {
+      const category = currentCategories[index];
+      const attributes = get(category, 'attributes');
+      const payload = {
+        name: get(attributes, 'name'),
+        description: get(attributes, 'description'),
+        icon_id: get(attributes, 'iconId'),
+        exact_position: get(attributes, 'position')
+      };
+      if (category.hasOwnProperty('id')) {
+        payload['id'] = category.id;
+      }
+      categoriesPayload.push(payload);
+    }
+
+    for(const index in originCategries) {
+      const id = get(originCategries[index], 'id');
+      if (currentCategoryIds.indexOf(id) === -1) {
+        categoriesPayload.push({
+          id,
+          '_destroy': true
         });
       }
     }
+
+    const { UpdateProviderLocation } = this.props;
+    let params = {};
+    if (banner.hasOwnProperty('id')) {
+      if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
+        params = {
+          site_banner_id: banner.id
+        };
+      }
+    }
+    if (categoriesPayload.length > 0) {
+      params = {
+        ...params,
+        service_categories_attributes: categoriesPayload
+      };
+      UpdateProviderLocation({
+        providerId: selectedLocation.providerId,
+        providerLocationId: selectedLocation.id,
+        data: {
+          provider_location: { ...params }
+        },
+        success: (location) => {
+          const categories = get(location, 'relationships.service_categories', []);
+          for (const index in categories) {
+            const category = categories[index];
+            const name = get(category , 'attributes.name');
+            const origin = categoriesPayload.find(payload => payload.name === name);
+            if (origin) {
+              set(category, 'attributes.position', origin.exact_position);
+            }
+          }
+          this.updateLocationServices(categories, originServices, currentServiceIds, currentServices);
+        }
+      });
+    } else {
+      this.updateLocationServices(originCategries, originServices, currentServiceIds, currentServices, params);
+    }
   };
 
-  updateLocation = (data, iconCreated) => {
+  updateLocationServices = (categories, originServices, currentServiceIds, services, params = {}) => {
+    const { providerId } = this.props;
+    const { createServiceClient } = require('../../../../api');
+    const serviceClient = createServiceClient('admin');
+    const servicesPayload = [];
+    for (const index in services) {
+      const service = services[index];
+      const attributes = get(service, 'attributes');
+      const position = get(attributes, 'position');
+      const category = categories.find(item => {
+        return parseInt(item.attributes.position) === Math.floor(position / 100);
+      });
+      const payload = {
+        category_id: get(attributes, 'categoryId'),
+        service_id: get(attributes, 'serviceId'),
+        name: get(attributes, 'name'),
+        description: get(attributes, 'description'),
+        icon_id: get(attributes, 'iconId'),
+        cost: get(attributes, 'cost') || 0,
+        cost_type: get(service, 'costType'),
+        service_category_id: get(attributes, 'serviceCategoryId'),
+        email_template: get(attributes, 'emailTemplate'),
+        position
+      };
+      if (category) {
+        payload['service_category_id'] = get(category, 'id');
+      } else {
+        payload['service_category_id'] = null;
+      }
+      if (service.hasOwnProperty('id')) {
+        payload['id'] = service.id;
+      }
+      servicesPayload.push(payload);
+    }
+    const promises = [];
+    for(const index in servicesPayload) {
+      const service = servicesPayload[index];
+      const data = {
+        service: {
+          provider_id: providerId,
+          name: get(service, 'name'),
+          description: get(service, 'description'),
+          category_id: get(service, 'category_id'),
+          icon_id: get(service, 'icon_id'),
+          cost: get(service, 'cost'),
+          cost_type: get(service, 'cost_type'),
+          service_category_id: get(service, 'service_category_id'),
+          email_template: get(service, 'email_template'),
+          exact_position: get(service, 'position')
+        }
+      };
+      if (service.service_id) {
+        promises.push(serviceClient.update(service.service_id, data));
+      } else {
+        promises.push(serviceClient.create(data));
+      }
+    }
+    if (promises.length > 0) {
+      Promise.all(promises).then(results => {
+        const payloads = results.map(result => {
+          const data = get(result, 'data', {});
+          const name = get(data, 'attributes.name');
+          const cost = get(data, 'attributes.cost');
+          const serviceId = get(data, 'id');
+          const locationService = servicesPayload.find(service => service.name === name);
+          const payload = {
+            name,
+            description: get(data, 'attributes.description'),
+            provider_id: providerId,
+            service_id: serviceId,
+            service_category_id: locationService.service_category_id,
+            position: locationService.position,
+            email_template: get(data, 'attributes.emailTemplate'),
+            cost
+          };
+          if (locationService.hasOwnProperty('id')) {
+            payload['id'] = locationService.id;
+          }
+          return payload;
+        });
+        for(const index in originServices) {
+          const id = get(originServices[index], 'id');
+          if (currentServiceIds.indexOf(id) === -1) {
+            payloads.push({
+              id,
+              '_destroy': true
+            });
+          }
+        }
+        if (payloads.length > 0) {
+          this.updateLocation({
+            provider_location: {
+              ...params,
+              provider_location_services_attributes: payloads
+            }
+          });
+        } else {
+          if (!isEmpty(params)) {
+            this.updateLocation({ provider_location: { ...params } });
+          }
+        }
+      })
+    }
+  }
+
+  updateLocation = (data) => {
     const { selectedLocation } = this.state;
     const { UpdateProviderLocation } = this.props;
     UpdateProviderLocation({
@@ -547,23 +830,18 @@ class AppEditor extends React.Component {
       providerLocationId: selectedLocation.id,
       data,
       success: () => {
-        this.hideModal();
         this.refreshData();
-        if (iconCreated) {
-          const { GetIcons } = this.props;
-          GetIcons({ params: { per_page: 1000 } });
-        }
       }
     });
   };
 
-  handlePublishStatus = () => {
+  handlePublishStatus = (published) => {
+    this.updateLocation({ provider_location: { published } });
   }
 
   render() {
-    const { step, banner, visibleOfModal, currentItem, currentScreen, selectedLocation, type } = this.state;
+    const { step, banner, visibleOfModal, currentItem, currentScreen, selectedLocation } = this.state;
     const renderingData = this.getRenderingData();
-    const { info } = currentItem;
     const { providerLocations, iconStatus, locationStatus } = this.props;
     return (
       <Wrapper>
@@ -599,8 +877,7 @@ class AppEditor extends React.Component {
             </ContentWrapper>
             {visibleOfModal && <CategoryModal
               // title={type === 'category' ? 'Customize Category' : 'Customize Service'}
-              type={type}
-              baseData={info}
+              baseData={currentItem}
               loading={
                 iconStatus === iconActions.CREATE_ICON ||
                 locationStatus === locationActions.UPDATE_PROVIDER_LOCATION
