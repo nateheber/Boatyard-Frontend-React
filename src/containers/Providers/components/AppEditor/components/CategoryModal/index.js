@@ -375,11 +375,6 @@ class CategoryModal extends React.Component {
     if (isEmpty(baseData)) {
       return 'category';
     }
-    // if (baseData.type === 'service_categories') {
-    //   return 'category';
-    // } else if (baseData.type === 'services' || baseData.type === 'provider_location_services') {
-    //   return 'service';
-    // }
     return baseData.type;
   }
 
