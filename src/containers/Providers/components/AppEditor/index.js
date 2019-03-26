@@ -10,7 +10,7 @@ import { actionTypes as iconActions, CreateIcon, GetIcons } from 'store/actions/
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
 import { setServiceTemplateData } from 'utils/serviceTemplate';
-
+import defaultTemplateInfos from './components/ServiceTemplates/defaultTemplateValues';
 
 import {
   AppHeader,
@@ -23,6 +23,8 @@ import {
   CategoryModal
 } from './components';
 import { ContentWrapper, PreviewWrapper } from '../Wrappers';
+
+const DEFAULT_TEMPLATE = 'request';
 
 const Wrapper = styled.div`
   display: flex;
@@ -112,7 +114,8 @@ class AppEditor extends React.Component {
         const newItem = {
           id: index + 1,
           type: 'service',
-          info: item
+          info: item,
+          template: setServiceTemplateData(item, this.getTemplateByType(get(item, 'attributes.emailTemplate')))
         };
         if (currentItem.type === 'service') {
           if (get(currentItem, 'info.attributes.name') === get(newItem, 'info.attributes.name')) {
@@ -138,7 +141,8 @@ class AppEditor extends React.Component {
       const item = {
         id: service.attributes.position,
         type: 'service',
-        info: service
+        info: service,
+        template: setServiceTemplateData(service, this.getTemplateByType(get(service, 'attributes.emailTemplate')))
       };
       if (currentItem.type === 'service') {
         if (get(currentItem, 'info.attributes.name') === get(item, 'info.attributes.name')) {
@@ -301,7 +305,7 @@ class AppEditor extends React.Component {
     }
     if (path === '') {
       const lastId = this.getLastId(newData.items);
-      newData.items.push({
+      const item = {
         id: lastId + 1,
         type,
         info: {
@@ -311,11 +315,15 @@ class AppEditor extends React.Component {
             position: lastId + 1
           }  
         }
-      })
+      };
+      if(type === 'service') {
+        item['template'] = setServiceTemplateData(info, this.getTemplateByType(DEFAULT_TEMPLATE));
+      }
+      newData.items.push(item);
     } else {
       const items = get(newData, `${path}.items`, []);
       const lastId = this.getLastId(items);
-      items.push({
+      const item = {
         id: lastId + 1,
         type,
         info: {
@@ -325,7 +333,11 @@ class AppEditor extends React.Component {
             position: lastId + 1
           }  
         }
-      });
+      };
+      if(type === 'service') {
+        item['template'] = setServiceTemplateData(info, this.getTemplateByType(DEFAULT_TEMPLATE));
+      }
+      items.push(item);
       set(newData, `${path}.items`, items);
     }
     this.setState({
@@ -593,6 +605,13 @@ class AppEditor extends React.Component {
     return get(location, 'relationships.provider_location_services', []);
   };
 
+  getTemplateByType = (type) => {
+    return {
+      templateType: type,
+      data: defaultTemplateInfos[type]
+    };
+  }
+
   handleSaveButtonClick = () => {
     const { banner, selectedLocation, data } = this.state;
     const originCategries = get(selectedLocation, 'relationships.service_categories', []);
@@ -618,6 +637,7 @@ class AppEditor extends React.Component {
             const subItem = subItems[subIdx];
             const position = parseInt(info.attributes.position) * 100 + parseInt(subIdx) + 1;
             const subInfo = get(subItem, 'info');
+            subInfo.attributes.emailTemplate = get(subItem, 'template.templateType');
             subInfo.attributes['position'] = position;
             currentServices.push(subInfo);
             if(subInfo.hasOwnProperty('id')) {
@@ -626,6 +646,7 @@ class AppEditor extends React.Component {
           }
         }
       } else {
+        info.attributes.emailTemplate = get(item, 'template.templateType');
         currentServices.push(info);
         if(info.hasOwnProperty('id')) {
           currentServiceIds.push(get(info, 'id'));
@@ -706,6 +727,7 @@ class AppEditor extends React.Component {
         cost: get(attributes, 'cost') || 0,
         cost_type: get(service, 'costType'),
         service_category_id: get(service, 'serviceCategoryId'),
+        email_template: get(attributes, 'emailTemplate'),
         position
       };
       if (category) {
@@ -721,35 +743,23 @@ class AppEditor extends React.Component {
     const promises = [];
     for(const index in servicesPayload) {
       const service = servicesPayload[index];
+      const data = {
+        service: {
+          provider_id: providerId,
+          name: get(service, 'name'),
+          description: get(service, 'description'),
+          category_id: get(service, 'category_id'),
+          icon_id: get(service, 'icon_id'),
+          cost: get(service, 'cost'),
+          cost_type: get(service, 'cost_type'),
+          service_category_id: get(service, 'service_category_id'),
+          email_template: get(service, 'email_template'),
+          exact_position: get(service, 'position')
+        }
+      };
       if (service.service_id) {
-        const data = {
-          service: {
-            provider_id: providerId,
-            name: get(service, 'name'),
-            description: get(service, 'description'),
-            category_id: get(service, 'category_id'),
-            icon_id: get(service, 'icon_id'),
-            cost: get(service, 'cost'),
-            cost_type: get(service, 'cost_type'),
-            service_category_id: get(service, 'service_category_id'),
-            exact_position: get(service, 'position')
-          }
-        };
         promises.push(serviceClient.update(service.service_id, data));
       } else {
-        const data = {
-          service: {
-            provider_id: providerId,
-            name: get(service, 'name'),
-            description: get(service, 'description'),
-            category_id: get(service, 'category_id'),
-            icon_id: get(service, 'icon_id'),
-            cost: get(service, 'cost'),
-            cost_type: get(service, 'cost_type'),
-            service_category_id: get(service, 'service_category_id'),
-            exact_position: get(service, 'position')
-          }
-        };
         promises.push(serviceClient.create(data));
       }
     }
@@ -768,6 +778,7 @@ class AppEditor extends React.Component {
             service_id: serviceId,
             service_category_id: locationService.service_category_id,
             position: locationService.position,
+            email_template: get(data, 'attributes.emailTemplate'),
             cost
           };
           if (locationService.hasOwnProperty('id')) {

@@ -86,31 +86,31 @@ export default class TemplateSelector extends React.Component {
               <Request {...templateDefValues} disabled />
             </TemplateOption>
           )
-        case 'requestPrice':
+        case 'request_price':
           return (
             <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <RequestPrice {...templateDefValues} disabled />
             </TemplateOption>
           )
-        case 'requestList':
+        case 'request_list':
           return (
             <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <RequestList {...templateDefValues} disabled />
             </TemplateOption>
           )
-        case 'requestPriceList':
+        case 'request_price_list':
           return (
             <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <RequestPriceList {...templateDefValues} disabled />
             </TemplateOption>
           )
-        case 'bookPrice':
+        case 'book_price':
           return (
             <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <BookPrice {...templateDefValues} disabled />
             </TemplateOption>
           )
-        case 'bookPriceList':
+        case 'book_price_list':
           return (
             <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <BookPriceList {...templateDefValues} disabled />
@@ -122,19 +122,19 @@ export default class TemplateSelector extends React.Component {
               <Book {...templateDefValues} disabled />
             </TemplateOption>
           )
-        case 'getHelp':
+        case 'get_help':
           return (
             <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <GetHelp {...templateDefValues} disabled />
             </TemplateOption>
           )
-        case 'bookList':
+        case 'book_list':
           return (
             <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <BookList {...templateDefValues} disabled />
             </TemplateOption>
           )
-        case 'pumpOut':
+        case 'pumpout':
           return (
             <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <PumpOut {...templateDefValues} disabled />
@@ -146,7 +146,7 @@ export default class TemplateSelector extends React.Component {
               <Fuel {...templateDefValues} disabled />
             </TemplateOption>
           );
-        case 'captainService':
+        case 'captains':
           return (
             <TemplateOption title={title} name={name} selected={isSelected} onClick={this.onChange(item)} key={`template_${item}`}>
               <CaptainService {...templateDefValues} disabled />

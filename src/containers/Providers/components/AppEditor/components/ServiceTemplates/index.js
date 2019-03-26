@@ -33,27 +33,27 @@ export default class ServiceTemplates extends React.Component {
     switch (selected) {
       case 'request':
         return <Request {...data} />;
-      case 'requestPrice':
+      case 'request_price':
         return <RequestPrice {...data} />;
-      case 'requestList':
+      case 'request_list':
         return <RequestList {...data} />;
-      case 'requestPriceList':
+      case 'request_price_list':
         return <RequestPriceList {...data} />;
-      case 'bookPrice':
+      case 'book_price':
         return <BookPrice {...data} />;
-      case 'bookPriceList':
+      case 'book_price_list':
         return <BookPriceList {...data} />;
       case 'book':
         return <Book {...data} />;
-      case 'bookList':
+      case 'book_list':
         return <BookList {...data} />;
-      case 'getHelp':
+      case 'get_help':
         return <GetHelp {...data} />;
-      case 'pumpOut':
+      case 'pumpout':
         return <PumpOut {...data} />;
       case 'fuel':
         return <Fuel {...data} />;
-      case 'captainService':
+      case 'captains':
         return <CaptainService {...data} />;
       default:
         return false;

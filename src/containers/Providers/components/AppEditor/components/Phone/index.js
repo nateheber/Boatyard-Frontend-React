@@ -50,25 +50,25 @@ class Phone extends React.Component {
       switch (templateType) {
         case 'request':
           return <Request {...data} onChange={onChangeTemplateInfo} />;
-        case 'requestPrice':
+        case 'request_price':
           return <RequestPrice {...data} onChange={onChangeTemplateInfo} />;
-        case 'requestList':
+        case 'request_list':
           return <RequestList {...data} onChange={onChangeTemplateInfo} />;
-        case 'requestPriceList':
+        case 'request_price_list':
           return <RequestPriceList {...data} onChange={onChangeTemplateInfo} />;
-        case 'bookPrice':
+        case 'book_price':
           return <BookPrice {...data} onChange={onChangeTemplateInfo} />;
         case 'book':
           return <Book {...data} onChange={onChangeTemplateInfo} />;
-        case 'bookList':
+        case 'book_list':
           return <BookList {...data} onChange={onChangeTemplateInfo} />;
-        case 'getHelp':
+        case 'get_help':
           return <GetHelp {...data} onChange={onChangeTemplateInfo} />;
-        case 'captainService':
+        case 'captains':
           return <CaptainService {...data} onChange={onChangeTemplateInfo} />;
-        case 'bookPriceList':
+        case 'book_price_list':
           return <BookPriceList {...data} onChange={onChangeTemplateInfo} />;
-        case 'pumpOut':
+        case 'pumpout':
           return (
             <PumpOut {...data} onChange={onChangeTemplateInfo} />
           );
