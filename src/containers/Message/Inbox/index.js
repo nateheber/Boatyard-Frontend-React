@@ -19,8 +19,8 @@ class Inbox extends React.Component {
   };
 
   componentDidMount() {
-    this.props.GetNetworks({ page: 1 });
-    this.props.GetConversations({ page: 1 });
+    this.props.GetNetworks({ page: 1, per_page: 1000 });
+    this.props.GetConversations({ page: 1, per_page: 1000 });
   }
 
   onCompose = () => {

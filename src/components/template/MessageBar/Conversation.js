@@ -41,8 +41,8 @@ export default ({ conversation: { conversation: { id }, messages, recipientProfi
     <Wrapper onClick={onClick(id)}>
       <Label>{name}</Label>
       <InfoWrapper>
-        <History>{messages[messages.length - 1].attributes.content}</History>
-        <TimeStamp>{moment(messages[messages.length - 1].attributes.createdAt).format('MMM D')}</TimeStamp>
+        <History>{messages[0].attributes.content}</History>
+        <TimeStamp>{moment(messages[0].attributes.createdAt).format('MMM D')}</TimeStamp>
       </InfoWrapper>
     </Wrapper>
   )
