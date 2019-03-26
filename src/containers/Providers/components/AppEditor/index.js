@@ -108,9 +108,9 @@ class AppEditor extends React.Component {
     let items = categories.map((category) => {
       let filtered = services.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
       filtered = orderBy(filtered, ['attributes.position'], ['asc']);
-      const subItems = filtered.map((item) => {
+      const subItems = filtered.map((item, index) => {
         const newItem = {
-          id: item.attributes.position,
+          id: index + 1,
           type: 'service',
           info: item
         };
@@ -148,6 +148,10 @@ class AppEditor extends React.Component {
       return item;
     });
     items = orderBy(items.concat(rootServices), ['id'], ['asc']);
+    items = items.map((item, index) => {
+      item.id = index + 1;
+      return item;
+    })
     set(newData, 'items', items);
     this.setState({
       data: newData,
