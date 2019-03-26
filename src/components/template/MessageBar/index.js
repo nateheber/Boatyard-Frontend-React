@@ -30,12 +30,12 @@ const Wrapper = styled.div`
 class MessageBar extends React.Component {
   state = {
     selected: -1,
-    newMessage: false,
+    newMessage: false
   };
 
   componentDidMount() {
-    this.props.GetNetworks({ page: 1 });
-    this.props.GetConversations({ page: 1 });
+    this.props.GetNetworks({ page: 1, per_page: 1000 });
+    this.props.GetConversations({ page: 1, per_page: 1000 });
     document.addEventListener('mouseup', this.handleClickOutside);
   }
 
@@ -58,6 +58,8 @@ class MessageBar extends React.Component {
 
   onBack = () => {
     this.setState({ selected: -1, newMessage: false });
+    this.props.GetNetworks({ page: 1, per_page: 1000 });
+    this.props.GetConversations({ page: 1, per_page: 1000 });
   }
 
   setWrapperRef = (node) => {

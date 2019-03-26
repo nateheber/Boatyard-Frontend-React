@@ -1,7 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
+import { GetNetworks } from 'store/actions/networks';
+import { GetConversations } from 'store/actions/conversations';
 import Header from 'components/compound/Header';
 import SideBar from 'components/compound/Sidebar';
 import MessageBar from './MessageBar';
@@ -52,6 +55,10 @@ class PageTemplate extends React.Component {
 
   toggleMessage = () => {
     const { showMessage } = this.state;
+    if (!showMessage) {
+      this.props.GetNetworks({ page: 1, per_page: 1000 });
+      this.props.GetConversations({ page: 1, per_page: 1000 });  
+    }
     this.setState({
       showMessage: !showMessage
     });
@@ -84,4 +91,8 @@ class PageTemplate extends React.Component {
   }
 }
 
-export default withRouter(PageTemplate);
+const mapDispatchToProps = {
+  GetNetworks,
+  GetConversations
+};
+export default withRouter(connect(null, mapDispatchToProps)(PageTemplate));
