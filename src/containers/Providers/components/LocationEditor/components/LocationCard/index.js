@@ -28,6 +28,16 @@ const Header = styled.div`
   background-repeat: no-repeat;
 `;
 
+const HeaderDetailsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 104.9px;
+  background-color: rgba(52,73,94,0.55);
+`;
+
 const ProviderName = styled.div`
   font-family: DIN-Regular;
   font-size: 16px;
@@ -39,6 +49,7 @@ const ProviderName = styled.div`
   text-align: center;
   color: #ffffff;
   text-transform: uppercase;
+  font-weight: 700;
 `;
 
 const LocationName = styled.div`
@@ -51,6 +62,7 @@ const LocationName = styled.div`
   text-align: center;
   color: #ffffff;
   text-transform: uppercase;
+  font-weight: 700;
 `;
 
 const Content = styled.div`
@@ -166,8 +178,10 @@ export default ({ providerName, location, onEdit }) => {
   return (
     <Wrapper>
       <Header src={headerImage}>
-        <ProviderName>{providerName}</ProviderName>
-        <LocationName>{locationName}</LocationName>
+        <HeaderDetailsContainer>
+          <ProviderName>{providerName}</ProviderName>
+          <LocationName>{locationName}</LocationName>
+        </HeaderDetailsContainer>
       </Header>
       <Content>
         <AddressWrapper>

@@ -670,7 +670,6 @@ class AppEditor extends React.Component {
         ...params,
         service_categories_attributes: categoriesPayload
       };
-      this.updateLocationServices(originCategries, originServices, currentServiceIds, currentServices, params);
       UpdateProviderLocation({
         providerId: selectedLocation.providerId,
         providerLocationId: selectedLocation.id,
