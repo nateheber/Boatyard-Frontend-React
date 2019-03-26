@@ -279,17 +279,15 @@ class CategoryModal extends React.Component {
         required: true,
         defaultValue: name,
         xs: 12,
-      }
-    ];
-    if (type === 'service') {
-      fields.push({
+      },
+      {
         field: 'description',
         label: 'Button Sub Copy',
         type: 'text_area',
         defaultValue: description,
         xs: 12
-      });
-    }
+      }
+    ];
 
     this.setState({ fields, name, description });
   };
