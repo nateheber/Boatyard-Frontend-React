@@ -107,7 +107,7 @@ class AppEditor extends React.Component {
     const services = this.getServices(location);
     let items = categories.map((category) => {
       let filtered = services.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
-      filtered = orderBy(filtered, ['attributes.position'], ['asc']);
+      filtered = orderBy(filtered, [function(o){ return o.attributes.position; }], ['asc']);
       const subItems = filtered.map((item, index) => {
         const newItem = {
           id: index + 1,
@@ -468,7 +468,7 @@ class AppEditor extends React.Component {
       }
     } else {
       toastr.clean()
-      toastr.error('Cannot set template to service');
+      toastr.error('Cannot set template to service category');
     }
   };
 
@@ -560,6 +560,7 @@ class AppEditor extends React.Component {
   handleChangeLocation = (locationId) => {
     const { providerLocations } = this.props;
     const selectedLocation = providerLocations.find(locations => locations.id === locationId);
+    this.setState({ currentScreen: '' });
     this.resetData(selectedLocation);
   };
 
@@ -638,7 +639,7 @@ class AppEditor extends React.Component {
         name: get(attributes, 'name'),
         description: get(attributes, 'description'),
         icon_id: get(attributes, 'iconId'),
-        position: get(attributes, 'position')
+        exact_position: get(attributes, 'position')
       };
       if (category.hasOwnProperty('id')) {
         payload['id'] = category.id;
@@ -731,7 +732,7 @@ class AppEditor extends React.Component {
             cost: get(service, 'cost'),
             cost_type: get(service, 'cost_type'),
             service_category_id: get(service, 'service_category_id'),
-            position: get(service, 'position')
+            exact_position: get(service, 'position')
           }
         };
         promises.push(serviceClient.update(service.service_id, data));
@@ -746,7 +747,7 @@ class AppEditor extends React.Component {
             cost: get(service, 'cost'),
             cost_type: get(service, 'cost_type'),
             service_category_id: get(service, 'service_category_id'),
-            position: get(service, 'position')
+            exact_position: get(service, 'position')
           }
         };
         promises.push(serviceClient.create(data));
