@@ -56,6 +56,13 @@ class LocationEditor extends React.Component {
     this.setState({ location: { ...providerLocations[idx] }, showNewLocation: true });
   }
 
+  onCreate = (location) => {
+    const { onCreateApp } = this.props;
+    if (onCreateApp) {
+      onCreateApp(location);
+    }
+  }
+
   createNew = () => {
     this.setState({ showNewLocation: true, location: null });
   }
@@ -83,6 +90,7 @@ class LocationEditor extends React.Component {
                   providerName={name}
                   location={location}
                   onEdit={this.onEdit(location.id)}
+                  onCreate={this.onCreate}
                   key={`provider_location_${idx}`}
                 />
               ))

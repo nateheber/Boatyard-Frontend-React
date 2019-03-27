@@ -70,20 +70,22 @@ class AppEditor extends React.Component {
       currentScreen: '',
       currentItem: {},
       visibleOfModal: false,
-      selectedLocation: {}
+      selectedLocation: props.selectedLocation || {}
     };
   }
 
   componentDidMount() {
-    const { GetSiteBanners } = this.props;
+    const { GetSiteBanners, providerLocations } = this.props;
     GetSiteBanners({ params: { per_page: 1000 }});
     const { selectedLocation } = this.state;
-    const { providerLocations } = this.props;
-    if (isEmpty(selectedLocation)) {
+    let location = selectedLocation;
+    if(isEmpty(location)) {
       if (providerLocations.length > 0) {
-        const location = providerLocations[0];
-        this.resetData(location);
+        location = providerLocations[0];
       }
+    }
+    if(!isEmpty(location)) {
+      this.resetData(location);
     }
   }
 
@@ -102,17 +104,17 @@ class AppEditor extends React.Component {
 
   resetData = (location) => {
     const banner = this.getBanner(location);
-    const categories = this.getCategories(location);
+    const categories = orderBy(this.getCategories(location), [function(o){ return o.attributes.manualPosition; }], ['asc']);
     const { data, currentItem } = this.state;
     let updatedItem = {};
     const newData = JSON.parse(JSON.stringify(data));
     const services = this.getServices(location);
     let items = categories.map((category) => {
       let filtered = services.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
-      filtered = orderBy(filtered, [function(o){ return o.attributes.position; }], ['asc']);
-      const subItems = filtered.map((item, index) => {
+      filtered = orderBy(filtered, [function(o){ return o.attributes.manualPosition; }], ['asc']);
+      const subItems = filtered.map(item => {
         const newItem = {
-          id: index + 1,
+          id: item.attributes.manualPosition,
           type: 'service',
           info: item,
           template: setServiceTemplateData(item, this.getTemplateByType(get(item, 'attributes.emailTemplate')))
@@ -130,7 +132,7 @@ class AppEditor extends React.Component {
         }
       }
       const item = {
-        id: category.attributes.position,
+        id: category.attributes.manualPosition,
         type: 'category',
         info: category,
         items: subItems
@@ -139,7 +141,7 @@ class AppEditor extends React.Component {
     });
     const rootServices = services.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => {
       const item = {
-        id: service.attributes.position,
+        id: service.attributes.manualPosition,
         type: 'service',
         info: service,
         template: setServiceTemplateData(service, this.getTemplateByType(get(service, 'attributes.emailTemplate')))
@@ -298,7 +300,7 @@ class AppEditor extends React.Component {
     if (type === 'service') {
       info = {
         attributes: {
-          position: 0,
+          manualPosition: 0,
           ...item
         }
       };
@@ -312,7 +314,7 @@ class AppEditor extends React.Component {
           ...info,
           attributes: {
             ...info.attributes,
-            position: lastId + 1
+            manualPosition: 0
           }  
         }
       };
@@ -330,7 +332,7 @@ class AppEditor extends React.Component {
           ...info,
           attributes: {
             ...info.attributes,
-            position: lastId + 1
+            manualPosition: 0
           }  
         }
       };
@@ -625,7 +627,7 @@ class AppEditor extends React.Component {
     for(const index in items) {
       const item = items[index];
       const info = get(item, 'info');
-      info.attributes.position = parseInt(index) + 1;
+      info.attributes.manualPosition = parseInt(index) + 1;
       if (item.type === 'category') {
         currentCategories.push(info);
         if(info.hasOwnProperty('id')) {
@@ -635,11 +637,10 @@ class AppEditor extends React.Component {
           const subItems = get(item, 'items');
           for(const subIdx in subItems) {
             const subItem = subItems[subIdx];
-            const position = parseInt(info.attributes.position) * 100 + parseInt(subIdx) + 1;
+            const manualPosition = parseInt(info.attributes.manualPosition) * 100 + parseInt(subIdx) + 1;
             const subInfo = get(subItem, 'info');
             subInfo.attributes.emailTemplate = get(subItem, 'template.templateType');
-            subInfo.attributes['position'] = position;
-            subInfo.attributes['serviceCategoryId'] = get(item, )
+            subInfo.attributes['manualPosition'] = manualPosition;
             currentServices.push(subInfo);
             if(subInfo.hasOwnProperty('id')) {
               currentServiceIds.push(get(subInfo, 'id'));
@@ -661,7 +662,7 @@ class AppEditor extends React.Component {
         name: get(attributes, 'name'),
         description: get(attributes, 'description'),
         icon_id: get(attributes, 'iconId'),
-        exact_position: get(attributes, 'position')
+        manual_position: get(attributes, 'manualPosition')
       };
       if (category.hasOwnProperty('id')) {
         payload['id'] = category.id;
@@ -701,14 +702,6 @@ class AppEditor extends React.Component {
         },
         success: (location) => {
           const categories = get(location, 'relationships.service_categories', []);
-          for (const index in categories) {
-            const category = categories[index];
-            const name = get(category , 'attributes.name');
-            const origin = categoriesPayload.find(payload => payload.name === name);
-            if (origin) {
-              set(category, 'attributes.position', origin.exact_position);
-            }
-          }
           this.updateLocationServices(categories, originServices, currentServiceIds, currentServices);
         }
       });
@@ -725,9 +718,9 @@ class AppEditor extends React.Component {
     for (const index in services) {
       const service = services[index];
       const attributes = get(service, 'attributes');
-      const position = get(attributes, 'position');
+      const manualPosition = get(attributes, 'manualPosition');
       const category = categories.find(item => {
-        return parseInt(item.attributes.position) === Math.floor(position / 100);
+        return parseInt(item.attributes.manualPosition) === Math.floor(manualPosition / 100);
       });
       const payload = {
         category_id: get(attributes, 'categoryId'),
@@ -739,7 +732,7 @@ class AppEditor extends React.Component {
         cost_type: get(service, 'costType'),
         service_category_id: get(attributes, 'serviceCategoryId'),
         email_template: get(attributes, 'emailTemplate'),
-        position
+        manual_position: manualPosition
       };
       if (category) {
         payload['service_category_id'] = get(category, 'id');
@@ -765,7 +758,7 @@ class AppEditor extends React.Component {
           cost_type: get(service, 'cost_type'),
           service_category_id: get(service, 'service_category_id'),
           email_template: get(service, 'email_template'),
-          exact_position: get(service, 'position')
+          manual_position: get(service, 'manual_position')
         }
       };
       if (service.service_id) {
@@ -788,7 +781,7 @@ class AppEditor extends React.Component {
             provider_id: providerId,
             service_id: serviceId,
             service_category_id: locationService.service_category_id,
-            position: locationService.position,
+            manual_position: locationService.manual_position,
             email_template: get(data, 'attributes.emailTemplate'),
             cost
           };

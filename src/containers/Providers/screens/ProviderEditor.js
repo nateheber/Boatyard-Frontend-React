@@ -15,6 +15,8 @@ import './style.css';
 class ProviderEditFlow extends React.Component {
   state = {
     providerId: -1,
+    selectedIndex: 0,
+    selectedLocation: null
   };
 
   componentDidMount() {
@@ -63,10 +65,18 @@ class ProviderEditFlow extends React.Component {
     }
   };
 
+  onChangeTab = (index) => {
+    this.setState({ selectedIndex: index });
+  };
+
+  onCreateApp = (selectedLocation) => {
+    this.setState({ selectedIndex: 2, selectedLocation });
+  };
+
   render() {
-    const { providerId } = this.state;
+    const { providerId, selectedLocation, selectedIndex } = this.state;
     return (
-      <Tabs>
+      <Tabs selectedIndex={selectedIndex} onSelect={this.onChangeTab}>
         <TabList>
           <Tab>ACCOUNT</Tab>
           <Tab disabled={providerId === -1}>LOCATIONS</Tab>
@@ -82,10 +92,10 @@ class ProviderEditFlow extends React.Component {
           />
         </TabPanel>
         <TabPanel>
-          <LocationEditor />
+          <LocationEditor onCreateApp={this.onCreateApp} />
         </TabPanel>
         <TabPanel>
-          <AppEditor providerId={providerId} />
+          <AppEditor providerId={providerId} selectedLocation={selectedLocation} />
         </TabPanel>
       </Tabs>
     );
