@@ -812,6 +812,14 @@ class AppEditor extends React.Component {
           }
         }
       })
+    } else {
+      if (!isEmpty(params)) {
+        this.updateLocation({
+          provider_location: {
+            ...params
+          }
+        });
+      }
     }
   }
 
