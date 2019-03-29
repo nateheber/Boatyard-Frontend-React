@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
-import { actionTypes, GetManagement, CreateManagement, UpdateManagement } from 'store/actions/managements';
+import { actionTypes, GetManagement, CreateManagement, UpdateManagement, DeleteManagement } from 'store/actions/managements';
+import { actionTypes as userActions, CreateUser, UpdateUser } from 'store/actions/users';
 import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { NormalText, PageTitle } from 'components/basic/Typho'
@@ -61,7 +62,7 @@ class TeamDetails extends React.Component {
       lastName: '',
       phoneNumber: '',
       email: '',
-      permissions: '',
+      access: 'admin',
       errorMessage: {
         firstName: '',
         lastName: '',
@@ -76,22 +77,27 @@ class TeamDetails extends React.Component {
     const query = queryString.parse(this.props.location.search);
     const managementId = query.id;
     if (managementId) {
-      this.setState({ managementId }, () => {
-        this.props.GetManagement({ managementId,
-          success: (management) => {
-            const firstName = get(management, 'relationships.user.attributes.firstName') || '';
-            const lastName = get(management, 'relationships.user.attributes.lastName') || '';
-            const phoneNumber = get(management, 'relationships.user.attributes.phoneNumber') || '';
-            const email = get(management, 'relationships.user.attributes.email') || '';
-            const permissions = get(management, 'access') || '';
-            this.setState({ management, firstName, lastName, phoneNumber, email, permissions });
-          },
-          error: () => {
-            toastr.error('Error', 'Member does not exist!');
-          } 
-        });
-      });
+      this.getManagement(managementId);
     }
+  }
+
+  getManagement = (managementId) => {
+    this.setState({ managementId }, () => {
+      this.props.GetManagement({ managementId,
+        success: (management) => {
+          const firstName = get(management, 'relationships.user.attributes.firstName') || '';
+          const lastName = get(management, 'relationships.user.attributes.lastName') || '';
+          const phoneNumber = get(management, 'relationships.user.attributes.phoneNumber') || '';
+          const email = get(management, 'relationships.user.attributes.email') || '';
+          const access = get(management, 'attributes.access') || 'admin';
+          this.setState({ management, firstName, lastName, phoneNumber, email, access });
+        },
+        error: () => {
+          toastr.error('Error', 'Member does not exist!');
+          this.onBack();
+        } 
+      });
+    });
   }
 
   isValidForm = () => {
@@ -142,8 +148,8 @@ class TeamDetails extends React.Component {
   }
 
   handlePermissionChange = (evt) => {
-    const permissions = evt.target.value;
-    this.setState({ permissions });
+    const access = evt.target.value;
+    this.setState({ access });
   };
 
   onChangeFN = evt => {
@@ -187,10 +193,62 @@ class TeamDetails extends React.Component {
   }
 
   onSave = () => {
-    const { managementId } = this.state;
+    const { managementId, management, access } = this.state;
+    const { CreateUser, UpdateUser, CreateManagement, UpdateManagement } = this.props;
+    console.log('-------management-----------', management);
+    console.log('-------access-----------', access);
     if (this.isValidForm()) {
+      const { firstName, lastName, email, phoneNumber } = this.state;
+      const userId = get(management, 'attributes.userId');
+      const data = {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone_number: phoneNumber
+      };
       if (managementId) {
+        UpdateUser({
+          userId,
+          data,
+          success: () => {
+            UpdateManagement({
+              managementId,
+              data: {
+                access
+              },
+              success: () => {
+                this.onBack();
+              }
+            });
+          }
+        });
       } else {
+        CreateUser({
+          data: {
+            user: {
+              ...data,
+              password: 'sdf239082394eSDF#$%@RFD@#^$Ybfzcvq39745CXZVQ#%#@#R'
+            },
+          },
+          success: (user) => {
+            const managementData = {
+              user_id: user.id,
+              access,
+              email
+            };
+            if (this.props.privilege === 'admin') {
+              managementData['provider_id'] = '1';
+            }
+            CreateManagement({
+              data: {
+                management: { ...managementData }
+              },
+              success: () => {
+                this.onBack();
+              }
+            });
+          }
+        });
       }
     }
   };
@@ -205,7 +263,7 @@ class TeamDetails extends React.Component {
       lastName,
       phoneNumber,
       email,
-      permissions,
+      access,
       errorMessage,
       visibleOfConfirmationModal
     } = this.state;
@@ -262,6 +320,7 @@ class TeamDetails extends React.Component {
               type="text"
               value={phoneNumber}
               onChange={this.onChangePN}
+              // mask='(999)999-9999'
               hasError={errorMessage['phoneNumber'].length >= 0}
               errorMessage={errorMessage['phoneNumber']}
             />
@@ -270,9 +329,8 @@ class TeamDetails extends React.Component {
         <InputRow>
           <InputFieldWrapper className="secondary">
             <Label>Permissions</Label>
-            {/* <PermissionText>{permissions}</PermissionText> */}
             <Select
-              value={permissions}
+              value={access}
               onChange={this.handlePermissionChange}
             >
               <React.Fragment>
@@ -321,14 +379,18 @@ class TeamDetails extends React.Component {
   }
 }
 
-const mapStateToProps = ({ management: { currentStatus }}) => ({
-  currentStatus
+const mapStateToProps = (state) => ({
+  currentStatus: state.management.currentStatus,
+  privilege: state.auth.privilege
 });
 
 const mapDispatchToProps = {
+  CreateUser,
+  UpdateUser,
   GetManagement,
   CreateManagement,
-  UpdateManagement
+  UpdateManagement,
+  DeleteManagement
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamDetails);

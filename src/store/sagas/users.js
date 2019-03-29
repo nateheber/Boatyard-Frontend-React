@@ -81,18 +81,26 @@ function* getUser(action) {
 function* createUser(action) {
   const userClient = yield select(getUserClient);
   const { data, success, error } = action.payload;
+  const result = yield call(userClient.create, data);
   try {
-    const result = yield call(userClient.create, data);
+    const user = get(result, 'data');
+    const payload = {
+      id: user.id,
+      type: user.type,
+      ...user.attributes,
+      ...user.relationships
+    };
     yield put({
       type: actionTypes.CREATE_USER_SUCCESS,
+      payload
     });
     if (success) {
-      yield call(success, get(result, 'data', {}));
+      yield call(success, payload);
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_USER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, result);
     }
   }
 }
@@ -100,8 +108,8 @@ function* createUser(action) {
 function* updateUser(action) {
   const userClient = yield select(getUserClient);
   const { userId, data, success, error } = action.payload;
+  const result = yield call(userClient.update, userId, data);
   try {
-    const result = yield call(userClient.update, userId, data);
     const user = get(result, 'data');
     const payload = {
       id: user.id,
@@ -114,16 +122,13 @@ function* updateUser(action) {
       type: actionTypes.UPDATE_USER_SUCCESS,
       payload
     });
-    yield put({
-      type: actionTypes.UPDATE_USER_SUCCESS,
-    });
     if (success) {
       yield call(success, payload);
     }
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_USER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, result);
     }
   }
 }
