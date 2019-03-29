@@ -25,8 +25,8 @@ export const responseInterceptor = client => {
       store.dispatch(logout());
       return false;
     } else {
-      // throw errorData;
-      return errorData;
+      throw errorData;
+      // return errorData;
     }
   });
   return client;
