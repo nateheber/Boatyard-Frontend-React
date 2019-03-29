@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import queryString from 'query-string';
 
 import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
 import { NormalText } from 'components/basic/Typho'
@@ -7,6 +8,7 @@ import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 import Modal from 'components/compound/Modal';
 import { TeamDetailsHeader } from '../../components';
+import { validateEmail } from 'utils/basic';
 
 const Wrapper = styled.div`
 `;
@@ -48,19 +50,76 @@ export default class TeamDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      memberId: -1,
       firstName: '',
       lastName: '',
       phoneNumber: '',
       email: '',
       permissions: '',
+      errorMessage: {
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        email: ''
+      },
       visibleOfConfirmationModal: false
     };
   }
 
-  onSave = () => {
-    const { id } = this.props.profile;
-    this.props.updateProfile({ id, data: this.state });
-  };
+  componentDidMount() {
+    const query = queryString.parse(this.props.location.search);
+    const memberId = query.id;
+    console.log('-----------------Member---------------', memberId);
+    this.setState({ memberId }, () => {
+    });
+  }
+
+  isValidForm = () => {
+    const { firstName, lastName, phoneNumber, email } = this.state;
+    let hasError = false;
+    let errorMessage = {
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      email: ''
+    };
+    if (firstName.length <= 0) {
+      errorMessage = {
+        ...errorMessage,
+        firstName: 'First Name is Required'
+      };
+      hasError = hasError || true;
+    }
+    if (lastName.length <= 0) {
+      errorMessage = {
+        ...errorMessage,
+        lastName: 'Last Name is Required'
+      };
+      hasError = hasError || true;
+    }
+    if (phoneNumber.length <= 0) {
+      errorMessage = {
+        ...errorMessage,
+        phoneNumber: 'Phone Number is Required'
+      };
+      hasError = hasError || true;
+    }
+    if (email.length <= 0) {
+      errorMessage = {
+        ...errorMessage,
+        email: 'Email is Required'
+      };
+      hasError = hasError || true;
+    } else if (!validateEmail(email)) {
+      errorMessage = {
+        ...errorMessage,
+        email: 'Invalid Email'
+      };
+      hasError = hasError || true;
+    }
+    this.setState({ errorMessage });
+    return !hasError;
+  }
 
   handlePermissionChange = (evt) => {
     const permissions = evt.target.value;
@@ -69,25 +128,25 @@ export default class TeamDetails extends React.Component {
 
   onChangeFN = evt => {
     this.setState({
-      firstName: evt.target.value
+      firstName: evt.target.value.trim()
     });
   };
 
   onChangeLN = evt => {
     this.setState({
-      lastName: evt.target.value
+      lastName: evt.target.value.trim()
     });
   };
 
   onChangeEmail = evt => {
     this.setState({
-      email: evt.target.value
+      email: evt.target.value.trim()
     });
   };
 
   onChangePN = evt => {
     this.setState({
-      phoneNumber: evt.target.value
+      phoneNumber: evt.target.value.trim()
     });
   };
 
@@ -108,13 +167,20 @@ export default class TeamDetails extends React.Component {
   }
 
   onSave = () => {
+    const { memberId } = this.state;
+    if (this.isValidForm()) {
+      if (memberId !== -1) {
+      } else {
+      }
+      // this.props.updateProfile({ id, data: this.state });  
+    }
   };
 
   deleteTeam = () => {
   };
 
   render() {
-    const { firstName, lastName, phoneNumber, email, permissions, visibleOfConfirmationModal } = this.state;
+    const { firstName, lastName, phoneNumber, email, permissions, errorMessage, visibleOfConfirmationModal } = this.state;
     const actions = (
       <React.Fragment>
         <HollowButton onClick={this.onBack} style={{ marginRight: 30 }}>Cancel</HollowButton>
@@ -134,6 +200,8 @@ export default class TeamDetails extends React.Component {
               type="text"
               defaultValue={firstName}
               onChange={this.onChangeFN}
+              hasError={errorMessage['firstName'].length >= 0}
+              errorMessage={errorMessage['firstName']}
             />
           </InputFieldWrapper>
           <InputFieldWrapper className="secondary">
@@ -142,6 +210,8 @@ export default class TeamDetails extends React.Component {
               type="text"
               defaultValue={lastName}
               onChange={this.onChangeLN}
+              hasError={errorMessage['lastName'].length >= 0}
+              errorMessage={errorMessage['lastName']}
             />
           </InputFieldWrapper>
         </InputRow>
@@ -149,9 +219,11 @@ export default class TeamDetails extends React.Component {
           <InputFieldWrapper className="secondary">
             <Label>Email</Label>
             <Input
-              type="text"
+              type="email"
               defaultValue={email}
               onChange={this.onChangeEmail}
+              hasError={errorMessage['email'].length >= 0}
+              errorMessage={errorMessage['email']}
             />
           </InputFieldWrapper>
           <InputFieldWrapper className="secondary">
@@ -160,6 +232,8 @@ export default class TeamDetails extends React.Component {
               type="text"
               defaultValue={phoneNumber}
               onChange={this.onChangePN}
+              hasError={errorMessage['phoneNumber'].length >= 0}
+              errorMessage={errorMessage['phoneNumber']}
             />
           </InputFieldWrapper>
         </InputRow>

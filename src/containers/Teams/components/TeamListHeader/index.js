@@ -1,11 +1,16 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 import { SectionHeaderWrapper, LeftPart, RightPart } from 'components/basic/Header';
 import { OrangeButton } from 'components/basic/Buttons';
 import { ActionDropdown } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
-export default class TeamListHeader extends React.Component {
+class TeamListHeader extends React.Component {
+  goToAddPage = () => {
+    this.props.history.push(`/team-details/`);
+  };
+
   render() {
   const { onAction } = this.props;
     return (
@@ -30,9 +35,11 @@ export default class TeamListHeader extends React.Component {
           />
         </LeftPart>
         <RightPart>
-          <OrangeButton className="desktop">ADD TEAM MEMBER</OrangeButton>
+          <OrangeButton className="desktop" onClick={this.goToAddPage}>ADD TEAM MEMBER</OrangeButton>
         </RightPart>
       </SectionHeaderWrapper>  
     );
   }
 }
+
+export default withRouter(TeamListHeader);

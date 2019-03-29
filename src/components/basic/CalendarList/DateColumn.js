@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { times, filter } from 'lodash';
 import moment from 'moment';
 
-import { parsetMomentToDate } from 'utils/date'
+import { parsetMomentToDate } from 'utils/basic';
 
 import Assignment from './Assignment'
 
