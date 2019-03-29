@@ -8,7 +8,7 @@ import provider from './providers';
 import service from './services';
 import category from './categories';
 import user from './users';
-import management from './management';
+import management from './managements';
 import order from './orders';
 import lineItem from './lineItems';
 import boat from './boats';
