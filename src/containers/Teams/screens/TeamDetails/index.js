@@ -252,6 +252,14 @@ class TeamDetails extends React.Component {
   };
 
   deleteTeamMember = () => {
+    const { DeleteManagement } = this.props;
+    const { managementId } = this.state;
+    DeleteManagement({
+      managementId,
+      success: () => {
+        this.onBack();
+      }
+    });
   };
 
   render() {
@@ -275,7 +283,7 @@ class TeamDetails extends React.Component {
     );
     const modalActions = [
       <HollowButton onClick={this.hideConfirmationModal} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.deleteTeam} key="modal_btn_save">Confirm</OrangeButton>
+      <OrangeButton onClick={this.deleteTeamMember} key="modal_btn_save">Confirm</OrangeButton>
     ];
     const editSection = (
       <React.Fragment>
