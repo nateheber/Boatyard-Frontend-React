@@ -1,10 +1,29 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get } from 'lodash';
+import { get, set, isEmpty } from 'lodash';
 
 import { actionTypes } from '../actions/managements';
 import { getManagementClient } from './sagaSelectors';
 
-function* getManagements1(action) {
+function refactorIncluded(included) {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i]
+    set(refactored, `${type}.${id}`, {...included[i]})
+  }
+  return refactored;
+}
+
+const refineManagement = (management, included) => {
+  for(const key in management.relationships) {
+    let value = management.relationships[key].data;
+    if(!isEmpty(value) && value.hasOwnProperty('type')) {
+      management.relationships[key] = included[value.type][value.id];
+    }
+  }
+  return management;
+}
+
+function* getManagements(action) {
   const managementClient = yield select(getManagementClient);
   const { params, success, error } = action.payload;
   const result = yield call(managementClient.list, params);
@@ -45,8 +64,7 @@ function* getManagement(action) {
     const { data, included } = result;
     yield put({
       type: actionTypes.GET_MANAGEMENTS_SUCCESS,
-      management: data,
-      included
+      management: refineManagement(data, refactorIncluded(included))
     });
     if (success) {
       yield call(success, data, included);
@@ -67,8 +85,7 @@ function* createManagement(action) {
     const { data, included } = result;
     yield put({
       type: actionTypes.CREATE_MANAGEMENT_SUCCESS,
-      management: data,
-      included
+      management: refineManagement(data, refactorIncluded(included))
     });
     if (success) {
       yield call(success, data, included);
@@ -89,8 +106,7 @@ function* updateManagement(action) {
     const { data, included } = result;
     yield put({
       type: actionTypes.UPDATE_MANAGEMENT_SUCCESS,
-      management: data,
-      included
+      management: refineManagement(data, refactorIncluded(included))
     });
     if (success) {
       yield call(success, data, included);
@@ -123,7 +139,7 @@ function* deleteManagement(action) {
 }
 
 export default function* ManagementSaga() {
-  yield takeEvery(actionTypes.GET_MANAGEMENTS, getManagements1);
+  yield takeEvery(actionTypes.GET_MANAGEMENTS, getManagements);
   yield takeEvery(actionTypes.GET_MANAGEMENT, getManagement);
   yield takeEvery(actionTypes.CREATE_MANAGEMENT, createManagement);
   yield takeEvery(actionTypes.UPDATE_MANAGEMENT, updateManagement);

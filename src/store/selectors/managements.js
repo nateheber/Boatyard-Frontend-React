@@ -13,8 +13,6 @@ export const refinedManagementsSelector = createSelector(
         let value = management.relationships[key].data;
         if(!isEmpty(value)) {
           management.relationships[key] = included[value.type][value.id];
-          // const idx = findIndex(included, location => location.id === value.id);
-          // if (idx > -1) management.relationships[key] = included[idx];  
         }
       }
       return management;

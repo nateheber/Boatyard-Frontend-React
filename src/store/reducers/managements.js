@@ -1,7 +1,16 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get } from 'lodash';
+import { get, set } from 'lodash';
 import { actionTypes } from '../actions/managements';
+
+function refactorIncluded(included) {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i]
+    set(refactored, `${type}.${id}`, {...included[i]})
+  }
+  return refactored;
+}
 
 const initialState = {
   currentStatus: '',
@@ -26,36 +35,14 @@ export default handleActions(
     [actionTypes.GET_MANAGEMENTS_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
-        const { total, perPage, managements } = payload;
+        const { total, perPage, managements, included } = payload;
         draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
         draft.managements = managements;
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.GET_MANAGEMENTS_FAILURE]: (state, action) =>
-      produce(state, draft => {
-        const { type, payload } = action;
-        draft.currentStatus = type;
-        draft.errors = payload;
-      }),
-
-    [actionTypes.FILTER_MANAGEMENTS]: (state, action) =>
-      produce(state, draft => {
-        const { type, payload } = action;
-        draft.currentStatus = type;
-        draft.page = get(payload, 'params.page', 1);
-        draft.errors = null;
-      }),
-    [actionTypes.FILTER_MANAGEMENTS_SUCCESS]: (state, action) =>
-      produce(state, draft => {
-        const { type, payload } = action;
-        const { total, perPage, managements } = payload;
-        draft.currentStatus = type;
-        draft.total = total;
-        draft.perPage = perPage;
-        draft.filteredManagements = managements;
-      }),
-    [actionTypes.FILTER_MANAGEMENTS_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
@@ -71,8 +58,9 @@ export default handleActions(
     [actionTypes.GET_MANAGEMENT_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
+        const { management } = payload;
         draft.currentStatus = type;
-        draft.currentManagement = payload;
+        draft.currentManagement = management;
       }),
     [actionTypes.GET_MANAGEMENT_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -89,8 +77,10 @@ export default handleActions(
       }),
     [actionTypes.CREATE_MANAGEMENT_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload } = action;
+        const { management } = payload;
         draft.currentStatus = type;
+        draft.currentManagement = management;
       }),
     [actionTypes.CREATE_MANAGEMENT_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -107,8 +97,10 @@ export default handleActions(
       }),
     [actionTypes.UPDATE_MANAGEMENT_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload } = action;
+        const { management } = payload;
         draft.currentStatus = type;
+        draft.currentManagement = management;
       }),
     [actionTypes.UPDATE_MANAGEMENT_FAILURE]: (state, action) =>
       produce(state, draft => {
