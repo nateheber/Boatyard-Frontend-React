@@ -6,7 +6,7 @@ import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, GetManagement, CreateManagement, UpdateManagement, DeleteManagement } from 'store/actions/managements';
-import { actionTypes as userActions, CreateUser, UpdateUser } from 'store/actions/users';
+import { CreateUser, UpdateUser } from 'store/actions/users';
 import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { NormalText, PageTitle } from 'components/basic/Typho'
@@ -195,8 +195,6 @@ class TeamDetails extends React.Component {
   onSave = () => {
     const { managementId, management, access } = this.state;
     const { CreateUser, UpdateUser, CreateManagement, UpdateManagement } = this.props;
-    console.log('-------management-----------', management);
-    console.log('-------access-----------', access);
     if (this.isValidForm()) {
       const { firstName, lastName, email, phoneNumber } = this.state;
       const userId = get(management, 'attributes.userId');
