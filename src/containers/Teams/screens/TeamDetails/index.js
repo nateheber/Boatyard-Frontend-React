@@ -1,9 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import queryString from 'query-string';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
+import { actionTypes, GetManagement, CreateManagement, UpdateManagement } from 'store/actions/managements';
 import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
-import { NormalText } from 'components/basic/Typho'
+import LoadingSpinner from 'components/basic/LoadingSpinner';
+import { NormalText, PageTitle } from 'components/basic/Typho'
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 import Modal from 'components/compound/Modal';
@@ -46,11 +51,12 @@ export const Description = styled(NormalText)`
 //   text-transform: capitalize;
 // `;
 
-export default class TeamDetails extends React.Component {
+class TeamDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      memberId: -1,
+      managementId: null,
+      management: {},
       firstName: '',
       lastName: '',
       phoneNumber: '',
@@ -68,10 +74,24 @@ export default class TeamDetails extends React.Component {
 
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
-    const memberId = query.id;
-    console.log('-----------------Member---------------', memberId);
-    this.setState({ memberId }, () => {
-    });
+    const managementId = query.id;
+    if (managementId) {
+      this.setState({ managementId }, () => {
+        this.props.GetManagement({ managementId,
+          success: (management) => {
+            const firstName = get(management, 'relationships.user.attributes.firstName') || '';
+            const lastName = get(management, 'relationships.user.attributes.lastName') || '';
+            const phoneNumber = get(management, 'relationships.user.attributes.phoneNumber') || '';
+            const email = get(management, 'relationships.user.attributes.email') || '';
+            const permissions = get(management, 'access') || '';
+            this.setState({ management, firstName, lastName, phoneNumber, email, permissions });
+          },
+          error: () => {
+            toastr.error('Error', 'Member does not exist!');
+          } 
+        });
+      });
+    }
   }
 
   isValidForm = () => {
@@ -167,20 +187,30 @@ export default class TeamDetails extends React.Component {
   }
 
   onSave = () => {
-    const { memberId } = this.state;
+    const { managementId } = this.state;
     if (this.isValidForm()) {
-      if (memberId !== -1) {
+      if (managementId) {
       } else {
       }
-      // this.props.updateProfile({ id, data: this.state });  
     }
   };
 
-  deleteTeam = () => {
+  deleteTeamMember = () => {
   };
 
   render() {
-    const { firstName, lastName, phoneNumber, email, permissions, errorMessage, visibleOfConfirmationModal } = this.state;
+    const {
+      managementId,
+      firstName,
+      lastName,
+      phoneNumber,
+      email,
+      permissions,
+      errorMessage,
+      visibleOfConfirmationModal
+    } = this.state;
+    const { currentStatus } = this.props;
+    const loading = currentStatus === actionTypes.GET_MANAGEMENT;
     const actions = (
       <React.Fragment>
         <HollowButton onClick={this.onBack} style={{ marginRight: 30 }}>Cancel</HollowButton>
@@ -198,7 +228,7 @@ export default class TeamDetails extends React.Component {
             <Label>First Name</Label>
             <Input
               type="text"
-              defaultValue={firstName}
+              value={firstName}
               onChange={this.onChangeFN}
               hasError={errorMessage['firstName'].length >= 0}
               errorMessage={errorMessage['firstName']}
@@ -208,7 +238,7 @@ export default class TeamDetails extends React.Component {
             <Label>Last Name</Label>
             <Input
               type="text"
-              defaultValue={lastName}
+              value={lastName}
               onChange={this.onChangeLN}
               hasError={errorMessage['lastName'].length >= 0}
               errorMessage={errorMessage['lastName']}
@@ -220,7 +250,7 @@ export default class TeamDetails extends React.Component {
             <Label>Email</Label>
             <Input
               type="email"
-              defaultValue={email}
+              value={email}
               onChange={this.onChangeEmail}
               hasError={errorMessage['email'].length >= 0}
               errorMessage={errorMessage['email']}
@@ -230,7 +260,7 @@ export default class TeamDetails extends React.Component {
             <Label>Phone</Label>
             <Input
               type="text"
-              defaultValue={phoneNumber}
+              value={phoneNumber}
               onChange={this.onChangePN}
               hasError={errorMessage['phoneNumber'].length >= 0}
               errorMessage={errorMessage['phoneNumber']}
@@ -246,7 +276,7 @@ export default class TeamDetails extends React.Component {
               onChange={this.handlePermissionChange}
             >
               <React.Fragment>
-                <option value="Admin">Admin</option>
+                <option value="admin">Admin</option>
               </React.Fragment>
             </Select>
           </InputFieldWrapper>
@@ -256,12 +286,24 @@ export default class TeamDetails extends React.Component {
     );
     return (
       <Wrapper>
-        <HeaderWrapper>
-          <TeamDetailsHeader title={'Brock Donnelly'} onAction={this.showConfirmationModal} />
-        </HeaderWrapper>
-        <ContentWrapper>
-          <EditorSection actions={actions} content={editSection} />
-        </ContentWrapper>
+        {managementId ? <React.Fragment>
+          {!loading && <React.Fragment>
+            <HeaderWrapper>
+              <TeamDetailsHeader title={`${firstName} ${lastName}`} onAction={this.showConfirmationModal} />
+            </HeaderWrapper>
+            <ContentWrapper>
+              <EditorSection actions={actions} content={editSection} />
+            </ContentWrapper>
+          </React.Fragment>}
+        </React.Fragment>
+        : <React.Fragment>
+            <HeaderWrapper>
+            <PageTitle style={{ padding: '25px 30px' }}>Add New Member</PageTitle>
+            </HeaderWrapper>
+            <ContentWrapper>
+              <EditorSection actions={actions} content={editSection} />
+            </ContentWrapper>          
+        </React.Fragment>}
         <Modal
           title={'Are You Sure?'}
           actions={modalActions}
@@ -269,9 +311,24 @@ export default class TeamDetails extends React.Component {
           open={visibleOfConfirmationModal}
           onClose={this.hideConfirmationModal}
         >
-          <Description>Deleting {'Brock Donnelly'}&#39;s account is permanent and cannot be undone.</Description>
+          <Description>Deleting {`${firstName} ${lastName}`}&#39;s account is permanent and cannot be undone.</Description>
         </Modal>
+        {(managementId && loading) && <LoadingSpinner
+          loading={loading}
+        />}
       </Wrapper>
     );
   }
 }
+
+const mapStateToProps = ({ management: { currentStatus }}) => ({
+  currentStatus
+});
+
+const mapDispatchToProps = {
+  GetManagement,
+  CreateManagement,
+  UpdateManagement
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TeamDetails);

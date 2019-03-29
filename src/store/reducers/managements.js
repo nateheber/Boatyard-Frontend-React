@@ -57,8 +57,7 @@ export default handleActions(
       }),
     [actionTypes.GET_MANAGEMENT_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type, payload } = action;
-        const { management } = payload;
+        const { type, management } = action;
         draft.currentStatus = type;
         draft.currentManagement = management;
       }),
@@ -77,8 +76,7 @@ export default handleActions(
       }),
     [actionTypes.CREATE_MANAGEMENT_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type, payload } = action;
-        const { management } = payload;
+        const { type, management } = action;
         draft.currentStatus = type;
         draft.currentManagement = management;
       }),
@@ -97,8 +95,7 @@ export default handleActions(
       }),
     [actionTypes.UPDATE_MANAGEMENT_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type, payload } = action;
-        const { management } = payload;
+        const { type, management } = action;
         draft.currentStatus = type;
         draft.currentManagement = management;
       }),

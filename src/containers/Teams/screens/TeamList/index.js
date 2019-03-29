@@ -31,7 +31,6 @@ class TeamList extends React.Component {
   render() {
     const { managements, page } = this.props;
     const pageCount = this.getPageCount();
-    console.log('-------------managements----------', managements);
     const columns = [
       { label: 'name', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName', },
       { label: 'phone number', value: 'relationships.user.attributes.phoneNumber' },

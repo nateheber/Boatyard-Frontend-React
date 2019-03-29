@@ -63,7 +63,7 @@ function* getManagement(action) {
   try {
     const { data, included } = result;
     yield put({
-      type: actionTypes.GET_MANAGEMENTS_SUCCESS,
+      type: actionTypes.GET_MANAGEMENT_SUCCESS,
       management: refineManagement(data, refactorIncluded(included))
     });
     if (success) {
