@@ -1,12 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
+import queryString from 'query-string';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
+import { actionTypes, GetManagement, CreateManagement, UpdateManagement, DeleteManagement } from 'store/actions/managements';
+import { CreateUser, UpdateUser } from 'store/actions/users';
 import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
-import { NormalText } from 'components/basic/Typho'
+import LoadingSpinner from 'components/basic/LoadingSpinner';
+import { NormalText, PageTitle } from 'components/basic/Typho'
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 import Modal from 'components/compound/Modal';
 import { TeamDetailsHeader } from '../../components';
+import { validateEmail } from 'utils/basic';
 
 const Wrapper = styled.div`
 `;
@@ -44,50 +52,127 @@ export const Description = styled(NormalText)`
 //   text-transform: capitalize;
 // `;
 
-export default class TeamDetails extends React.Component {
+class TeamDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      managementId: null,
+      management: {},
       firstName: '',
       lastName: '',
       phoneNumber: '',
       email: '',
-      permissions: '',
+      access: 'admin',
+      errorMessage: {
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        email: ''
+      },
       visibleOfConfirmationModal: false
     };
   }
 
-  onSave = () => {
-    const { id } = this.props.profile;
-    this.props.updateProfile({ id, data: this.state });
-  };
+  componentDidMount() {
+    const query = queryString.parse(this.props.location.search);
+    const managementId = query.id;
+    if (managementId) {
+      this.getManagement(managementId);
+    }
+  }
+
+  getManagement = (managementId) => {
+    this.setState({ managementId }, () => {
+      this.props.GetManagement({ managementId,
+        success: (management) => {
+          const firstName = get(management, 'relationships.user.attributes.firstName') || '';
+          const lastName = get(management, 'relationships.user.attributes.lastName') || '';
+          const phoneNumber = get(management, 'relationships.user.attributes.phoneNumber') || '';
+          const email = get(management, 'relationships.user.attributes.email') || '';
+          const access = get(management, 'attributes.access') || 'admin';
+          this.setState({ management, firstName, lastName, phoneNumber, email, access });
+        },
+        error: () => {
+          toastr.error('Error', 'Member does not exist!');
+          this.onBack();
+        } 
+      });
+    });
+  }
+
+  isValidForm = () => {
+    const { firstName, lastName, phoneNumber, email } = this.state;
+    let hasError = false;
+    let errorMessage = {
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      email: ''
+    };
+    if (firstName.length <= 0) {
+      errorMessage = {
+        ...errorMessage,
+        firstName: 'First Name is Required'
+      };
+      hasError = hasError || true;
+    }
+    if (lastName.length <= 0) {
+      errorMessage = {
+        ...errorMessage,
+        lastName: 'Last Name is Required'
+      };
+      hasError = hasError || true;
+    }
+    if (phoneNumber.length <= 0) {
+      errorMessage = {
+        ...errorMessage,
+        phoneNumber: 'Phone Number is Required'
+      };
+      hasError = hasError || true;
+    }
+    if (email.length <= 0) {
+      errorMessage = {
+        ...errorMessage,
+        email: 'Email is Required'
+      };
+      hasError = hasError || true;
+    } else if (!validateEmail(email)) {
+      errorMessage = {
+        ...errorMessage,
+        email: 'Invalid Email'
+      };
+      hasError = hasError || true;
+    }
+    this.setState({ errorMessage });
+    return !hasError;
+  }
 
   handlePermissionChange = (evt) => {
-    const permissions = evt.target.value;
-    this.setState({ permissions });
+    const access = evt.target.value;
+    this.setState({ access });
   };
 
   onChangeFN = evt => {
     this.setState({
-      firstName: evt.target.value
+      firstName: evt.target.value.trim()
     });
   };
 
   onChangeLN = evt => {
     this.setState({
-      lastName: evt.target.value
+      lastName: evt.target.value.trim()
     });
   };
 
   onChangeEmail = evt => {
     this.setState({
-      email: evt.target.value
+      email: evt.target.value.trim()
     });
   };
 
   onChangePN = evt => {
     this.setState({
-      phoneNumber: evt.target.value
+      phoneNumber: evt.target.value.trim()
     });
   };
 
@@ -108,13 +193,88 @@ export default class TeamDetails extends React.Component {
   }
 
   onSave = () => {
+    const { managementId, management, access } = this.state;
+    const { CreateUser, UpdateUser, CreateManagement, UpdateManagement } = this.props;
+    if (this.isValidForm()) {
+      const { firstName, lastName, email, phoneNumber } = this.state;
+      const userId = get(management, 'attributes.userId');
+      const data = {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone_number: phoneNumber
+      };
+      if (managementId) {
+        UpdateUser({
+          userId,
+          data,
+          success: () => {
+            UpdateManagement({
+              managementId,
+              data: {
+                access
+              },
+              success: () => {
+                this.onBack();
+              }
+            });
+          }
+        });
+      } else {
+        CreateUser({
+          data: {
+            user: {
+              ...data,
+              password: 'sdf239082394eSDF#$%@RFD@#^$Ybfzcvq39745CXZVQ#%#@#R'
+            },
+          },
+          success: (user) => {
+            const managementData = {
+              user_id: user.id,
+              access,
+              email
+            };
+            if (this.props.privilege === 'admin') {
+              managementData['provider_id'] = '1';
+            }
+            CreateManagement({
+              data: {
+                management: { ...managementData }
+              },
+              success: () => {
+                this.onBack();
+              }
+            });
+          }
+        });
+      }
+    }
   };
 
-  deleteTeam = () => {
+  deleteTeamMember = () => {
+    const { DeleteManagement } = this.props;
+    const { managementId } = this.state;
+    DeleteManagement({
+      managementId,
+      success: () => {
+        this.onBack();
+      }
+    });
   };
 
   render() {
-    const { firstName, lastName, phoneNumber, email, permissions, visibleOfConfirmationModal } = this.state;
+    const {
+      managementId,
+      firstName,
+      lastName,
+      phoneNumber,
+      email,
+      access,
+      errorMessage,
+      visibleOfConfirmationModal
+    } = this.state;
+    const { currentStatus } = this.props;
+    const loading = currentStatus === actionTypes.GET_MANAGEMENT;
     const actions = (
       <React.Fragment>
         <HollowButton onClick={this.onBack} style={{ marginRight: 30 }}>Cancel</HollowButton>
@@ -123,7 +283,7 @@ export default class TeamDetails extends React.Component {
     );
     const modalActions = [
       <HollowButton onClick={this.hideConfirmationModal} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.deleteTeam} key="modal_btn_save">Confirm</OrangeButton>
+      <OrangeButton onClick={this.deleteTeamMember} key="modal_btn_save">Confirm</OrangeButton>
     ];
     const editSection = (
       <React.Fragment>
@@ -132,16 +292,20 @@ export default class TeamDetails extends React.Component {
             <Label>First Name</Label>
             <Input
               type="text"
-              defaultValue={firstName}
+              value={firstName}
               onChange={this.onChangeFN}
+              hasError={errorMessage['firstName'].length >= 0}
+              errorMessage={errorMessage['firstName']}
             />
           </InputFieldWrapper>
           <InputFieldWrapper className="secondary">
             <Label>Last Name</Label>
             <Input
               type="text"
-              defaultValue={lastName}
+              value={lastName}
               onChange={this.onChangeLN}
+              hasError={errorMessage['lastName'].length >= 0}
+              errorMessage={errorMessage['lastName']}
             />
           </InputFieldWrapper>
         </InputRow>
@@ -149,30 +313,34 @@ export default class TeamDetails extends React.Component {
           <InputFieldWrapper className="secondary">
             <Label>Email</Label>
             <Input
-              type="text"
-              defaultValue={email}
+              type="email"
+              value={email}
               onChange={this.onChangeEmail}
+              hasError={errorMessage['email'].length >= 0}
+              errorMessage={errorMessage['email']}
             />
           </InputFieldWrapper>
           <InputFieldWrapper className="secondary">
             <Label>Phone</Label>
             <Input
               type="text"
-              defaultValue={phoneNumber}
+              value={phoneNumber}
               onChange={this.onChangePN}
+              // mask='(999)999-9999'
+              hasError={errorMessage['phoneNumber'].length >= 0}
+              errorMessage={errorMessage['phoneNumber']}
             />
           </InputFieldWrapper>
         </InputRow>
         <InputRow>
           <InputFieldWrapper className="secondary">
             <Label>Permissions</Label>
-            {/* <PermissionText>{permissions}</PermissionText> */}
             <Select
-              value={permissions}
+              value={access}
               onChange={this.handlePermissionChange}
             >
               <React.Fragment>
-                <option value="Admin">Admin</option>
+                <option value="admin">Admin</option>
               </React.Fragment>
             </Select>
           </InputFieldWrapper>
@@ -182,12 +350,24 @@ export default class TeamDetails extends React.Component {
     );
     return (
       <Wrapper>
-        <HeaderWrapper>
-          <TeamDetailsHeader title={'Brock Donnelly'} onAction={this.showConfirmationModal} />
-        </HeaderWrapper>
-        <ContentWrapper>
-          <EditorSection actions={actions} content={editSection} />
-        </ContentWrapper>
+        {managementId ? <React.Fragment>
+          {!loading && <React.Fragment>
+            <HeaderWrapper>
+              <TeamDetailsHeader title={`${firstName} ${lastName}`} onAction={this.showConfirmationModal} />
+            </HeaderWrapper>
+            <ContentWrapper>
+              <EditorSection actions={actions} content={editSection} />
+            </ContentWrapper>
+          </React.Fragment>}
+        </React.Fragment>
+        : <React.Fragment>
+            <HeaderWrapper>
+            <PageTitle style={{ padding: '25px 30px' }}>Add New Member</PageTitle>
+            </HeaderWrapper>
+            <ContentWrapper>
+              <EditorSection actions={actions} content={editSection} />
+            </ContentWrapper>          
+        </React.Fragment>}
         <Modal
           title={'Are You Sure?'}
           actions={modalActions}
@@ -195,9 +375,28 @@ export default class TeamDetails extends React.Component {
           open={visibleOfConfirmationModal}
           onClose={this.hideConfirmationModal}
         >
-          <Description>Deleting {'Brock Donnelly'}&#39;s account is permanent and cannot be undone.</Description>
+          <Description>Deleting {`${firstName} ${lastName}`}&#39;s account is permanent and cannot be undone.</Description>
         </Modal>
+        {(managementId && loading) && <LoadingSpinner
+          loading={loading}
+        />}
       </Wrapper>
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  currentStatus: state.management.currentStatus,
+  privilege: state.auth.privilege
+});
+
+const mapDispatchToProps = {
+  CreateUser,
+  UpdateUser,
+  GetManagement,
+  CreateManagement,
+  UpdateManagement,
+  DeleteManagement
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TeamDetails);

@@ -26,6 +26,7 @@ export const responseInterceptor = client => {
       return false;
     } else {
       throw errorData;
+      // return errorData;
     }
   });
   return client;

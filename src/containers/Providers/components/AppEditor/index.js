@@ -726,11 +726,11 @@ class AppEditor extends React.Component {
         category_id: get(attributes, 'categoryId'),
         service_id: get(attributes, 'serviceId'),
         name: get(attributes, 'name'),
+        subtitle: get(attributes, 'subtitle'),
         description: get(attributes, 'description'),
         icon_id: get(attributes, 'iconId'),
         cost: get(attributes, 'cost') || 0,
         cost_type: get(service, 'costType'),
-        service_category_id: get(attributes, 'serviceCategoryId'),
         email_template: get(attributes, 'emailTemplate'),
         manual_position: manualPosition
       };
@@ -755,10 +755,7 @@ class AppEditor extends React.Component {
           category_id: get(service, 'category_id'),
           icon_id: get(service, 'icon_id'),
           cost: get(service, 'cost'),
-          cost_type: get(service, 'cost_type'),
-          service_category_id: get(service, 'service_category_id'),
-          email_template: get(service, 'email_template'),
-          manual_position: get(service, 'manual_position')
+          cost_type: get(service, 'cost_type')
         }
       };
       if (service.service_id) {
@@ -777,12 +774,13 @@ class AppEditor extends React.Component {
           const locationService = servicesPayload.find(service => service.name === name);
           const payload = {
             name,
-            description: get(data, 'attributes.description'),
+            description: locationService.description,
+            subtitle: locationService.description,
             provider_id: providerId,
             service_id: serviceId,
             service_category_id: locationService.service_category_id,
             manual_position: locationService.manual_position,
-            email_template: get(data, 'attributes.emailTemplate'),
+            email_template: locationService.email_template,
             cost
           };
           if (locationService.hasOwnProperty('id')) {
@@ -812,6 +810,14 @@ class AppEditor extends React.Component {
           }
         }
       })
+    } else {
+      if (!isEmpty(params)) {
+        this.updateLocation({
+          provider_location: {
+            ...params
+          }
+        });
+      }
     }
   }
 
