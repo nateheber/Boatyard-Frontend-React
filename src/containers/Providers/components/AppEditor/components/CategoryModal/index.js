@@ -190,7 +190,6 @@ class CategoryModal extends React.Component {
     this.state = {
       fields: [],
       name: '',
-      description: '',
       subtitle: '',
       iconFile: null,
       iconRef: null,
@@ -270,7 +269,6 @@ class CategoryModal extends React.Component {
     const { baseData } = this.props;
     const type = this.getType();
     const name = get(baseData, 'info.attributes.name');
-    const description = get(baseData, 'info.attributes.description');
     const subtitle = get(baseData, 'info.attributes.subtitle');
     const fields = [
       {
@@ -281,27 +279,17 @@ class CategoryModal extends React.Component {
         required: true,
         defaultValue: name,
         xs: 12,
-      }
-    ];
-    if (type === 'service') {
-      fields.push({
+      },
+      {
         field: 'subtitle',
         label: 'Button Sub Copy',
         type: 'text_area',
         defaultValue: subtitle,
         xs: 12
-      });
-    } else {
-      fields.push({
-        field: 'description',
-        label: 'Button Sub Copy',
-        type: 'text_area',
-        defaultValue: description,
-        xs: 12
-      });
-    }
+      }
+    ];
 
-    this.setState({ fields, name, description, subtitle });
+    this.setState({ fields, name, subtitle });
   };
 
   setTextFields = ref => {
@@ -392,7 +380,7 @@ class CategoryModal extends React.Component {
 
   render() {
     const { loading, title, open, onClose, currentStatus, baseData } = this.props;
-    const { fields, name, description, subtitle } = this.state;
+    const { fields, name, subtitle } = this.state;
     const customIcon = this.getCustomIcon();
     const actions = [];
     const type = this.getType();
@@ -447,7 +435,7 @@ class CategoryModal extends React.Component {
               <PreviewIcon src={iconSrc} />
               <PreviewTextWrapper>
                 <PreviewName>{name}</PreviewName>
-                <PreviewDescription>{type === 'service' ? subtitle : description}</PreviewDescription>
+                <PreviewDescription>{subtitle}</PreviewDescription>
               </PreviewTextWrapper>
               <PreviewNextIcon src={BackIcon} />
             </PreviewContent>

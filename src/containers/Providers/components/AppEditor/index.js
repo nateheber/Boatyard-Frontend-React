@@ -660,7 +660,7 @@ class AppEditor extends React.Component {
       const attributes = get(category, 'attributes');
       const payload = {
         name: get(attributes, 'name'),
-        description: get(attributes, 'description'),
+        subtitle: get(attributes, 'subtitle'),
         icon_id: get(attributes, 'iconId'),
         manual_position: get(attributes, 'manualPosition')
       };
@@ -730,7 +730,7 @@ class AppEditor extends React.Component {
         description: get(attributes, 'description'),
         icon_id: get(attributes, 'iconId'),
         cost: get(attributes, 'cost') || 0,
-        cost_type: get(service, 'costType'),
+        cost_type: get(attributes, 'costType'),
         email_template: get(attributes, 'emailTemplate'),
         manual_position: manualPosition
       };
@@ -775,7 +775,7 @@ class AppEditor extends React.Component {
           const payload = {
             name,
             description: locationService.description,
-            subtitle: locationService.description,
+            subtitle: locationService.subtitle,
             provider_id: providerId,
             service_id: serviceId,
             service_category_id: locationService.service_category_id,

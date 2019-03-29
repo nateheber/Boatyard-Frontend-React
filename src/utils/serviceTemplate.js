@@ -8,7 +8,7 @@ export const setServiceTemplateData = (serviceInfo, templateInfo) => {
   set(newData, 'templateTitle', name);
   if (hasIn(newData, 'data.subtitle')) {
     const defaultData = get(newData, 'data.subtitle');
-    set(newData, 'data.subtitle', get(attributes, 'subtitle') || defaultData);
+    set(newData, 'data.subtitle', name || defaultData);
   }
   if (hasIn(newData, 'data.description')) {
     const defaultData = get(newData, 'data.description');

@@ -146,20 +146,14 @@ class ListItem extends React.Component {
 
   getRenderingTexts = () => {
     const { item } = this.props;
-    const { info: { attributes: { name, description } } } = item;  
-    return { name, description };
-    // if (item.type === 'category') {
-    //   const { info: { attributes: { name, description } } } = item;  
-    //   return { name, description };
-    // }
-    // const { info: { name, description } } = item;
-    // return { name, description };
+    const { info: { attributes: { name, subtitle } } } = item;  
+    return { name, subtitle };
   }
 
   render () {
     const { style } = this.props;
     const { showEditWrapper } = this.state;
-    const { name, description } = this.getRenderingTexts();
+    const { name, subtitle } = this.getRenderingTexts();
     const icon = this.getIcon();
     return (
       <Wrapper onClick={this.onClickItem} style={style}>
@@ -167,7 +161,7 @@ class ListItem extends React.Component {
           <Icon src={icon} />
           <ContentWrapper>
             <Title>{name}</Title>
-            <Description>{description}</Description>
+            <Description>{subtitle}</Description>
           </ContentWrapper>
           <EditWrapper className={classNames({ show: showEditWrapper })}>
             <EditButtonWrapper className={classNames({ show: showEditWrapper })}>
