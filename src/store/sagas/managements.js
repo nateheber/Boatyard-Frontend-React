@@ -1,5 +1,6 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, set, isEmpty } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/managements';
 import { getManagementClient } from './sagaSelectors';
@@ -26,8 +27,9 @@ const refineManagement = (management, included) => {
 function* getManagements(action) {
   const managementClient = yield select(getManagementClient);
   const { params, success, error } = action.payload;
-  const result = yield call(managementClient.list, params);
+  let result = null;
   try {
+    result = yield call(managementClient.list, params);
     const managements = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
@@ -59,8 +61,9 @@ function* getManagements(action) {
 function* getManagement(action) {
   const managementClient = yield select(getManagementClient);
   const { managementId, success, error } = action.payload;
-  const result = yield call(managementClient.read, managementId);
+  let result = null;
   try {
+    result = yield call(managementClient.read, managementId);
     const { data, included } = result;
     yield put({
       type: actionTypes.GET_MANAGEMENT_SUCCESS,
@@ -79,15 +82,17 @@ function* getManagement(action) {
 
 function* createManagement(action) {
   const managementClient = yield select(getManagementClient);
-  const { data, success, error } = action.payload;
-  const result = yield call(managementClient.create, data);
+  const { data: payload, success, error } = action.payload;
+  let result = null;
   try {
+    result = yield call(managementClient.create, payload);
     const { data, included } = result;
     yield put({
       type: actionTypes.CREATE_MANAGEMENT_SUCCESS,
       management: refineManagement(data, refactorIncluded(included))
     });
     if (success) {
+      toastr.success('Success', 'Created successfully!');
       yield call(success, data, included);
     }
   } catch (e) {
@@ -100,15 +105,17 @@ function* createManagement(action) {
 
 function* updateManagement(action) {
   const managementClient = yield select(getManagementClient);
-  const { managementId, data, success, error } = action.payload;
-  const result = yield call(managementClient.update, managementId, data);
+  const { managementId, data: payload, success, error } = action.payload;
+  let result = null;
   try {
+    result = yield call(managementClient.update, managementId, payload);
     const { data, included } = result;
     yield put({
       type: actionTypes.UPDATE_MANAGEMENT_SUCCESS,
       management: refineManagement(data, refactorIncluded(included))
     });
     if (success) {
+      toastr.success('Success', 'Saved successfully!');
       yield call(success, data, included);
     }
   } catch (e) {
@@ -128,6 +135,7 @@ function* deleteManagement(action) {
       type: actionTypes.DELETE_MANAGEMENT_SUCCESS,
     });
     if (success) {
+      toastr.success('Success', 'Deleted successfully!');
       yield call(success);
     }
   } catch (e) {
