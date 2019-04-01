@@ -608,10 +608,21 @@ class AppEditor extends React.Component {
   };
 
   getTemplateByType = (type) => {
-    return {
-      templateType: type,
-      data: defaultTemplateInfos[type]
-    };
+    const data = { ...defaultTemplateInfos[type] };
+    for(const key in defaultTemplateInfos[type]) {
+      const value = defaultTemplateInfos[type][key];
+      if (key === 'data') {
+        const subData = {};
+        for(const subkey in value) {
+          const subvalue = value[subkey];
+          subData[subkey] = subvalue;
+        }
+        data[key] = subData;
+      } else {
+        data[key] = value;
+      }
+    }
+    return { templateType: type, data };
   }
 
   handleSaveButtonClick = () => {
@@ -660,7 +671,7 @@ class AppEditor extends React.Component {
       const attributes = get(category, 'attributes');
       const payload = {
         name: get(attributes, 'name'),
-        subtitle: get(attributes, 'subtitle'),
+        description: get(attributes, 'description'),
         icon_id: get(attributes, 'iconId'),
         manual_position: get(attributes, 'manualPosition')
       };
@@ -730,7 +741,7 @@ class AppEditor extends React.Component {
         description: get(attributes, 'description'),
         icon_id: get(attributes, 'iconId'),
         cost: get(attributes, 'cost') || 0,
-        cost_type: get(attributes, 'costType'),
+        cost_type: get(service, 'costType'),
         email_template: get(attributes, 'emailTemplate'),
         manual_position: manualPosition
       };
@@ -775,7 +786,7 @@ class AppEditor extends React.Component {
           const payload = {
             name,
             description: locationService.description,
-            subtitle: locationService.subtitle,
+            subtitle: locationService.description,
             provider_id: providerId,
             service_id: serviceId,
             service_category_id: locationService.service_category_id,

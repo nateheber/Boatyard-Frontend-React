@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { SearchBox } from 'components/basic/Input';
 
-import templatesInfo from '../defaultTemplateValues' ;
+import defaultTemplateInfos from '../defaultTemplateValues' ;
 import {
   BookPriceList, Fuel, PumpOut,
   TemplateOption, CaptainService,
@@ -72,12 +72,12 @@ export default class TemplateSelector extends React.Component {
   }
 
   renderTemplates = () => {
-    const keys = Object.keys(templatesInfo);
+    const keys = Object.keys(defaultTemplateInfos);
     const { selected } = this.state;
     return keys.map((item) => {
-      const templateDefValues = templatesInfo[item].data;
-      const name = templatesInfo[item].templateName;
-      const title = templatesInfo[item].templateTitle;
+      const templateDefValues = defaultTemplateInfos[item].data;
+      const name = defaultTemplateInfos[item].templateName;
+      const title = defaultTemplateInfos[item].templateTitle;
       const isSelected = item === selected;
       switch (item) {
         case 'request':
