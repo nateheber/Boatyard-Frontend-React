@@ -789,7 +789,7 @@ class AppEditor extends React.Component {
           const locationService = servicesPayload.find(service => service.name === name);
           const payload = {
             name,
-            subtitle: locationService.description,
+            subtitle: locationService.subtitle,
             description: locationService.description,
             secondary_description: locationService.secondary_description,
             provider_id: providerId,

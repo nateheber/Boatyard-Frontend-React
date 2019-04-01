@@ -32,8 +32,6 @@ export const setServiceTemplateData = (serviceInfo, templateInfo) => {
 }
 
 export const setTemplateDataToServiceAttributes = (serviceInfo, templateInfo) => {
-  console.log('------------------------serviceInfo------------', serviceInfo);
-  console.log('------------------------templateInfo------------', templateInfo);
   const attributes = get(serviceInfo, 'attributes');
   const { data } = templateInfo;
   if (hasIn(data, 'data.description')) {
