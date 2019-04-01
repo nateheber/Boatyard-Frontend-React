@@ -9,7 +9,7 @@ import { actionTypes as locationActions, GetProviderLocations, UpdateProviderLoc
 import { actionTypes as iconActions, CreateIcon, GetIcons } from 'store/actions/icons';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
-import { setServiceTemplateData } from 'utils/serviceTemplate';
+import { setServiceTemplateData, setTemplateDataToServiceAttributes } from 'utils/serviceTemplate';
 import defaultTemplateInfos from './components/ServiceTemplates/defaultTemplateValues';
 
 import {
@@ -649,8 +649,9 @@ class AppEditor extends React.Component {
           for(const subIdx in subItems) {
             const subItem = subItems[subIdx];
             const manualPosition = parseInt(info.attributes.manualPosition) * 100 + parseInt(subIdx) + 1;
-            const subInfo = get(subItem, 'info');
+            let subInfo = get(subItem, 'info');
             subInfo.attributes.emailTemplate = get(subItem, 'template.templateType');
+            subInfo.attributes = setTemplateDataToServiceAttributes(subInfo, get(subItem, 'template'));
             subInfo.attributes['manualPosition'] = manualPosition;
             currentServices.push(subInfo);
             if(subInfo.hasOwnProperty('id')) {
@@ -660,6 +661,7 @@ class AppEditor extends React.Component {
         }
       } else {
         info.attributes.emailTemplate = get(item, 'template.templateType');
+        info.attributes = setTemplateDataToServiceAttributes(info, get(item, 'template'));
         currentServices.push(info);
         if(info.hasOwnProperty('id')) {
           currentServiceIds.push(get(info, 'id'));
@@ -743,6 +745,7 @@ class AppEditor extends React.Component {
         cost: get(attributes, 'cost') || 0,
         cost_type: get(service, 'costType'),
         email_template: get(attributes, 'emailTemplate'),
+        secondary_description: get(attributes, 'secondaryDescription'),
         manual_position: manualPosition
       };
       if (category) {
@@ -763,6 +766,7 @@ class AppEditor extends React.Component {
           provider_id: providerId,
           name: get(service, 'name'),
           description: get(service, 'description'),
+          secondary_description: get(service, 'secondary_description'),
           category_id: get(service, 'category_id'),
           icon_id: get(service, 'icon_id'),
           cost: get(service, 'cost'),
@@ -785,8 +789,9 @@ class AppEditor extends React.Component {
           const locationService = servicesPayload.find(service => service.name === name);
           const payload = {
             name,
-            description: locationService.description,
             subtitle: locationService.description,
+            description: locationService.description,
+            secondary_description: locationService.secondary_description,
             provider_id: providerId,
             service_id: serviceId,
             service_category_id: locationService.service_category_id,
