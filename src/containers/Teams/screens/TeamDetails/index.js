@@ -326,7 +326,7 @@ class TeamDetails extends React.Component {
               type="text"
               value={phoneNumber}
               onChange={this.onChangePN}
-              // mask='(999)999-9999'
+              mask='(999) 999-9999'
               hasError={errorMessage['phoneNumber'].length >= 0}
               errorMessage={errorMessage['phoneNumber']}
             />

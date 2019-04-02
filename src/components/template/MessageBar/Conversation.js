@@ -34,15 +34,15 @@ const TimeStamp = styled.div`
   color: #688da0;
 `;
 
-export default ({ conversation: { conversation: { id }, messages, recipientProfile }, onClick }) => {
+export default ({ conversation: { conversation: { id }, mostRecentMessage, recipientProfile }, onClick }) => {
   const name = recipientProfile.type === 'providers' ? get(recipientProfile, 'attributes.name') :
     `${get(recipientProfile, 'attributes.firstName') || ''} ${get(recipientProfile, 'attributes.lastName') || ''}`;
   return (
     <Wrapper onClick={onClick(id)}>
       <Label>{name}</Label>
       <InfoWrapper>
-        <History>{messages[0].attributes.content}</History>
-        <TimeStamp>{moment(messages[0].attributes.createdAt).format('MMM D')}</TimeStamp>
+        <History>{get(mostRecentMessage, 'attributes.content')}</History>
+        <TimeStamp>{moment(get(mostRecentMessage, 'attributes.createdAt')).format('MMM D')}</TimeStamp>
       </InfoWrapper>
     </Wrapper>
   )
