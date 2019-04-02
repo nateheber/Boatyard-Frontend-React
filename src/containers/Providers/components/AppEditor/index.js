@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { get, set, isEmpty, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
-import { GetSiteBanners, CreateSiteBanner } from 'store/actions/site-banners';
+import { GetSiteBanners } from 'store/actions/site-banners';
 import { actionTypes as locationActions, GetProviderLocations, UpdateProviderLocation } from 'store/actions/providerLocations';
 import { actionTypes as iconActions, CreateIcon, GetIcons } from 'store/actions/icons';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
@@ -746,6 +746,7 @@ class AppEditor extends React.Component {
         cost_type: get(service, 'costType'),
         email_template: get(attributes, 'emailTemplate'),
         secondary_description: get(attributes, 'secondaryDescription'),
+        additional_details: get(attributes, 'additionalDetails'),
         manual_position: manualPosition
       };
       if (category) {
@@ -758,6 +759,7 @@ class AppEditor extends React.Component {
       }
       servicesPayload.push(payload);
     }
+    console.log('-------------service payloads-----------------', servicesPayload);
     const promises = [];
     for(const index in servicesPayload) {
       const service = servicesPayload[index];
@@ -792,6 +794,7 @@ class AppEditor extends React.Component {
             subtitle: locationService.subtitle,
             description: locationService.description,
             secondary_description: locationService.secondary_description,
+            additional_details: locationService.additional_details,
             provider_id: providerId,
             service_id: serviceId,
             service_category_id: locationService.service_category_id,
@@ -919,7 +922,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   GetSiteBanners,
-  CreateSiteBanner,
   GetProviderLocations,
   UpdateProviderLocation,
   CreateIcon,
