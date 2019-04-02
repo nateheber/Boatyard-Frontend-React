@@ -1,4 +1,4 @@
-import { get, orderBy } from 'lodash';
+import { get } from 'lodash';
 import { createSelector } from 'reselect';
 
 import { refineMessage } from 'utils/conversations';
@@ -20,13 +20,13 @@ export const refinedConversationSelector = createSelector(
       const recipientInfo = get(conversation, 'relationships.recipient.data');
       const recipientProfileInfo = get(included, `[${recipientInfo.type}][${recipientInfo.id}].relationships.owner.data`);
       const recipientProfile = get(included, `[${recipientProfileInfo.type}][${recipientProfileInfo.id}]`);
-      const messageInfos = orderBy(get(conversation, 'relationships.ongoingMessages.data', []), [function(o) { return parseInt(o.id); }], ['desc']);
-      const messages = messageInfos.map(info => get(included, `[${info.type}][${info.id}]`));
+      const messageInfo = get(conversation, 'relationships.mostRecentMessage.data', {});
+      const  mostRecentMessage = get(included, `[${messageInfo.type}][${messageInfo.id}]`);
       return {
         conversation,
         senderProfile,
         recipientProfile,
-        messages
+        mostRecentMessage
       }
     });
     return {conversations: parsedData};
