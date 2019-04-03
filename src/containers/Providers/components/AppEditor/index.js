@@ -859,6 +859,7 @@ class AppEditor extends React.Component {
       providerLocationId: selectedLocation.id,
       data,
       success: () => {
+        toastr.success('Success', 'Saved successfully!');
         this.refreshData();
       }
     });
