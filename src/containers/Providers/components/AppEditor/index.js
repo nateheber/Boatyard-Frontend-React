@@ -4,12 +4,13 @@ import styled from 'styled-components';
 import { get, set, isEmpty, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
-import { GetSiteBanners, CreateSiteBanner } from 'store/actions/site-banners';
+import { GetSiteBanners } from 'store/actions/site-banners';
+import { GetServices } from 'store/actions/services';
 import { actionTypes as locationActions, GetProviderLocations, UpdateProviderLocation } from 'store/actions/providerLocations';
 import { actionTypes as iconActions, CreateIcon, GetIcons } from 'store/actions/icons';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
-import { setServiceTemplateData } from 'utils/serviceTemplate';
+import { setServiceTemplateData, setTemplateDataToServiceAttributes } from 'utils/serviceTemplate';
 import defaultTemplateInfos from './components/ServiceTemplates/defaultTemplateValues';
 
 import {
@@ -75,8 +76,9 @@ class AppEditor extends React.Component {
   }
 
   componentDidMount() {
-    const { GetSiteBanners, providerLocations } = this.props;
-    GetSiteBanners({ params: { per_page: 1000 }});
+    const { providerId, GetSiteBanners, providerLocations, GetServices } = this.props;
+    GetSiteBanners({ params: { per_page: 1000 } });
+    GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
     const { selectedLocation } = this.state;
     let location = selectedLocation;
     if(isEmpty(location)) {
@@ -90,7 +92,8 @@ class AppEditor extends React.Component {
   }
 
   refreshData = () => {
-    const { providerId, GetProviderLocations } = this.props;
+    const { providerId, GetProviderLocations, GetServices } = this.props;
+    GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
     GetProviderLocations({
       providerId,
       success: () => {
@@ -608,10 +611,21 @@ class AppEditor extends React.Component {
   };
 
   getTemplateByType = (type) => {
-    return {
-      templateType: type,
-      data: defaultTemplateInfos[type]
-    };
+    const data = { ...defaultTemplateInfos[type] };
+    for(const key in defaultTemplateInfos[type]) {
+      const value = defaultTemplateInfos[type][key];
+      if (key === 'data') {
+        const subData = {};
+        for(const subkey in value) {
+          const subvalue = value[subkey];
+          subData[subkey] = subvalue;
+        }
+        data[key] = subData;
+      } else {
+        data[key] = value;
+      }
+    }
+    return { templateType: type, data };
   }
 
   handleSaveButtonClick = () => {
@@ -638,8 +652,9 @@ class AppEditor extends React.Component {
           for(const subIdx in subItems) {
             const subItem = subItems[subIdx];
             const manualPosition = parseInt(info.attributes.manualPosition) * 100 + parseInt(subIdx) + 1;
-            const subInfo = get(subItem, 'info');
+            let subInfo = get(subItem, 'info');
             subInfo.attributes.emailTemplate = get(subItem, 'template.templateType');
+            subInfo.attributes = setTemplateDataToServiceAttributes(subInfo, get(subItem, 'template'));
             subInfo.attributes['manualPosition'] = manualPosition;
             currentServices.push(subInfo);
             if(subInfo.hasOwnProperty('id')) {
@@ -649,6 +664,7 @@ class AppEditor extends React.Component {
         }
       } else {
         info.attributes.emailTemplate = get(item, 'template.templateType');
+        info.attributes = setTemplateDataToServiceAttributes(info, get(item, 'template'));
         currentServices.push(info);
         if(info.hasOwnProperty('id')) {
           currentServiceIds.push(get(info, 'id'));
@@ -711,10 +727,11 @@ class AppEditor extends React.Component {
   };
 
   updateLocationServices = (categories, originServices, currentServiceIds, services, params = {}) => {
-    const { providerId } = this.props;
+    const { providerId, services: allServices } = this.props;
     const { createServiceClient } = require('../../../../api');
     const serviceClient = createServiceClient('admin');
     const servicesPayload = [];
+    const serviceNames = allServices.map(service => service.name);
     for (const index in services) {
       const service = services[index];
       const attributes = get(service, 'attributes');
@@ -722,16 +739,26 @@ class AppEditor extends React.Component {
       const category = categories.find(item => {
         return parseInt(item.attributes.manualPosition) === Math.floor(manualPosition / 100);
       });
+      const serviceName = get(attributes, 'name');
+      let serviceId = get(attributes, 'serviceId');
+      if (!serviceId) {
+          const index = serviceNames.indexOf(serviceName);
+        if (index > -1) {
+          serviceId = allServices[index].id;
+        }
+      }
       const payload = {
         category_id: get(attributes, 'categoryId'),
-        service_id: get(attributes, 'serviceId'),
-        name: get(attributes, 'name'),
+        service_id: serviceId,
+        name: serviceName,
         subtitle: get(attributes, 'subtitle'),
         description: get(attributes, 'description'),
         icon_id: get(attributes, 'iconId'),
         cost: get(attributes, 'cost') || 0,
         cost_type: get(service, 'costType'),
         email_template: get(attributes, 'emailTemplate'),
+        secondary_description: get(attributes, 'secondaryDescription'),
+        additional_details: get(attributes, 'additionalDetails'),
         manual_position: manualPosition
       };
       if (category) {
@@ -752,6 +779,7 @@ class AppEditor extends React.Component {
           provider_id: providerId,
           name: get(service, 'name'),
           description: get(service, 'description'),
+          secondary_description: get(service, 'secondary_description'),
           category_id: get(service, 'category_id'),
           icon_id: get(service, 'icon_id'),
           cost: get(service, 'cost'),
@@ -774,8 +802,10 @@ class AppEditor extends React.Component {
           const locationService = servicesPayload.find(service => service.name === name);
           const payload = {
             name,
+            subtitle: locationService.subtitle,
             description: locationService.description,
-            subtitle: locationService.description,
+            secondary_description: locationService.secondary_description,
+            additional_details: locationService.additional_details,
             provider_id: providerId,
             service_id: serviceId,
             service_category_id: locationService.service_category_id,
@@ -897,17 +927,18 @@ const mapStateToProps = (state) => ({
   provider: state.provider.currentProvider,
   ...refinedProviderLocationSelector(state),
   iconStatus: state.icon.currentStatus,
-  locationStatus: state.providerLocation.currentStatus
+  locationStatus: state.providerLocation.currentStatus,
+  services: state.service.services
 
 });
 
 const mapDispatchToProps = {
   GetSiteBanners,
-  CreateSiteBanner,
   GetProviderLocations,
   UpdateProviderLocation,
   CreateIcon,
-  GetIcons
+  GetIcons,
+  GetServices
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppEditor);

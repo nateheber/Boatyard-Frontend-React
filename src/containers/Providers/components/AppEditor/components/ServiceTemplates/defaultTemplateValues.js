@@ -15,8 +15,8 @@ const templatesInfo = {
     data: {
       cost: '10.00',
       unit: 'bag',
-      description: `Our helpful staff will be happy to arrange pick up of regulated trash from your yacht at a time that is convenient for you.`,
-      secondaryDescription: `Please let us know how many bags of trash you need removed, and we will be in touch to schedule your service.`,
+      description: 'Our helpful staff will be happy to arrange pick up of regulated trash from your yacht at a time that is convenient for you.',
+      secondaryDescription: 'Please let us know how many bags of trash you need removed, and we will be in touch to schedule your service.',
       textAreaLabel: 'How many bags?',
       buttonText: 'Submit'
     }
@@ -117,8 +117,8 @@ const templatesInfo = {
       cost: '4.00',
       unit: 'gallon',
       subtitle: 'Pump-Out',
-      description: `Our helpful staff is available upon request to provide marine pump-out services at your slip.`,
-      secondaryDescription: `Does your holding tank require a special fitting for pump-outs?`,
+      description: 'Our helpful staff is available upon request to provide marine pump-out services at your slip.',
+      secondaryDescription: 'Does your holding tank require a special fitting for pump-outs?',
       inputLabel: 'Special  Fittings',
       textAreaLabel: 'What can we do to help you?',
       buttonText: 'Schedule'
@@ -128,7 +128,7 @@ const templatesInfo = {
     templateName: 'Get Help',
     templateTitle: 'On-Water Help',
     data: {
-      subtitle: `Need Help\nOn The Water?`,
+      subtitle: 'Need Help\nOn The Water?',
       description: 'This button is fo non-emergency assistance only, including boat towing, fuel drops, jump starts and ungrounding. If you have an emergency situation, please call the Coast Guard or dial 911 immediately.'
     }
   },
@@ -139,8 +139,8 @@ const templatesInfo = {
       cost: '3.50',
       unit: 'gal',
       buttonText: 'schedule',
-      description: `Our fuel prices include all taxes and fees.`,
-      secondaryDescription: `Fuel prices fluctuate daily. If there is a change in price, a confirmation will be sent on the day of delivery with a final price for your approval. Your credit card will not be charged until your delivery is completed.`
+      description: 'Our fuel prices include all taxes and fees.',
+      secondaryDescription: 'Fuel prices fluctuate daily. If there is a change in price, a confirmation will be sent on the day of delivery with a final price for your approval. Your credit card will not be charged until your delivery is completed.'
     }
   },
   captains: {
