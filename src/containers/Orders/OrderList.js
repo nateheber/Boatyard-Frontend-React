@@ -81,9 +81,14 @@ const tabs = {
 class OrderList extends React.Component {
   constructor(props) {
     super(props);
+    const columns = ORDER_COLUMNS;
+    if (props.privilege === 'provider') {
+      columns.splice(4, 1);
+    }
     this.state = {
       tab: 'all',
-      selectedColumns: ORDER_COLUMNS
+      columns,
+      selectedColumns: columns
     };
   }
 
@@ -154,12 +159,12 @@ class OrderList extends React.Component {
       };
     });
 
-    const { tab, selectedColumns } = this.state;
+    const { tab, columns, selectedColumns } = this.state;
     return (
       <Wrapper>
         <OrderHeader
           onNewOrder={this.newOrder}
-          columns={ORDER_COLUMNS}
+          columns={columns}
           selectedColumns={selectedColumns}
           onChangeColumns={this.onChangeColumns} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
