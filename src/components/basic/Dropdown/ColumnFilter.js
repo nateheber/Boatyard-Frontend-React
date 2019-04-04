@@ -146,7 +146,7 @@ export class ColumnFilter extends React.Component {
                     this.select(val);
                   }}
                 />
-                {val.label}
+                {val.label.toUpperCase()}
               </MenuItem>
             </MenuItemLi>
           ))}

@@ -33,7 +33,7 @@ const TableWrapper = styled.div`
   min-width: 100%;
 `;
 
-const columns = [
+const ORDER_COLUMNS = [
   { label: 'order', value: 'name', width: 1 },
   { label: 'order placed', value: 'createdAt', width: 1.2 },
   {
@@ -52,6 +52,7 @@ const columns = [
   //   combines: [', ', ', '],
   //   width: 2.5
   // },
+  { label: 'provider', value: 'relationships.provider.attributes.name', width: 1 },
   {
     label: 'location',
     street: 'relationships.boat.relationships.location.address.street',
@@ -78,7 +79,18 @@ const tabs = {
 };
 
 class OrderList extends React.Component {
-  state = { tab: 'all' }
+  constructor(props) {
+    super(props);
+    const columns = ORDER_COLUMNS;
+    if (props.privilege === 'provider') {
+      columns.splice(4, 1);
+    }
+    this.state = {
+      tab: 'all',
+      columns,
+      selectedColumns: columns
+    };
+  }
 
   componentDidMount() {
     this.props.SetDispatchedFlag(false);
@@ -93,7 +105,13 @@ class OrderList extends React.Component {
     } else {
       this.props.GetOrders({ params: { page: 1, per_page: 15 } });
     }
-  }
+  };
+
+  onChangeColumns = (columns) => {
+    this.setState({
+      selectedColumns: columns
+    });
+  };
 
   setNewOrderModalRef = (ref) => {
     if (ref) {
@@ -141,15 +159,19 @@ class OrderList extends React.Component {
       };
     });
 
-    const { tab } = this.state;
+    const { tab, columns, selectedColumns } = this.state;
     return (
       <Wrapper>
-        <OrderHeader onNewOrder={this.newOrder} />
+        <OrderHeader
+          onNewOrder={this.newOrder}
+          columns={columns}
+          selectedColumns={selectedColumns}
+          onChangeColumns={this.onChangeColumns} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
         <Content>
           <TableWrapper>
             <Table
-              columns={columns}
+              columns={selectedColumns}
               records={processedOrders}
               toDetails={this.toDetails}
               page={page}
