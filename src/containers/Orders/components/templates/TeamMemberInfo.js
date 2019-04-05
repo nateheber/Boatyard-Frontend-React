@@ -26,7 +26,6 @@ class TeamMemberInfo extends React.Component {
 
   componentDidMount() {
     const { id } = this.props;
-    console.log('-----------------id---------------', id);
     this.props.GetManagement({ managementId: id, success: this.onFetchSucceed })
     this._isMounted = true;
   }
