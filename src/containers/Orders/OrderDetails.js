@@ -151,12 +151,12 @@ class OrderDetails extends React.Component {
     const updatedDate = this.getUdpatedDate();
     const { orderId, isFirstLoad, visibleOfBoatModal } = this.state;
     const providerId = this.getProviderId();
-    const { currentOrder, currentStatus, boatStatus, privilege } = this.props;
+    const { currentOrder, currentStatus, boatStatus } = this.props;
     const lineItems = get(currentOrder, 'lineItems', []);
     const summaryInfo = this.getSummaryInfo();
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
-    const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled' && privilege === "admin";
+    const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
     const canShowCustomerInfo = this.getCustomerInfoCondition();
 
     return (
