@@ -290,7 +290,7 @@ class TeamMemberSelector extends React.Component {
             }
           </Scroller>
         </DropdownMenu>
-        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} count={dispatchIds.length} />
+        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} count={dispatchIds.length} type={'management'} />
       </Wrapper>
     );
   }
