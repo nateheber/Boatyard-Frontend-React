@@ -41,7 +41,7 @@ class TeamMemberInfo extends React.Component {
   }
 
   render() {
-    const { managementName } = this.state;;
+    const { managementName } = this.state;
     return (
       <div>
         {managementName && <Wrapper>
