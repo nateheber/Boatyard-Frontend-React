@@ -13,7 +13,7 @@ const Text = styled.div`
 
 export default class AssignConfirmModal extends React.Component {
   render() {
-    const { open, onClose, onConfirm, count } = this.props;
+    const { open, onClose, onConfirm, count, type } = this.props;
     const actions = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
       <OrangeButton onClick={onConfirm} key="modal_btn_save">SAVE</OrangeButton>
@@ -26,9 +26,9 @@ export default class AssignConfirmModal extends React.Component {
         onClose={onClose}
       >
         {count === 0 ? (
-            <Text>You are removing providers</Text>
+            <Text>You are removing {type || 'provider'}s</Text>
           ) : (
-            <Text>You are dispatching order to {count} providers</Text>
+            <Text>You are dispatching order to {count} {type || 'provider'}s</Text>
           )
         }
       </Modal>
