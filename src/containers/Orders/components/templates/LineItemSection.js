@@ -169,7 +169,7 @@ class LineItemSection extends React.Component {
       isResend,
       success: () => {
         this.setState({ showQuote: false });
-        toastr.success('Success', 'Quote was sent successfully!');
+        toastr.success('Success', 'Sent quote successfully!');
         GetOrder({ orderId });
       },
       error: () => {

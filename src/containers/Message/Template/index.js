@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import {
   GetGlobalTemplates,
@@ -28,9 +29,9 @@ class TemplateBox extends React.Component {
   }
 
   componentDidMount() {
-    const { GetGlobalTemplates, GetLocalTemplates } = this.props;
+    const { GetGlobalTemplates } = this.props;
     GetGlobalTemplates({ params: { 'per_page': 200 } });
-    GetLocalTemplates({ params: { 'per_page': 200 } });
+    // GetLocalTemplates({ params: { 'per_page': 200 } });
   }
 
   getGlobalTemplateId = (triggerKey) => {
@@ -79,6 +80,11 @@ class TemplateBox extends React.Component {
       templateId,
       data: {
        'global_message_template': data
+      },
+      success: () => {
+        toastr.success('Success', 'Saved successfully!');
+        const { GetGlobalTemplates } = this.props;
+        GetGlobalTemplates({ params: { 'per_page': 200 } });    
       }
     });
   }
