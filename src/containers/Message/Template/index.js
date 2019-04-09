@@ -54,9 +54,11 @@ class TemplateBox extends React.Component {
   }
 
   onSave = ({ triggerKey, templateInfo }) => {
-    // const { privilege } = this.props;
-    const templateId = this.getGlobalTemplateId(triggerKey);
-    this.updateGlobalTemplate(templateId, templateInfo);
+    const { privilege } = this.props;
+    if (privilege === 'admin') {
+      const templateId = this.getGlobalTemplateId(triggerKey);
+      this.updateGlobalTemplate(templateId, templateInfo);
+    }
     //   const templateId = this.getGlobalTemplateId(triggerKey);
     //   this.updateGlobalTemplate(templateId, templateInfo);
     // if (privilege === 'admin') {
