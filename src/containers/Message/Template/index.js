@@ -29,7 +29,7 @@ class TemplateBox extends React.Component {
   }
 
   componentDidMount() {
-    const { GetGlobalTemplates, GetLocalTemplates } = this.props;
+    const { GetGlobalTemplates } = this.props;
     GetGlobalTemplates({ params: { 'per_page': 200 } });
     // GetLocalTemplates({ params: { 'per_page': 200 } });
   }
