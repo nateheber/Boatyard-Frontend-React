@@ -166,7 +166,7 @@ function* updateOrder(action) {
 }
 
 function* sendQuote(action) {
-  const { orderId, success, error, dispatched } = action.payload;
+  const { orderId, isResend, success, error, dispatched } = action.payload;
   const dispatchedFlg = yield select(getOrderDispatchedFlag) || dispatched;
   let orderClient;
   if (dispatchedFlg) {
@@ -175,7 +175,7 @@ function* sendQuote(action) {
     orderClient = yield select(getOrderClient);
   }
   try {
-    yield call(orderClient.update, orderId, { order: { transition: 'provision' } });
+    yield call(orderClient.update, orderId, { order: { transition: isResend ? 'reprovision' : 'provision' } });
     yield put({ type: actionTypes.SEND_QUOTE_SUCCESS });
     if (success) {
       yield call(success);

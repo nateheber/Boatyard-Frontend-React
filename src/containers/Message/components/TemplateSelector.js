@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, keys } from 'lodash';
+import { get, keys, startCase } from 'lodash';
 
 import { MessageItem, TemplateItem } from 'components/basic/Message';
 
@@ -16,8 +16,10 @@ class TemplateSelector extends React.Component {
     const triggerKeys = keys(globalTemplates);
     const options = triggerKeys.map((triggerKey) => ({
       triggerKey,
-      trigger: get(globalTemplates, `${triggerKey}.trigger`),
-      messageType: get(globalTemplates, `${triggerKey}.messageType`),
+      title: startCase(triggerKey),
+      subject: get(globalTemplates, `${triggerKey}.attributes.subject`),
+      // trigger: get(globalTemplates, `${triggerKey}.trigger`),
+      // messageType: get(globalTemplates, `${triggerKey}.messageType`),
     }));
     return options;
   }
@@ -28,7 +30,7 @@ class TemplateSelector extends React.Component {
     return (
       <Wrapper>
         {
-          options.map(({ triggerKey, trigger, messageType }, idx) => (
+          options.map(({ triggerKey, subject, title }, idx) => (
             <MessageItem
               onClick={() => {
                 this.setState({ selected: triggerKey });
@@ -38,8 +40,8 @@ class TemplateSelector extends React.Component {
               key={triggerKey}
             >
               <TemplateItem
-                type={messageType}
-                description={trigger}
+                title={title}
+                description={subject}
               />
             </MessageItem>
           ))

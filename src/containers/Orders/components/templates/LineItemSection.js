@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import deepEqual from 'deep-equal';
 import moment from 'moment';
 import { get, set, isEmpty } from 'lodash';
+import styled from 'styled-components';
+import { toastr } from 'react-redux-toastr';
 
 import {
   updateLineItems,
@@ -12,12 +14,18 @@ import {
 import { GetOrder, SendQuote, actionTypes } from 'store/actions/orders';
 import { orderSelector } from 'store/selectors/orders';
 import { Section } from 'components/basic/InfoSection';
-import SendQuoteModal from 'components/template/SendQuoteModal';
+import Modal from 'components/compound/Modal';
+import { NormalText } from 'components/basic/Typho'
 import NewLineItems from '../infoSections/NewLineItem';
 import LineItem from '../infoSections/LineItem';
 import ButtonGroup from '../basic/ButtonGroup';
 import QuoteHeader from '../basic/QuoteHeader';
+import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 
+export const Description = styled(NormalText)`
+  font-family: 'Open sans-serif', sans-serif;
+  padding: 10px 0;
+`;
 class LineItemSection extends React.Component {
   constructor(props) {
     super(props);
@@ -147,17 +155,21 @@ class LineItemSection extends React.Component {
   };
 
   canSendQuote = () => {
-    const { privilege, currentOrder } = this.props;
+    const { currentOrder } = this.props;
     const orderState = get(currentOrder, 'attributes.state');
-    return privilege === 'provider' && orderState === 'accepted';
+    return orderState === 'accepted' || orderState === 'provisioned';
   }
 
   sendQuote = () => {
-    const { orderId, SendQuote, GetOrder } = this.props;
+    const { orderId, SendQuote, GetOrder, currentOrder } = this.props;
+    const orderState = get(currentOrder, 'attributes.state');
+    const isResend = orderState === 'provisioned';
     SendQuote({
       orderId,
+      isResend,
       success: () => {
         this.setState({ showQuote: false });
+        toastr.success('Success', 'Quote was sent successfully!');
         GetOrder({ orderId });
       },
       error: () => {
@@ -168,7 +180,11 @@ class LineItemSection extends React.Component {
 
   render() {
     const { newItems, mode, lineItems, showQuote } = this.state;
-    const { updatedAt, privilege, currentStatus } = this.props;
+    const { updatedAt, currentStatus } = this.props;
+    const modalActions = [
+      <HollowButton onClick={this.hideQuoteModal} key="modal_btn_cancel">Cancel</HollowButton>,
+      <OrangeButton onClick={this.sendQuote} key="modal_btn_save">Send</OrangeButton>
+    ];
     return (
       <Section
         title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`}
@@ -203,14 +219,24 @@ class LineItemSection extends React.Component {
           showQuote={this.canSendQuote()}
           onSendQuote={this.onSendQuote}
         />
-        {privilege === 'provider' && (
+        <Modal
+          title={'Send Quote'}
+          actions={modalActions}
+          loading={currentStatus === actionTypes.SEND_QUOTE}
+          normal={true}
+          open={showQuote}
+          onClose={this.hideQuoteModal}
+        >
+          <Description>Are you sure you want to send this quote?</Description>
+        </Modal>
+        {/* {privilege === 'provider' && (
           <SendQuoteModal
             loading={currentStatus === actionTypes.SEND_QUOTE}
             open={showQuote}
             onClose={this.hideQuoteModal}
             onSendQuote={this.sendQuote}
           />
-        )}
+        )} */}
       </Section>
     );
   }
