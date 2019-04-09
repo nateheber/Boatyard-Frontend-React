@@ -17,7 +17,8 @@ class TemplateSelector extends React.Component {
     const options = triggerKeys.map((triggerKey) => ({
       triggerKey,
       title: startCase(triggerKey),
-      trigger: get(globalTemplates, `${triggerKey}.trigger`),
+      subject: get(globalTemplates, `${triggerKey}.attributes.subject`),
+      // trigger: get(globalTemplates, `${triggerKey}.trigger`),
       // messageType: get(globalTemplates, `${triggerKey}.messageType`),
     }));
     return options;
@@ -29,7 +30,7 @@ class TemplateSelector extends React.Component {
     return (
       <Wrapper>
         {
-          options.map(({ triggerKey, trigger, title }, idx) => (
+          options.map(({ triggerKey, subject, title }, idx) => (
             <MessageItem
               onClick={() => {
                 this.setState({ selected: triggerKey });
@@ -40,7 +41,7 @@ class TemplateSelector extends React.Component {
             >
               <TemplateItem
                 title={title}
-                description={trigger}
+                description={subject}
               />
             </MessageItem>
           ))

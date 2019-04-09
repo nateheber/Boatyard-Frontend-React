@@ -54,27 +54,29 @@ class TemplateBox extends React.Component {
   }
 
   onSave = ({ triggerKey, templateInfo }) => {
-    const { privilege } = this.props;
-    if (privilege === 'admin') {
-      const templateId = this.getGlobalTemplateId(triggerKey);
-      this.updateGlobalTemplate(templateId, templateInfo);
-    } else {
-      const localTemplateId = this.getLocalTemplateId(triggerKey);
-      if (localTemplateId) {
-        this.updateLocalTemplate(localTemplateId, templateInfo);
-      } else {
-        this.createLocalTemplate(triggerKey, templateInfo);
-      }
-    }
+    // const { privilege } = this.props;
+    const templateId = this.getGlobalTemplateId(triggerKey);
+    this.updateGlobalTemplate(templateId, templateInfo);
+    //   const templateId = this.getGlobalTemplateId(triggerKey);
+    //   this.updateGlobalTemplate(templateId, templateInfo);
+    // if (privilege === 'admin') {
+    //   const templateId = this.getGlobalTemplateId(triggerKey);
+    //   this.updateGlobalTemplate(templateId, templateInfo);
+    // } else {
+    //   const localTemplateId = this.getLocalTemplateId(triggerKey);
+    //   if (localTemplateId) {
+    //     this.updateLocalTemplate(localTemplateId, templateInfo);
+    //   } else {
+    //     this.createLocalTemplate(triggerKey, templateInfo);
+    //   }
+    // }
   }
 
   updateGlobalTemplate = (templateId, data) => {
     this.props.UpdateGlobalTemplate({
       templateId,
       data: {
-       'global_message_template': {
-          email_options: data
-       }
+       'global_message_template': data
       }
     });
   }

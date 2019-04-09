@@ -37,7 +37,7 @@ const DisplayName = styled.div`
   font-family: 'Montserrat', sans-serif !important;
   color: #07384b;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 26px;
   margin-right: 5px;
 `;
 

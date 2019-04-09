@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty, hasIn } from 'lodash';
-import changeCase from 'change-case';
+import { get, isEmpty, hasIn, startCase } from 'lodash';
 
 import { InboxContentHeader } from '../components/MessageHeader';
 import { TemplateEditor } from '../components';
@@ -24,9 +23,15 @@ class TemplateContent extends React.Component {
   getTemplateInfo = () => {
     const { selected, globalTemplates, localTemplates, privilege } = this.props;
     if (hasIn(localTemplates, selected) && privilege !== 'admin') {
-      return get(localTemplates, `${selected}.attributes.emailOptions`);
+      // return get(localTemplates, `${selected}.attributes.emailOptions`);
+      const subject = get(localTemplates, `${selected}.attributes.subject`);
+      const emailOptions = get(localTemplates, `${selected}.attributes.emailOptions`);
+      return { subject, emailOptions };
     }
-    return get(globalTemplates, `${selected}.attributes.emailOptions`);
+    // return get(globalTemplates, `${selected}.attributes.emailOptions`);
+    const subject = get(globalTemplates, `${selected}.attributes.subject`);
+    const emailOptions = get(globalTemplates, `${selected}.attributes.emailOptions`);
+    return { subject, emailOptions };
   }
 
   render() {
@@ -38,7 +43,7 @@ class TemplateContent extends React.Component {
     return (
       <Wrapper>
         <InboxContentHeader
-          name={`Edit ${changeCase.ucFirst(selected)} Reply`}
+          name={`Edit <${startCase(selected)}> Template`}
           onBack={onBack}
         />
         <TemplateEditor
