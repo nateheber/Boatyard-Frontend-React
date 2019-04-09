@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, keys } from 'lodash';
+import { get, keys, startCase } from 'lodash';
 
 import { MessageItem, TemplateItem } from 'components/basic/Message';
 
@@ -15,9 +15,9 @@ class TemplateSelector extends React.Component {
     const { globalTemplates } = this.props;
     const triggerKeys = keys(globalTemplates);
     const options = triggerKeys.map((triggerKey) => ({
-      triggerKey,
+      triggerKey: startCase(triggerKey),
       trigger: get(globalTemplates, `${triggerKey}.trigger`),
-      messageType: get(globalTemplates, `${triggerKey}.messageType`),
+      // messageType: get(globalTemplates, `${triggerKey}.messageType`),
     }));
     return options;
   }
@@ -38,7 +38,7 @@ class TemplateSelector extends React.Component {
               key={triggerKey}
             >
               <TemplateItem
-                type={messageType}
+                type={triggerKey}
                 description={trigger}
               />
             </MessageItem>
