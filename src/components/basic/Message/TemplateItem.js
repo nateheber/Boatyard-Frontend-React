@@ -21,9 +21,9 @@ const Description = styled.div`
   font-weight: bold;
 `;
 
-export const TemplateItem = ({ type, description }) => (
+export const TemplateItem = ({ title, description }) => (
   <Wrapper>
-    <TypeText>{type}</TypeText>
+    <TypeText>{title}</TypeText>
     <Description>{description}</Description>
   </Wrapper>
 );
