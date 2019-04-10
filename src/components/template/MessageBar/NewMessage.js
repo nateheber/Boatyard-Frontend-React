@@ -134,10 +134,15 @@ class NewMessage extends React.Component {
 
   onChangeUserFilter = val => {
     return new Promise((resolve, reject) => {
+      const params = {
+        'user[sort]': 'asc',
+        'user[order]': 'last_name'
+      };
+      if (val && !isEmpty(val)) {
+        params['search_by_full_name'] = val;
+      }
       this.props.FilterUsers({
-        params: {
-          'search_by_full_name': val
-        },
+        params,
         success: resolve,
         error: reject
       });
@@ -204,7 +209,7 @@ class NewMessage extends React.Component {
         <InputWrapper>
           <InputLabel>To:</InputLabel>
           <Select
-            placeholder="Choose a recipient"
+            placeholder={'Choose a recipient'}
             components={{
               Option: CustomerOption,
               MultiValueLabel,
