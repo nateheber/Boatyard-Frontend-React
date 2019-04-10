@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, orderBy } from 'lodash';
 import { createSelector } from 'reselect';
 
 import { refineMessage } from 'utils/conversations';
@@ -29,7 +29,7 @@ export const refinedConversationSelector = createSelector(
         mostRecentMessage
       }
     });
-    return {conversations: parsedData};
+    return {conversations: orderBy(parsedData, [function(o){ return o.mostRecentMessage.attributes.createdAt; }], ['desc'])};
   }
 );
 

@@ -193,13 +193,12 @@ class NewMessage extends React.Component {
   sendMessage = (data, recipientInfo) => () => {
     this.props.CreateMessage({
       data: {
+        ...recipientInfo,
         message: isEmpty(data.image) ? {
           content: data.text,
-          ...recipientInfo,
         } : {
           content: data.text,
           file: get(data, 'image'),
-          ...recipientInfo,
         }
       },
       success: this.onSendingSuccess
