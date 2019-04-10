@@ -50,11 +50,11 @@ const HeaderTitle = styled.div`
   color: #e6e6e6;
 `;
 
-const ValueLabel = styled.div`
-  display: inline-block;
-  font-size: 12px;
-  color: #333;
-`;
+// const ValueLabel = styled.div`
+//   display: inline-block;
+//   font-size: 12px;
+//   color: #333;
+// `;
 
 const selectorStyle = {
   multiValue: (base) => ({
@@ -89,14 +89,14 @@ export const colourOptions = [
   { value: 'silver', label: 'Silver', color: '#666666' },
 ];
 
-const MultiValueLabel = ({props, data}) => {
-  const { label } = data;
-  return (
-    <ValueLabel {...props}>
-      {label}
-    </ValueLabel>
-  );
-};
+// const MultiValueLabel = ({props, data}) => {
+//   const { label } = data;
+//   return (
+//     <ValueLabel {...props}>
+//       {label}
+//     </ValueLabel>
+//   );
+// };
 
 const parseUserType = (type) => {
   switch(type) {
@@ -170,19 +170,31 @@ class NewMessage extends React.Component {
   onSend = (data) => {
     const { users } = this.state;
     const senderInfo = this.getSenderInfo();
-    users.forEach((user) => {
-      const recipientInfo = this.getRecipientInfo(user);
-      this.props.CreateNetwork({
-        data: {
-          network: {
-            ...senderInfo,
-            ...recipientInfo
-          }
-        },
-        success: this.sendMessage(data, recipientInfo),
-        error: this.networkCreationFailed(data, recipientInfo)
-      })
+    const recipientInfo = this.getRecipientInfo(users);
+    this.props.CreateNetwork({
+      data: {
+        network: {
+          ...senderInfo,
+          ...recipientInfo
+        }
+      },
+      success: this.sendMessage(data, recipientInfo),
+      error: this.networkCreationFailed(data, recipientInfo)
     });
+
+    // users.forEach((user) => {
+    //   const recipientInfo = this.getRecipientInfo(user);
+    //   this.props.CreateNetwork({
+    //     data: {
+    //       network: {
+    //         ...senderInfo,
+    //         ...recipientInfo
+    //       }
+    //     },
+    //     success: this.sendMessage(data, recipientInfo),
+    //     error: this.networkCreationFailed(data, recipientInfo)
+    //   })
+    // });
   }
 
   onSendingSuccess = (result) => {
@@ -222,12 +234,12 @@ class NewMessage extends React.Component {
         <InputWrapper>
           <InputLabel>To:</InputLabel>
           <Select
-            isMulti
+            // isMulti
             cacheOptions
             defaultOptions
             components={{
               Option: CustomerOption,
-              MultiValueLabel
+              // MultiValueLabel
             }}
             loadOptions={this.loadOptions}
             onInputChange={this.onChangeUserFilter}
