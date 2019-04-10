@@ -40,7 +40,7 @@ const InputLabel = styled.div`
 `;
 
 const Select = styled(BoatyardSelect)`
-  width: 220px;
+  width: 240px;
 `;
 
 const HeaderTitle = styled.div`
@@ -75,11 +75,25 @@ const selectorStyle = {
   })
 }
 
-const MultiValueLabel = (props) => {
-  const { data: { firstName, lastName } } = props;
+
+export const colourOptions = [
+  { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
+  { value: 'blue', label: 'Blue', color: '#0052CC', isDisabled: true },
+  { value: 'purple', label: 'Purple', color: '#5243AA' },
+  { value: 'red', label: 'Red', color: '#FF5630', isFixed: true },
+  { value: 'orange', label: 'Orange', color: '#FF8B00' },
+  { value: 'yellow', label: 'Yellow', color: '#FFC400' },
+  { value: 'green', label: 'Green', color: '#36B37E' },
+  { value: 'forest', label: 'Forest', color: '#00875A' },
+  { value: 'slate', label: 'Slate', color: '#253858' },
+  { value: 'silver', label: 'Silver', color: '#666666' },
+];
+
+const MultiValueLabel = ({props, data}) => {
+  const { label } = data;
   return (
     <ValueLabel {...props}>
-      {firstName} {lastName}
+      {label}
     </ValueLabel>
   );
 };
@@ -98,22 +112,22 @@ const parseUserType = (type) => {
 class NewMessage extends React.Component {
   state = {
     users: -1,
-    defaultOptions: []
+    inputValue: ''
   };
 
   componentDidMount() {
-    this.loadOptions('')
-      .then(result => {
-        this.setState({
-          defaultOptions: result,
-        })
-      })
   }
 
   loadOptions = val => {
     return this.onChangeUserFilter(val)
       .then((filtered) => {
-        return filtered;
+        return filtered.map(user => {
+          const value = get(user, 'id');
+          const label = `${get(user, 'firstName')} ${get(user, 'lastName')}`;
+          const type = get(user, 'type');
+          const email = get(user, 'email');
+          return { value, label, email, type };
+        });
       }, () => {
         return [];
       });
@@ -127,9 +141,9 @@ class NewMessage extends React.Component {
   }
 
   getRecipientInfo = (user) => {
-    const { id, type } = user;
+    const { value, type } = user;
     const parsedType = parseUserType(type);
-    return { recipient_id: id, recipient_type: parsedType };
+    return { recipient_id: value, recipient_type: parsedType };
   }
 
   onChangeUserFilter = val => {
@@ -168,7 +182,7 @@ class NewMessage extends React.Component {
         success: this.sendMessage(data, recipientInfo),
         error: this.networkCreationFailed(data, recipientInfo)
       })
-    })
+    });
   }
 
   onSendingSuccess = (result) => {
@@ -199,7 +213,7 @@ class NewMessage extends React.Component {
   }
 
   render() {
-    const { users, defaultOptions } = this.state;
+    const { users } = this.state;
     return (
       <React.Fragment>
         <ChatHeader>
@@ -209,18 +223,17 @@ class NewMessage extends React.Component {
         <InputWrapper>
           <InputLabel>To:</InputLabel>
           <Select
-            placeholder={'Choose a recipient'}
+            isMulti
+            cacheOptions
+            defaultOptions
             components={{
               Option: CustomerOption,
-              MultiValueLabel,
+              MultiValueLabel
             }}
-            cacheOptions
-            defaultOptions={defaultOptions}
-            isMulti
-            onInputChange={this.onChangeUserFilter}
             loadOptions={this.loadOptions}
-            onChange={this.onChangeUser}
+            onInputChange={this.onChangeUserFilter}
             styles={selectorStyle}
+            onChange={this.onChangeUser}
             value={users}
           />
         </InputWrapper>
