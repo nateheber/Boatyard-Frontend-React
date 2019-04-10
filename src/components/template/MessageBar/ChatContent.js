@@ -138,13 +138,12 @@ class ChatContent extends React.Component {
     const recipientInfo = this.getRecipientInfo();
     this.props.CreateMessage({
       data: {
+        ...recipientInfo,
         message: isEmpty(data.image) ? {
-          content: data.text,
-          ...recipientInfo,
+          content: data.text
         } : {
           content: data.text,
-          file: get(data, 'image'),
-          ...recipientInfo,
+          file: get(data, 'image')
         }
       },
       success: this.onSendingSuccess

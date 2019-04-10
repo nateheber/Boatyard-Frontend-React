@@ -31,10 +31,10 @@ const Email = styled.span`
   font-family: 'Open Sans';
 `;
 
-export default ({ data: { email, firstName, lastName }, innerProps: { id, ...rest } }) => (
+export default ({ data: { label, email, firstName, lastName }, innerProps: { id, ...rest } }) => (
   <Wrapper {...rest} key={id}>
     <Name>
-      {firstName} {lastName}
+    {label ? label : `${firstName} ${lastName}`}
     </Name>
     <Email>{email}</Email>
   </Wrapper>
