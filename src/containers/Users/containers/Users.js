@@ -92,7 +92,12 @@ class Users extends React.Component {
   onSave = (data) => {
     const { CreateUser, page } = this.props;
     CreateUser({
-      data: { user: { ...data.user } },
+      data: {
+        user: {
+        ...data.user,
+        password: Math.random().toString(36).slice(-8)
+        }
+      },
       success: () => {
         this.hideModal();
         this.loadPage(page);

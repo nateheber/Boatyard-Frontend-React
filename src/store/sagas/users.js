@@ -81,8 +81,8 @@ function* getUser(action) {
 function* createUser(action) {
   const userClient = yield select(getUserClient);
   const { data, success, error } = action.payload;
-  const result = yield call(userClient.create, data);
   try {
+    const result = yield call(userClient.create, data);
     const user = get(result, 'data');
     const payload = {
       id: user.id,
@@ -100,7 +100,7 @@ function* createUser(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_USER_FAILURE, payload: e });
     if (error) {
-      yield call(error, result);
+      yield call(error, e);
     }
   }
 }

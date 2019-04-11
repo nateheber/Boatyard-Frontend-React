@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { camelize } from '@ridi/object-case-converter';
 
 import store from 'store';
@@ -20,12 +20,23 @@ export const responseInterceptor = client => {
     return data;
   }, (error) => {
     const errorData = get(error, 'response.data', {});
-    const message = get(error, 'response.data.message', '');
+    let message = 'Unknown Error';
+    if (errorData && !isEmpty(errorData)) {
+      message = get(error, 'response.data.message', '');
+      if (!(message && message.length > 0)) {
+        const keys = Object.keys(errorData);
+        if (keys.length > 0) {
+          message = get(errorData, `${keys[0]}`, '');
+        } else {
+          message = errorData;
+        }
+      }
+    }
     if (message === 'Signature has expired') {
       store.dispatch(logout());
       return false;
     } else {
-      throw errorData;
+      throw message;
     }
   });
   return client;
