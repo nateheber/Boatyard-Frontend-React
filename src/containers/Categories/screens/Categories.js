@@ -4,7 +4,7 @@ import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { Col, Row } from 'react-flexbox-grid';
-import { get, isEmpty, isNumber, startCase } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import {
   actionTypes as categoryActions,
@@ -127,8 +127,8 @@ class Categories extends React.Component {
           this.hideCategoryModal();
           this.loadPage(page);
         },
-        error: () => {
-          this.showErrors();
+        error: (e) => {
+          toastr.error('Error', e.message);
         }
       });  
     } else {
@@ -140,8 +140,8 @@ class Categories extends React.Component {
           this.hideCategoryModal();
           this.loadPage(page);
         },
-        error: () => {
-          this.showErrors();
+        error: (e) => {
+          toastr.error('Error', e.message);
         }
       });  
     }
@@ -157,32 +157,10 @@ class Categories extends React.Component {
         this.hideCategoryModal();
         this.loadPage(page);
       },
-      error: () => {
-        this.showErrors();
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     })
-  };
-
-  showErrors = () => {
-    const { errors } = this.props;
-    toastr.clean();
-    if (errors && errors.length > 0) {
-      for (const key in errors) {
-        if (isNumber(key)) {
-          toastr.error(startCase(errors[key].join('')));
-        }else {
-          toastr.error(startCase(key), startCase(errors[key].join('')));
-        }
-      }
-    } else {
-      for (const key in errors) {
-        if (isNumber(key)) {
-          toastr.error(startCase(errors[key]));
-        }else {
-          toastr.error(startCase(key), startCase(errors[key]));
-        }
-      }
-    }
   };
 
   render() {
@@ -234,7 +212,6 @@ const mapStateToProps = (state) => ({
   page: state.category.page,
   perPage: state.category.perPage,
   total: state.category.total,
-  errors: state.category.errors,
   iconStatus: state.icon.currentStatus
 });
 

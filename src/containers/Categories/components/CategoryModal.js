@@ -330,8 +330,8 @@ class CategoryModal extends React.Component {
         onSave(values, iconFile, customIcon);
       }
     } else {
-      toastr.clean()
-      toastr.error('Please fill out all the required fields')
+      toastr.clean();
+      toastr.error('Please fill out all the required fields');
     }
   };
 

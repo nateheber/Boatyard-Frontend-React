@@ -157,16 +157,21 @@ export default class CustomerModal extends React.Component {
           address_attributes[key] = value;
         }
       }
-      user = {
-        ...user,
-        locations_attributes: [
-          {
-            name: 'Home Address',
-            location_type: 'residential_address',
-            address_attributes
-          }
-        ]
-      };
+      if (address_attributes.street.trim().length > 0 ||
+        address_attributes.city.trim().length > 0 ||
+        address_attributes.state.trim().length > 0 ||
+        address_attributes.zip.trim().length > 0) {
+          user = {
+            ...user,
+            locations_attributes: [
+              {
+                name: 'Home Address',
+                location_type: 'residential_address',
+                address_attributes
+              }
+            ]
+          };
+        }
       this.props.onSave({ user });
     }
   }

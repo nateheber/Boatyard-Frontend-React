@@ -20,7 +20,7 @@ function* getPaymentGateways(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_PAYMENT_GATEWAYS_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -41,7 +41,7 @@ function* createPaymentGateway(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_PAYMENT_GATEWAY_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -60,7 +60,7 @@ function* deletePaymentGateway(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_PAYMENT_GATEWAY_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

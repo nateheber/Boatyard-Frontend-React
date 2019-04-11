@@ -49,8 +49,8 @@ function* loginRequest(action) {
         type
       }
     });
-  } catch (err) {
-    toastr.clean()
+  } catch (e) {
+    toastr.clean();
     toastr.error('Auth Failure', 'Invalid credentials');
     yield put({
       type: actions.setAuthState,
@@ -83,7 +83,8 @@ function* userPermissionRequest(action) {
         payload: {}
       });
     }
-  } catch (err) {
+  } catch (e) {
+    toastr.error('Error', e.message);
     yield put({
       type: ProviderActions.LOGIN_WITH_PROVIDER,
       payload: {}

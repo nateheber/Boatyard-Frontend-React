@@ -4,7 +4,7 @@ import { toastr } from 'react-redux-toastr';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
-import { isNumber, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 import {
   actionTypes,
@@ -88,17 +88,8 @@ class Customers extends React.Component {
         this.closeNewModal();
         this.loadCustomers();
       },
-      error: () => {
-        const { errors } = this.props;
-        if (errors && errors.length > 0) {
-          for (const key in errors) {
-            if (isNumber(key)) {
-              toastr.error(errors[key].join(''));
-            }else {
-              toastr.error(key, errors[key].join(''));
-            }
-          }
-        }
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -175,8 +166,7 @@ const mapStateToProps = (state) => ({
   childAccounts: state.childAccount.childAccounts,
   page: state.childAccount.page,
   perPage: state.childAccount.perPage,
-  total: state.childAccount.total,
-  errors: state.childAccount.errors
+  total: state.childAccount.total
 });
 
 const mapDispatchToProps = {

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Col, Row } from 'react-flexbox-grid';
 import { withRouter } from 'react-router-dom';
-import { get, isNumber, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, GetServices, UpdateService, DeleteService } from 'store/actions/services';
@@ -102,17 +102,8 @@ class Services extends React.Component {
         this.hideEditModal();
         this.loadPage(page);
       },
-      error: () => {
-        const { errors } = this.props;
-        if (errors && errors.length > 0) {
-          for (const key in errors) {
-            if (isNumber(key)) {
-              toastr.error(errors[key].join(''));
-            }else {
-              toastr.error(key, errors[key].join(''));
-            }
-          }
-        }
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
   }
@@ -127,17 +118,8 @@ class Services extends React.Component {
         this.hideEditModal();
         this.loadPage(page);
       },
-      error: () => {
-        const { errors } = this.props;
-        if (errors && errors.length > 0) {
-          for (const key in errors) {
-            if (isNumber(key)) {
-              toastr.error(errors[key].join(''));
-            }else {
-              toastr.error(key, errors[key].join(''));
-            }
-          }
-        }
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
   }

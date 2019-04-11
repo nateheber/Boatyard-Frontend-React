@@ -21,7 +21,7 @@ function* getCreditCards(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_CREDIT_CARDS_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -90,7 +90,7 @@ function* createCreditCard(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_CREDIT_CARD_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -109,7 +109,7 @@ function* deleteCreditCard(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_CREDIT_CARD_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -128,7 +128,7 @@ function* updateCreditCard(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_CREDIT_CARD_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

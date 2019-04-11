@@ -275,10 +275,10 @@ class AppEditor extends React.Component {
   addCategories = (category) => {
     const { currentItem } = this.state;
     if (get(currentItem, 'type') === 'category') {
-      toastr.clean()
+      toastr.clean();
       toastr.error('Cannot add category under category');
     } else if (get(currentItem, 'type') === 'service') {
-      toastr.clean()
+      toastr.clean();
       toastr.error('Cannot add category under service');
     } else {
       this.addItem(category, 'category');
@@ -288,7 +288,7 @@ class AppEditor extends React.Component {
   addServices = (service) => {
     const { currentItem } = this.state;
     if (get(currentItem, 'type') === 'service') {
-      toastr.clean()
+      toastr.clean();
       toastr.error('Cannot add service under service');
     } else {
       this.addItem(service, 'service');
@@ -484,7 +484,7 @@ class AppEditor extends React.Component {
         this.setState({ data: newData, visibleOfModal: false });
       }
     } else {
-      toastr.clean()
+      toastr.clean();
       toastr.error('Cannot set template to service category');
     }
   };

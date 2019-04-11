@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
-import { get, isNumber } from 'lodash';
+import { get } from 'lodash';
 
 import { actionTypes, CreateCreditCard } from 'store/actions/credit-cards';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
@@ -139,17 +139,8 @@ class CreateModal extends React.Component {
       this.props.CreateCreditCard({
         data,
         success: this.onSuccess,
-        error: () => {
-          const { errors } = this.props;
-          if (errors && errors.length > 0) {
-            for (const key in errors) {
-              if (isNumber(key)) {
-                toastr.error(errors[key].join(''));
-              }else {
-                toastr.error(key, errors[key].join(''));
-              }
-            }
-          }
+        error: (e) => {
+          toastr.error('Error', e.message);
         }
       });
     }
@@ -180,8 +171,7 @@ class CreateModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  currentStatus: state.creditCard.currentStatus,
-  errors: state.creditCard.errors
+  currentStatus: state.creditCard.currentStatus
 });
 
 const mapDispatchToProps = {

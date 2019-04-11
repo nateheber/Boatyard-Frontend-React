@@ -10,7 +10,6 @@ function* getQuickReplies(action) {
   let successType = actionTypes.GET_QUICK_REPLIES_SUCCESS;
   let failureType = actionTypes.GET_QUICK_REPLIES_FAILURE;
   const { params, success, error } = action.payload;
-  let result = null;
   try {
     let sendingParam;
     if (privilege === 'admin') {
@@ -22,7 +21,7 @@ function* getQuickReplies(action) {
     } else {
       sendingParam = params;
     }
-    result = yield call(apiClient.list, sendingParam);
+    const result = yield call(apiClient.list, sendingParam);
     const quickReplies = get(result, 'data', []);
     const { perPage, total } = result;
     switch (action.type) {
@@ -47,7 +46,7 @@ function* getQuickReplies(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -83,7 +82,7 @@ function* createQuickReply(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_QUICK_REPLY_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -108,7 +107,7 @@ function* updateQuickReply(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_QUICK_REPLY_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -143,7 +142,7 @@ function* deleteQuickReply(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_QUICK_REPLY_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

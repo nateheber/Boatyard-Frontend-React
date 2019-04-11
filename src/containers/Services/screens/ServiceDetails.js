@@ -4,7 +4,7 @@ import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
-import { get, filter, camelCase, isEmpty, startCase, isNumber, hasIn, orderBy } from 'lodash';
+import { get, filter, camelCase, isEmpty, startCase, hasIn, orderBy } from 'lodash';
 
 import { actionTypes as serviceActions, GetService, UpdateService } from 'store/actions/services';
 import { GetCategories, GetCategory } from 'store/actions/categories';
@@ -364,22 +364,13 @@ class ServiceDetails extends React.Component {
         success: () => {
           this.onCancel();
         },
-        error: () => {
-          const { errors } = this.props;
-          if (errors && errors.length > 0) {
-            for (const key in errors) {
-              if (isNumber(key)) {
-                toastr.error(errors[key].join(''));
-              }else {
-                toastr.error(key, errors[key].join(''));
-              }
-            }
-          }
+        error: (e) => {
+          toastr.error('Error', e.message);
         }
       });
     } else {
-      toastr.clean()
-      toastr.error('Please fill out all the required fields')
+      toastr.clean();
+      toastr.error('Please fill out all the required fields');
     }
   };
 

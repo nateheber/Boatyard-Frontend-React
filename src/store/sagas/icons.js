@@ -19,9 +19,8 @@ function* getIcons(action) {
   let successType = actionTypes.GET_ICONS_SUCCESS;
   let failureType = actionTypes.GET_ICONS_FAILURE;
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(iconClient.list, params);
+    const result = yield call(iconClient.list, params);
     const icons = get(result, 'data', []);
     const { perPage, total } = result;
     switch (action.type) {
@@ -47,7 +46,7 @@ function* getIcons(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -55,9 +54,8 @@ function* getIcons(action) {
 function* getIcon(action) {
   const iconClient = yield select(getIconClient);
   const { iconId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(iconClient.read, iconId);
+    const result = yield call(iconClient.read, iconId);
     const { data, included } = result;
     const refinedData = {
       id: data.id,
@@ -76,7 +74,7 @@ function* getIcon(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_ICON_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -95,7 +93,7 @@ function* createIcon(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_ICON_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

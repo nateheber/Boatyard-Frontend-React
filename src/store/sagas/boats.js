@@ -37,7 +37,7 @@ function* getBoats(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_BOATS_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -58,7 +58,7 @@ function* getBoat(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_BOAT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -77,7 +77,7 @@ function* createBoat(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_BOAT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -96,7 +96,7 @@ function* updateBoat(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_BOAT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -115,7 +115,7 @@ function* deleteBoat(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_BOAT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

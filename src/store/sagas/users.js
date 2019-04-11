@@ -46,7 +46,7 @@ function* getUsers(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -73,7 +73,7 @@ function* getUser(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_USER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -81,8 +81,8 @@ function* getUser(action) {
 function* createUser(action) {
   const userClient = yield select(getUserClient);
   const { data, success, error } = action.payload;
-  const result = yield call(userClient.create, data);
   try {
+    const result = yield call(userClient.create, data);
     const user = get(result, 'data');
     const payload = {
       id: user.id,
@@ -100,7 +100,7 @@ function* createUser(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_USER_FAILURE, payload: e });
     if (error) {
-      yield call(error, result);
+      yield call(error, e);
     }
   }
 }
@@ -147,7 +147,7 @@ function* deleteUser(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_USER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

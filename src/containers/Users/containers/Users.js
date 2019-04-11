@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
-import { isEmpty, isNumber } from 'lodash';
+import { isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, CreateUser, GetUsers } from 'store/actions/users';
@@ -53,11 +53,11 @@ class Users extends React.Component {
     const { GetUsers } = this.props;
     const { sort } = this.state;
     const params = isEmpty(keyword) ? {
-      page: page,
+      page,
       'user[sort]': sort.direction,
       'user[order]': sort.col
     } : {
-      page: page,
+      page,
       'user[sort]': sort.direction,
       'user[order]': sort.col,
       search_by_full_name: keyword
@@ -69,6 +69,15 @@ class Users extends React.Component {
     this.setState({ sort: sort }, () => {
       this.loadPage(1);
     });
+  };
+
+  getPageCount = () => {
+    const { perPage, total } = this.props;
+    return Math.ceil(total/perPage);
+  };
+
+  changePage = (page) => {
+    this.loadPage(page);
   };
 
   handleInputChange = (keyword) => {
@@ -92,22 +101,18 @@ class Users extends React.Component {
   onSave = (data) => {
     const { CreateUser, page } = this.props;
     CreateUser({
-      data: { user: { ...data.user } },
+      data: {
+        user: {
+        ...data.user,
+        password: Math.random().toString(36).slice(-8)
+        }
+      },
       success: () => {
         this.hideModal();
         this.loadPage(page);
       },
-      error: () => {
-        const { errors } = this.props;
-        if (errors && errors.length > 0) {
-          for (const key in errors) {
-            if (isNumber(key)) {
-              toastr.error(errors[key].join(''));
-            }else {
-              toastr.error(key, errors[key].join(''));
-            }
-          }
-        }
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -119,7 +124,8 @@ class Users extends React.Component {
       { label: 'contact number', value: 'phoneNumber', sort: 'phone_number' }
     ];
     const { sort, visibleOfModal } = this.state;
-    const { users, currentStatus } = this.props;
+    const { users, currentStatus, page } = this.props;
+    const pageCount = this.getPageCount();
     return (
       <Wrapper>
         <UsersHeader onAdd={this.showModal} />
@@ -134,6 +140,9 @@ class Users extends React.Component {
           sort={sort}
           onSortChange={this.onSortChange}
           toDetails={this.toDetails}
+          page={page}
+          pageCount={pageCount}
+          onPageChange={this.changePage}
         />
         {visibleOfModal && <CustomerModal
           title="Add New User"
@@ -147,7 +156,13 @@ class Users extends React.Component {
   }
 }
 
-const mapStateToProps = ({ user: { users, currentStatus, page } }) => ({ users, currentStatus, page });
+const mapStateToProps = ({ user: { users, currentStatus, page,perPage ,total } }) => ({
+  users,
+  currentStatus,
+  page,
+  perPage,
+  total
+});
 const mapDispatchToProps = {
   CreateUser,
   GetUsers
