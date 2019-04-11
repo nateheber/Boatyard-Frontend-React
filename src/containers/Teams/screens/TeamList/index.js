@@ -28,6 +28,10 @@ class TeamList extends React.Component {
     return Math.ceil(total/perPage);
   };
 
+  changePage = (page) => {
+    this.props.GetManagements({ page });
+  }
+
   render() {
     const { managements, page } = this.props;
     const pageCount = this.getPageCount();
