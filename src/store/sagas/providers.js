@@ -128,7 +128,7 @@ function* loginWithProvider(action) {
         yield call(success);
       }
     } else {
-      toastr.clean()
+      toastr.clean();
       toastr.error('Auth Failure', 'Invalid Credentials');
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE });
       if (error) {
@@ -136,7 +136,7 @@ function* loginWithProvider(action) {
       }
     }
   } catch (e) {
-    toastr.clean()
+    toastr.clean();
     toastr.error('Auth Failure', 'Invalid Credentials');
     yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
     if (error) {

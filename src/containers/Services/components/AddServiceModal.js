@@ -184,8 +184,8 @@ class AddServiceModal extends React.Component {
       };
       onSave(mainValues);
     } else {
-      toastr.clean()
-      toastr.error('Please fill out all the required fields')
+      toastr.clean();
+      toastr.error('Please fill out all the required fields');
     }
   };
 

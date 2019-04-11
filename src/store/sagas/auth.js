@@ -50,7 +50,7 @@ function* loginRequest(action) {
       }
     });
   } catch (e) {
-    toastr.clean()
+    toastr.clean();
     toastr.error('Auth Failure', 'Invalid credentials');
     yield put({
       type: actions.setAuthState,

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
-import { isEmpty, isNumber } from 'lodash';
+import { isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, CreateUser, GetUsers } from 'store/actions/users';
@@ -102,17 +102,8 @@ class Users extends React.Component {
         this.hideModal();
         this.loadPage(page);
       },
-      error: () => {
-        const { errors } = this.props;
-        if (errors && errors.length > 0) {
-          for (const key in errors) {
-            if (isNumber(key)) {
-              toastr.error(errors[key].join(''));
-            }else {
-              toastr.error(key, errors[key].join(''));
-            }
-          }
-        }
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
   };

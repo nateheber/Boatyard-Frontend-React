@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
-import {isNumber } from 'lodash';
 
 import { actionTypes as childActions, UpdateChildAccount } from 'store/actions/child-accounts';
 import { actionTypes as userActions, UpdateUser } from 'store/actions/users';
@@ -25,9 +24,8 @@ class CustomerInfoSection extends React.Component {
           this.hideModal();
           refreshInfo(currentUser);
         },
-        error: () => {
-          const { userErrors } = this.props;
-          this.showErrors(userErrors);
+        error: (e) => {
+          toastr.error('Error', e.message);
         }
       });  
     } else {
@@ -37,23 +35,10 @@ class CustomerInfoSection extends React.Component {
           this.hideModal();
           refreshInfo();
         },
-        error: () => {
-          const { childErrors } = this.props;
-          this.showErrors(childErrors);
+        error: (e) => {
+          toastr.error('Error', e.message);
         }
       });  
-    }
-  };
-
-  showErrors = (errors) => {
-    if (errors && errors.length > 0) {
-      for (const key in errors) {
-        if (isNumber(key)) {
-          toastr.error(errors[key].join(''));
-        }else {
-          toastr.error(key, errors[key].join(''));
-        }
-      }
     }
   };
 
@@ -90,9 +75,7 @@ class CustomerInfoSection extends React.Component {
 
 const mapStateToProps = (state) => ({
   childStatus: state.childAccount.currentStatus,
-  userStatus: state.user.currentStatus,
-  childErrors: state.childAccount.errors,
-  userErrors: state.user.errors
+  userStatus: state.user.currentStatus
 });
 
 const mapDispatchToProps = {
