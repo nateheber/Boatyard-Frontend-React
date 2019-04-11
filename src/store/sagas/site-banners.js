@@ -19,9 +19,8 @@ function* getBanners(action) {
   let successType = actionTypes.GET_SITE_BANNERS_SUCCESS;
   let failureType = actionTypes.GET_SITE_BANNERS_FAILURE;
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(bannerClient.list, params);
+    const result = yield call(bannerClient.list, params);
     const banners = get(result, 'data', []);
     const { perPage, total } = result;
     switch (action.type) {
@@ -47,7 +46,7 @@ function* getBanners(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -55,9 +54,8 @@ function* getBanners(action) {
 function* getBanner(action) {
   const bannerClient = yield select(getSiteBannerClient);
   const { bannerId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(bannerClient.read, bannerId);
+    const result = yield call(bannerClient.read, bannerId);
     const { data, included } = result;
     const refinedData = {
       id: data.id,
@@ -76,7 +74,7 @@ function* getBanner(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_SITE_BANNER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -97,7 +95,7 @@ function* createBanner(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_SITE_BANNER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -119,7 +117,7 @@ function* updateBanner(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_SITE_BANNER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -138,7 +136,7 @@ function* deleteBanner(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_SITE_BANNER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

@@ -38,7 +38,7 @@ function* getConversations(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_CONVERSATIONS_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -64,7 +64,7 @@ function* getConversation(action) {
       yield put({ type: actionTypes.GET_CONVERSATION_FAILURE, payload: e });
     }
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -83,7 +83,7 @@ function* createMessage(action){
   } catch (e) {
     yield put({ type: actionTypes.CREATE_MESSAGE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

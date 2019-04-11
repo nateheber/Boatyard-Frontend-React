@@ -57,7 +57,7 @@ function* getProviders(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -87,7 +87,7 @@ function* getPreferredProviders(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_PREFERRED_PROVIDERS_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -140,7 +140,7 @@ function* loginWithProvider(action) {
     toastr.error('Auth Failure', 'Invalid Credentials');
     yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -161,7 +161,7 @@ function* getProvider(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_PROVIDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -186,7 +186,7 @@ function* createProvider(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_PROVIDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -204,7 +204,7 @@ function* addPreferredProvider(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_PROVIDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -224,7 +224,7 @@ function* updateProvider(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_PROVIDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -242,7 +242,7 @@ function* deleteProvider(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_PROVIDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -260,7 +260,7 @@ function* deletePreferredProvider(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_PROVIDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

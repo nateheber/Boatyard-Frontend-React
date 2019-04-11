@@ -81,7 +81,7 @@ function* getOrders(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -112,7 +112,7 @@ function* getOrder(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_ORDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -137,7 +137,7 @@ function* createOrder(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_ORDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -160,7 +160,7 @@ function* updateOrder(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_ORDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -183,7 +183,7 @@ function* sendQuote(action) {
   } catch (e) {
     yield put({ type: actionTypes.SEND_QUOTE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -206,7 +206,7 @@ function* deleteOrder(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_ORDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -228,7 +228,7 @@ function* acceptOrder(action) {
   } catch (e) {
     yield put({ type: actionTypes.ACCEPT_ORDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -256,7 +256,7 @@ function* dispatchOrder(action) {
   } catch (e) {
     yield put({ type: actionTypes.DISPATCH_ORDER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

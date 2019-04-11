@@ -86,9 +86,8 @@ function* getProviderLocations(action) {
   } else {
     submissionParams = { ...params };
   }
-  let result = null;
   try {
-    result = yield call(apiClient.list, [providerId],submissionParams);
+    const result = yield call(apiClient.list, [providerId],submissionParams);
     const providerLocations = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
@@ -116,7 +115,7 @@ function* getProviderLocations(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -124,9 +123,8 @@ function* getProviderLocations(action) {
 function* getProviderLocation(action) {
   const apiClient = yield select(getProviderLocationClient);
   const { providerId, providerLocationId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(apiClient.read, [providerId, providerLocationId]);
+    const result = yield call(apiClient.read, [providerId, providerLocationId]);
     const { data, included } = result;
     const location = refineProviderLocation(data, included);
     yield put({
@@ -139,7 +137,7 @@ function* getProviderLocation(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_PROVIDER_LOCATION_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -147,9 +145,8 @@ function* getProviderLocation(action) {
 function* createProviderLocation(action) {
   const apiClient = yield select(getProviderLocationClient);
   const { providerId, data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(apiClient.create, [providerId], data);
+    const result = yield call(apiClient.create, [providerId], data);
     const { data: location, included } = result;
     const refinedLocation = refineProviderLocation(location, included);
     yield put({
@@ -161,7 +158,7 @@ function* createProviderLocation(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_PROVIDER_LOCATION_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -169,9 +166,8 @@ function* createProviderLocation(action) {
 function* updateProviderLocation(action) {
   const apiClient = yield select(getProviderLocationClient);
   const { providerId, providerLocationId, data, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(apiClient.update, [providerId, providerLocationId], data);
+    const result = yield call(apiClient.update, [providerId, providerLocationId], data);
     const { data: location, included } = result;
     const refinedLocation = refineProviderLocation(location, included);
     yield put({
@@ -183,7 +179,7 @@ function* updateProviderLocation(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_PROVIDER_LOCATION_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -202,7 +198,7 @@ function* deleteProviderLocation(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_PROVIDER_LOCATION_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

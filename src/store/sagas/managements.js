@@ -27,9 +27,8 @@ const refineManagement = (management, included) => {
 function* getManagements(action) {
   const managementClient = yield select(getManagementClient);
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(managementClient.list, params);
+    const result = yield call(managementClient.list, params);
     const managements = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
@@ -53,7 +52,7 @@ function* getManagements(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_MANAGEMENTS_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -61,9 +60,8 @@ function* getManagements(action) {
 function* getManagement(action) {
   const managementClient = yield select(getManagementClient);
   const { managementId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(managementClient.read, managementId);
+    const result = yield call(managementClient.read, managementId);
     const { data, included } = result;
     yield put({
       type: actionTypes.GET_MANAGEMENT_SUCCESS,
@@ -75,7 +73,7 @@ function* getManagement(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_MANAGEMENT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -83,9 +81,8 @@ function* getManagement(action) {
 function* createManagement(action) {
   const managementClient = yield select(getManagementClient);
   const { data: payload, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(managementClient.create, payload);
+    const result = yield call(managementClient.create, payload);
     const { data, included } = result;
     yield put({
       type: actionTypes.CREATE_MANAGEMENT_SUCCESS,
@@ -98,7 +95,7 @@ function* createManagement(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_MANAGEMENT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -106,9 +103,8 @@ function* createManagement(action) {
 function* updateManagement(action) {
   const managementClient = yield select(getManagementClient);
   const { managementId, data: payload, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(managementClient.update, managementId, payload);
+    const result = yield call(managementClient.update, managementId, payload);
     const { data, included } = result;
     yield put({
       type: actionTypes.UPDATE_MANAGEMENT_SUCCESS,
@@ -121,7 +117,7 @@ function* updateManagement(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_MANAGEMENT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -141,7 +137,7 @@ function* deleteManagement(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_MANAGEMENT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

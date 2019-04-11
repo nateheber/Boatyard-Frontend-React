@@ -36,7 +36,8 @@ export const responseInterceptor = client => {
       store.dispatch(logout());
       return false;
     } else {
-      throw message;
+      const err = { message };
+      throw err;
     }
   });
   return client;

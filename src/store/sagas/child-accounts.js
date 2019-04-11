@@ -47,7 +47,7 @@ function* getChildAccounts(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -73,7 +73,7 @@ function* getChildAccount(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_CHILD_ACCOUNT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -92,7 +92,7 @@ function* createChildAccount(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_CHILD_ACCOUNT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -111,7 +111,7 @@ function* updateChildAccount(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_CHILD_ACCOUNT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -130,7 +130,7 @@ function* deleteChildAccount(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_CHILD_ACCOUNT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

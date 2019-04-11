@@ -30,9 +30,8 @@ function* getCategories(action) {
   } else {
     submissionParams = { ...params };
   }
-  let result = null;
   try {
-    result = yield call(categoryClient.list, submissionParams);
+    const result = yield call(categoryClient.list, submissionParams);
     const categories = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
@@ -60,7 +59,7 @@ function* getCategories(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -68,9 +67,8 @@ function* getCategories(action) {
 function* getCategory(action) {
   const categoryClient = yield select(getCategoryClient);
   const { categoryId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(categoryClient.read, categoryId);
+    const result = yield call(categoryClient.read, categoryId);
     const { data, included } = result;
     const category = {
       id: data.id,
@@ -87,7 +85,7 @@ function* getCategory(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_CATEGORY_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -106,7 +104,7 @@ function* createCategory(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_CATEGORY_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -125,7 +123,7 @@ function* updateCategory(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_CATEGORY_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -144,7 +142,7 @@ function* deleteCategory(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_CATEGORY_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

@@ -37,7 +37,7 @@ function* getNetworks(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_NETWORKS_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -58,7 +58,7 @@ function* getNetwork(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_NETWORK_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -96,7 +96,7 @@ function* updateNetwork(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_NETWORK_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -115,7 +115,7 @@ function* deleteNetwork(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_NETWORK_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

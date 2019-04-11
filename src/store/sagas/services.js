@@ -21,9 +21,8 @@ function* getServices(action) {
   let successType = actionTypes.GET_SERVICES_SUCCESS;
   let failureType = actionTypes.GET_SERVICES_FAILURE;
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(serviceClient.list, params);
+    const result = yield call(serviceClient.list, params);
     const services = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
@@ -51,7 +50,7 @@ function* getServices(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -59,9 +58,8 @@ function* getServices(action) {
 function* getService(action) {
   const serviceClient = yield select(getServiceClient);
   const { serviceId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(serviceClient.read, serviceId);
+    const result = yield call(serviceClient.read, serviceId);
     const { data, included } = result;
     const refinedData = {
       id: data.id,
@@ -80,7 +78,7 @@ function* getService(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_SERVICE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -99,7 +97,7 @@ function* createService(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_SERVICE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -118,7 +116,7 @@ function* updateService(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_SERVICE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -137,7 +135,7 @@ function* deleteService(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_SERVICE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

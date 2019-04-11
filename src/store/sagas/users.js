@@ -46,7 +46,7 @@ function* getUsers(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -73,7 +73,7 @@ function* getUser(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_USER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -147,7 +147,7 @@ function* deleteUser(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_USER_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

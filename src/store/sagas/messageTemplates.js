@@ -19,9 +19,8 @@ const processTemplates = (templates) => {
 function* getGlobalTemplates(action) {
   const templateClient = yield select(getGlobalMessageTemplatesClient);
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(templateClient.list, params);
+    const result = yield call(templateClient.list, params);
     const templates = get(result, 'data', []);
     const { perPage, total } = result;
     yield put({
@@ -38,7 +37,7 @@ function* getGlobalTemplates(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_GLOBAL_TEMPLATES_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -46,9 +45,8 @@ function* getGlobalTemplates(action) {
 function* getLocalTemplates(action) {
   const templateClient = yield select(getLocalMessageTemplatesClient);
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(templateClient.list, params);
+    const result = yield call(templateClient.list, params);
     const templates = get(result, 'data', []);
     const { perPage, total } = result;
     yield put({
@@ -65,7 +63,7 @@ function* getLocalTemplates(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_LOCAL_TEMPLATES_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -84,7 +82,7 @@ function* createLocalTemplate(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_LOCAL_TEMPLATE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -103,7 +101,7 @@ function* updateLocalTemplate(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_LOCAL_TEMPLATE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -122,7 +120,7 @@ function* updateGlobalTemplate(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_LOCAL_TEMPLATE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -141,7 +139,7 @@ function* deleteLocalTemplate(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_LOCAL_TEMPLATE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
