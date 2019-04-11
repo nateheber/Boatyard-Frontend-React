@@ -109,28 +109,28 @@ class TeamDetails extends React.Component {
       phoneNumber: '',
       email: ''
     };
-    if (firstName.length <= 0) {
+    if (firstName.trim().length <= 0) {
       errorMessage = {
         ...errorMessage,
         firstName: 'First Name is Required'
       };
       hasError = hasError || true;
     }
-    if (lastName.length <= 0) {
+    if (lastName.trim().length <= 0) {
       errorMessage = {
         ...errorMessage,
         lastName: 'Last Name is Required'
       };
       hasError = hasError || true;
     }
-    if (phoneNumber.length <= 0) {
+    if (phoneNumber.trim().length <= 0) {
       errorMessage = {
         ...errorMessage,
         phoneNumber: 'Phone Number is Required'
       };
       hasError = hasError || true;
     }
-    if (email.length <= 0) {
+    if (email.trim().length <= 0) {
       errorMessage = {
         ...errorMessage,
         email: 'Email is Required'
@@ -154,25 +154,25 @@ class TeamDetails extends React.Component {
 
   onChangeFN = evt => {
     this.setState({
-      firstName: evt.target.value.trim()
+      firstName: evt.target.value
     });
   };
 
   onChangeLN = evt => {
     this.setState({
-      lastName: evt.target.value.trim()
+      lastName: evt.target.value
     });
   };
 
   onChangeEmail = evt => {
     this.setState({
-      email: evt.target.value.trim()
+      email: evt.target.value
     });
   };
 
   onChangePN = evt => {
     this.setState({
-      phoneNumber: evt.target.value.trim()
+      phoneNumber: evt.target.value
     });
   };
 
@@ -199,10 +199,10 @@ class TeamDetails extends React.Component {
       const { firstName, lastName, email, phoneNumber } = this.state;
       const userId = get(management, 'attributes.userId');
       const data = {
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        phone_number: phoneNumber
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        email: email.trim(),
+        phone_number: phoneNumber.trim()
       };
       if (managementId) {
         UpdateUser({
@@ -215,9 +215,16 @@ class TeamDetails extends React.Component {
                 access
               },
               success: () => {
+                toastr.success('Success', 'Saved successfully!');
                 this.onBack();
+              },
+              error: (e) => {
+                toastr.error('Error', e.message);
               }
             });
+          },
+          error: (e) => {
+            toastr.error('Error', e.message);
           }
         });
       } else {
@@ -225,7 +232,7 @@ class TeamDetails extends React.Component {
           data: {
             user: {
               ...data,
-              password: 'sdf239082394eSDF#$%@RFD@#^$Ybfzcvq39745CXZVQ#%#@#R'
+              password: Math.random().toString(36).slice(-8)
             },
           },
           success: (user) => {
@@ -242,9 +249,16 @@ class TeamDetails extends React.Component {
                 management: { ...managementData }
               },
               success: () => {
+                toastr.success('Success', 'Created successfully!');
                 this.onBack();
+              },
+              error: (e) => {
+                toastr.error('Error', e.message);
               }
             });
+          },
+          error: (e) => {
+            toastr.error('Error', e.message);
           }
         });
       }

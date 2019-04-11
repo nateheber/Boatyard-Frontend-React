@@ -89,7 +89,6 @@ function* createManagement(action) {
       management: refineManagement(data, refactorIncluded(included))
     });
     if (success) {
-      toastr.success('Success', 'Created successfully!');
       yield call(success, data, included);
     }
   } catch (e) {
@@ -111,7 +110,6 @@ function* updateManagement(action) {
       management: refineManagement(data, refactorIncluded(included))
     });
     if (success) {
-      toastr.success('Success', 'Saved successfully!');
       yield call(success, data, included);
     }
   } catch (e) {
