@@ -86,7 +86,7 @@ class Customers extends React.Component {
       data: { child_account: { ...data.user } },
       success: () => {
         this.closeNewModal();
-        this.loadCustomers();
+        this.loadPage(1);
       },
       error: (e) => {
         toastr.error('Error', e.message);
@@ -111,7 +111,7 @@ class Customers extends React.Component {
   };
 
   changePage = (page) => {
-    this.loadCustomers(page);
+    this.loadPage(page);
   };
 
   getPageCount = () => {
