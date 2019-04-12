@@ -84,7 +84,7 @@ function* userPermissionRequest(action) {
       });
     }
   } catch (e) {
-    toastr.error('Error', e.message);
+    // toastr.error('Error', e.message);
     yield put({
       type: ProviderActions.LOGIN_WITH_PROVIDER,
       payload: {}
