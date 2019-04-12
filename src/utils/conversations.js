@@ -18,7 +18,7 @@ export const getOwnership = (profile, senderProfile) => {
   return senderProfileId === profileId && profileType === senderProfileType;
 }
 
-export const parseIncluded = (included) => {
+export const parseIncludedForMessages = (included) => {
   return included.reduce((prev, item) => {
     const { id, type, attributes, relationships } = item;
     const target = {...prev};
@@ -30,6 +30,15 @@ export const parseIncluded = (included) => {
     return target;
   }, {});
 }
+
+export const refactorIncluded = (included) => {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i];
+    set(refactored, `${type}.${id}`, {...included[i]});
+  }
+  return refactored;
+};
 
 export const parseMessageDetails = (profile, message, included) => {
   const profileId = get(message, 'attributes.profileId');
@@ -47,7 +56,7 @@ export const refineMessage = (profile, currentConversation) => {
   if(isEmpty(currentConversation))
       return { messages: [] };
     const { data, included } = currentConversation;
-    const parsedIncluded = parseIncluded(included);
+    const parsedIncluded = parseIncludedForMessages(included);
     const reversedData = reverse(data);
     const messages = reversedData.map((message, index) => {
       const currMessage = parseMessageDetails(profile, message, parsedIncluded);

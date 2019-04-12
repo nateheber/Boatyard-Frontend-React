@@ -3,15 +3,7 @@ import { produce } from 'immer'
 import { set, get } from 'lodash'
 
 import { actionTypes } from '../actions/orders';
-
-function refactorIncluded(included) {
-  let refactored = {};
-  for ( let i = 0; i < included.length; i += 1 ) {
-    const { type, id } = included[i]
-    set(refactored, `${type}.${id}`, {...included[i]})
-  }
-  return refactored;
-}
+import { refactorIncluded } from 'utils/conversations';
 
 const ordersState = {
   orders: [],

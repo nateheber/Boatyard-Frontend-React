@@ -1,16 +1,8 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get, set } from 'lodash';
+import { get } from 'lodash';
 import { actionTypes } from '../actions/conversations';
-
-function refactorIncluded(included) {
-  let refactored = {};
-  for ( let i = 0; i < included.length; i += 1 ) {
-    const { type, id } = included[i];
-    set(refactored, `${type}.${id}`, {...included[i]});
-  }
-  return refactored;
-}
+import { refactorIncluded, parseIncludedForMessages } from 'utils/conversations';
 
 const initialState = {
   currentStatus: '',
@@ -20,6 +12,13 @@ const initialState = {
   page: 1,
   perPage: 20,
   total: 0,
+  message: {
+    messages: [],
+    included: {},
+    page: 1,
+    perPage: 20,
+    total: 0
+  },
   errors: null
 };
 
@@ -51,18 +50,27 @@ export default handleActions(
 
     [actionTypes.GET_CONVERSATION]: (state, action) =>
       produce(state, draft => {
-        const { type, payload: { first } } = action;
+        const { type, payload } = action;
+        const first = get(payload, 'first', false);
+        draft.page = get(payload, 'params.page', 1);
         draft.currentStatus = type;
         if (first) {
-          draft.currentConversation = {};
+          draft.message.messages = [];
         }
         draft.errors = null;
       }),
     [actionTypes.GET_CONVERSATION_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
+        const { total, perPage, data, included } = payload;
         draft.currentStatus = type;
-        draft.currentConversation = payload;
+        const parsed = parseIncludedForMessages(included);
+        draft.message = {
+          total,
+          perPage,
+          messages: data,
+          included: parsed
+        };
       }),
     [actionTypes.GET_CONVERSATION_FAILURE]: (state, action) =>
       produce(state, draft => {
