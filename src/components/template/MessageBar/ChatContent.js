@@ -87,10 +87,10 @@ class ChatContent extends React.Component {
     GetConversation({
       conversationId,
       onlyCallback: true,
-      success: (message) => {
+      success: (messages) => {
         const { isMounted } = this.state;
         if (isMounted) {
-          this.setState({ ...refineMessage(profile, message), loading: false });
+          this.setState({ ...refineMessage(profile, messages), loading: false });
         }
       }
     });

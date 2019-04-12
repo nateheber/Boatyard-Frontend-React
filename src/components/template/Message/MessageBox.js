@@ -10,6 +10,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   flex-grow: 1;
   overflow-y: scroll;
+  padding-bottom: 20px;
 `;
 
 export class MessageBox extends React.Component {
