@@ -1,17 +1,8 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get, set } from 'lodash';
+import { get } from 'lodash';
 import { actionTypes } from '../actions/providers';
-
-function refactorIncluded(included) {
-  let refactored = {};
-  for ( let i = 0; i < included.length; i += 1 ) {
-    const { type, id } = included[i]
-    set(refactored, `${type}.${id}`, {...included[i]})
-  }
-  return refactored;
-}
-
+import { refactorIncluded } from 'utils/conversations';
 
 const initialState = {
   currentStatus: '',

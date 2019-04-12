@@ -1,18 +1,10 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, set, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/managements';
 import { getManagementClient } from './sagaSelectors';
-
-function refactorIncluded(included) {
-  let refactored = {};
-  for ( let i = 0; i < included.length; i += 1 ) {
-    const { type, id } = included[i]
-    set(refactored, `${type}.${id}`, {...included[i]})
-  }
-  return refactored;
-}
+import { refactorIncluded } from 'utils/conversations';
 
 const refineManagement = (management, included) => {
   for(const key in management.relationships) {

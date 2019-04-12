@@ -1,8 +1,9 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { set, get, hasIn, keys, isArray, isEmpty } from 'lodash';
+import { get, hasIn, keys, isArray, isEmpty } from 'lodash';
 
 import { actionTypes } from '../actions/providerLocations';
 import { getProviderLocationClient } from './sagaSelectors';
+import { refactorIncluded } from 'utils/conversations';
 
 const refineProviderLocations = (providerLocations) => {
   return providerLocations.map(location => {
@@ -14,15 +15,6 @@ const refineProviderLocations = (providerLocations) => {
     };
   });
 };
-
-function refactorIncluded(included) {
-  let refactored = {};
-  for ( let i = 0; i < included.length; i += 1 ) {
-    const { type, id } = included[i]
-    set(refactored, `${type}.${id}`, {...included[i]})
-  }
-  return refactored;
-}
 
 const refineProviderLocation = (location, included) => {
   const refactoredIncluded = refactorIncluded(included);

@@ -46,14 +46,14 @@ function* getConversations(action) {
 function* getConversation(action) {
   const privilege = select(getPrivilege);
   const apiClient = new APIGenerator.customApiClient(privilege === 'provider' ? 'provider' : 'basic');
-  const { conversationId, onlyCallback, success, error } = action.payload;
+  const { conversationId, onlyCallback, params, success, error } = action.payload;
   try {
-    const result = yield call(apiClient.get, `/conversations/${conversationId}/messages`);
-    const { data, included } = result;
+    const result = yield call(apiClient.get, `/conversations/${conversationId}/messages`, params);
+    const { data, included, perPage, total } = result;
     if (!onlyCallback) {
       yield put({
         type: actionTypes.GET_CONVERSATION_SUCCESS,
-        payload: { data, included }
+        payload: { data, included, perPage, total }
       });
     }
     if (success) {
