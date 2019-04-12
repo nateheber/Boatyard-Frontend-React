@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get } from 'lodash';
+import { get, reverse, merge } from 'lodash';
 import { actionTypes } from '../actions/conversations';
 import { refactorIncluded, parseIncludedForMessages } from 'utils/conversations';
 
@@ -52,10 +52,17 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         const first = get(payload, 'first', false);
-        draft.page = get(payload, 'params.page', 1);
+        const page = get(payload, 'params.page', 1);
+        const perPage = get(payload, 'params.per_page', 20);
         draft.currentStatus = type;
         if (first) {
-          draft.message.messages = [];
+          draft.message = {
+            messages: [],
+            included: {},
+            page,
+            perPage,
+            total: 0        
+          };
         }
         draft.errors = null;
       }),
@@ -64,12 +71,15 @@ export default handleActions(
         const { type, payload } = action;
         const { total, perPage, data, included } = payload;
         draft.currentStatus = type;
+        const messages = get(state, 'message.messages');
+        const mergedMessages = merge(reverse(data), messages);
         const parsed = parseIncludedForMessages(included);
+        const origin = get(state, 'message.included');
         draft.message = {
           total,
           perPage,
-          messages: data,
-          included: parsed
+          messages: mergedMessages,
+          included: merge(origin, parsed)
         };
       }),
     [actionTypes.GET_CONVERSATION_FAILURE]: (state, action) =>

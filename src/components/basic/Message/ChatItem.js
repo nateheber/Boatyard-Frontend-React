@@ -19,15 +19,9 @@ const Wrapper = styled.div`
 const DateContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   margin-bottom: 10px;
-`;
-
-const LineDivider = styled.div`
-  background: #BBB;
-  height: 1px;
-  width: 100px;
 `;
 
 const DateText = styled.div`
@@ -89,23 +83,6 @@ const MessageBody = styled.div`
       border-bottom-left-radius: 2px;
     }
   }
-  // &:before {
-  //   content: ' ';
-  //   width: 0;
-  //   height: 0;
-  //   border-left: 16px solid transparent;
-  //   border-right: 16px solid transparent;
-  //   top: -5px;
-  //   position: absolute;
-  // }
-  // &.op:before {
-  //   left: 5px;
-  //   border-bottom: 12px solid #f6f6f6;
-  // }
-  // &.own:before {
-  //   right: 5px;
-  //   border-bottom: 12px solid #ffd4aa;
-  // }
 `;
 
 const Image = styled.img`
@@ -120,13 +97,10 @@ export class ChatItem extends React.Component {
     return (
       <Wrapper className={`${own ? 'own' : 'op'} ${hasPrev ? 'has-prev': ''} ${hasNext ? 'has-next' : ''}`}>
         {showDate && <DateContainer>
-          <LineDivider />
           <DateText>{moment(time).format('MMM D, YYYY')}</DateText>
-          <LineDivider />
         </DateContainer>}
         {!hasPrev && <UserDetailsCotainer>
           {!own && <DisplayName className={secondary ? 'secondary' : 'primary'}>{`${name}`}&nbsp;</DisplayName>}
-          {/* <DateTime>{moment(time).format('MMM D, YYYY h:m A')}</DateTime> */}
           <TimeText>{moment(time).format('h:mm A')}</TimeText>
         </UserDetailsCotainer>}
         <MessageBody className={`${own ? 'own' : 'op'} ${hasPrev ? 'has-prev': ''} ${hasNext ? 'has-next' : ''}`}>
