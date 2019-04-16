@@ -94,6 +94,45 @@ export const refineMessage = (profile, currentConversation) => {
     return { messages: messages, included: parsedIncluded };
 }
 
+export const refineMessages = (profile, data, included) => {
+  const parsedIncluded = parseIncludedForMessages(included);
+  const reversedData = reverse(data);
+  const messages = reversedData.map((message, index) => {
+    const currMessage = parseMessageDetails(profile, message, parsedIncluded);
+    let hasPrev = false;
+    let hasNext = false;
+    let showDate = false;
+    const prevMessage = parseMessageDetails(profile, reversedData[index - 1], parsedIncluded);
+    const nextMessage = parseMessageDetails(profile, reversedData[index + 1], parsedIncluded);
+    if (index === 0) {
+      showDate = true;
+      hasNext = hasNextMessage(currMessage, nextMessage);
+    } else {
+      const startDay = moment(prevMessage.sentAt).date();
+      const endDay = moment(currMessage.sentAt).date();
+      if (startDay !== endDay) {
+        showDate = true;
+      }
+      hasPrev = hasPreviousMessage(prevMessage, currMessage);
+      if (index < reversedData.length - 1) {
+        hasNext = hasNextMessage(currMessage, nextMessage);
+      }
+    }
+
+    return ({
+      name: currMessage.senderName,
+      body: currMessage.content,
+      file: currMessage.file,
+      own: currMessage.own,
+      showDate,
+      hasPrev,
+      hasNext,
+      time: currMessage.sentAt
+    });
+  });
+  return { messages: messages, included: parsedIncluded };
+}
+
 const hasPreviousMessage = (prevMessage, currMessage) => {
   const startTime = moment(prevMessage.sentAt);
   const end = moment(currMessage.sentAt);
