@@ -4,8 +4,11 @@ import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Bell from '../../../resources/notification-bell.svg';
-import Message from '../../../resources/messages-icon.png';
+import MessageBox from '../../../resources/messages-icon.png';
 import ChevronIcon from '../../../resources/down-chevron.svg';
+import Message from '../../../resources/message.png';
+import CheckCircle from '../../../resources/check_circle.png';
+import Document from '../../../resources/document.png';
 
 import { logout } from '../../../store/reducers/auth';
 
@@ -27,12 +30,11 @@ const MenuWrapper = styled.ul`
   display: block;
 `;
 
-const DropdownItem = styled.li`
+const DropdownItem = styled.div`
   position: relative;
   box-sizing: border-box;
   display: flex;
   height: 68px;
-  padding: 20px 10px !important;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -54,10 +56,13 @@ const DropdownMenu = styled.ul`
   background-color: white;
   position: absolute;
   top: 68px;
-  width: 200px;
+  min-width: 200px;
   right: 0;
   min-height: 70px;
   padding: 0;
+  &.notifications {
+    min-width: 300px;
+  }
   &::before {
     height: 100%;
     display: block;
@@ -88,10 +93,40 @@ const MenuItemLi = styled.div`
   }
 `;
 
+const BadgeNum = styled.div`
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  background: #EBEBEB;
+  border-radius: 100%;
+  font-family: Helvetica;
+  font-size: 14px;
+  color: #F38118;
+  text-align: center;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+`;
+
+// const BadgePlus = styled.label`
+//   position: absolute;
+//   top: 6px;
+//   right: 11px;
+//   font-size: 12px;
+//   color: #F38118;
+//   font-weight: 900;
+//   &::before {
+//     content: '+';
+//   }
+// `;
+
 const MenuItem = styled.button`
   border: none;
   width: 100%;
-  padding: 0 15px;
+  color: #003247;
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
   text-align: left;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
@@ -107,7 +142,7 @@ const IconItem = styled.li`
   width: 68px;
   height: 68px;
   box-sizing: border-box;
-  padding: 20px 10px !important;
+  padding: 20px 10px;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -122,7 +157,14 @@ const IconItem = styled.li`
   }
 `;
 
-const Icon = styled.img``;
+const MenuItemIcon = styled.img`
+  width: 22px;
+  height: 22px;
+  margin-right: 13px;
+`;
+
+const Icon = styled.img`
+`;
 
 const UsernameWrapper = styled.a`
   color: #fff;
@@ -131,6 +173,7 @@ const UsernameWrapper = styled.a`
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 20px 10px;
 `;
 
 const Username = styled.div`
@@ -176,11 +219,32 @@ const MenuUI = ({ firstName, lastName, logout, history, toggleMessage, messageTo
           </MenuItemLi>
         </DropdownMenu>
       </DropdownItem>
-      <IconItem>
-        <Icon width={20} height={20} src={Bell} alt="bell" />
-      </IconItem>
+      <DropdownItem>
+        <IconItem>
+          <Icon width={20} height={20} src={Bell} alt="bell" />
+        </IconItem>
+        <BadgeNum>{'3'}</BadgeNum>
+        {/* <BadgePlus /> */}
+        <DropdownMenu className="notifications">
+          <MenuItemLi>
+            <MenuItem onClick={() => history.push('/')}>
+              <MenuItemIcon src={Message} />You have a new message.
+            </MenuItem>
+          </MenuItemLi>
+          <MenuItemLi>
+            <MenuItem onClick={() => history.push('/')}>
+              <MenuItemIcon src={CheckCircle} />Brock has accepted your quote
+            </MenuItem>
+          </MenuItemLi>
+          <MenuItemLi>
+            <MenuItem onClick={() => history.push('/')}>
+              <MenuItemIcon src={Document} />You have received a new order from Brock
+            </MenuItem>
+          </MenuItemLi>
+        </DropdownMenu>
+      </DropdownItem>
       <IconItem ref={messageToggleRef} className="hide-on-mobile" onClick={toggleMessage}>
-        <Icon width={32} height={20} src={Message} alt="bell" />
+        <Icon width={32} height={20} src={MessageBox} alt="message" />
       </IconItem>
     </MenuWrapper>
   </Wrapper>
