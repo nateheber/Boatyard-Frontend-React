@@ -157,13 +157,13 @@ class LineItemSection extends React.Component {
   canSendQuote = () => {
     const { currentOrder } = this.props;
     const orderState = get(currentOrder, 'attributes.state');
-    return orderState === 'accepted' || orderState === 'provisioned';
+    return orderState === 'accepted' || orderState === 'provisioned' || orderState === 'scheduled';
   }
 
   sendQuote = () => {
     const { orderId, SendQuote, GetOrder, currentOrder } = this.props;
     const orderState = get(currentOrder, 'attributes.state');
-    const isResend = orderState === 'provisioned';
+    const isResend = orderState === 'provisioned' || orderState === 'scheduled';
     SendQuote({
       orderId,
       isResend,
