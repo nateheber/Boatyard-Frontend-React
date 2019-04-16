@@ -82,6 +82,7 @@ const DropdownMenu = styled.ul`
 
 const MenuItemLi = styled.div`
   padding: 8px 0;
+  cursor: pointer;
   &:hover {
     background-color: #f6f6f7;
   }
@@ -96,6 +97,7 @@ const MenuItem = styled.button`
   font-size: 14px;
   background: transparent;
   outline: none;
+  cursor: pointer;
 `;
 
 const IconItem = styled.li`
