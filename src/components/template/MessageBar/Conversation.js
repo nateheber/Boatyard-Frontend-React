@@ -70,6 +70,7 @@ const InfoWrapper = styled.div`
 
 const History = styled.div`
   display: inline-block;
+  max-width: 240px;
   color: #688da0;
 `;
 
