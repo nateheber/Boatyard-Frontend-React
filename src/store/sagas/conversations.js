@@ -69,6 +69,25 @@ function* getConversation(action) {
   }
 }
 
+function* deleteConversation(action) {
+  const conversationClient = yield select(getConversationClient);
+  const { conversationId, success, error } = action.payload;
+  try {
+    yield call(conversationClient.delete, conversationId);
+    yield put({
+      type: actionTypes.DELETE_CONVERSATION_SUCCESS
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.DELETE_CONVERSATION_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
 function* createMessage(action){
   const apiClient = yield select(getMessageClient);
   const { data, success, error } = action.payload;
@@ -91,5 +110,6 @@ function* createMessage(action){
 export default function* ConversationSaga() {
   yield takeEvery(actionTypes.GET_CONVERSATIONS, getConversations);
   yield takeEvery(actionTypes.GET_CONVERSATION, getConversation);
+  yield takeEvery(actionTypes.DELETE_CONVERSATION, deleteConversation);
   yield takeEvery(actionTypes.CREATE_MESSAGE, createMessage);
 }

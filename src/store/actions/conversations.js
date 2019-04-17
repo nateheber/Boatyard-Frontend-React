@@ -12,6 +12,10 @@ export const actionTypes = {
   CREATE_MESSAGE: '[CONVERSATIONS] - Create Message',
   CREATE_MESSAGE_SUCCESS: '[CONVERSATIONS] - Create Message Success',
   CREATE_MESSAGE_FAILURE: '[CONVERSATIONS] - Create Message Failure',
+
+  DELETE_CONVERSATION: '[CONVERSATIONS] - Delete Conversation',
+  DELETE_CONVERSATION_SUCCESS: '[CONVERSATIONS] - Delete Conversation Success',
+  DELETE_CONVERSATION_FAILURE: '[CONVERSATIONS] - Delete Conversation Failure'
 };
 
 export const GetConversations = createAction(actionTypes.GET_CONVERSATIONS, payload => payload);
@@ -25,3 +29,7 @@ export const GetConversationFailure = createAction(actionTypes.GET_CONVERSATION_
 export const CreateMessage = createAction(actionTypes.CREATE_MESSAGE, payload => payload);
 export const CreateMessageSuccess = createAction(actionTypes.CREATE_MESSAGE_SUCCESS);
 export const CreateMessageFailure = createAction(actionTypes.CREATE_MESSAGE_FAILURE);
+
+export const DeleteConversation = createAction(actionTypes.DELETE_CONVERSATION, payload => payload);
+export const DeleteConversationSuccess = createAction(actionTypes.DELETE_CONVERSATION_SUCCESS);
+export const DeleteConversationFailure = createAction(actionTypes.DELETE_CONVERSATION_FAILURE);
