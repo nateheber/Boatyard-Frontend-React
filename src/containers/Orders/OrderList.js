@@ -74,6 +74,7 @@ const tabs = {
   ],
   provider: [
     { title: 'ALL', value: 'all', counts: 0 },
+    { title: 'INVOICED', value: 'invoiced', counts: 0 },
     { title: 'AWAITING ACCEPTANCE', value: 'dispatched', counts: 0 },
   ]
 };
@@ -102,6 +103,8 @@ class OrderList extends React.Component {
     this.props.SetDispatchedFlag(tab === 'dispatched');
     if (tab === 'needAssignment') {
       this.props.GetOrders({ params: { page: 1, per_page: 15, 'order[state]': 'draft' } })
+    } else if (tab === 'invoiced') {
+      this.props.GetOrders({ params: { page: 1, per_page: 15, 'order[state]': 'invoiced' } })
     } else {
       this.props.GetOrders({ params: { page: 1, per_page: 15 } });
     }
