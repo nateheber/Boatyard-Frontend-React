@@ -38,7 +38,7 @@ export default handleActions(
         draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
-        draft.conversations = conversations;
+        draft.conversations = conversations.filter(conversation => conversation.state !== 'archived');
         draft.included = refactorIncluded(included);
       }),
     [actionTypes.GET_CONVERSATIONS_FAILURE]: (state, action) =>
