@@ -70,7 +70,6 @@ const MessageBody = styled.div`
   background-color: #f6f6f6;
   word-wrap: break-word;
   hyphens: auto;
-  word-break: break-all;
   &.own {
     background-color: #ffd4aa;
     border-bottom-right-radius: 2px;
