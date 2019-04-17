@@ -64,14 +64,19 @@ const Label = styled.div`
 const InfoWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const History = styled.div`
   display: inline-block;
   max-width: 240px;
   color: #688da0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `;
 
 const TimeStamp = styled.div`
