@@ -65,7 +65,7 @@ const InfoWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  height: 36px;
 `;
 
 const History = styled.div`
