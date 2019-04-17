@@ -11,7 +11,11 @@ const Wrapper = styled.div`
   font-size: 14px;
   cursor: pointer;
   position: relative;
-  .btn-close {
+  .overlay {
+    transition: all ease-in-out .2s;
+    opacity: 0;
+  }
+.btn-close {
     transition: all ease-in-out .2s;
     opacity: 0;
     .close-icon {
@@ -19,6 +23,9 @@ const Wrapper = styled.div`
     }
   }
   &:hover {
+    .overlay {
+      opacity: 1;
+    }
     .btn-close {
       opacity: 1;
       .close-icon {
@@ -26,6 +33,15 @@ const Wrapper = styled.div`
       }
     }
   }
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
 `;
 
 const CloseButton = styled.button`
@@ -72,6 +88,7 @@ export default ({ conversation: { conversation: { id }, mostRecentMessage, recip
         <History>{get(mostRecentMessage, 'attributes.content')}</History>
         <TimeStamp>{moment(get(mostRecentMessage, 'attributes.createdAt')).format('MMM D')}</TimeStamp>
       </InfoWrapper>
+      <Overlay className="overlay" />
       <CloseButton className="btn-close" onClick={onDelete(id)}>
         <EvilIcon name="ei-close-o" size="s" className="close-icon" />
       </CloseButton>
