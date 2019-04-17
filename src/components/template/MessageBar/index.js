@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import { GetNetworks } from 'store/actions/networks';
-import { GetConversations, GetConversation } from 'store/actions/conversations';
+import { GetConversations, GetConversation, DeleteConversation } from 'store/actions/conversations';
 import { refinedConversationSelector } from 'store/selectors/conversations';
 
 import NewMessage from './NewMessage';
@@ -56,6 +56,17 @@ class MessageBar extends React.Component {
     this.setState({ selected: id, newMessage: false });
   }
 
+  onDelete = id => (event) => {
+    event.stopPropagation();
+    this.setState({ selected: -1, newMessage: false });
+    this.props.DeleteConversation({
+      conversationId: id,
+      success: () => {
+        this.props.GetConversations({ page: 1, per_page: 1000 });
+      }
+    });
+  }
+
   onBack = () => {
     this.setState({ selected: -1, newMessage: false });
     this.props.GetNetworks({ page: 1, per_page: 1000 });
@@ -87,6 +98,7 @@ class MessageBar extends React.Component {
           <ChatHistory
             onNew={this.onNew}
             onSelect={this.onSelect}
+            onDelete={this.onDelete}
             conversations={conversations}
           />
         }
@@ -109,6 +121,7 @@ const mapDispatchToProps = {
   GetNetworks,
   GetConversations,
   GetConversation,
+  DeleteConversation
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageBar);

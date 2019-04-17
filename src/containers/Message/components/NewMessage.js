@@ -184,7 +184,7 @@ class NewMessage extends React.Component {
   }
 
   networkCreationFailed = (data, recipientInfo) => (result) => {
-    if (get(result, 'recipient_id[0]') === 'already exists.') {
+    if (get(result, 'message[0]') === 'already exists.') {
       this.sendMessage(data, recipientInfo)();
     }
   }

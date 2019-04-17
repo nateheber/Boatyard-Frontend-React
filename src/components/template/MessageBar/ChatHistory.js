@@ -27,7 +27,7 @@ const ConversationListWrapper = styled.div`
 export default class ChatHistory extends React.Component {
 
   render() {
-    const { conversations, onSelect, onNew } = this.props;
+    const { conversations, onSelect, onNew, onDelete } = this.props;
     return (
       <Wrapper>
         <SearchWrapper>
@@ -37,7 +37,7 @@ export default class ChatHistory extends React.Component {
         <ConversationListWrapper>
           {
             conversations.map((conversation, idx) => (
-              <Conversation conversation={conversation} onClick={onSelect} key={`item_${idx}`} />
+              <Conversation conversation={conversation} onClick={onSelect} onDelete={onDelete} key={`item_${idx}`} />
             ))
           }
         </ConversationListWrapper>
