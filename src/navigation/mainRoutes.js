@@ -13,8 +13,8 @@ import Calendar from 'components/template/Calendar';
 import Providers from 'containers/Providers/screens/Providers';
 import ProviderEditor from 'containers/Providers/screens/ProviderEditor';
 import UpdateProfile from 'containers/Profiles/screens/UpdateProfile';
-import OpenedInvoices from 'containers/Invoices/OpenedInvoices';
-import PaidInvoices from 'containers/Invoices/PaidInvoices';
+// import OpenedInvoices from 'containers/Invoices/OpenedInvoices';
+// import PaidInvoices from 'containers/Invoices/PaidInvoices';
 import Services from 'containers/Services/screens/Services';
 import AddService from 'containers/Services/screens/AddService';
 import ServiceDetails from 'containers/Services/screens/ServiceDetails';
@@ -54,7 +54,7 @@ const MainRoutes = ({ privilege }) => (
           }
         }}
       />
-      <Route exact path="/invoices/open"
+      {/* <Route exact path="/invoices/open"
         render={() => {
           if(privilege === 'provider') {
             return (<OpenedInvoices />);
@@ -71,7 +71,7 @@ const MainRoutes = ({ privilege }) => (
             return (<Redirect to="/dashboard"/>);
           }
         }}
-      />
+      /> */}
       <Route exact path="/services/"
         render={() => {
           if(privilege === 'provider') {
