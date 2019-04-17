@@ -63,24 +63,26 @@ const MessageBody = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px !important;
   border-radius: 13px;
-  padding: 10px;
+  padding: 10px 15px;
   position: relative;
   margin-bottom: 0 !important;
   max-width: 250px;
-  min-width: 70px;
   background-color: #f6f6f6;
+  word-wrap: break-word;
+  hyphens: auto;
+  word-break: break-all;
   &.own {
     background-color: #ffd4aa;
-    text-align: right;
     border-bottom-right-radius: 2px;
     &.has-prev {
-      border-top-right-radius: 2px;
+      // border-top-right-radius: 2px;
     }
   }
   &.op {
-    border-top-left-radius: 2px;
+    // border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
     &.has-next {
-      border-bottom-left-radius: 2px;
+      // border-bottom-left-radius: 2px;
     }
   }
 `;
