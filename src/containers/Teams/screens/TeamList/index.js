@@ -37,7 +37,7 @@ class TeamList extends React.Component {
     const pageCount = this.getPageCount();
     const columns = [
       { label: 'name', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName', },
-      { label: 'phone number', value: 'relationships.user.attributes.phoneNumber' },
+      { label: 'phone number', value: 'relationships.user.attributes.phoneNumber', isPhone: true },
       { label: 'email', value: 'relationships.user.attributes.email' },
       { label: 'permissions', value: 'access' }
     ];
