@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 const PROVIDER_COLUMNS = [
   { label: 'provider name', value: 'name', sort: 'name' },
   { label: 'contact name', value: 'contact_name' },
-  { label: 'phone', value: 'phoneNumber', sort: 'phone_number' },
+  { label: 'phone', value: 'phoneNumber', sort: 'phone_number', isPhone: true },
   { label: 'email', value: 'email' },
   { label: 'location', value: 'location' }
 ];

@@ -13,3 +13,17 @@ export function validateEmail(email) {
     return true;
   }
 }
+
+export function formatPhoneNumber(phone, isEditing = false) {
+  let formatted = phone;
+  if (phone && phone.startsWith('+1')) {
+    formatted = phone.slice(2);
+    if (!isEditing) {
+      const npa = formatted.substr(0, 3);
+      const nxx = formatted.substr(3, 3);
+      const last4 = formatted.substr(6, 4);
+      formatted = `(${npa}) ${nxx}-${last4}`;
+    }
+  }
+  return formatted;
+}

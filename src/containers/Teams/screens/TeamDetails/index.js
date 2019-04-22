@@ -14,7 +14,7 @@ import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 import Modal from 'components/compound/Modal';
 import { TeamDetailsHeader } from '../../components';
-import { validateEmail } from 'utils/basic';
+import { validateEmail, formatPhoneNumber } from 'utils/basic';
 
 const Wrapper = styled.div`
 `;
@@ -90,7 +90,7 @@ class TeamDetails extends React.Component {
           const phoneNumber = get(management, 'relationships.user.attributes.phoneNumber') || '';
           const email = get(management, 'relationships.user.attributes.email') || '';
           const access = get(management, 'attributes.access') || 'admin';
-          this.setState({ management, firstName, lastName, phoneNumber, email, access });
+          this.setState({ management, firstName, lastName, phoneNumber: formatPhoneNumber(phoneNumber), email, access });
         },
         error: () => {
           toastr.error('Error', 'Member does not exist!');

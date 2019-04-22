@@ -125,7 +125,7 @@ class Customers extends React.Component {
     const pageCount = this.getPageCount();
     const columns = [
       { label: 'name', value: 'firstName/lastName', sort: 'last_name' },
-      { label: 'phone', value: 'phoneNumber', sort: 'phone_number' },
+      { label: 'phone', value: 'phoneNumber', sort: 'phone_number', isPhone: true },
       { label: 'email', value: 'email', sort: 'email' },
       { label: 'location', value: 'location' },
       { label: 'last order', value: 'lastOrder' },

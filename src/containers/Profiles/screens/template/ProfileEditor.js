@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Modal from 'react-responsive-modal';
+import { formatPhoneNumber } from 'utils/basic';
 
 import {
   InputRow,
@@ -48,7 +49,7 @@ export default class ProfileEditor extends React.Component {
     this.state = {
       firstName,
       lastName,
-      phoneNumber,
+      phoneNumber: formatPhoneNumber(phoneNumber),
       email,
       showModal: false
     };
