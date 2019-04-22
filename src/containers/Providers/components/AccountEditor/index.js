@@ -7,6 +7,7 @@ import { OrangeButton } from 'components/basic/Buttons';
 import { AccountHeader, CompanyInfo, ContactInfo } from './components';
 
 import { getProviderPrimaryLocation } from 'utils/provider';
+import { formatPhoneNumber } from 'utils/basic';
 
 import { CreateProvider, UpdateProvider } from 'store/actions/providers';
 import { CreateProviderLocation, UpdateProviderLocation } from 'store/actions/providerLocations';
@@ -89,7 +90,7 @@ class AccountEditor extends React.Component {
       return {
         contactName,
         contactEmail,
-        contactPhone,
+        contactPhone: formatPhoneNumber(contactPhone),
       };
     }
   }

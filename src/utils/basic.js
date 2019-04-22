@@ -16,7 +16,7 @@ export function validateEmail(email) {
 
 export function formatPhoneNumber(phone, isEditing = false) {
   let formatted = phone;
-  if (phone.startsWith('+1')) {
+  if (phone && phone.startsWith('+1')) {
     formatted = phone.slice(2);
     if (!isEditing) {
       const npa = formatted.substr(0, 3);

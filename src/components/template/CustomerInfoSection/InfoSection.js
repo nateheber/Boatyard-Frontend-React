@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { EditButton } from 'components/basic/Buttons';
+import { formatPhoneNumber } from 'utils/basic';
 
 const Wrapper = styled.div`
   margin-bottom: 15px;
@@ -34,7 +35,7 @@ export default ({ firstName, lastName, email, phoneNumber, isDisabled, onEdit })
       </Name>
       {onEdit && !isDisabled && <EditButton onClick={onEdit} />}
     </EditWrapper>
-    <FieldValue>{phoneNumber}</FieldValue>
+    <FieldValue>{formatPhoneNumber(phoneNumber)}</FieldValue>
     <FieldValue>{email}</FieldValue>
   </Wrapper>
 );

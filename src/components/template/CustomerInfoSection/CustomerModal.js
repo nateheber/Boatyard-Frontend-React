@@ -4,6 +4,7 @@ import { get } from 'lodash';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
+import { formatPhoneNumber } from 'utils/basic';
 
 const mainFields = ['first_name', 'last_name', 'phone_number', 'email', 'notes'];
 const locationFields = ['street', 'city', 'state', 'zip'];
@@ -59,7 +60,7 @@ export default class CustomerModal extends React.Component {
         errorMessage: 'Enter Phone Number',
         mask: '(999)999-9999',
         required: true,
-        defaultValue: phoneNumber,
+        defaultValue: formatPhoneNumber(phoneNumber),
         xs: 12,
         sm: 12,
         md: 3,

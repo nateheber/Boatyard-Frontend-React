@@ -9,6 +9,7 @@ import {
 } from 'components/basic/Input';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
+import { formatPhoneNumber } from 'utils/basic';
 
 const Wrapper = styled.div`
   margin: 30px;
@@ -35,7 +36,7 @@ export default class ProviderInfo extends React.Component {
           </InputWrapper>
           <InputWrapper className="secondary">
             <InputLabel>Phone</InputLabel>
-            <Input type="text" value={phoneNumber || ''} disabled />
+            <Input type="text" value={formatPhoneNumber(phoneNumber) || ''} disabled />
           </InputWrapper>
         </InputRow>
         <InputRow>
