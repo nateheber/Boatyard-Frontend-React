@@ -121,7 +121,7 @@ class Users extends React.Component {
     const columns = [
       { label: 'name', value: 'firstName/lastName', sort: 'last_name' },
       { label: 'email', value: 'email', sort: 'email' },
-      { label: 'contact number', value: 'phoneNumber', sort: 'phone_number' }
+      { label: 'contact number', value: 'phoneNumber', sort: 'phone_number', isPhone: true }
     ];
     const { sort, visibleOfModal } = this.state;
     const { users, currentStatus, page } = this.props;

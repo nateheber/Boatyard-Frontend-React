@@ -6,6 +6,7 @@ import moment from 'moment';
 import { Col } from 'react-flexbox-grid';
 import { get, capitalize, isEmpty } from 'lodash';
 
+import { formatPhoneNumber } from 'utils/basic';
 import CaretDownIcon from '../../../resources/caret-down-solid.svg';
 import CaretUpIcon from '../../../resources/caret-up-solid.svg';
 
@@ -269,6 +270,9 @@ export class Record extends React.PureComponent {
       } else {
         value = '';
       }
+    }
+    if (column.isPhone) {
+      value = formatPhoneNumber(value);
     }
     return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
   };
