@@ -6,6 +6,7 @@ import EditIcon from 'resources/edit.svg';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 
 import { getAddressInformation } from 'utils/location';
+import { formatPhoneNumber } from 'utils/basic';
 
 const Wrapper = styled.div`
   width: 281px;
@@ -193,7 +194,7 @@ export default ({ providerName, location, onEdit, onCreate }) => {
           <ContactFieldLabel>Name:</ContactFieldLabel>{contactName}
         </ContactField>
         <ContactField>
-          <ContactFieldLabel>Phone:</ContactFieldLabel>{contactPhone}
+          <ContactFieldLabel>Phone:</ContactFieldLabel>{formatPhoneNumber(contactPhone)}
         </ContactField>
         <ContactField>
           <ContactFieldLabel>Email:</ContactFieldLabel>{contactEmail}
