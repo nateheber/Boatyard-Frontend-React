@@ -58,7 +58,7 @@ export default class CustomerModal extends React.Component {
         field: 'phone_number',
         label: 'Phone Number',
         errorMessage: 'Enter Phone Number',
-        mask: '(999)999-9999',
+        mask: '(999) 999-9999',
         required: true,
         defaultValue: formatPhoneNumber(phoneNumber),
         xs: 12,
