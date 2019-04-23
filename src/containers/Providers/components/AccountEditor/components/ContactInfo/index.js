@@ -57,7 +57,7 @@ export default class ContactInfo extends React.Component {
         type: 'text_field',
         defaultValue: contactPhone,
         errorMessage: 'Enter the phone number',
-        mask: '(999)999-9999',
+        mask: '(999) 999-9999',
         required: true,
         xs: 12,
         sm: 12,
