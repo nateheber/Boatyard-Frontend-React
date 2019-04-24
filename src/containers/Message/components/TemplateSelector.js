@@ -12,12 +12,16 @@ class TemplateSelector extends React.Component {
     selected: ''
   };
   getOptions = () => {
-    const { globalTemplates } = this.props;
-    const triggerKeys = keys(globalTemplates);
+    const { privilege, globalTemplates, localTemplates } = this.props;
+    let templates = globalTemplates;
+    if (privilege !== 'admin') {
+      templates = localTemplates;
+    }
+    const triggerKeys = keys(templates);
     const options = triggerKeys.map((triggerKey) => ({
       triggerKey,
       title: startCase(triggerKey),
-      subject: get(globalTemplates, `${triggerKey}.attributes.subject`),
+      subject: get(templates, `${triggerKey}.attributes.subject`),
       // trigger: get(globalTemplates, `${triggerKey}.trigger`),
       // messageType: get(globalTemplates, `${triggerKey}.messageType`),
     }));
@@ -54,6 +58,7 @@ class TemplateSelector extends React.Component {
 const mapStateToProps = (state) => ({
   globalTemplates: state.messageTemplate.globalTemplates,
   localTemplates: state.messageTemplate.localTemplates,
+  privilege: state.auth.privilege
 })
 
 export default connect(mapStateToProps)(TemplateSelector);

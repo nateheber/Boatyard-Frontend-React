@@ -29,9 +29,9 @@ class TemplateBox extends React.Component {
   }
 
   componentDidMount() {
-    const { GetGlobalTemplates } = this.props;
+    const { GetGlobalTemplates, GetLocalTemplates } = this.props;
     GetGlobalTemplates({ params: { 'per_page': 200 } });
-    // GetLocalTemplates({ params: { 'per_page': 200 } });
+    GetLocalTemplates({ params: { 'per_page': 200 } });
   }
 
   getGlobalTemplateId = (triggerKey) => {
@@ -59,6 +59,9 @@ class TemplateBox extends React.Component {
     if (privilege === 'admin') {
       const templateId = this.getGlobalTemplateId(triggerKey);
       this.updateGlobalTemplate(templateId, templateInfo);
+    } else {
+      const localTemplateId = this.getLocalTemplateId(triggerKey);
+      this.updateLocalTemplate(localTemplateId, templateInfo);
     }
     //   const templateId = this.getGlobalTemplateId(triggerKey);
     //   this.updateGlobalTemplate(templateId, templateInfo);
@@ -95,18 +98,21 @@ class TemplateBox extends React.Component {
       data: {
         messageTemplate: baseData
       }
-    })
+    });
   }
 
   updateLocalTemplate = (templateId, data) => {
     this.props.UpdateLocalTemplate({
       templateId,
       data: {
-        'message_template': {
-          email_options: data
-        }
+        'message_template': data
+      },
+      success: () => {
+        toastr.success('Success', 'Saved successfully!');
+        const { GetLocalTemplates } = this.props;
+        GetLocalTemplates({ params: { 'per_page': 200 } });    
       }
-    })
+    });
   }
 
   render() {
