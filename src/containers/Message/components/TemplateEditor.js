@@ -129,13 +129,15 @@ export class TemplateEditor extends React.Component {
     const { subject, emailOptions } = this.state;
     const email_options = {};
     if (emailOptions.emailBody) {
-      email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
+      // email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
+      email_options['email_body'] = emailOptions.emailBody;
     }
     if (emailOptions.emailGreeting) {
       email_options['email_greeting'] = emailOptions.emailGreeting;
     }
     if (emailOptions.secondaryEmailBody) {
-      email_options['secondary_email_body'] = emailOptions.secondaryEmailBody.replace(/\n/g, '<br>');
+      // email_options['secondary_email_body'] = emailOptions.secondaryEmailBody.replace(/\n/g, '<br>');
+      email_options['secondary_email_body'] = emailOptions.secondaryEmailBody;
     }
     const messageTemplate = {
       subject,
