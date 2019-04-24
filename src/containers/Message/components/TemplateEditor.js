@@ -68,12 +68,10 @@ export class TemplateEditor extends React.Component {
     const buttonText = get(emailOptions, 'buttonText');
     let emailBody = get(emailOptions, 'emailBody');
     if (emailBody) {
-      console.log('----------emailBody---------------', emailBody);
       emailBody = emailBody.replace(/<br>/g, '\n');
     }
     let secondaryEmailBody = get(emailOptions, 'secondaryEmailBody');
     if (secondaryEmailBody) {
-      console.log('----------secondaryEmailBody---------------', secondaryEmailBody);
       secondaryEmailBody = secondaryEmailBody.replace(/<br>/g, '\n');
     }
     const emailSenderName = get(emailOptions, 'emailSenderName');
