@@ -66,8 +66,16 @@ export class TemplateEditor extends React.Component {
     const { emailOptions, subject } = templateInfo;
     const emailGreeting = get(emailOptions, 'emailGreeting');
     const buttonText = get(emailOptions, 'buttonText');
-    const emailBody = get(emailOptions, 'emailBody');
-    const secondaryEmailBody = get(emailOptions, 'secondaryEmailBody');
+    let emailBody = get(emailOptions, 'emailBody');
+    if (emailBody) {
+      console.log('----------emailBody---------------', emailBody);
+      emailBody = emailBody.replace(/<br>/g, '\n');
+    }
+    let secondaryEmailBody = get(emailOptions, 'secondaryEmailBody');
+    if (secondaryEmailBody) {
+      console.log('----------secondaryEmailBody---------------', secondaryEmailBody);
+      secondaryEmailBody = secondaryEmailBody.replace(/<br>/g, '\n');
+    }
     const emailSenderName = get(emailOptions, 'emailSenderName');
     const emailSenderCompany = get(emailOptions, 'emailSenderCompany');
     const hasSecondSection = !(secondaryEmailBody === undefined || secondaryEmailBody === null);
@@ -121,14 +129,15 @@ export class TemplateEditor extends React.Component {
 
   onSave = () => {
     const { subject, emailOptions } = this.state;
-    const email_options = {
-      email_body: emailOptions.emailBody
-    };
+    const email_options = {};
+    if (emailOptions.emailBody) {
+      email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
+    }
     if (emailOptions.emailGreeting) {
       email_options['email_greeting'] = emailOptions.emailGreeting;
     }
     if (emailOptions.secondaryEmailBody) {
-      email_options['secondary_email_body'] = emailOptions.secondaryEmailBody;
+      email_options['secondary_email_body'] = emailOptions.secondaryEmailBody.replace(/\n/g, '<br>');
     }
     const messageTemplate = {
       subject,
