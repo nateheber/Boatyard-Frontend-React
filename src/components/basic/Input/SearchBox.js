@@ -15,7 +15,7 @@ const InputWrapper = styled.div`
   align-items: center;
   background-color: white;
   &.secondary {
-    background-color: #ffaa5c;
+    background-color: #265B70;
     border: none;
   }
 `;

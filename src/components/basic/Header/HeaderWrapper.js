@@ -8,7 +8,7 @@ const Wrapper = styled(Row)`
   margin: 0px !important;
   height: 68px;
   width: 100%;
-  background-color: #f7941e;
+  background-color: #0D485F;
   align-items: center;
   z-index: 100;
   box-sizing: border-box;
