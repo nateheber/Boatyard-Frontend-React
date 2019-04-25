@@ -9,7 +9,7 @@ const NavItem = styled.li`
   border: 0px;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #aaa2aa !important;
+  border-bottom: 1px solid #AAA2AA;
   font-family: 'Montserrat', sans-serif;
 `;
 
@@ -18,14 +18,14 @@ const Link = styled.a`
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  padding: 15px 0px !important;
-  text-decoration: none !important;
+  padding: 15px 0px;
+  text-decoration: none;
   &:hover {
-    background-color: #00485e !important;
+    background-color: #F5F5F5;
     cursor: pointer;
   }
   &.active {
-    background-color: #00485e !important;
+    background-color: #F5F5F5;
   }
   @media (max-width: 1091px) {
     transition: 0.3s;
@@ -49,7 +49,7 @@ const Title = styled.span`
   text-align: center;
   margin-top: 5px;
   box-sizing: border-box;
-  color: #b4bcc8;
+  color: #9CAFB7;
   font-size: 13px;
   line-height: 18px;
   font-weight: 500;
@@ -58,10 +58,10 @@ const Title = styled.span`
     font-size: 10px !important;
   }
   &.active {
-    color: white;
+    color: #07384B;
   }
   ${Link}:hover &.active {
-    color: #b4bcc8;
+    // color: #b4bcc8;
   }
 `;
 
@@ -98,7 +98,7 @@ const SubMenuItem = styled.a`
     font-size: 10px !important;
   }
   &.active {
-    color: #f7941e;
+    color: #07384B;
   }
 `;
 

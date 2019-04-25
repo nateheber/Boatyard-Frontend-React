@@ -4,7 +4,7 @@ export const SideBarWrapper = styled.div`
   list-style: none;
   margin: 0;
   padding: 0;
-  background-color: #01556d;
+  background-color: #FFFFFF;
   height: calc(100vh - 68px) !important;
   display: block;
   padding-bottom: 68px;

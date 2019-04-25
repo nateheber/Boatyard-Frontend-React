@@ -128,7 +128,7 @@ const navItems = [
 
 const SideBarContainer = styled.div`
   display: block;
-  background-color: #01556d;
+  background-color: #FFFFFF;
   overflow-y: scroll;
   overflow-x: hidden;
   width: 195px !important;

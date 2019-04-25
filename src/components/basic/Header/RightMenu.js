@@ -39,7 +39,7 @@ const DropdownItem = styled.div`
   align-items: center;
   justify-content: center;
   &:hover {
-    background-color: #e17614;
+    background-color: #265B70;
     cursor: pointer;
   }
   float: left;
@@ -97,11 +97,11 @@ const BadgeNum = styled.div`
   position: absolute;
   right: 12px;
   top: 10px;
-  background: #EBEBEB;
+  background: #e17614;
   border-radius: 100%;
   font-family: Helvetica;
   font-size: 14px;
-  color: #F38118;
+  color: #0D485F;
   text-align: center;
   width: 18px;
   height: 18px;
@@ -147,7 +147,7 @@ const IconItem = styled.li`
   align-items: center;
   justify-content: center;
   &:hover {
-    background-color: #e17614;
+    background-color: #265B70;
     cursor: pointer;
   }
   @media (max-width: 843px) {
