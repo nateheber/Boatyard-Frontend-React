@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
+import { toastr } from 'react-redux-toastr';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { get } from 'lodash';
 
@@ -33,37 +34,16 @@ class ProviderEditFlow extends React.Component {
 
   onCreation = (providerId) => {
     this.setState({ providerId });
+    toastr.success('Success', 'Created successfully!');
     this.props.GetProvider({ providerId });
   }
 
   onUpdate = () => {
     const { currentProvider } = this.props;
     const providerId = get(currentProvider, 'id');
+    toastr.success('Success', 'Saved successfully!');
     this.props.GetProvider({ providerId });
   }
-
-  onSave = data => {
-    const { providerId } = this.state;
-    if (providerId !== -1) {
-      this.props.UpdateProvider({
-        providerId,
-        data
-      });
-      this.setState({
-        ...data
-      });
-    } else {
-      this.props.CreateProvider({
-        data,
-        success: providerId => {
-          this.setState({
-            providerId,
-            ...data
-          });
-        }
-      });
-    }
-  };
 
   onChangeTab = (index) => {
     this.setState({ selectedIndex: index });
@@ -88,7 +68,6 @@ class ProviderEditFlow extends React.Component {
             {...this.state}
             onCreation={this.onCreation}
             onUpdate={this.onUpdate}
-            save={this.onSave}
           />
         </TabPanel>
         <TabPanel>
