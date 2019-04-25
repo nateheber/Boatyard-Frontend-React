@@ -48,7 +48,7 @@ const DateTime = styled.div`
 `;
 
 export const InboxItem = ({
-  conversation: { id }, messages, recipientProfile,
+  conversation: { id }, mostRecentMessage, recipientProfile,
   selected,
   onCheck,
   onSelect
@@ -65,12 +65,12 @@ export const InboxItem = ({
           )
         }
         <TextBody>
-          {get(messages, '[0].attributes.content').slice(0, 3)}
+          {get(mostRecentMessage, 'attributes.content').slice(0, 3)}
           ...
         </TextBody>
       </LeftBody>
       <RightBody>
-        <DateTime>{moment(get(messages, '[0].attributes.data.sentAt')).format('MMM D')}</DateTime>
+        <DateTime>{moment(get(mostRecentMessage, 'attributes.createdAt')).format('MMM D')}</DateTime>
       </RightBody>
     </Content>
   </Wrapper>
