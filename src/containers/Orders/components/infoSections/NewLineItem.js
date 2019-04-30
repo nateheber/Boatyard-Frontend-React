@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 import { connect } from 'react-redux';
 
@@ -7,6 +8,11 @@ import { FilterServices } from 'store/actions/services';
 import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
+
+const Line = styled(Row)`
+  padding: 5px 0px;
+  position: relative;
+`;
 
 class NewLineItem extends React.Component {
   state = {
@@ -65,46 +71,44 @@ class NewLineItem extends React.Component {
     const { quantity, cost, comment } = this.state;
     return (
       <React.Fragment>
-        <Row>
-          <Col lg={8} sm={8} xs={8} md={8} xl={8}>
-            <Row>
-              <Col lg={6} sm={6} xs={6} md={6} xl={6}>
-                <BoatyardSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  cacheOptions
-                  defaultOptions
-                  loadOptions={this.onChangeFilter}
-                  onChange={this.onChangeService}
-                />
-              </Col>
-              <Col lg={3} sm={3} xs={3} md={3} xl={3}>
-                <CurrencyInput
-                  fixedDecimalScale
-                  decimalScale={0}
-                  value={quantity}
-                  onChange={this.onChangeQuantity}
-                  hideError
-                />
-              </Col>
-              <Col lg={3} sm={3} xs={3} md={3} xl={3}>
-                <CurrencyInput
-                  fixedDecimalScale
-                  prefix='$'
-                  decimalScale={2}
-                  value={cost}
-                  onChange={this.onChangeCost}
-                  hideError
-                />
-              </Col>
-            </Row>
+        <Line>
+          <Col lg={6} sm={6} xs={6} md={6} xl={6}>
+            <BoatyardSelect
+              className="basic-single"
+              classNamePrefix="select"
+              cacheOptions
+              defaultOptions
+              loadOptions={this.onChangeFilter}
+              onChange={this.onChangeService}
+            />
           </Col>
-          <Col lg={4} sm={4} xs={4} md={4} xl={4}>
-            <RemoveButton onClick={this.props.remove} />
+          <Col lg={2} sm={2} xs={2} md={2} xl={2}>
+            <CurrencyInput
+              fixedDecimalScale
+              decimalScale={0}
+              value={quantity}
+              onChange={this.onChangeQuantity}
+              hideError
+            />
           </Col>
-        </Row>
+          <Col lg={2} sm={2} xs={2} md={2} xl={2}>
+            <CurrencyInput
+              fixedDecimalScale
+              prefix='$'
+              decimalScale={2}
+              value={cost}
+              onChange={this.onChangeCost}
+              hideError
+            />
+          </Col>
+          <RemoveButton style={{
+              position: 'absolute',
+              top: 2,
+              right: 8
+            }} onClick={this.props.remove} />
+        </Line>
         <Row>
-          <Col sm={8}>
+          <Col sm={10}>
             <TextArea
               value={comment}
               onChange={this.onChangeComment}

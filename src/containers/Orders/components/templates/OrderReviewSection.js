@@ -90,7 +90,7 @@ export default class OrderReviewSection extends React.Component {
     return (
       <Section>
         <Row>
-          <Col sm={12} md={6}>
+          <Col xs={12} sm={6} md={6}>
             <FieldLabel>ORDER NOTES</FieldLabel>
             <TextArea
               value={comments || ''}
@@ -98,17 +98,18 @@ export default class OrderReviewSection extends React.Component {
             />
             <HollowButton onClick={this.submitComments}>COMMENT INTERNALLY</HollowButton>
           </Col>
-          <Col sm={12} md={6}>
+          <Col xs={12} sm={2} md={2}></Col>
+          <Col xs={12} sm={4} md={4}>
             <Row>
-              <Col sm={6}><Label>Subtotal:</Label></Col>
-              <Col sm={6}><Value>${parseFloat(subtotal).toFixed(2)}</Value></Col>
+              <Col xs={6}><Label>Subtotal:</Label></Col>
+              <Col xs={6}><Value>${parseFloat(subtotal).toFixed(2)}</Value></Col>
             </Row>
             <TaxEditor value={taxRate} taxAmount={taxAmount} onChange={this.onChangeTax} />
             <OnClickEditor value={deposit} label="Deposit" onChange={this.onChangeDeposit} />
             <OnClickEditor value={discount} label="Discount" onChange={this.onChangeDiscount} />
             <Row>
-              <Col sm={6}><Label className="total">Total:</Label></Col>
-              <Col sm={6}><Value className="total">${parseFloat(total).toFixed(2)}</Value></Col>
+              <Col xs={6}><Label className="total">Total:</Label></Col>
+              <Col xs={6}><Value className="total">${parseFloat(total).toFixed(2)}</Value></Col>
             </Row>
           </Col>
         </Row>

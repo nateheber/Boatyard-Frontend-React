@@ -15,7 +15,8 @@ const Record = styled.div`
 `;
 
 const Line = styled(Row)`
-  padding: 10px 0px;
+  padding: 5px 0px;
+  position: relative;
 `;
 
 const Name = styled.div`
@@ -128,7 +129,7 @@ class LineItem extends React.Component {
     return (
       <Record>
         <Line>
-          <Col md={4} sm={4} lg={4} xl={4} xs={4}>
+          <Col md={6} sm={6} lg={6} xl={6} xs={6}>
             {mode === 'edit' ? (
               <BoatyardSelect
                 className="basic-single"
@@ -174,13 +175,15 @@ class LineItem extends React.Component {
             <Value>${(parseFloat(parseFloat(quantity) * parseFloat(parseFloat(cost)).toFixed(2))).toFixed(2)}</Value>
           </Col>
           { mode === 'edit' && (
-            <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-              <RemoveButton onClick={onRemove} />
-            </Col>
+            <RemoveButton style={{
+              position: 'absolute',
+              top: 2,
+              right: 8
+            }} onClick={onRemove} />
           )}
         </Line>
         <Row>
-          <Col sm={8}>
+          <Col sm={10}>
             {
               mode === 'edit' ? (
                 <TextArea value={comment} onChange={(evt) => this.onChange(evt, 'comment')} />
