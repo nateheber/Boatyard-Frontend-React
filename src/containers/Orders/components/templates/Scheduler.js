@@ -94,7 +94,7 @@ export default class OrderSummarySection extends React.Component {
         {
           assignments.length === 0 ? (
             <React.Fragment>
-              <HollowButton onClick={this.addOne}>SCHEDULE 1 OPTION</HollowButton>
+              <HollowButton style={{ marginLeft: 0 }} onClick={this.addOne}>SCHEDULE 1 OPTION</HollowButton>
               <HollowButton onClick={this.addThree}>SCHEDULE 3 OPTIONS</HollowButton>
             </React.Fragment>
           ) : (
