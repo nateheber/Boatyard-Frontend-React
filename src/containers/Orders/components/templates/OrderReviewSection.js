@@ -96,7 +96,7 @@ export default class OrderReviewSection extends React.Component {
               value={comments || ''}
               onChange={this.onChangeComment}
             />
-            <HollowButton onClick={this.submitComments}>COMMENT INTERNALLY</HollowButton>
+            <HollowButton style={{ marginLeft: 0 }} onClick={this.submitComments}>COMMENT INTERNALLY</HollowButton>
           </Col>
           <Col xs={12} sm={2} md={2}></Col>
           <Col xs={12} sm={4} md={4}>

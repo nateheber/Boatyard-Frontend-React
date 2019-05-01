@@ -6,6 +6,7 @@ import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 
 const Container = styled(Row)`
   padding: 20px 0;
+  margin: 0 !important;
   border-top: 1px solid #e6e6e6;
   align-items: center;
   justify-content: space-between;
@@ -18,7 +19,7 @@ const Left = styled.div`
 export default ({ onAdd, onSave, showSave, showQuote, onSendQuote }) => (
   <Container>
     <Left>
-      <HollowButton onClick={onAdd}>
+      <HollowButton style={{ marginLeft: 0 }} onClick={onAdd}>
         ADD ITEM
       </HollowButton>
       {
@@ -31,7 +32,7 @@ export default ({ onAdd, onSave, showSave, showQuote, onSendQuote }) => (
     </Left>
     {
       showSave && (
-        <OrangeButton onClick={onSave}>
+        <OrangeButton style={{ marginRight: 5 }} onClick={onSave}>
           SAVE CHANGES
         </OrangeButton>
       )

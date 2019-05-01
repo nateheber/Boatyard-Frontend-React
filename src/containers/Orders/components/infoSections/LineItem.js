@@ -178,7 +178,7 @@ class LineItem extends React.Component {
             <RemoveButton style={{
               position: 'absolute',
               top: 2,
-              right: 8
+              right: 12
             }} onClick={onRemove} />
           )}
         </Line>
