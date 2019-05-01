@@ -62,10 +62,10 @@ export default class TaxEditor extends React.Component {
     const { taxAmount } = this.props;
     return edit ? (
       <Row style={{ padding: '10px 0px' }}>
-        <Col sm={6}>
+        <Col xs={6}>
           <Input type="text" value={value} onChange={this.onChange} onBlur={this.resetEdit} />
         </Col>
-        <Col sm={6}>
+        <Col xs={6}>
           <Value>
             ${parseFloat(taxAmount).toFixed(2)}
           </Value>
@@ -73,7 +73,7 @@ export default class TaxEditor extends React.Component {
       </Row>
     ) : (
       <Row style={{ padding: '10px 0px' }}>
-        <Col sm={6}>
+        <Col xs={6}>
           <Label>
             {'Tax '}
             <Placeholder onClick={this.setEdit}>
@@ -81,7 +81,7 @@ export default class TaxEditor extends React.Component {
             </Placeholder> :
           </Label>
         </Col>
-        <Col sm={6}>
+        <Col xs={6}>
           <Value>
             ${parseFloat(taxAmount).toFixed(2)}
           </Value>

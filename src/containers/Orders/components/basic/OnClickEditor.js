@@ -56,10 +56,10 @@ export default class OnClickEditor extends React.Component {
     const { label } = this.props;
     return edit ? (
       <Row style={{ padding: '10px 0px' }}>
-        <Col sm={6}>
+        <Col xs={6}>
           <Label>{label}:</Label>
         </Col>
-        <Col sm={6}>
+        <Col xs={6}>
           <CurrencyInput
             autoFocus
             fixedDecimalScale
@@ -74,10 +74,10 @@ export default class OnClickEditor extends React.Component {
       </Row>
     ) : (
       <Row style={{ padding: '10px 0px' }}>
-        <Col sm={6}>
+        <Col xs={6}>
           <Label>{label}:</Label>
         </Col>
-        <Col sm={6}>
+        <Col xs={6}>
           <Placeholder onClick={this.setEdit}>
             {isEmpty(value) ? 'Add' : `$${parseFloat(value).toFixed(2)}`}
           </Placeholder>
