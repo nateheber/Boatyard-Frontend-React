@@ -6,7 +6,7 @@ import { isEmpty } from 'lodash'
 import SectionHeader from './SectionHeader';
 
 const Content = styled.div`
-  padding: 30px 20px;
+  padding: 30px 25px;
   background-color: #FFF;
   &.hasBorder {
     border-top: 1px solid #e6e6e6;

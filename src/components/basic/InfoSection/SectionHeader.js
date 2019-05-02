@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   color: #004258;
   text-transform: uppercase;
   position: relative;
-  padding: 15px 20px;
+  padding: 15px 25px;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
