@@ -1,9 +1,9 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from 'react';
+import styled from 'styled-components';
 
-import { Section } from 'components/basic/InfoSection'
+import { Section } from 'components/basic/InfoSection';
 
-import { generateOrderTimeline } from 'utils/order'
+import { generateOrderTimeline } from 'utils/order';
 
 const TimelineItem = styled.div`
   position: relative;
@@ -34,7 +34,7 @@ const TimelineItem = styled.div`
     border-radius: 8px;
     background-color:  #a9b5bb;
   }
-`
+`;
 
 export default class TimeLineSection extends React.Component {
 
