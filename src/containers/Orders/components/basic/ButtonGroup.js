@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Row } from 'react-flexbox-grid';
+import { Row, Col } from 'react-flexbox-grid';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 
@@ -12,30 +12,23 @@ const Container = styled(Row)`
   justify-content: space-between;
 `;
 
-const Left = styled.div`
-  align-items: center;
-`
+const Column = styled(Col)`
+  padding: 0 !important;
+  margin-left: -5px;
+  margin-right: -5px;
+`;
 
-export default ({ onAdd, onSave, showSave, showQuote, onSendQuote }) => (
+export default ({ onAdd, onSave, showSave }) => (
   <Container>
-    <Left>
-      <HollowButton style={{ marginLeft: 0 }} onClick={onAdd}>
+    <Column xs={12} sm={6}>
+      <HollowButton onClick={onAdd}>
         ADD ITEM
       </HollowButton>
-      {
-        showQuote && (
-          <HollowButton onClick={onSendQuote}>
-            Send Quote
-          </HollowButton>
-        )
-      }
-    </Left>
-    {
-      showSave && (
-        <OrangeButton style={{ marginRight: 5 }} onClick={onSave}>
-          SAVE CHANGES
-        </OrangeButton>
-      )
-    }
+    </Column>
+    <Column xs={12} sm={6} style={{ textAlign: 'right' }}>
+      {showSave && <OrangeButton style={{ marginRight: 5 }} onClick={onSave}>
+        SAVE CHANGES
+      </OrangeButton>}
+    </Column>
   </Container>
 )

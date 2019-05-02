@@ -74,26 +74,6 @@ class OrderDetails extends React.Component {
     return get(getProviderFromOrder(currentOrder), 'id', '');
   };
 
-  getSummaryInfo = () => {
-    const { currentOrder } = this.props;
-    const total = get(currentOrder, 'attributes.total');
-    const subtotal = get(currentOrder, 'attributes.subTotal');
-    const taxRate = get(currentOrder, 'attributes.taxRate');
-    const taxAmount = get(currentOrder, 'attributes.taxAmount');
-    const discount = get(currentOrder, 'attributes.discount');
-    const deposit = get(currentOrder, 'attributes.deposit');
-    const comments = get(currentOrder, 'attributes.comments');
-    return {
-      total,
-      subtotal,
-      taxRate,
-      discount,
-      deposit,
-      taxAmount,
-      comments
-    };
-  };
-
   getUdpatedDate = () => {
     const { currentOrder } = this.props;
     const updatedAt = get(currentOrder, 'attributes.updatedAt');
@@ -153,7 +133,6 @@ class OrderDetails extends React.Component {
     const providerId = this.getProviderId();
     const { currentOrder, currentStatus, boatStatus } = this.props;
     const lineItems = get(currentOrder, 'lineItems', []);
-    const summaryInfo = this.getSummaryInfo();
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
     const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
@@ -180,7 +159,7 @@ class OrderDetails extends React.Component {
                       providerId={providerId}
                     />
                     <OrderReviewSection
-                      {...summaryInfo}
+                      order={currentOrder}
                       updateOrder={this.updateOrder}
                     />
                   </SectionGroup>

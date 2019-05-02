@@ -10,19 +10,19 @@ const Content = styled.div`
   background-color: #FFF;
   &.hasBorder {
     border-top: 1px solid #e6e6e6;
-    padding-top: 10px;
+    padding-top: 20px;
   }
   &.noPadding {
     padding: 0;
   }
 `
 
-export const Section = ({ title, mode, onEdit, children, disabled, editComponent, noPadding }) => (
+export const Section = ({ title, mode, onEdit, children, disabled, editComponent, noPadding, ...rest }) => (
   <div>
     {
       title && <SectionHeader title={title} mode={mode} onEdit={onEdit} disabled={disabled} editComponent={editComponent} />
     }
-    <Content className={classNames({ hasBorder: isEmpty(title), noPadding })}>
+    <Content {...rest} className={classNames({ hasBorder: isEmpty(title), noPadding })}>
       {children}
     </Content>
   </div>
