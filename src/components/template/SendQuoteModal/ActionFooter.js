@@ -2,13 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons'
-import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import AttachImg from 'resources/attach.svg';
-
-library.add(faTimes)
 
 const Wrapper = styled.div`
   display: flex;

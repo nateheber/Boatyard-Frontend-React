@@ -17,6 +17,7 @@ import { actionTypes as boatActions, UpdateBoat } from 'store/actions/boats';
 import { SectionGroup } from 'components/basic/InfoSection';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import CustomerBoat from './components/templates/CustomerBoat';
+import JobSection from './components/templates/JobSection';
 import LineItemSection from './components/templates/LineItemSection';
 import OrderSummarySection from './components/templates/OrderSummarySection';
 import OrderReviewSection from './components/templates/OrderReviewSection';
@@ -181,6 +182,9 @@ class OrderDetails extends React.Component {
                       customerInfo={customerInfo}
                       onEditBoat={() => this.showBoatModal()}
                     />
+                  </SectionGroup>
+                  <SectionGroup>
+                    <JobSection order={currentOrder} />
                   </SectionGroup>
                   <SectionGroup>
                     <TimeLineSection order={currentOrder} />
