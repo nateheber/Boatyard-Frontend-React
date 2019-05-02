@@ -3,13 +3,14 @@ import styled from 'styled-components';
 export const HollowButton = styled.button`
   min-width: 120px;
   position: relative;
-  border: 1px solid #a9b5bb;
+  border: 1px solid #A9B5BB;
   border-image: initial;
   border-radius: 6px;
+  background: #FFFFFF;
   cursor: pointer;
-  color: #333;
+  color: #003247;
   font-size: 12px;
-  font-family: Montserrat, sans-serif;
+  font-family: Montserrat-Bold;
   font-weight: 700;
   text-align: center;
   text-transform: uppercase;
