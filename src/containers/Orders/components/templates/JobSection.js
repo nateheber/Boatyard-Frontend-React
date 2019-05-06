@@ -7,7 +7,7 @@ import { Section } from 'components/basic/InfoSection';
 import JobItem from '../infoSections/JobItem';
 
 const Wrapper = styled.div`
-  margin: -25px;
+  margin: -25px -15px;
   overflow: auto;
   max-height: 290px;
 `;
