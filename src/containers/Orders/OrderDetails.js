@@ -27,6 +27,7 @@ import PaymentSection from './components/templates/PaymentSection';
 import TimeLineSection from './components/templates/TimeLineSection';
 import OrderAssignment from './components/templates/OrderAssignment';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
+import JobModal from './components/modals/JobModal';
 
 const Wrapper = styled.div`
   padding: 30px 25px;
@@ -41,7 +42,8 @@ class OrderDetails extends React.Component {
   state = {
     orderId: -1,
     isFirstLoad: true,
-    visibleOfBoatModal: false
+    visibleOfBoatModal: false,
+    visibleOfJobModal: false
   };
 
   componentDidMount() {
@@ -127,10 +129,18 @@ class OrderDetails extends React.Component {
     this.props.UpdateOrder({ orderId, data });
   };
 
+  showJobModal = () => {
+    this.setState({ visibleOfJobModal: true });
+  };
+
+  hideJobModal = () => {
+    this.setState({ visibleOfJobModal: false });
+  };
+
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const updatedDate = this.getUdpatedDate();
-    const { orderId, isFirstLoad, visibleOfBoatModal } = this.state;
+    const { orderId, isFirstLoad, visibleOfBoatModal, visibleOfJobModal } = this.state;
     const providerId = this.getProviderId();
     const { currentOrder, currentStatus, boatStatus, privilege } = this.props;
     const lineItems = get(currentOrder, 'lineItems', []);
@@ -184,7 +194,7 @@ class OrderDetails extends React.Component {
                     />
                   </SectionGroup>
                   {privilege === 'provider' && <SectionGroup>
-                    <JobSection order={currentOrder} />
+                    <JobSection order={currentOrder} addJob={this.showJobModal} />
                   </SectionGroup>}
                   <SectionGroup>
                     <TimeLineSection order={currentOrder} />
@@ -202,6 +212,12 @@ class OrderDetails extends React.Component {
                 boatInfo={boatInfo}
               />
             )}
+            {visibleOfJobModal && <JobModal
+              open={visibleOfJobModal}
+              customerInfo={customerInfo}
+              onClose={this.hideJobModal}
+              onSave={this.onSaveJob}
+            />}
           </React.Fragment>
         )}
       </React.Fragment>

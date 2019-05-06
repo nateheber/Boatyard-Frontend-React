@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AddIcon from '../../../../resources/job/add.png';
 
 
 import { Section } from 'components/basic/InfoSection';
 import JobItem from '../infoSections/JobItem';
+import GradientButton from '../basic/GradientButton';
 
 const Wrapper = styled.div`
   margin: -25px -15px;
@@ -12,28 +13,22 @@ const Wrapper = styled.div`
   max-height: 290px;
 `;
 
-const Button = styled.button`
-  position: relative;
-  width: 30px;
-  height: 30px;
-  padding: 5px;
-  outline: none;
-  cursor: pointer;
-  background: #FFFFFF;
-  background-image: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0.12) 100%);
-  border: 1px solid #A9B5BB;
-  border-radius: 6px;
+const Image = styled.img`
+  width: 11px;
 `;
 
 export default class JobSection extends React.Component {
-  addJob = () => {
-
+  handleAddJob = () => {
+    const { addJob } = this.props;
+    if (addJob) {
+      addJob();
+    }
   };
 
   renderAddButton = () => {
-    return (<Button onClick={this.addJob}>
-      <FontAwesomeIcon icon='plus' color='#003247' />
-    </Button>);
+    return (<GradientButton onClick={this.handleAddJob}>
+      <Image src={AddIcon} />
+    </GradientButton>);
   };
 
   render () {
