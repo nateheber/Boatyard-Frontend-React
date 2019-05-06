@@ -82,7 +82,7 @@ const tabs = {
 class OrderList extends React.Component {
   constructor(props) {
     super(props);
-    const columns = ORDER_COLUMNS;
+    const columns = ORDER_COLUMNS.slice(0);
     if (props.privilege === 'provider') {
       columns.splice(4, 1);
     }
