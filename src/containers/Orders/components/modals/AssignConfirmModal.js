@@ -15,7 +15,15 @@ export default class AssignConfirmModal extends React.Component {
   getName = () => {
     const { assignees } = this.props;
     if (assignees) {
-      assignees.map(assignee => assignee.name);
+      const names = assignees.map(assignee => `[${assignee.name}]`);
+      if (names.length > 2) {
+        const prefNames = names.slice(0, names.length - 1);
+        return `${prefNames.join(', ')} and ${names[names.length - 1]}`;
+      } else if (names.length === 2) {
+        return names.join(' and ');
+      } else {
+        return names.join('');
+      }
     }
     return '';
   };
