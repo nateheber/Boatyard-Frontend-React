@@ -2,20 +2,20 @@ import React from 'react';
 import { get } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FormFields from 'components/template/FormFields';
+import Switch from 'react-switch';
 
-import { HollowButton, OrangeButton } from 'components/basic/Buttons'
+import { OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import {
-  InputWrapper,
-  InputLabel,
   Input,
-  CheckBox,
-  TextArea,
-  Select,
-  DateSelector,
-  CurrencyInput
+  // InputWrapper,
+  // InputLabel,
+  // CheckBox,
+  // TextArea,
+  // Select,
+  // DateSelector,
+  // CurrencyInput
 } from 'components/basic/Input';
 import { formatPhoneNumber } from 'utils/basic';
 import GradientButton from '../../basic/GradientButton';
@@ -133,6 +133,7 @@ const Attachment = styled.div`
     > img {
       width: 42px;
       height: 46px;
+      object-fit: contain;
     }
   }
 `;
@@ -163,6 +164,15 @@ const AttachmentTitle = styled.div`
 `;
 
 export default class JobModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showBoatInfo: true,
+      showCustomerInfo: true,
+      showLocationInfo: true
+    };
+  }
+
   setCustomerInfoFieldRef = (ref) => {
     this.customerInfoFields = ref;
   };
@@ -417,11 +427,21 @@ export default class JobModal extends React.Component {
   handlePrint = () => {
   };
 
+  handleChangeVisibleOfBoatInfo = () => {
+  };
+
+  handleChangeVisibleOfCustomerInfo = () => {
+  };
+
+  handleChangeVisibleOfLocationInfo = () => {
+  };
+
   handleAddAttachment = () => {
   };
 
   render() {
     const { open, onClose, loading } = this.props;
+    const { showBoatInfo, showCustomerInfo, showLocationInfo } = this.state;
     const action = [
       <OrangeButton onClick={this.onSend} key="modal_btn_save">Send</OrangeButton>
     ];
@@ -498,6 +518,48 @@ export default class JobModal extends React.Component {
         <Section>
           <SectionHeader>
             <HeaderTitle>Location</HeaderTitle>
+            <Switch
+              checked={showBoatInfo}
+              onChange={this.handleChangeVisibleOfLocationInfo}
+              uncheckedIcon={
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                    fontSize: 12,
+                    color: '#FFFFFF',
+                    paddingRight: 2,
+                    backgroundColor: '#A9B5BB',
+                    border: '1px solid #A9B5BB',
+                    borderRadius: '0 6px 6px 0'
+                  }}
+                >
+                  OFF
+                </div>
+              }
+              checkedIcon={
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                    fontSize: 12,
+                    color: '#FFFFFF',
+                    paddingRight: 2,
+                    backgroundColor: '#F38118',
+                    border: '1px solid #A9B5BB',
+                    borderRadius: '6px 0 0  6px'
+                  }}
+                >
+                  ON
+                </div>
+              }
+              className="react-switch"
+              id="icon-switch"
+            />
           </SectionHeader>
           <SectionContent>
             <FormFields

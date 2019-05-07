@@ -133,7 +133,8 @@ const modalStyles = {
   },
   large: {
     overlay: {
-      background: 'transparent'
+      background: 'rgba(0, 0, 0, 0.3)',
+      padding: '100px 1.2rem'
     },
     modal: {
       padding: '0px',
@@ -150,7 +151,8 @@ const modalStyles = {
   },
   extraLarge: {
     overlay: {
-      background: 'transparent'
+      background: 'rgba(0, 0, 0, 0.3)',
+      padding: '100px 1.2rem'
     },
     modal: {
       padding: '0px',
