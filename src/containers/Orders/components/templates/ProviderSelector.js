@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { findIndex, sortBy } from 'lodash';
+import { get, findIndex, sortBy } from 'lodash';
 import deepEqual from 'deep-equal';
 
 import { Input } from 'components/basic/Input';
@@ -117,7 +117,7 @@ const ClearAssigneeWrapper = styled.div`
   justify-content: center;
 `
 
-const getPageCount = (perPage, total) => Math.ceil(total/perPage)
+// const getPageCount = (perPage, total) => Math.ceil(total/perPage);
 
 class ProviderSelector extends React.Component {
   constructor(props) {
@@ -125,11 +125,12 @@ class ProviderSelector extends React.Component {
     this.setWrapperRef = this.setWrapperRef.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
     this.state = {
-      keyword: "",
+      keyword: '',
       showMenu: false,
-      dispatchIds: props.dispatchIds || [],
-      providers: [],
       showModal: false,
+      providers: [],
+      dispatchedProviders: [],
+      filteredProviders: []
     }
   }
 
@@ -148,67 +149,72 @@ class ProviderSelector extends React.Component {
   }
 
   onChangeFilter = (evt) => {
-    this.setState({ keyword: evt.target.value, providers: [] }, this.filterProviders);
-  }
+    this.setState({ keyword: evt.target.value }, () => {
+      this.filterProviders();
+    });
+  };
 
-  onFetchProviders = (providers, page) => {
-    if (page === 1) {
-      this.setState({ providers })
-    } else {
-      this.setState({ providers: [...this.state.providers, ...providers] })
-    }
-  }
+  onFetchProviders = () => {
+    const { dispatchIds, providers } = this.props;
+    const dispatchedProviders = dispatchIds.map(id => {
+      return providers.find(item => `${item.id}` === `${id}`);
+    });
+    this.setState({
+      providers: providers.slice(0),
+      dispatchedProviders,
+      filteredProviders: providers.slice(0)
+    });
+  };
 
   onScroll = (e) => {
-    const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
-    const { page, total, perPage } = this.props;
-    const { keyword } = this.state;
-    if (bottom) {
-      const pageCount = getPageCount(parseInt(perPage), parseInt(total));
-      if (page + 1 < pageCount) {
-        if (keyword === '') {
-          this.props.GetProviders({ params: { page: page + 1 }, success: this.onFetchProviders })
-        } else {
-          this.props.GetProviders({ params: { page: page + 1, 'provider[name]': keyword }, success: this.onFetchProviders })
-        }
-      }
-    }
-  }
+  //   const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+  //   const { page, total, perPage } = this.props;
+  //   const { keyword } = this.state;
+  //   if (bottom) {
+  //     const pageCount = getPageCount(parseInt(perPage), parseInt(total));
+  //     if (page + 1 < pageCount) {
+  //       if (keyword === '') {
+  //         this.props.GetProviders({ params: { page: page + 1 }, success: this.onFetchProviders })
+  //       } else {
+  //         this.props.GetProviders({ params: { page: page + 1, 'provider[name]': keyword }, success: this.onFetchProviders })
+  //       }
+  //     }
+  //   }
+  };
 
-  onChangeSelection = (providerId) => {
-    const { dispatchIds } = this.state;
-    const idx = findIndex(dispatchIds, id => id === parseInt(providerId));
+  onChangeSelection = (provider) => {
+    const { dispatchedProviders } = this.state;
+    const idx = findIndex(dispatchedProviders, item => `${item.id}` === `${provider.id}`);
+    let result = [];
     if (idx >= 0) {
-      const result = [...dispatchIds.slice(0, idx), ...dispatchIds.slice(idx + 1)];
-      this.setState({ dispatchIds: result });
+      result = [...dispatchedProviders.slice(0, idx), ...dispatchedProviders.slice(idx + 1)];
     } else {
-      this.setState({ dispatchIds: [...dispatchIds, parseInt(providerId)] });
+      result = [...dispatchedProviders, provider];
     }
-  }
+    this.setState({ dispatchedProviders: result });
+  };
 
   showMenu = () => {
-    this.props.GetProviders({params: {page: 1}, success: this.onFetchProviders});
+    this.props.GetProviders({params: { page: 1, per_page: 1000 }, success: this.onFetchProviders});
     this.setState({ showMenu: true });
-  }
+  };
 
   clearAssignees = () => {
-    this.setState({
-      dispatchIds: []
-    });
-  }
+    this.setState({ dispatchedProviders: [] });
+  };
 
   setWrapperRef(node) {
     this.wrapperRef = node;
   }
 
   filterProviders = () => {
-    const { keyword } = this.state;
-    if (keyword === '') {
-      this.props.GetProviders({ success: this.onFetchProviders })
-    } else {
-      this.props.GetProviders({ params: { 'provider[name]': keyword }, success: this.onFetchProviders })
+    const { keyword, providers } = this.state;
+    let filteredProviders = providers.slice(0);
+    if (keyword && keyword.trim().length > 0) {
+      filteredProviders = providers.filter(provider => get(provider, 'name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
     }
-  }
+    this.setState({ filteredProviders });
+  };
 
   handleClickOutside(event) {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
@@ -222,45 +228,44 @@ class ProviderSelector extends React.Component {
   }
 
   showModal = () => {
-    const { dispatchIds } = this.state;
-    const originalArray = sortBy(this.props.dispatchIds);
-    const targetArray = sortBy(dispatchIds);
+    const { dispatchedProviders } = this.state;
+    const { dispatchIds } = this.props;
+    const originalArray = sortBy(dispatchIds);
+    const targetArray = sortBy(dispatchedProviders.map(provider => provider.id));
     if (!deepEqual(originalArray, targetArray)) {
       this.setState({ showModal: true });
     }
-  }
+  };
 
   closeModal = () => {
-    this.setState({ dispatchIds: [], showModal: false });
-  }
+    this.setState({ dispatchedProviders: [], showModal: false });
+  };
 
   submitData = () => {
-    const { dispatchIds } = this.state;
+    const { dispatchedProviders } = this.state;
+    const dispatchIds = dispatchedProviders.map(provider => provider.id);
     this.props.onChange(dispatchIds);
-    this.setState({ showModal: false, dispatchIds: [] });
-  }
+    this.setState({ showModal: false, dispatchedProviders: [] });
+  };
 
-  isChecked = (providerId) => {
-    const { dispatchIds } = this.state;
-    const idx= findIndex(dispatchIds, id => parseInt(providerId) === id);
+  isChecked = (provider) => {
+    const { dispatchedProviders } = this.state;
+    const idx= findIndex(dispatchedProviders, item => `${provider.id}` === `${item.id}`);
     return idx >= 0;
-  }
+  };
 
   filterShowingProviders = () => {
-    const { providers } = this.state;
-    const { dispatchIds } = this.props;
-    const result = providers.filter((provider) => {
-      const { id } = provider;
-      const idx = dispatchIds.findIndex(dispatchId => dispatchId === parseInt(id));
+    const { filteredProviders, dispatchedProviders } = this.state;
+    const result = filteredProviders.filter((provider) => {
+      const idx = dispatchedProviders.findIndex(item => `${item.id}` === `${provider.id}`);
       return idx === -1;
-    })
+    });
     return result;
-  }
+  };
 
   render() {
-    const { showMenu, showModal, keyword, dispatchIds } = this.state;
+    const { showMenu, showModal, keyword, dispatchedProviders } = this.state;
     const filteredProviders = this.filterShowingProviders();
-    const { dispatchIds: originalIds } = this.props;
     return (
       <Wrapper ref={this.setWrapperRef}>
         <Button onClick={this.showMenu}>
@@ -275,28 +280,28 @@ class ProviderSelector extends React.Component {
           </ClearAssigneeWrapper>
           <Scroller onScroll={this.onScroll}>
             {
-              originalIds.map(( providerId, idx ) => (
-                <MenuItemLi key={`provider_${providerId}`} >
-                  <ProviderCheck checked={this.isChecked(providerId)} providerId={providerId} onClick={() => this.onChangeSelection(providerId)} />
+              dispatchedProviders.map(( provider, idx ) => (
+                <MenuItemLi key={`provider_${provider.id}`} >
+                  <ProviderCheck checked={this.isChecked(provider)} provider={provider} onClick={() => this.onChangeSelection(provider)} />
                 </MenuItemLi>
               ))
             }
             {
               filteredProviders.map((provider, idx) => (
                 <MenuItemLi key={`provider_${provider.id}`} >
-                  <ProviderCheck checked={this.isChecked(provider.id)} provider={provider} onClick={() => this.onChangeSelection(provider.id)} />
+                  <ProviderCheck checked={this.isChecked(provider)} provider={provider} onClick={() => this.onChangeSelection(provider)} />
                 </MenuItemLi>
               ))
             }
           </Scroller>
         </DropdownMenu>
-        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} count={dispatchIds.length} />
+        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} assignees={dispatchedProviders} />
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ provider: { providers, page, total, perPage} }) => ({
+const mapStateToProps = ({ provider: { providers, page, total, perPage } }) => ({
   providers,
   page,
   total,

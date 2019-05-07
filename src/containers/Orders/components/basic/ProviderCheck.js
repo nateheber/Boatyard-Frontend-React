@@ -17,36 +17,36 @@ class ProviderCheck extends React.Component {
   componentDidMount() {
     const { providerId } = this.props;
     if (providerId) {
-      this.props.GetProvider({ providerId, success: this.onFetchSucceed })
+      this.props.GetProvider({ providerId, success: this.onFetchSucceed });
     }
     this._isMounted = true;
   }
 
   componentWillUnmount() {
     this._isMounted = false;
-  }
+  };
 
   getProviderName = () => {
     const { provider } = this.props;
     return get(provider, 'name', this.state.providerName);
-  }
+  };
 
   onFetchSucceed = (provider) => {
     if (this._isMounted) {
-      this.setState({ providerName: provider.name })
+      this.setState({ providerName: provider.name });
     }
-  }
+  };
 
   render() {
     const { checked, onClick } = this.props;
     return (
       <CheckField title={this.getProviderName()} checked={checked} onClick={onClick}/>
-    )
+    );
   }
 }
 
 const mapDispatchToProps = {
   GetProvider
-}
+};
 
 export default connect(null, mapDispatchToProps)(ProviderCheck);
