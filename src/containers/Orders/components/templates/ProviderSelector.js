@@ -200,9 +200,7 @@ class ProviderSelector extends React.Component {
   };
 
   clearAssignees = () => {
-    this.setState({
-      dispatchIds: []
-    });
+    this.setState({ dispatchedProviders: [] });
   };
 
   setWrapperRef(node) {
@@ -230,22 +228,24 @@ class ProviderSelector extends React.Component {
   }
 
   showModal = () => {
-    const { dispatchIds } = this.state;
-    const originalArray = sortBy(this.props.dispatchIds);
-    const targetArray = sortBy(dispatchIds);
+    const { dispatchedProviders } = this.state;
+    const { dispatchIds } = this.props;
+    const originalArray = sortBy(dispatchIds);
+    const targetArray = sortBy(dispatchedProviders.map(provider => provider.id));
     if (!deepEqual(originalArray, targetArray)) {
       this.setState({ showModal: true });
     }
   };
 
   closeModal = () => {
-    this.setState({ dispatchIds: [], showModal: false });
+    this.setState({ dispatchedProviders: [], showModal: false });
   };
 
   submitData = () => {
-    const { dispatchIds } = this.state;
+    const { dispatchedProviders } = this.state;
+    const dispatchIds = dispatchedProviders.map(provider => provider.id);
     this.props.onChange(dispatchIds);
-    this.setState({ showModal: false, dispatchIds: [] });
+    this.setState({ showModal: false, dispatchedProviders: [] });
   };
 
   isChecked = (provider) => {
@@ -295,7 +295,7 @@ class ProviderSelector extends React.Component {
             }
           </Scroller>
         </DropdownMenu>
-        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} count={dispatchedProviders.length} />
+        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} assignees={dispatchedProviders} />
       </Wrapper>
     );
   }
