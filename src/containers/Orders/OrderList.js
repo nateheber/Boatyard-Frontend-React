@@ -100,6 +100,10 @@ class OrderList extends React.Component {
     this.onChangeTab(tab);
   }
 
+  componentWillUnmount() {
+    this.props.SetDispatchedFlag(false);
+  }
+
   onChangeTab = (tab, page = 1) => {
     const { privilege } = this.props;
     this.props.SetDispatchedFlag(false);
@@ -115,7 +119,7 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'provider_order_sequence',
+            'order[order]': 'created_at',
             'order[sort]': 'desc',
           }
         });
@@ -128,7 +132,7 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'provider_order_sequence',
+            'order[order]': 'position',
             'order[sort]': 'desc',
           }
         });
