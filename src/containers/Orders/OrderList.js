@@ -115,7 +115,7 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'created_at',
+            'order[order]': 'provider_order_sequence',
             'order[sort]': 'desc',
           }
         });
@@ -123,7 +123,18 @@ class OrderList extends React.Component {
         this.props.GetOrders({ params: {page, per_page: 15, 'order[state]': 'dispatched' } });
       }
     } else {
-      this.props.GetOrders({ params: { page, per_page: 15 } });
+      if (privilege === 'provider') {
+        this.props.GetOrders({
+          params: {
+            page,
+            per_page: 15,
+            'order[order]': 'provider_order_sequence',
+            'order[sort]': 'desc',
+          }
+        });
+      } else {
+        this.props.GetOrders({ params: { page, per_page: 15 } });
+      }
     }
   };
 
