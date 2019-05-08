@@ -358,7 +358,7 @@ class SelectServiceModal extends React.Component {
     if (template === 'full' || template === 'pumpout' || template.indexOf('book') === 0) {
       return true;
     }
-    return true;
+    return false;
   }
 
   createOrder = () => {
