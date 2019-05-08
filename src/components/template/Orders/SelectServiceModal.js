@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
-import { get, isEmpty, filter, camelCase, startCase, hasIn } from 'lodash';
+import { get, isEmpty, filter, camelCase, startCase, hasIn, sortBy } from 'lodash';
 
 import { FilterServices, GetService } from 'store/actions/services';
 import { actionTypes } from 'store/actions/orders';
@@ -157,9 +157,11 @@ class SelectServiceModal extends React.Component {
     const { service } = this.state;
     const { included } = this.props;
     const orgProperties = {}; // get(service, `properties`, {});
-    const fields = get(service, 'orderFields.data', []);
+    const fields = get(service, 'relationships.orderFields.data', []);
     const includedFields = get(included, 'order_fields', []);
-    const refinedFields = [];
+    console.log('---------service-------------', service);
+    console.log('---------includedFields-------------', includedFields);
+    let refinedFields = [];
     for (const index in fields) {
       const field = fields[index];
       const filtered = filter(includedFields, item => !isEmpty(item) && item.id === field.id);
@@ -167,6 +169,8 @@ class SelectServiceModal extends React.Component {
         refinedFields.push(filtered[0]);
       }
     }
+    refinedFields = sortBy(refinedFields, 'attributes.position');
+
     const serviceFields = [];
     for (const index in refinedFields) {
       const field = refinedFields[index];
@@ -338,9 +342,9 @@ class SelectServiceModal extends React.Component {
                 onChange={this.handleServiceFieldChange}
               />
             )}
-            {!isEmpty(service) && (
+            {/* {!isEmpty(service) && (
               <FormFields ref={this.setBoatFieldsRef} fields={boatFields} />
-            )}
+            )} */}
             {!isEmpty(service) && (
               <FormFields ref={this.setOrderFieldsRef} fields={orderFields} />
             )}
