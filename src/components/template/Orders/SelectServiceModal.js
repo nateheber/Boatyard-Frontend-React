@@ -12,7 +12,7 @@ import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
 import FormFields from 'components/template/FormFields';
 import { BoatyardSelect } from 'components/basic/Dropdown';
-
+import * as constants from 'utils/constants';
 
 const SubSectionTitle = styled.h5`
   text-transform: uppercase;
@@ -45,6 +45,7 @@ class SelectServiceModal extends React.Component {
     this.state = {
       service: {},
       value: {},
+      whenFields: [],
       boatFields: [],
       serviceFields: []
     };
@@ -83,6 +84,7 @@ class SelectServiceModal extends React.Component {
     this.setState({
       service: val
     }, () => {
+      this.getWhenFields();
       this.getServiceFields();
       this.getBoatFields();
     });
@@ -153,14 +155,81 @@ class SelectServiceModal extends React.Component {
   //   }
   // };
 
+  getWhenFields = (whenValue = null) => {
+    let whenOptions = constants.WHEN_OPTIONS.map(option => {
+      return {
+        label: option,
+        value: option
+      };
+    });
+    whenOptions = [{ value: '', label: '' }].concat(whenOptions);
+    const whenFields = [
+      {
+        field: 'when',
+        label: 'When',
+        type: 'select_box',
+        options: whenOptions,
+        required: true,
+        defaultValue: whenValue,
+        errorMessage: 'Choose Option',
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      }
+    ];
+    if (whenValue === constants.WHEN_SPEICFIC_DATE_OPTION) {
+      whenFields.push({
+        field: 'day',
+        label: 'Day',
+        type: 'date',
+        required: true,
+        defaultValue: new Date(),
+        errorMessage: `Choose Date`,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      });
+      let slotOptions = constants.SLOT_OPTIONS.map(option => {
+        return {
+          label: option,
+          value: option
+        };
+      });
+      slotOptions = [{ value: '', label: '' }].concat(slotOptions);
+      whenFields.push({
+        field: 'slot',
+        label: 'Slot',
+        type: 'select_box',
+        options: slotOptions,
+        required: true,
+        errorMessage: 'Choose Slot',
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      });
+    }
+    this.setState({ whenFields });
+  };
+
   getServiceFields = () => {
     const { service } = this.state;
     const { included } = this.props;
     const orgProperties = {}; // get(service, `properties`, {});
     const fields = get(service, 'relationships.orderFields.data', []);
     const includedFields = get(included, 'order_fields', []);
-    console.log('---------service-------------', service);
-    console.log('---------includedFields-------------', includedFields);
     let refinedFields = [];
     for (const index in fields) {
       const field = fields[index];
@@ -257,8 +326,18 @@ class SelectServiceModal extends React.Component {
     }
   };
 
+  handleWhenFieldChange = (value, field) => {
+    if (field === 'when') {
+      this.getWhenFields(value[field]);
+    }
+  };
+
   handleServiceFieldChange = (value, field) => {
     console.log('----------------------', field, value);
+  };
+
+  setWhenFieldsRef = ref => {
+    this.whenFieldsForm = ref;
   };
 
   setServiceFieldsRef = ref => {
@@ -273,13 +352,32 @@ class SelectServiceModal extends React.Component {
     this.orderForm = ref;
   };
 
+  canShowWhenFields = () => {
+    const { service } = this.state;
+    const template = get(service, 'emailTemplate');
+    if (template === 'full' || template === 'pumpout' || template.indexOf('book') === 0) {
+      return true;
+    }
+    return true;
+  }
+
   createOrder = () => {
     const { service } = this.state;
-    let serviceValues = {}, orderValues = {}, boatValues = {};
-    if ((this.serviceForm && !this.serviceForm.validateFields()) ||
+    let whenValues = {}, serviceValues = {}, orderValues = {}, boatValues = {};
+    console.log('----------whenFieldsForm--------', (this.whenFieldsForm && !this.whenFieldsForm.validateFields()));
+    console.log('----------whenFieldsForm--------', this.whenFieldsForm, !this.whenFieldsForm.validateFields(), this.whenFieldsForm.getFieldValues());
+    console.log('----------serviceForm--------', (this.serviceForm && !this.serviceForm.validateFields()));
+    console.log('----------orderForm--------', (this.orderForm && !this.orderForm.validateFields()));
+    console.log('----------boatForm--------', (this.boatForm && !this.boatForm.validateFields()));
+    if ((this.whenFieldsForm && !this.whenFieldsForm.validateFields()) ||
+    (this.serviceForm && !this.serviceForm.validateFields()) ||
     (this.orderForm && !this.orderForm.validateFields()) ||
     (this.boatForm && !this.boatForm.validateFields())) {
       return;
+    }
+    console.log('----------1--------');
+    if (this.whenFieldsForm) {
+      whenValues = this.whenFieldsForm.getFieldValues();
     }
     if (this.serviceForm) {
       serviceValues = this.serviceForm.getFieldValues();
@@ -291,12 +389,13 @@ class SelectServiceModal extends React.Component {
       orderValues = this.orderForm.getFieldValues();
     }
     orderValues = { ...orderValues, ...boatValues };
-    this.props.toNext(service, serviceValues, orderValues);
+    console.log('----------2--------');
+    this.props.toNext(service, whenValues, serviceValues, orderValues);
   };
 
   render() {
     const { open, onClose, currentStatus } = this.props;
-    const { service, serviceFields, boatFields } = this.state;
+    const { service, whenFields, serviceFields, boatFields } = this.state;
     const action = [
       <OrangeButton
         key="modal_action_button"
@@ -335,6 +434,13 @@ class SelectServiceModal extends React.Component {
         </Row>
         <Row>
           <Col sm={12}>
+            {(!isEmpty(service) && this.canShowWhenFields()) && (
+              <FormFields
+                ref={this.setWhenFieldsRef}
+                fields={whenFields}
+                onChange={this.handleWhenFieldChange}
+              />
+            )}
             {!isEmpty(serviceFields) && (
               <FormFields
                 ref={this.setServiceFieldsRef}
@@ -342,9 +448,10 @@ class SelectServiceModal extends React.Component {
                 onChange={this.handleServiceFieldChange}
               />
             )}
-            {/* {!isEmpty(service) && (
+            {/* {!isEmpty(service) && ( */}
+            {false && (
               <FormFields ref={this.setBoatFieldsRef} fields={boatFields} />
-            )} */}
+            )}
             {!isEmpty(service) && (
               <FormFields ref={this.setOrderFieldsRef} fields={orderFields} />
             )}
