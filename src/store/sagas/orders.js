@@ -244,7 +244,7 @@ function* dispatchOrder(action) {
   }
   try {
     if (orderState !== 'draft') {
-      yield call(orderClient.update, orderId, { order: { transition: "undispatch" } });
+      yield call(orderClient.update, orderId, { order: { transition: 'undispatch' } });
     }
     yield call(normalClient.update, orderId, { order: { dispatch_ids: dispatchIds } });
     yield put({ type: actionTypes.DISPATCH_ORDER_SUCCESS });
