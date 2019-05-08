@@ -676,7 +676,7 @@ class AppEditor extends React.Component {
       const attributes = get(category, 'attributes');
       const payload = {
         name: get(attributes, 'name'),
-        description: get(attributes, 'description'),
+        subtitle: get(attributes, 'subtitle'),
         icon_id: get(attributes, 'iconId'),
         manual_position: get(attributes, 'manualPosition')
       };
