@@ -50,7 +50,6 @@ class NewOrderModal extends React.Component {
   };
 
   createNewOrder = (service, whenValues = {}, serviceValues = {}, orderValues = {}) => {
-    console.log('----------3--------');
     const { CreateOrder, UpdateOrder, onFinishCreation, privilege } = this.props;
     const { customer, boat } = this.state;
     const orderData = {
@@ -66,14 +65,13 @@ class NewOrderModal extends React.Component {
       //   ...serviceValues
       // }
     };
-    console.log('----------4--------');
     if (whenValues.hasOwnProperty('when')) {
       const scheduleAttributes = {
         asap: null,
         flexible: null,
         complicated: null,
         specific_start: null,
-        specific_end: null
+        specific_stop: null
       };
   
       switch (whenValues['when']) {
@@ -90,16 +88,16 @@ class NewOrderModal extends React.Component {
             const day = whenValues['day'];
             const slot = whenValues['slot'];
             let specific_start = moment(day);
-            let specific_end = moment(day);
+            let specific_stop = moment(day);
             if (slot === constants.WHEN_SLOT_MORNING) {
               specific_start = specific_start.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-              specific_end = specific_end.set({ hour: 12, minute: 0, second: 0, millisecond: 0 });
+              specific_stop = specific_stop.set({ hour: 12, minute: 0, second: 0, millisecond: 0 });
             } else {
               specific_start = specific_start.set({ hour: 12, minute: 0,second: 0, millisecond: 0 });
-              specific_end = specific_end.set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
+              specific_stop = specific_stop.set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
             }
             scheduleAttributes['specific_start'] = specific_start.format('YYYY-MM-DD HH:mm:ssZ');
-            scheduleAttributes['specific_end'] = specific_end.format('YYYY-MM-DD HH:mm:ssZ');
+            scheduleAttributes['specific_stop'] = specific_stop.format('YYYY-MM-DD HH:mm:ssZ');
           }
           break;
         }

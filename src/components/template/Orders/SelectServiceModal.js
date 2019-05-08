@@ -364,18 +364,12 @@ class SelectServiceModal extends React.Component {
   createOrder = () => {
     const { service } = this.state;
     let whenValues = {}, serviceValues = {}, orderValues = {}, boatValues = {};
-    console.log('----------whenFieldsForm--------', (this.whenFieldsForm && !this.whenFieldsForm.validateFields()));
-    console.log('----------whenFieldsForm--------', this.whenFieldsForm, !this.whenFieldsForm.validateFields(), this.whenFieldsForm.getFieldValues());
-    console.log('----------serviceForm--------', (this.serviceForm && !this.serviceForm.validateFields()));
-    console.log('----------orderForm--------', (this.orderForm && !this.orderForm.validateFields()));
-    console.log('----------boatForm--------', (this.boatForm && !this.boatForm.validateFields()));
     if ((this.whenFieldsForm && !this.whenFieldsForm.validateFields()) ||
     (this.serviceForm && !this.serviceForm.validateFields()) ||
     (this.orderForm && !this.orderForm.validateFields()) ||
     (this.boatForm && !this.boatForm.validateFields())) {
       return;
     }
-    console.log('----------1--------');
     if (this.whenFieldsForm) {
       whenValues = this.whenFieldsForm.getFieldValues();
     }
@@ -389,7 +383,6 @@ class SelectServiceModal extends React.Component {
       orderValues = this.orderForm.getFieldValues();
     }
     orderValues = { ...orderValues, ...boatValues };
-    console.log('----------2--------');
     this.props.toNext(service, whenValues, serviceValues, orderValues);
   };
 
