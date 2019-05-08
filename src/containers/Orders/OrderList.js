@@ -83,19 +83,21 @@ class OrderList extends React.Component {
   constructor(props) {
     super(props);
     const columns = ORDER_COLUMNS.slice(0);
+    let tab = 'all';
     if (props.privilege === 'provider') {
       columns.splice(4, 1);
+      tab = 'dispatched';
     }
     this.state = {
-      tab: 'all',
+      tab,
       columns,
       selectedColumns: columns
     };
   }
 
   componentDidMount() {
-    this.props.SetDispatchedFlag(false);
-    this.props.GetOrders({ params: { page: 1, per_page: 15 } });
+    const { tab } = this.state;
+    this.onChangeTab(tab);
   }
 
   onChangeTab = (tab) => {
