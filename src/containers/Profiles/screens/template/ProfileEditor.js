@@ -2,13 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import Modal from 'react-responsive-modal';
 import { formatPhoneNumber } from 'utils/basic';
+import { Row, Col } from 'react-flexbox-grid';
 
-import {
-  InputRow,
-  InputWrapper,
-  InputLabel,
-  Input
-} from 'components/basic/Input';
+import { Input } from 'components/basic/Input';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 
@@ -24,6 +20,15 @@ const Splitter = styled.div`
   height: 1px;
   background: #dfdfdf;
   margin: 20px 0px;
+`;
+
+const InputLabel = styled.div`
+  color: #004258;
+  font-weight: 700;
+  margin-bottom: 5px;
+  font-size: 12px;
+  font-family: Montserrat, sans-serif;
+  text-transform: uppercase;
 `;
 
 const PermissionText = styled.div`
@@ -51,6 +56,7 @@ export default class ProfileEditor extends React.Component {
       lastName,
       phoneNumber: formatPhoneNumber(phoneNumber),
       email,
+      taxRate: '',
       showModal: false
     };
   }
@@ -91,6 +97,13 @@ export default class ProfileEditor extends React.Component {
       phoneNumber: evt.target.value
     });
   };
+
+  onChangeTaxRate = (evt) => {
+    this.setState({
+      taxRate: evt.target.value
+    });
+  };
+
   showModal = () => {
     this.setState({
       showModal: true
@@ -102,7 +115,7 @@ export default class ProfileEditor extends React.Component {
     });
   };
   render() {
-    const { firstName, lastName, phoneNumber, email, showModal } = this.state;
+    const { firstName, lastName, phoneNumber, email, taxRate, showModal } = this.state;
     const { history, privilege } = this.props;
     const { type } = this.props.profile;
     const actions = (
@@ -113,62 +126,74 @@ export default class ProfileEditor extends React.Component {
     );
     const editSection = (
       <React.Fragment>
-        <InputRow>
-          <InputWrapper className="secondary">
+        <Row style={{ marginBottom: 20 }}>
+          <Col xs={12} sm={6}>
             <InputLabel>First Name</InputLabel>
             <Input
               type="text"
               defaultValue={firstName}
               onChange={this.onChangeFN}
             />
-          </InputWrapper>
-          <InputWrapper className="secondary">
+          </Col>
+          <Col xs={12} sm={6}>
             <InputLabel>Last Name</InputLabel>
             <Input
               type="text"
               defaultValue={lastName}
               onChange={this.onChangeLN}
             />
-          </InputWrapper>
-        </InputRow>
-        <InputRow>
-          <InputWrapper className="secondary">
+          </Col>
+        </Row>
+        <Row style={{ marginBottom: 20 }}>
+          <Col xs={12} sm={6}>
             <InputLabel>Email</InputLabel>
             <Input
               type="text"
               defaultValue={email}
               onChange={this.onChangeEmail}
             />
-          </InputWrapper>
-          <InputWrapper className="secondary">
+          </Col>
+          <Col xs={12} sm={6}>
             <InputLabel>Phone</InputLabel>
             <Input
               type="text"
               defaultValue={phoneNumber}
               onChange={this.onChangePN}
             />
-          </InputWrapper>
-        </InputRow>
-        <InputRow>
-          <InputWrapper className="secondary">
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} sm={6}>
             <InputLabel>Permissions</InputLabel>
             <PermissionText>{type}</PermissionText>
-          </InputWrapper>
-        </InputRow>
+          </Col>
+        </Row>
         <Splitter />
-        <InputRow style={{ flex: '12' }}>
-          <InputWrapper style={{ flex: '3' }} className="secondary">
+        <Row>
+          <Col xs={12} sm={6} md={6}>
             <InputLabel>Security Settings</InputLabel>
-            <HollowButton onClick={this.showModal}>
+            <HollowButton onClick={this.showModal} style={{ margin: 0 }}>
               Change Password
             </HollowButton>
-          </InputWrapper>
+          </Col>
           {
             privilege === 'provider' &&
-            <InputWrapper style={{ flex: '3' }} className="secondary">
+            <Col xs={12} sm={6} md={4}>
               <InputLabel>Payment Settings</InputLabel>
               <PaymentSettings />
-            </InputWrapper>
+            </Col>
+          }
+          {
+            privilege === 'provider' &&
+            <Col xs={12} sm={6} md={2}>
+              <InputLabel>Tax Rate (%)</InputLabel>
+              <Input
+                type="text"
+                defaultValue={taxRate}
+                onChange={this.onChangeTaxRate}
+              />
+            </Col>
+
           }
           {/* <InputWrapper style={{ flex: '2' }} className="secondary">
             <InputLabel>IOS App Version</InputLabel>
@@ -178,7 +203,7 @@ export default class ProfileEditor extends React.Component {
             <InputLabel>Android App Version</InputLabel>
             <Input type="text" />
           </InputWrapper> */}
-        </InputRow>
+        </Row>
       </React.Fragment>
     );
     return (
