@@ -484,7 +484,6 @@ class AppEditor extends React.Component {
         this.setState({ data: newData, visibleOfModal: false });
       }
     } else {
-      toastr.clean();
       toastr.error('Cannot set template to service category');
     }
   };
