@@ -100,15 +100,30 @@ class OrderList extends React.Component {
     this.onChangeTab(tab);
   }
 
-  onChangeTab = (tab) => {
+  onChangeTab = (tab, page = 1) => {
+    const { privilege } = this.props;
+    this.props.SetDispatchedFlag(false);
     this.setState({ tab });
-    this.props.SetDispatchedFlag(tab === 'dispatched');
     if (tab === 'needAssignment') {
-      this.props.GetOrders({ params: { page: 1, per_page: 15, 'order[state]': 'draft' } })
+      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft' } });
     } else if (tab === 'invoiced') {
-      this.props.GetOrders({ params: { page: 1, per_page: 15, 'order[state]': 'invoiced' } })
+      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'invoiced' } });
+    } else if (tab === 'dispatched') {
+      if (privilege === 'provider') {
+        this.props.SetDispatchedFlag(true);
+        this.props.GetOrders({
+          params: {
+            page,
+            per_page: 15,
+            'order[order]': 'created_at',
+            'order[sort]': 'desc',
+          }
+        });
+      } else {
+        this.props.GetOrders({ params: {page, per_page: 15, 'order[state]': 'dispatched' } });
+      }
     } else {
-      this.props.GetOrders({ params: { page: 1, per_page: 15 } });
+      this.props.GetOrders({ params: { page, per_page: 15 } });
     }
   };
 
@@ -136,7 +151,8 @@ class OrderList extends React.Component {
   };
 
   changePage = (page) => {
-    this.props.GetOrders({ params: { page: page } });
+    const { tab } = this.state;
+    this.onChangeTab(tab, page);
   };
 
   newOrder = () => {
