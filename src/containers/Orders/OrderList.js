@@ -156,8 +156,12 @@ class OrderList extends React.Component {
 
   toDetails = order => {
     const { state } = order;
-    this.props.SetDispatchedFlag(state === 'dispatched');
-    this.props.history.push(`/order-details/?order=${order.id}`);
+    const { privilege } = this.props;
+    let dispatched = false;
+    if (state === 'dispatched' && privilege === 'provider') {
+      dispatched = true;
+    }
+    this.props.history.push({pathname: '/order-details/', search: `?order=${order.id}`, state: { dispatched }});
   };
 
   getPageCount = () => {
