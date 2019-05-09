@@ -119,7 +119,7 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'position',
+            'order[order]': 'id',
             'order[sort]': 'desc',
           }
         });
@@ -166,7 +166,6 @@ class OrderList extends React.Component {
 
   getPageCount = () => {
     const { perPage, total } = this.props;
-    console.log('---------------------Total', perPage, total);
     return Math.ceil(total/perPage);
   };
 
