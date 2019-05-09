@@ -100,15 +100,45 @@ class OrderList extends React.Component {
     this.onChangeTab(tab);
   }
 
-  onChangeTab = (tab) => {
+  componentWillUnmount() {
+    this.props.SetDispatchedFlag(false);
+  }
+
+  onChangeTab = (tab, page = 1) => {
+    const { privilege } = this.props;
+    this.props.SetDispatchedFlag(false);
     this.setState({ tab });
-    this.props.SetDispatchedFlag(tab === 'dispatched');
     if (tab === 'needAssignment') {
-      this.props.GetOrders({ params: { page: 1, per_page: 15, 'order[state]': 'draft' } })
+      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft' } });
     } else if (tab === 'invoiced') {
-      this.props.GetOrders({ params: { page: 1, per_page: 15, 'order[state]': 'invoiced' } })
+      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'invoiced' } });
+    } else if (tab === 'dispatched') {
+      if (privilege === 'provider') {
+        this.props.SetDispatchedFlag(true);
+        this.props.GetOrders({
+          params: {
+            page,
+            per_page: 15,
+            'order[order]': 'id',
+            'order[sort]': 'desc',
+          }
+        });
+      } else {
+        this.props.GetOrders({ params: {page, per_page: 15, 'order[state]': 'dispatched' } });
+      }
     } else {
-      this.props.GetOrders({ params: { page: 1, per_page: 15 } });
+      if (privilege === 'provider') {
+        this.props.GetOrders({
+          params: {
+            page,
+            per_page: 15,
+            'order[order]': 'position',
+            'order[sort]': 'desc',
+          }
+        });
+      } else {
+        this.props.GetOrders({ params: { page, per_page: 15 } });
+      }
     }
   };
 
@@ -126,8 +156,12 @@ class OrderList extends React.Component {
 
   toDetails = order => {
     const { state } = order;
-    this.props.SetDispatchedFlag(state === 'dispatched');
-    this.props.history.push(`/order-details/?order=${order.id}`);
+    const { privilege } = this.props;
+    let dispatched = false;
+    if (state === 'dispatched' && privilege === 'provider') {
+      dispatched = true;
+    }
+    this.props.history.push({pathname: '/order-details/', search: `?order=${order.id}`, state: { dispatched }});
   };
 
   getPageCount = () => {
@@ -136,7 +170,8 @@ class OrderList extends React.Component {
   };
 
   changePage = (page) => {
-    this.props.GetOrders({ params: { page: page } });
+    const { tab } = this.state;
+    this.onChangeTab(tab, page);
   };
 
   newOrder = () => {
@@ -194,7 +229,7 @@ class OrderList extends React.Component {
 const mapStateToProps = state => ({
   orders: refinedOrdersSelector(state),
   page: get(state, 'order.orders.page', 1),
-  perPage: get(state, 'oreder.orders.perPage', 20),
+  perPage: get(state, 'order.orders.perPage', 20),
   total: get(state, 'order.orders.total', 0),
   privilege: get(state, 'auth.privilege')
 });

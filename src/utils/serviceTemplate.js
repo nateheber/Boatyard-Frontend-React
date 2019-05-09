@@ -2,6 +2,7 @@ import { get, set, hasIn } from 'lodash';
 
 export const setServiceTemplateData = (serviceInfo, templateInfo) => {
   const attributes = get(serviceInfo, 'attributes');
+  const existingService = serviceInfo.hasOwnProperty('id');
   const { name } = attributes;
   const newTemplate = { ...templateInfo };
   const { data } = newTemplate;
@@ -9,16 +10,28 @@ export const setServiceTemplateData = (serviceInfo, templateInfo) => {
   set(newData, 'templateTitle', name);
   newData.templateTitle = name;
   if (hasIn(newData, 'data.description')) {
-    const defaultData = get(newData, 'data.description');
-    set(newData, 'data.description', get(attributes, 'description') || defaultData);
+    if (existingService) {
+      set(newData, 'data.description', get(attributes, 'description') || '');
+    } else {
+      const defaultData = get(newData, 'data.description');
+      set(newData, 'data.description', get(attributes, 'description') || defaultData);
+    }
   }
   if (hasIn(newData, 'data.secondaryDescription')) {
-    const defaultData = get(newData, 'data.secondaryDescription');
-    set(newData, 'data.secondaryDescription', get(attributes, 'secondaryDescription') || defaultData);
+    if (existingService) {
+      set(newData, 'data.secondaryDescription', get(attributes, 'secondaryDescription') || '');
+    } else {
+      const defaultData = get(newData, 'data.secondaryDescription');
+      set(newData, 'data.secondaryDescription', get(attributes, 'secondaryDescription') || defaultData);
+    }
   }
   if (hasIn(newData, 'data.cost')) {
-    const defaultData = get(newData, 'data.cost');
-    set(newData, 'data.cost', get(attributes, 'cost') || defaultData);
+    if (existingService) {
+      set(newData, 'data.cost', get(attributes, 'cost'));
+    } else {
+      const defaultData = get(newData, 'data.cost');
+      set(newData, 'data.cost', get(attributes, 'cost') || defaultData);
+    }
   }
   const { additionalDetails } = attributes;
   if (additionalDetails) {
@@ -60,16 +73,19 @@ export const setTemplateDataToServiceAttributes = (serviceInfo, templateInfo) =>
   const attributes = get(serviceInfo, 'attributes');
   const { data } = templateInfo;
   if (hasIn(data, 'data.description')) {
-    const defaultValue = get(attributes, 'description');
-    set(attributes, 'description', get(data, 'data.description') || defaultValue);
+    // const defaultValue = get(attributes, 'description');
+    // set(attributes, 'description', get(data, 'data.description') || defaultValue);
+    set(attributes, 'description', get(data, 'data.description'));
   }
   if (hasIn(data, 'data.secondaryDescription')) {
-    const defaultValue = get(attributes, 'secondaryDescription');
-    set(attributes, 'secondaryDescription', get(data, 'data.secondaryDescription') || defaultValue);
+    // const defaultValue = get(attributes, 'secondaryDescription');
+    // set(attributes, 'secondaryDescription', get(data, 'data.secondaryDescription') || defaultValue);
+    set(attributes, 'secondaryDescription', get(data, 'data.secondaryDescription'));
   }
   if (hasIn(data, 'data.cost')) {
-    const defaultValue = get(attributes, 'cost');
-    set(attributes, 'cost', get(data, 'data.cost') || defaultValue);
+    // const defaultValue = get(attributes, 'cost');
+    // set(attributes, 'cost', get(data, 'data.cost') || defaultValue);
+    set(attributes, 'cost', get(data, 'data.cost'));
   }
   let additionalDetails = [];
   if (hasIn(data, 'data.listDescription')) {
