@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { set } from 'lodash';
+// import { set } from 'lodash';
 
 
 export const parsetMomentToDate = (date) => {
@@ -35,7 +35,13 @@ export const refactorIncluded = (included) => {
   let refactored = {};
   for ( let i = 0; i < included.length; i += 1 ) {
     const { type, id } = included[i];
-    set(refactored, `${type}.${id}`, {...included[i]});
+    if (refactored.hasOwnProperty(type)) {
+      refactored[type][`${id}`] = {...included[i]};
+    } else {
+      refactored[type] = {};
+      refactored[type][`${id}`] = {...included[i]};
+    }
+    // set(refactored, `${type}.${id}`, {...included[i]});
   }
   return refactored;
 };

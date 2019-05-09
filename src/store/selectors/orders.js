@@ -1,4 +1,4 @@
-import { get, set, filter, forEach, findIndex, sortBy, isEmpty } from 'lodash';
+import { get, set, forEach, sortBy, isEmpty, isArray } from 'lodash';
 import { createSelector } from 'reselect';
 
 const setLineItemRelationships = (lineItem, included) => {
@@ -7,7 +7,15 @@ const setLineItemRelationships = (lineItem, included) => {
   for(const key in relationships) {
     let value = get(relationships, `[${key}].data`);
     if (value && !isEmpty(value)) {
-      set(resultData, `relationships[${key}]`, get(included, `[${value.type}][${value.id}]`));
+      if (isArray(value)) {
+        set(resultData, `relationships[${key}]`, []);
+        for(const index in value) {
+          const subValue = value[index];
+          set(resultData, `relationships[${key}][${index}]`, get(included, `[${subValue.type}][${subValue.id}]`));
+        }
+      } else {
+        set(resultData, `relationships[${key}]`, get(included, `[${value.type}][${value.id}]`));
+      }
     }
   }
   return lineItem;
@@ -99,23 +107,21 @@ const includedSelector = (state, orderType) => {
 
 const lineItemsSelector = state => {
   const currentOrder = state.order.currentOrder;
-  const lineItems = get(currentOrder, 'data.relationships.lineItems.data');
-  const included = get(currentOrder, 'included');
-  const lineItemDetail = filter(included, info => info.type === 'line_items');
+  const lineItems = get(currentOrder, 'relationships.lineItems.data');
+  const included = state.order.included;
+  const lineItemsDetail = included.hasOwnProperty('line_items') ? included['line_items'] : {};
   const data = [];
   forEach(lineItems, (lineItem) => {
-    const includedIdx = findIndex(lineItemDetail, detail => detail.id === lineItem.id && detail.type === lineItem.type);
-    const attributes= get(lineItemDetail, `[${includedIdx}].attributes`);
-    const serviceInfo = get(lineItemDetail, `[${includedIdx}].relationships.service.data`);
-    const serviceIdx = findIndex(included, info => info.type === serviceInfo.type && info.id === serviceInfo.id);
-    const serviceAttributes = get(included, `[${serviceIdx}].attributes`);
+    const attributes= get(lineItemsDetail, `${lineItem.id}.attributes`);
+    const serviceInfo = get(lineItemsDetail, `${lineItem.id}.relationships.service`);
+    const serviceAttributes = get(serviceInfo, 'attributes');
     return data.push({
       ...lineItem,
       attributes,
       serviceId: serviceInfo.id,
       serviceAttributes,
     })
-  })
+  });
   return sortBy(data, ['id']);
 };
 
