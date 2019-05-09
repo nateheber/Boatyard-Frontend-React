@@ -109,7 +109,7 @@ const lineItemsSelector = state => {
   const currentOrder = state.order.currentOrder;
   const lineItems = get(currentOrder, 'relationships.lineItems.data');
   const included = state.order.included;
-  const lineItemsDetail = included.hasOwnProperty('line_items') ? included['line_items'] : {};
+  const lineItemsDetail = (included && included.hasOwnProperty('line_items')) ? included['line_items'] : {};
   const data = [];
   forEach(lineItems, (lineItem) => {
     const attributes= get(lineItemsDetail, `${lineItem.id}.attributes`);
