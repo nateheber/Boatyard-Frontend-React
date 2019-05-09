@@ -355,7 +355,7 @@ class SelectServiceModal extends React.Component {
   canShowWhenFields = () => {
     const { service } = this.state;
     const template = get(service, 'emailTemplate');
-    if (template === 'full' || template === 'pumpout' || template.indexOf('book') === 0) {
+    if (template === 'fuel' || template === 'pumpout' || template.indexOf('book') === 0) {
       return true;
     }
     return false;
