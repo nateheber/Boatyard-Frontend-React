@@ -119,7 +119,7 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'created_at',
+            'order[order]': 'position',
             'order[sort]': 'desc',
           }
         });
