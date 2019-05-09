@@ -1,7 +1,7 @@
 import React from 'react';
 import { get } from 'lodash';
 import styled from 'styled-components';
-import { Row, Col } from 'react-flexbox-grid';
+import { Col } from 'react-flexbox-grid';
 import FormFields from 'components/template/FormFields';
 import Switch from 'react-switch';
 
@@ -20,7 +20,7 @@ import {
 import { formatPhoneNumber } from 'utils/basic';
 import GradientButton from '../../basic/GradientButton';
 import AddIcon from '../../../../../resources/job/add.png';
-import CloseIcon from '../../../../../resources/job/close.png';
+// import CloseIcon from '../../../../../resources/job/close.png';
 import LeftArrowIcon from '../../../../../resources/job/left_arrow.png';
 import RightArrowIcon from '../../../../../resources/job/right_arrow.png';
 import PrintIcon from '../../../../../resources/job/print.png';
@@ -441,7 +441,8 @@ export default class JobModal extends React.Component {
 
   render() {
     const { open, onClose, loading } = this.props;
-    const { showBoatInfo, showCustomerInfo, showLocationInfo } = this.state;
+    // const { showBoatInfo, showCustomerInfo, showLocationInfo } = this.state;
+    const { showBoatInfo } = this.state;
     const action = [
       <OrangeButton onClick={this.onSend} key="modal_btn_save">Send</OrangeButton>
     ];
