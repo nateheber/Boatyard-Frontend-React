@@ -48,10 +48,10 @@ class OrderDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
-    // const state = this.props.location.state;
-    // if (state && state.hasOwnProperty('dispatched')) {
-    //   this.props.SetDispatchedFlag(state.dispatched);
-    // }
+    const state = this.props.location.state;
+    if (state && state.hasOwnProperty('dispatched')) {
+      this.props.SetDispatchedFlag(state.dispatched);
+    }
     this.setState({ orderId }, () => {
       this.loadOrder();
     });
