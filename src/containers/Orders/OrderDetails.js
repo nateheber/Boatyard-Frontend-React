@@ -209,7 +209,8 @@ class OrderDetails extends React.Component {
                     />
                   </SectionGroup>
                   {privilege === 'provider' && <SectionGroup>
-                    <JobSection order={currentOrder} addJob={this.showJobModal} />
+                    {/* <JobSection order={currentOrder} addJob={this.showJobModal} /> */}
+                    <JobSection order={currentOrder} />
                   </SectionGroup>}
                   <SectionGroup>
                     <TimeLineSection order={currentOrder} />
