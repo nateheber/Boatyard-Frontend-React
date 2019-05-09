@@ -166,6 +166,7 @@ class OrderList extends React.Component {
 
   getPageCount = () => {
     const { perPage, total } = this.props;
+    console.log('---------------------Total', perPage, total);
     return Math.ceil(total/perPage);
   };
 
@@ -229,7 +230,7 @@ class OrderList extends React.Component {
 const mapStateToProps = state => ({
   orders: refinedOrdersSelector(state),
   page: get(state, 'order.orders.page', 1),
-  perPage: get(state, 'oreder.orders.perPage', 20),
+  perPage: get(state, 'order.orders.perPage', 20),
   total: get(state, 'order.orders.total', 0),
   privilege: get(state, 'auth.privilege')
 });
