@@ -86,7 +86,7 @@ class OrderList extends React.Component {
     let tab = 'all';
     if (props.privilege === 'provider') {
       columns.splice(4, 1);
-      tab = 'dispatched';
+      // tab = 'dispatched';
     }
     this.state = {
       tab,
