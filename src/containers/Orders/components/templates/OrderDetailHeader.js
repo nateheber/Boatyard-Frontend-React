@@ -4,6 +4,7 @@ import { Row } from 'react-flexbox-grid';
 import { withRouter } from 'react-router-dom';
 import { get } from 'lodash';
 import styled from 'styled-components';
+import { toastr } from 'react-redux-toastr';
 
 import { FilterProviders } from 'store/actions/providers';
 import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders';
@@ -69,23 +70,70 @@ class OrderDetailHeader extends React.Component {
   acceptOrder = () => {
     const { order } = this.props;
     const orderId = get(order, 'id');
-    this.props.AcceptOrder({ orderId });
+    this.props.AcceptOrder({
+      orderId,
+      success: () => {
+        toastr.success('Success', 'Declined successfully!');
+        this.props.history.push('/orders/');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
   }
 
   declineOrder = () => {
     const { order } = this.props;
-    this.props.UpdateOrder({ order_id: order.id, data: { order: { state: 'rejected' } } })
+    const orderId = get(order, 'id');
+    this.props.UpdateOrder({
+      orderId,
+      data: {
+        order: {
+          transition: 'disassociate'
+        }
+      },
+      success: () => {
+        toastr.success('Success', 'Declined successfully!');
+        this.props.history.push('/orders/');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
   }
 
   cancelOrder = () => {
     const { order } = this.props;
-    this.props.UpdateOrder({ order_id: order.id, data: { order: { state: 'canceled' } } })
+    const orderId = get(order, 'id');
+    this.props.UpdateOrder({
+      orderId,
+      data: {
+        order: {
+          transition: 'cancel'
+        }
+      },
+      success: () => {
+        toastr.success('Success', 'Canceled successfully!');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
   }
 
   deleteOrder = () => {
     const { order } = this.props;
-    this.props.DeleteOrder({ order_id: order.id });
-    this.props.history.push('/orders/');
+    const orderId = get(order, 'id');
+    this.props.DeleteOrder({
+      orderId,
+      success: () => {
+        toastr.success('Success', 'Deleted successfully!');
+        this.props.history.push('/orders/');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
   }
 
   getOrderStatus = () => {

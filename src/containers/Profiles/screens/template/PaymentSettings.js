@@ -21,7 +21,7 @@ class PaymentSettings extends React.Component {
     const { showPaymentModal } = this.state;
     return (
       <React.Fragment>
-        <HollowButton onClick={this.showGatewayModal}>Connect Payment Gateway</HollowButton>
+        <HollowButton onClick={this.showGatewayModal} style={{ margin: 0 }}>Connect Payment Gateway</HollowButton>
         <PaymentGatewayModal open={showPaymentModal} onClose={this.closeGatewayModal} />
       </React.Fragment>
     );

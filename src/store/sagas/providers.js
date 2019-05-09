@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/providers';
@@ -10,13 +10,14 @@ import { customApiClient, createProviderClient, createPreferredProviderClient } 
 import { getCustomApiClient } from './sagaSelectors';
 
 const refineProviders = (providers) => {
-  return providers.map(provider => {
+  const refinedProviders = providers.map(provider => {
     return {
       id: provider.id,
       ...provider.attributes,
       relationships: provider.relationships
     };
   });
+  return orderBy(refinedProviders, [function(o){ return o.name.toLowerCase(); }], ['asc']);
 };
 
 const adminApiClient = createProviderClient('admin');

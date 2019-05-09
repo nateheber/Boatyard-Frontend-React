@@ -5,18 +5,35 @@ import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
 
 const Text = styled.div`
-  text-align: center;
-  font-size: 21px;
+  text-align: left;
+  line-height: 24px;
+  font-size: 16px;
   color: #003247;
-  margin-bottom: 20px;
-`
+`;
 
 export default class AssignConfirmModal extends React.Component {
+  getName = () => {
+    const { assignees } = this.props;
+    if (assignees) {
+      const names = assignees.map(assignee => assignee.name);
+      if (names.length > 2) {
+        const prefNames = names.slice(0, names.length - 1);
+        return `${prefNames.join(', ')} and ${names[names.length - 1]}`;
+      } else if (names.length === 2) {
+        return names.join(' and ');
+      } else {
+        return names.join('');
+      }
+    }
+    return '';
+  };
+
   render() {
-    const { open, onClose, onConfirm, count, type } = this.props;
+    const { open, onClose, onConfirm, assignees } = this.props;
+    const names = this.getName();
     const actions = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
-      <OrangeButton onClick={onConfirm} key="modal_btn_save">SAVE</OrangeButton>
+      <OrangeButton onClick={onConfirm} key="modal_btn_save">{(assignees && assignees.length === 0) ? 'CONFIRM' : 'SEND'}</OrangeButton>
     ];
     return (
       <Modal
@@ -25,10 +42,10 @@ export default class AssignConfirmModal extends React.Component {
         open={open}
         onClose={onClose}
       >
-        {count === 0 ? (
-            <Text>You are removing {type || 'provider'}s</Text>
+        {(assignees && assignees.length === 0) ? (
+            <Text>Please confirm that you would like to remove all assignees from this order.</Text>
           ) : (
-            <Text>You are dispatching order to {count} {type || 'provider'}s</Text>
+            <Text>Please confirm that you would like to dispatch this order to {names}.</Text>
           )
         }
       </Modal>

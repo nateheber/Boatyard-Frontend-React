@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
 import { get } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
-import { actionTypes, GetOrder, UpdateOrder } from 'store/actions/orders';
+import { actionTypes, GetOrder, UpdateOrder, SetDispatchedFlag } from 'store/actions/orders';
 import { orderSelector } from 'store/selectors/orders';
 import {
   getUserFromOrder,
@@ -49,9 +51,17 @@ class OrderDetails extends React.Component {
   componentDidMount() {
     const query = queryString.parse(this.props.location.search);
     const orderId = query.order;
+    const state = this.props.location.state;
+    if (state && state.hasOwnProperty('dispatched')) {
+      this.props.SetDispatchedFlag(state.dispatched);
+    }
     this.setState({ orderId }, () => {
       this.loadOrder();
     });
+  }
+
+  componentWillUnmount() {
+    this.props.SetDispatchedFlag(false);
   }
 
   loadOrder = () => {
@@ -62,6 +72,11 @@ class OrderDetails extends React.Component {
       success: () => {
         this.setState({ isFirstLoad: false });
       },
+      error: (e) => {
+        toastr.error('Error', e.message);
+        this.props.history.goBack();
+        this.props.history.goBack();
+      }
     });
   }
 
@@ -236,10 +251,11 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   GetOrder,
   UpdateOrder,
-  UpdateBoat
+  UpdateBoat,
+  SetDispatchedFlag
 };
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(OrderDetails);
+)(OrderDetails));

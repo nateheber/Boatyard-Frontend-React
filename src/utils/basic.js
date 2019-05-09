@@ -1,18 +1,21 @@
-import moment from 'moment'
+import moment from 'moment';
+// import { set } from 'lodash';
+
 
 export const parsetMomentToDate = (date) => {
   const convertTime = moment(date).format("YYYY-MM-DD HH:mm:ss");
   return new Date(convertTime);
-}
+};
 
 export function validateEmail(email) {
-  let reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/ ;
+  // const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/ ;
+  const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if(reg.test(email) === false) {
     return false;
   } else {
     return true;
   }
-}
+};
 
 export function formatPhoneNumber(phone, isEditing = false) {
   let formatted = phone;
@@ -26,4 +29,19 @@ export function formatPhoneNumber(phone, isEditing = false) {
     }
   }
   return formatted;
-}
+};
+
+export const refactorIncluded = (included) => {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i];
+    if (refactored.hasOwnProperty(type)) {
+      refactored[type][`${id}`] = {...included[i]};
+    } else {
+      refactored[type] = {};
+      refactored[type][`${id}`] = {...included[i]};
+    }
+    // set(refactored, `${type}.${id}`, {...included[i]});
+  }
+  return refactored;
+};

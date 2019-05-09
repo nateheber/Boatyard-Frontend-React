@@ -2,7 +2,7 @@ import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
 import { get } from 'lodash';
 import { actionTypes } from '../actions/providerLocations';
-import { refactorIncluded } from 'utils/conversations';
+import { refactorIncluded } from 'utils/basic';
 
 const initialState = {
   currentStatus: '',
