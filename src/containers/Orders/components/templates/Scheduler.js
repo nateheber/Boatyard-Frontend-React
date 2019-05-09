@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { get } from 'lodash';
+import { Row, Col } from 'react-flexbox-grid';
 
 import { Section } from 'components/basic/InfoSection';
 import { HollowButton } from 'components/basic/Buttons';
@@ -11,18 +12,23 @@ import AssignmentInfo from '../basic/AssignmentInfo';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
-`
+`;
 
 const AssignmentsList = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-`
+`;
 
 const Buttons  = styled.div`
   display: flex;
   flex-direction: column;
-`
+`;
+
+const Column = styled(Col)`
+  margin-left: -5px;
+  margin-right: -5px;
+`;
 
 export default class OrderSummarySection extends React.Component {
   state = {
@@ -93,10 +99,12 @@ export default class OrderSummarySection extends React.Component {
       <Section title="Scheduling">
         {
           assignments.length === 0 ? (
-            <React.Fragment>
-              <HollowButton style={{ marginLeft: 0 }} onClick={this.addOne}>SCHEDULE 1 OPTION</HollowButton>
-              <HollowButton onClick={this.addThree}>SCHEDULE 3 OPTIONS</HollowButton>
-            </React.Fragment>
+            <Row style={{ margin: 0 }}>
+              <Column>
+                <HollowButton onClick={this.addOne}>SCHEDULE 1 OPTION</HollowButton>
+                <HollowButton onClick={this.addThree}>SCHEDULE 3 OPTIONS</HollowButton>
+              </Column>
+            </Row>
           ) : (
             <Wrapper>
               <AssignmentsList>

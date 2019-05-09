@@ -34,6 +34,8 @@ const InfoList = styled.div`
 const Buttons  = styled.div`
   display: flex;
   flex-direction: row;
+  margin-left: -5px;
+  margin-right: -5px;
   @media (max-width: 600px) {
     justify-content: space-evenly;
   }

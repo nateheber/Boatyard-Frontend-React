@@ -11,7 +11,7 @@ const Label = styled.div`
   font-size: 16px;
   line-height: 20px;
   font-weight:  regular;
-`
+`;
 
 const Placeholder = styled.div`
   cursor: pointer;
@@ -22,7 +22,12 @@ const Placeholder = styled.div`
   &:hover {
     color: #d56f12;
   }
-`
+`;
+
+const UpdatedRow = styled(Row)`
+  min-height: 40px;
+  align-items: center;
+`;
 
 export default class OnClickEditor extends React.Component {
   constructor(props) {
@@ -55,12 +60,13 @@ export default class OnClickEditor extends React.Component {
     const { edit, value } = this.state;
     const { label } = this.props;
     return edit ? (
-      <Row style={{ padding: '10px 0px' }}>
+      <UpdatedRow>
         <Col xs={6}>
           <Label>{label}:</Label>
         </Col>
         <Col xs={6}>
           <CurrencyInput
+            style={{ marginBottom: 0 }}
             autoFocus
             fixedDecimalScale
             prefix='$'
@@ -71,9 +77,9 @@ export default class OnClickEditor extends React.Component {
             hideError
           />
         </Col>
-      </Row>
+      </UpdatedRow>
     ) : (
-      <Row style={{ padding: '10px 0px' }}>
+      <UpdatedRow>
         <Col xs={6}>
           <Label>{label}:</Label>
         </Col>
@@ -82,7 +88,7 @@ export default class OnClickEditor extends React.Component {
             {isEmpty(value) ? 'Add' : `$${parseFloat(value).toFixed(2)}`}
           </Placeholder>
         </Col>
-      </Row>
+      </UpdatedRow>
     )
   }
 }

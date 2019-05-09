@@ -131,9 +131,28 @@ const modalStyles = {
       fill: '#003247'
     }
   },
+  large: {
+    overlay: {
+      background: 'rgba(0, 0, 0, 0.3)',
+      padding: '100px 1.2rem'
+    },
+    modal: {
+      padding: '0px',
+      width: '100%',
+      maxWidth: '900px'
+    },
+    closeButton: {
+      top: '25px',
+      right: '15px'
+    },
+    closeIcon: {
+      fill: '#003247'
+    }
+  },
   extraLarge: {
     overlay: {
-      background: 'transparent'
+      background: 'rgba(0, 0, 0, 0.3)',
+      padding: '100px 1.2rem'
     },
     modal: {
       padding: '0px',
@@ -168,15 +187,38 @@ const modalStyles = {
 
 export default class CustomModal extends React.Component {
   render() {
-    const { open, onClose, classes, children, title, actions, small, normal, extraLarge, minHeight, loading, spinnerOptions, tabs, selected, onSelect } = this.props;
+    const {
+      open,
+      loading,
+      onClose,
+      classes,
+      children,
+      title,
+      actions,
+      small,
+      normal,
+      large,
+      extraLarge,
+      minHeight,
+      spinnerOptions,
+      tabs,
+      selected,
+      onSelect,
+      customHeader
+    } = this.props;
     return (
       <Modal
-        styles={small ? modalStyles.small : normal ? modalStyles.normal : extraLarge ? modalStyles.extraLarge : modalStyles.main}
+        styles={small ? modalStyles.small :
+          normal ? modalStyles.normal  :
+          large ? modalStyles.large :
+          extraLarge ? modalStyles.extraLarge : modalStyles.main
+        }
         open={open}
         onClose={onClose}
         style={{width: '300px'}}
       >
-        <Header className={classNames(!isEmpty(tabs) ? 'noBorder' : '', classes)}>{title}</Header>
+        {(title && title.length > 0) && <Header className={classNames(!isEmpty(tabs) ? 'noBorder' : '', classes)}>{title}</Header>}
+        <Header>{customHeader}</Header>
         {!isEmpty(tabs) && <ModalTab tabs={tabs} selected={selected} onSelect={onSelect} /> }
         <Body>
           <Content style={{ minHeight: minHeight || 'inherit' }} className={classNames(classes)}>

@@ -4,36 +4,41 @@ import deepEqual from 'deep-equal';
 import moment from 'moment';
 import { get, set, isEmpty } from 'lodash';
 import styled from 'styled-components';
-import { toastr } from 'react-redux-toastr';
+import { Row, Col } from 'react-flexbox-grid';
 
 import {
   updateLineItems,
   deleteLineItem,
   createLineItems
 } from 'store/reducers/lineItems';
-import { GetOrder, SendQuote, actionTypes } from 'store/actions/orders';
 import { orderSelector } from 'store/selectors/orders';
 import { Section } from 'components/basic/InfoSection';
-import Modal from 'components/compound/Modal';
-import { NormalText } from 'components/basic/Typho'
 import NewLineItems from '../infoSections/NewLineItem';
 import LineItem from '../infoSections/LineItem';
-import ButtonGroup from '../basic/ButtonGroup';
 import QuoteHeader from '../basic/QuoteHeader';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 
-export const Description = styled(NormalText)`
-  font-family: 'Open sans-serif', sans-serif;
-  padding: 10px 0;
+const ButtonGroup = styled(Row)`
+  padding: 20px 0;
+  margin: 0 !important;
+  border-top: 1px solid #e6e6e6;
+  align-items: center;
+  justify-content: space-between;
 `;
+
+const Column = styled(Col)`
+  padding: 0 !important;
+  margin-left: -5px;
+  margin-right: -5px;
+`;
+
 class LineItemSection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       newItems: [],
       lineItems: get(props, 'currentOrder.lineItems', []),
-      mode: 'view',
-      showQuote: false,
+      mode: 'view'
     }
   }
 
@@ -86,16 +91,8 @@ class LineItemSection extends React.Component {
     if (mode === 'edit') {
       this.updateLineItems();
     }
-    this.saveNewItems()
+    this.saveNewItems();
     this.setState({ mode: 'view' })
-  }
-
-  onSendQuote = () => {
-    this.setState({ showQuote: true });
-  }
-
-  hideQuoteModal = () => {
-    this.setState({ showQuote: false });
   }
 
   updateLineItems = () => {
@@ -154,39 +151,12 @@ class LineItemSection extends React.Component {
     });
   };
 
-  canSendQuote = () => {
-    const { currentOrder } = this.props;
-    const orderState = get(currentOrder, 'attributes.state');
-    return orderState === 'accepted' || orderState === 'provisioned' || orderState === 'scheduled';
-  }
-
-  sendQuote = () => {
-    const { orderId, SendQuote, GetOrder, currentOrder } = this.props;
-    const orderState = get(currentOrder, 'attributes.state');
-    const isResend = orderState === 'provisioned' || orderState === 'scheduled';
-    SendQuote({
-      orderId,
-      isResend,
-      success: () => {
-        this.setState({ showQuote: false });
-        toastr.success('Success', 'Sent quote successfully!');
-        GetOrder({ orderId });
-      },
-      error: () => {
-        this.setState({ showQuote: false });
-      }
-    });
-  }
-
   render() {
-    const { newItems, mode, lineItems, showQuote } = this.state;
-    const { updatedAt, currentStatus } = this.props;
-    const modalActions = [
-      <HollowButton onClick={this.hideQuoteModal} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.sendQuote} key="modal_btn_save">Send</OrangeButton>
-    ];
+    const { newItems, mode, lineItems } = this.state;
+    const { updatedAt } = this.props;
     return (
       <Section
+        style={{ paddingBottom: 0 }}
         title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`}
         mode={mode}
         onEdit={this.onEdit}
@@ -212,48 +182,33 @@ class LineItemSection extends React.Component {
             remove={() => this.removeNewItem(idx)}
           />
         ))}
-        <ButtonGroup
-          onAdd={this.addNewItem}
-          showSave={newItems.length > 0 || mode === 'edit'}
-          onSave={this.onSave}
-          showQuote={this.canSendQuote()}
-          onSendQuote={this.onSendQuote}
-        />
-        <Modal
-          title={'Send Quote'}
-          actions={modalActions}
-          loading={currentStatus === actionTypes.SEND_QUOTE}
-          normal={true}
-          open={showQuote}
-          onClose={this.hideQuoteModal}
-        >
-          <Description>Are you sure you want to send this quote?</Description>
-        </Modal>
-        {/* {privilege === 'provider' && (
-          <SendQuoteModal
-            loading={currentStatus === actionTypes.SEND_QUOTE}
-            open={showQuote}
-            onClose={this.hideQuoteModal}
-            onSendQuote={this.sendQuote}
-          />
-        )} */}
+        <ButtonGroup>
+          <Column xs={12} sm={6}>
+            <HollowButton onClick={this.addNewItem}>
+              ADD ITEM
+            </HollowButton>
+          </Column>
+          <Column xs={12} sm={6} style={{ textAlign: 'right' }}>
+            {(newItems.length > 0 || mode === 'edit') &&
+              <OrangeButton style={{ marginRight: 5 }} onClick={this.onSave}>
+                SAVE CHANGES
+              </OrangeButton>
+            }
+          </Column>
+        </ButtonGroup>
       </Section>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  ...orderSelector(state),
-  privilege: state.auth.privilege,
-  currentStatus: state.order.currentStatus,
+  ...orderSelector(state)
 })
 
 const mapDispatchToProps = {
   updateLineItems,
   deleteLineItem,
-  createLineItems,
-  GetOrder,
-  SendQuote,
+  createLineItems
 };
 
 export default connect(

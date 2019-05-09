@@ -9,14 +9,14 @@ const Label = styled.div`
   font-family: "Source Sans Pro", sans-serif;
   font-size: 16px;
   line-height: 20px;
-`
+`;
 
 const Value = styled.div`
   color: #8f8f8f;
   font-family: "Source Sans Pro", sans-serif;
   font-size: 16px;
   line-height: 20px;
-`
+`;
 
 const Placeholder = styled.span`
   cursor: pointer;
@@ -27,7 +27,12 @@ const Placeholder = styled.span`
   &:hover {
     color: #d56f12;
   }
-`
+`;
+
+const UpdatedRow = styled(Row)`
+  min-height: 40px;
+  align-items: center;
+`;
 
 export default class TaxEditor extends React.Component {
   constructor(props) {
@@ -61,18 +66,18 @@ export default class TaxEditor extends React.Component {
     const { edit, value } = this.state;
     const { taxAmount } = this.props;
     return edit ? (
-      <Row style={{ padding: '10px 0px' }}>
+      <UpdatedRow>
         <Col xs={6}>
-          <Input type="text" value={value} onChange={this.onChange} onBlur={this.resetEdit} />
+          <Input style={{ marginBottom: 0 }} type="text" value={value} onChange={this.onChange} onBlur={this.resetEdit} />
         </Col>
         <Col xs={6}>
           <Value>
             ${parseFloat(taxAmount).toFixed(2)}
           </Value>
         </Col>
-      </Row>
+      </UpdatedRow>
     ) : (
-      <Row style={{ padding: '10px 0px' }}>
+      <UpdatedRow>
         <Col xs={6}>
           <Label>
             {'Tax '}
@@ -86,7 +91,7 @@ export default class TaxEditor extends React.Component {
             ${parseFloat(taxAmount).toFixed(2)}
           </Value>
         </Col>
-      </Row>    
+      </UpdatedRow>    
     )
   }
 }

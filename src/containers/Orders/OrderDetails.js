@@ -19,15 +19,17 @@ import { actionTypes as boatActions, UpdateBoat } from 'store/actions/boats';
 import { SectionGroup } from 'components/basic/InfoSection';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import CustomerBoat from './components/templates/CustomerBoat';
+import JobSection from './components/templates/JobSection';
 import LineItemSection from './components/templates/LineItemSection';
 import OrderSummarySection from './components/templates/OrderSummarySection';
 import OrderReviewSection from './components/templates/OrderReviewSection';
 import OrderDetailHeader from './components/templates/OrderDetailHeader';
 import Scheduler from './components/templates/Scheduler';
 import PaymentSection from './components/templates/PaymentSection';
-import Timeline from './components/templates/Timeline';
+import TimeLineSection from './components/templates/TimeLineSection';
 import OrderAssignment from './components/templates/OrderAssignment';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
+import JobModal from './components/modals/JobModal';
 
 const Wrapper = styled.div`
   padding: 30px 25px;
@@ -42,7 +44,8 @@ class OrderDetails extends React.Component {
   state = {
     orderId: -1,
     isFirstLoad: true,
-    visibleOfBoatModal: false
+    visibleOfBoatModal: false,
+    visibleOfJobModal: false
   };
 
   componentDidMount() {
@@ -87,26 +90,6 @@ class OrderDetails extends React.Component {
   getProviderId = () => {
     const { currentOrder } = this.props;
     return get(getProviderFromOrder(currentOrder), 'id', '');
-  };
-
-  getSummaryInfo = () => {
-    const { currentOrder } = this.props;
-    const total = get(currentOrder, 'attributes.total');
-    const subtotal = get(currentOrder, 'attributes.subTotal');
-    const taxRate = get(currentOrder, 'attributes.taxRate');
-    const taxAmount = get(currentOrder, 'attributes.taxAmount');
-    const discount = get(currentOrder, 'attributes.discount');
-    const deposit = get(currentOrder, 'attributes.deposit');
-    const comments = get(currentOrder, 'attributes.comments');
-    return {
-      total,
-      subtotal,
-      taxRate,
-      discount,
-      deposit,
-      taxAmount,
-      comments
-    };
   };
 
   getUdpatedDate = () => {
@@ -161,14 +144,21 @@ class OrderDetails extends React.Component {
     this.props.UpdateOrder({ orderId, data });
   };
 
+  showJobModal = () => {
+    this.setState({ visibleOfJobModal: true });
+  };
+
+  hideJobModal = () => {
+    this.setState({ visibleOfJobModal: false });
+  };
+
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const updatedDate = this.getUdpatedDate();
-    const { orderId, isFirstLoad, visibleOfBoatModal } = this.state;
+    const { orderId, isFirstLoad, visibleOfBoatModal, visibleOfJobModal } = this.state;
     const providerId = this.getProviderId();
-    const { currentOrder, currentStatus, boatStatus } = this.props;
+    const { currentOrder, currentStatus, boatStatus, privilege } = this.props;
     const lineItems = get(currentOrder, 'lineItems', []);
-    const summaryInfo = this.getSummaryInfo();
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
     const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
@@ -195,7 +185,7 @@ class OrderDetails extends React.Component {
                       providerId={providerId}
                     />
                     <OrderReviewSection
-                      {...summaryInfo}
+                      order={currentOrder}
                       updateOrder={this.updateOrder}
                     />
                   </SectionGroup>
@@ -218,8 +208,12 @@ class OrderDetails extends React.Component {
                       onEditBoat={() => this.showBoatModal()}
                     />
                   </SectionGroup>
+                  {privilege === 'provider' && <SectionGroup>
+                    {/* <JobSection order={currentOrder} addJob={this.showJobModal} /> */}
+                    <JobSection order={currentOrder} />
+                  </SectionGroup>}
                   <SectionGroup>
-                    <Timeline order={currentOrder} />
+                    <TimeLineSection order={currentOrder} />
                   </SectionGroup>
                 </Column>
               </Row>
@@ -234,6 +228,12 @@ class OrderDetails extends React.Component {
                 boatInfo={boatInfo}
               />
             )}
+            {visibleOfJobModal && <JobModal
+              open={visibleOfJobModal}
+              customerInfo={customerInfo}
+              onClose={this.hideJobModal}
+              onSave={this.onSaveJob}
+            />}
           </React.Fragment>
         )}
       </React.Fragment>
