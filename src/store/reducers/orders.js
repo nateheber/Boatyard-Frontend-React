@@ -188,13 +188,7 @@ export default handleActions(
         const { type, payload: { order, included } } = action;
         draft.currentStatus = type;
         draft.currentOrder = order;
-        const refactoredIncluded = refactorIncluded(included);
-        for(const key in refactoredIncluded) {
-          const items = refactoredIncluded[key];
-          for(const index in items) {
-            set(draft, `included.${key}.${index}`, items[index]);
-          }          
-        }
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.GET_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {

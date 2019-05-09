@@ -2,8 +2,10 @@ import React from 'react'
 import { isEmpty } from 'lodash';
 import styled from 'styled-components';
 import { get, startCase } from 'lodash';
+import moment from 'moment';
 
 import { Section } from 'components/basic/InfoSection';
+import * as constants from 'utils/constants';
 
 const TR = styled.tr`
   &:last-child {
@@ -30,6 +32,54 @@ const FieldValue = styled.td`
 `;
 
 export default class OrderSummarySection extends React.Component {
+  renderWhenValues = () => {
+    const { order } = this.props;
+    const lineItems = get(order, 'lineItems', []);
+    if (lineItems && lineItems.length > 0) {
+      const scheduleItems = get(lineItems[0], 'relationships.lineItemSchedules', []);
+      if (scheduleItems && scheduleItems.length > 0) {
+        const scheduleItem = scheduleItems[0];
+        if (scheduleItem) {
+          if (get(scheduleItem, 'attributes.flexible')) {
+            return (
+              <TR>
+                <Label>WHEN</Label>
+                <FieldValue sm={3} md={3} lg={3}>{constants.WHEN_FLEXIBLE_OPTION}</FieldValue>
+              </TR>
+            );
+          } else if (get(scheduleItem, 'attributes.asap')) {
+            return (
+              <TR>
+                <Label>WHEN</Label>
+                <FieldValue sm={3} md={3} lg={3}>{constants.WHEN_ASAP_OPTION}</FieldValue>
+              </TR>
+            );
+          } else if (get(scheduleItem, 'attributes.complicated')) {
+            return (
+              <TR>
+                <Label>WHEN</Label>
+                <FieldValue sm={3} md={3} lg={3}>{constants.WHEN_COMPLICATED_OPTION}</FieldValue>
+              </TR>
+            );
+          } else {
+            const startAt = moment(get(scheduleItem, 'attributes.specificStart'));
+            let morning = true;
+            if (startAt.hours() > 11) {
+              morning = false;
+            }
+            return (
+              <TR>
+                <Label>WHEN</Label>
+                <FieldValue sm={3} md={3} lg={3}>{`${startAt.format('MM/DD/YYYY')} (${morning ? 'Morning' : 'Afternoon'})`}</FieldValue>
+              </TR>
+            );
+          }
+        }
+      }
+    }
+    return null;
+  };
+
   renderProperties = () => {
     const { order } = this.props;
     const properties = get(order, 'attributes.properties', {});
@@ -68,6 +118,7 @@ export default class OrderSummarySection extends React.Component {
                 {serviceName}
               </FieldValue>
             </TR>}
+            {this.renderWhenValues()}
             {this.renderProperties()}
             {!isEmpty(slipNumber) && <TR>
               <Label>
