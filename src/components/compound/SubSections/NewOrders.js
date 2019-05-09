@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { get, merge, orderBy } from 'lodash';
+import { get } from 'lodash';
 
-import { GetNewOrders, GetPaidOrders } from 'store/actions/orders';
+import { GetNewOrders } from 'store/actions/orders';
 import { refinedOrdersSelector } from 'store/selectors/orders'
 import { NewOrderSection } from 'components/basic/SubSection';
 import { OrderTable } from 'components/basic/Order';
@@ -30,44 +30,36 @@ class NewOrders extends React.Component {
   }
 
   componentDidMount() {
-    const { GetNewOrders, GetPaidOrders } = this.props;
+    const { GetNewOrders } = this.props;
     GetNewOrders({
       params: {
         page: 1,
         per_page: 5,
-        'order[state]': 'draft',
+        'order[order]': 'position',
         'order[sort]': 'desc',
-        'order[order]': 'created_at'
-      },
-      success: () => {
-        GetPaidOrders({
-          params: {
-            page: 1,
-            per_page: 5,
-            'order[state]': 'dispatched',
-            'order[sort]': 'desc',
-            'order[order]': 'created_at'
-          },
-          success: () => {
-            const { draftTotal, dispatchedTotal, draftOrders, dispatchedOrders } = this.props;
-            let total = draftTotal + dispatchedTotal;
-            let orders = orderBy(merge(draftOrders, dispatchedOrders), ['createdAt'], ['desc']);
-            if (total > 5) {
-              orders = orders.slice(0, 5);
-              total = 5;
-            }
-            this.setState({ loaded: true, total, orders });
-          }
-        });
       }
     });
   }
 
   render() {
     const { history } = this.props;
-    const { loaded, total, orders } = this.state;
+    const { total, orders } = this.props;
+    let newOrders = orders;
+    if (total > 5) {
+      newOrders = orders.slice(0, 5);
+    }
+    const processedOrders = (newOrders || []).map(order => {
+      let name = `Order #${order.id}`;
+      if (order.providerOrderSequence) {
+        name = `Order #${order.providerOrderSequence}`;
+      }
+      return {
+        ...order,
+        name,
+      };
+    });
     const columns = [
-      { label: 'ORDER', value: 'id', isTitle: true, type: 'new', link: true },
+      { label: 'ORDER', value: 'name', isTitle: true, type: 'new', link: true },
       {
         label: 'CUSTOMER',
         value: [
@@ -75,7 +67,7 @@ class NewOrders extends React.Component {
           'relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'
         ],
         isCustomer: true,
-        type: 'new-customer'
+        // type: 'new-customer'
       },
       { label: 'SERVICE', value: 'relationships.service.attributes.name' },
       { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' },
@@ -84,12 +76,12 @@ class NewOrders extends React.Component {
     ];
     return (
       <Wrapper>
-      <NewOrderSection count={total} />
-      {loaded && <OrderTable
+      <NewOrderSection count={total >= 5 ? 5 : total } />
+      <OrderTable
         columns={columns}
-        items={orders}
-      />}
-      {loaded && <HollowButton className="btn-view-all" onClick={() => history.push('/orders/')}>
+        items={processedOrders}
+      />
+      {total > 5 && <HollowButton className="btn-view-all" onClick={() => history.push('/orders/')}>
         VIEW ALL
       </HollowButton>}
     </Wrapper>  
@@ -98,15 +90,12 @@ class NewOrders extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  draftTotal: get(state, 'order.newOrders.total'),
-  dispatchedTotal: get(state, 'order.paidOrders.total'),
-  draftOrders: refinedOrdersSelector(state, 'new'),
-  dispatchedOrders: refinedOrdersSelector(state, 'paid')
+  total: get(state, 'order.newOrders.total', 0),
+  orders: refinedOrdersSelector(state, 'new'),
 });
 
 const mapDispatchToProps = {
-  GetNewOrders,
-  GetPaidOrders
+  GetNewOrders
 };
 
 export default withRouter(connect(

@@ -218,7 +218,7 @@ export default class CustomModal extends React.Component {
         style={{width: '300px'}}
       >
         {(title && title.length > 0) && <Header className={classNames(!isEmpty(tabs) ? 'noBorder' : '', classes)}>{title}</Header>}
-        <Header>{customHeader}</Header>
+        {customHeader && <Header>{customHeader}</Header>}
         {!isEmpty(tabs) && <ModalTab tabs={tabs} selected={selected} onSelect={onSelect} /> }
         <Body>
           <Content style={{ minHeight: minHeight || 'inherit' }} className={classNames(classes)}>
