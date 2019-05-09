@@ -1,9 +1,11 @@
-import moment from 'moment'
+import moment from 'moment';
+import { set } from 'lodash';
+
 
 export const parsetMomentToDate = (date) => {
   const convertTime = moment(date).format("YYYY-MM-DD HH:mm:ss");
   return new Date(convertTime);
-}
+};
 
 export function validateEmail(email) {
   // const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/ ;
@@ -13,7 +15,7 @@ export function validateEmail(email) {
   } else {
     return true;
   }
-}
+};
 
 export function formatPhoneNumber(phone, isEditing = false) {
   let formatted = phone;
@@ -27,4 +29,13 @@ export function formatPhoneNumber(phone, isEditing = false) {
     }
   }
   return formatted;
-}
+};
+
+export const refactorIncluded = (included) => {
+  let refactored = {};
+  for ( let i = 0; i < included.length; i += 1 ) {
+    const { type, id } = included[i];
+    set(refactored, `${type}.${id}`, {...included[i]});
+  }
+  return refactored;
+};

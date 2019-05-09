@@ -1,7 +1,7 @@
 import React from 'react'
 import { isEmpty } from 'lodash';
 import styled from 'styled-components';
-import { get } from 'lodash';
+import { get, startCase } from 'lodash';
 
 import { Section } from 'components/basic/InfoSection';
 
@@ -39,7 +39,7 @@ export default class OrderSummarySection extends React.Component {
       fields.push(
         <TR key={`${key} - ${value}`}>
           <Label>
-            {key.toUpperCase()}
+            {startCase(key)}
           </Label>
           <FieldValue sm={3} md={3} lg={3}>
             {value}

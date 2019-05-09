@@ -70,10 +70,15 @@ export default class FormFields extends React.Component {
     const errors = [];
     const { fields } = this.props;
     for (let i = 0; i < fields.length; i += 1) {
-      if (
+      const fieldValue = get(value, fields[i].field);
+      if (fields[i].type === 'date') {
+        if (fields[i].required && !fieldValue) {
+          errors.push(fields[i].field);
+        }
+      } else if (
         fields[i].type !== 'check_box' &&
         fields[i].required &&
-        isEmpty(get(value, fields[i].field))
+        isEmpty(fieldValue)
       ) {
         errors.push(fields[i].field);
       }

@@ -3,7 +3,7 @@ import { get, hasIn, keys, isArray, isEmpty } from 'lodash';
 
 import { actionTypes } from '../actions/providerLocations';
 import { getProviderLocationClient } from './sagaSelectors';
-import { refactorIncluded } from 'utils/conversations';
+import { refactorIncluded } from 'utils/basic';
 
 const refineProviderLocations = (providerLocations) => {
   return providerLocations.map(location => {

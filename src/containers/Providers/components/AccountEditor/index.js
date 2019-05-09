@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { get } from 'lodash';
 
@@ -9,7 +10,7 @@ import { AccountHeader, CompanyInfo, ContactInfo } from './components';
 import { getProviderPrimaryLocation } from 'utils/provider';
 import { formatPhoneNumber } from 'utils/basic';
 
-import { CreateProvider, UpdateProvider } from 'store/actions/providers';
+import { CreateProvider, UpdateProvider, LoginWithProvider } from 'store/actions/providers';
 import { CreateProviderLocation, UpdateProviderLocation } from 'store/actions/providerLocations';
 
 const Wrapper = styled.div`
@@ -166,6 +167,16 @@ class AccountEditor extends React.Component {
     })
   }
 
+  selectProvider = () => {
+    const { provider, LoginWithProvider } = this.props;
+    LoginWithProvider({
+      providerId: provider.id,
+      success: () => {
+        this.props.history.push('/dashboard');
+      }
+    });
+  };
+
   saveData = () => {
     const { newFlg } = this.props;
     const isCompanyValid = this.companyFields.validateFields();
@@ -194,7 +205,7 @@ class AccountEditor extends React.Component {
     const contactInfo = this.getDefaultContactInfo();
     return (
       <Wrapper>
-        <AccountHeader name={name} />
+        <AccountHeader name={name} onLogin={this.selectProvider} />
         <EditorWrapper>
           <EditorContent>
             <CompanyInfo newFlg={newFlg} ref={this.setCompanyFieldsRef} defaultValues={companyInfo} />
@@ -218,6 +229,7 @@ const mapDispatchToProps = {
   UpdateProvider,
   CreateProviderLocation,
   UpdateProviderLocation,
+  LoginWithProvider
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountEditor);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AccountEditor));
