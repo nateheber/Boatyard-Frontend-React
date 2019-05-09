@@ -2,7 +2,8 @@ import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
 import { get, reverse, merge } from 'lodash';
 import { actionTypes } from '../actions/conversations';
-import { refactorIncluded, parseIncludedForMessages } from 'utils/conversations';
+import { refactorIncluded } from 'utils/basic';
+import { parseIncludedForMessages } from 'utils/conversations';
 
 const initialState = {
   currentStatus: '',

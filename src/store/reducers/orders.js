@@ -3,7 +3,7 @@ import { produce } from 'immer'
 import { set, get } from 'lodash'
 
 import { actionTypes } from '../actions/orders';
-import { refactorIncluded } from 'utils/conversations';
+import { refactorIncluded } from 'utils/basic';
 
 const ordersState = {
   orders: [],

@@ -1,5 +1,5 @@
-import { isEmpty, get, set, reverse, hasIn } from 'lodash';
 import moment from 'moment';
+import { isEmpty, get, set, reverse, hasIn } from 'lodash';
 
 const MERGE_RANGE_MINUTES = 5;
 
@@ -30,15 +30,6 @@ export const parseIncludedForMessages = (included) => {
     return target;
   }, {});
 }
-
-export const refactorIncluded = (included) => {
-  let refactored = {};
-  for ( let i = 0; i < included.length; i += 1 ) {
-    const { type, id } = included[i];
-    set(refactored, `${type}.${id}`, {...included[i]});
-  }
-  return refactored;
-};
 
 export const parseMessageDetails = (profile, message, included) => {
   const profileId = get(message, 'attributes.profileId');

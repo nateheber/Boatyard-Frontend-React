@@ -4,7 +4,7 @@ import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/managements';
 import { getManagementClient } from './sagaSelectors';
-import { refactorIncluded } from 'utils/conversations';
+import { refactorIncluded } from 'utils/basic';
 
 const refineManagement = (management, included) => {
   for(const key in management.relationships) {
