@@ -27,7 +27,7 @@ const Input = styled.input`
   font-size: 14px;
   border: none;
   height: 30px;
-  width: calc(100% - 40px);
+  width: calc(100% - 40px) !important;
   font-weight: 600;
   padding-top: 0px;
   padding-bottom: 0px;
