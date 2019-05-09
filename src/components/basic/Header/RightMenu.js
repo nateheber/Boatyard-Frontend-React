@@ -219,7 +219,7 @@ const MenuUI = ({ firstName, lastName, logout, history, toggleMessage, messageTo
           </MenuItemLi>
         </DropdownMenu>
       </DropdownItem>
-      <DropdownItem>
+      <DropdownItem style={{ display: 'none' }}>
         <IconItem>
           <Icon width={20} height={20} src={Bell} alt="bell" />
         </IconItem>
