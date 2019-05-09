@@ -16,7 +16,7 @@ const RightPart = styled.div`
 
 const SearchWrapper = styled.div`
   width: 228px;
-`
+`;
 
 const Header = ({ onMenuToggle, onToggleMessage, messageToggleRef }) => (
   <HeaderWrapper>
@@ -24,7 +24,7 @@ const Header = ({ onMenuToggle, onToggleMessage, messageToggleRef }) => (
     <Logo />
     <RightPart xs={10}>
       <SearchWrapper>
-        <SearchBox secondary placeholder="Search by order number, user, boat, etc" />
+        <SearchBox secondary placeholder="Search by order number, user, boat, etc" style={{ display: 'none', width: '100%' }} />
       </SearchWrapper>
       <RightMenu messageToggleRef={messageToggleRef} toggleMessage={onToggleMessage} />
     </RightPart>

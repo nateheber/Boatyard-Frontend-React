@@ -119,7 +119,7 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'created_at',
+            'order[order]': 'id',
             'order[sort]': 'desc',
           }
         });
@@ -156,8 +156,12 @@ class OrderList extends React.Component {
 
   toDetails = order => {
     const { state } = order;
-    this.props.SetDispatchedFlag(state === 'dispatched');
-    this.props.history.push(`/order-details/?order=${order.id}`);
+    const { privilege } = this.props;
+    let dispatched = false;
+    if (state === 'dispatched' && privilege === 'provider') {
+      dispatched = true;
+    }
+    this.props.history.push({pathname: '/order-details/', search: `?order=${order.id}`, state: { dispatched }});
   };
 
   getPageCount = () => {
@@ -225,7 +229,7 @@ class OrderList extends React.Component {
 const mapStateToProps = state => ({
   orders: refinedOrdersSelector(state),
   page: get(state, 'order.orders.page', 1),
-  perPage: get(state, 'oreder.orders.perPage', 20),
+  perPage: get(state, 'order.orders.perPage', 20),
   total: get(state, 'order.orders.total', 0),
   privilege: get(state, 'auth.privilege')
 });
