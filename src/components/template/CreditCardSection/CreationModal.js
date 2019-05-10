@@ -120,6 +120,7 @@ let infoFields = [
     field: 'country',
     label: 'Country',
     options: coutries,
+    defaultValue: coutries[0].value,
     required: true,
     errorMessage: 'Choose Country',
     xs: 12,
