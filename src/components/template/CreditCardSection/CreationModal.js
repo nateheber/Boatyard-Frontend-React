@@ -13,6 +13,14 @@ const Divider = styled.hr`
   margin: 20px 0;
   border-top: 1px solid #f1f1f1;
 `;
+
+const coutries = [
+  {
+    label: 'United States',
+    value: 'US'
+  }
+];
+
 const cardFields = [
   {
     type: 'text_field',
@@ -103,6 +111,19 @@ let infoFields = [
     errorMessage: 'Required',
     xs: 4,
     sm: 4,
+    md: 4,
+    lg: 4,
+    xl: 4
+  },
+  {
+    type: 'select_box',
+    field: 'country',
+    label: 'Country',
+    options: coutries,
+    required: true,
+    errorMessage: 'Choose Country',
+    xs: 12,
+    sm: 12,
     md: 4,
     lg: 4,
     xl: 4
