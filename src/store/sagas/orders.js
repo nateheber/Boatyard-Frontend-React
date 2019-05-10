@@ -175,13 +175,45 @@ function* sendQuote(action) {
     orderClient = yield select(getOrderClient);
   }
   try {
-    yield call(orderClient.update, orderId, { order: { transition: isResend ? 'reprovision' : 'provision' } });
-    yield put({ type: actionTypes.SEND_QUOTE_SUCCESS });
+    const result = yield call(orderClient.update, orderId, { order: { transition: isResend ? 'reprovision' : 'provision' } });
+    const { data, included } = result;
+    yield put({
+      type: actionTypes.SEND_QUOTE_SUCCESS,
+      payload: {
+        order: data,
+        included
+      }
+    });
     if (success) {
       yield call(success);
     }
   } catch (e) {
     yield put({ type: actionTypes.SEND_QUOTE_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
+function* sendInvoice(action) {
+  const apiClient = yield select(getCustomApiClient);
+  const { orderId, success, error } = action.payload;
+  try {
+    const result = yield call(apiClient.post, `/orders/${orderId}/invoices`);
+    // const { data, included } = result;
+    const { data } = result;
+    yield put({
+      type: actionTypes.SEND_INVOICE_SUCCESS,
+      payload: {
+        order: data,
+        // included
+      }
+    });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.SEND_INVOICE_FAILURE, payload: e });
     if (error) {
       yield call(error, e);
     }
@@ -275,4 +307,5 @@ export default function* OrderSaga() {
   yield takeEvery(actionTypes.DISPATCH_ORDER, dispatchOrder);
   yield takeEvery(actionTypes.ACCEPT_ORDER, acceptOrder);
   yield takeEvery(actionTypes.SEND_QUOTE, sendQuote);
+  yield takeEvery(actionTypes.SEND_INVOICE, sendInvoice);
 }
