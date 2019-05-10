@@ -73,7 +73,7 @@ class OrderDetailHeader extends React.Component {
     this.props.AcceptOrder({
       orderId,
       success: () => {
-        toastr.success('Success', 'Declined successfully!');
+        toastr.success('Success', 'Accepted successfully!');
         this.props.history.push('/orders/');
       },
       error: (e) => {
