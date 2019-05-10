@@ -198,7 +198,7 @@ export default class FormFields extends React.Component {
   render() {
     const { fields, fieldSize } = this.props;
     return (
-      <Row>
+      <Row style={{ marginBottom: 10 }}>
         {fields.map(
           (
             {
