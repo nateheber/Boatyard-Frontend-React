@@ -198,7 +198,7 @@ export default class FormFields extends React.Component {
   render() {
     const { fields, fieldSize } = this.props;
     return (
-      <Row style={{ marginBottom: 10 }}>
+      <Row>
         {fields.map(
           (
             {
@@ -216,7 +216,7 @@ export default class FormFields extends React.Component {
             },
             idx
           ) => (
-            <Col {...posInfo} key={`field_${idx}`}>
+            <Col {...posInfo} key={`field_${idx}`}  style={{ marginBottom: 10 }}>
               <InputWrapper className={classNames("secondary", `size-${fieldSize}`)}>
                 <InputLabel>{label}</InputLabel>
                 {this.renderInputField(
