@@ -6,7 +6,7 @@ import deepEqual from 'deep-equal';
 import { toastr } from 'react-redux-toastr';
 import { get } from 'lodash';
 
-import { GetOrder, SendQuote, actionTypes } from 'store/actions/orders';
+import { GetOrder, SendQuote, SendInvoice, actionTypes } from 'store/actions/orders';
 import { Section } from 'components/basic/InfoSection';
 import { TextArea } from 'components/basic/Input';
 import { NormalText } from 'components/basic/Typho';
@@ -69,7 +69,11 @@ class OrderReviewSection extends React.Component {
   constructor(props) {
     super(props)
     const summary = this.getSummaryInfo();
-    this.state = { showQuote: false, ...summary };
+    this.state = {
+      ...summary,
+      showQuote: false,
+      showInvoice: false
+    };
   }
 
   componentDidUpdate(prevProps) {
@@ -155,8 +159,16 @@ class OrderReviewSection extends React.Component {
     this.setState({ showQuote: false });
   }
 
+  onSendInvoice = () => {
+    this.setState({ showInvoice: true });
+  }
+
+  hideInvoiceModal = () => {
+    this.setState({ showInvoice: false });
+  }
+
   sendQuote = () => {
-    const { SendQuote, GetOrder, order } = this.props;
+    const { SendQuote, order } = this.props;
     const orderId = get(order, 'id');
     const orderState = get(order, 'attributes.state');
     const isResend = orderState === 'provisioned' || orderState === 'scheduled';
@@ -166,20 +178,40 @@ class OrderReviewSection extends React.Component {
       success: () => {
         this.setState({ showQuote: false });
         toastr.success('Success', 'Sent quote successfully!');
-        GetOrder({ orderId });
       },
-      error: () => {
+      error: (e) => {
         this.setState({ showQuote: false });
+        toastr.error('Error', e.message);
+      }
+    });
+  };
+
+  sendInvoice = () => {
+    const { SendInvoice, order } = this.props;
+    const orderId = get(order, 'id');
+    SendInvoice({
+      orderId,
+      success: () => {
+        this.setState({ showInvoice: false });
+        toastr.success('Success', 'Sent invoice successfully!');
+      },
+      error: (e) => {
+        this.setState({ showInvoice: false });
+        toastr.error('Error', e.message);
       }
     });
   };
 
   render() {
-    const { taxRate, deposit, discount, subtotal, total, taxAmount, comments, showQuote } = this.state;
+    const { taxRate, deposit, discount, subtotal, total, taxAmount, comments, showQuote, showInvoice } = this.state;
     const { currentStatus } = this.props;
-    const modalActions = [
+    const quoteModalActions = [
       <HollowButton onClick={this.hideQuoteModal} key="modal_btn_cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.sendQuote} key="modal_btn_save">Send</OrangeButton>
+    ];
+    const invoiceModalActions = [
+      <HollowButton onClick={this.hideQuoteModal} key="modal_btn_cancel">Cancel</HollowButton>,
+      <OrangeButton onClick={this.sendInvoice} key="modal_btn_save">Send</OrangeButton>
     ];
     return (
       <Section>
@@ -213,20 +245,30 @@ class OrderReviewSection extends React.Component {
             {this.canSendQuote() && <HollowButton onClick={this.onSendQuote}>
               Send Quote
             </HollowButton>}
-            {this.canSendInvoice() && <HollowButton onClick={this.addNewItem}>
+            {this.canSendInvoice() && <HollowButton onClick={this.onSendInvoice}>
               Send Invoice
             </HollowButton>}
           </Column>
         </ButtonGroup>
         <Modal
           title={'Send Quote'}
-          actions={modalActions}
+          actions={quoteModalActions}
           loading={currentStatus === actionTypes.SEND_QUOTE}
           normal={true}
           open={showQuote}
           onClose={this.hideQuoteModal}
         >
           <Description>Are you sure you want to send this quote?</Description>
+        </Modal>
+        <Modal
+          title={'Send Invoice'}
+          actions={invoiceModalActions}
+          loading={currentStatus === actionTypes.SEND_INVOICE}
+          normal={true}
+          open={showInvoice}
+          onClose={this.hideInvoiceModal}
+        >
+          <Description>Are you sure you want to send this invoice?</Description>
         </Modal>
         {/* {privilege === 'provider' && (
           <SendQuoteModal
@@ -248,7 +290,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   GetOrder,
-  SendQuote
+  SendQuote,
+  SendInvoice
 };
 
 export default connect(

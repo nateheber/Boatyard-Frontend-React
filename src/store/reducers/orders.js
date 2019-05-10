@@ -276,11 +276,31 @@ export default handleActions(
       }),
     [actionTypes.SEND_QUOTE_SUCCESS]: (state, action) =>
       produce(state, draft => {
+        const { type, payload: { order, included } } = action;
+        draft.currentStatus = type;
+        draft.currentOrder = order;
+        draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.SEND_QUOTE_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.SEND_INVOICE]: (state, action) =>
+      produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
         draft.errors = null;
       }),
-    [actionTypes.SEND_QUOTE_FAILURE]: (state, action) =>
+    [actionTypes.SEND_INVOICE_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: { order } } = action;
+        draft.currentStatus = type;
+        draft.currentOrder = order;
+      }),
+    [actionTypes.SEND_INVOICE_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;

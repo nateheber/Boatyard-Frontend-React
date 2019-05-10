@@ -53,6 +53,10 @@ export const actionTypes = {
   SEND_QUOTE_SUCCESS: '[ORDERS] - Send quote success',
   SEND_QUOTE_FAILURE: '[ORDERS] - Send quote failure',
 
+  SEND_INVOICE: '[ORDERS] - Send invoice',
+  SEND_INVOICE_SUCCESS: '[ORDERS] - Send invoice success',
+  SEND_INVOICE_FAILURE: '[ORDERS] - Send invoice failure',
+
   SET_DISPATCHED_FLAG: '[ORDERS] - Set Dispatched Flag',
 };
 
@@ -107,5 +111,9 @@ export const DispatchOrderFailure = createAction(actionTypes.DISPATCH_ORDER_FAIL
 export const SendQuote = createAction(actionTypes.SEND_QUOTE, payload => payload);
 export const SendQuoteSuccess = createAction(actionTypes.SEND_QUOTE_SUCCESS);
 export const SendQuoteFailure = createAction(actionTypes.SEND_QUOTE_FAILURE);
+
+export const SendInvoice = createAction(actionTypes.SEND_INVOICE, payload => payload);
+export const SendInvoiceSuccess = createAction(actionTypes.SEND_INVOICE_SUCCESS);
+export const SendInvoiceFailure = createAction(actionTypes.SEND_INVOICE_FAILURE);
 
 export const SetDispatchedFlag = createAction(actionTypes.SET_DISPATCHED_FLAG);
