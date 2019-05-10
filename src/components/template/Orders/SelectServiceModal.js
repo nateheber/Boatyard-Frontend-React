@@ -54,7 +54,6 @@ class SelectServiceModal extends React.Component {
   loadOptions = val => {
     return this.onChangeServiceFilter(val)
       .then((filtered) => {
-        console.log('----------filtered----------', filtered);
         return sortBy(filtered, 'name');
       }, () => {
         return [];
