@@ -55,7 +55,7 @@ const Content = styled.div`
 
 const ActionWrapper = styled.div`
   display: flex;
-  padding: 10px 30px;
+  padding: 20px 30px;
   justify-content: flex-end;
   align-items: center;
   border-top: 1px solid #e5e5e5;

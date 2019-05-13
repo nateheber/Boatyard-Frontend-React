@@ -28,7 +28,7 @@ function* getCreditCards(action) {
 
 function* createCreditCard(action) {
   const { data, success, error } = action.payload;
-  const { card_number, cvv, year, month, first_name, last_name } = data;
+  const { card_number, cvv, year, month, first_name, last_name, zip, country } = data;
   const spreedlyClient = createSpreedlyClient();
   const creditCardClient = yield select(getCreditCardClient);
   try {
@@ -40,7 +40,9 @@ function* createCreditCard(action) {
           number: card_number,
           verification_value: cvv,
           month: parseInt(month),
-          year: parseInt(year)
+          year: parseInt(year),
+          zip: zip,
+          country: country
         },
       }
     });

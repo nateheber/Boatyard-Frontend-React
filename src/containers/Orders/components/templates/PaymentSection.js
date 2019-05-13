@@ -22,12 +22,14 @@ const InfoItem = styled.div`
   font-family: "Source Sans Pro", sans-serif;
   font-size: 14px;
   font-weight: 400;
+  margin-bottom: 2px;
 `;
 
 const InfoList = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  margin-top: 5px;
   margin-bottom: 15px;
 `;
 
@@ -108,7 +110,7 @@ class PaymentSection extends React.Component {
         <Wrapper>
           <InfoList>
             {this.renderPayments()}
-            <InfoItem>
+            <InfoItem style={{ marginTop: 5 }}>
               Balance Remaining: ${parseFloat(balance).toFixed(2)}
             </InfoItem>
           </InfoList>
