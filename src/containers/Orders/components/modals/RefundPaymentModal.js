@@ -14,7 +14,7 @@ import { getUserFromOrder, getProviderFromOrder } from 'utils/order'
 
 const tabs = ['Credit Card', 'Cash/Check'];
 
-class OrderPaymentModal extends React.Component {
+class RefundPaymentModal extends React.Component {
   constructor(props) {
     super(props);
     const { order } = props;
@@ -146,4 +146,4 @@ const mapDispatchToProps = {
   CreatePayment
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrderPaymentModal);
+export default connect(mapStateToProps, mapDispatchToProps)(RefundPaymentModal);
