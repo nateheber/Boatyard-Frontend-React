@@ -216,7 +216,7 @@ export default class FormFields extends React.Component {
             },
             idx
           ) => (
-            <Col {...posInfo} key={`field_${idx}`}>
+            <Col {...posInfo} key={`field_${idx}`}  style={{ margin: '5px 0' }}>
               <InputWrapper className={classNames("secondary", `size-${fieldSize}`)}>
                 <InputLabel>{label}</InputLabel>
                 {this.renderInputField(
