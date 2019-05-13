@@ -29,7 +29,7 @@ const cardFields = [
     mask: '9999 9999 9999 9999',
     errorMessage: 'Please enter a valid card number.',
     required: true,
-    xs: 6,
+    xs: 12,
     sm: 6,
     md: 6,
     lg: 6,
@@ -42,8 +42,8 @@ const cardFields = [
     mask: '99',
     required: true,
     errorMessage: 'Required',
-    xs: 2,
-    sm: 2,
+    xs: 12,
+    sm: 6,
     md: 2,
     lg: 2,
     xl: 2
@@ -55,8 +55,8 @@ const cardFields = [
     required: true,
     errorMessage: 'Required',
     mask: '9999',
-    xs: 2,
-    sm: 2,
+    xs: 12,
+    sm: 6,
     md: 2,
     lg: 2,
     xl: 2
@@ -68,8 +68,8 @@ const cardFields = [
     mask: '999',
     required: true,
     errorMessage: 'Required',
-    xs: 2,
-    sm: 2,
+    xs: 12,
+    sm: 6,
     md: 2,
     lg: 2,
     xl: 2
@@ -84,7 +84,7 @@ let infoFields = [
     required: true,
     errorMessage: 'Required',
     defaultValue: '',
-    xs: 6,
+    xs: 12,
     sm: 6,
     md: 6,
     lg: 6,
@@ -97,7 +97,7 @@ let infoFields = [
     required: true,
     errorMessage: 'Required',
     defaultValue: '',
-    xs: 6,
+    xs: 12,
     sm: 6,
     md: 6,
     lg: 6,
@@ -109,11 +109,11 @@ let infoFields = [
     label: 'Zip Code',
     required: true,
     errorMessage: 'Required',
-    xs: 4,
-    sm: 4,
-    md: 4,
-    lg: 4,
-    xl: 4
+    xs: 12,
+    sm: 6,
+    md: 6,
+    lg: 6,
+    xl: 6
   },
   {
     type: 'select_box',
@@ -124,10 +124,10 @@ let infoFields = [
     required: true,
     errorMessage: 'Choose Country',
     xs: 12,
-    sm: 12,
-    md: 4,
-    lg: 4,
-    xl: 4
+    sm: 6,
+    md: 6,
+    lg: 6,
+    xl: 6
   }
 ];
 
