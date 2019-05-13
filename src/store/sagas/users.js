@@ -108,8 +108,8 @@ function* createUser(action) {
 function* updateUser(action) {
   const userClient = yield select(getUserClient);
   const { userId, data, success, error } = action.payload;
-  const result = yield call(userClient.update, userId, data);
   try {
+    const result = yield call(userClient.update, userId, data);
     const user = get(result, 'data');
     const payload = {
       id: user.id,
@@ -128,7 +128,7 @@ function* updateUser(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_USER_FAILURE, payload: e });
     if (error) {
-      yield call(error, result);
+      yield call(error, e);
     }
   }
 }
