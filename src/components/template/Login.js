@@ -4,30 +4,72 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 import LoginForm from './Forms/LoginForm';
-
 import { login } from 'store/reducers/auth';
+import WelcomeImage from '../../resources/auth/welcome-bg.png';
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  background-color: white;
-  padding: 42px 50px 45px;
-  @media (max-width: 694px) {
-    padding: 30px;
+  flex-direction: row;
+  padding: 10px;
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
+  @media (max-width: 402px) {
+    width: calc(100% - 20px);
   }
 `;
 
-export const PageTitle = styled.h2`
-  color: #004258;
-  font-weight: 700;
-  display: inline-block;
-  margin: 0;
-  padding: 5px 0 30px;
-  font-family: 'Montserrat', sans-serif !important;
-  font-size: 36px;
-  &.centered {
-    text-align: center;
+const SideContent =styled.div`
+  display: flex;
+  width: 382px;
+  height: 514px;
+  background-color: #ECECEC;
+  &.welcome {
+    background-image: url(${WelcomeImage});
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
+  @media (max-width: 800px) {
+    &.welcome {
+      display: none;
+    }
+  }
+  @media (max-width: 402px) {
+    width: 100%;
+    flex-direction: column;
+  }
+`;
+
+const WelcomeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0 54px;
+`;
+
+const WelcomeTitle = styled.h1`
+  margin-bottom: 14px;
+  color: #FFFFFF;
+  font-family: Montserrat-Bold;
+  font-size: 42px;
+  font-weight: 700;
+`;
+
+const WelcomeBody = styled.div`
+  margin-bottom: 14px;
+  color: #FFFFFF;
+  font-family: Montserrat-Regular;
+  font-size: 14px;
+`;
+
+const WelcomeFooter = styled.div`
+  margin-bottom: 14px;
+  color: #FFFFFF;
+  font-family: Montserrat-BoldItalic;
+  font-size: 14px;
 `;
 
 class Login extends React.Component {
@@ -37,8 +79,16 @@ class Login extends React.Component {
   render() {
     return (
       <Wrapper>
-        <PageTitle className="centered">Login</PageTitle>
-        <LoginForm onLogin={this.login} />
+        <SideContent>
+          <LoginForm onLogin={this.login} />
+        </SideContent>
+        <SideContent className="welcome">
+          <WelcomeWrapper>
+            <WelcomeTitle>Welcome<br /> to Boatyard</WelcomeTitle>
+            <WelcomeBody>We're on a mission to connect our community of boaters, marine pros, dealers and marinas.</WelcomeBody>
+            <WelcomeFooter>We’re happy to have you on board.</WelcomeFooter>
+          </WelcomeWrapper>
+        </SideContent>
       </Wrapper>
     );
   }

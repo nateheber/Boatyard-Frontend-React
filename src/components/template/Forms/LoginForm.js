@@ -5,56 +5,89 @@ import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form'
 
 import { login } from 'store/reducers/auth';
-import { InputRow, InputWrapper, InputLabel } from 'components/basic/Input';
 import { OrangeButton } from 'components/basic/Buttons';
+import LogoImage from '../../../resources/by_logo_2.png';
 
-const Wrapper = styled.div`
-  padding: 0px 15px;
+const Wrapper = styled.form`
+  padding: 45px 54px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  @media (max-width: 402px) {
+    padding: 20px;
+    width: initial;
+  }
+`;
+
+const Logo = styled.img`
+  max-width: 212px;
+  width: 100%;
+  margin-bottom: 36px;
+  object-fit: contain;
+  object-position: center;
 `;
 
 const ActionWrapper = styled.div`
-  margin-top: 15px;
   display: flex;
   flex-direction: column;
+  width: 100%;
   align-items: center;
+  margin-top: 20px;
 `;
 
-const Label = styled(InputLabel)`
-  color: #004258;
-  margin-bottom: 5px;
+const InputRow = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const InputLabel = styled.div`
+  margin-bottom: 8px;
   line-height: 20px;
   font-weight: 600;
+  font-family: Montserrat-Medium;
+  font-size: 18px;
+  color: #0D485F;
+  text-align: center;
 `;
 
 const InputField = styled(Field)`
   position: relative;
   background: #fff;
   padding: 0 15px;
-  margin-bottom: 15px;
   border: 1px solid #dfdfdf;
-  height: 35px;
+  height: 40px;
   width: 100%;
   border-radius: 6px !important;
   outline: none;
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
-  font-size: 14px;
+  font-size: 18px;
+  margin-bottom: 20px;
   &:disabled {
     background: #f1f1f1;
   }
 `;
 
 const Button = styled(OrangeButton)`
+  width: 100%;
   margin-bottom: 15px;
-  padding: 10px 30px;
-  min-width: initial;
-  height: initial;
+  height: 48px;
+  font-family: Montserrat-ExtraBold;
+  font-size: 12px;
+  color: #000000;
+  text-align: center;
+  background-color: #F38118;
+  border-radius: 6px;
 `;
 
 const ForgotLink = styled(Link)`
   text-decoration: none;
-  color: #004258;
-  font-size: 14px;
+  font-family: Montserrat-SemiBold;
+  font-size: 12px;
+  color: #0D485F;
+  text-align: center;
 `;
 
 const ErrorMessage = styled.div`
@@ -105,45 +138,40 @@ class LoginForm extends React.Component {
       <Form
         onSubmit={this.login}
         render={({ handleSubmit, submitting }) => (
-          <form onSubmit={handleSubmit}>
-            <Wrapper>
-              <InputRow>
-                <InputWrapper className="primary">
-                  <Label>Email</Label>
-                  <InputField
-                    name="email"
-                    component="input"
-                    type="email"
-                    placeholder="Email"
-                    validate={required}
-                  />
-                  <Error name="email" />
-                </InputWrapper>
-              </InputRow>
-              <InputRow>
-                <InputWrapper className="primary">
-                  <Label>Password</Label>
-                  <InputField
-                    name="password"
-                    type="password"
-                    component="input"
-                    placeholder="Password"
-                    validate={required}
-                  />
-                  <Error name="password" />
-                </InputWrapper>
-              </InputRow>
-              <ActionWrapper>
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                >
-                  Login
-                </Button>
-                <ForgotLink to="/forgot-password/">Forgot Password?</ForgotLink>
-              </ActionWrapper>
-            </Wrapper>
-          </form>
+          <Wrapper onSubmit={handleSubmit}>
+            <Logo src={LogoImage} />
+            <InputRow>
+              <InputLabel>Email</InputLabel>
+              <InputField
+                name="email"
+                component="input"
+                type="email"
+                placeholder="Email"
+                validate={required}
+              />
+              <Error name="email" />
+            </InputRow>
+            <InputRow>
+              <InputLabel>Password</InputLabel>
+              <InputField
+                name="password"
+                type="password"
+                component="input"
+                placeholder="Password"
+                validate={required}
+              />
+              <Error name="password" />
+            </InputRow>
+            <ActionWrapper>
+              <Button
+                type="submit"
+                disabled={submitting}
+              >
+                Login
+              </Button>
+              <ForgotLink to="/forgot-password/">Forgot Password?</ForgotLink>
+            </ActionWrapper>
+          </Wrapper>
         )}>
       </Form>
     );
