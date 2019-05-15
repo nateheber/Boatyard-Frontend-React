@@ -29,7 +29,6 @@ class TeamList extends React.Component {
   };
 
   changePage = (page) => {
-    console.log('----------page-----------', page);
     this.props.GetManagements({ params: { page } });
   }
 
