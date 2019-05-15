@@ -353,12 +353,13 @@ class SelectServiceModal extends React.Component {
   };
 
   canShowWhenFields = () => {
-    const { service } = this.state;
-    const template = get(service, 'emailTemplate');
-    if (template === 'fuel' || template === 'pumpout' || template.indexOf('book') === 0) {
-      return true;
-    }
-    return false;
+    // const { service } = this.state;
+    // const template = get(service, 'emailTemplate');
+    // if (template === 'fuel' || template === 'pumpout' || template.indexOf('book') === 0) {
+    //   return true;
+    // }
+    // return false;
+    return true;
   }
 
   createOrder = () => {
