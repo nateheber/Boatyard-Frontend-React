@@ -33,7 +33,7 @@ class ListModal extends React.Component {
 
   setDefault = (id) => {
     const data = {
-      isDefault: true,
+      is_default: true,
     }
     this.props.UpdateCreditCard({ creditCardId: id, data, success: this.props.refreshCards })
   };
