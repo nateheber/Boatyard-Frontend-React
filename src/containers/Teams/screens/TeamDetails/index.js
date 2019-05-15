@@ -6,7 +6,6 @@ import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, GetManagement, CreateManagement, UpdateManagement, DeleteManagement } from 'store/actions/managements';
-import { CreateUser, UpdateUser } from 'store/actions/users';
 import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { NormalText, PageTitle } from 'components/basic/Typho'
@@ -193,69 +192,42 @@ class TeamDetails extends React.Component {
   }
 
   onSave = () => {
-    const { managementId, management, access } = this.state;
-    const { CreateUser, UpdateUser, CreateManagement, UpdateManagement } = this.props;
+    const { managementId, access } = this.state;
+    const { CreateManagement, UpdateManagement } = this.props;
     if (this.isValidForm()) {
       const { firstName, lastName, email, phoneNumber } = this.state;
-      const userId = get(management, 'attributes.userId');
       const data = {
         first_name: firstName.trim(),
         last_name: lastName.trim(),
         email: email.trim(),
-        phone_number: phoneNumber.trim()
+        phone_number: phoneNumber.trim(),
+        access
       };
       if (managementId) {
-        UpdateUser({
-          userId,
-          data,
+        UpdateManagement({
+          managementId,
+          data: {
+            management: data
+          },
           success: () => {
-            UpdateManagement({
-              managementId,
-              data: {
-                access
-              },
-              success: () => {
-                toastr.success('Success', 'Saved successfully!');
-                this.onBack();
-              },
-              error: (e) => {
-                toastr.error('Error', e.message);
-              }
-            });
+            toastr.success('Success', 'Saved successfully!');
+            this.onBack();
           },
           error: (e) => {
             toastr.error('Error', e.message);
           }
         });
       } else {
-        CreateUser({
+        if (this.props.privilege === 'admin') {
+          data['provider_id'] = '1';
+        }
+        CreateManagement({
           data: {
-            user: {
-              ...data,
-              password: Math.random().toString(36).slice(-8)
-            },
+            management: data
           },
-          success: (user) => {
-            const managementData = {
-              user_id: user.id,
-              access,
-              email
-            };
-            if (this.props.privilege === 'admin') {
-              managementData['provider_id'] = '1';
-            }
-            CreateManagement({
-              data: {
-                management: { ...managementData }
-              },
-              success: () => {
-                toastr.success('Success', 'Created successfully!');
-                this.onBack();
-              },
-              error: (e) => {
-                toastr.error('Error', e.message);
-              }
-            });
+          success: () => {
+            toastr.success('Success', 'Created successfully!');
+            this.onBack();
           },
           error: (e) => {
             toastr.error('Error', e.message);
@@ -405,8 +377,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  CreateUser,
-  UpdateUser,
   GetManagement,
   CreateManagement,
   UpdateManagement,
