@@ -14,7 +14,6 @@ export const actionTypes = {
   GET_USER_PERMISSION_SUCCESS: '[AUTH] - Get permission of user Success',
   GET_USER_PERMISSION_FAILURE: '[AUTH] - Get permission of user Failure',
 
-  SET_ADMIN_TOKEN: '[AUTH] - Set admin token',
   SET_PROVIDER_TOKEN: '[AUTH] - Set provider token',
   SET_PRIVILEGE: '[AUTH] - Set privilege',
   
@@ -33,7 +32,6 @@ export const GetUserPermission = createAction(actionTypes.GET_USER_PERMISSION, p
 export const GetUserPermissionSuccess = createAction(actionTypes.GET_USER_PERMISSION_SUCCESS);
 export const GetUserPermissionFailure = createAction(actionTypes.GET_USER_PERMISSION_FAILURE);
 
-export const SetAdminToken = createAction(actionTypes.SET_ADMIN_TOKEN, payload => payload);
 export const SetProviderToken = createAction(actionTypes.SET_PROVIDER_TOKEN, payload => payload);
 export const SetPrivilege = createAction(actionTypes.SET_PRIVILEGE, payload => payload);
 export const Logout = createAction(actionTypes.AUTH_LOGOUT, payload => payload);

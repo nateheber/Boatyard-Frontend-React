@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import { toastr } from 'react-redux-toastr';
 
 import LoginForm from '../Forms/LoginForm';
-import { Login } from 'store/actions/auth';
+import { Login, GetUserPermission } from 'store/actions/auth';
+import { LoginWithProvider } from 'store/actions/providers';
 import WelcomeImage from '../../../resources/auth/welcome-bg.png';
 
 const Wrapper = styled.div`
@@ -77,14 +78,27 @@ const WelcomeFooter = styled.div`
 
 class LoginComponent extends React.Component {
   handleLogin = (email, password) => {
-    const { Login } = this.props;
+    const { Login, GetUserPermission, LoginWithProvider } = this.props;
     Login({
       params: {
         email,
         password
       },
       success: () => {
-        this.props.history.push('/');
+        GetUserPermission({ success: () => {
+          this.props.history.push('/');
+        },
+        error: (e) => {
+          LoginWithProvider({
+            success: () => {
+              this.props.history.push('/');
+            },
+            error: (e) => {
+              toastr.error('Error', e.message);
+            }
+          })
+        }
+      });
       },
       error: (e) => {
         toastr.error('Error', e.message);
@@ -115,7 +129,9 @@ const mapStateToProps = ({ auth: { errorMessage } }) => ({
 });
 
 const mapDispatchToProps = {
-  Login
+  Login,
+  GetUserPermission,
+  LoginWithProvider
 };
 
 export default withRouter(

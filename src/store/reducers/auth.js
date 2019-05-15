@@ -26,12 +26,18 @@ export default handleActions(
         draft.currentStatus = type;
         draft.errors = payload;
       }),
-    [actionTypes.SET_ADMIN_TOKEN]: (state, action) =>
+    [actionTypes.GET_USER_PERMISSION_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.adminToken = payload;
         draft.errors = null;
+      }),
+    [actionTypes.GET_USER_PERMISSION_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
       }),
     [actionTypes.SET_PROVIDER_TOKEN]: (state, action) =>
       produce(state, draft => {
