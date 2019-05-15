@@ -1,10 +1,11 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { withRouter } from 'react-router-dom';
+import { toastr } from 'react-redux-toastr';
 
 import LoginForm from '../Forms/LoginForm';
-import { login } from 'store/reducers/auth';
+import { Login } from 'store/actions/auth';
 import WelcomeImage from '../../../resources/auth/welcome-bg.png';
 
 const Wrapper = styled.div`
@@ -22,7 +23,7 @@ const Wrapper = styled.div`
 const SideContent =styled.div`
   display: flex;
   width: 382px;
-  height: 514px;
+  min-height: 514px;
   background-color: #ECECEC;
   &.welcome {
     background-image: url(${WelcomeImage});
@@ -74,15 +75,28 @@ const WelcomeFooter = styled.div`
   font-size: 14px;
 `;
 
-class Login extends React.Component {
-  login = (email, password) => {
-    this.props.login({ email, password });
+class LoginComponent extends React.Component {
+  handleLogin = (email, password) => {
+    const { Login } = this.props;
+    Login({
+      params: {
+        email,
+        password
+      },
+      success: () => {
+        this.props.history.push('/');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
   };
+
   render() {
     return (
       <Wrapper>
         <SideContent>
-          <LoginForm onLogin={this.login} />
+          <LoginForm onLogin={this.handleLogin} />
         </SideContent>
         <SideContent className="welcome">
           <WelcomeWrapper>
@@ -101,12 +115,12 @@ const mapStateToProps = ({ auth: { errorMessage } }) => ({
 });
 
 const mapDispatchToProps = {
-  login
+  Login
 };
 
 export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(Login)
+  )(LoginComponent)
 );

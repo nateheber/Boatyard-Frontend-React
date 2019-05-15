@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import BackgroundImage from '../../resources/auth/login-bg.png';
 
@@ -28,4 +29,4 @@ class AuthPageTemplate extends React.Component {
 
 const mapStateToProps = ({ auth }) => ({ auth });
 
-export default connect(mapStateToProps)(AuthPageTemplate);
+export default withRouter(connect(mapStateToProps)(AuthPageTemplate));

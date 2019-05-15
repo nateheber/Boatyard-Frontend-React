@@ -1,12 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Form, Field } from 'react-final-form'
+import { Form, Field } from 'react-final-form';
 
-import { login } from 'store/reducers/auth';
 import { OrangeButton } from 'components/basic/Buttons';
 import LogoImage from '../../../../resources/by_logo_2.png';
+import { validateEmail } from 'utils/basic';
 
 const Wrapper = styled.form`
   padding: 45px 54px;
@@ -23,9 +22,38 @@ const Wrapper = styled.form`
 const Logo = styled.img`
   max-width: 212px;
   width: 100%;
-  margin-bottom: 36px;
+  margin-bottom: 45px;
   object-fit: contain;
   object-position: center;
+`;
+
+const Title = styled.div`
+  margin-bottom: 8px;
+  line-height: 20px;
+  font-weight: 700;
+  font-family: Montserrat;
+  font-size: 21px;
+  color: #0D485F;
+  text-align: center;
+`;
+
+const Description = styled.div`
+  margin-top: 10px;
+  padding: 0 20px;
+  line-height: 20px;
+  font-size: 14px;
+  color: #0D485F;
+  text-align: center;
+  font-family: Montserrat;
+  color: #0D485F;
+  font-style: italic;
+  text-align: center;
+`;
+
+const Divider = styled.div`
+  border-bottom: 1px solid #C2C2C2;
+  margin: 30px 0;
+  width: 100%;
 `;
 
 const ActionWrapper = styled.div`
@@ -33,19 +61,19 @@ const ActionWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   align-items: center;
-  margin-top: 20px;
 `;
 
 const InputRow = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  margin-bottom: 10px;
 `;
 
 const InputLabel = styled.div`
   margin-bottom: 8px;
-  line-height: 20px;
-  font-weight: 600;
+  line-height: 24px;
+  font-weight: 500;
   font-family: Montserrat;
   font-size: 18px;
   color: #0D485F;
@@ -56,7 +84,7 @@ const InputField = styled(Field)`
   position: relative;
   background: #fff;
   padding: 0 15px;
-  border: 1px solid #dfdfdf;
+  border: none;
   height: 40px;
   width: 100%;
   border-radius: 6px !important;
@@ -64,7 +92,7 @@ const InputField = styled(Field)`
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   &:disabled {
     background: #f1f1f1;
   }
@@ -94,8 +122,8 @@ const LoginLink = styled(Link)`
 
 const ErrorMessage = styled.div`
   color: #f7941e;
-  margin-top: -0.75em;
-  margin-bottom: 1em;
+  height: 20px;
+  margin-bottom: 5px;
   font-size: 14px;
   font-weight: 600;
   text-transform: none;
@@ -106,50 +134,37 @@ const Error = ({ name }) => (
     name={name}
     subscribe={{ touched: true, error: true }}
     render={({ meta: { touched, error } }) =>
-      touched && error ? <ErrorMessage>{error}</ErrorMessage> : null
+      touched && error ? <ErrorMessage>{error}</ErrorMessage> : <ErrorMessage />
     }
   />
 );
 
-const required = value => (value ? undefined : 'This field is required.')
+const emailValidation = value => (value ? (validateEmail(value) ? undefined : 'Invalid Email') : 'This field is required.');
 
 class RequestForm extends React.Component {
-  state = {
-    email: '',
-    emailError: '',
-    password: '',
-    passwordError: ''
+  handleSubmit = (values) => {
+    const { onSendRquest } = this.props;
+    const { email } = values;
+    onSendRquest(email);
   };
-  changeEmail = evt => {
-    this.setState({
-      email: evt.target.value
-    });
-  };
-  changePassword = evt => {
-    this.setState({
-      password: evt.target.value
-    });
-  };
-  login = (values) => {
-    // const { onLogin } = this.props;
-    // const { email } = values;
-    // onLogin(email);
-  };
+
   render() {
     return (
       <Form
-        onSubmit={this.login}
+        onSubmit={this.handleSubmit}
         render={({ handleSubmit, submitting }) => (
           <Wrapper onSubmit={handleSubmit}>
             <Logo src={LogoImage} />
+            <Title>Forgot Your Password?</Title>
+            <Description>Not to worry. Enter your email, and we'll send you a link to create a new one.</Description>
+            <Divider />
             <InputRow>
-              <InputLabel>Email</InputLabel>
+              <InputLabel>Your Email</InputLabel>
               <InputField
                 name="email"
                 component="input"
                 type="email"
-                placeholder="Email"
-                validate={required}
+                validate={emailValidation}
               />
               <Error name="email" />
             </InputRow>
@@ -158,9 +173,9 @@ class RequestForm extends React.Component {
                 type="submit"
                 disabled={submitting}
               >
-                Send Request
+                Send Reset Link
               </Button>
-              <LoginLink to="/login/">Log in</LoginLink>
+              <LoginLink to="/login">Log in</LoginLink>
             </ActionWrapper>
           </Wrapper>
         )}>
@@ -169,11 +184,4 @@ class RequestForm extends React.Component {
   }
 }
 
-const mapDispatchToProps = {
-  login
-};
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(RequestForm);
+export default RequestForm;

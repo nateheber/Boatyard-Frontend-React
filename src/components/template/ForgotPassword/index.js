@@ -1,9 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { login } from 'store/reducers/auth';
 import RequestForm from '../Forms/RequestForm';
 
 
@@ -22,7 +19,7 @@ const Wrapper = styled.div`
 const SideContent =styled.div`
   display: flex;
   width: 382px;
-  height: 514px;
+  min-height: 514px;
   background-color: #ECECEC;
   @media (max-width: 402px) {
     width: 100%;
@@ -31,31 +28,18 @@ const SideContent =styled.div`
 `;
 
 class ForgotPassword extends React.Component {
-  login = (email, password) => {
-    this.props.login({ email, password });
+  handleSendRequest = (email) => {
+    console.log('---------------Email-----------', email);
   };
   render() {
     return (
       <Wrapper>
         <SideContent>
-          <RequestForm onLogin={this.login} />
+          <RequestForm onSendRquest={this.handleSendRequest} />
         </SideContent>
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ auth: { errorMessage } }) => ({
-  errorMessage
-});
-
-const mapDispatchToProps = {
-  login
-};
-
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(ForgotPassword)
-);
+export default ForgotPassword;

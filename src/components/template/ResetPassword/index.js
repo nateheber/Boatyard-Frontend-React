@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { login } from 'store/reducers/auth';
+import { Login } from 'store/actions/auth';
 import PasswordForm from '../Forms/PasswordForm';
 
 
@@ -22,7 +22,7 @@ const Wrapper = styled.div`
 const SideContent =styled.div`
   display: flex;
   width: 382px;
-  height: 514px;
+  min-height: 514px;
   background-color: #ECECEC;
   @media (max-width: 402px) {
     width: 100%;
@@ -31,14 +31,14 @@ const SideContent =styled.div`
 `;
 
 class ResetPassword extends React.Component {
-  login = (email, password) => {
-    this.props.login({ email, password });
+  handleResetPassword = (password) => {
+    console.log('------------password-------------', password);
   };
   render() {
     return (
       <Wrapper>
         <SideContent>
-          <PasswordForm onLogin={this.login} />
+          <PasswordForm onResetPassword={this.handleResetPassword} />
         </SideContent>
       </Wrapper>
     );
@@ -50,7 +50,7 @@ const mapStateToProps = ({ auth: { errorMessage } }) => ({
 });
 
 const mapDispatchToProps = {
-  login
+  Login
 };
 
 export default withRouter(

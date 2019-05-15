@@ -1,12 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { Form, Field } from 'react-final-form'
+import { Form, Field } from 'react-final-form';
 
-import { login } from 'store/reducers/auth';
 import { OrangeButton } from 'components/basic/Buttons';
 import LogoImage from '../../../../resources/by_logo_2.png';
+import { validateEmail } from 'utils/basic';
 
 const Wrapper = styled.form`
   padding: 45px 54px;
@@ -33,7 +32,7 @@ const ActionWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 
 const InputRow = styled.div`
@@ -54,9 +53,9 @@ const InputLabel = styled.div`
 
 const InputField = styled(Field)`
   position: relative;
-  background: #fff;
+  background-color: #fff !important;
   padding: 0 15px;
-  border: 1px solid #dfdfdf;
+  border: none;
   height: 40px;
   width: 100%;
   border-radius: 6px !important;
@@ -64,9 +63,16 @@ const InputField = styled(Field)`
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   &:disabled {
     background: #f1f1f1;
+  }
+  &:-internal-autofill-selected,
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover, 
+  &:-webkit-autofill:focus {
+    border: none;
+    background-color: #fff !important;
   }
 `;
 
@@ -94,8 +100,8 @@ const ForgotLink = styled(Link)`
 
 const ErrorMessage = styled.div`
   color: #f7941e;
-  margin-top: -0.75em;
-  margin-bottom: 1em;
+  height: 20px;
+  margin-bottom: 5px;
   font-size: 14px;
   font-weight: 600;
   text-transform: none;
@@ -106,12 +112,14 @@ const Error = ({ name }) => (
     name={name}
     subscribe={{ touched: true, error: true }}
     render={({ meta: { touched, error } }) =>
-      touched && error ? <ErrorMessage>{error}</ErrorMessage> : null
+      touched && error ? <ErrorMessage>{error}</ErrorMessage> : <ErrorMessage />
     }
   />
 );
 
-const required = value => (value ? undefined : 'This field is required.')
+const emailValidation = value => (value ? (validateEmail(value) ? undefined : 'Invalid Email') : 'This field is required.');
+const required = value => (value ? (value.length >= 6 ? undefined : 'less than 6 characters' ) : 'This field is required.');
+// const required = value => (value ? undefined : 'This field is required.')
 
 class LoginForm extends React.Component {
   state = {
@@ -120,25 +128,29 @@ class LoginForm extends React.Component {
     password: '',
     passwordError: ''
   };
+
   changeEmail = evt => {
     this.setState({
       email: evt.target.value
     });
   };
+
   changePassword = evt => {
     this.setState({
       password: evt.target.value
     });
   };
-  login = (values) => {
+
+  handleSubmit = (values) => {
     const { onLogin } = this.props;
     const { email, password } = values;
     onLogin(email, password);
   };
+
   render() {
     return (
       <Form
-        onSubmit={this.login}
+        onSubmit={this.handleSubmit}
         render={({ handleSubmit, submitting }) => (
           <Wrapper onSubmit={handleSubmit}>
             <Logo src={LogoImage} />
@@ -148,8 +160,7 @@ class LoginForm extends React.Component {
                 name="email"
                 component="input"
                 type="email"
-                placeholder="Email"
-                validate={required}
+                validate={emailValidation}
               />
               <Error name="email" />
             </InputRow>
@@ -159,7 +170,6 @@ class LoginForm extends React.Component {
                 name="password"
                 type="password"
                 component="input"
-                placeholder="Password"
                 validate={required}
               />
               <Error name="password" />
@@ -171,7 +181,7 @@ class LoginForm extends React.Component {
               >
                 Login
               </Button>
-              <ForgotLink to="/forgot-password/">Forgot Password?</ForgotLink>
+              <ForgotLink to="/forgot-password">Forgot Password?</ForgotLink>
             </ActionWrapper>
           </Wrapper>
         )}>
@@ -180,11 +190,4 @@ class LoginForm extends React.Component {
   }
 }
 
-const mapDispatchToProps = {
-  login
-};
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(LoginForm);
+export default LoginForm;

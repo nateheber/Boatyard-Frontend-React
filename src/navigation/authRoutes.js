@@ -9,9 +9,9 @@ import ResetPassword from 'components/template/ResetPassword';
 const AuthRoutes = () => (
   <Router>
     <AuthPageTemplate>
-      <Route exact path="/login/" component={Login} />
-      <Route exact path="/forgot-password/" component={ForgotPassword} />
-      <Route exact path="/reset-password/" component={ResetPassword} />
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/forgot-password" component={ForgotPassword} />
+      <Route exact path="/reset-password" component={ResetPassword} />
     </AuthPageTemplate>
   </Router>
 );

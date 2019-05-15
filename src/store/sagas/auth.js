@@ -1,8 +1,7 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
-import { toastr } from 'react-redux-toastr';
 
-import { actions } from '../reducers/auth';
+import { actionTypes } from '../actions/auth';
 import { actions as ProfileActions } from '../reducers/profile';
 import { actionTypes as ProviderActions } from '../actions/providers';
 
@@ -13,7 +12,8 @@ import { customApiClient } from '../../api';
 const escalationClient = customApiClient('basic');
 
 function* loginRequest(action) {
-  const { email, password } = action.payload;
+  const { params, success, error } = action.payload;
+  const { email, password } = params;
   try {
     const result = yield call(login, email, password);
     const {
@@ -26,17 +26,13 @@ function* loginRequest(action) {
         phoneNumber,
         authorizationToken
       }
-    } = result;
+    } = result.data;
     yield put({
-      type: actions.setAuthState,
-      payload: {
-        authToken: authorizationToken,
-        errorMessage: '',
-        loading: false
-      }
+      type: actionTypes.AUTH_LOGIN_SUCCESS,
+      payload: authorizationToken
     });
     yield put({
-      type: actions.getUserPermission
+      type: actionTypes.GET_USER_PERMISSION
     });
     yield put({
       type: ProfileActions.setProfile,
@@ -49,17 +45,17 @@ function* loginRequest(action) {
         type
       }
     });
+    if (success) {
+      yield call(success);
+    }
   } catch (e) {
-    toastr.clean();
-    toastr.error('Auth Failure', 'Invalid credentials');
     yield put({
-      type: actions.setAuthState,
-      payload: {
-        authToken: '',
-        errorMessage: 'Invalid username or password',
-        loading: false
-      }
+      type: actionTypes.AUTH_LOGIN_FAILURE,
+      payload: e
     });
+    if (error) {
+      yield call(error, e);
+    }
   }
 }
 
@@ -70,11 +66,11 @@ function* userPermissionRequest(action) {
     });
     if (!isEmpty(result)) {
       yield put({
-        type: actions.setAdminToken,
+        type: actionTypes.SET_ADMIN_TOKEN,
         payload: result.data.attributes.authorizationToken
       });
       yield put({
-        type: actions.setPrivilege,
+        type: actionTypes.SET_PRIVILEGE,
         payload: 'admin'
       });
     } else {
@@ -103,8 +99,8 @@ function* logoutRequest(action) {
 }
 
 export default function* AuthSaga() {
-  yield takeEvery(actions.login, loginRequest);
-  yield takeEvery(actions.signup, signupRequest);
-  yield takeEvery(actions.logout, logoutRequest);
-  yield takeEvery(actions.getUserPermission, userPermissionRequest);
+  yield takeEvery(actionTypes.AUTH_LOGIN, loginRequest);
+  yield takeEvery(actionTypes.AUTH_SIGNUP, signupRequest);
+  yield takeEvery(actionTypes.GET_USER_PERMISSION, userPermissionRequest);
+  yield takeEvery(actionTypes.AUTH_LOGOUT, logoutRequest);
 }

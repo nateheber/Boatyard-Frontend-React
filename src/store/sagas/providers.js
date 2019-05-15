@@ -3,7 +3,7 @@ import { get, isEmpty, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/providers';
-import { actions as authActions } from '../reducers/auth';
+import { actionTypes as authActions } from '../actions/auth';
 
 import { customApiClient, createProviderClient, createPreferredProviderClient } from '../../api';
 
@@ -117,11 +117,11 @@ function* loginWithProvider(action) {
         'data.attributes.authorizationToken'
       );
       yield put({
-        type: authActions.setProviderToken,
+        type: authActions.SET_PROVIDER_TOKEN,
         payload: authorizationToken
       });
       yield put({
-        type: authActions.setPrivilege,
+        type: authActions.SET_PRIVILEGE,
         payload: 'provider'
       });
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: result });

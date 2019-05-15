@@ -10,7 +10,7 @@ import Message from '../../../resources/message.png';
 import CheckCircle from '../../../resources/check_circle.png';
 import Document from '../../../resources/document.png';
 
-import { logout } from '../../../store/reducers/auth';
+import { Logout } from '../../../store/actions/auth';
 
 const Wrapper = styled.div`
   display: inline-block;
@@ -198,7 +198,7 @@ const Chevron = styled.div`
   }
 `;
 
-const MenuUI = ({ firstName, lastName, logout, history, toggleMessage, messageToggleRef }) => (
+const MenuUI = ({ firstName, lastName, Logout, history, toggleMessage, messageToggleRef }) => (
   <Wrapper>
     <MenuWrapper>
       <DropdownItem>
@@ -213,7 +213,7 @@ const MenuUI = ({ firstName, lastName, logout, history, toggleMessage, messageTo
             </MenuItem>
           </MenuItemLi>
           <MenuItemLi>
-            <MenuItem onClick={() => logout(() => history.push('/'))}>
+            <MenuItem onClick={() => Logout(() => history.push('/login'))}>
               Logout
             </MenuItem>
           </MenuItemLi>
@@ -256,7 +256,7 @@ const mapStateToProps = ({ profile: { firstName, lastName } }) => ({
 });
 
 const mapDispatchToProps = {
-  logout
+  Logout
 };
 
 export const RightMenu = withRouter(

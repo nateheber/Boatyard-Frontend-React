@@ -1,9 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { Form, Field } from 'react-final-form'
+import { Form, Field } from 'react-final-form';
+import { toastr } from 'react-redux-toastr';
 
-import { login } from 'store/reducers/auth';
 import { OrangeButton } from 'components/basic/Buttons';
 import LogoImage from '../../../../resources/by_logo_2.png';
 
@@ -22,7 +21,7 @@ const Wrapper = styled.form`
 const Logo = styled.img`
   max-width: 212px;
   width: 100%;
-  margin-bottom: 36px;
+  margin-bottom: 56px;
   object-fit: contain;
   object-position: center;
 `;
@@ -32,7 +31,7 @@ const ActionWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 
 const InputRow = styled.div`
@@ -43,8 +42,8 @@ const InputRow = styled.div`
 
 const InputLabel = styled.div`
   margin-bottom: 8px;
-  line-height: 20px;
-  font-weight: 600;
+  line-height: 24px;
+  font-weight: 500;
   font-family: Montserrat;
   font-size: 18px;
   color: #0D485F;
@@ -55,7 +54,7 @@ const InputField = styled(Field)`
   position: relative;
   background: #fff;
   padding: 0 15px;
-  border: 1px solid #dfdfdf;
+  border: none;
   height: 40px;
   width: 100%;
   border-radius: 6px !important;
@@ -63,7 +62,7 @@ const InputField = styled(Field)`
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   &:disabled {
     background: #f1f1f1;
   }
@@ -94,8 +93,8 @@ const PasswordHint = styled.div`
 
 const ErrorMessage = styled.div`
   color: #f7941e;
-  margin-top: -0.75em;
-  margin-bottom: 1em;
+  height: 20px;
+  margin-bottom: 5px;
   font-size: 14px;
   font-weight: 600;
   text-transform: none;
@@ -106,39 +105,28 @@ const Error = ({ name }) => (
     name={name}
     subscribe={{ touched: true, error: true }}
     render={({ meta: { touched, error } }) =>
-      touched && error ? <ErrorMessage>{error}</ErrorMessage> : null
+      touched && error ? <ErrorMessage>{error}</ErrorMessage> : <ErrorMessage />
     }
   />
 );
 
-const required = value => (value ? undefined : 'This field is required.')
+const required = value => (value ? (value.length >= 6 ? undefined : 'less than 6 characters' ) : 'This field is required.');
 
 class PasswordForm extends React.Component {
-  state = {
-    email: '',
-    emailError: '',
-    password: '',
-    passwordError: ''
+  handleSubmit = (values) => {
+    const { onResetPassword } = this.props;
+    const { newPassword, confirmPassword } = values;
+    if (newPassword === confirmPassword) {
+      onResetPassword(newPassword);
+    } else {
+      toastr.error('Error', 'Password does not match');
+    }
   };
-  changeEmail = evt => {
-    this.setState({
-      email: evt.target.value
-    });
-  };
-  changePassword = evt => {
-    this.setState({
-      password: evt.target.value
-    });
-  };
-  login = (values) => {
-    // const { onLogin } = this.props;
-    // const { newPassword, confirmPassword } = values;
-    // onLogin(email, password);
-  };
+
   render() {
     return (
       <Form
-        onSubmit={this.login}
+        onSubmit={this.handleSubmit}
         render={({ handleSubmit, submitting }) => (
           <Wrapper onSubmit={handleSubmit}>
             <Logo src={LogoImage} />
@@ -148,10 +136,9 @@ class PasswordForm extends React.Component {
                 name="newPassword"
                 type="password"
                 component="input"
-                placeholder="Password"
                 validate={required}
               />
-              <Error name="password" />
+              <Error name="newPassword" />
             </InputRow>
             <InputRow>
               <InputLabel>Confirm Password</InputLabel>
@@ -159,10 +146,9 @@ class PasswordForm extends React.Component {
                 name="confirmPassword"
                 type="password"
                 component="input"
-                placeholder="Password"
                 validate={required}
               />
-              <Error name="password" />
+              <Error name="confirmPassword" />
             </InputRow>
             <ActionWrapper>
               <Button
@@ -180,11 +166,4 @@ class PasswordForm extends React.Component {
   }
 }
 
-const mapDispatchToProps = {
-  login
-};
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(PasswordForm);
+export default PasswordForm;

@@ -11,9 +11,7 @@ export const login = (email, password) =>
         email,
         password
       }
-    })
-    .then(response => response.data)
-    .catch(err => err);
+    });
 
 export const signup = (email, password) =>
   authClient
@@ -22,6 +20,4 @@ export const signup = (email, password) =>
         email,
         password
       }
-    })
-    .then(response => response.data)
-    .catch(err => err);
+    });
