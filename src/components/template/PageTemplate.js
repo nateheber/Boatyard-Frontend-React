@@ -7,6 +7,21 @@ import AuthPageTemplate from './AuthPageTemplate';
 import MainPageTemplate from './MainPageTemplate';
 
 class PageTemplate extends React.Component {
+  constructor(props) {
+    super(props);
+    const { isAuthenticated, history, location } = props;
+    if (!isAuthenticated) {
+      if ((location.search !== null || location.search !== undefined) && location.search.indexOf('redirect_url') < 0) {
+        history.push({
+          pathname: '/login/',
+          search: `?redirect_url=${location.pathname}${location.search}`
+        });
+      } else {
+        history.push(`${location.pathname}${location.search}`);
+      }
+    }
+  }
+
   render() {
     const { isAuthenticated } = this.props;
     return (

@@ -95,4 +95,5 @@ const mapDispatchToProps = {
   GetNetworks,
   GetConversations
 };
+
 export default withRouter(connect(null, mapDispatchToProps)(MainPageTemplate));

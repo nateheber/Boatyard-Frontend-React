@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { toastr } from 'react-redux-toastr';
+import queryString from 'query-string';
 
 import LoginForm from '../Forms/LoginForm';
 import { Login, GetUserPermission } from 'store/actions/auth';
@@ -79,6 +80,7 @@ const WelcomeFooter = styled.div`
 class LoginComponent extends React.Component {
   handleLogin = (email, password) => {
     const { Login, GetUserPermission, LoginWithProvider } = this.props;
+    const query = queryString.parse(this.props.location.search);
     Login({
       params: {
         email,
@@ -86,12 +88,20 @@ class LoginComponent extends React.Component {
       },
       success: () => {
         GetUserPermission({ success: () => {
-          this.props.history.push('/');
+          if (query.hasOwnProperty('redirect_url')) {
+            this.props.history.push(query['redirect_url']);
+          } else {
+            this.props.history.push('/');
+          }
         },
         error: (e) => {
           LoginWithProvider({
             success: () => {
-              this.props.history.push('/');
+              if (query.hasOwnProperty('redirect_url')) {
+                this.props.history.push(query['redirect_url']);
+              } else {
+                this.props.history.push('/');
+              }
             },
             error: (e) => {
               toastr.error('Error', e.message);
