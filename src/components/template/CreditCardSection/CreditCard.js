@@ -25,7 +25,6 @@ const Wrapper = styled(Row)`
       padding-left: 0;
       > div {
         width: 100%;
-        justify-content: space-between;
       }
     }
   }
@@ -76,7 +75,10 @@ const ButtonsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  &.is-default {
+    justify-content: space-between;
+  }
 `
 
 export default ({ creditCard: { id, attributes: { name, last4, isDefault } }, onSetDefault, onRemove }) => (
@@ -88,8 +90,8 @@ export default ({ creditCard: { id, attributes: { name, last4, isDefault } }, on
       <RadioButton onClick={() => onSetDefault(id)} className={classNames({ active: isDefault })}/>
     </Col>
     <Col sm={2}>
-      <ButtonsWrapper>
-        <MarkerImg src={CheckedMarker} />
+      <ButtonsWrapper className={isDefault && 'is-default'}>
+        {isDefault && <MarkerImg src={CheckedMarker} />}
         <RemoveButton src={RemoveIcon} onClick={() => onRemove(id)} />
       </ButtonsWrapper>
     </Col>
