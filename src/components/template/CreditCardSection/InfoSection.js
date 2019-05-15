@@ -7,18 +7,20 @@ import CheckedMarker from 'resources/checked_marker.png'
 
 const CardInfo = styled.div`
   color: #094359;
-  font-family: "Source Sans",sans-serif !important;
-  font-size: 14px;
-`
+  font-family: 'Source Sans', sans-serif !important;
+  font-size: 16px;
+  text-align: left;
+  line-height: 24px;
+`;
 
 const MarkerImg = styled.img`
   width: 23px;
   height: 20px;
-`
+`;
 
-export default ({ creditCard: { name, last4 } }) => (
-  <Row>
+export default ({ creditCard: { name, last4, isDefault } }) => (
+  <Row style={{ marginBottom: 10 }}>
     <Col sm={7}><CardInfo>{capitalize(name)} xxxxxx{last4}</CardInfo></Col>
-    <Col sm={2}><MarkerImg src={CheckedMarker}/></Col>
+    {isDefault && <Col sm={2}><MarkerImg src={CheckedMarker}/></Col>}
   </Row>
 )
