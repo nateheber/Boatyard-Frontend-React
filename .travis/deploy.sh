@@ -21,4 +21,4 @@ aws cloudfront create-invalidation \
   --distribution-id $CLOUDFRONT_DIST_ID \
   --paths /*
 
-curl -X GET -H 'Token: $WEBHOOK_TOKEN' http://secret-$NODE_ENV.boatyard.com/hooks/travis
+curl -X GET -H "Token: $WEBHOOK_TOKEN" https://secret-$NODE_ENV.boatyard.com/hooks/travis
