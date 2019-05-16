@@ -223,8 +223,10 @@ export default handleActions(
       }),
     [actionTypes.UPDATE_ORDER_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload: { order, included } } = action;
         draft.currentStatus = type;
+        draft.currentOrder = order;
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.UPDATE_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {

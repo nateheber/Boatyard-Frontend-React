@@ -152,8 +152,15 @@ function* updateOrder(action) {
     orderClient = yield select(getOrderClient);
   }
   try {
-    yield call(orderClient.update, orderId, data);
-    yield put({ type: actionTypes.UPDATE_ORDER_SUCCESS });
+    const result = yield call(orderClient.update, orderId, data);
+    const { data: order, included } = result;
+    yield put({
+      type: actionTypes.UPDATE_ORDER_SUCCESS,
+      payload: {
+        order,
+        included
+      }
+    });
     if (success) {
       yield call(success);
     }

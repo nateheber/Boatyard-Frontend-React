@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'react-flexbox-grid'
 
-import { Input } from 'components/basic/Input';
+import { CurrencyInput } from 'components/basic/Input';
 
 const Label = styled.div`
   color: #8f8f8f;
@@ -55,10 +55,10 @@ export default class TaxEditor extends React.Component {
     })
   }
 
-  onChange = (evt) => {
-    this.props.onChange(evt.target.value)
+  onChange = (values) => {
+    this.props.onChange(values.value);
     this.setState({
-      value: evt.target.value
+      value: values.value
     })
   }
 
@@ -68,7 +68,14 @@ export default class TaxEditor extends React.Component {
     return edit ? (
       <UpdatedRow>
         <Col xs={6}>
-          <Input style={{ marginBottom: 0 }} type="text" value={value} onChange={this.onChange} onBlur={this.resetEdit} />
+          <CurrencyInput
+            style={{ marginBottom: 0 }}
+            fixedDecimalScale
+            decimalScale={1}
+            value={value}
+            onBlur={this.resetEdit}
+            onValueChange={this.onChange} />
+
         </Col>
         <Col xs={6}>
           <Value>

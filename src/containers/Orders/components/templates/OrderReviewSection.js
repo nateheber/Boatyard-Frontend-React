@@ -6,7 +6,7 @@ import deepEqual from 'deep-equal';
 import { toastr } from 'react-redux-toastr';
 import { get } from 'lodash';
 
-import { GetOrder, SendQuote, SendInvoice, actionTypes } from 'store/actions/orders';
+import { GetOrder, UpdateOrder, SendQuote, SendInvoice, actionTypes } from 'store/actions/orders';
 import { Section } from 'components/basic/InfoSection';
 import { TextArea } from 'components/basic/Input';
 import { NormalText } from 'components/basic/Typho';
@@ -77,7 +77,7 @@ class OrderReviewSection extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!deepEqual(prevProps, this.props)) {
+    if (!deepEqual(prevProps.order, this.props.order)) {
       const summary = this.getSummaryInfo();
       this.setState({ ...summary });
     }
@@ -87,11 +87,18 @@ class OrderReviewSection extends React.Component {
     const { order } = this.props;
     const total = get(order, 'attributes.total');
     const subtotal = get(order, 'attributes.subTotal');
-    const taxRate = get(order, 'attributes.taxRate');
+    let taxRate = (parseFloat(get(order, 'attributes.taxRate') || '0') * 100).toFixed(1);
     const taxAmount = get(order, 'attributes.taxAmount');
     const discount = get(order, 'attributes.discount');
     const deposit = get(order, 'attributes.deposit');
     const comments = get(order, 'attributes.comments');
+    const provider = get(order, 'relationships.provider');
+    if (provider && !provider.hasOwnProperty('data')) {
+      const providerTaxRate = (parseFloat(get(provider, 'attributes.taxRate') || '0') * 100).toFixed(1);
+      if (parseFloat(taxRate) <= 0) {
+        taxRate = providerTaxRate;
+      }
+    }
     return {
       total,
       subtotal,
@@ -104,12 +111,16 @@ class OrderReviewSection extends React.Component {
   };
 
   updatePriceInfo = () => {
-    const { comments, ...priceInfo } = this.state;
-    this.props.updateOrder({order: priceInfo});
+    const { taxRate, discount, deposit } = this.state;
+    this.props.updateOrder({order: {
+      tax_rate: `${(parseFloat(taxRate) / 100)}`,
+      deposit,
+      discount
+    }});
   };
 
   onChangeTax = (taxRate) => {
-    const { subtotal } = this.props;
+    const { subtotal } = this.state;
     const taxAmount = parseFloat(taxRate) * parseFloat(subtotal) / 100;
     const total = taxAmount + parseFloat(subtotal);
     this.setState({ taxRate, taxAmount, total }, this.updatePriceInfo);
@@ -290,6 +301,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   GetOrder,
+  UpdateOrder,
   SendQuote,
   SendInvoice
 };
