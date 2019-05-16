@@ -111,13 +111,9 @@ function* loginWithProvider(action) {
           provider_id: parseInt(id)
         }
       });  
-      const authorizationToken = get(
-        result,
-        'data.attributes.authorizationToken'
-      );
       yield put({
-        type: authActions.SET_PROVIDER_TOKEN,
-        payload: authorizationToken
+        type: authActions.SET_PROVIDER_INFO,
+        payload: get(result, 'data')
       });
       yield put({
         type: authActions.SET_PRIVILEGE,
