@@ -2,8 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
+import queryString from 'query-string';
+import { isEmpty } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
-import { Login } from 'store/actions/auth';
+import { ResetPassword } from 'store/actions/auth';
 import PasswordForm from '../Forms/PasswordForm';
 
 
@@ -30,9 +33,26 @@ const SideContent =styled.div`
   }
 `;
 
-class ResetPassword extends React.Component {
+class ResetPasswordComponent extends React.Component {
   handleResetPassword = (password) => {
-    console.log('------------password-------------', password);
+    const query = queryString.parse(this.props.location.search);
+    if (query && !isEmpty(query) && Object.prototype.hasOwnProperty.call(query, 'token')) {
+      const token = query.token;
+      const { ResetPassword } = this.props;
+      ResetPassword({
+        token,
+        password,
+        success: () => {
+          toastr.success('Success', 'Updated password successfully!')
+          this.props.history.push('/login');
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
+        }
+      });
+    } else {
+      toastr.error('Error', 'Missing token to reset password');
+    }
   };
   render() {
     return (
@@ -45,17 +65,9 @@ class ResetPassword extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth: { errorMessage } }) => ({
-  errorMessage
-});
-
 const mapDispatchToProps = {
-  Login
+  ResetPassword
 };
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(ResetPassword)
+export default withRouter(connect(null, mapDispatchToProps)(ResetPasswordComponent)
 );

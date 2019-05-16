@@ -1,6 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
+import { toastr } from 'react-redux-toastr';
 
+import { SendResetRequest } from 'store/actions/auth';
 import RequestForm from '../Forms/RequestForm';
 
 
@@ -29,7 +33,17 @@ const SideContent =styled.div`
 
 class ForgotPassword extends React.Component {
   handleSendRequest = (email) => {
-    console.log('---------------Email-----------', email);
+    const { SendResetRequest } = this.props;
+    SendResetRequest({
+      email,
+      success: () => {
+        toastr.success('Success', 'Sent successfully!')
+        this.props.history.push('/login');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
   };
   render() {
     return (
@@ -42,4 +56,8 @@ class ForgotPassword extends React.Component {
   }
 }
 
-export default ForgotPassword;
+const mapDispatchToProps = {
+  SendResetRequest
+};
+
+export default withRouter(connect(null, mapDispatchToProps)(ForgotPassword));
