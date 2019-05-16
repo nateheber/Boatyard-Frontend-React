@@ -115,9 +115,9 @@ class PaymentGatewayModal extends React.Component {
   getActions = () => {
     const { step } = this.state;
     if (step === 'gateway') {
-      return [<OrangeButton onClick={this.next}>Next</OrangeButton>];
+      return [<OrangeButton key={`btn_next`} onClick={this.next}>Next</OrangeButton>];
     }
-    return [<OrangeButton onClick={this.connect}>Connect</OrangeButton>];
+    return [<OrangeButton key={`btn_connect`} onClick={this.connect}>Connect</OrangeButton>];
   };
 
   renderGatewaySelection = () => {

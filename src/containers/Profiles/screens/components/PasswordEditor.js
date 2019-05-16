@@ -33,7 +33,7 @@ const Content = styled.div`
   overflow: auto;
 `;
 
-export class PasswordEditor extends React.Component {
+export default class PasswordEditor extends React.Component {
   state = {
     password: '',
     confirmPassword: ''
