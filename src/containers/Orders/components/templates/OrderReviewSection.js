@@ -120,9 +120,9 @@ class OrderReviewSection extends React.Component {
   };
 
   onChangeTax = (taxRate) => {
-    const { subtotal } = this.state;
+    const { subtotal, deposit, discount } = this.state;
     const taxAmount = parseFloat(taxRate) * parseFloat(subtotal) / 100;
-    const total = taxAmount + parseFloat(subtotal);
+    const total = taxAmount + parseFloat(subtotal) - parseFloat(deposit) - parseFloat(discount);
     this.setState({ taxRate, taxAmount, total }, this.updatePriceInfo);
   };
 

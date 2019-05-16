@@ -57,6 +57,12 @@ export default class RequestPriceList extends React.Component {
     });
   }
 
+  onChangeList = (listItems) => {
+    this.setState({ listItems }, () => {
+      this.props.onChange(this.state)
+    });
+  }
+
   render() {
     const {
       cost,
