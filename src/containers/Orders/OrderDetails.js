@@ -163,7 +163,6 @@ class OrderDetails extends React.Component {
     const orderStatus = get(currentOrder, 'attributes.state' );
     const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
     const canShowCustomerInfo = this.getCustomerInfoCondition();
-
     return (
       <React.Fragment>
         {loading && isFirstLoad ? (
