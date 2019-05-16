@@ -59,7 +59,7 @@ export const setServiceTemplateData = (serviceInfo, templateInfo) => {
         const newItem = get(listItems, `${index}`);
         newListItems.push(newItem || oldItem);
       }
-      set(newData, 'data.listDescription', newListItems);
+      set(newData, 'data.listItems', newListItems);
     }
   }
   // if (hasIn(newData, 'data.unit')) {
