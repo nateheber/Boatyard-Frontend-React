@@ -14,6 +14,14 @@ export const actionTypes = {
   GET_USER_PERMISSION_SUCCESS: '[AUTH] - Get permission of user Success',
   GET_USER_PERMISSION_FAILURE: '[AUTH] - Get permission of user Failure',
 
+  SEND_RESET_REQUEST: '[AUTH] - Send request to reset password',
+  SEND_RESET_REQUEST_SUCCESS: '[AUTH] - Send request to reset password Success',
+  SEND_RESET_REQUEST_FAILURE: '[AUTH] - Send request to reset password Failure',
+
+  RESET_PASSWORD: '[AUTH] - Reset password',
+  RESET_PASSWORD_SUCCESS: '[AUTH] - Reset password Success',
+  RESET_PASSWORD_FAILURE: '[AUTH] - Reset password Failure',
+
   SET_PROVIDER_INFO: '[AUTH] - Set provider token and info',
   SET_PRIVILEGE: '[AUTH] - Set privilege',
   
@@ -31,6 +39,14 @@ export const SignupFailure = createAction(actionTypes.AUTH_SIGNUP_FAILURE);
 export const GetUserPermission = createAction(actionTypes.GET_USER_PERMISSION, payload => payload);
 export const GetUserPermissionSuccess = createAction(actionTypes.GET_USER_PERMISSION_SUCCESS);
 export const GetUserPermissionFailure = createAction(actionTypes.GET_USER_PERMISSION_FAILURE);
+
+export const SendResetRequest = createAction(actionTypes.SEND_RESET_REQUEST, payload => payload);
+export const SendResetRequestSuccess = createAction(actionTypes.SEND_RESET_REQUEST_SUCCESS);
+export const SendResetRequestFailure = createAction(actionTypes.SEND_RESET_REQUEST_FAILURE);
+
+export const ResetPassword = createAction(actionTypes.RESET_PASSWORD, payload => payload);
+export const ResetPasswordSuccess = createAction(actionTypes.RESET_PASSWORD_SUCCESS);
+export const ResetPasswordFailure = createAction(actionTypes.RESET_PASSWORD_FAILURE);
 
 export const SetProviderInfo = createAction(actionTypes.SET_PROVIDER_INFO, payload => payload);
 export const SetPrivilege = createAction(actionTypes.SET_PRIVILEGE, payload => payload);
