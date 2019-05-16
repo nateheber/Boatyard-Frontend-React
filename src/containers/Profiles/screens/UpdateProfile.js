@@ -59,13 +59,13 @@ const modalStyles = {
 class UpdateProfile extends React.Component {
   constructor(props) {
     super(props);
-    const { firstName, lastName, phoneNumber, email } = props.profile;
+    const { firstName, lastName, phoneNumber, email, taxRate } = props.profile;
     this.state = {
       firstName,
       lastName,
       phoneNumber: formatPhoneNumber(phoneNumber),
       email,
-      taxRate: '',
+      taxRate,
       showModal: false
     };
   }
@@ -106,6 +106,7 @@ class UpdateProfile extends React.Component {
             <InputLabel>Phone</InputLabel>
             <Input
               type="text"
+              mask={`(999) 999-9999`}
               defaultValue={phoneNumber}
               onChange={this.onChangePN}
             />
@@ -250,7 +251,8 @@ const mapStateToProps = (state) => ({
   privilege: state.auth.privilege,
   managementStatus: state.management.currentStatus,
   providerStatus: state.provider.currentStatus,
-  profile: state.management.currentManagement,
+  profile: state.profile,
+  management: state.management.currentManagement,
   provider: state.provider.currentProvider
 });
 
