@@ -106,7 +106,7 @@ class UpdateProfile extends React.Component {
       const provider = get(management, 'relationships.provider');
       SetProviderInfo(provider);
       const { id: providerId, attributes: { taxRate } } = provider;
-      const tax = (parseFloat(taxRate) * 100).toFixed(2);
+      const tax = (parseFloat(taxRate) * 100).toFixed(1);
       this.setState({
         providerId,
         taxRate: tax
