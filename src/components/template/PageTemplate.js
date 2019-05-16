@@ -1,98 +1,55 @@
 import React from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
-import { GetNetworks } from 'store/actions/networks';
-import { GetConversations } from 'store/actions/conversations';
-import Header from 'components/compound/Header';
-import SideBar from 'components/compound/Sidebar';
-import MessageBar from './MessageBar';
-
-const Wrapper = styled.div`
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-`;
-
-
-const PageContent = styled.div`
-  display: flex;
-  box-sizing: border-box;
-  justify-content: stretch;
-  flex-direction: row;
-  flex: 1;
-  padding-top: 68px;
-  height: 100%;
-  width: 100vw;
-  background-color: #e6e6e6;
-  overflow: hidden;
-`;
-
-const ContentWrapper = styled.div`
-  height: 100%;
-  overflow-y: scroll;
-  @media (min-width: 991px) {
-    flex: 1;
-  }
-  @media (max-width: 991px) {
-    width: 100vw;
-  }
-`;
+import { isAuthenticatedSelector } from 'store/selectors/auth';
+import AuthPageTemplate from './AuthPageTemplate';
+import MainPageTemplate from './MainPageTemplate';
 
 class PageTemplate extends React.Component {
-  state = {
-    showSidebar: false,
-    showMessage: false,
-  };
-
-  toggleMenu = () => {
-    const { showSidebar } = this.state;
-    this.setState({
-      showSidebar: !showSidebar
-    });
-  };
-
-  toggleMessage = () => {
-    const { showMessage } = this.state;
-    if (!showMessage) {
-      this.props.GetNetworks({ page: 1, per_page: 1000 });
-      this.props.GetConversations({ page: 1, per_page: 1000 });  
+  constructor(props) {
+    super(props);
+    const { isAuthenticated, history, location } = props;
+    if (!isAuthenticated) {
+      if ((location.search !== null || location.search !== undefined) && location.search.indexOf('redirect_url') < 0) {
+        if (!(location.pathname.indexOf('/login') > -1 ||
+          location.pathname.indexOf('/forgot-password') > -1 ||
+          location.pathname.indexOf('/reset-password') > -1)) {
+          history.push({
+            pathname: '/login/',
+            search: `?redirect_url=${location.pathname}${location.search}`
+          });  
+        }
+      }
+    } else {
+      if (location.pathname.indexOf('/login') > -1 ||
+        location.pathname.indexOf('/forgot-password') > -1 ||
+        location.pathname.indexOf('/reset-password') > -1) {
+        history.push('/');
+      }
     }
-    this.setState({
-      showMessage: !showMessage
-    });
-  }
-
-  hideMessage = (e) => {
-    if (!(this.messageToggle && this.messageToggle.contains(e.target))) {
-      this.setState({ showMessage: false });
-    }
-  }
-
-  messageToggleRef = (ref) => {
-    this.messageToggle = ref;
   }
 
   render() {
-    const { showSidebar, showMessage } = this.state;
+    const { isAuthenticated } = this.props;
     return (
-      <Wrapper>
-        <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={this.toggleMessage} />
-        <PageContent>
-          <SideBar showSidebar={showSidebar} />
-          <ContentWrapper>
+      <React.Fragment>
+        {isAuthenticated ? 
+          <MainPageTemplate>
             {this.props.children}
-          </ContentWrapper>
-          <MessageBar show={showMessage} onHide={this.hideMessage} />
-        </PageContent>
-      </Wrapper>
+          </MainPageTemplate>
+        :
+          <AuthPageTemplate>
+            {this.props.children}
+          </AuthPageTemplate>
+        }
+      </React.Fragment>
     );
   }
 }
 
-const mapDispatchToProps = {
-  GetNetworks,
-  GetConversations
-};
-export default withRouter(connect(null, mapDispatchToProps)(PageTemplate));
+const mapStateToProps = (state) => ({
+  isAuthenticated: isAuthenticatedSelector(state)
+});
+
+export default withRouter(connect(mapStateToProps)(PageTemplate));

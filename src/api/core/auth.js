@@ -1,4 +1,4 @@
-import { logout } from 'store/reducers/auth';
+import { Logout } from 'store/actions/auth';
 import store from 'store';
 
 export const authInterceptor = (client, authType) => {
@@ -28,7 +28,7 @@ export const authInterceptor = (client, authType) => {
       return config;
     },
     err => {
-      store.dispatch(logout());
+      store.dispatch(Logout());
       return Promise.reject(err);
     }
   );

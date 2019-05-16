@@ -6,7 +6,7 @@ import ReduxToastr from 'react-redux-toastr';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 
-import AppRoutes from './navigation';
+import AppRoutes from './routes';
 import store, { persistor } from './store';
 
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
