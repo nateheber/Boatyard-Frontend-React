@@ -8,6 +8,7 @@ export const actions = {
   setProfile: 'PROFILE/SET'
 };
 
+export const setProfile = createAction(actions.setProfile);
 export const fetchProfile = createAction(actions.fetchProfile);
 export const updateProfile = createAction(actions.updateProfile);
 export const deleteProfile = createAction(actions.deleteProfile);

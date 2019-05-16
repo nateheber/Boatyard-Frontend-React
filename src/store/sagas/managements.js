@@ -99,12 +99,13 @@ function* createManagement(action) {
   try {
     const result = yield call(managementClient.create, payload);
     const { data, included } = result;
+    const refinedManagement = refineManagement(data, refactorIncluded(included));
     yield put({
       type: actionTypes.CREATE_MANAGEMENT_SUCCESS,
-      management: refineManagement(data, refactorIncluded(included))
+      management: refinedManagement
     });
     if (success) {
-      yield call(success, data, included);
+      yield call(success, refinedManagement);
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_MANAGEMENT_FAILURE, payload: e });
@@ -120,12 +121,13 @@ function* updateManagement(action) {
   try {
     const result = yield call(managementClient.update, managementId, payload);
     const { data, included } = result;
+    const refinedManagement = refineManagement(data, refactorIncluded(included));
     yield put({
       type: actionTypes.UPDATE_MANAGEMENT_SUCCESS,
-      management: refineManagement(data, refactorIncluded(included))
+      management: refinedManagement
     });
     if (success) {
-      yield call(success, data, included);
+      yield call(success, refinedManagement);
     }
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_MANAGEMENT_FAILURE, payload: e });

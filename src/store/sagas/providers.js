@@ -20,6 +20,7 @@ const refineProviders = (providers) => {
 };
 
 const adminApiClient = createProviderClient('admin');
+const providerApiClient = createProviderClient('provider');
 const basicProviderClient = createProviderClient('basic');
 const customManagement = customApiClient('admin');
 const adminPreferredApiClient = createPreferredProviderClient('admin');
@@ -202,9 +203,13 @@ function* addPreferredProvider(action) {
 }
 
 function* updateProvider(action) {
-  const { providerId, data, success, error } = action.payload;
+  const { authType, providerId, data, success, error } = action.payload;
+  let apiClient = adminApiClient;
+  if (authType && authType === 'provider') {
+    apiClient = providerApiClient;
+  }
   try {
-    const result = yield call(adminApiClient.update, providerId, data);
+    const result = yield call(apiClient.update, providerId, data);
     const provider = get(result, 'data', {});
     yield put({
       type: actionTypes.UPDATE_PROVIDER_SUCCESS,

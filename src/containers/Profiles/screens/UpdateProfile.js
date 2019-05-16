@@ -3,18 +3,22 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import Modal from 'react-responsive-modal';
-import { formatPhoneNumber } from 'utils/basic';
 import { Row, Col } from 'react-flexbox-grid';
+import { toastr } from 'react-redux-toastr';
+import { get } from 'lodash';
 
 import { actionTypes as managementActions, GetManagement, UpdateManagement } from 'store/actions/managements';
-import { actionTypes as providerActions, GetProvider, UpdateProvider } from 'store/actions/providers';
+import { actionTypes as providerActions, UpdateProvider } from 'store/actions/providers';
+import { SetProviderInfo } from 'store/actions/auth';
+import { formatPhoneNumber } from 'utils/basic';
 import { Input } from 'components/basic/Input';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 import PaymentSettings from './components/PaymentSettings';
 import PasswordEditor from './components/PasswordEditor';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 
-import { updateProfile } from 'store/reducers/profile';
+import { updateProfile, setProfile } from 'store/reducers/profile';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -59,20 +63,60 @@ const modalStyles = {
 class UpdateProfile extends React.Component {
   constructor(props) {
     super(props);
-    const { firstName, lastName, phoneNumber, email, taxRate } = props.profile;
     this.state = {
-      firstName,
-      lastName,
-      phoneNumber: formatPhoneNumber(phoneNumber),
-      email,
-      taxRate,
+      managementId: null,
+      providerId: null,
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      email: '',
+      taxRate: '',
       showModal: false
     };
   }
 
+  componentWillMount() {
+    const { profile: { id: userId }, GetManagement } = this.props;
+    GetManagement({
+      params: {
+        'management[user_id]': userId
+      },
+      success: (management) => {
+        this.setManagementToState(management);
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    })
+  }
+  setManagementToState = (management) => {
+    const { privilege, setProfile, SetProviderInfo } = this.props;
+    const { id: managementId } = management;
+    const user = get(management, 'relationships.user');
+    setProfile({ id: user.id, ...user.attributes });
+    const { firstName, lastName, phoneNumber, email } = user.attributes;
+    this.setState({
+      managementId,
+      firstName,
+      lastName,
+      phoneNumber: formatPhoneNumber(phoneNumber, true),
+      email
+    });
+    if (privilege === 'provider') {
+      const provider = get(management, 'relationships.provider');
+      SetProviderInfo(provider);
+      const { id: providerId, attributes: { taxRate } } = provider;
+      const tax = (parseFloat(taxRate) * 100).toFixed(2);
+      this.setState({
+        providerId,
+        taxRate: tax
+      });
+    }
+  }
+
   renderEditorSection = () => {
     const { privilege } = this.props;
-    const { firstName, lastName, phoneNumber, email, taxRate, type } = this.state;
+    const { firstName, lastName, phoneNumber, email, taxRate } = this.state;
     return (
       <React.Fragment>
         <Row style={{ marginBottom: 20 }}>
@@ -80,7 +124,7 @@ class UpdateProfile extends React.Component {
             <InputLabel>First Name</InputLabel>
             <Input
               type="text"
-              defaultValue={firstName}
+              value={firstName}
               onChange={this.onChangeFN}
             />
           </Col>
@@ -88,7 +132,7 @@ class UpdateProfile extends React.Component {
             <InputLabel>Last Name</InputLabel>
             <Input
               type="text"
-              defaultValue={lastName}
+              value={lastName}
               onChange={this.onChangeLN}
             />
           </Col>
@@ -98,7 +142,7 @@ class UpdateProfile extends React.Component {
             <InputLabel>Email</InputLabel>
             <Input
               type="text"
-              defaultValue={email}
+              value={email}
               onChange={this.onChangeEmail}
             />
           </Col>
@@ -106,8 +150,8 @@ class UpdateProfile extends React.Component {
             <InputLabel>Phone</InputLabel>
             <Input
               type="text"
-              mask={`(999) 999-9999`}
-              defaultValue={phoneNumber}
+              mask="(999) 999-9999"
+              value={phoneNumber}
               onChange={this.onChangePN}
             />
           </Col>
@@ -115,7 +159,7 @@ class UpdateProfile extends React.Component {
         <Row>
           <Col xs={12} sm={6}>
             <InputLabel>Permissions</InputLabel>
-            <PermissionText>{type}</PermissionText>
+            <PermissionText>{`Admin`}</PermissionText>
           </Col>
         </Row>
         <Splitter />
@@ -139,7 +183,7 @@ class UpdateProfile extends React.Component {
               <InputLabel>Tax Rate (%)</InputLabel>
               <Input
                 type="text"
-                defaultValue={taxRate}
+                value={taxRate}
                 onChange={this.onChangeTaxRate}
               />
             </Col>
@@ -169,8 +213,50 @@ class UpdateProfile extends React.Component {
   }
 
   onSave = () => {
-    const { id } = this.props.profile;
-    this.props.updateProfile({ id, data: this.state });
+    const { providerId, taxRate } = this.state;
+    const { privilege, UpdateProvider } = this.props;
+    if (privilege === 'provider') {
+      UpdateProvider({
+        authType: 'provider',
+        providerId,
+        data: {
+          provider: {
+            tax_rate: `${parseFloat(taxRate) / 100}`
+          }
+        },
+        success: (provider) => {
+          this.updateProfile();
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
+        }
+      })
+    } else {
+      this.updateProfile();
+    }
+  };
+
+  updateProfile = () => {
+    const { managementId, firstName, lastName, phoneNumber, email } = this.state;
+    const { UpdateManagement } = this.props;
+    UpdateManagement({
+      managementId,
+      data: {
+        management: {
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          email: email.trim(),
+          phone_number: phoneNumber.trim(),
+        }
+      },
+      success: (management) => {
+        this.setManagementToState(management);
+        toastr.success('Success', 'Saved successfully!');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
   };
 
   onUpdatePassword = password => {
@@ -229,6 +315,13 @@ class UpdateProfile extends React.Component {
     });
   };
 
+  isLoading = () => {
+    const { managementStatus, providerStatus } = this.props;
+    return managementStatus === managementActions.GET_MANAGEMENT ||
+    managementStatus === managementActions.UPDATE_MANAGEMENT ||
+    providerStatus === providerActions.UPDATE_PROVIDER;
+  }
+
   render() {
     const { showModal } = this.state;
     return (
@@ -242,6 +335,7 @@ class UpdateProfile extends React.Component {
             onSave={this.onUpdatePassword}
           />
         </Modal>
+        {this.isLoading() && <LoadingSpinner loading={this.isLoading()} />}
       </Wrapper>
     );
   }
@@ -251,16 +345,15 @@ const mapStateToProps = (state) => ({
   privilege: state.auth.privilege,
   managementStatus: state.management.currentStatus,
   providerStatus: state.provider.currentStatus,
-  profile: state.profile,
-  management: state.management.currentManagement,
-  provider: state.provider.currentProvider
+  profile: state.profile
 });
 
 const mapDispatchToProps = {
   updateProfile,
+  setProfile,
+  SetProviderInfo,
   GetManagement,
   UpdateManagement,
-  GetProvider,
   UpdateProvider
 };
 

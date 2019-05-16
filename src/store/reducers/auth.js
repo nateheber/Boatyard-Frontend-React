@@ -1,6 +1,7 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
 import { actionTypes } from '../actions/auth';
+import { get } from 'lodash';
 
 const initialState = {
   currentStatus: '',
@@ -43,9 +44,12 @@ export default handleActions(
     [actionTypes.SET_PROVIDER_INFO]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
-        const { id, attributes: { authorizationToken, taxRate }} = payload;
+        const { id, attributes: { taxRate }} = payload;
+        const authorizationToken = get(payload, 'attributes.authorizationToken');
         draft.currentStatus = type;
-        draft.providerToken = authorizationToken;
+        if (authorizationToken) {
+          draft.providerToken = authorizationToken;
+        }
         draft.providerId = id;
         draft.taxRate = taxRate;
         draft.errors = null;
