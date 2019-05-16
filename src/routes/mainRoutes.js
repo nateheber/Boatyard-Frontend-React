@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 import PageTemplate from 'components/template/PageTemplate';
+import Login from 'components/template/Login';
+import ForgotPassword from 'components/template/ForgotPassword';
+import ResetPassword from 'components/template/ResetPassword';
 import Dashboard from 'components/template/Dashboard';
 import Order from 'containers/Orders/OrderList';
 import OrderDetails from 'containers/Orders/OrderDetails';
@@ -25,6 +28,9 @@ import { Users, UserDetails } from 'containers/Users';
 const MainRoutes = ({ privilege }) => (
   <Router>
     <PageTemplate>
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/forgot-password" component={ForgotPassword} />
+      <Route exact path="/reset-password" component={ResetPassword} />
       <Route exact path="/" component={Dashboard} />
       <Route exact path="/update-profile" component={UpdateProfile} />
       <Route exact path="/dashboard/" component={Dashboard} />

@@ -2,7 +2,7 @@ import { get, isEmpty } from 'lodash';
 import { camelize } from '@ridi/object-case-converter';
 
 import store from 'store';
-import { logout } from 'store/reducers/auth';
+import { Logout } from 'store/actions/auth';
 
 export const responseInterceptor = client => {
   client.interceptors.response.use((response) => {
@@ -33,7 +33,7 @@ export const responseInterceptor = client => {
       }
     }
     if (message === 'Signature has expired') {
-      store.dispatch(logout());
+      store.dispatch(Logout());
       return false;
     } else {
       const err = { message };

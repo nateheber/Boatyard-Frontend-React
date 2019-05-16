@@ -1,54 +1,59 @@
-import { createAction, handleActions } from 'redux-actions';
+import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-
-export const actions = {
-  signup: 'AUTH/SIGNUP',
-  login: 'AUTH/LOGIN',
-  logout: 'AUTH/LOGOUT',
-  setAuthState: 'AUTH/SET_AUTH_STATE',
-  getUserPermission: 'AUTH/GET_USER_PERMISSION',
-  setAdminToken: 'AUTH/SET_ADMIN_TOKEN',
-  setProviderToken: 'AUTH/SET_PROVIDER_TOKEN',
-  setPrivilege: 'AUTH/SET_PREVILAGE'
-};
-
-export const signup = createAction(actions.signup);
-export const login = createAction(actions.login);
-export const logout = createAction(actions.logout);
+import { actionTypes } from '../actions/auth';
 
 const initialState = {
+  currentStatus: '',
   authToken: '',
   adminToken: '',
   providerToken: '',
-  errorMessage: '',
+  errors: '',
   privilege: '',
   loading: false
 };
 
 export default handleActions(
   {
-    [actions.setAuthState]: (
-      state,
-      { payload: { authToken, errorMessage, loading } }
-    ) =>
-      produce(state, draftState => {
-        draftState.authToken = authToken;
-        draftState.errorMessage = errorMessage;
-        draftState.loading = loading;
+    [actionTypes.AUTH_LOGIN_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.authToken = payload;
       }),
-    [actions.setAdminToken]: (state, { payload }) =>
-      produce(state, draftState => {
-        draftState.adminToken = payload;
+    [actionTypes.AUTH_LOGIN_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
       }),
-    [actions.setProviderToken]: (state, { payload }) =>
-      produce(state, draftState => {
-        draftState.providerToken = payload;
+    [actionTypes.GET_USER_PERMISSION_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.adminToken = payload;
+        draft.errors = null;
       }),
-    [actions.setPrivilege]: (state, { payload }) =>
-      produce(state, draftState => {
-        draftState.privilege = payload;
+    [actionTypes.GET_USER_PERMISSION_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
       }),
-    [actions.logout]: () => ({
+    [actionTypes.SET_PROVIDER_TOKEN]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.providerToken = payload;
+        draft.errors = null;
+      }),
+    [actionTypes.SET_PRIVILEGE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.privilege = payload;
+        draft.errors = null;
+      }),
+    [actionTypes.AUTH_LOGOUT]: () => ({
       ...initialState
     })
   },
