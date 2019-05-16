@@ -97,8 +97,8 @@ function* loginWithProvider(action) {
   const escalationApiClient = yield select(getCustomApiClient);
   const { providerId, success, error } = action.payload;
   let id = providerId;
-  let result = null;
   try {
+    let result = null;
     if (isEmpty(providerId)) {
       result = yield call(basicProviderClient.list);
       const { data } = result;
