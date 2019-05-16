@@ -12,12 +12,20 @@ class PageTemplate extends React.Component {
     const { isAuthenticated, history, location } = props;
     if (!isAuthenticated) {
       if ((location.search !== null || location.search !== undefined) && location.search.indexOf('redirect_url') < 0) {
-        history.push({
-          pathname: '/login/',
-          search: `?redirect_url=${location.pathname}${location.search}`
-        });
-      } else {
-        history.push(`${location.pathname}${location.search}`);
+        if (!(location.pathname.indexOf('/login') > -1 ||
+          location.pathname.indexOf('/forgot-password') > -1 ||
+          location.pathname.indexOf('/reset-password') > -1)) {
+          history.push({
+            pathname: '/login/',
+            search: `?redirect_url=${location.pathname}${location.search}`
+          });  
+        }
+      }
+    } else {
+      if (location.pathname.indexOf('/login') > -1 ||
+        location.pathname.indexOf('/forgot-password') > -1 ||
+        location.pathname.indexOf('/reset-password') > -1) {
+        history.push('/');
       }
     }
   }

@@ -1,6 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, isEmpty, orderBy } from 'lodash';
-import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/providers';
 import { actionTypes as authActions } from '../actions/auth';
@@ -97,8 +96,8 @@ function* loginWithProvider(action) {
   const escalationApiClient = yield select(getCustomApiClient);
   const { providerId, success, error } = action.payload;
   let id = providerId;
-  let result = null;
   try {
+    let result = null;
     if (isEmpty(providerId)) {
       result = yield call(basicProviderClient.list);
       const { data } = result;
@@ -129,16 +128,12 @@ function* loginWithProvider(action) {
         yield call(success);
       }
     } else {
-      toastr.clean();
-      toastr.error('Auth Failure', 'Invalid Credentials');
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE });
       if (error) {
-        yield call(error, true);
+        yield call(error, { message: 'Invalid Credentials' });
       }
     }
   } catch (e) {
-    toastr.clean();
-    toastr.error('Auth Failure', 'Invalid Credentials');
     yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error, e);

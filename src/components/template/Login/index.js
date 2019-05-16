@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { toastr } from 'react-redux-toastr';
-import queryString from 'query-string';
 
 import LoginForm from '../Forms/LoginForm';
 import { Login, GetUserPermission } from 'store/actions/auth';
@@ -80,7 +79,6 @@ const WelcomeFooter = styled.div`
 class LoginComponent extends React.Component {
   handleLogin = (email, password) => {
     const { Login, GetUserPermission, LoginWithProvider } = this.props;
-    const query = queryString.parse(this.props.location.search);
     Login({
       params: {
         email,
@@ -88,8 +86,10 @@ class LoginComponent extends React.Component {
       },
       success: () => {
         GetUserPermission({ success: () => {
-          if (query.hasOwnProperty('redirect_url')) {
-            this.props.history.push(query['redirect_url']);
+          const index = this.props.location.search.indexOf('redirect_url');
+          if (index > -1) {
+            const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
+            this.props.history.push(redirectUrl);
           } else {
             this.props.history.push('/');
           }
@@ -97,8 +97,11 @@ class LoginComponent extends React.Component {
         error: (e) => {
           LoginWithProvider({
             success: () => {
-              if (query.hasOwnProperty('redirect_url')) {
-                this.props.history.push(query['redirect_url']);
+              const index = this.props.location.search.indexOf('redirect_url');
+              if (index > -1) {
+                const index = this.props.location.search.indexOf('redirect_url');
+                const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
+                this.props.history.push(redirectUrl);
               } else {
                 this.props.history.push('/');
               }
