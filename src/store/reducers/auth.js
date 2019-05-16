@@ -61,6 +61,30 @@ export default handleActions(
         draft.privilege = payload;
         draft.errors = null;
       }),
+    [actionTypes.SEND_RESET_REQUEST_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.SEND_RESET_REQUEST_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+    [actionTypes.RESET_PASSWORD_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.RESET_PASSWORD_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
     [actionTypes.AUTH_LOGOUT]: () => ({
       ...initialState
     })
