@@ -8,4 +8,5 @@ export * from './ImageUploader';
 export * from './ImageSelector';
 export * from './Selector';
 export * from './DateSelector';
-export * from './TimePicker'
+export * from './TimePicker';
+export * from './FileInput';

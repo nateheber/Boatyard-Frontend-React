@@ -2,11 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 
 import FormFields from 'components/template/FormFields';
+import UploadIcon from 'resources/upload.png';
 
 const Wrapper = styled.div`
   margin-bottom: 44px;
   width: 100%;
-`
+`;
 
 const Title = styled.div`
   font-family: Montserrat;
@@ -25,11 +26,11 @@ const FieldWrapper = styled.div`
   background-color: #fafafa;
   margin-top: 25px;
   padding: 23px 25px 9px;
-`
+`;
 
-export default class ComanyInfo extends React.Component {
+export default class CompanyInfo extends React.Component {
   getCompanyFieldInfo = () => {
-    const { defaultValues: { name, street, city, state, zip, websiteUrl }, newFlg } = this.props;
+    const { defaultValues: { name, street, city, state, zip, websiteUrl, logo }, newFlg } = this.props;
     return newFlg ? [
       {
         field: 'name',
@@ -39,7 +40,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the company name',
         required: true,
         xs: 12,
-        md: 6,
+        sm: 6,
+        md: 6
       },
       {
         field: 'email',
@@ -49,7 +51,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter user email',
         required: true,
         xs: 12,
-        md: 6,
+        sm: 6,
+        md: 6
       },
       {
         field: 'street',
@@ -59,7 +62,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the address',
         required: true,
         xs: 12,
-        md: 5,
+        sm: 6,
+        md: 5
       },
       {
         field: 'city',
@@ -69,7 +73,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the city',
         required: true,
         xs: 12,
-        md: 4,
+        sm: 6,
+        md: 4
       },
       {
         field: 'state',
@@ -79,7 +84,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the state',
         required: true,
         xs: 12,
-        md: 2,
+        sm: 6,
+        md: 2
       },
       {
         field: 'zip',
@@ -89,7 +95,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the zipcode',
         required: true,
         xs: 12,
-        md: 1,
+        sm: 6,
+        md: 1
       },
       {
         field: 'websiteUrl',
@@ -97,7 +104,7 @@ export default class ComanyInfo extends React.Component {
         type: 'text_field',
         defaultValue: websiteUrl,
         xs: 12,
-        sm: 12,
+        sm: 6,
         md: 5,
         lg: 5,
         xl: 5
@@ -107,7 +114,7 @@ export default class ComanyInfo extends React.Component {
         label: 'Google Place ID',
         type: 'text_field',
         xs: 12,
-        sm: 12,
+        sm: 6,
         md: 4,
         lg: 4,
         xl: 4
@@ -116,12 +123,24 @@ export default class ComanyInfo extends React.Component {
         field: 'subscriber',
         label: 'Subscriber',
         type: 'check_box',
-        xs: 12,
-        sm: 12,
+        xs: 6,
+        sm: 6,
         md: 1,
         lg: 1,
         xl: 1
       },
+      {
+        field: 'logo',
+        label: 'Logo',
+        type: 'file_input',
+        placeholder: 'NO LOGO UPLOADED',
+        icon: UploadIcon,
+        xs: 6,
+        sm: 6,
+        md: 2,
+        lg: 2,
+        xl: 2
+      }
     ] : [
       {
         field: 'name',
@@ -131,7 +150,9 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the company name',
         required: true,
         xs: 12,
+        sm: 6,
         md: 3,
+        lg: 3
       },
       {
         field: 'street',
@@ -141,7 +162,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the address',
         required: true,
         xs: 12,
-        md: 4,
+        sm: 6,
+        md: 4
       },
       {
         field: 'city',
@@ -151,7 +173,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the city',
         required: true,
         xs: 12,
-        md: 2,
+        sm: 4,
+        md: 2
       },
       {
         field: 'state',
@@ -161,7 +184,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the state',
         required: true,
         xs: 12,
-        md: 2,
+        sm: 4,
+        md: 2
       },
       {
         field: 'zip',
@@ -171,7 +195,8 @@ export default class ComanyInfo extends React.Component {
         errorMessage: 'Enter the zipcode',
         required: true,
         xs: 12,
-        md: 1,
+        sm: 4,
+        md: 1
       },
       {
         field: 'websiteUrl',
@@ -179,7 +204,7 @@ export default class ComanyInfo extends React.Component {
         type: 'text_field',
         defaultValue: websiteUrl,
         xs: 12,
-        sm: 12,
+        sm: 6,
         md: 5,
         lg: 5,
         xl: 5
@@ -189,7 +214,7 @@ export default class ComanyInfo extends React.Component {
         label: 'Google Place ID',
         type: 'text_field',
         xs: 12,
-        sm: 12,
+        sm: 6,
         md: 4,
         lg: 4,
         xl: 4
@@ -198,11 +223,24 @@ export default class ComanyInfo extends React.Component {
         field: 'subscriber',
         label: 'Subscriber',
         type: 'check_box',
-        xs: 12,
-        sm: 12,
+        xs: 6,
+        sm: 6,
         md: 1,
         lg: 1,
         xl: 1
+      },
+      {
+        field: 'logo',
+        label: 'Logo',
+        type: 'file_input',
+        placeholder: 'NO LOGO UPLOADED',
+        icon: UploadIcon,
+        defaultValue: { file: null, baseString: logo, ref: null },
+        xs: 6,
+        sm: 6,
+        md: 2,
+        lg: 2,
+        xl: 2
       },
     ];
   }

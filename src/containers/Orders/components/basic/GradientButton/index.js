@@ -27,7 +27,7 @@ export default class GradientButton extends React.Component {
   };
 
   render () {
-    const { children } = this.props
+    const { children } = this.props;
     return (<Button onClick={this.handleClick} >
       {children}
     </Button>);

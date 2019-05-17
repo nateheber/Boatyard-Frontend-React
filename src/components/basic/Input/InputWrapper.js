@@ -3,9 +3,13 @@ import styled from 'styled-components';
 export const InputLabel = styled.div`
   display: flex;
   flex: 1;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: Montserrat;
+  font-weight: 600;
   font-size: 14px;
-  color: #333;
+  color: #003247;
+  text-align: left;
+  margin-bottom: 20px;
+  text-transform: capitalize;
 `;
 
 export const InputWrapper = styled.div`
@@ -61,6 +65,33 @@ export const InputWrapper = styled.div`
     color: #003247;
     margin-bottom: 21px;
     text-transform: none;
+  }
+  .field-section {
+    width: 100%;
+  }
+  &.upload {
+    display: flex;
+    flex-direction: row;
+    .field-section {
+      width: 50px;
+    }
+    .file-section {
+      width: calc(100% - 50px);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FFFFFF;
+      border: 1px solid #D8D8D8;
+      border-radius: 6px;
+      label {
+        font-family: Helvetica;
+        font-size: 14px;
+        color: #D8D8D8;
+        text-align: center;
+        padding: 0 20px;
+      }
+    }
   }
 `;
 

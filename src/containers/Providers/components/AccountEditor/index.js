@@ -25,6 +25,12 @@ const EditorWrapper = styled.div`
   box-sizing: border-box;
   margin: 27px 24px;
   padding: 38px 77px 26px;
+  @media (max-width: 900px) {
+    padding: 30px 50px 26px;
+  }
+  @media (max-width: 600px) {
+    padding: 25px;
+  }
 `;
 
 const EditorContent = styled.div`
@@ -55,6 +61,7 @@ class AccountEditor extends React.Component {
         state: '',
         zip: '',
         websiteUrl: '',
+        logo: null
       };
     } else {
       const locationInfo = getProviderPrimaryLocation(provider);
@@ -65,6 +72,7 @@ class AccountEditor extends React.Component {
       const city = get(address, 'city', '');
       const state = get(address, 'state', '');
       const zip = get(address, 'zip', '');
+      const logo = get(provider, 'logo.url');
       return {
         name,
         street,
@@ -72,6 +80,7 @@ class AccountEditor extends React.Component {
         state,
         zip,
         websiteUrl,
+        logo
       };
     }
   }
@@ -100,23 +109,32 @@ class AccountEditor extends React.Component {
     const companyInfo = this.companyFields.getFieldValues();
     const contactInfo = this.contactFields.getFieldValues();
     const { CreateProvider, onCreation } = this.props;
-    const { name, websiteUrl, street, city, state, zip, email } = companyInfo;
+    const { name, websiteUrl, street, city, state, zip, email, logo } = companyInfo;
     const { contactName, contactPhone, contactEmail } = contactInfo;
+    const locationInfo = {
+      primary_location_attributes: {
+        location_type: 'business_address',
+        name,
+        address_attributes: {
+          street, city, state, zip, country: 'USA'
+        }
+      }
+    };
+    const params = {
+      name,
+      email,
+      website_url: websiteUrl,
+      phone_number: contactPhone,
+      contact_name: contactName,
+      contact_email: contactEmail,
+      ...locationInfo
+    };
+    if (logo.baseString && logo.baseString.indexOf('http') !== 0) {
+      params['logo'] = logo.baseString;
+    };
     CreateProvider({
       data: {
-        provider: {
-          name, website_url: websiteUrl, email,
-          phone_number: contactPhone,
-          contact_name: contactName,
-          contact_email: contactEmail,
-          primary_location_attributes: {
-            location_type: 'business_address',
-            name,
-            address_attributes: {
-              street, city, state, zip, country: 'USA'
-            }
-          }
-        }
+        provider: params
       },
       success: (provider) => {
         const { id } = provider;
@@ -130,7 +148,7 @@ class AccountEditor extends React.Component {
     const contactInfo = this.contactFields.getFieldValues();
     const { provider, UpdateProvider, onUpdate } = this.props;
     const providerId = get(provider, 'id');
-    const { name, websiteUrl, street, city, state, zip } = companyInfo;
+    const { name, websiteUrl, street, city, state, zip, logo } = companyInfo;
     const { contactName, contactPhone, contactEmail } = contactInfo;
     const providerLocation = get(provider, 'relationships.primaryLocation.data');
     const locationInfo = providerLocation ? {
@@ -151,16 +169,20 @@ class AccountEditor extends React.Component {
         }
       }
     };
+    const params = {
+      name,
+      website_url: websiteUrl,
+      contact_name: contactName,
+      contact_email: contactEmail,
+      phone_number: contactPhone,
+      ...locationInfo,
+    };
+    if (logo.baseString && logo.baseString.indexOf('http') !== 0) {
+      params['logo'] = logo.baseString;
+    };
     UpdateProvider({
       data: {
-        provider: {
-          name,
-          website_url: websiteUrl,
-          contact_name: contactName,
-          contact_email: contactEmail,
-          phone_number: contactPhone,
-          ...locationInfo,
-        }
+        provider: params
       },
       providerId,
       success: onUpdate
