@@ -6,7 +6,7 @@ import { get, isEmpty } from 'lodash';
 import { OrangeButton } from 'components/basic/Buttons';
 import ChatBox from 'components/template/Message/ChatBox';
 import { BoatyardSelect } from 'components/basic/Dropdown';
-import CustomerOption from 'components/basic/CustomerOption';
+import MessageCustomerOption from 'components/basic/MessageCustomerOption';
 
 import { refinedNetworkSelector } from 'store/selectors/network';
 import { CreateNetwork } from 'store/actions/networks';
@@ -238,7 +238,7 @@ class NewMessage extends React.Component {
             cacheOptions
             defaultOptions
             components={{
-              Option: CustomerOption,
+              Option: MessageCustomerOption,
               // MultiValueLabel
             }}
             loadOptions={this.loadOptions}
