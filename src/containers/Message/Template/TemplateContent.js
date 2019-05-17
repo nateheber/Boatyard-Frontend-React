@@ -24,14 +24,16 @@ class TemplateContent extends React.Component {
     const { selected, globalTemplates, localTemplates, privilege } = this.props;
     if (hasIn(localTemplates, selected) && privilege !== 'admin') {
       // return get(localTemplates, `${selected}.attributes.emailOptions`);
-      const subject = get(localTemplates, `${selected}.attributes.subject`);
+      const subject = get(localTemplates, `${selected}.attributes.subject`) || '';
+      const smsText = get(localTemplates, `${selected}.attributes.smsText`) || '';
       const emailOptions = get(localTemplates, `${selected}.attributes.emailOptions`);
-      return { subject, emailOptions };
+      return { subject, smsText, emailOptions };
     }
     // return get(globalTemplates, `${selected}.attributes.emailOptions`);
-    const subject = get(globalTemplates, `${selected}.attributes.subject`);
+    const subject = get(globalTemplates, `${selected}.attributes.subject`) || '';
+    const smsText = get(localTemplates, `${selected}.attributes.smsText`) || '';
     const emailOptions = get(globalTemplates, `${selected}.attributes.emailOptions`);
-    return { subject, emailOptions };
+    return { subject, smsText, emailOptions };
   }
 
   render() {

@@ -7,7 +7,7 @@ import { getGlobalMessageTemplatesClient, getLocalMessageTemplatesClient } from 
 
 const processTemplates = (templates) => {
   const templateObject = {};
-  sortBy(templates, ['attributes.id'], ['desc']).forEach(template => {
+  sortBy(templates, ['id'], ['desc']).forEach(template => {
     const triggerKey = get(template, 'attributes.triggerKey');
     const trigger = get(template, 'attributes.trigger');
     const messageType = get(template, 'attributes.messageType').split('_').join(' ');
