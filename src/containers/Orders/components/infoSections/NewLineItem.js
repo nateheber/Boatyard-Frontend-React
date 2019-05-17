@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 import { connect } from 'react-redux';
 
-import { FilterServices } from 'store/actions/services';
-
 import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
@@ -22,27 +20,25 @@ class NewLineItem extends React.Component {
     comment: '',
   };
 
-  onChangeFilter = (val) =>  new Promise((resolve, reject) => {
-    const { privilege } = this.props;
-    let params = {
-      'service[discarded_at]': null
-    };
-    if (val && val.trim().length > 0) {
-      params['search_by_name'] = val;
+  onChangeFilter = (inputValue, callback) => {
+    setTimeout(() => {
+      callback(this.filterOptions(inputValue));
+    }, 100);
+  };
+
+  filterOptions = (inputValue) => {
+    const { services } = this.props;
+    let filteredServices = services;
+    if (inputValue && inputValue.trim().length > 0) {
+      filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
     }
-    if (privilege === 'admin') {
-      params['service[provider_id]'] = 1;
-    }
-    this.props.FilterServices({ params, success: resolve, error: reject });
-  }).then((services) =>
-    services.map(option => ({
+    const options = filteredServices.map(option => ({
       value: option.id,
       cost: option.cost,
       label: option.name
-    }))
-  ).catch(err => {
-    return [];
-  });
+    }));
+    return options;
+  };
 
   onChangeQuantity = (evt) => {
     this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) });
@@ -121,11 +117,8 @@ class NewLineItem extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  privilege: state.auth.privilege
+  privilege: state.auth.privilege,
+  services: state.service.services
 });
 
-const mapDispatchToProps = {
-  FilterServices
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(NewLineItem);
+export default connect(mapStateToProps, null)(NewLineItem);

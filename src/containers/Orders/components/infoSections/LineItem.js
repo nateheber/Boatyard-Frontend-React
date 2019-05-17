@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { set, get } from 'lodash';
 import { Row, Col } from 'react-flexbox-grid';
 
-import { FilterServices } from 'store/actions/services';
 import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
@@ -45,7 +44,7 @@ class LineItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      serviceId: props.serviceId,
+      serviceId: props.service.id,
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
@@ -55,7 +54,7 @@ class LineItem extends React.Component {
   componentDidUpdate(prevProps) {
     if (!deepEqual(prevProps, this.props)) {
       this.setState({
-        serviceId: this.props.serviceId,
+        serviceId: this.props.service.id,
         quantity: this.props.attributes.quantity,
         cost: this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
@@ -63,22 +62,27 @@ class LineItem extends React.Component {
     }
   }
 
-  onChangeFilter = (val) =>  new Promise((resolve, reject) => {
-    const { privilege } = this.props;
-    let params = {
-      'service[discarded_at]': null
-    };
-    if (val && val.trim().length > 0) {
-      params['search_by_name'] = val;
+  onChangeFilter = (inputValue, callback) => {
+    setTimeout(() => {
+      callback(this.filterOptions(inputValue));
+    }, 100);
+  };
+
+  filterOptions = (inputValue) => {
+    const { services } = this.props;
+    let filteredServices = services;
+    if (inputValue && inputValue.trim().length > 0) {
+      filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
     }
-    if (privilege === 'admin') {
-      params['service[provider_id]'] = 1;
-    }
-    this.props.FilterServices({ params, success: resolve, error: reject });
-  }).then((services) => this.filterOptions(services)
-  ).catch(err => {
-    return [];
-  });
+    const options = filteredServices.map(option => ({
+      value: option.id,
+      cost: option.cost,
+      label: option.name
+    }));
+    const currentOption = this.getCurrentOption();
+    const result = options.filter(option => option.value !== currentOption.value);
+    return [currentOption, ...result];
+  };
 
   onChange = (value, field) => {
     const changeVal = {};
@@ -92,39 +96,27 @@ class LineItem extends React.Component {
   };
 
   onChangeService = (service) => {
-    const serviceId = service.value;
-    this.setState({ serviceId }, () => {
-      this.props.onChange(this.state)
+    this.setState({
+      serviceId: service.value,
+      cost: service.cost,
+      quantity: 1
+    }, () => {
+      this.props.onChange(this.state);
     });
   };
 
-  getServiceName = () => {
-    const serviceName = get(this.props, 'relationships.service.attributes.name');
-    return serviceName;
-  };
-
-  getServiceId = () => {
-    const { serviceId } = this.props;
-    return serviceId;
-  };
-
-  getCurrentOption = () => ({ value: this.getServiceId(), label: this.getServiceName() });
-
-  filterOptions = (filteredServices) => {
-    const services = filteredServices || [];
-    const options = services.map(option => ({
-      value: option.id,
-      label: option.name
-    }));
-    const currentOption = { value: this.getServiceId(), label: this.getServiceName() };
-    const result = options.filter(option => option.value !== currentOption.value);
-    return [currentOption, ...result];
+  getCurrentOption = () => {
+    const { service } = this.props
+    return {
+      value:  get(service, 'attributes.id'),
+      cost: get(service, 'attributes.cost'),
+      label: get(service, 'attributes.name')
+    };
   };
 
   render() {
-    const { mode, onRemove } = this.props;
+    const { mode, onRemove, service } = this.props;
     const { quantity, cost, comment } = this.state;
-    const name = this.getServiceName();
     const currentOption = this.getCurrentOption();
     return (
       <Record>
@@ -141,7 +133,7 @@ class LineItem extends React.Component {
                 onChange={this.onChangeService}
               />
             ) : (
-              <Name>{name}</Name>
+              <Name>{get(service, 'attributes.name')}</Name>
             )}
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
@@ -199,11 +191,9 @@ class LineItem extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  privilege: state.auth.privilege
+  privilege: state.auth.privilege,
+  services: state.service.services
 });
 
-const mapDispatchToProps = {
-  FilterServices
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(LineItem);
+export default connect(mapStateToProps, null)(LineItem);

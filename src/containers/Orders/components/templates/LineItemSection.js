@@ -2,16 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import deepEqual from 'deep-equal';
 import moment from 'moment';
-import { get, set, isEmpty } from 'lodash';
+import { get, set, isEmpty, sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
+import { toastr } from 'react-redux-toastr';
 
+import { FilterServices } from 'store/actions/services';
 import {
   updateLineItems,
   deleteLineItem,
   createLineItems
 } from 'store/reducers/lineItems';
 import { orderSelector } from 'store/selectors/orders';
+import { GetOrder } from 'store/actions/orders';
 import { Section } from 'components/basic/InfoSection';
 import NewLineItems from '../infoSections/NewLineItem';
 import LineItem from '../infoSections/LineItem';
@@ -37,9 +40,21 @@ class LineItemSection extends React.Component {
     super(props);
     this.state = {
       newItems: [],
-      lineItems: get(props, 'currentOrder.lineItems', []),
+      lineItems: this.refactorLineItems(get(props, 'currentOrder.lineItems', [])),
       mode: 'view'
     }
+  }
+
+  componentDidMount() {
+    const { privilege, FilterServices } = this.props;
+    let params = {
+      'service[discarded_at]': null,
+      'per_page': 1000
+    };
+    if (privilege === 'admin') {
+      params['service[provider_id]'] = 1;
+    }
+    FilterServices({ params });
   }
 
   componentDidUpdate(prevProps) {
@@ -55,8 +70,19 @@ class LineItemSection extends React.Component {
         prevProps.currentOrder.lineItems
       )
     ) {
-      this.setState({ lineItems: this.props.currentOrder.lineItems });
+      this.setState({ lineItems: this.refactorLineItems(this.props.currentOrder.lineItems) });
     }
+  }
+
+  refactorLineItems = (items) => {
+    const lineItems = items.map(item => {
+      return {
+        id: item.id,
+        attributes: item.attributes,
+        ...item.relationships
+      }
+    });
+    return sortBy(lineItems, 'createdAt');
   }
 
   onChange = (item, idx) => {
@@ -90,8 +116,9 @@ class LineItemSection extends React.Component {
     const { mode } = this.state;
     if (mode === 'edit') {
       this.updateLineItems();
+    } else {
+      this.saveNewItems();
     }
-    this.saveNewItems();
     this.setState({ mode: 'view' })
   }
 
@@ -109,7 +136,12 @@ class LineItemSection extends React.Component {
         orderId,
         data: updateInfo,
         callback: () => {
-          GetOrder({ orderId });
+          const { newItems } = this.state;
+          if (newItems.length > 0) {
+            this.saveNewItems();
+          } else {
+            GetOrder({ orderId });
+          }
         }
       });
     }
@@ -202,13 +234,16 @@ class LineItemSection extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  privilege: state.auth.privilege,
   ...orderSelector(state)
-})
+});
 
 const mapDispatchToProps = {
+  FilterServices,
   updateLineItems,
   deleteLineItem,
-  createLineItems
+  createLineItems,
+  GetOrder
 };
 
 export default connect(
