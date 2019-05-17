@@ -28,7 +28,7 @@ export const sendResetRequest = (email) =>
   });
 
 export const resetPassword = (token, password) =>
-  authClient.post(`${apiBaseUrl}/users/recoveries`, {
+  authClient.patch(`${apiBaseUrl}/users/recoveries`, {
     recovery: {
       reset_password_token: token,
       password: password,
