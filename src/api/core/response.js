@@ -1,4 +1,4 @@
-import { get, isEmpty, isArray } from 'lodash';
+import { get, isEmpty, isArray, startCase } from 'lodash';
 import { camelize } from '@ridi/object-case-converter';
 
 import store from 'store';
@@ -26,7 +26,7 @@ export const responseInterceptor = client => {
       if (!(message && message.length > 0)) {
         const keys = Object.keys(errorData);
         if (keys.length > 0) {
-          message = `${keys[0]} ${get(errorData, `${keys[0]}`, '')}`;
+          message = `${startCase(keys[0])} ${get(errorData, `${keys[0]}`, '')}`;
         } else {
           message = errorData;
         }
