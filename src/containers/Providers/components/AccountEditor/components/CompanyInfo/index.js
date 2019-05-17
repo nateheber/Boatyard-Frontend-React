@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import FormFields from 'components/template/FormFields';
+import { FileInput } from 'components/basic/Input';
 
 const Wrapper = styled.div`
   margin-bottom: 44px;
@@ -235,6 +236,7 @@ export default class CompanyInfo extends React.Component {
         <FieldWrapper>
           <FormFields ref={this.setRef} fieldSize="big" fields={fields} />
         </FieldWrapper>
+        <FileInput title="Upload" />
       </Wrapper>
     )
   }
