@@ -3,7 +3,7 @@ import { put, takeEvery, call } from 'redux-saga/effects';
 import { actionTypes } from '../actions/auth';
 import { actions as ProfileActions } from '../reducers/profile';
 
-import { login, signup } from '../../api/auth';
+import { login, signup, sendResetRequest, resetPassword } from '../../api/auth';
 
 import { customApiClient } from '../../api';
 
@@ -85,6 +85,38 @@ function* signupRequest(action) {
   console.log(result);
 }
 
+function* sendRequestToResetPassword(action) {
+  const { email, success, error } = action.payload;
+  try {
+    yield call(sendResetRequest, email);
+    yield put({ type: actionTypes.SEND_RESET_REQUEST_SUCCESS });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.SEND_RESET_REQUEST_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
+function* changePassword(action) {
+  const { token, password, success, error } = action.payload;
+  try {
+    yield call(resetPassword, token, password);
+    yield put({ type: actionTypes.RESET_PASSWORD_SUCCESS });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.RESET_PASSWORD_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
 function* logoutRequest(action) {
   yield call(action.payload);
 }
@@ -93,5 +125,7 @@ export default function* AuthSaga() {
   yield takeEvery(actionTypes.AUTH_LOGIN, loginRequest);
   yield takeEvery(actionTypes.AUTH_SIGNUP, signupRequest);
   yield takeEvery(actionTypes.GET_USER_PERMISSION, userPermissionRequest);
+  yield takeEvery(actionTypes.SEND_RESET_REQUEST, sendRequestToResetPassword);
+  yield takeEvery(actionTypes.RESET_PASSWORD, changePassword);
   yield takeEvery(actionTypes.AUTH_LOGOUT, logoutRequest);
 }

@@ -175,7 +175,7 @@ class RequestForm extends React.Component {
               >
                 Send Reset Link
               </Button>
-              <LoginLink to="/login">Log in</LoginLink>
+              <LoginLink to="/login">Back to Log in</LoginLink>
             </ActionWrapper>
           </Wrapper>
         )}>
