@@ -111,7 +111,7 @@ class OrderList extends React.Component {
     if (tab === 'needAssignment') {
       this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft' } });
     } else if (tab === 'invoiced') {
-      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'invoiced' } });
+      this.props.GetOrders({ params: { page, per_page: 15, 'order[invoiced]': true } });
     } else if (tab === 'dispatched') {
       if (privilege === 'provider') {
         this.props.SetDispatchedFlag(true);
