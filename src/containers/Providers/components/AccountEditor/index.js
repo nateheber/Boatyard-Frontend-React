@@ -25,6 +25,12 @@ const EditorWrapper = styled.div`
   box-sizing: border-box;
   margin: 27px 24px;
   padding: 38px 77px 26px;
+  @media (max-width: 900px) {
+    padding: 30px 50px 26px;
+  }
+  @media (max-width: 600px) {
+    padding: 25px;
+  }
 `;
 
 const EditorContent = styled.div`
@@ -47,6 +53,7 @@ class AccountEditor extends React.Component {
 
   getDefaultCompanyInfo = () => {
     const { provider, newFlg } = this.props;
+    console.log('---------------------provider---------------', provider);
     if (newFlg) {
       return {
         name: '',
@@ -55,6 +62,7 @@ class AccountEditor extends React.Component {
         state: '',
         zip: '',
         websiteUrl: '',
+        logo: null
       };
     } else {
       const locationInfo = getProviderPrimaryLocation(provider);
@@ -65,6 +73,7 @@ class AccountEditor extends React.Component {
       const city = get(address, 'city', '');
       const state = get(address, 'state', '');
       const zip = get(address, 'zip', '');
+      const logo = get(address, 'logo.url');
       return {
         name,
         street,
@@ -72,6 +81,7 @@ class AccountEditor extends React.Component {
         state,
         zip,
         websiteUrl,
+        logo
       };
     }
   }
