@@ -53,7 +53,6 @@ class AccountEditor extends React.Component {
 
   getDefaultCompanyInfo = () => {
     const { provider, newFlg } = this.props;
-    console.log('---------------------provider---------------', provider);
     if (newFlg) {
       return {
         name: '',

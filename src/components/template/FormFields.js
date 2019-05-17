@@ -3,6 +3,9 @@ import { Row, Col } from 'react-flexbox-grid';
 import { isEmpty, set, get, findIndex } from 'lodash';
 import deepEqual from 'deep-equal';
 import classNames from 'classnames';
+import styled from 'styled-components';
+
+import TestImage from 'resources/test_images/3.png';
 
 import {
   InputWrapper,
@@ -12,17 +15,22 @@ import {
   TextArea,
   Select,
   DateSelector,
-  CurrencyInput
+  CurrencyInput,
+  FileInput
 } from 'components/basic/Input';
+
+const Image = styled.img`
+  width: 100%;
+  height: 78px;
+  object-fit: cover;
+  object-position: center;
+`;
 
 export default class FormFields extends React.Component {
   constructor(props) {
     super(props);
     const { fields } = props;
-    const value = {};
-    for (let i = 0; i < fields.length; i += 1) {
-      set(value, fields[i].field, get(fields[i], 'defaultValue', ''));
-    }
+    const value = this.getValues(fields);
     this.state = {
       value,
       errors: []
@@ -32,26 +40,34 @@ export default class FormFields extends React.Component {
   componentDidUpdate(prevProps) {
     if (!deepEqual(this.props.fields, prevProps.fields)) {
       const { fields } = this.props;
-      const value = {};
-      for (let i = 0; i < fields.length; i += 1) {
-        if (fields[i].type === 'check_box') {
-          const fieldValue = get(fields[i], 'defaultValue');
-          if (fieldValue === 'true') {
-            set(value, fields[i].field, true);
-          } else if (fieldValue === 'false') {
-            set(value, fields[i].field, false);
-          } else {
-            set(value, fields[i].field, Boolean(fieldValue));
-          }
-        } else {
-          set(value, fields[i].field, get(fields[i], 'defaultValue', ''));
-        }
-      }
+      const value = this.getValues(fields);
       this.setState({
         value,
         errors: []
       });
     }
+  }
+
+  getValues = (fields) => {
+    const value = {};
+    for (let i = 0; i < fields.length; i += 1) {
+      if (fields[i].type === 'check_box') {
+        const fieldValue = get(fields[i], 'defaultValue');
+        if (fieldValue === 'true') {
+          set(value, fields[i].field, true);
+        } else if (fieldValue === 'false') {
+          set(value, fields[i].field, false);
+        } else {
+          set(value, fields[i].field, Boolean(fieldValue));
+        }
+      } else if (fields[i].type === 'file_input') {
+        set(value, fields[i].field, get(fields[i], 'defaultValue', { file: null, baseString: null, ref: null }));
+
+      } else {
+        set(value, fields[i].field, get(fields[i], 'defaultValue', ''));
+      }
+    }
+    return value;
   }
 
   onChangeValue = (field, val) => {
@@ -100,13 +116,15 @@ export default class FormFields extends React.Component {
 
   getFieldValues = () => this.state.value;
 
-  renderInputField = (field, type, mask, maskChar, placeholder, dateFormat, errorMessage, options, size, disabled) => {
+  renderInputField = (field, type, mask, maskChar, placeholder, dateFormat, errorMessage, options, size, disabled, title, icon) => {
     const { value, errors } = this.state;
     let fieldValue = '';
       if (type === 'check_box') {
         fieldValue = get(value, field) || false;
       } else if (type === 'date') {
         fieldValue = get(value, field) || new Date();
+      } else if (type === 'file_input') {
+        fieldValue = get(value, field) || { file: null, baseString: null, ref: null };
       } else {
         fieldValue = get(value, field) || '';
       }
@@ -190,6 +208,15 @@ export default class FormFields extends React.Component {
             value={fieldValue}
             onValueChange={values => this.onChangeValue(field, values.value)} />
         );
+      case 'file_input':
+          return (
+            <FileInput
+              title={title}
+              icon={icon}
+              placeholder={placeholder}
+              value={fieldValue}
+              onChange={values => this.onChangeValue(field, values)} />
+          );
       default:
         return null;
     }
@@ -197,6 +224,7 @@ export default class FormFields extends React.Component {
 
   render() {
     const { fields, fieldSize } = this.props;
+    const { value } = this.state;
     return (
       <Row>
         {fields.map(
@@ -212,25 +240,36 @@ export default class FormFields extends React.Component {
               type,
               options,
               disabled,
+              title,
+              icon,
               ...posInfo
             },
             idx
           ) => (
             <Col {...posInfo} key={`field_${idx}`}  style={{ margin: '5px 0' }}>
-              <InputWrapper className={classNames("secondary", `size-${fieldSize}`)}>
-                <InputLabel>{label}</InputLabel>
-                {this.renderInputField(
-                  field,
-                  type,
-                  mask,
-                  maskChar,
-                  placeholder,
-                  dateFormat,
-                  errorMessage,
-                  options,
-                  fieldSize,
-                  disabled,
-                )}
+              <InputWrapper className={classNames("secondary", `size-${fieldSize}`, `${type === 'file_input' && 'upload'}`)}>
+                  <div className="field-section">
+                    <InputLabel>{label}</InputLabel>
+                    {this.renderInputField(
+                      field,
+                      type,
+                      mask,
+                      maskChar,
+                      placeholder,
+                      dateFormat,
+                      errorMessage,
+                      options,
+                      fieldSize,
+                      disabled,
+                      title,
+                      icon
+                    )}
+                  </div>
+                  {type === 'file_input' && <div className="file-section">
+                    {(value[field].file || value[field].baseString)
+                      ? <Image src={TestImage} alt="uploaded file" />
+                      : <label>{placeholder}</label>}
+                  </div>}
               </InputWrapper>
             </Col>
           )

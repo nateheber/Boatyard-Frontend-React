@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import FormFields from 'components/template/FormFields';
-import { FileInput } from 'components/basic/Input';
+import UploadIcon from 'resources/upload.png';
 
 const Wrapper = styled.div`
   margin-bottom: 44px;
@@ -129,6 +129,18 @@ export default class CompanyInfo extends React.Component {
         lg: 1,
         xl: 1
       },
+      {
+        field: 'logo',
+        label: 'Logo',
+        type: 'file_input',
+        placeholder: 'NO LOGO UPLOADED',
+        icon: UploadIcon,
+        xs: 6,
+        sm: 6,
+        md: 2,
+        lg: 2,
+        xl: 2
+      }
     ] : [
       {
         field: 'name',
@@ -217,6 +229,18 @@ export default class CompanyInfo extends React.Component {
         lg: 1,
         xl: 1
       },
+      {
+        field: 'logo',
+        label: 'Logo',
+        type: 'file_input',
+        placeholder: 'NO LOGO UPLOADED',
+        icon: UploadIcon,
+        xs: 6,
+        sm: 6,
+        md: 2,
+        lg: 2,
+        xl: 2
+      },
     ];
   }
   setRef = (ref) => {
@@ -236,7 +260,6 @@ export default class CompanyInfo extends React.Component {
         <FieldWrapper>
           <FormFields ref={this.setRef} fieldSize="big" fields={fields} />
         </FieldWrapper>
-        <FileInput title="Upload" />
       </Wrapper>
     )
   }

@@ -9,7 +9,7 @@ const Button = styled.label`
   position: relative;
   width: 30px;
   height: 30px;
-  padding: 5px;
+  padding: 2px;
   outline: none;
   cursor: pointer;
   background: #FFFFFF;
@@ -26,6 +26,12 @@ const Button = styled.label`
   text-transform: uppercase;
 `;
 
+const Image = styled.img`
+  width: 18px;
+  object-fit: contain;
+  object-position: center;
+`;
+
 export class FileInput extends React.Component{
   handleChange = (e, file) => {
     const { onChange } = this.props;
@@ -37,7 +43,11 @@ export class FileInput extends React.Component{
 
       reader.onload = e => {
         if (onChange) {
-          onChange(newFile, reader.result, this.refs.input);
+          onChange({
+            file: newFile,
+            baseString: reader.result,
+            ref: this.refs.input
+          });
         }
       };
   
@@ -50,7 +60,7 @@ export class FileInput extends React.Component{
     return (
       <Button {...rest} >
         {title && <label>title</label>}
-          
+        {icon && <Image src={icon} />}
         <Input type="file" accept={accept || '*.*'} onChange={this.handleChange} ref="input" />
       </Button>  
     );
