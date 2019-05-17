@@ -20,7 +20,7 @@ import {
 const Image = styled.img`
   width: 100%;
   height: 72px;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   background: #FFFFFF;
   border: 1px solid #D8D8D8;
