@@ -5,7 +5,6 @@ import moment from 'moment';
 import { get, set, isEmpty, sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
-import { toastr } from 'react-redux-toastr';
 
 import { FilterServices } from 'store/actions/services';
 import {
