@@ -30,7 +30,7 @@ const FieldWrapper = styled.div`
 
 export default class CompanyInfo extends React.Component {
   getCompanyFieldInfo = () => {
-    const { defaultValues: { name, street, city, state, zip, websiteUrl }, newFlg } = this.props;
+    const { defaultValues: { name, street, city, state, zip, websiteUrl, logo }, newFlg } = this.props;
     return newFlg ? [
       {
         field: 'name',
@@ -235,6 +235,7 @@ export default class CompanyInfo extends React.Component {
         type: 'file_input',
         placeholder: 'NO LOGO UPLOADED',
         icon: UploadIcon,
+        defaultValue: { file: null, baseString: logo, ref: null },
         xs: 6,
         sm: 6,
         md: 2,

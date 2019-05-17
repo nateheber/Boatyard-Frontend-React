@@ -5,8 +5,6 @@ import deepEqual from 'deep-equal';
 import classNames from 'classnames';
 import styled from 'styled-components';
 
-import TestImage from 'resources/test_images/3.png';
-
 import {
   InputWrapper,
   InputLabel,
@@ -21,9 +19,12 @@ import {
 
 const Image = styled.img`
   width: 100%;
-  height: 78px;
+  height: 72px;
   object-fit: cover;
   object-position: center;
+  background: #FFFFFF;
+  border: 1px solid #D8D8D8;
+  border-radius: 6px;
 `;
 
 export default class FormFields extends React.Component {
@@ -266,9 +267,9 @@ export default class FormFields extends React.Component {
                     )}
                   </div>
                   {type === 'file_input' && <div className="file-section">
-                    {(value[field].file || value[field].baseString)
-                      ? <Image src={TestImage} alt="uploaded file" />
-                      : <label>{placeholder}</label>}
+                    {value[field].baseString ?
+                      <Image src={value[field].baseString} alt="uploaded file" />
+                    : <label>{placeholder}</label>}
                   </div>}
               </InputWrapper>
             </Col>
