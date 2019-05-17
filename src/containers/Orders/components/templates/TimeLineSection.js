@@ -38,6 +38,13 @@ const TimelineItem = styled.div`
 
 export default class TimeLineSection extends React.Component {
 
+  refactorMessage = (message) => {
+    if (message) {
+      return message.replace(/provisioned/g, 'quoted').replace(/scheduled/g, 'in progress');
+    }
+    return '';
+  }
+
   render () {
     const { order } = this.props;
     const timelineItems = generateOrderTimeline(order);
@@ -45,7 +52,7 @@ export default class TimeLineSection extends React.Component {
       <Section title="Timeline">
         {
           timelineItems.map((item, idx) => (
-            <TimelineItem key={`timeline_${idx}`}>{item.message}</TimelineItem>
+            <TimelineItem key={`timeline_${idx}`}>{this.refactorMessage(item.message)}</TimelineItem>
           ))
         }
       </Section>
