@@ -55,7 +55,7 @@ export const getCreationInfo = order => {
   const dateString = moment(createdAt).format('MMM D, YYYY [at] hh:mm A');
   return {
     time: moment(createdAt).valueOf(),
-    message: `Order placed by ${customerName} ${dateString}`
+    message: `Order placed by ${customerName} on ${dateString}`
   };
 };
 
@@ -64,7 +64,7 @@ export const getUpdatedStatus = order => {
   const dateString = moment(updatedAt).format('MMM D, YYYY [at] hh:mm A');
   return {
     time: moment(updatedAt).valueOf(),
-    message: `Order updated ${dateString}`
+    message: `Order updated on ${dateString}`
   };
 };
 
@@ -80,7 +80,7 @@ export const getOrderProcessInfo = order => {
           if (!isEmpty(time)) {
             result.push({
               time: moment(time).valueOf(),
-              message: `Order assigned at ${moment(time).format(
+              message: `Order assigned on ${moment(time).format(
                 'MMM D, YYYY [at] hh:mm A'
               )}`
             });
@@ -90,7 +90,7 @@ export const getOrderProcessInfo = order => {
           if (!isEmpty(time)) {
             result.push({
               time: moment(time).valueOf(),
-              message: `Order provisioned at ${moment(time).format(
+              message: `Order quoted on ${moment(time).format(
                 'MMM D, YYYY [at] hh:mm A'
               )}`
             });
@@ -100,7 +100,7 @@ export const getOrderProcessInfo = order => {
           if (!isEmpty(time)) {
             result.push({
               time: moment(time).valueOf(),
-              message: `Order scheduled at ${moment(time).format(
+              message: `Order in progress on ${moment(time).format(
                 'MMM D, YYYY [at] hh:mm A'
               )}`
             });
@@ -110,7 +110,7 @@ export const getOrderProcessInfo = order => {
           if (!isEmpty(time)) {
             result.push({
               time: moment(time).valueOf(),
-              message: `Order invoiced at ${moment(time).format(
+              message: `Order invoiced on ${moment(time).format(
                 'MMM D, YYYY [at] hh:mm A'
               )}`
             });
