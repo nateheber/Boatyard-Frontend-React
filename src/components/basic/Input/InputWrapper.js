@@ -26,11 +26,11 @@ export const InputWrapper = styled.div`
     align-items: flex-start;
   }
   &.primary > ${InputLabel} {
-    font-weight: 400;
+    // font-weight: 400;
     margin-bottom: 5px;
   }
   &.primary > ${InputLabel} {
-    font-weight: 400;
+    // font-weight: 400;
     margin-bottom: 5px;
   }
   &.secondary > ${InputLabel} {
