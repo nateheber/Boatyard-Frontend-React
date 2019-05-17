@@ -30,6 +30,11 @@ const InputFieldWrapper= styled(InputWrapper)`
   margin-bottom: 20px;
 `;
 
+const Divider = styled.div`
+  border-bottom: 1px solid #e6e6e6;
+  margin: 30px 0;
+`;
+
 const ActionWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -63,7 +68,7 @@ export class TemplateEditor extends React.Component {
   }
 
   updateState = (templateInfo) => {
-    const { emailOptions, subject } = templateInfo;
+    const { subject, smsText, emailOptions } = templateInfo;
     const emailGreeting = get(emailOptions, 'emailGreeting');
     const buttonText = get(emailOptions, 'buttonText');
     const emailBody = get(emailOptions, 'emailBody');
@@ -81,6 +86,7 @@ export class TemplateEditor extends React.Component {
                       !(emailSenderCompany === undefined || emailSenderCompany === null);
     this.setState({
       subject,
+      smsText,
       emailOptions: {
         emailGreeting,
         buttonText,
@@ -125,8 +131,13 @@ export class TemplateEditor extends React.Component {
     this.setState({ emailOptions: { ...emailOptions, secondaryEmailBody } });
   };
 
+  onChangeSMSText = (evt) => {
+    const smsText = evt.target.value;
+    this.setState({ smsText });
+  };
+
   onSave = () => {
-    const { subject, emailOptions } = this.state;
+    const { subject, smsText, emailOptions } = this.state;
     const email_options = {};
     if (emailOptions.emailBody) {
       // email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
@@ -141,6 +152,7 @@ export class TemplateEditor extends React.Component {
     }
     const messageTemplate = {
       subject,
+      sms_text: smsText,
       email_options
     };
     this.props.onSave(messageTemplate);
@@ -148,7 +160,7 @@ export class TemplateEditor extends React.Component {
 
   render() {
     const { onCancel } = this.props;
-    const { subject, emailOptions, hasSecondSection, hasFooter } = this.state;
+    const { subject, smsText, emailOptions, hasSecondSection, hasFooter } = this.state;
     return (
       <Wrapper>
         <InputFieldWrapper className="primary">
@@ -173,6 +185,11 @@ export class TemplateEditor extends React.Component {
         {hasFooter && <InputFieldWrapper className="primary">
           <TextArea placeholder={`${emailOptions.emailSenderName}\n${emailOptions.emailSenderCompany}`} disabled />
         </InputFieldWrapper>}
+        <Divider />
+        <InputFieldWrapper className="primary">
+          <InputLabel>Push Notification</InputLabel>
+          <TextArea value={smsText} onChange={this.onChangeSMSText} />
+        </InputFieldWrapper>
         <ActionWrapper>
           <HollowButton onClick={onCancel}>CANCEL</HollowButton>
           <OrangeButton onClick={this.onSave}>SAVE</OrangeButton>
