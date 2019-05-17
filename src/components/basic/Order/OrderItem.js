@@ -147,8 +147,7 @@ class OrderItem extends React.Component {
               style={{ width: column.width || `${100 / columns.length}%`}}
             >
               <THeader>{column.label}</THeader>
-              {column.link && <Link to={`/order-details/?order=${item.id}`}>{getValue(column, item)}</Link>}
-              {!column.link && getValue(column, item)}
+              {getValue(column, item)}
             </Field>
           );
         })
