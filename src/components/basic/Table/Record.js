@@ -323,7 +323,6 @@ export class Record extends React.PureComponent {
             </FirstField>
             <FirstField
               className="is-desktop"
-              onClick={this.onGoToDetails}
               style={isEmpty(sizes) ? {} : { width: `${sizes[0]}px` }}
             >
               {this.getValue(firstColumn, record)}
