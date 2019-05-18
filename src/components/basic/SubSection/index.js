@@ -10,7 +10,7 @@ import RevenueImage from '../../../resources/monthly_revenue.svg';
 
 export const NewOrderSection = ({ count }) => (
   <SubSectionFrame
-    title={`NEW ORDERS(${count})`}
+    title={`New Orders(${count})`}
     iconBg="#e49852"
     icon={AssignmentImage}
   />

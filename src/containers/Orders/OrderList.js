@@ -111,7 +111,15 @@ class OrderList extends React.Component {
     if (tab === 'needAssignment') {
       this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft' } });
     } else if (tab === 'invoiced') {
-      this.props.GetOrders({ params: { page, per_page: 15, 'invoices': true } });
+      this.props.GetOrders({
+        params: {
+          page,
+          per_page: 15,
+          'invoices': true,
+          'order[order]': 'position',
+          'order[sort]': 'desc'
+        }
+      });
     } else if (tab === 'dispatched') {
       if (privilege === 'provider') {
         this.props.SetDispatchedFlag(true);
@@ -119,12 +127,12 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'id',
-            'order[sort]': 'desc',
+            'order[order]': 'position',
+            'order[sort]': 'desc'
           }
         });
       } else {
-        this.props.GetOrders({ params: {page, per_page: 15, 'order[state]': 'dispatched' } });
+        this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'dispatched' } });
       }
     } else {
       if (privilege === 'provider') {
@@ -133,7 +141,7 @@ class OrderList extends React.Component {
             page,
             per_page: 15,
             'order[order]': 'position',
-            'order[sort]': 'desc',
+            'order[sort]': 'desc'
           }
         });
       } else {
