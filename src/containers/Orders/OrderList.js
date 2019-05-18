@@ -14,6 +14,13 @@ import { refinedOrdersSelector } from 'store/selectors/orders';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
+const ALL_TAB = 'all';
+const NEED_ASSIGNMENT_TAB = 'needAssignment';
+const INVOICED_TAB = 'invoiced';
+const DISPATCHED_TAB = 'dispatched';
+
+const ORDER_TABS = [ALL_TAB, NEED_ASSIGNMENT_TAB, INVOICED_TAB, DISPATCHED_TAB];
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -68,14 +75,14 @@ const ORDER_COLUMNS = [
 ];
 const tabs = {
   admin: [
-    { title: 'ALL', value: 'all', counts: 0 },
-    { title: 'NEED ASSIGNMENT', value: 'needAssignment', counts: 0 },
-    { title: 'DISPATCHED', value: 'dispatched', counts: 0 },
+    { title: 'ALL', value: ALL_TAB, counts: 0 },
+    { title: 'NEED ASSIGNMENT', value: NEED_ASSIGNMENT_TAB, counts: 0 },
+    { title: 'DISPATCHED', value: DISPATCHED_TAB, counts: 0 },
   ],
   provider: [
-    { title: 'ALL', value: 'all', counts: 0 },
-    { title: 'INVOICED', value: 'invoiced', counts: 0 },
-    { title: 'AWAITING ACCEPTANCE', value: 'dispatched', counts: 0 },
+    { title: 'ALL', value: ALL_TAB, counts: 0 },
+    { title: 'INVOICED', value: INVOICED_TAB, counts: 0 },
+    { title: 'AWAITING ACCEPTANCE', value: DISPATCHED_TAB, counts: 0 },
   ]
 };
 
@@ -83,10 +90,16 @@ class OrderList extends React.Component {
   constructor(props) {
     super(props);
     const columns = ORDER_COLUMNS.slice(0);
-    let tab = 'all';
+    let tab = ALL_TAB;
     if (props.privilege === 'provider') {
       columns.splice(4, 1);
-      // tab = 'dispatched';
+    }
+    const { state } = props.location;
+    if (state && state.hasOwnProperty('tab')) {
+      const tabState = get(state, 'tab');
+      if (ORDER_TABS.indexOf(tabState) > -1) {
+        tab = tabState;
+      }
     }
     this.state = {
       tab,
@@ -108,9 +121,9 @@ class OrderList extends React.Component {
     const { privilege } = this.props;
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
-    if (tab === 'needAssignment') {
+    if (tab === NEED_ASSIGNMENT_TAB) {
       this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft' } });
-    } else if (tab === 'invoiced') {
+    } else if (tab === INVOICED_TAB) {
       this.props.GetOrders({
         params: {
           page,
@@ -120,7 +133,7 @@ class OrderList extends React.Component {
           'order[sort]': 'desc'
         }
       });
-    } else if (tab === 'dispatched') {
+    } else if (tab === DISPATCHED_TAB) {
       if (privilege === 'provider') {
         this.props.SetDispatchedFlag(true);
         this.props.GetOrders({

@@ -57,7 +57,7 @@ class OpenInvoices extends React.Component {
         items={processedOrders}
         hiddenHeader={true}
       />
-      <HollowButton className="btn-view-all" onClick={() => history.push('/invoices/')}>
+      <HollowButton className="btn-view-all" onClick={() => history.push({ pathname: '/orders/', state: { tab: 'invoiced' } })}>
         VIEW ALL
       </HollowButton>
     </Wrapper>  
