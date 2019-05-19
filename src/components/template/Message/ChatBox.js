@@ -15,6 +15,7 @@ import QuickReplyModal from './QuickReplyModal';
 
 const Wrapper = styled.div`
   border-top: 1px solid #e6e6e6;
+  background-color: #F5F5F5;
   &.noBorder {
     border: none;
   }
@@ -58,6 +59,7 @@ const InputView = styled.div`
     background-color: white;
     border-radius: 15px;
     padding: 15px;
+    border: 1px solid #e6e6e6;
   }
   .third & {
     background-color: white;
@@ -136,9 +138,9 @@ const ButtonIcon = styled.div`
   mask: url(${props => props.src});
   mask-repeat: no-repeat;
   mask-size: 22px 22px;
-  background-color: rgb(19, 48, 68);
+  background-color: white;
   .secondary & {
-    background-color: white;
+    background-color: rgb(19, 48, 68);
   }
 `;
 

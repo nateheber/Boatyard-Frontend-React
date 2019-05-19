@@ -13,7 +13,7 @@ import { refineMessage } from 'utils/conversations';
 import BackImage from 'resources/back.svg';
 
 const ChatHeader = styled.div`
-  background-color: #07384b;
+  background-color: #F5F5F5;
   border-bottom: 1px solid #aaa2aa;
   padding: 15px;
   display: flex;
@@ -43,7 +43,7 @@ const BackImg = styled.div`
   mask: url(${props => props.src});
   mask-repeat: no-repeat;
   mask-size: 13px 22px;
-  background-color: white;
+  background-color: #004258;
 `;
 
 const RecipientName = styled.div`
@@ -51,7 +51,7 @@ const RecipientName = styled.div`
   flex: 1;
   padding-right: 36px;
   justify-content: center;
-  color: white;
+  color: #004258;
   font-size: 22px;
   text-align: center;
 `;

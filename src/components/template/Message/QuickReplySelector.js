@@ -21,9 +21,9 @@ const ButtonIcon = styled.div`
   mask: url(${props => props.src});
   mask-repeat: no-repeat;
   mask-size: 22px 22px;
-  background-color: rgb(19, 48, 68);
+  background-color: white;
   .secondary & {
-    background-color: white;
+    background-color: rgb(19, 48, 68);
   }
 `;
 

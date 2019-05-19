@@ -26,9 +26,9 @@ const DateContainer = styled.div`
 
 const DateText = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
-  font-weight: 400;
+  font-weight: 600;
   font-size: 14px;
-  color: #BBB;
+  color: #888;
 `;
 
 const UserDetailsCotainer = styled.div`
@@ -41,6 +41,7 @@ const DisplayName = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px !important;
   font-weight: bold;
+  font-style: italic;
   &.own {
     text-align: right;
   }
@@ -48,7 +49,7 @@ const DisplayName = styled.div`
     color: #07384b;
   }
   &.secondary {
-    color: #E6E6E6;
+    color: #004258;
   }
 `;
 
@@ -56,7 +57,8 @@ const TimeText = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: 400;
   font-size: 12px;
-  color: #939393;
+  color: #888;
+  font-style: italic;
 `;
 
 const MessageBody = styled.div`
@@ -66,12 +68,13 @@ const MessageBody = styled.div`
   padding: 10px 15px;
   position: relative;
   margin-bottom: 0 !important;
-  max-width: 250px;
-  background-color: #f6f6f6;
+  max-width: 220px;
+  background-color: #ECECEC;
   word-wrap: break-word;
-  hyphens: auto;
+  color: #004258;
+  // hyphens: auto;
   &.own {
-    background-color: #ffd4aa;
+    background-color: #D1D9DD;
     border-bottom-right-radius: 2px;
     &.has-prev {
       // border-top-right-radius: 2px;

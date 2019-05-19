@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   position: fixed;
   height: calc(100vh - 68px) !important;
   width: 350px;
-  background-color: #01556d;
+  background-color: #FFF;
   transition: right 1s;
   z-index: 10;
   &.show {

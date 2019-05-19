@@ -13,6 +13,7 @@ const SearchWrapper = styled.div`
   justify-content: center;
   padding: 30px;
   border-bottom: solid 1px #e6e6e6;
+  background-color: #F5F5F5;
 `;
 
 const Wrapper = styled.div`
