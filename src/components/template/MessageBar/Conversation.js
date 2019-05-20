@@ -15,7 +15,7 @@ const Wrapper = styled.div`
     transition: all ease-in-out .2s;
     opacity: 0;
   }
-.btn-close {
+  .btn-close {
     transition: all ease-in-out .2s;
     opacity: 0;
     .close-icon {
