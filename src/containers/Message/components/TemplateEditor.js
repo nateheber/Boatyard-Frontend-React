@@ -175,9 +175,9 @@ export class TemplateEditor extends React.Component {
           <InputLabel>Email Body{hasSecondSection && ' Section 1'}</InputLabel>
           <TextArea value={emailOptions.emailBody} onChange={this.onChangeBodyText} />
         </InputFieldWrapper>
-        <ViewTemplateButtonWrapper>
+        {emailOptions.buttonText && <ViewTemplateButtonWrapper>
           <PurpleButton>{emailOptions.buttonText}</PurpleButton>
-        </ViewTemplateButtonWrapper>
+        </ViewTemplateButtonWrapper>}
         {hasSecondSection && <InputFieldWrapper className="primary">
             <InputLabel>Email Body Section 2</InputLabel>
             <TextArea value={emailOptions.secondaryEmailBody} onChange={this.onChangeSecondBodyText} />
