@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import EvilIcon from 'react-evil-icons';
+import { toastr } from 'react-redux-toastr';
 
-import { GetSiteBanners, CreateSiteBanner } from 'store/actions/site-banners';
+import { GetSiteBanners, CreateSiteBanner, DeleteSiteBanner } from 'store/actions/site-banners';
 import { UploadButton } from 'components/basic/Buttons';
 // import { SearchBox } from 'components/basic/Input';
 import { SelectorWrapper } from '../../../Wrappers';
@@ -33,18 +35,66 @@ const HeaderWrapper = styled.div`
 //   width: 282px;
 // `;
 
-const ImageWrapper = styled.div`
+const ImageList = styled.div`
   display: block;
   max-height: 536px;
   overflow-y: scroll;
   margin-top: 13px;
 `;
 
-const Image = styled.div`
-  display: inline-block;
+const BannerWrapper = styled.div`
+  position: relative;
   width: 282px;
   height: 80px;
   margin: 0 12px 14px;
+  .overlay {
+    transition: all ease-in-out .2s;
+    opacity: 0;
+  }
+  .btn-close {
+    transition: all ease-in-out .2s;
+    opacity: 0;
+    .close-icon {
+      fill: white;
+    }
+  }
+  &:hover {
+    .overlay {
+      opacity: 1;
+    }
+    .btn-close {
+      opacity: 1;
+      .close-icon {
+        fill: white;
+      }
+    }
+  }
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+`;
+
+const DeleteButton = styled.button`
+  background: no-repeat;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  outline: none;
+`;
+
+const Image = styled.div`
+  display: inline-block;
+  width: 100%;
+  height: 80px;
   background-image: url(${props => props.src});
   background-repeat: no-repeat;
   background-position: center center;
@@ -69,8 +119,11 @@ class AppBanners extends React.Component {
         success: (banner) => {
           onChangeBanner(banner);
           GetSiteBanners({ params: { per_page: 1000 }});
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
         }
-      })  ;
+      });
     }
   };
 
@@ -87,6 +140,31 @@ class AppBanners extends React.Component {
     onChangeBanner(banner);
   };
 
+  handleDelete = () => (bannerId) => {
+    console.log('------------bannerId---------', bannerId);
+    const { GetSiteBanners, DeleteSiteBanner, onChangeBanner } = this.props;
+    DeleteSiteBanner({
+      bannerId,
+      success: () => {
+        GetSiteBanners({
+          params: { per_page: 1000 },
+          success: () => {
+            const { banners } = this.props;
+            if (banners.length > 0) {
+              onChangeBanner(banners[0], bannerId);
+            }
+          },
+          error: (e) => {
+            toastr.error('Error', e.message);
+          }  
+        });
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+  };
+
   render() {
     const { banners } = this.props;
     return (
@@ -98,13 +176,19 @@ class AppBanners extends React.Component {
             </SearchWrapper> */}
             <UploadButton style={{ marginLeft: 10 }} title="Upload Image" accept="image/*" onChange={this.handleFileChange} />
           </HeaderWrapper>
-          <ImageWrapper>
+          <ImageList>
             {
               banners.map(banner => (
-                <Image src={banner.banner.url} key={`image_${banner.id}`} onClick={this.handleChangeBanner(banner)} />
+                <BannerWrapper>
+                  <Image src={banner.banner.url} key={`image_${banner.id}`} onClick={this.handleChangeBanner(banner)} />
+                  <Overlay className="overlay" />
+                  <DeleteButton className="btn-close" onClick={this.handleDelete(banner.id)}>
+                    <EvilIcon name="ei-close-o" size="s" className="close-icon" />
+                  </DeleteButton>
+                </BannerWrapper>
               ))
             }
-          </ImageWrapper>
+          </ImageList>
         </Wrapper>
       </SelectorWrapper>
     )
@@ -118,7 +202,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   GetSiteBanners,
-  CreateSiteBanner
+  CreateSiteBanner,
+  DeleteSiteBanner
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppBanners);
