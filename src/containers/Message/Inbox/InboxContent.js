@@ -20,6 +20,7 @@ const Wrapper = styled.div`
   justify-content: flex-start;
   width: 100%;
   height: 100%;
+  position: relative;
 `;
 
 class InboxContent extends React.Component {
@@ -29,16 +30,16 @@ class InboxContent extends React.Component {
     included: []
   };
 
-  componentDidMount() {
-    // const { conversationId } = this.props;
-    // const _this = this;
-    // if (conversationId !== -1) {
-    //   const timerId = setInterval(() => {
-    //     _this.loadConversation();
-    //   }, 3000);
-    //   this.setState({ timerId });
-    // }
-  }
+  // componentDidMount() {
+  //   const { conversationId } = this.props;
+  //   const _this = this;
+  //   if (conversationId !== -1) {
+  //     const timerId = setInterval(() => {
+  //       _this.loadConversation();
+  //     }, 3000);
+  //     this.setState({ timerId });
+  //   }
+  // }
 
   componentDidUpdate(prevProps) {
     const { conversationId } = this.props;
@@ -62,7 +63,7 @@ class InboxContent extends React.Component {
       conversationId,
       onlyCallback: true,
       success: (messages) => {
-        this.setState({ ...refineMessage(profile, messages)});
+        this.setState({ ...refineMessage(profile, messages) });
       }
     });
   }
