@@ -21,7 +21,9 @@ export class MessageBox extends React.Component {
   }
 
   scrollToBottom = () => {
-    this.messagesEnd.current.scrollIntoView({ behavior: 'auto' });
+    if (this.messagesEnd.current) {
+      this.messagesEnd.current.scrollIntoView({ behavior: 'auto' });
+    }
   }
 
   componentDidUpdate(prevProps) {
