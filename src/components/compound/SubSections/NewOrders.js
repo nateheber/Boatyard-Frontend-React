@@ -36,7 +36,7 @@ class NewOrders extends React.Component {
         page: 1,
         per_page: 5,
         'order[order]': 'position',
-        'order[sort]': 'desc',
+        'order[sort]': 'desc'
       }
     });
   }
@@ -55,7 +55,7 @@ class NewOrders extends React.Component {
       }
       return {
         ...order,
-        name,
+        name
       };
     });
     const columns = [
