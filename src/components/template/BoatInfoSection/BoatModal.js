@@ -129,7 +129,7 @@ class BoatModal extends React.Component {
         locationName = get(boatLocation, 'attributes.name', '');
         slip = get(boatInfo, 'slip', '');
       } else {
-        locationType = 'marina';
+        locationType = 'private_dock';
       }
     }
 
