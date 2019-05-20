@@ -178,7 +178,7 @@ class LineItem extends React.Component {
           <Col sm={10}>
             {
               mode === 'edit' ? (
-                <TextArea value={comment} onChange={(evt) => this.onChange(evt, 'comment')} />
+                <TextArea value={comment} onChange={(evt) => this.onChange(evt.target.value, 'comment')} />
               ) : (
                 <Comment>{comment}</Comment>
               )
