@@ -19,6 +19,8 @@ const NEED_ASSIGNMENT_TAB = 'needAssignment';
 const INVOICED_TAB = 'invoiced';
 const DISPATCHED_TAB = 'dispatched';
 
+const PER_PAGE = 15;
+
 const ORDER_TABS = [ALL_TAB, NEED_ASSIGNMENT_TAB, INVOICED_TAB, DISPATCHED_TAB];
 
 const Wrapper = styled.div`
@@ -122,12 +124,12 @@ class OrderList extends React.Component {
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
-      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft' } });
+      this.props.GetOrders({ params: { page, per_page: PER_PAGE, 'order[state]': 'draft' } });
     } else if (tab === INVOICED_TAB) {
       this.props.GetOrders({
         params: {
           page,
-          per_page: 15,
+          per_page: PER_PAGE,
           'invoices': true,
           'order[order]': 'position',
           'order[sort]': 'desc'
@@ -139,26 +141,26 @@ class OrderList extends React.Component {
         this.props.GetOrders({
           params: {
             page,
-            per_page: 15,
+            per_page: PER_PAGE,
             'order[order]': 'position',
             'order[sort]': 'desc'
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'dispatched' } });
+        this.props.GetOrders({ params: { page, per_page: PER_PAGE, 'order[state]': 'dispatched' } });
       }
     } else {
       if (privilege === 'provider') {
         this.props.GetOrders({
           params: {
             page,
-            per_page: 15,
+            per_page: PER_PAGE,
             'order[order]': 'position',
             'order[sort]': 'desc'
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 15 } });
+        this.props.GetOrders({ params: { page, per_page: PER_PAGE } });
       }
     }
   };
@@ -205,8 +207,15 @@ class OrderList extends React.Component {
     this.props.history.push(`/order-details/?order=${orderId}`);
   };
 
+  handleSearch = (keyword) => {
+
+  };
+
+  handleExport = () => {
+  };
+
   render() {
-    const { orders, page, privilege } = this.props;
+    const { privilege, page, orders } = this.props;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
@@ -227,7 +236,9 @@ class OrderList extends React.Component {
           onNewOrder={this.newOrder}
           columns={columns}
           selectedColumns={selectedColumns}
-          onChangeColumns={this.onChangeColumns} />
+          onChangeColumns={this.onChangeColumns}
+          onSearch={this.handleSearch}
+          onExport={this.handleExport} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
         <Content>
           <TableWrapper>
@@ -250,7 +261,7 @@ class OrderList extends React.Component {
 const mapStateToProps = state => ({
   orders: refinedOrdersSelector(state),
   page: get(state, 'order.orders.page', 1),
-  perPage: get(state, 'order.orders.perPage', 20),
+  perPage: get(state, 'order.orders.perPage', PER_PAGE),
   total: get(state, 'order.orders.total', 0),
   privilege: get(state, 'auth.privilege')
 });
