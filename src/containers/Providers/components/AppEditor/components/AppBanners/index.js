@@ -140,8 +140,7 @@ class AppBanners extends React.Component {
     onChangeBanner(banner);
   };
 
-  handleDelete = () => (bannerId) => {
-    console.log('------------bannerId---------', bannerId);
+  handleDelete = (bannerId) => () => {
     const { GetSiteBanners, DeleteSiteBanner, onChangeBanner } = this.props;
     DeleteSiteBanner({
       bannerId,
@@ -156,7 +155,7 @@ class AppBanners extends React.Component {
           },
           error: (e) => {
             toastr.error('Error', e.message);
-          }  
+          }
         });
       },
       error: (e) => {
