@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -62,7 +63,7 @@ class NeedAssignment extends React.Component {
         columns={columns}
         items={orders}
       />
-      <HollowButton className="btn-view-all" onClick={() => history.push('/orders/')}>
+      <HollowButton className="btn-view-all" onClick={() => history.push({ pathname: '/orders/', state: { tab: 'needAssignment' } })}>
         VIEW ALL
       </HollowButton>
     </Wrapper>  
@@ -80,7 +81,7 @@ const mapDispatchToProps = {
   SetDispatchedFlag
 };
 
-export default connect(
+export default withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
-  )(NeedAssignment);
+  )(NeedAssignment));
