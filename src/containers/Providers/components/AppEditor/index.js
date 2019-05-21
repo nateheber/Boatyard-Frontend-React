@@ -174,8 +174,15 @@ class AppEditor extends React.Component {
     this.setState({ step });
   };
 
-  handleChangeBanner = (banner) => {
-    this.setState({ banner });
+  handleChangeBanner = (banner, deletedBannerId = null) => {
+    if (deletedBannerId) {
+      const { banner } = this.state;
+      if (banner.id === deletedBannerId) {
+        this.setState({ banner });
+      }
+    } else {
+      this.setState({ banner });
+    }
   };
 
   setServices = (services) => {
