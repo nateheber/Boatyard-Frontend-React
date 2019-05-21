@@ -48,27 +48,15 @@ const ViewTemplateButtonWrapper = styled.div`
 `;
 
 export class TemplateEditor extends React.Component {
-  state = {
-    subject: '',
-    emailOptions: {
-      emailGreeting: '',
-      buttonText: '',
-      emailBody: '',
-      secondaryEmailBody: null,
-      emailSenderName: null,
-      emailSenderCompany: null
-    },
-    hasSecondSection: false,
-    hasFooter: false
+  constructor(props) {
+    super(props);
+    const states = this.updateState();
+    this.state = { ...states };
   }
 
-  componentDidMount() {
+  updateState = () => {
     const { defaultTemplateInfo } = this.props;
-    this.updateState(defaultTemplateInfo);
-  }
-
-  updateState = (templateInfo) => {
-    const { subject, smsText, emailOptions } = templateInfo;
+    const { templateId, subject, smsText, emailOptions } = defaultTemplateInfo;
     const emailGreeting = get(emailOptions, 'emailGreeting');
     const buttonText = get(emailOptions, 'buttonText');
     const emailBody = get(emailOptions, 'emailBody');
@@ -84,7 +72,8 @@ export class TemplateEditor extends React.Component {
     const hasSecondSection = !(secondaryEmailBody === undefined || secondaryEmailBody === null);
     const hasFooter = !(emailSenderName === undefined || emailSenderName === null) ||
                       !(emailSenderCompany === undefined || emailSenderCompany === null);
-    this.setState({
+    return {
+      templateId,
       subject,
       smsText,
       emailOptions: {
@@ -97,7 +86,7 @@ export class TemplateEditor extends React.Component {
       },
       hasSecondSection,
       hasFooter
-    });
+    };
   };
 
   componentDidUpdate(prevProps) {
@@ -136,32 +125,36 @@ export class TemplateEditor extends React.Component {
     this.setState({ smsText });
   };
 
-  onSave = () => {
-    const { subject, smsText, emailOptions } = this.state;
-    const email_options = {};
-    if (emailOptions.emailBody) {
-      // email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
-      email_options['email_body'] = emailOptions.emailBody;
-    }
-    if (Object.prototype.hasOwnProperty.call(emailOptions, 'emailGreeting')) {
-      if (emailOptions.emailGreeting !== null && emailOptions.emailGreeting !== undefined && emailOptions.emailGreeting.trim().length > 0) {
-        email_options['email_greeting'] = emailOptions.emailGreeting;
-      } else {
-        email_options['email_greeting'] = '';
+  handleSaveTemplate = () => {
+    const { onSave } = this.props;
+    const { templateId, subject, smsText, emailOptions } = this.state;
+    if (onSave) {
+      const email_options = {};
+      if (emailOptions.emailBody) {
+        // email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
+        email_options['email_body'] = emailOptions.emailBody;
       }
-    } else {
-      email_options['email_greeting'] = null;
+      if (Object.prototype.hasOwnProperty.call(emailOptions, 'emailGreeting')) {
+        if (emailOptions.emailGreeting !== null && emailOptions.emailGreeting !== undefined && emailOptions.emailGreeting.trim().length > 0) {
+          email_options['email_greeting'] = emailOptions.emailGreeting;
+        } else {
+          email_options['email_greeting'] = '';
+        }
+      } else {
+        email_options['email_greeting'] = null;
+      }
+      if (emailOptions.secondaryEmailBody) {
+        // email_options['secondary_email_body'] = emailOptions.secondaryEmailBody.replace(/\n/g, '<br>');
+        email_options['secondary_email_body'] = emailOptions.secondaryEmailBody;
+      }
+      const messageTemplate = {
+        templateId,
+        subject,
+        sms_text: smsText,
+        email_options
+      };
+      onSave(messageTemplate);
     }
-    if (emailOptions.secondaryEmailBody) {
-      // email_options['secondary_email_body'] = emailOptions.secondaryEmailBody.replace(/\n/g, '<br>');
-      email_options['secondary_email_body'] = emailOptions.secondaryEmailBody;
-    }
-    const messageTemplate = {
-      subject,
-      sms_text: smsText,
-      email_options
-    };
-    this.props.onSave(messageTemplate);
   }
 
   render() {
@@ -198,7 +191,7 @@ export class TemplateEditor extends React.Component {
         </InputFieldWrapper>
         <ActionWrapper>
           <HollowButton onClick={onCancel}>CANCEL</HollowButton>
-          <OrangeButton onClick={this.onSave}>SAVE</OrangeButton>
+          <OrangeButton onClick={this.handleSaveTemplate}>SAVE</OrangeButton>
         </ActionWrapper>
       </Wrapper>
     );
