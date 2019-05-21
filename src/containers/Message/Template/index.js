@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import {
@@ -29,54 +28,23 @@ class TemplateBox extends React.Component {
   }
 
   componentDidMount() {
-    const { GetGlobalTemplates, GetLocalTemplates } = this.props;
-    GetGlobalTemplates({ params: { 'per_page': 200 } });
-    GetLocalTemplates({ params: { 'per_page': 200 } });
-  }
-
-  getGlobalTemplateId = (triggerKey) => {
-    const { globalTemplates } = this.props;
-    return get(globalTemplates, `${triggerKey}.id`);
-  }
-
-  getLocalTemplateId = (triggerKey) => {
-    const { localTemplates } = this.props;
-    return get(localTemplates, `${triggerKey}.id`);
-  }
-
-  getBaseData = (triggerKey, data) => {
-    const { globalTemplates } = this.props;
-    const baseData = get(globalTemplates, `${triggerKey}.attributes`);
-    const { createdAt, updatedAt, ...actualData } = baseData;
-    return {
-      ...actualData,
-      emailOptions: data
-    };
-  }
-
-  onSave = ({ triggerKey, templateInfo }) => {
-    const { privilege } = this.props;
+    const { GetGlobalTemplates, GetLocalTemplates, privilege } = this.props;
     if (privilege === 'admin') {
-      const templateId = this.getGlobalTemplateId(triggerKey);
-      this.updateGlobalTemplate(templateId, templateInfo);
+      GetGlobalTemplates({ params: { 'per_page': 200 } });
     } else {
-      const localTemplateId = this.getLocalTemplateId(triggerKey);
-      this.updateLocalTemplate(localTemplateId, templateInfo);
+      GetLocalTemplates({ params: { 'per_page': 200 } });
     }
-    //   const templateId = this.getGlobalTemplateId(triggerKey);
-    //   this.updateGlobalTemplate(templateId, templateInfo);
-    // if (privilege === 'admin') {
-    //   const templateId = this.getGlobalTemplateId(triggerKey);
-    //   this.updateGlobalTemplate(templateId, templateInfo);
-    // } else {
-    //   const localTemplateId = this.getLocalTemplateId(triggerKey);
-    //   if (localTemplateId) {
-    //     this.updateLocalTemplate(localTemplateId, templateInfo);
-    //   } else {
-    //     this.createLocalTemplate(triggerKey, templateInfo);
-    //   }
-    // }
   }
+
+  handleSaveTemplate = (templateInfo) => {
+    const { privilege } = this.props;
+    const { templateId, ...updatedInfo } = templateInfo;
+    if (privilege === 'admin') {
+      this.updateGlobalTemplate(templateId, updatedInfo);
+    } else {
+      this.updateLocalTemplate(templateId, updatedInfo);
+    }
+  };
 
   updateGlobalTemplate = (templateId, data) => {
     this.props.UpdateGlobalTemplate({
@@ -88,18 +56,12 @@ class TemplateBox extends React.Component {
         toastr.success('Success', 'Saved successfully!');
         const { GetGlobalTemplates } = this.props;
         GetGlobalTemplates({ params: { 'per_page': 200 } });    
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
-  }
-
-  createLocalTemplate = (trigger, data) => {
-    const baseData = this.getBaseData(trigger, data);
-    this.props.CreateLocalTemplate({
-      data: {
-        messageTemplate: baseData
-      }
-    });
-  }
+  };
 
   updateLocalTemplate = (templateId, data) => {
     this.props.UpdateLocalTemplate({
@@ -110,10 +72,13 @@ class TemplateBox extends React.Component {
       success: () => {
         toastr.success('Success', 'Saved successfully!');
         const { GetLocalTemplates } = this.props;
-        GetLocalTemplates({ params: { 'per_page': 200 } });    
+        GetLocalTemplates({ params: { 'per_page': 200 } });
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
-  }
+  };
 
   render() {
     const { selected, showContent } = this.state;
@@ -131,7 +96,7 @@ class TemplateBox extends React.Component {
             selected={selected}
             onBack={this.goBack}
             onCancel={this.goBack}
-            onSave={this.onSave}
+            onSave={this.handleSaveTemplate}
           />
         }
         showContent={showContent}

@@ -6,7 +6,7 @@ import { TemplateSelector } from '../components';
 
 const Wrapper = styled.div``;
 
-export default class QRLeft extends React.Component {
+export default class TemplateLeft extends React.Component {
   render() {
     const { onSelect } = this.props;
     return (

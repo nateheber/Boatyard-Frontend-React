@@ -1,19 +1,26 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, set, sortBy } from 'lodash';
+import { get, sortBy } from 'lodash';
 import snakeCaseKeys from 'snakecase-keys';
 
 import { actionTypes } from '../actions/messageTemplates';
 import { getGlobalMessageTemplatesClient, getLocalMessageTemplatesClient } from './sagaSelectors';
 
 const processTemplates = (templates) => {
-  const templateObject = {};
-  sortBy(templates, ['id'], ['desc']).forEach(template => {
-    const triggerKey = get(template, 'attributes.triggerKey');
-    const trigger = get(template, 'attributes.trigger');
-    const messageType = get(template, 'attributes.messageType').split('_').join(' ');
-    set(templateObject, triggerKey, {...template, trigger, messageType});
+  // const templateObject = {};
+  // sortBy(templates, ['id'], ['desc']).forEach(template => {
+  //   const triggerKey = get(template, 'attributes.triggerKey');
+  //   const trigger = get(template, 'attributes.trigger');
+  //   const messageType = get(template, 'attributes.messageType').split('_').join(' ');
+  //   set(templateObject, triggerKey, {...template, trigger, messageType});
+  // });
+  // return templateObject;
+  return sortBy(templates, ['id'], ['desc']).map(template => {
+    return {
+      id: template.id,
+      type: template.type,
+      ...template.attributes
+    };
   });
-  return templateObject;
 }
 
 function* getGlobalTemplates(action) {

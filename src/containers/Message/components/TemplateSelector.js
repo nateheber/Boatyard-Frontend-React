@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, keys, startCase } from 'lodash';
+import { startCase } from 'lodash';
 
 import { MessageItem, TemplateItem } from 'components/basic/Message';
 
@@ -11,45 +11,43 @@ class TemplateSelector extends React.Component {
   state = {
     selected: ''
   };
-  getOptions = () => {
+
+  getTemplates = () => {
     const { privilege, globalTemplates, localTemplates } = this.props;
-    let templates = globalTemplates;
-    if (privilege !== 'admin') {
-      templates = localTemplates;
+    if (privilege === 'admin') {
+      return globalTemplates;
     }
-    const triggerKeys = keys(templates);
-    const options = triggerKeys.map((triggerKey) => ({
-      triggerKey,
-      title: startCase(triggerKey),
-      subject: get(templates, `${triggerKey}.attributes.subject`),
-      // trigger: get(globalTemplates, `${triggerKey}.trigger`),
-      // messageType: get(globalTemplates, `${triggerKey}.messageType`),
-    }));
-    return options;
-  }
-  render() {
+    return localTemplates;
+  };
+
+  renderTemplates = () => {
     const { onSelect } = this.props;
     const { selected } = this.state;
-    const options = this.getOptions();
+    const templates = this.getTemplates();
+    return templates.map(template => {
+      const { triggerKey, subject } = template;
+      return (<MessageItem
+        onClick={() => {
+          this.setState({ selected: triggerKey });
+          if (onSelect) {
+            onSelect(triggerKey);
+          }
+        }}
+        className={selected === triggerKey ? 'active' : 'detactive'}
+        key={triggerKey}
+      >
+        <TemplateItem
+          title={startCase(triggerKey)}
+          description={subject}
+        />
+      </MessageItem>);
+    });
+  };
+
+  render() {
     return (
       <Wrapper>
-        {
-          options.map(({ triggerKey, subject, title }, idx) => (
-            <MessageItem
-              onClick={() => {
-                this.setState({ selected: triggerKey });
-                onSelect(triggerKey);
-              }}
-              className={selected === triggerKey ? 'active' : 'detactive'}
-              key={triggerKey}
-            >
-              <TemplateItem
-                title={title}
-                description={subject}
-              />
-            </MessageItem>
-          ))
-        }
+        {this.renderTemplates()}
       </Wrapper>
     );
   }

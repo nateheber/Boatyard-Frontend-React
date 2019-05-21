@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty, hasIn, startCase } from 'lodash';
+import { isEmpty, startCase } from 'lodash';
 
 import { InboxContentHeader } from '../components/MessageHeader';
 import { TemplateEditor } from '../components';
@@ -15,26 +15,21 @@ const Wrapper = styled.div`
 `;
 
 class TemplateContent extends React.Component {
-  onSave = (templateInfo) => {
-    const { onSave, selected } = this.props;
-    onSave({ triggerKey: selected, templateInfo });
-  }
+  handleSaveTemplate = (templateInfo) => {
+    const { onSave } = this.props;
+    if (onSave) {
+      onSave(templateInfo);
+    }
+  };
 
   getTemplateInfo = () => {
     const { selected, globalTemplates, localTemplates, privilege } = this.props;
-    if (hasIn(localTemplates, selected) && privilege !== 'admin') {
-      // return get(localTemplates, `${selected}.attributes.emailOptions`);
-      const subject = get(localTemplates, `${selected}.attributes.subject`) || '';
-      const smsText = get(localTemplates, `${selected}.attributes.smsText`) || '';
-      const emailOptions = get(localTemplates, `${selected}.attributes.emailOptions`);
-      return { subject, smsText, emailOptions };
+    let templates = globalTemplates;
+    if (privilege === 'provider') {
+      templates = localTemplates;
     }
-    // return get(globalTemplates, `${selected}.attributes.emailOptions`);
-    const subject = get(globalTemplates, `${selected}.attributes.subject`) || '';
-    const smsText = get(localTemplates, `${selected}.attributes.smsText`) || '';
-    const emailOptions = get(globalTemplates, `${selected}.attributes.emailOptions`);
-    return { subject, smsText, emailOptions };
-  }
+    return templates.find(template => template.triggerKey === selected);
+  };
 
   render() {
     const { selected, onCancel, onBack } = this.props;
@@ -52,7 +47,7 @@ class TemplateContent extends React.Component {
           defaultTemplateInfo={templateInfo}
           selected={selected}
           onCancel={onCancel}
-          onSave={this.onSave}
+          onSave={this.handleSaveTemplate}
           key={selected}
         />
       </Wrapper>
