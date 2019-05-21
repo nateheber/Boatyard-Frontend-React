@@ -28,18 +28,7 @@ class TemplateContent extends React.Component {
     if (privilege === 'provider') {
       templates = localTemplates;
     }
-    const selectedTemplate = templates.find(template => template.triggerKey === selected);
-    if (selectedTemplate && !isEmpty(selectedTemplate)) {
-      const { id: templateId, subject, smsText, emailOptions } = selectedTemplate;
-      return {
-        templateId,
-        subject,
-        smsText,
-        emailOptions
-      };
-    } else {
-      return {};
-    }
+    return templates.find(template => template.triggerKey === selected);
   };
 
   render() {
