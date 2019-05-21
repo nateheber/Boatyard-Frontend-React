@@ -132,18 +132,24 @@ class NewOrderModal extends React.Component {
             }
           },
           success: () => {
-            AcceptOrder({
-              orderId: order.id,
-              success: () => {
-                this.setState({ loading: false });
-                this.closeServiceModal();
-                if (onFinishCreation) onFinishCreation(get(order, 'id'));
-              },
-              error: (e) => {
-                this.setState({ loading: false });
-                toastr.error('Error', e.message);
-              }
-            });
+            if (privilege === 'admin') {
+              this.setState({ loading: false });
+              this.closeServiceModal();
+              if (onFinishCreation) onFinishCreation(get(order, 'id'));
+            } else {
+              AcceptOrder({
+                orderId: order.id,
+                success: () => {
+                  this.setState({ loading: false });
+                  this.closeServiceModal();
+                  if (onFinishCreation) onFinishCreation(get(order, 'id'));
+                },
+                error: (e) => {
+                  this.setState({ loading: false });
+                  toastr.error('Error', e.message);
+                }
+              });
+            }
           },
           error: (e) => {
             this.setState({ loading: false });
