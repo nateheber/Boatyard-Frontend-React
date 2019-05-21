@@ -143,8 +143,10 @@ export class TemplateEditor extends React.Component {
       // email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
       email_options['email_body'] = emailOptions.emailBody;
     }
-    if (emailOptions.emailGreeting) {
+    if (emailOptions.emailGreeting && emailOptions.emailGreeting.trim().length > 0) {
       email_options['email_greeting'] = emailOptions.emailGreeting;
+    } else {
+      email_options['email_greeting'] = null;
     }
     if (emailOptions.secondaryEmailBody) {
       // email_options['secondary_email_body'] = emailOptions.secondaryEmailBody.replace(/\n/g, '<br>');
@@ -169,7 +171,7 @@ export class TemplateEditor extends React.Component {
         </InputFieldWrapper>
         <InputFieldWrapper className="primary">
           <InputLabel>Greeting</InputLabel>
-          <Input type="text" value={emailOptions.emailGreeting} onChange={this.onChangeGreeting} disabled={emailOptions.emailGreeting === undefined} />
+          <Input type="text" value={emailOptions.emailGreeting} onChange={this.onChangeGreeting} />
         </InputFieldWrapper>
         <InputFieldWrapper className="primary">
           <InputLabel>Email Body{hasSecondSection && ' Section 1'}</InputLabel>
