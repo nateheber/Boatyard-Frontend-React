@@ -7,7 +7,8 @@ import {
   Input,
   TextArea,
   InputWrapper,
-  InputLabel
+  InputLabel,
+  CheckBox
 } from 'components/basic/Input';
 import {
   HollowButton,
@@ -30,6 +31,25 @@ const InputFieldWrapper= styled(InputWrapper)`
   margin-bottom: 20px;
 `;
 
+const CheckBoxes = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+const CheckBoxWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 30px;
+`;
+
+const CheckBoxLabel = styled(InputLabel)`
+  margin: 0;
+  color: #555;
+`;
+
 const Divider = styled.div`
   border-bottom: 1px solid #e6e6e6;
   margin: 30px 0;
@@ -47,28 +67,28 @@ const ViewTemplateButtonWrapper = styled.div`
   margin: 0 10px 20px;
 `;
 
+const DELIVERY_OPTIONS = [
+  'email',
+  'push',
+  'sms'
+];
+
+const DELIVERY_LABELS = {
+  email: 'Email',
+  push: 'Push Notification',
+  sms: 'SMS'
+};
+
 export class TemplateEditor extends React.Component {
-  state = {
-    subject: '',
-    emailOptions: {
-      emailGreeting: '',
-      buttonText: '',
-      emailBody: '',
-      secondaryEmailBody: null,
-      emailSenderName: null,
-      emailSenderCompany: null
-    },
-    hasSecondSection: false,
-    hasFooter: false
+  constructor(props) {
+    super(props);
+    const states = this.updateState();
+    this.state = { ...states };
   }
 
-  componentDidMount() {
+  updateState = () => {
     const { defaultTemplateInfo } = this.props;
-    this.updateState(defaultTemplateInfo);
-  }
-
-  updateState = (templateInfo) => {
-    const { subject, smsText, emailOptions } = templateInfo;
+    const { id: templateId, subject, smsText, deliveryDestinations, emailOptions } = defaultTemplateInfo;
     const emailGreeting = get(emailOptions, 'emailGreeting');
     const buttonText = get(emailOptions, 'buttonText');
     const emailBody = get(emailOptions, 'emailBody');
@@ -84,9 +104,11 @@ export class TemplateEditor extends React.Component {
     const hasSecondSection = !(secondaryEmailBody === undefined || secondaryEmailBody === null);
     const hasFooter = !(emailSenderName === undefined || emailSenderName === null) ||
                       !(emailSenderCompany === undefined || emailSenderCompany === null);
-    this.setState({
+    return {
+      templateId,
       subject,
       smsText,
+      deliveryDestinations: deliveryDestinations || [],
       emailOptions: {
         emailGreeting,
         buttonText,
@@ -97,7 +119,7 @@ export class TemplateEditor extends React.Component {
       },
       hasSecondSection,
       hasFooter
-    });
+    };
   };
 
   componentDidUpdate(prevProps) {
@@ -136,32 +158,57 @@ export class TemplateEditor extends React.Component {
     this.setState({ smsText });
   };
 
-  onSave = () => {
-    const { subject, smsText, emailOptions } = this.state;
-    const email_options = {};
-    if (emailOptions.emailBody) {
-      // email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
-      email_options['email_body'] = emailOptions.emailBody;
+  isChecked = (value) => {
+    const { deliveryDestinations } = this.state;
+    if (deliveryDestinations.indexOf(value) > -1) {
+      return true;
     }
-    if (Object.prototype.hasOwnProperty.call(emailOptions, 'emailGreeting')) {
-      if (emailOptions.emailGreeting !== null && emailOptions.emailGreeting !== undefined && emailOptions.emailGreeting.trim().length > 0) {
-        email_options['email_greeting'] = emailOptions.emailGreeting;
-      } else {
-        email_options['email_greeting'] = '';
-      }
+    return false;
+  };
+
+  handleChangeDeliveryOption = (value) => () => {
+    const { deliveryDestinations } = this.state;
+    const destinations = deliveryDestinations.slice(0);
+    const index = destinations.indexOf(value);
+    if (index > -1) {
+      destinations.splice(index, 1);
     } else {
-      email_options['email_greeting'] = null;
+      destinations.push(value);
     }
-    if (emailOptions.secondaryEmailBody) {
-      // email_options['secondary_email_body'] = emailOptions.secondaryEmailBody.replace(/\n/g, '<br>');
-      email_options['secondary_email_body'] = emailOptions.secondaryEmailBody;
+    this.setState({ deliveryDestinations: destinations })
+  }
+
+  handleSaveTemplate = () => {
+    const { onSave } = this.props;
+    const { templateId, subject, smsText, deliveryDestinations, emailOptions } = this.state;
+    if (onSave) {
+      const email_options = {};
+      if (emailOptions.emailBody) {
+        // email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
+        email_options['email_body'] = emailOptions.emailBody;
+      }
+      if (Object.prototype.hasOwnProperty.call(emailOptions, 'emailGreeting')) {
+        if (emailOptions.emailGreeting !== null && emailOptions.emailGreeting !== undefined && emailOptions.emailGreeting.trim().length > 0) {
+          email_options['email_greeting'] = emailOptions.emailGreeting;
+        } else {
+          email_options['email_greeting'] = '';
+        }
+      } else {
+        email_options['email_greeting'] = null;
+      }
+      if (emailOptions.secondaryEmailBody) {
+        // email_options['secondary_email_body'] = emailOptions.secondaryEmailBody.replace(/\n/g, '<br>');
+        email_options['secondary_email_body'] = emailOptions.secondaryEmailBody;
+      }
+      const messageTemplate = {
+        templateId,
+        subject,
+        sms_text: smsText,
+        delivery_destinations: deliveryDestinations,
+        email_options
+      };
+      onSave(messageTemplate);
     }
-    const messageTemplate = {
-      subject,
-      sms_text: smsText,
-      email_options
-    };
-    this.props.onSave(messageTemplate);
   }
 
   render() {
@@ -169,6 +216,22 @@ export class TemplateEditor extends React.Component {
     const { subject, smsText, emailOptions, hasSecondSection, hasFooter } = this.state;
     return (
       <Wrapper>
+        <InputFieldWrapper className="primary">
+          <InputLabel>Delivery Options</InputLabel>
+          <CheckBoxes>
+            {DELIVERY_OPTIONS.map(option => (
+              <CheckBoxWrapper key={`delivery_destination_${option}`}>
+                <CheckBox
+                  small
+                  checked={this.isChecked(option)}
+                  onClick={this.handleChangeDeliveryOption(option)}
+                />
+                <CheckBoxLabel>{DELIVERY_LABELS[option]}</CheckBoxLabel>
+              </CheckBoxWrapper>
+            ))}
+          </CheckBoxes>
+        </InputFieldWrapper>
+        <Divider />
         <InputFieldWrapper className="primary">
           <InputLabel>Subject</InputLabel>
           <Input type="text" value={subject} onChange={this.onChangeSubject} />
@@ -198,7 +261,7 @@ export class TemplateEditor extends React.Component {
         </InputFieldWrapper>
         <ActionWrapper>
           <HollowButton onClick={onCancel}>CANCEL</HollowButton>
-          <OrangeButton onClick={this.onSave}>SAVE</OrangeButton>
+          <OrangeButton onClick={this.handleSaveTemplate}>SAVE</OrangeButton>
         </ActionWrapper>
       </Wrapper>
     );
