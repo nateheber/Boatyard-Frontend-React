@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { get, isEmpty, filter, camelCase, startCase, hasIn, sortBy } from 'lodash';
 
 import { FilterServices, GetService } from 'store/actions/services';
-import { actionTypes } from 'store/actions/orders';
 import Modal from 'components/compound/Modal';
 import { OrangeButton } from 'components/basic/Buttons';
 import ProviderOption from 'components/basic/ProviderOption';
@@ -388,7 +387,7 @@ class SelectServiceModal extends React.Component {
   };
 
   render() {
-    const { open, onClose, currentStatus } = this.props;
+    const { open, onClose, loading } = this.props;
     const { service, whenFields, serviceFields, boatFields } = this.state;
     const action = [
       <OrangeButton
@@ -400,7 +399,7 @@ class SelectServiceModal extends React.Component {
     return (
       <Modal
         title="Create Order"
-        loading={currentStatus === actionTypes.CREATE_ORDER || currentStatus === actionTypes.UPDATE_ORDER}
+        loading={loading}
         minHeight={265}
         actions={action}
         open={open}
@@ -457,7 +456,6 @@ class SelectServiceModal extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  currentStatus: state.order.currentStatus,
   filteredServices: state.service.filteredServices,
   included: state.service.included,
   privilege: state.auth.privilege

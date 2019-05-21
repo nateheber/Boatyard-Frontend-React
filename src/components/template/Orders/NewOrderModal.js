@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import moment from 'moment';
+import { toastr } from 'react-redux-toastr';
 
-import { CreateOrder, UpdateOrder } from 'store/actions/orders';
+import { CreateOrder, UpdateOrder, AcceptOrder } from 'store/actions/orders';
 import SelectCustomerModal from './SelectCustomerModal';
 import SelectServiceModal from './SelectServiceModal';
 import * as constants from 'utils/constants';
@@ -15,7 +16,8 @@ class NewOrderModal extends React.Component {
       showCustomerModal: false,
       showServiceModal: false,
       customer: -1,
-      boat: -1
+      boat: -1,
+      loading: false
     };
   }
 
@@ -50,7 +52,7 @@ class NewOrderModal extends React.Component {
   };
 
   createNewOrder = (service, whenValues = {}, serviceValues = {}, orderValues = {}) => {
-    const { CreateOrder, UpdateOrder, onFinishCreation, privilege } = this.props;
+    const { CreateOrder, UpdateOrder, AcceptOrder, onFinishCreation, privilege } = this.props;
     const { customer, boat } = this.state;
     const orderData = {
       boat_id: boat.id,
@@ -65,6 +67,7 @@ class NewOrderModal extends React.Component {
       //   ...serviceValues
       // }
     };
+    this.setState({ loading: true });
     if (whenValues.hasOwnProperty('when')) {
       const scheduleAttributes = {
         asap: null,
@@ -129,16 +132,40 @@ class NewOrderModal extends React.Component {
             }
           },
           success: () => {
-            this.closeServiceModal();
-            if (onFinishCreation) onFinishCreation(get(order, 'id'));
+            if (privilege === 'admin') {
+              this.setState({ loading: false });
+              this.closeServiceModal();
+              if (onFinishCreation) onFinishCreation(get(order, 'id'));
+            } else {
+              AcceptOrder({
+                orderId: order.id,
+                success: () => {
+                  this.setState({ loading: false });
+                  this.closeServiceModal();
+                  if (onFinishCreation) onFinishCreation(get(order, 'id'));
+                },
+                error: (e) => {
+                  this.setState({ loading: false });
+                  toastr.error('Error', e.message);
+                }
+              });
+            }
+          },
+          error: (e) => {
+            this.setState({ loading: false });
+            toastr.error('Error', e.message);
           }
         });
+      },
+      error: (e) => {
+        this.setState({ loading: false });
+        toastr.error('Error', e.message);
       }
     });
   };
 
   render() {
-    const { showCustomerModal, showServiceModal, boat } = this.state;
+    const { showCustomerModal, showServiceModal, boat, loading } = this.state;
     return (
       <React.Fragment>
         {showCustomerModal &&
@@ -151,6 +178,7 @@ class NewOrderModal extends React.Component {
         {showServiceModal &&
           <SelectServiceModal
             open={showServiceModal}
+            loading={loading}
             boat={boat}
             onClose={this.closeServiceModal}
             toNext={this.createNewOrder}
@@ -167,7 +195,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   CreateOrder,
-  UpdateOrder
+  UpdateOrder,
+  AcceptOrder
 }
 
 export default connect(
