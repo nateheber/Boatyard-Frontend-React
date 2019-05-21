@@ -143,8 +143,10 @@ export class TemplateEditor extends React.Component {
       // email_options['email_body'] = emailOptions.emailBody.replace(/\n/g, '<br>');
       email_options['email_body'] = emailOptions.emailBody;
     }
-    if (emailOptions.emailGreeting && emailOptions.emailGreeting.trim().length > 0) {
+    if (Object.prototype.hasOwnProperty.call(emailOptions, 'emailGreeting') && emailOptions.emailGreeting.trim().length > 0) {
       email_options['email_greeting'] = emailOptions.emailGreeting;
+    } else if (Object.prototype.hasOwnProperty.call(emailOptions, 'emailGreeting') && emailOptions.emailGreeting.trim().length === 0){
+      email_options['email_greeting'] = '';
     } else {
       email_options['email_greeting'] = null;
     }
