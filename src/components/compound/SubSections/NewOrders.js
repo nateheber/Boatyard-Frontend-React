@@ -35,7 +35,7 @@ class NewOrders extends React.Component {
       params: {
         page: 1,
         per_page: 5,
-        'order[order]': 'position',
+        'order[order]': 'provider_order_sequence',
         'order[sort]': 'desc'
       }
     });

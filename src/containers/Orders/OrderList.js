@@ -131,7 +131,7 @@ class OrderList extends React.Component {
           page,
           per_page: 15,
           'invoices': true,
-          'order[order]': 'position',
+          'order[order]': 'provider_order_sequence',
           'order[sort]': 'desc'
         }
       });
@@ -142,7 +142,7 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'position',
+            'order[order]': 'provider_order_sequence',
             'order[sort]': 'desc'
           }
         });
@@ -155,7 +155,7 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'position',
+            'order[order]': 'provider_order_sequence',
             'order[sort]': 'desc'
           }
         });
