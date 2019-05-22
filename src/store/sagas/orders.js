@@ -118,12 +118,13 @@ function* getOrder(action) {
   try {
     const result = yield call(orderClient.read, orderId);
     const { data: order, included } = result;
+    const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
       type: actionTypes.GET_ORDER_SUCCESS,
-      payload: { order: addStateAliasOfOrder(order), included }
+      payload: { order: refactoredOrder, included }
     });
     if (success) {
-      yield call(success);
+      yield call(success, refactoredOrder);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_ORDER_FAILURE, payload: e });
@@ -140,12 +141,13 @@ function* createOrder(action) {
     const result = yield call(orderClient.create, data);
     yield put({ type: actionTypes.CREATE_ORDER_SUCCESS });
     const { data: order, included } = result;
+    const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
       type: actionTypes.CREATE_ORDER_FAILURE,
-      payload: { order: addStateAliasOfOrder(order), included }
+      payload: { order: refactoredOrder, included }
     });
     if (success) {
-      yield call(success);
+      yield call(success, refactoredOrder);
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_ORDER_FAILURE, payload: e });
@@ -167,12 +169,13 @@ function* updateOrder(action) {
   try {
     const result = yield call(orderClient.update, orderId, data);
     const { data: order, included } = result;
+    const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
       type: actionTypes.UPDATE_ORDER_SUCCESS,
-      payload: { order: addStateAliasOfOrder(order), included }
+      payload: { order: refactoredOrder, included }
     });
     if (success) {
-      yield call(success);
+      yield call(success, refactoredOrder);
     }
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_ORDER_FAILURE, payload: e });
@@ -194,12 +197,13 @@ function* sendQuote(action) {
   try {
     const result = yield call(orderClient.update, orderId, { order: { transition: isResend ? 'reprovision' : 'provision' } });
     const { data: order, included } = result;
+    const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
       type: actionTypes.SEND_QUOTE_SUCCESS,
-      payload: { order: addStateAliasOfOrder(order), included }
+      payload: { order: refactoredOrder, included }
     });
     if (success) {
-      yield call(success);
+      yield call(success, refactoredOrder);
     }
   } catch (e) {
     yield put({ type: actionTypes.SEND_QUOTE_FAILURE, payload: e });
@@ -215,12 +219,13 @@ function* sendInvoice(action) {
   try {
     const result = yield call(apiClient.post, `/orders/${orderId}/invoices`);
     const { data: order } = result;
+    const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
       type: actionTypes.SEND_INVOICE_SUCCESS,
-      payload: { order: addStateAliasOfOrder(order) }
+      payload: { order: refactoredOrder }
     });
     if (success) {
-      yield call(success);
+      yield call(success, refactoredOrder);
     }
   } catch (e) {
     yield put({ type: actionTypes.SEND_INVOICE_FAILURE, payload: e });
