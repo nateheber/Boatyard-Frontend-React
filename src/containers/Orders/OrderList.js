@@ -202,8 +202,6 @@ class OrderList extends React.Component {
   };
 
   creationFinished = (orderId) => {
-    // const { page, GetOrders } = this.props;
-    // GetOrders({ params: { page: page } });
     this.props.history.push(`/order-details/?order=${orderId}`);
   };
 
