@@ -45,3 +45,19 @@ export const refactorIncluded = (included) => {
   }
   return refactored;
 };
+
+export const AVAILABLE_ALIAS_ORDERS = [
+  'dispatched',
+  'assigned',
+  'provisioned',
+  'scheduled',
+  'accepted'
+];
+
+export const ORDER_ALIASES = {
+  dispatched: 'Awaiting Acceptance',
+  assigned: 'Awaiting Acceptance',
+  provisioned: 'Quote Sent',
+  scheduled: 'Quote Accepted',
+  accepted: 'In Progress'
+};

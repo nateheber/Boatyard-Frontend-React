@@ -205,8 +205,10 @@ export default handleActions(
       }),
     [actionTypes.CREATE_ORDER_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload: { order, included } } = action;
         draft.currentStatus = type;
+        draft.currentOrder = order;
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.CREATE_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -303,6 +305,26 @@ export default handleActions(
         draft.currentOrder = order;
       }),
     [actionTypes.SEND_INVOICE_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.ACCEPT_ORDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.ACCEPT_ORDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: { order, included } } = action;
+        draft.currentStatus = type;
+        draft.currentOrder = order;
+        draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.ACCEPT_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
