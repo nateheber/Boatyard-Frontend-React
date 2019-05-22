@@ -6,6 +6,13 @@ export const getUserFromOrder = (order, privilege = 'admin') => {
   if (privilege !== 'admin') {
     user = get(order, 'relationships.childAccount');
   }
+  if (!isEmpty(user)) {
+    return {
+      id: user.id,
+      type: user.type,
+      ...user.attributes
+    };
+  }
   // if (!isEmpty(user)) {
   //   if (user.hasOwnProperty('data')) {
   //     user = get(order, 'relationships.childAccount');
@@ -18,13 +25,7 @@ export const getUserFromOrder = (order, privilege = 'admin') => {
   //     };
   //   }
   // }
-  if (!isEmpty(user)) {
-    return {
-      id: user.id,
-      type: user.type,
-      ...user.attributes
-    };
-  }
+  return user;
 };
 
 export const getChildAccountFromOrder = order => {
