@@ -71,7 +71,7 @@ const ORDER_COLUMNS = [
   { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1.5, },
   { label: 'boat', value: 'relationships.boat.attributes.make', width: 1.2, },
   { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$', width: 0.8, },
-  { label: 'order status', value: 'state', width: 1.2 },
+  { label: 'order status', value: 'orderAlias', width: 1.2 },
 ];
 const tabs = {
   admin: [
