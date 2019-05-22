@@ -1,8 +1,24 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, hasIn } from 'lodash';
+import { get, hasIn, startCase } from 'lodash';
 
+import { ORDER_ALIASES, AVAILABLE_ALIAS_ORDERS } from 'utils/basic';
 import { actionTypes } from '../actions/orders';
 import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag, getPrivilege } from './sagaSelectors';
+
+const addStateAliasOfOrder = (order) => {
+  const state = get(order, 'attributes.state');
+  let stateAlias = startCase(state);
+  if (AVAILABLE_ALIAS_ORDERS.indexOf(state) > -1) {
+    stateAlias = ORDER_ALIASES[state];
+  }
+  return {
+    ...order,
+    attributes: {
+      ...order.attributes,
+      orderAlias: stateAlias
+    }
+  };
+};
 
 function* getOrders(action) {
   let successType = actionTypes.GET_ORDERS_SUCCESS;
@@ -64,12 +80,15 @@ function* getOrders(action) {
     yield put({
       type: successType,
       payload: {
-        orders: orders.map(order => ({
-          id: order.id,
-          type: order.type,
-          ...order.attributes,
-          relationships: order.relationships,
-        })),
+        orders: orders.map(item => {
+          const order = addStateAliasOfOrder(item);
+          return {
+            id: order.id,
+            type: order.type,
+            ...order.attributes,
+            relationships: order.relationships,
+          };
+        }),
         included,
         perPage,
         total,
@@ -98,13 +117,10 @@ function* getOrder(action) {
   }
   try {
     const result = yield call(orderClient.read, orderId);
-    const { data, included } = result;
+    const { data: order, included } = result;
     yield put({
       type: actionTypes.GET_ORDER_SUCCESS,
-      payload: {
-        order: data,
-        included
-      }
+      payload: { order, included }
     });
     if (success) {
       yield call(success);
@@ -123,16 +139,13 @@ function* createOrder(action) {
   try {
     const result = yield call(orderClient.create, data);
     yield put({ type: actionTypes.CREATE_ORDER_SUCCESS });
-    const order = get(result, 'data', {});
-    const included = get(result, 'data', {});
-    const refinedOrder = {
-      id: order.id,
-      type: order.type,
-      ...order.attributes,
-      relationships: order.relationships,
-    };
+    const { data: order, included } = result;
+    yield put({
+      type: actionTypes.CREATE_ORDER_FAILURE,
+      payload: { order: addStateAliasOfOrder(order), included }
+    });
     if (success) {
-      yield call(success, refinedOrder, included);
+      yield call(success);
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_ORDER_FAILURE, payload: e });
@@ -156,10 +169,7 @@ function* updateOrder(action) {
     const { data: order, included } = result;
     yield put({
       type: actionTypes.UPDATE_ORDER_SUCCESS,
-      payload: {
-        order,
-        included
-      }
+      payload: { order: addStateAliasOfOrder(order), included }
     });
     if (success) {
       yield call(success);
@@ -183,13 +193,10 @@ function* sendQuote(action) {
   }
   try {
     const result = yield call(orderClient.update, orderId, { order: { transition: isResend ? 'reprovision' : 'provision' } });
-    const { data, included } = result;
+    const { data: order, included } = result;
     yield put({
       type: actionTypes.SEND_QUOTE_SUCCESS,
-      payload: {
-        order: data,
-        included
-      }
+      payload: { order: addStateAliasOfOrder(order), included }
     });
     if (success) {
       yield call(success);
@@ -207,14 +214,10 @@ function* sendInvoice(action) {
   const { orderId, success, error } = action.payload;
   try {
     const result = yield call(apiClient.post, `/orders/${orderId}/invoices`);
-    // const { data, included } = result;
-    const { data } = result;
+    const { data: order } = result;
     yield put({
       type: actionTypes.SEND_INVOICE_SUCCESS,
-      payload: {
-        order: data,
-        // included
-      }
+      payload: { order: addStateAliasOfOrder(order) }
     });
     if (success) {
       yield call(success);
@@ -255,8 +258,12 @@ function* acceptOrder(action) {
   const { orderId, success, error } = action.payload;
   const dispatched = yield select(getOrderDispatchedFlag);
   try {
-    yield call(apiClient.patch, `/${dispatched ? 'dispatched_orders' : 'orders'}/${orderId}`, { order: { transition: 'accept' } });
-    yield put({ type: actionTypes.ACCEPT_ORDER_SUCCESS });
+    const result = yield call(apiClient.patch, `/${dispatched ? 'dispatched_orders' : 'orders'}/${orderId}`, { order: { transition: 'accept' } });
+    const { data: order, included } = result;
+    yield put({
+      type: actionTypes.ACCEPT_ORDER_SUCCESS,
+      payload: { order: addStateAliasOfOrder(order), included }
+    });
     if (dispatched) {
       yield put({ type: actionTypes.SET_DISPATCHED_FLAG, payload: false });
     }
