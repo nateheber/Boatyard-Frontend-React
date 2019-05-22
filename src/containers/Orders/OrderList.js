@@ -142,8 +142,8 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            'order[order]': 'provider_order_sequence',
-            'order[sort]': 'desc'
+            // 'order[order]': 'provider_order_sequence',
+            // 'order[sort]': 'desc'
           }
         });
       } else {
