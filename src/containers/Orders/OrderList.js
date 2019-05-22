@@ -11,6 +11,7 @@ import { OrderHeader } from 'components/compound/SectionHeader';
 
 import { GetOrders, SetDispatchedFlag } from 'store/actions/orders';
 import { refinedOrdersSelector } from 'store/selectors/orders';
+import { getCustomerName, getBoatFromOrder } from 'utils/order';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
@@ -20,6 +21,7 @@ const INVOICED_TAB = 'invoiced';
 const DISPATCHED_TAB = 'dispatched';
 
 const PER_PAGE = 15;
+const TOTAL_ORDER_COUNT = 1000;
 
 const ORDER_TABS = [ALL_TAB, NEED_ASSIGNMENT_TAB, INVOICED_TAB, DISPATCHED_TAB];
 
@@ -48,8 +50,7 @@ const ORDER_COLUMNS = [
   {
     label: 'CUSTOMER',
     value: [
-      'relationships.user.attributes.firstName/relationships.user.attributes.lastName',
-      'relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'
+      'relationships.user.attributes.firstName/relationships.user.attributes.lastName'
     ],
     isCustomer: true,
     width: 1.2
@@ -94,6 +95,7 @@ class OrderList extends React.Component {
     const columns = ORDER_COLUMNS.slice(0);
     let tab = ALL_TAB;
     if (props.privilege === 'provider') {
+      columns[2]['value'] = ['relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'];
       columns.splice(4, 1);
     }
     const { state } = props.location;
@@ -106,7 +108,12 @@ class OrderList extends React.Component {
     this.state = {
       tab,
       columns,
-      selectedColumns: columns
+      selectedColumns: columns,
+      page: 1,
+      pageCount: 0,
+      orders: [],
+      filteredOrders: [],
+      keyword: ''
     };
   }
 
@@ -124,47 +131,61 @@ class OrderList extends React.Component {
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
-      this.props.GetOrders({ params: { page, per_page: PER_PAGE, 'order[state]': 'draft' } });
+      this.loadOrders({
+        page,
+        per_page: TOTAL_ORDER_COUNT,
+        'order[state]': 'draft'
+      });
     } else if (tab === INVOICED_TAB) {
-      this.props.GetOrders({
-        params: {
-          page,
-          per_page: PER_PAGE,
-          'invoices': true,
-          'order[order]': 'position',
-          'order[sort]': 'desc'
-        }
+      this.loadOrders({
+        page,
+        per_page: TOTAL_ORDER_COUNT,
+        'invoices': true,
+        // 'order[order]': 'position',
+        // 'order[sort]': 'desc'
       });
     } else if (tab === DISPATCHED_TAB) {
       if (privilege === 'provider') {
         this.props.SetDispatchedFlag(true);
-        this.props.GetOrders({
-          params: {
-            page,
-            per_page: PER_PAGE,
-            'order[order]': 'position',
-            'order[sort]': 'desc'
-          }
+        this.loadOrders({
+          page,
+          per_page: TOTAL_ORDER_COUNT,
+          // 'order[order]': 'position',
+          // 'order[sort]': 'desc'
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: PER_PAGE, 'order[state]': 'dispatched' } });
+        this.loadOrders({
+          page,
+          per_page: TOTAL_ORDER_COUNT,
+          'order[state]': 'dispatched'
+        });
       }
     } else {
       if (privilege === 'provider') {
-        this.props.GetOrders({
-          params: {
-            page,
-            per_page: PER_PAGE,
-            'order[order]': 'position',
-            'order[sort]': 'desc'
-          }
+        this.loadOrders({
+          page,
+          per_page: TOTAL_ORDER_COUNT,
+          // 'order[order]': 'position',
+          // 'order[sort]': 'desc'
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: PER_PAGE } });
+        this.loadOrders({
+          page,
+          per_page: TOTAL_ORDER_COUNT
+        });
       }
     }
   };
 
+  loadOrders = (params, page = 1) => {
+    const { GetOrders } = this.props;
+    GetOrders({
+      params,
+      success: () => {
+        this.processOrders();
+      }
+    });
+  };
   onChangeColumns = (columns) => {
     this.setState({
       selectedColumns: columns
@@ -187,14 +208,61 @@ class OrderList extends React.Component {
     this.props.history.push({pathname: '/order-details/', search: `?order=${order.id}`, state: { dispatched }});
   };
 
-  getPageCount = () => {
-    const { perPage, total } = this.props;
-    return Math.ceil(total/perPage);
+  changePage = (page) => {
+    // const { tab } = this.state;
+    // this.onChangeTab(tab, page);
+    this.setState({ page });
   };
 
-  changePage = (page) => {
+  processOrders = () => {
+    const { privilege, orders } = this.props;
     const { tab } = this.state;
-    this.onChangeTab(tab, page);
+    let processedOrders = (orders || []).map(order => {
+      let name = `Order #${order.id}`;
+      if (privilege === 'provider') {
+        if (order.state === 'dispatched' || order.state === 'assigned') {
+          name = '-';
+        } else if(order.providerOrderSequence) {
+          name = `Order #${order.providerOrderSequence}`;
+        }
+      }
+      return {
+        ...order,
+        name,
+        createdAt: `${moment(order.createdAt).format('MMM DD, YYYY')}`
+      };
+    });
+    if (tab === ALL_TAB && privilege === 'provider') {
+      const dispatchedOrders = processedOrders.filter(order => order.state === 'dispatched' || order.state === 'assigned');
+      const restOrders = processedOrders.filter(order => order.state !== 'dispatched' && order.state !== 'assigned');
+      processedOrders = dispatchedOrders.concat(restOrders);
+    }
+    this.setState({ orders: processedOrders }, () => {
+      this.filterOrders();
+    });
+  };
+
+  filterOrders = () => {
+    const { privilege } = this.props;
+    const { orders, keyword } = this.state;
+    let filteredOrders = orders.slice(0);
+    if (keyword.trim().length > 0) {
+      const lowerKeyword = keyword.toLowerCase();
+      filteredOrders = orders.filter(order => {
+        const customerName = (getCustomerName(order, privilege) || '').toLowerCase();
+        const boatName = (get(getBoatFromOrder(order), 'name') || '').toLowerCase();
+        return order.id.indexOf(keyword) > -1 ||
+          order.stateAlias.toLowerCase().indexOf(lowerKeyword) > -1 ||
+          customerName.indexOf(lowerKeyword) > -1 ||
+          boatName.indexOf(lowerKeyword) > -1;
+      });
+    }
+    const pageCount = Math.ceil(filteredOrders.length / PER_PAGE);
+    this.setState({
+      page: 1,
+      pageCount,
+      filteredOrders
+    });
   };
 
   newOrder = () => {
@@ -202,34 +270,21 @@ class OrderList extends React.Component {
   };
 
   creationFinished = (orderId) => {
-    // const { page, GetOrders } = this.props;
-    // GetOrders({ params: { page: page } });
     this.props.history.push(`/order-details/?order=${orderId}`);
   };
 
   handleSearch = (keyword) => {
-
+    this.setState({ keyword }, () => {
+      this.filterOrders();
+    });
   };
 
   handleExport = () => {
   };
 
   render() {
-    const { privilege, page, orders } = this.props;
-    const pageCount = this.getPageCount();
-    const processedOrders = (orders || []).map(order => {
-      let name = `Order #${order.id}`;
-      if (privilege === 'provider' && order.providerOrderSequence) {
-        name = `Order #${order.providerOrderSequence}`;
-      }  
-      return {
-      ...order,
-      name,
-      createdAt: `${moment(order.createdAt).format('MMM DD, YYYY')}`
-      };
-    });
-
-    const { tab, columns, selectedColumns } = this.state;
+    const { privilege } = this.props;
+    const { tab, columns, selectedColumns, page, pageCount, filteredOrders } = this.state;
     return (
       <Wrapper>
         <OrderHeader
@@ -244,7 +299,7 @@ class OrderList extends React.Component {
           <TableWrapper>
             <Table
               columns={selectedColumns}
-              records={processedOrders}
+              records={filteredOrders.slice((page - 1) * 15, page * 15)}
               toDetails={this.toDetails}
               page={page}
               pageCount={pageCount}
@@ -260,8 +315,6 @@ class OrderList extends React.Component {
 
 const mapStateToProps = state => ({
   orders: refinedOrdersSelector(state),
-  page: get(state, 'order.orders.page', 1),
-  perPage: get(state, 'order.orders.perPage', PER_PAGE),
   total: get(state, 'order.orders.total', 0),
   privilege: get(state, 'auth.privilege')
 });
