@@ -88,7 +88,7 @@ class OrderDetailHeader extends React.Component {
       orderId,
       data: {
         order: {
-          transition: 'disassociate'
+          transition: order.state === 'dispatched' ? 'disassociate' : 'reject'
         }
       },
       success: () => {
