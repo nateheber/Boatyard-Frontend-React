@@ -27,7 +27,7 @@ class OpenInvoices extends React.Component {
         page: 1,
         per_page: 5,
         'invoices': true,
-        'order[order]': 'position',
+        'order[order]': 'provider_order_sequence',
         'order[sort]': 'desc'
       }
     });
