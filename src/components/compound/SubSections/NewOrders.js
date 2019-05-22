@@ -50,7 +50,9 @@ class NewOrders extends React.Component {
     }
     const processedOrders = (newOrders || []).map(order => {
       let name = `Order #${order.id}`;
-      if (order.providerOrderSequence) {
+      if (order.state === 'dispatched' || order.state === 'assigned') {
+        name = '_';
+      } else if (order.providerOrderSequence) {
         name = `Order #${order.providerOrderSequence}`;
       }
       return {
@@ -63,7 +65,6 @@ class NewOrders extends React.Component {
       {
         label: 'CUSTOMER',
         value: [
-          'relationships.user.attributes.firstName/relationships.user.attributes.lastName',
           'relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'
         ],
         isCustomer: true,
@@ -72,7 +73,7 @@ class NewOrders extends React.Component {
       { label: 'SERVICE', value: 'relationships.service.attributes.name' },
       { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' },
       { label: 'BOAT MAKE', value: 'relationships.boat.attributes.make' },
-      { label: 'ORDER STATUS', value: 'status' }
+      { label: 'ORDER STATUS', value: 'stateAlias' }
     ];
     return (
       <Wrapper>
