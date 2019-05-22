@@ -136,8 +136,8 @@ class OrderDetailHeader extends React.Component {
   }
 
   getOrderStatus = () => {
-    const { order } = this.props;
-    const customerName = getCustomerName(order);
+    const { privilege, order } = this.props;
+    const customerName = getCustomerName(order, privilege);
     let id = get(order, 'attributes.providerOrderSequence', null);
     if (!id) {
       id = get(order, 'id', 'Unknown');

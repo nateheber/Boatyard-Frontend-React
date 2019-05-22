@@ -1,19 +1,41 @@
 import { findIndex, get, isEmpty, sortBy } from 'lodash';
 import moment from 'moment';
 
-export const getUserFromOrder = order => {
+export const getUserFromOrder = (order, privilege = 'admin') => {
   let user = get(order, 'relationships.user');
+  if (privilege !== 'admin') {
+    user = get(order, 'relationships.childAccount');
+  }
+  // if (!isEmpty(user)) {
+  //   if (user.hasOwnProperty('data')) {
+  //     user = get(order, 'relationships.childAccount');
+  //   }
+  //   if (!isEmpty(user)) {
+  //     return {
+  //       id: user.id,
+  //       type: user.type,
+  //       ...user.attributes
+  //     };
+  //   }
+  // }
   if (!isEmpty(user)) {
-    if (user.hasOwnProperty('data')) {
-      user = get(order, 'relationships.childAccount');
-    }
-    if (!isEmpty(user)) {
-      return {
-        id: user.id,
-        type: user.type,
-        ...user.attributes
-      };
-    }
+    return {
+      id: user.id,
+      type: user.type,
+      ...user.attributes
+    };
+  }
+  return user;
+};
+
+export const getChildAccountFromOrder = order => {
+  const user = get(order, 'relationships.childAccount');
+  if (!isEmpty(user)) {
+    return {
+      id: user.id,
+      type: user.type,
+      ...user.attributes
+    };
   }
   return user;
 };
@@ -42,10 +64,10 @@ export const getProviderFromOrder = order => {
   return provider;
 };
 
-export const getCustomerName = order => {
-  const user = getUserFromOrder(order);
-  const firstName = get(user, 'firstName', '');
-  const lastName = get(user, 'lastName');
+export const getCustomerName = (order, privilege = 'admin') => {
+  const user = getUserFromOrder(order, privilege);
+  const firstName = get(user, 'firstName', '') || '';
+  const lastName = get(user, 'lastName', '') || '';
   return `${firstName} ${lastName}`;
 };
 
