@@ -18,6 +18,18 @@ export const getUserFromOrder = order => {
   return user;
 };
 
+export const getChildAccountFromOrder = order => {
+  const user = get(order, 'relationships.childAccount');
+  if (!isEmpty(user)) {
+    return {
+      id: user.id,
+      type: user.type,
+      ...user.attributes
+    };
+  }
+  return user;
+};
+
 export const getBoatFromOrder = order => {
   let boat = get(order, 'relationships.boat', {});
   if (!isEmpty(boat)) {

@@ -10,7 +10,7 @@ import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import Modal from 'components/compound/Modal';
 import CreditCardSelector from 'components/template/CreditCardSection/CreditCardSelector';
 import PaymentSelector from 'components/template/CreditCardSection/PaymentSelector';
-import { getUserFromOrder, getProviderFromOrder } from 'utils/order'
+import { getUserFromOrder, getChildAccountFromOrder, getProviderFromOrder } from 'utils/order'
 
 const tabs = ['Credit Card', 'Cash/Check'];
 
@@ -51,7 +51,10 @@ class OrderPaymentModal extends React.Component {
   onSave = () => {
     const { order, privilege, CreatePayment, onSave }  = this.props;
     const { balance, fee, cardId } = this.state;
-    const user = getUserFromOrder(order);
+    let user = getUserFromOrder(order);
+    if (privilege === 'provider') {
+      user = getChildAccountFromOrder(order);
+    }
     const provider = getProviderFromOrder(order);
 
     const data = privilege === 'admin' ? {
@@ -81,8 +84,11 @@ class OrderPaymentModal extends React.Component {
   }
 
   refreshCards = () => {
-    const { order, GetCreditCards } = this.props;
-    const user = getUserFromOrder(order);
+    const { order, privilege, GetCreditCards } = this.props;
+    let user = getUserFromOrder(order);
+    if (privilege === 'provider') {
+      user = getChildAccountFromOrder(order);
+    }
     let params = {};
     if (user.type === 'child_accounts') {
       params = {'credit_card[child_account_id]': user.id };
@@ -96,7 +102,10 @@ class OrderPaymentModal extends React.Component {
     const { open, loading, onClose, creditCards, privilege, order } = this.props;
     const { balance, fee, tab } = this.state;
     const charging = parseFloat(parseFloat(parseFloat(balance || '0').toFixed(2)) + parseFloat(parseFloat(fee || '0').toFixed(2))).toFixed(2);
-    const user = getUserFromOrder(order);
+    let user = getUserFromOrder(order);
+    if (privilege === 'provider') {
+      user = getChildAccountFromOrder(order);
+    }
     const action = [
       <HollowButton onClick={onClose} key="Cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.onSave} key="Next">{tab === 'Credit Card' ? `Charge $${charging}` : 'Confirm Payment'}</OrangeButton>
