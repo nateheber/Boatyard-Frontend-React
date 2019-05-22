@@ -56,8 +56,8 @@ export const getProviderFromOrder = order => {
 
 export const getCustomerName = order => {
   const user = getUserFromOrder(order);
-  const firstName = get(user, 'firstName', '');
-  const lastName = get(user, 'lastName');
+  const firstName = get(user, 'firstName', '') || '';
+  const lastName = get(user, 'lastName', '') || '';
   return `${firstName} ${lastName}`;
 };
 
