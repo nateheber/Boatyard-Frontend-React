@@ -11,6 +11,7 @@ import { OrderHeader } from 'components/compound/SectionHeader';
 
 import { GetOrders, SetDispatchedFlag } from 'store/actions/orders';
 import { refinedOrdersSelector } from 'store/selectors/orders';
+import { getCustomerName } from 'utils/order';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
@@ -46,8 +47,7 @@ const ORDER_COLUMNS = [
   {
     label: 'CUSTOMER',
     value: [
-      'relationships.user.attributes.firstName/relationships.user.attributes.lastName',
-      'relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'
+      'relationships.user.attributes.firstName/relationships.user.attributes.lastName'
     ],
     isCustomer: true,
     width: 1.2
@@ -93,6 +93,8 @@ class OrderList extends React.Component {
     let tab = ALL_TAB;
     if (props.privilege === 'provider') {
       columns.splice(4, 1);
+      // columns[2]['value'] = ['relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'];
+      columns[2]['value'] = ['customerName'];
     }
     const { state } = props.location;
     if (state && state.hasOwnProperty('tab')) {
@@ -210,12 +212,19 @@ class OrderList extends React.Component {
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
-      if (privilege === 'provider' && order.providerOrderSequence) {
-        name = `Order #${order.providerOrderSequence}`;
+      let customerName = getCustomerName(order, privilege);
+      if (privilege === 'provider') {
+        if (order.state === 'dispatched' || order.state === 'assigned') {
+          name = '_';
+          customerName = '_';
+        } else if (order.providerOrderSequence) {
+          name = `Order #${order.providerOrderSequence}`;
+        }
       }  
       return {
       ...order,
       name,
+      customerName,
       createdAt: `${moment(order.createdAt).format('MMM DD, YYYY')}`
       };
     });
