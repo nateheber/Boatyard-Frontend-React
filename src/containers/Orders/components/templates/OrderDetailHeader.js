@@ -74,7 +74,6 @@ class OrderDetailHeader extends React.Component {
       orderId,
       success: () => {
         toastr.success('Success', 'Accepted successfully!');
-        this.props.history.push('/orders/');
       },
       error: (e) => {
         toastr.error('Error', e.message);
@@ -146,7 +145,7 @@ class OrderDetailHeader extends React.Component {
     const time = get(order, 'attributes.createdAt', new Date());
     const total = get(order, 'attributes.total');
     const scheduledAt = get(order, 'attributes.scheduledAt');
-    const status = get(order, 'attributes.state');
+    const status = get(order, 'attributes.stateAlias');
     return ({
       id,
       time,
