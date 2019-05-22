@@ -6,13 +6,6 @@ export const getUserFromOrder = (order, privilege = 'admin') => {
   if (privilege !== 'admin') {
     user = get(order, 'relationships.childAccount');
   }
-  if (!isEmpty(user)) {
-    return {
-      id: user.id,
-      type: user.type,
-      ...user.attributes
-    };
-  }
   // if (!isEmpty(user)) {
   //   if (user.hasOwnProperty('data')) {
   //     user = get(order, 'relationships.childAccount');
@@ -25,6 +18,24 @@ export const getUserFromOrder = (order, privilege = 'admin') => {
   //     };
   //   }
   // }
+  if (!isEmpty(user)) {
+    return {
+      id: user.id,
+      type: user.type,
+      ...user.attributes
+    };
+  }
+};
+
+export const getChildAccountFromOrder = order => {
+  const user = get(order, 'relationships.childAccount');
+  if (!isEmpty(user)) {
+    return {
+      id: user.id,
+      type: user.type,
+      ...user.attributes
+    };
+  }
   return user;
 };
 
@@ -54,8 +65,8 @@ export const getProviderFromOrder = order => {
 
 export const getCustomerName = (order, privilege = 'admin') => {
   const user = getUserFromOrder(order, privilege);
-  const firstName = get(user, 'firstName', '');
-  const lastName = get(user, 'lastName');
+  const firstName = get(user, 'firstName', '') || '';
+  const lastName = get(user, 'lastName', '') || '';
   return `${firstName} ${lastName}`;
 };
 

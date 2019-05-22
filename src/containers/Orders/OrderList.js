@@ -97,6 +97,7 @@ class OrderList extends React.Component {
     if (props.privilege === 'provider') {
       columns[2]['value'] = ['relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'];
       columns.splice(4, 1);
+      columns[2]['value'] = ['customerName'];
     }
     const { state } = props.location;
     if (state && state.hasOwnProperty('tab')) {
@@ -141,8 +142,8 @@ class OrderList extends React.Component {
         page,
         per_page: TOTAL_ORDER_COUNT,
         'invoices': true,
-        // 'order[order]': 'position',
-        // 'order[sort]': 'desc'
+        'order[order]': 'provider_order_sequence',
+        'order[sort]': 'desc'
       });
     } else if (tab === DISPATCHED_TAB) {
       if (privilege === 'provider') {
@@ -150,8 +151,8 @@ class OrderList extends React.Component {
         this.loadOrders({
           page,
           per_page: TOTAL_ORDER_COUNT,
-          // 'order[order]': 'position',
-          // 'order[sort]': 'desc'
+          'order[order]': 'provider_order_sequence',
+          'order[sort]': 'desc'
         });
       } else {
         this.loadOrders({
@@ -165,8 +166,8 @@ class OrderList extends React.Component {
         this.loadOrders({
           page,
           per_page: TOTAL_ORDER_COUNT,
-          // 'order[order]': 'position',
-          // 'order[sort]': 'desc'
+          'order[order]': 'provider_order_sequence',
+          'order[sort]': 'desc'
         });
       } else {
         this.loadOrders({
@@ -186,6 +187,7 @@ class OrderList extends React.Component {
       }
     });
   };
+
   onChangeColumns = (columns) => {
     this.setState({
       selectedColumns: columns
@@ -291,9 +293,7 @@ class OrderList extends React.Component {
           onNewOrder={this.newOrder}
           columns={columns}
           selectedColumns={selectedColumns}
-          onChangeColumns={this.onChangeColumns}
-          onSearch={this.handleSearch}
-          onExport={this.handleExport} />
+          onChangeColumns={this.onChangeColumns} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
         <Content>
           <TableWrapper>
