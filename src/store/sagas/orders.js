@@ -15,7 +15,7 @@ const addStateAliasOfOrder = (order) => {
     ...order,
     attributes: {
       ...order.attributes,
-      orderAlias: stateAlias
+      stateAlias: stateAlias
     }
   };
 };
@@ -120,7 +120,7 @@ function* getOrder(action) {
     const { data: order, included } = result;
     yield put({
       type: actionTypes.GET_ORDER_SUCCESS,
-      payload: { order, included }
+      payload: { order: addStateAliasOfOrder(order), included }
     });
     if (success) {
       yield call(success);
