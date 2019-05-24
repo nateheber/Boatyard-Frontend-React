@@ -185,28 +185,50 @@ function* updateOrder(action) {
   }
 }
 
+// function* sendQuote(action) {
+//   const { orderId, isResend, success, error, dispatched } = action.payload;
+//   const dispatchedFlg = yield select(getOrderDispatchedFlag) || dispatched;
+//   let orderClient;
+//   if (dispatchedFlg) {
+//     orderClient = yield select(getDispatchedOrderClient);
+//   } else {
+//     orderClient = yield select(getOrderClient);
+//   }
+//   try {
+//     const result = yield call(orderClient.update, orderId, { order: { transition: isResend ? 'reprovision' : 'provision' } });
+//     const { data: order, included } = result;
+//     const refactoredOrder = addStateAliasOfOrder(order);
+//     yield put({
+//       type: actionTypes.SEND_QUOTE_SUCCESS,
+//       payload: { order: refactoredOrder, included }
+//     });
+//     if (success) {
+//       yield call(success, refactoredOrder);
+//     }
+//   } catch (e) {
+//     yield put({ type: actionTypes.SEND_QUOTE_FAILURE, payload: e });
+//     if (error) {
+//       yield call(error, e);
+//     }
+//   }
+// }
+
 function* sendQuote(action) {
-  const { orderId, isResend, success, error, dispatched } = action.payload;
-  const dispatchedFlg = yield select(getOrderDispatchedFlag) || dispatched;
-  let orderClient;
-  if (dispatchedFlg) {
-    orderClient = yield select(getDispatchedOrderClient);
-  } else {
-    orderClient = yield select(getOrderClient);
-  }
+  const apiClient = yield select(getCustomApiClient);
+  const { orderId, success, error } = action.payload;
   try {
-    const result = yield call(orderClient.update, orderId, { order: { transition: isResend ? 'reprovision' : 'provision' } });
-    const { data: order, included } = result;
+    const result = yield call(apiClient.post, `/orders/${orderId}/quotes`);
+    const { data: order } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
-      type: actionTypes.SEND_QUOTE_SUCCESS,
-      payload: { order: refactoredOrder, included }
+      type: actionTypes.SEND_INVOICE_SUCCESS,
+      payload: { order: refactoredOrder }
     });
     if (success) {
       yield call(success, refactoredOrder);
     }
   } catch (e) {
-    yield put({ type: actionTypes.SEND_QUOTE_FAILURE, payload: e });
+    yield put({ type: actionTypes.SEND_INVOICE_FAILURE, payload: e });
     if (error) {
       yield call(error, e);
     }
