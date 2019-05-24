@@ -81,8 +81,8 @@ class OrderDetails extends React.Component {
   }
 
   getOrderInfo = () => {
-    const { currentOrder } = this.props;
-    const customerInfo = getUserFromOrder(currentOrder);
+    const { currentOrder, privilege } = this.props;
+    const customerInfo = getUserFromOrder(currentOrder, privilege);
     const boatInfo = getBoatFromOrder(currentOrder);
     return { boatInfo, customerInfo };
   };
