@@ -25,10 +25,11 @@ const Tile = styled.div`
   width: 282px;
   margin: 0 12px 18px;
   .tile-content {
+    height: 78px;
     display: flex;
     background: #F8F8F8;
     align-items: center;
-    padding: 20px 10px 20px 30px;
+    padding: 0 10px 0 30px;
     cursor: pointer;
     border-radius: 6px;
     &:hover {
