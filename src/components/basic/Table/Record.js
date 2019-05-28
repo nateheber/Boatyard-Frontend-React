@@ -47,10 +47,11 @@ const Tile = styled(Col)`
     max-width: 16.66% !important;
   }
   .tile-content {
+    height: 78px;
     display: flex;
     background: #F8F8F8;
     align-items: center;
-    padding: 20px 10px 20px 30px;
+    padding: 0 10px 0 30px;
     cursor: pointer;
     border-radius: 6px;
     &:hover {
