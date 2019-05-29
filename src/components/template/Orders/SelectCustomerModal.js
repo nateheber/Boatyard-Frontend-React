@@ -20,7 +20,7 @@ import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 import BoatInfo from './BoatInfo';
 import CustomerModal from 'components/template/CustomerInfoSection/CustomerModal';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
-import { BoatyardSelect } from 'components/basic/Dropdown';
+import AsyncSelect from 'react-select/lib/Async';
 
 
 const SubSectionTitle = styled.h5`
@@ -32,6 +32,46 @@ const SubSectionTitle = styled.h5`
   margin-top: 35px;
   margin-bottom: 10px;
 `;
+
+const colourStyles = {
+  control: styles => ({
+    ...styles,
+    backgroundColor: 'white',
+    fontSize: 14,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontWeight: 400,
+    letterSpacing: -0.3,
+    minHeight: 28,
+    border: '1px solid #dfdfdf'
+  }),
+  input: styles => ({
+    ...styles,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontSize: 14,
+    color: '#555',
+    paddingTop: 1,
+    paddingBottom: 1
+  }),
+  loadingMessage: styles => ({
+    ...styles,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontSize: 14,
+    color: '#555'
+  }),
+  dropdownIndicator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  indicatorSeparator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  clearIndicator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  placeholder: styles => ({ ...styles }),
+};
 
 class SelectCustomerModal extends React.Component {
   constructor(props) {
@@ -102,27 +142,29 @@ class SelectCustomerModal extends React.Component {
       refinedBoat: {},
       refinedBoats: []
     }, () => {
-      const params = privilege === 'admin' ?
-      { 'boat[user_id]': user.id } :
-      { 'boat[child_account_id]': user.id };
-
-      this.props.GetBoats({
-        params,
-        success: () => {
-          const { boats } = this.props;
-          if (!isEmpty(boats)) {
-            let index = findIndex(boats, boat => boat.isDefault === true);
-            if (index < 0) {
-              index = 0;
+      if (user && !isEmpty(user)) {
+        const params = privilege === 'admin' ?
+        { 'boat[user_id]': user.id } :
+        { 'boat[child_account_id]': user.id };
+  
+        this.props.GetBoats({
+          params,
+          success: () => {
+            const { boats } = this.props;
+            if (!isEmpty(boats)) {
+              let index = findIndex(boats, boat => boat.isDefault === true);
+              if (index < 0) {
+                index = 0;
+              }
+              this.setState({
+                boat: boats[index]
+              }, () => {
+                this.getRefinedBoats();
+              });
             }
-            this.setState({
-              boat: boats[index]
-            }, () => {
-              this.getRefinedBoats();
-            });
           }
-        }
-      });  
+        });
+      }
     });
   };
 
@@ -295,16 +337,18 @@ class SelectCustomerModal extends React.Component {
         </Row>
         <Row style={{ alignItems: 'center'}}>
           <Col sm={12} md={8} lg={7} style={{ marginBottom: 5 }}>
-            <BoatyardSelect
+            <AsyncSelect
               ref={this.setCustomerSelectRef}
               components={{
                 Option: CustomerOption,
                 SingleValue: CustomerOptionValue
               }}
+              isClearable
               defaultOptions
               loadOptions={this.loadOptions}
               onChange={this.onChangeUser}
               value={customer}
+              styles={colourStyles}
             />
           </Col>
           <Col sm={12} md={4} lg={3} lgOffset={2}>
