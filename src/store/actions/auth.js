@@ -25,7 +25,7 @@ export const actionTypes = {
   SET_PROVIDER_INFO: '[AUTH] - Set provider token and info',
   SET_PRIVILEGE: '[AUTH] - Set privilege',
   
-  AUTH_LOGOUT: '[AUTH] - Log out',
+  AUTH_LOGOUT: '[AUTH] - Log out'
 };
 
 export const Login = createAction(actionTypes.AUTH_LOGIN, payload => payload);

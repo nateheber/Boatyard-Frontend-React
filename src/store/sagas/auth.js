@@ -117,15 +117,10 @@ function* changePassword(action) {
   }
 }
 
-function* logoutRequest(action) {
-  yield call(action.payload);
-}
-
 export default function* AuthSaga() {
   yield takeEvery(actionTypes.AUTH_LOGIN, loginRequest);
   yield takeEvery(actionTypes.AUTH_SIGNUP, signupRequest);
   yield takeEvery(actionTypes.GET_USER_PERMISSION, userPermissionRequest);
   yield takeEvery(actionTypes.SEND_RESET_REQUEST, sendRequestToResetPassword);
   yield takeEvery(actionTypes.RESET_PASSWORD, changePassword);
-  yield takeEvery(actionTypes.AUTH_LOGOUT, logoutRequest);
 }
