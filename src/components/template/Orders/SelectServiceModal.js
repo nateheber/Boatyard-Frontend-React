@@ -10,7 +10,7 @@ import { OrangeButton } from 'components/basic/Buttons';
 import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
 import FormFields from 'components/template/FormFields';
-import { BoatyardSelect } from 'components/basic/Dropdown';
+import AsyncSelect from 'react-select/lib/Async';
 import * as constants from 'utils/constants';
 
 const SubSectionTitle = styled.h5`
@@ -22,6 +22,46 @@ const SubSectionTitle = styled.h5`
   margin-top: 0;
   margin-bottom: 5px;
 `;
+
+const colourStyles = {
+  control: styles => ({
+    ...styles,
+    backgroundColor: 'white',
+    fontSize: 14,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontWeight: 400,
+    letterSpacing: -0.3,
+    minHeight: 28,
+    border: '1px solid #dfdfdf'
+  }),
+  input: styles => ({
+    ...styles,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontSize: 14,
+    color: '#555',
+    paddingTop: 1,
+    paddingBottom: 1
+  }),
+  loadingMessage: styles => ({
+    ...styles,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontSize: 14,
+    color: '#555'
+  }),
+  dropdownIndicator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  indicatorSeparator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  clearIndicator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  placeholder: styles => ({ ...styles }),
+};
 
 const orderFields = [
   {
@@ -412,14 +452,16 @@ class SelectServiceModal extends React.Component {
             </Row>
             <Row style={{ marginBottom: 15 }}>
               <Col sm={12}>
-                <BoatyardSelect
+                <AsyncSelect
                   defaultOptions
+                  isClearable
                   components={{
                     Option: ProviderOption,
                     SingleValue: ProviderOptionValue
                   }}
                   loadOptions={this.loadOptions}
                   onChange={this.onChangeService}
+                  styles={colourStyles}
                 />
               </Col>
             </Row>
