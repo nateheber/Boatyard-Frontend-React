@@ -145,7 +145,8 @@ class OrderDetailHeader extends React.Component {
     const time = get(order, 'attributes.createdAt', new Date());
     const total = get(order, 'attributes.total');
     const scheduledAt = get(order, 'attributes.scheduledAt');
-    const status = get(order, 'attributes.stateAlias');
+    const status = get(order, 'attributes.state');
+    const stateAlias = get(order, 'attributes.stateAlias');
     return ({
       id,
       time,
@@ -153,6 +154,7 @@ class OrderDetailHeader extends React.Component {
       total,
       scheduledAt,
       status,
+      stateAlias
     })
   }
 
