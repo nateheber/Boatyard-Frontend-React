@@ -9,6 +9,7 @@ import { refinedOrdersSelector } from 'store/selectors/orders'
 import { NewOrderSection } from 'components/basic/SubSection';
 import { OrderTable } from 'components/basic/Order';
 import { HollowButton } from 'components/basic/Buttons'
+import { getCustomerName } from 'utils/order';
 
 const Wrapper = styled.div`
   background-color: #fff;
@@ -42,21 +43,23 @@ class NewOrders extends React.Component {
   }
 
   render() {
-    const { history } = this.props;
-    const { total, orders } = this.props;
+    const { history, total, orders, privilege } = this.props;
     let newOrders = orders;
     if (total > 5) {
       newOrders = orders.slice(0, 5);
     }
     const processedOrders = (newOrders || []).map(order => {
       let name = `Order #${order.id}`;
+      let customerName = getCustomerName(order, privilege);
       if (order.state === 'dispatched' || order.state === 'assigned') {
         name = '_';
+        customerName = '_';
       } else if (order.providerOrderSequence) {
         name = `Order #${order.providerOrderSequence}`;
       }
       return {
         ...order,
+        customerName,
         name
       };
     });
@@ -64,9 +67,7 @@ class NewOrders extends React.Component {
       { label: 'ORDER', value: 'name', isTitle: true, type: 'new', link: true },
       {
         label: 'CUSTOMER',
-        value: [
-          'relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'
-        ],
+        value: ['customerName'],
         isCustomer: true,
         // type: 'new-customer'
       },
@@ -93,6 +94,7 @@ class NewOrders extends React.Component {
 const mapStateToProps = state => ({
   total: get(state, 'order.newOrders.total', 0),
   orders: refinedOrdersSelector(state, 'new'),
+  privilege: get(state, 'auth.privilege')
 });
 
 const mapDispatchToProps = {
