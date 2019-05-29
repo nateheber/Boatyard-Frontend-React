@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import AsyncSelect from 'react-select/lib/Async'
+import AsyncSelect from 'react-select/lib/Async';
 
 export const BoatyardSelect = styled(AsyncSelect)`
   font-size: 13px;
