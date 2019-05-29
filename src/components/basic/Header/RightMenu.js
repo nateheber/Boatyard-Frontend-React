@@ -10,6 +10,7 @@ import Message from '../../../resources/message.png';
 import CheckCircle from '../../../resources/check_circle.png';
 import Document from '../../../resources/document.png';
 
+import { isAuthenticatedSelector } from 'store/selectors/auth';
 import { Logout } from '../../../store/actions/auth';
 
 const Wrapper = styled.div`
@@ -198,61 +199,75 @@ const Chevron = styled.div`
   }
 `;
 
-const MenuUI = ({ firstName, lastName, Logout, history, toggleMessage, messageToggleRef }) => (
-  <Wrapper>
-    <MenuWrapper>
-      <DropdownItem>
-        <UsernameWrapper>
-          <Username>{`${firstName} ${lastName}`}</Username>
-          <Chevron />
-        </UsernameWrapper>
-        <DropdownMenu>
-          <MenuItemLi>
-            <MenuItem onClick={() => history.push('/update-profile/')}>
-              Settings
-            </MenuItem>
-          </MenuItemLi>
-          <MenuItemLi>
-            <MenuItem onClick={() => Logout(() => history.push('/login'))}>
-              Logout
-            </MenuItem>
-          </MenuItemLi>
-        </DropdownMenu>
-      </DropdownItem>
-      <DropdownItem style={{ display: 'none' }}>
-        <IconItem>
-          <Icon width={20} height={20} src={Bell} alt="bell" />
-        </IconItem>
-        <BadgeNum>{'3'}</BadgeNum>
-        {/* <BadgePlus /> */}
-        <DropdownMenu className="notifications">
-          <MenuItemLi>
-            <MenuItem onClick={() => history.push('/')}>
-              <MenuItemIcon src={Message} />You have a new message.
-            </MenuItem>
-          </MenuItemLi>
-          <MenuItemLi>
-            <MenuItem onClick={() => history.push('/')}>
-              <MenuItemIcon src={CheckCircle} />Brock has accepted your quote
-            </MenuItem>
-          </MenuItemLi>
-          <MenuItemLi>
-            <MenuItem onClick={() => history.push('/')}>
-              <MenuItemIcon src={Document} />You have received a new order from Brock
-            </MenuItem>
-          </MenuItemLi>
-        </DropdownMenu>
-      </DropdownItem>
-      <IconItem ref={messageToggleRef} className="hide-on-mobile" onClick={toggleMessage}>
-        <Icon width={32} height={20} src={MessageBox} alt="message" />
-      </IconItem>
-    </MenuWrapper>
-  </Wrapper>
-);
+class MenuUI extends React.Component {
 
-const mapStateToProps = ({ profile: { firstName, lastName } }) => ({
-  firstName,
-  lastName
+  logout = () => {
+    const { Logout } = this.props;
+    Logout();
+  };
+
+  render() {
+    const { firstName, lastName, history, toggleMessage, messageToggleRef } = this.props;
+    return (
+      <Wrapper>
+        <MenuWrapper>
+          <DropdownItem>
+            <UsernameWrapper>
+              <Username>{`${firstName} ${lastName}`}</Username>
+              <Chevron />
+            </UsernameWrapper>
+            <DropdownMenu>
+              <MenuItemLi>
+                <MenuItem onClick={() => history.push('/update-profile/')}>
+                  Settings
+                </MenuItem>
+              </MenuItemLi>
+              <MenuItemLi>
+                <MenuItem onClick={this.logout}>
+                  Logout
+                </MenuItem>
+              </MenuItemLi>
+            </DropdownMenu>
+          </DropdownItem>
+          <DropdownItem style={{ display: 'none' }}>
+            <IconItem>
+              <Icon width={20} height={20} src={Bell} alt="bell" />
+            </IconItem>
+            <BadgeNum>{'3'}</BadgeNum>
+            {/* <BadgePlus /> */}
+            <DropdownMenu className="notifications">
+              <MenuItemLi>
+                <MenuItem onClick={() => history.push('/')}>
+                  <MenuItemIcon src={Message} />You have a new message.
+                </MenuItem>
+              </MenuItemLi>
+              <MenuItemLi>
+                <MenuItem onClick={() => history.push('/')}>
+                  <MenuItemIcon src={CheckCircle} />Brock has accepted your quote
+                </MenuItem>
+              </MenuItemLi>
+              <MenuItemLi>
+                <MenuItem onClick={() => history.push('/')}>
+                  <MenuItemIcon src={Document} />You have received a new order from Brock
+                </MenuItem>
+              </MenuItemLi>
+            </DropdownMenu>
+          </DropdownItem>
+          <IconItem ref={messageToggleRef} className="hide-on-mobile" onClick={toggleMessage}>
+            <Icon width={32} height={20} src={MessageBox} alt="message" />
+          </IconItem>
+        </MenuWrapper>
+      </Wrapper>
+    );
+  }
+}
+
+const mapStateToProps = (state) => ({
+  firstName: state.profile.firstName,
+  lastName: state.profile.lastName,
+  isAuthenticated: isAuthenticatedSelector(state),
+  providerToken: state.auth.providerToken,
+  adminToken: state.auth.adminToken
 });
 
 const mapDispatchToProps = {

@@ -7,9 +7,15 @@ import AuthPageTemplate from './AuthPageTemplate';
 import MainPageTemplate from './MainPageTemplate';
 
 class PageTemplate extends React.Component {
-  constructor(props) {
-    super(props);
-    const { isAuthenticated, history, location } = props;
+  componentDidUpdate(prevProps) {
+    if ((prevProps.isAuthenticated !== this.props.isAuthenticated) ||
+      (prevProps.location.pathname !== this.props.location.pathname)) {
+      this.changeLocation();
+    }
+  }
+
+  changeLocation = () => {
+    const { isAuthenticated, history, location } = this.props;
     if (!isAuthenticated) {
       if ((location.search !== null || location.search !== undefined) && location.search.indexOf('redirect_url') < 0) {
         if (!(location.pathname.indexOf('/login') > -1 ||
@@ -49,7 +55,9 @@ class PageTemplate extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  isAuthenticated: isAuthenticatedSelector(state)
+  isAuthenticated: isAuthenticatedSelector(state),
+  providerToken: state.auth.providerToken,
+  adminToken: state.auth.adminToken
 });
 
 export default withRouter(connect(mapStateToProps)(PageTemplate));
