@@ -1,11 +1,12 @@
-import React from 'react'
-import styled from 'styled-components'
-import moment from 'moment'
-import { isEmpty } from 'lodash'
+import React from 'react';
+import { connect } from 'react-redux';
+import styled from 'styled-components';
+import moment from 'moment';
+import { isEmpty } from 'lodash';
 
 const Wrapper = styled.div`
   width: 100%;
-`
+`;
 
 const LabelWrapper = styled.div`
   width: 100%;
@@ -16,7 +17,8 @@ const LabelWrapper = styled.div`
   @media (max-width: 778px) {
     display: none;
   }
-`
+`;
+
 const ValueWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -25,20 +27,20 @@ const ValueWrapper = styled.div`
   @media (max-width: 778px) {
     display: none;
   }
-`
+`;
 
 const MobileWrapper = styled.div`
   display: none;
   @media (max-width: 778px) {
     display: block;
   }
-`
+`;
 
 const FieldWrapper = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-`
+`;
 
 const FieldLabel = styled.div`
   display: flex;
@@ -50,7 +52,7 @@ const FieldLabel = styled.div`
   font-weight: 600;
   font-size: 12px;
   padding: 8px 30px;
-`
+`;
 
 const FieldValue = styled.div`
   display: flex;
@@ -62,7 +64,7 @@ const FieldValue = styled.div`
   font-size: 14px;
   font-wieght: 400;
   padding: 8px 30px;
-`
+`;
 
 const StatusValue = styled.div`
   display: flex;
@@ -73,57 +75,65 @@ const StatusValue = styled.div`
   font-family: Montserrat , sans-serif;
   font-size: 12px;
   padding: 8px 30px;
-`
+`;
+class OrderStatus extends React.Component {
+  render() {
+    const { privilege, id, time, customerName, total, scheduledAt, status, stateAlias } = this.props;
+    return (
+      <Wrapper>
+        <LabelWrapper>
+          <FieldLabel>order #</FieldLabel>
+          <FieldLabel>time</FieldLabel>
+          <FieldLabel>Customer</FieldLabel>
+          <FieldLabel>total</FieldLabel>
+          <FieldLabel>payment status</FieldLabel>
+          <FieldLabel>scheduling status</FieldLabel>
+          <FieldLabel>order status</FieldLabel>
+        </LabelWrapper>
+        <ValueWrapper>
+          <FieldValue>{id}</FieldValue>
+          <FieldValue>{moment(time).format('MMM D, YYYY')}</FieldValue>
+          <FieldValue>{(privilege === 'provider' && (status === 'dispatched' || status === 'assigned')) ? '' : customerName}</FieldValue>
+          <FieldValue>${parseFloat(total).toFixed(2)}</FieldValue>
+          <StatusValue> </StatusValue>
+          <StatusValue>{isEmpty(scheduledAt) ? 'Scheduling Needed' : `Scheduled At ${moment(scheduledAt).format('MMM D, YYYY')}`}</StatusValue>
+          <StatusValue>{stateAlias}</StatusValue>
+        </ValueWrapper>
+        <MobileWrapper>
+          <FieldWrapper>
+            <FieldLabel>order #</FieldLabel>
+            <FieldValue>{id}</FieldValue>
+          </FieldWrapper>
+          <FieldWrapper>
+            <FieldLabel>time</FieldLabel>
+            <FieldValue>{moment(time).format('MMM D, YYYY')}</FieldValue>
+          </FieldWrapper>
+          <FieldWrapper>
+            <FieldLabel>Customer</FieldLabel>
+            <FieldValue>{(privilege === 'provider' && (status === 'dispatched' || status === 'assigned')) ? '' : customerName}</FieldValue>
+          </FieldWrapper>
+          <FieldWrapper>
+            <FieldLabel>total</FieldLabel>
+            <FieldValue>${parseFloat(total).toFixed(2)}</FieldValue>
+          </FieldWrapper>
+          <FieldWrapper>
+            <FieldLabel>payment status</FieldLabel>
+            <StatusValue></StatusValue>
+          </FieldWrapper>
+          <FieldWrapper>
+            <FieldLabel>scheduling status</FieldLabel>
+            <StatusValue>{scheduledAt ? 'Scheduling Needed' : `Scheduled At ${moment(scheduledAt).format('MMM D, YYYY')}`}</StatusValue>
+          </FieldWrapper>
+          <FieldWrapper>
+            <FieldLabel>order status</FieldLabel>
+            <StatusValue>{stateAlias}</StatusValue>
+          </FieldWrapper>
+        </MobileWrapper>
+      </Wrapper>
+    );
+  }
+}
 
-export default ({ id, time, customerName, total, scheduledAt, status }) => (
-  <Wrapper>
-    <LabelWrapper>
-      <FieldLabel>order #</FieldLabel>
-      <FieldLabel>time</FieldLabel>
-      <FieldLabel>Customer</FieldLabel>
-      <FieldLabel>total</FieldLabel>
-      <FieldLabel>payment status</FieldLabel>
-      <FieldLabel>scheduling status</FieldLabel>
-      <FieldLabel>order status</FieldLabel>
-    </LabelWrapper>
-    <ValueWrapper>
-      <FieldValue>{id}</FieldValue>
-      <FieldValue>{moment(time).format('MMM D, YYYY')}</FieldValue>
-      <FieldValue>{customerName}</FieldValue>
-      <FieldValue>${parseFloat(total).toFixed(2)}</FieldValue>
-      <StatusValue> </StatusValue>
-      <StatusValue>{isEmpty(scheduledAt) ? 'Scheduling Needed' : `Scheduled At ${moment(scheduledAt).format('MMM D, YYYY')}`}</StatusValue>
-      <StatusValue>{status}</StatusValue>
-    </ValueWrapper>
-    <MobileWrapper>
-      <FieldWrapper>
-        <FieldLabel>order #</FieldLabel>
-        <FieldValue>{id}</FieldValue>
-      </FieldWrapper>
-      <FieldWrapper>
-        <FieldLabel>time</FieldLabel>
-        <FieldValue>{moment(time).format('MMM D, YYYY')}</FieldValue>
-      </FieldWrapper>
-      <FieldWrapper>
-        <FieldLabel>Customer</FieldLabel>
-        <FieldValue>{customerName}</FieldValue>
-      </FieldWrapper>
-      <FieldWrapper>
-        <FieldLabel>total</FieldLabel>
-        <FieldValue>${parseFloat(total).toFixed(2)}</FieldValue>
-      </FieldWrapper>
-      <FieldWrapper>
-        <FieldLabel>payment status</FieldLabel>
-        <StatusValue></StatusValue>
-      </FieldWrapper>
-      <FieldWrapper>
-        <FieldLabel>scheduling status</FieldLabel>
-        <StatusValue>{scheduledAt ? 'Scheduling Needed' : `Scheduled At ${moment(scheduledAt).format('MMM D, YYYY')}`}</StatusValue>
-      </FieldWrapper>
-      <FieldWrapper>
-        <FieldLabel>order status</FieldLabel>
-        <StatusValue>{status}</StatusValue>
-      </FieldWrapper>
-    </MobileWrapper>
-  </Wrapper>
-)
+const mapStateToProps = state => ({ privilege: state.auth.privilege });
+
+export default connect(mapStateToProps, null)(OrderStatus);
