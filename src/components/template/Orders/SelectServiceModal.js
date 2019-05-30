@@ -68,6 +68,7 @@ const orderFields = [
     type: 'text_area',
     field: 'special_instructions',
     label: 'Special Instructions',
+    className: 'primary',
     errorMessage: 'Enter Special Instructions',
     required: false,
     xs: 12,
@@ -206,6 +207,7 @@ class SelectServiceModal extends React.Component {
       {
         field: 'when',
         label: 'When',
+        className: 'primary',
         type: 'select_box',
         options: whenOptions,
         required: true,
@@ -229,6 +231,7 @@ class SelectServiceModal extends React.Component {
       whenFields.push({
         field: 'day',
         label: 'Day',
+        className: 'primary',
         type: 'date',
         required: true,
         defaultValue: new Date(),
@@ -249,6 +252,7 @@ class SelectServiceModal extends React.Component {
       whenFields.push({
         field: 'slot',
         label: 'Slot',
+        className: 'primary',
         type: 'select_box',
         options: slotOptions,
         required: true,
@@ -289,6 +293,7 @@ class SelectServiceModal extends React.Component {
       let formField = {
         field: name,
         label: label,
+        className: 'primary',
         type: fieldType,
         required,
         defaultValue: defVal,
@@ -333,6 +338,7 @@ class SelectServiceModal extends React.Component {
       boatFields.push({
         type: 'text_field',
         field: 'slip_number',
+        className: 'primary',
         label: 'Slip Number',
         required: true,
         defaultValue: slip,

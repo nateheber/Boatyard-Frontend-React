@@ -30,7 +30,7 @@ const SubSectionTitle = styled.h5`
   font-weight: bold;
   font-family: 'Montserrat', sans-serif !important;
   margin-top: 35px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 `;
 
 const colourStyles = {

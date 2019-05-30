@@ -30,6 +30,7 @@ export default class CustomerModal extends React.Component {
       {
         type: 'text_field',
         field: 'first_name',
+        className: 'primary',
         label: 'First Name',
         errorMessage: 'Enter First Name',
         required: true,
@@ -43,6 +44,7 @@ export default class CustomerModal extends React.Component {
       {
         type: 'text_field',
         field: 'last_name',
+        className: 'primary',
         label: 'Last Name',
         errorMessage: 'Enter Last Name',
         required: true,
@@ -56,6 +58,7 @@ export default class CustomerModal extends React.Component {
       {
         type: 'text_field',
         field: 'phone_number',
+        className: 'primary',
         label: 'Phone Number',
         errorMessage: 'Enter Phone Number',
         mask: '(999) 999-9999',
@@ -70,6 +73,7 @@ export default class CustomerModal extends React.Component {
       {
         type: 'text_field',
         field: 'street',
+        className: 'primary',
         label: 'Billing Address',
         errorMessage: 'Enter Billing Address',
         defaultValue: billingAddress,
@@ -82,6 +86,7 @@ export default class CustomerModal extends React.Component {
       {
         type: 'text_field',
         field: 'city',
+        className: 'primary',
         label: 'City',
         errorMessage: 'Enter City',
         defaultValue: city,
@@ -94,6 +99,7 @@ export default class CustomerModal extends React.Component {
       {
         type: 'text_field',
         field: 'state',
+        className: 'primary',
         label: 'State',
         errorMessage: 'Enter State',
         defaultValue: state,
@@ -106,6 +112,7 @@ export default class CustomerModal extends React.Component {
       {
         type: 'text_field',
         field: 'zip',
+        className: 'primary',
         label: 'Zip Code',
         errorMessage: 'Enter Zipcode',
         defaultValue: zipcode,
@@ -118,6 +125,7 @@ export default class CustomerModal extends React.Component {
       {
         type: 'text_field',
         field: 'email',
+        className: 'primary',
         label: 'Email',
         errorMessage: 'Enter the email',
         required: true,
@@ -131,6 +139,7 @@ export default class CustomerModal extends React.Component {
       {
         type: 'text_area',
         field: 'notes',
+        className: 'primary',
         label: 'Customer Notes',
         errorMessage: 'Enter the notes',
         required: false,

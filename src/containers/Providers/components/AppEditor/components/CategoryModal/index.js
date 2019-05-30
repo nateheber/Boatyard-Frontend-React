@@ -275,6 +275,7 @@ class CategoryModal extends React.Component {
         field: 'name',
         label: `${startCase(type)} Name`,
         type: 'text_field',
+        className: 'primary',
         errorMessage: `Enter ${startCase(type)} name`,
         required: true,
         defaultValue: name,
@@ -284,6 +285,7 @@ class CategoryModal extends React.Component {
         field: 'subtitle',
         label: 'Button Sub Copy',
         type: 'text_area',
+        className: 'primary',
         defaultValue: subtitle,
         xs: 12
       }
