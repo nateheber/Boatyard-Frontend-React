@@ -28,11 +28,12 @@ function* getOrders(action) {
   if (!hasIn(params, 'order[order]')) {
     submissionParams = {
       ...params,
+      'order[discarded_at]': null,
       'order[order]': 'created_at',
       'order[sort]': 'desc',
     };
   } else {
-    submissionParams = { ...params };
+    submissionParams = { ...params, 'order[discarded_at]': null };
   }
   const dispatched = yield select(getOrderDispatchedFlag);
   let orderClient;
