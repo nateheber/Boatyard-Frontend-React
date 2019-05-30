@@ -37,7 +37,7 @@ const Count = styled.span`
 
 export default ({ tabs, selected, onChange }) => (
   <Wrapper>
-    {tabs.map((tab, idx) => (
+    {tabs && tabs.map((tab, idx) => (
       <Tab
         key={`tab_${idx}`}
         onClick={() => {

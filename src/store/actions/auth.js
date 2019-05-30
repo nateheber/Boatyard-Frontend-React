@@ -24,6 +24,10 @@ export const actionTypes = {
 
   SET_PROVIDER_INFO: '[AUTH] - Set provider token and info',
   SET_PRIVILEGE: '[AUTH] - Set privilege',
+
+  SET_REFRESH_FLAG: '[AUTH] - Set flag to refresh page',
+  SET_REFRESH_FLAG_SUCCESS: '[AUTH] - Set flag to refresh page',
+  SET_REFRESH_FLAG_FAILURE: '[AUTH] - Set flag to refresh page',
   
   AUTH_LOGOUT: '[AUTH] - Log out'
 };
@@ -50,5 +54,10 @@ export const ResetPasswordFailure = createAction(actionTypes.RESET_PASSWORD_FAIL
 
 export const SetProviderInfo = createAction(actionTypes.SET_PROVIDER_INFO, payload => payload);
 export const SetPrivilege = createAction(actionTypes.SET_PRIVILEGE, payload => payload);
+
+export const SetRefreshFlag = createAction(actionTypes.SET_REFRESH_FLAG, payload => payload);
+export const SetRefreshFlagSuccess = createAction(actionTypes.SET_REFRESH_FLAG_SUCCESS);
+export const SetRefreshFlagFailure = createAction(actionTypes.SET_REFRESH_FLAG_FAILURE);
+
 export const Logout = createAction(actionTypes.AUTH_LOGOUT, payload => payload);
 

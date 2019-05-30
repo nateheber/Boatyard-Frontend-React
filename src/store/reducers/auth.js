@@ -11,7 +11,8 @@ const initialState = {
   errors: null,
   privilege: '',
   providerId: '',
-  taxRate: ''
+  taxRate: '',
+  refreshPage: false
 };
 
 export default handleActions(
@@ -87,7 +88,20 @@ export default handleActions(
       }),
     [actionTypes.AUTH_LOGOUT]: () => ({
       ...initialState
-    })
+    }),
+    [actionTypes.SET_REFRESH_FLAG_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.refreshPage = payload;
+        draft.errors = null;
+      }),
+    [actionTypes.SET_REFRESH_FLAG_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      })
   },
   initialState
 );
