@@ -353,6 +353,16 @@ class SelectServiceModal extends React.Component {
     this.setState({ boatFields });
   };
 
+  getBoatValues = () => {
+    const { boat } = this.props;
+    const locationType = get(boat, 'relationships.location.attributes.locationType', '');
+    if (locationType === 'marina') {
+      const slip_number = get(boat, 'slip', '');
+      return { slip_number };
+    }
+    return {};
+  };
+
   getDefaultValue = (type, field, orgProperties) => {
     if (hasIn(orgProperties, field)) {
       return get(orgProperties, field);
@@ -409,7 +419,7 @@ class SelectServiceModal extends React.Component {
 
   createOrder = () => {
     const { service } = this.state;
-    let whenValues = {}, serviceValues = {}, orderValues = {}, boatValues = {};
+    let whenValues = {}, serviceValues = {}, orderValues = {}, boatValues = this.getBoatValues();
     if ((this.whenFieldsForm && !this.whenFieldsForm.validateFields()) ||
     (this.serviceForm && !this.serviceForm.validateFields()) ||
     (this.orderForm && !this.orderForm.validateFields()) ||

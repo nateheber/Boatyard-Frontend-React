@@ -139,11 +139,10 @@ function* createOrder(action) {
   const { data, success, error } = action.payload;
   try {
     const result = yield call(orderClient.create, data);
-    yield put({ type: actionTypes.CREATE_ORDER_SUCCESS });
     const { data: order, included } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
-      type: actionTypes.CREATE_ORDER_FAILURE,
+      type: actionTypes.CREATE_ORDER_SUCCESS,
       payload: { order: refactoredOrder, included }
     });
     if (success) {
@@ -221,14 +220,14 @@ function* sendQuote(action) {
     const { data: order } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
-      type: actionTypes.SEND_INVOICE_SUCCESS,
+      type: actionTypes.SEND_QUOTE_SUCCESS,
       payload: { order: refactoredOrder }
     });
     if (success) {
       yield call(success, refactoredOrder);
     }
   } catch (e) {
-    yield put({ type: actionTypes.SEND_INVOICE_FAILURE, payload: e });
+    yield put({ type: actionTypes.SEND_QUOTE_FAILURE, payload: e });
     if (error) {
       yield call(error, e);
     }
