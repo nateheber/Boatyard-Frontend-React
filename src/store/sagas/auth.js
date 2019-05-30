@@ -117,10 +117,26 @@ function* changePassword(action) {
   }
 }
 
+function* setRefreshFlag(action) {
+  const { flag, success, error } = action.payload;
+  try {
+    yield put({ type: actionTypes.SET_REFRESH_FLAG_SUCCESS, payload: flag });
+    if (success) {
+      yield call(success);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.SET_REFRESH_FLAG_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
 export default function* AuthSaga() {
   yield takeEvery(actionTypes.AUTH_LOGIN, loginRequest);
   yield takeEvery(actionTypes.AUTH_SIGNUP, signupRequest);
   yield takeEvery(actionTypes.GET_USER_PERMISSION, userPermissionRequest);
   yield takeEvery(actionTypes.SEND_RESET_REQUEST, sendRequestToResetPassword);
   yield takeEvery(actionTypes.RESET_PASSWORD, changePassword);
+  yield takeEvery(actionTypes.SET_REFRESH_FLAG, setRefreshFlag);
 }

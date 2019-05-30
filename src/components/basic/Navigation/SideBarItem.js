@@ -1,6 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+
+import { SetRefreshFlag } from 'store/actions/auth';
 
 const NavItem = styled.li`
   display: block;
@@ -102,40 +105,54 @@ const SubMenuItem = styled.a`
   }
 `;
 
-const NavComp = ({
-  mainImage,
-  activeImage,
-  isActive,
-  title,
-  link,
-  subItems,
-  history,
-  location: { pathname }
-}) => {
-  const className = isActive ? 'active' : 'deactive';
-  return (
-    <NavItem>
-      <Link onClick={() => { if (link) history.push(link); }} className={className} >
-        <NavIcon className={className} mainImage={mainImage} activeImage={activeImage} />
-        <Title className={className} >{title}</Title>
-      </Link>
-      {subItems && (
-        <SubHeader>
-          {subItems.map((item, idx) => (
-            <SubMenuItem
-              className={item.link === pathname ? 'active' : 'deactive'}
-              key={`sub_item_${idx}`}
-              onClick={() => {
-                history.push(item.link);
-              }}
-            >
-              {item.title}
-            </SubMenuItem>
-          ))}
-        </SubHeader>
-      )}
-    </NavItem>
-  );
+class NavComponent extends React.Component {
+  handleClick = () => {
+    const { link, location: { pathname }, history, SetRefreshFlag } = this.props;
+    if (link === pathname) {
+      SetRefreshFlag({ flag: true });
+    } else {
+      history.push(link);
+    }
+  };
+  render () {
+    const {
+      mainImage,
+      activeImage,
+      isActive,
+      title,
+      subItems,
+      history,
+      location: { pathname }
+    } = this.props;
+    const className = isActive ? 'active' : 'deactive';
+    return (
+      <NavItem>
+        <Link onClick={this.handleClick} className={className} >
+          <NavIcon className={className} mainImage={mainImage} activeImage={activeImage} />
+          <Title className={className} >{title}</Title>
+        </Link>
+        {subItems && (
+          <SubHeader>
+            {subItems.map((item, idx) => (
+              <SubMenuItem
+                className={item.link === pathname ? 'active' : 'deactive'}
+                key={`sub_item_${idx}`}
+                onClick={() => {
+                  history.push(item.link);
+                }}
+              >
+                {item.title}
+              </SubMenuItem>
+            ))}
+          </SubHeader>
+        )}
+      </NavItem>
+    );
+  }
+}
+
+const mapDispatchToProps = {
+  SetRefreshFlag
 };
 
-export const SideBarItem = withRouter(NavComp);
+export const SideBarItem = withRouter(connect(null, mapDispatchToProps)(NavComponent));
