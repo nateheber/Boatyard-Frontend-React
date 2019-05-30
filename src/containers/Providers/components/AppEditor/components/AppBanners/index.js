@@ -36,7 +36,9 @@ const HeaderWrapper = styled.div`
 // `;
 
 const ImageList = styled.div`
-  display: block;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
   max-height: 536px;
   overflow-y: scroll;
   margin-top: 13px;
@@ -46,7 +48,7 @@ const BannerWrapper = styled.div`
   position: relative;
   width: 282px;
   height: 80px;
-  margin: 0 12px 14px;
+  margin: 0 12px 18px;
   .overlay {
     transition: all ease-in-out .2s;
     opacity: 0;
