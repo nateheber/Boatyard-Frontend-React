@@ -237,6 +237,7 @@ export default class FormFields extends React.Component {
               maskChar,
               placeholder,
               dateFormat,
+              className,
               errorMessage,
               type,
               options,
@@ -248,7 +249,7 @@ export default class FormFields extends React.Component {
             idx
           ) => (
             <Col {...posInfo} key={`field_${idx}`}  style={{ margin: '5px 0' }}>
-              <InputWrapper className={classNames("secondary", `size-${fieldSize}`, `${type === 'file_input' && 'upload'}`)}>
+              <InputWrapper className={classNames(className || '', `size-${fieldSize}`, `${type === 'file_input' && 'upload'}`)}>
                   <div className="field-section">
                     <InputLabel>{label}</InputLabel>
                     {this.renderInputField(

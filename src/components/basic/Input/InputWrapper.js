@@ -3,13 +3,11 @@ import styled from 'styled-components';
 export const InputLabel = styled.div`
   display: flex;
   flex: 1;
-  font-family: Montserrat;
+  font-family: Montserrat, sans-serif;
   font-weight: 600;
   font-size: 14px;
   color: #003247;
-  text-align: left;
-  margin-bottom: 20px;
-  text-transform: capitalize;
+  text-align: left;  text-transform: capitalize;
 `;
 
 export const InputWrapper = styled.div`
@@ -25,22 +23,14 @@ export const InputWrapper = styled.div`
     flex-direction: column;
     align-items: flex-start;
   }
-  &.primary > ${InputLabel} {
-    // font-weight: 400;
+  &.primary ${InputLabel} {
     margin-bottom: 5px;
   }
-  &.primary > ${InputLabel} {
-    // font-weight: 400;
-    margin-bottom: 5px;
+  &.secondary ${InputLabel} {
+    // font-weight: 700;
+    margin-bottom: 20px;
   }
-  &.secondary > ${InputLabel} {
-    color: #004258;
-    font-weight: 700;
-    margin-bottom: 5px;
-    font-size: 12px;
-    font-family: Montserrat, sans-serif;
-  }
-  &.third > ${InputLabel} {
+  &.third ${InputLabel} {
     margin: 20px 0px;
     color: #8f8f8f;
     font-weight: 400;

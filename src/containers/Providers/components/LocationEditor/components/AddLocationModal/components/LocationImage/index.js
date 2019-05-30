@@ -24,7 +24,7 @@ const ControlPart = styled.div`
 const FieldName = styled.span`
   font-family: Montserrat;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   font-style: normal;
   font-stretch: normal;
   line-height: normal;

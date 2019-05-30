@@ -25,6 +25,7 @@ const cardFields = [
   {
     type: 'text_field',
     field: 'card_number',
+    className: 'primary',
     label: 'CARD NUMBER',
     mask: '9999 9999 9999 9999',
     errorMessage: 'Please enter a valid card number.',
@@ -38,6 +39,7 @@ const cardFields = [
   {
     type: 'text_field',
     field: 'month',
+    className: 'primary',
     label: 'MONTH',
     mask: '99',
     required: true,
@@ -51,6 +53,7 @@ const cardFields = [
   {
     type: 'text_field',
     field: 'year',
+    className: 'primary',
     label: 'YEAR',
     required: true,
     errorMessage: 'Required',
@@ -64,6 +67,7 @@ const cardFields = [
   {
     type: 'text_field',
     field: 'cvv',
+    className: 'primary',
     label: 'CVV',
     mask: '999',
     required: true,
@@ -80,6 +84,7 @@ let infoFields = [
   {
     type: 'text_field',
     field: 'first_name',
+    className: 'primary',
     label: 'First Name',
     required: true,
     errorMessage: 'Required',
@@ -93,6 +98,7 @@ let infoFields = [
   {
     type: 'text_field',
     field: 'last_name',
+    className: 'primary',
     label: 'Last Name',
     required: true,
     errorMessage: 'Required',
@@ -106,6 +112,7 @@ let infoFields = [
   {
     type: 'text_field',
     field: 'zip',
+    className: 'primary',
     label: 'Zip Code',
     required: true,
     errorMessage: 'Required',
@@ -118,6 +125,7 @@ let infoFields = [
   {
     type: 'select_box',
     field: 'country',
+    className: 'primary',
     label: 'Country',
     options: coutries,
     defaultValue: coutries[0].value,

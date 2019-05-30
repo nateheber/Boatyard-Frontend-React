@@ -67,6 +67,7 @@ class AddServiceModal extends React.Component {
       {
         field: 'name',
         label: 'Name',
+        className: 'primary',
         type: 'text_field',
         errorMessage: 'Enter the service name',
         required: true,
@@ -80,6 +81,7 @@ class AddServiceModal extends React.Component {
       {
         field: 'cost',
         label: 'Price',
+        className: 'primary',
         type: 'currency_field',
         defaultValue: cost,
         placeholder: '$0.00',
@@ -92,6 +94,7 @@ class AddServiceModal extends React.Component {
       {
         field: 'cost_type',
         label: 'Price Type',
+        className: 'primary',
         type: 'select_box',
         options: priceTypes,
         defaultValue: costType,
@@ -104,6 +107,7 @@ class AddServiceModal extends React.Component {
       {
         field: 'is_taxable',
         label: 'Taxable',
+        className: 'primary',
         type: 'check_box',
         defaultValue: isTaxable,
         xs: 12,
@@ -156,6 +160,7 @@ class AddServiceModal extends React.Component {
       {
         field: 'description',
         label: 'Description',
+        className: 'primary',
         type: 'text_area',
         required: false,
         defaultValue: description,

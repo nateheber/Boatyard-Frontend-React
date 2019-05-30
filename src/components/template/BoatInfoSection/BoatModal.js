@@ -51,6 +51,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'name',
+        className: 'primary',
         label: 'Name',
         errorMessage: 'Enter the boat name',
         required: true,
@@ -64,6 +65,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'make',
+        className: 'primary',
         label: 'Make',
         errorMessage: 'Enter the boat make',
         required: true,
@@ -77,6 +79,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'model',
+        className: 'primary',
         label: 'Boat Model',
         errorMessage: 'Enter the boat model',
         required: true,
@@ -90,6 +93,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'year',
+        className: 'primary',
         label: 'Year',
         errorMessage: 'Enter the boat year',
         required: true,
@@ -104,6 +108,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'length',
+        className: 'primary',
         label: 'Boat Length',
         defaultValue: get(boatInfo, 'length', ''),
         xs: 6,
@@ -137,6 +142,7 @@ class BoatModal extends React.Component {
       {
         type: 'select_box',
         field: 'location_type',
+        className: 'primary',
         label: 'Boat Location',
         errorMessage: 'Select Location Type',
         required: true,
@@ -156,6 +162,7 @@ class BoatModal extends React.Component {
           {
             type: 'text_field',
             field: 'location_name',
+            className: 'primary',
             label: 'Marina Name',
             errorMessage: 'Set Marina Name',
             required: true,
@@ -171,6 +178,7 @@ class BoatModal extends React.Component {
           {
             type: 'text_field',
             field: 'slip',
+            className: 'primary',
             label: 'Slip',
             errorMessage: 'Set Slip',
             required: true,
@@ -189,6 +197,7 @@ class BoatModal extends React.Component {
           {
             type: 'text_field',
             field: 'location_name',
+            className: 'primary',
             label: 'Location Name',
             errorMessage: 'Set Location Name',
             required: true,
@@ -218,6 +227,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'street',
+        className: 'primary',
         label: 'Address',
         errorMessage: 'Set Location Address',
         required: true,
@@ -231,6 +241,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'city',
+        className: 'primary',
         label: 'City',
         errorMessage: 'Set City',
         required: true,
@@ -244,6 +255,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'state',
+        className: 'primary',
         label: 'State',
         errorMessage: 'Set State',
         required: true,
@@ -257,6 +269,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'zip',
+        className: 'primary',
         label: 'Zip',
         errorMessage: 'Set Zip',
         required: true,

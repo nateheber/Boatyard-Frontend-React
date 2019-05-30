@@ -187,10 +187,10 @@ export default class JobModal extends React.Component {
 
   getCustomerInfoFieldsInfo = () => {
     const customerInfo = get(this.props, 'customerInfo', {
-      firstName: 'Mykolas',
-      lastName: 'Kvieska',
-      phoneNumber: '2344536783',
-      email: 'mykolas@gmail.com'
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      email: ''
     });
     const {
       firstName,
