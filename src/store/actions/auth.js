@@ -26,8 +26,8 @@ export const actionTypes = {
   SET_PRIVILEGE: '[AUTH] - Set privilege',
 
   SET_REFRESH_FLAG: '[AUTH] - Set flag to refresh page',
-  SET_REFRESH_FLAG_SUCCESS: '[AUTH] - Set flag to refresh page',
-  SET_REFRESH_FLAG_FAILURE: '[AUTH] - Set flag to refresh page',
+  SET_REFRESH_FLAG_SUCCESS: '[AUTH] - Set flag to refresh page Success',
+  SET_REFRESH_FLAG_FAILURE: '[AUTH] - Set flag to refresh page Failure',
   
   AUTH_LOGOUT: '[AUTH] - Log out'
 };

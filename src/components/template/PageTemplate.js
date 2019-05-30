@@ -65,4 +65,4 @@ const mapStateToProps = (state) => ({
   adminToken: state.auth.adminToken
 });
 
-export default withRouter(connect(mapStateToProps)(PageTemplate));
+export default withRouter(connect(mapStateToProps, null)(PageTemplate));
