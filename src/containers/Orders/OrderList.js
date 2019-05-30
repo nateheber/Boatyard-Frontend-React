@@ -10,7 +10,6 @@ import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 
 import { GetOrders, SetDispatchedFlag } from 'store/actions/orders';
-import { SetRefreshFlag } from 'store/actions/auth';
 import { refinedOrdersSelector } from 'store/selectors/orders';
 import { getCustomerName } from 'utils/order';
 
@@ -114,32 +113,6 @@ class OrderList extends React.Component {
   componentDidMount() {
     const { tab } = this.state;
     this.onChangeTab(tab);
-  }
-
-  initComponent() {
-    const { location: { state } } = this.props;
-    let tab = ALL_TAB;
-    if (state && state.hasOwnProperty('tab')) {
-      const tabState = get(state, 'tab');
-      if (ORDER_TABS.indexOf(tabState) > -1) {
-        tab = tabState;
-      }
-    }
-    this.setState({ tab }, () => {
-      this.onChangeTab(tab);
-    });
-  }
-
-  componentDidUpdate() {
-    const { refreshPage, SetRefreshFlag } = this.props;
-    if (refreshPage) {
-      SetRefreshFlag({
-        flag: false,
-        success: () => {
-          this.initComponent();
-        }
-      });
-    }
   }
 
   componentWillUnmount() {
@@ -286,14 +259,12 @@ const mapStateToProps = state => ({
   page: get(state, 'order.orders.page', 1),
   perPage: get(state, 'order.orders.perPage', 20),
   total: get(state, 'order.orders.total', 0),
-  privilege: get(state, 'auth.privilege'),
-  refreshPage: state.auth.refreshPage
+  privilege: get(state, 'auth.privilege')
 });
 
 const mapDispatchToProps = {
   GetOrders,
   SetDispatchedFlag,
-  SetRefreshFlag
 };
 
 export default withRouter(

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import { isAuthenticatedSelector } from 'store/selectors/auth';
+import { SetRefreshFlag } from 'store/actions/auth';
 import AuthPageTemplate from './AuthPageTemplate';
 import MainPageTemplate from './MainPageTemplate';
 
@@ -10,12 +11,24 @@ class PageTemplate extends React.Component {
   constructor(props) {
     super(props);
     this.changeLocation();
+    this.state = {
+      key: Math.random()
+    };
   }
 
   componentDidUpdate(prevProps) {
+    const { refreshPage, SetRefreshFlag } = this.props;
     if ((prevProps.isAuthenticated !== this.props.isAuthenticated) ||
       (prevProps.location.pathname !== this.props.location.pathname)) {
       this.changeLocation();
+    }
+    if (refreshPage) {
+      SetRefreshFlag({
+        flag: false,
+        success: () => {
+          this.setState({ key: Math.random() });
+        }
+      });
     }
   }
 
@@ -43,14 +56,15 @@ class PageTemplate extends React.Component {
 
   render() {
     const { isAuthenticated } = this.props;
+    const { key } = this.state;
     return (
       <React.Fragment>
         {isAuthenticated ? 
-          <MainPageTemplate>
+          <MainPageTemplate key={key}>
             {this.props.children}
           </MainPageTemplate>
         :
-          <AuthPageTemplate>
+          <AuthPageTemplate key={key}>
             {this.props.children}
           </AuthPageTemplate>
         }
@@ -62,7 +76,12 @@ class PageTemplate extends React.Component {
 const mapStateToProps = (state) => ({
   isAuthenticated: isAuthenticatedSelector(state),
   providerToken: state.auth.providerToken,
-  adminToken: state.auth.adminToken
+  adminToken: state.auth.adminToken,
+  refreshPage: state.auth.refreshPage
 });
 
-export default withRouter(connect(mapStateToProps, null)(PageTemplate));
+const mapDispatchToProps = {
+  SetRefreshFlag
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PageTemplate));
