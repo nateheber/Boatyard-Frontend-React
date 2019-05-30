@@ -31,7 +31,6 @@ const MainRoutes = ({ privilege }) => (
       <Route exact path="/login" component={Login} />
       <Route exact path="/forgot-password" component={ForgotPassword} />
       <Route exact path="/reset-password" component={ResetPassword} />
-      <Route exact path="/" component={Dashboard} />
       <Route exact path="/update-profile" component={UpdateProfile} />
       <Route exact path="/dashboard/" component={Dashboard} />
       <Route exact path="/inbox/" component={Inbox} />
@@ -142,6 +141,7 @@ const MainRoutes = ({ privilege }) => (
           }
         }}
       />
+      <Route exact path="/" component={Dashboard} />
     </PageTemplate>
   </Router>
 );

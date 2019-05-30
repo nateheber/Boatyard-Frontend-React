@@ -8,7 +8,7 @@ const initialState = {
   authToken: '',
   adminToken: '',
   providerToken: '',
-  errors: '',
+  errors: null,
   privilege: '',
   providerId: '',
   taxRate: ''
