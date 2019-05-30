@@ -135,6 +135,25 @@ class OrderDetailHeader extends React.Component {
     });
   }
 
+  completeOrder = () => {
+    const { order } = this.props;
+    const orderId = get(order, 'id');
+    this.props.UpdateOrder({
+      orderId,
+      data: {
+        order: {
+          transition: 'complete'
+        }
+      },
+      success: () => {
+        toastr.success('Success', 'Completed successfully!');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+  }
+
   getOrderStatus = () => {
     const { privilege, order } = this.props;
     const customerName = getCustomerName(order, privilege);
@@ -187,6 +206,10 @@ class OrderDetailHeader extends React.Component {
                 {
                   title: 'Cancel Order',
                   action: this.cancelOrder,
+                },
+                {
+                  title: 'Mark as Complete',
+                  action: this.completeOrder,
                 }
               ]}
             />
