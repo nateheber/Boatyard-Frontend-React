@@ -7,6 +7,11 @@ import AuthPageTemplate from './AuthPageTemplate';
 import MainPageTemplate from './MainPageTemplate';
 
 class PageTemplate extends React.Component {
+  constructor(props) {
+    super(props);
+    this.changeLocation();
+  }
+
   componentDidUpdate(prevProps) {
     if ((prevProps.isAuthenticated !== this.props.isAuthenticated) ||
       (prevProps.location.pathname !== this.props.location.pathname)) {
