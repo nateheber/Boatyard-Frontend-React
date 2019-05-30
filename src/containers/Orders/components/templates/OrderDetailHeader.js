@@ -135,6 +135,16 @@ class OrderDetailHeader extends React.Component {
     });
   }
 
+  canCompleteOrder = () => {
+    const { order } = this.props;
+    const orderState = get(order, 'attributes.state');
+    return orderState === 'accepted' ||
+      orderState === 'provisioned' ||
+      orderState === 'scheduled' ||
+      orderState === 'started' ||
+      orderState === 'invoiced';
+  };
+
   completeOrder = () => {
     const { order } = this.props;
     const orderId = get(order, 'id');
@@ -192,26 +202,29 @@ class OrderDetailHeader extends React.Component {
     if (!orderId) {
       orderId = get(order, 'id');
     }
+    const items = [
+      {
+        title: 'Delete Order',
+        action: this.deleteOrder
+      },
+      {
+        title: 'Cancel Order',
+        action: this.cancelOrder
+      }
+    ];
+    if (this.canCompleteOrder()) {
+      items.push({
+        title: 'Mark as Complete',
+        action: this.completeOrder
+      });
+    }
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
           <LeftPart>
             <PageTitle>Order #{orderId}</PageTitle>
             <ActionDropdown
-              items={[
-                {
-                  title: 'Delete Order',
-                  action: this.deleteOrder
-                },
-                {
-                  title: 'Cancel Order',
-                  action: this.cancelOrder,
-                },
-                {
-                  title: 'Mark as Complete',
-                  action: this.completeOrder,
-                }
-              ]}
+              items={items}
             />
           </LeftPart>
           {canAcceptOrder && <RightPart>
