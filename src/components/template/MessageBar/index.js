@@ -25,6 +25,7 @@ const Wrapper = styled.div`
   }
   display: flex;
   flex-direction: column;
+  z-index: 1000;
 `;
 
 class MessageBar extends React.Component {
