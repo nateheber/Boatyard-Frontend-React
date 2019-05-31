@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Intercom from 'react-intercom';
+import { IntercomAPI } from 'react-intercom';
 
 import { isAuthenticatedSelector } from 'store/selectors/auth';
 import { intercomAppId } from '../../api/config';
@@ -16,6 +17,16 @@ class PageTemplate extends React.Component {
     this.state = {
       key: Math.random()
     };
+  }
+
+  componentWillMount() {
+    this.unlisten = this.props.history.listen((location, action) => {
+      IntercomAPI('update');
+    });    
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentDidUpdate(prevProps) {
