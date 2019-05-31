@@ -218,12 +218,16 @@ export const getIconClient = state => {
   }
 };
 
-export const getNetworkClient = state => {
+export const getNetworkClient = () => {
   return APIGenerator.createNetworkClient('basic');
 };
 
-export const getConversationClient = state => {
+export const getConversationClient = () => {
   return APIGenerator.createConversationsClient('basic');
+};
+
+export const getProviderConversationClient = () => {
+  return APIGenerator.createConversationsClient('provider');
 };
 
 export const getMessageClient = state => {
