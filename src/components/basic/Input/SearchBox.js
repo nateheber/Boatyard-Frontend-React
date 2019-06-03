@@ -100,6 +100,7 @@ export class SearchBox extends React.Component {
         <Input
           className={secondary ? 'secondary' : 'primary'}
           {...this.props}
+          style={{ marginBottom: 0 }}
           value={value}
           onChange={this.onChangeInput}
           onFocus={() => {

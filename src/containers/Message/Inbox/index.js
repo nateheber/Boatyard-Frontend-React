@@ -19,8 +19,9 @@ class Inbox extends React.Component {
   };
 
   componentDidMount() {
-    this.props.GetNetworks({ page: 1, per_page: 1000 });
-    this.props.GetConversations({ page: 1, per_page: 1000 });
+    const { GetNetworks, GetConversations } = this.props;
+    GetNetworks({ params: { page: 1, per_page: 1000 } });
+    GetConversations({ params: { page: 1, per_page: 1000 } });
   }
 
   onCompose = () => {
@@ -30,7 +31,8 @@ class Inbox extends React.Component {
   }
 
   onShowItem = id => {
-    this.props.GetConversation({ conversationId: id });
+    const { GetConversation } = this.props;
+    GetConversation({ conversationId: id });
     this.setState({
       createNew: false,
       showContent: true,

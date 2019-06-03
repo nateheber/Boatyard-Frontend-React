@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 import { GetNetworks } from 'store/actions/networks';
@@ -54,10 +54,11 @@ class MainPageTemplate extends React.Component {
   };
 
   toggleMessage = () => {
+    const { GetNetworks, GetConversations } = this.props;
     const { showMessage } = this.state;
     if (!showMessage) {
-      this.props.GetNetworks({ page: 1, per_page: 1000 });
-      this.props.GetConversations({ page: 1, per_page: 1000 });  
+      GetNetworks({ params: { page: 1, per_page: 1000 } });
+      GetConversations({ params: { page: 1, per_page: 1000 } });
     }
     this.setState({
       showMessage: !showMessage
@@ -91,9 +92,13 @@ class MainPageTemplate extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  privilege: state.auth.privilege
+});
+
 const mapDispatchToProps = {
   GetNetworks,
   GetConversations
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(MainPageTemplate));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MainPageTemplate));
