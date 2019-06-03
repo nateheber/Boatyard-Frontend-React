@@ -58,12 +58,12 @@ class InboxContent extends React.Component {
   }
 
   loadConversation = () => {
-    const { conversationId, GetConversation, profile } = this.props;
+    const { conversationId, GetConversation, profile, auth } = this.props;
     GetConversation({
       conversationId,
       onlyCallback: true,
       success: (messages) => {
-        this.setState({ ...refineMessage(profile, messages) });
+        this.setState({ ...refineMessage(profile, messages, auth) });
       }
     });
   }
@@ -135,6 +135,7 @@ class InboxContent extends React.Component {
 
 const mapStateToProps = (state) => ({
   profile: profileSelector(state),
+  auth: state.auth
 })
 
 const mapDispatchToProps = {

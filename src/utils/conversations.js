@@ -31,31 +31,34 @@ export const parseIncludedForMessages = (included) => {
   }, {});
 }
 
-export const parseMessageDetails = (profile, message, included) => {
+export const parseMessageDetails = (profile, message, included, auth) => {
   const profileId = get(message, 'attributes.profileId');
   const file = get(message, 'attributes.file.url');
   const content = get(message, 'attributes.content', '');
   const sentAt = get(message, 'attributes.data.sentAt');
-  const senderProfile = getProfileData(included, profileId);
+  let senderProfile = getProfileData(included, profileId);
+  if (senderProfile && senderProfile.type === 'providers' && senderProfile.id === auth.providerId) {
+    senderProfile = profile;
+  }
   // const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName') || ''} ${get(senderProfile, 'attributes.lastName') || ''}`;
   const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName') || ''}`;
   const own = getOwnership(profile, senderProfile);
   return { profileId, senderName, content, file, own, sentAt };
 };
 
-export const refineMessage = (profile, currentConversation) => {
+export const refineMessage = (profile, currentConversation, auth) => {
   if(isEmpty(currentConversation))
       return { messages: [] };
     const { data, included } = currentConversation;
     const parsedIncluded = parseIncludedForMessages(included);
     const reversedData = reverse(data);
     const messages = reversedData.map((message, index) => {
-      const currMessage = parseMessageDetails(profile, message, parsedIncluded);
+      const currMessage = parseMessageDetails(profile, message, parsedIncluded, auth);
       let hasPrev = false;
       let hasNext = false;
       let showDate = false;
-      const prevMessage = parseMessageDetails(profile, reversedData[index - 1], parsedIncluded);
-      const nextMessage = parseMessageDetails(profile, reversedData[index + 1], parsedIncluded);
+      const prevMessage = parseMessageDetails(profile, reversedData[index - 1], parsedIncluded, auth);
+      const nextMessage = parseMessageDetails(profile, reversedData[index + 1], parsedIncluded, auth);
       if (index === 0) {
         showDate = true;
         hasNext = hasNextMessage(currMessage, nextMessage);
