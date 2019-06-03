@@ -1,8 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import Intercom from 'react-intercom';
+import { IntercomAPI } from 'react-intercom';
 
 import { isAuthenticatedSelector } from 'store/selectors/auth';
+import { intercomAppId } from '../../api/config';
 import { SetRefreshFlag } from 'store/actions/auth';
 import AuthPageTemplate from './AuthPageTemplate';
 import MainPageTemplate from './MainPageTemplate';
@@ -14,6 +17,16 @@ class PageTemplate extends React.Component {
     this.state = {
       key: Math.random()
     };
+  }
+
+  componentWillMount() {
+    this.unlisten = this.props.history.listen((location, action) => {
+      IntercomAPI('update');
+    });    
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentDidUpdate(prevProps) {
@@ -55,8 +68,16 @@ class PageTemplate extends React.Component {
   }
 
   render() {
-    const { isAuthenticated } = this.props;
+    const { isAuthenticated, profile } = this.props;
     const { key } = this.state;
+    let user = {};
+    if (isAuthenticated) {
+      user = {
+        user_id: profile.id,
+        email: profile.email,
+        name: `${profile.firstName} ${profile.lastName}`
+      };
+    }
     return (
       <React.Fragment>
         {isAuthenticated ? 
@@ -68,6 +89,7 @@ class PageTemplate extends React.Component {
             {this.props.children}
           </AuthPageTemplate>
         }
+        <Intercom appID={intercomAppId} { ...user } />
       </React.Fragment>
     );
   }
@@ -77,7 +99,8 @@ const mapStateToProps = (state) => ({
   isAuthenticated: isAuthenticatedSelector(state),
   providerToken: state.auth.providerToken,
   adminToken: state.auth.adminToken,
-  refreshPage: state.auth.refreshPage
+  refreshPage: state.auth.refreshPage,
+  profile: state.profile
 });
 
 const mapDispatchToProps = {

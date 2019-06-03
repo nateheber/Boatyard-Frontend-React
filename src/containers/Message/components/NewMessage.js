@@ -20,7 +20,13 @@ const InputWrapper = styled(Row)`
   padding: 30px;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  .customer-label {
+    width: 30px;
+  }
+  .customer-select {
+    width: calc(100% - 30px);
+    max-width: 300px;
+  }
 `;
 
 const InputLabel = styled(Col)`
@@ -194,8 +200,8 @@ class NewMessage extends React.Component {
     return (
       <React.Fragment>
         <InputWrapper>
-          <InputLabel xs={2}>To</InputLabel>
-          <InputField xs={10}>
+          <InputLabel className="customer-label">To:</InputLabel>
+          <InputField className="customer-select">
             <Select
               placeholder="Choose a recipient"
               components={{

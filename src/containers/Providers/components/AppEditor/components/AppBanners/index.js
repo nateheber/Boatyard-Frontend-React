@@ -179,8 +179,8 @@ class AppBanners extends React.Component {
           </HeaderWrapper>
           <ImageList>
             {
-              banners.map(banner => (
-                <BannerWrapper>
+              banners.map((banner, index) => (
+                <BannerWrapper key={`banner_${index}`}>
                   <Image src={banner.banner.url} key={`image_${banner.id}`} onClick={this.handleChangeBanner(banner)} />
                   <Overlay className="overlay" />
                   <DeleteButton className="btn-close" onClick={this.handleDelete(banner.id)}>

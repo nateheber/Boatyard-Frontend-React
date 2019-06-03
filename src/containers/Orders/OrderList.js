@@ -131,6 +131,8 @@ class OrderList extends React.Component {
           page,
           per_page: 15,
           'invoices': true,
+          // 'states': 'accepted,provisioned,scheduled,started,invoiced',
+          'without_states': 'completed',
           'order[order]': 'provider_order_sequence',
           'order[sort]': 'desc'
         }

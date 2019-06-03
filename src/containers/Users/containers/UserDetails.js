@@ -378,12 +378,12 @@ class UserDetails extends React.Component {
     } = this.state;
     const userName = `${get(currentUser, 'firstName')} ${get(currentUser, 'lastName')}`;
     const columns = [
-      { label: 'orders', value: 'id' },
-      { label: 'order placed', value: 'createdAt', isDate: true },
-      { label: 'service', value: 'relationships.service.attributes.name' },
-      { label: 'boat name', value: 'relationships.boat.attributes.name' },
-      { label: 'boat make', value: 'relationships.boat.attributes.make' },
-      { label: 'total paid', value: 'totalPayments', isCurrency: true, isValue: true, prefix: '$' }
+      { label: 'orders', value: 'id', width: 1 },
+      { label: 'order placed', value: 'createdAt', isDate: true, width: 2 },
+      { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
+      { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1 },
+      { label: 'boat make', value: 'relationships.boat.attributes.make', width: 1 },
+      { label: 'total paid', value: 'totalPayments', isCurrency: true, isValue: true, prefix: '$', width: 1 }
     ]
     const pageCount = this.getPageCount();
     const actions = [
