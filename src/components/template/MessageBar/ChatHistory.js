@@ -17,11 +17,10 @@ const SearchWrapper = styled.div`
 
 const Wrapper = styled.div`
   height: 100%;
+  overflow-y: scroll;
 `;
 
 const ConversationListWrapper = styled.div`
-  height: 60%;
-  overflow-y: scroll;
 `;
 
 export default class ChatHistory extends React.Component {

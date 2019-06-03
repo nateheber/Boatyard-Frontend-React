@@ -80,7 +80,7 @@ class ChatContent extends React.Component {
   }
 
   updateConversation = (first = false) => {
-    const { conversationId, GetConversation, profile } = this.props;
+    const { conversationId, GetConversation, profile, auth } = this.props;
     if (first) {
       this.setState({ loading: true });
     }
@@ -90,7 +90,7 @@ class ChatContent extends React.Component {
       success: (messages) => {
         const { isMounted } = this.state;
         if (isMounted) {
-          this.setState({ ...refineMessage(profile, messages), loading: false });
+          this.setState({ ...refineMessage(profile, messages, auth), loading: false });
         }
       }
     });
@@ -173,6 +173,7 @@ class ChatContent extends React.Component {
 
 const mapStateToProps = (state) => ({
   profile: profileSelector(state),
+  auth: state.auth
 })
 
 const mapDispatchToProps = {

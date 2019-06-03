@@ -25,6 +25,7 @@ const Wrapper = styled.div`
   }
   display: flex;
   flex-direction: column;
+  z-index: 1000;
 `;
 
 class MessageBar extends React.Component {
@@ -34,9 +35,15 @@ class MessageBar extends React.Component {
   };
 
   componentDidMount() {
-    this.props.GetNetworks({ page: 1, per_page: 1000 });
-    this.props.GetConversations({ page: 1, per_page: 1000 });
+    const { GetNetworks } = this.props;
+    GetNetworks({ params: { page: 1, per_page: 1000 } });
+    this.loadConversations();
     document.addEventListener('mouseup', this.handleClickOutside);
+  }
+
+  loadConversations = () => {
+    const { GetConversations } = this.props;
+    GetConversations({ params: { page: 1, per_page: 1000 } });
   }
 
   componentWillUnmount() {
@@ -62,15 +69,16 @@ class MessageBar extends React.Component {
     this.props.DeleteConversation({
       conversationId: id,
       success: () => {
-        this.props.GetConversations({ page: 1, per_page: 1000 });
+        this.loadConversations();
       }
     });
   }
 
   onBack = () => {
+    const { GetNetworks } = this.props;
     this.setState({ selected: -1, newMessage: false });
-    this.props.GetNetworks({ page: 1, per_page: 1000 });
-    this.props.GetConversations({ page: 1, per_page: 1000 });
+    GetNetworks({ params: { page: 1, per_page: 1000 } });
+    this.loadConversations();
   }
 
   setWrapperRef = (node) => {
@@ -113,8 +121,8 @@ class MessageBar extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  ...refinedConversationSelector(state),
+const mapStateToProps = (state) => ({
+  ...refinedConversationSelector(state)
 })
 
 const mapDispatchToProps = {

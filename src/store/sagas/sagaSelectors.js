@@ -219,15 +219,42 @@ export const getIconClient = state => {
 };
 
 export const getNetworkClient = state => {
-  return APIGenerator.createNetworkClient('basic');
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createNetworkClient('basic');
+    case 'admin':
+      return APIGenerator.createNetworkClient('admin');
+    case 'provider':
+      return APIGenerator.createNetworkClient('provider');
+    default:
+      return APIGenerator.createNetworkClient('basic');
+  }
 };
 
 export const getConversationClient = state => {
-  return APIGenerator.createConversationsClient('basic');
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createConversationsClient('basic');
+    case 'admin':
+      return APIGenerator.createConversationsClient('admin');
+    case 'provider':
+      return APIGenerator.createConversationsClient('provider');
+    default:
+      return APIGenerator.createConversationsClient('basic');
+  }
 };
 
 export const getMessageClient = state => {
-  return APIGenerator.createMessageClient('basic');
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createMessageClient('basic');
+    case 'admin':
+      return APIGenerator.createMessageClient('admin');
+    case 'provider':
+      return APIGenerator.createMessageClient('provider');
+    default:
+      return APIGenerator.createMessageClient('basic');
+  }
 };
 
 export const getSiteBannerClient = state => {
