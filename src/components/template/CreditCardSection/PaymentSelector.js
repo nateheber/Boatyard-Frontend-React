@@ -17,17 +17,12 @@ const Title = styled.div`
 const options = ['cash', 'check']
 
 export default class PaymentOptionSelector extends React.Component {
-  state = {
-    selected: ''
-  }
-
   onSelect = (selected) => {
-    this.setState({ selected })
-    this.props.onChange(selected)
-  }
+    this.props.onChange(selected);
+  };
 
   render() {
-    const { selected } = this.state;
+    const { selected } = this.props;
     return (
       <Wrapper>
         <Title>Payment Method</Title>

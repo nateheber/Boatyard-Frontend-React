@@ -24,7 +24,7 @@ class OrderPaymentModal extends React.Component {
       balance,
       fee: 0,
       tab: 'Credit Card',
-      paymentMethod: '',
+      paymentMethod: 'cash'
     }
   }
 
@@ -48,9 +48,9 @@ class OrderPaymentModal extends React.Component {
     this.setState({ tab })
   }
 
-  onSave = () => {
+  handleSave = () => {
     const { order, privilege, CreatePayment, onSave }  = this.props;
-    const { balance, fee, cardId } = this.state;
+    const { balance, fee, cardId, tab, paymentMethod } = this.state;
     let user = getUserFromOrder(order);
     if (privilege === 'provider') {
       user = getChildAccountFromOrder(order);
@@ -59,15 +59,18 @@ class OrderPaymentModal extends React.Component {
 
     const data = privilege === 'admin' ? {
       order_id: order.id,
-      credit_card_id: cardId,
       provider_id: provider.id,
       amount: parseFloat(balance).toFixed(2),
       boatyard_fee: parseFloat(fee).toFixed(2)
     } : {
       order_id: order.id,
-      credit_card_id: cardId,
       amount: parseFloat(balance).toFixed(2)
     };
+    if (tab === 'Credit Card') {
+      data['credit_card_id'] = cardId;
+    } else {
+      data['payment_type'] = paymentMethod;
+    }
     if (user.type === 'child_accounts') {
       data['child_account_id'] = user.id;
     } else {
@@ -100,7 +103,7 @@ class OrderPaymentModal extends React.Component {
 
   render() {
     const { open, loading, onClose, creditCards, privilege, order } = this.props;
-    const { balance, fee, tab } = this.state;
+    const { balance, fee, tab, paymentMethod } = this.state;
     const charging = parseFloat(parseFloat(parseFloat(balance || '0').toFixed(2)) + parseFloat(parseFloat(fee || '0').toFixed(2))).toFixed(2);
     let user = getUserFromOrder(order);
     if (privilege === 'provider') {
@@ -108,7 +111,7 @@ class OrderPaymentModal extends React.Component {
     }
     const action = [
       <HollowButton onClick={onClose} key="Cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.onSave} key="Next">{tab === 'Credit Card' ? `Charge $${charging}` : 'Confirm Payment'}</OrangeButton>
+      <OrangeButton onClick={this.handleSave} key="Next">{tab === 'Credit Card' ? `Charge $${charging}` : 'Confirm Payment'}</OrangeButton>
     ];
     return (
       <Modal
@@ -132,7 +135,7 @@ class OrderPaymentModal extends React.Component {
                   refreshCards={this.refreshCards}
                 />
               ) : (
-                <PaymentSelector onChange={this.onSelectPaymentMethod} />
+                <PaymentSelector selected={paymentMethod} onChange={this.onSelectPaymentMethod} />
               )
             }
           </Col>
