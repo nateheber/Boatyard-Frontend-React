@@ -9,6 +9,12 @@ import { Section } from 'components/basic/InfoSection';
 import { HollowButton } from 'components/basic/Buttons';
 import OrderPaymentModal from '../modals/OrderPaymentModal';
 
+const PAYMENT_TYPES = {
+  cash: 'Cash',
+  check: 'Check',
+  credit: 'Credit Card'
+};
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -72,11 +78,11 @@ class PaymentSection extends React.Component {
   renderPayments = () => {
     const { payments } = this.props;
     return payments.map(payment => {
-      const { amount, createdAt } = payment.attributes;
+      const { amount, paymentType, createdAt } = payment.attributes;
       const amountInFloat = parseFloat(amount);
       return (
         <InfoItem key={`payment_${payment.id}`}>
-          ${amountInFloat.toFixed(2)} paid by Credit Card - {moment(createdAt).format('MMM D, YYYY')}
+          ${amountInFloat.toFixed(2)} {`paid by ${PAYMENT_TYPES[paymentType]}`} - {moment(createdAt).format('MMM D, YYYY')}
         </InfoItem>
       );
     });
