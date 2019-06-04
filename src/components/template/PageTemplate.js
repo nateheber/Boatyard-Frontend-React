@@ -21,7 +21,7 @@ class PageTemplate extends React.Component {
 
   componentWillMount() {
     this.unlisten = this.props.history.listen((location, action) => {
-      IntercomAPI('update');
+      IntercomAPI('update', { last_request_at: parseInt((new Date()).getTime()/1000) });
     });    
   }
 
