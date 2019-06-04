@@ -1,14 +1,16 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 import styled from 'styled-components';
-import { Col } from 'react-flexbox-grid';
 import FormFields from 'components/template/FormFields';
 import Switch from 'react-switch';
 
+import { GetManagements } from 'store/actions/managements';
+import { refinedManagementsSelector } from 'store/selectors/managements';
 import { OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import {
-  Input,
+  // Input,
   // InputWrapper,
   // InputLabel,
   // CheckBox,
@@ -19,6 +21,8 @@ import {
 } from 'components/basic/Input';
 import { formatPhoneNumber } from 'utils/basic';
 import GradientButton from '../../basic/GradientButton';
+import { Section, SectionHeader, SectionContent, JobTitleSection } from './components';
+
 import AddIcon from '../../../../../resources/job/add.png';
 // import CloseIcon from '../../../../../resources/job/close.png';
 import LeftArrowIcon from '../../../../../resources/job/left_arrow.png';
@@ -58,48 +62,11 @@ const Actions = styled.div`
   padding-right: 40px;
 `;
 
-const Section = styled.div`
-  margin-bottom: 30px;
-`;
-
-const SectionHeader = styled.div`
-  background: #F5F5F5;
-  height: 80px;
-  padding: 0 25px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
 const HeaderTitle = styled.div`
   font-family: Montserrat-Bold;
   font-size: 18px;
   color: #003247;
   text-align: left;
-`;
-
-const HeaderInputLabel = styled.label`
-  font-family: Montserrat-Bold;
-  font-size: 12px;
-  color: #003247;
-  text-align: center;
-  text-decoration: uppercase;
-  margin-right: 5px;
-  width: 70px;
-`;
-
-const SectionContent = styled.div`
-  background: #FFFFFF;
-  border: 1px solid #A9B5BB;
-  padding: 25px;
-  &.hidden {
-    display: none;
-  }
-`;
-
-const Column = styled(Col)`
-  align-items: center;
-  display: flex;
 `;
 
 const AttachmentSlider = styled.div`
@@ -163,14 +130,20 @@ const AttachmentTitle = styled.div`
   margin-top: 18px;
 `;
 
-export default class JobModal extends React.Component {
+class JobModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      selectedTeamMembers: [],
       showBoatInfo: true,
       showCustomerInfo: true,
       showLocationInfo: true
     };
+  }
+
+  componentDidMount() {
+    const { GetManagements } = this.props;
+    GetManagements({ params: { page: 1, per_page: 1000 } });
   }
 
   setCustomerInfoFieldRef = (ref) => {
@@ -427,24 +400,49 @@ export default class JobModal extends React.Component {
   handlePrint = () => {
   };
 
-  handleChangeVisibleOfBoatInfo = () => {
+  handleTeamMemberChange = member => {
+    const { selectedTeamMembers } = this.state;
+    const selected = selectedTeamMembers.slice(0);
+    selected.push(member);
+    this.setState({ selectedTeamMembers: selected });
   };
 
-  handleChangeVisibleOfCustomerInfo = () => {
+
+  handleChangeVisibleOfBoatInfo = (showBoatInfo) => {
+    this.setState({ showBoatInfo });
   };
 
-  handleChangeVisibleOfLocationInfo = () => {
+  handleChangeVisibleOfCustomerInfo = (showCustomerInfo) => {
+    this.setState({ showCustomerInfo });
+  };
+
+  handleChangeVisibleOfLocationInfo = (showLocationInfo) => {
+    this.setState({ showLocationInfo });
   };
 
   handleAddAttachment = () => {
   };
 
+  getOptions = () => {
+    const { managements } = this.props;
+    const { selectedTeamMembers } = this.state;
+    if (managements) {
+      const options = managements.map(management => (
+        {
+          value: management.id,
+          label: `${management.relationships.user.attributes.firstName} ${management.relationships.user.attributes.lastName}`
+        }
+      ));
+      return options.filter(o1 => selectedTeamMembers.filter(o2 => o2.value === o1.value).length === 0);
+    }
+    return [];
+  };
+
   render() {
     const { open, onClose, loading } = this.props;
-    // const { showBoatInfo, showCustomerInfo, showLocationInfo } = this.state;
-    const { showBoatInfo } = this.state;
+    const { showBoatInfo, showCustomerInfo, showLocationInfo, selectedTeamMembers } = this.state;
     const action = [
-      <OrangeButton onClick={this.onSend} key="modal_btn_save">Send</OrangeButton>
+      <OrangeButton onClick={this.onSend} key='modal_btn_save'>Send</OrangeButton>
     ];
     const headers = (
       <ModalHeader>
@@ -453,7 +451,7 @@ export default class JobModal extends React.Component {
           <GradientButton onClick={this.handlePrint}>
             <Image className='print' src={PrintIcon} />
           </GradientButton>
-          <OrangeButton style={{ marginLeft: 30 }} onClick={this.onSend} key="modal_btn_save">Send</OrangeButton>
+          <OrangeButton style={{ marginLeft: 30 }} onClick={this.onSend} key='modal_btn_save'>Send</OrangeButton>
         </Actions>
       </ModalHeader>
     );
@@ -469,18 +467,7 @@ export default class JobModal extends React.Component {
         onClose={onClose}
         large
       >
-        <Section>
-          <SectionHeader>
-            <Column>
-              <Input style={{ width: 205 }} placeholder='Job Title' />
-            </Column>
-            <Column>
-              <HeaderInputLabel>Assign To:</HeaderInputLabel>
-              <Input style={{ width: 205 }} placeholder='Team Member' />
-            </Column>
-          </SectionHeader>
-          <SectionContent></SectionContent>
-        </Section>
+        <JobTitleSection onChange={this.handleTeamMemberChange} selected={selectedTeamMembers} />
 
         <Section>
           <SectionHeader>
@@ -496,44 +483,22 @@ export default class JobModal extends React.Component {
         <Section>
           <SectionHeader>
             <HeaderTitle>Customer Info</HeaderTitle>
-          </SectionHeader>
-          <SectionContent>
-            <FormFields
-              ref={this.setCustomerInfoFieldRef}
-              fields={customerFields}
-            />
-          </SectionContent>
-        </Section>
-        <Section>
-          <SectionHeader>
-            <HeaderTitle>Boat Info</HeaderTitle>
-          </SectionHeader>
-          <SectionContent>
-            <FormFields
-              ref={this.setBoatInfoFieldRef}
-              fields={boatFields}
-            />
-          </SectionContent>
-        </Section>
-
-        <Section>
-          <SectionHeader>
-            <HeaderTitle>Location</HeaderTitle>
             <Switch
-              checked={showBoatInfo}
-              onChange={this.handleChangeVisibleOfLocationInfo}
+              checked={showCustomerInfo}
+              onChange={this.handleChangeVisibleOfCustomerInfo}
+              onColor={'transparent'}
+              offColor={'transparent'}
               uncheckedIcon={
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
                     fontSize: 12,
                     color: '#FFFFFF',
                     paddingRight: 2,
                     backgroundColor: '#A9B5BB',
-                    border: '1px solid #A9B5BB',
                     borderRadius: '0 6px 6px 0'
                   }}
                 >
@@ -543,31 +508,137 @@ export default class JobModal extends React.Component {
               checkedIcon={
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
                     fontSize: 12,
                     color: '#FFFFFF',
                     paddingRight: 2,
                     backgroundColor: '#F38118',
-                    border: '1px solid #A9B5BB',
                     borderRadius: '6px 0 0  6px'
                   }}
                 >
                   ON
                 </div>
               }
-              className="react-switch"
-              id="icon-switch"
+              className='switch-job'
+              id='icon-switch'
             />
           </SectionHeader>
-          <SectionContent>
+          {showCustomerInfo && <SectionContent>
+            <FormFields
+              ref={this.setCustomerInfoFieldRef}
+              fields={customerFields}
+            />
+          </SectionContent>}
+        </Section>
+        <Section>
+          <SectionHeader>
+            <HeaderTitle>Boat Info</HeaderTitle>
+            <Switch
+              checked={showBoatInfo}
+              onChange={this.handleChangeVisibleOfBoatInfo}
+              onColor={'transparent'}
+              offColor={'transparent'}
+              uncheckedIcon={
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
+                    fontSize: 12,
+                    color: '#FFFFFF',
+                    paddingRight: 2,
+                    backgroundColor: '#A9B5BB',
+                    borderRadius: '0 6px 6px 0'
+                  }}
+                >
+                  OFF
+                </div>
+              }
+              checkedIcon={
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
+                    fontSize: 12,
+                    color: '#FFFFFF',
+                    paddingRight: 2,
+                    backgroundColor: '#F38118',
+                    borderRadius: '6px 0 0  6px'
+                  }}
+                >
+                  ON
+                </div>
+              }
+              className='switch-job'
+              id='icon-switch'
+            />
+          </SectionHeader>
+          {showBoatInfo && <SectionContent>
+            <FormFields
+              ref={this.setBoatInfoFieldRef}
+              fields={boatFields}
+            />
+          </SectionContent>}
+        </Section>
+
+        <Section>
+          <SectionHeader>
+            <HeaderTitle>Location</HeaderTitle>
+            <Switch
+              checked={showLocationInfo}
+              onChange={this.handleChangeVisibleOfLocationInfo}
+              onColor={'transparent'}
+              offColor={'transparent'}
+              uncheckedIcon={
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
+                    fontSize: 12,
+                    color: '#FFFFFF',
+                    paddingRight: 2,
+                    backgroundColor: '#A9B5BB',
+                    borderRadius: '0 6px 6px 0'
+                  }}
+                >
+                  OFF
+                </div>
+              }
+              checkedIcon={
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
+                    fontSize: 12,
+                    color: '#FFFFFF',
+                    paddingRight: 2,
+                    backgroundColor: '#F38118',
+                    borderRadius: '6px 0 0  6px'
+                  }}
+                >
+                  ON
+                </div>
+              }
+              className='switch-job'
+              id='icon-switch'
+            />
+          </SectionHeader>
+          {showLocationInfo && <SectionContent>
             <FormFields
               ref={this.setLocationInfoFieldRef}
               fields={locationFields}
             />
-          </SectionContent>
+          </SectionContent>}
         </Section>
 
         <Section>
@@ -616,3 +687,13 @@ export default class JobModal extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  managements: refinedManagementsSelector(state)
+});
+
+const mapDispatchToProps = {
+  GetManagements
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(JobModal);
