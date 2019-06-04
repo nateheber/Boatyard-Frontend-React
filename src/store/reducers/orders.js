@@ -280,10 +280,9 @@ export default handleActions(
       }),
     [actionTypes.SEND_QUOTE_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type, payload: { order, included } } = action;
+        const { type, payload: { order } } = action;
         draft.currentStatus = type;
         draft.currentOrder = order;
-        draft.included = refactorIncluded(included);
       }),
     [actionTypes.SEND_QUOTE_FAILURE]: (state, action) =>
       produce(state, draft => {

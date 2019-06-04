@@ -181,11 +181,8 @@ class OrderReviewSection extends React.Component {
   sendQuote = () => {
     const { SendQuote, order } = this.props;
     const orderId = get(order, 'id');
-    const orderState = get(order, 'attributes.state');
-    const isResend = orderState === 'provisioned' || orderState === 'scheduled';
     SendQuote({
       orderId,
-      isResend,
       success: () => {
         this.setState({ showQuote: false });
         toastr.success('Success', 'Sent quote successfully!');
@@ -221,7 +218,7 @@ class OrderReviewSection extends React.Component {
       <OrangeButton onClick={this.sendQuote} key="modal_btn_save">Send</OrangeButton>
     ];
     const invoiceModalActions = [
-      <HollowButton onClick={this.hideQuoteModal} key="modal_btn_cancel">Cancel</HollowButton>,
+      <HollowButton onClick={this.hideInvoiceModal} key="modal_btn_cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.sendInvoice} key="modal_btn_save">Send</OrangeButton>
     ];
     return (
@@ -261,7 +258,7 @@ class OrderReviewSection extends React.Component {
             </HollowButton>}
           </Column>
         </ButtonGroup>
-        <Modal
+        {showQuote && <Modal
           title={'Send Quote'}
           actions={quoteModalActions}
           loading={currentStatus === actionTypes.SEND_QUOTE}
@@ -270,8 +267,8 @@ class OrderReviewSection extends React.Component {
           onClose={this.hideQuoteModal}
         >
           <Description>Are you sure you want to send this quote?</Description>
-        </Modal>
-        <Modal
+        </Modal>}
+        {showInvoice && <Modal
           title={'Send Invoice'}
           actions={invoiceModalActions}
           loading={currentStatus === actionTypes.SEND_INVOICE}
@@ -280,7 +277,7 @@ class OrderReviewSection extends React.Component {
           onClose={this.hideInvoiceModal}
         >
           <Description>Are you sure you want to send this invoice?</Description>
-        </Modal>
+        </Modal>}
         {/* {privilege === 'provider' && (
           <SendQuoteModal
             loading={currentStatus === actionTypes.SEND_QUOTE}
