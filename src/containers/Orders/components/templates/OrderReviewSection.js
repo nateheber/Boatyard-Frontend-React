@@ -149,7 +149,7 @@ class OrderReviewSection extends React.Component {
   canSendQuote = () => {
     const { order } = this.props;
     const orderState = get(order, 'attributes.state');
-    return orderState === 'accepted' || orderState === 'provisioned' || orderState === 'scheduled';
+    return orderState === 'accepted' || orderState === 'provisioned' || orderState === 'scheduled' || orderState === 'declined';
   };
 
   canSendInvoice = () => {
@@ -157,6 +157,7 @@ class OrderReviewSection extends React.Component {
     const orderState = get(order, 'attributes.state');
     return orderState === 'accepted' ||
       orderState === 'provisioned' ||
+      orderState === 'declined' ||
       orderState === 'scheduled' ||
       orderState === 'started' ||
       orderState === 'invoiced';
