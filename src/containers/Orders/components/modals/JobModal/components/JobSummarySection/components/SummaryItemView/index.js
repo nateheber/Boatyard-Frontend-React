@@ -53,7 +53,8 @@ export default class AttachmentSection extends React.Component {
         </Row>
         <Row>
           <Col xs={12}>
-            <Text>Description: At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et qua.</Text>
+            <Text className='title'>Special Instructions:</Text>
+            <Text>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et qua.</Text>
           </Col>
         </Row>
         <DeleteButton className="btn-delete" onClick={() => this.handleDelete}>

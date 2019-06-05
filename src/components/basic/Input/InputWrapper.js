@@ -38,6 +38,9 @@ export const InputWrapper = styled.div`
     font-family: "Open sans-serif", sans-serif;
     text-transform: none;
   }
+  &.upper ${InputLabel} {
+    text-transform: uppercase;
+  }
   margin: 0px 10px;
   &:first-child {
     margin-left: 0px;
