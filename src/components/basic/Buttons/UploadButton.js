@@ -50,7 +50,8 @@ export class UploadButton extends React.Component{
     const { title, accept, ...rest } = this.props;
     return (
       <Button {...rest} >
-        {title || 'Upload'}
+        {title && title}
+        {!title && this.props.children}
         <Input type="file" accept={accept || '*.*'} onChange={this.handleChange} ref="input" />
       </Button>  
     );

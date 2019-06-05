@@ -228,6 +228,7 @@ class OrderDetails extends React.Component {
               />
             )}
             {visibleOfJobModal && <JobModal
+              order={currentOrder}
               open={visibleOfJobModal}
               customerInfo={customerInfo}
               onClose={this.hideJobModal}

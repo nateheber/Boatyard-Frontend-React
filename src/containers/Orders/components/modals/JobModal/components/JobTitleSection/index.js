@@ -7,7 +7,7 @@ import EvilIcon from 'react-evil-icons';
 import { GetManagements } from 'store/actions/managements';
 import { refinedManagementsSelector } from 'store/selectors/managements';
 import { Input } from 'components/basic/Input';
-import { Section, SectionHeader, SectionContent, Column } from '../Section';
+import { Section, SectionHeader, SectionContent, Column, DeleteButton } from '../Section';
 
 const HeaderInputLabel = styled.label`
   font-family: Montserrat-Bold;
@@ -20,19 +20,18 @@ const HeaderInputLabel = styled.label`
 `;
 
 const TeamMemberChip = styled.div`
+  display: flex;
+  padding: 4px 8px 4px 12px;
+  margin: 5px;
+  align-items: center;
   border: 1px solid #A9B5BB;
   border-radius: 6px;
 `;
 
 const TeamMemberName = styled.label`
   font-family: Helvetica;
-  font-size: 16px;
+  font-size: 15px;
   color: #003247;
-  line-height: 23px;
-`;
-
-const TeamMemberDeleteButton = styled.button`
-  background: #003247;
 `;
 
 const colourStyles = {
@@ -98,6 +97,13 @@ class JobTitleSection extends React.Component {
     }
   };
 
+  handleDelete = member => {
+    const { onChange } = this.props;
+    if (onChange) {
+      onChange(member, true);
+    }
+  };
+
   getOptions = () => {
     const { managements, selected } = this.props;
     if (managements) {
@@ -134,14 +140,16 @@ class JobTitleSection extends React.Component {
           </Column>
         </SectionHeader>
         <SectionContent>
-          {selected.map(member => (
-            <TeamMemberChip key={`member_${member.value}`}>
-              <TeamMemberName>{member.label}</TeamMemberName>
-              <TeamMemberDeleteButton>
-                <EvilIcon name="ei-close-o" size="s" className="close-icon" />
-              </TeamMemberDeleteButton>
-            </TeamMemberChip>
-          ))}
+          <Column style={{ flexWrap: 'wrap' }}>
+            {selected.map(member => (
+              <TeamMemberChip key={`member_${member.value}`}>
+                <TeamMemberName>{member.label}</TeamMemberName>
+                <DeleteButton onClick={() => this.handleDelete(member)}>
+                  <EvilIcon name="ei-close" size="s" className="close-icon" />
+                </DeleteButton>
+              </TeamMemberChip>
+            ))}
+          </Column>
         </SectionContent>
       </Section>
     );

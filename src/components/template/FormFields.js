@@ -13,6 +13,7 @@ import {
   TextArea,
   Select,
   DateSelector,
+  TimePicker,
   CurrencyInput,
   FileInput
 } from 'components/basic/Input';
@@ -25,6 +26,12 @@ const Image = styled.img`
   background: #FFFFFF;
   border: 1px solid #D8D8D8;
   border-radius: 6px;
+`;
+
+const TimeRangeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0;
 `;
 
 export default class FormFields extends React.Component {
@@ -63,7 +70,8 @@ export default class FormFields extends React.Component {
         }
       } else if (fields[i].type === 'file_input') {
         set(value, fields[i].field, get(fields[i], 'defaultValue', { file: null, baseString: null, ref: null }));
-
+      } else if (fields[i].type === 'time_range') {
+        set(value, fields[i].field, get(fields[i], 'defaultValue', { time_start: null, time_end: null }));
       } else {
         set(value, fields[i].field, get(fields[i], 'defaultValue', ''));
       }
@@ -90,6 +98,14 @@ export default class FormFields extends React.Component {
       const fieldValue = get(value, fields[i].field);
       if (fields[i].type === 'date') {
         if (fields[i].required && !fieldValue) {
+          errors.push(fields[i].field);
+        }
+      } else if (fields[i].type === 'time') {
+        if (fields[i].required && !fieldValue) {
+          errors.push(fields[i].field);
+        }
+      } else if (fields[i].type === 'time_range') {
+        if (fields[i].required && !(fieldValue.time_start || fieldValue.time_end)) {
           errors.push(fields[i].field);
         }
       } else if (
@@ -126,6 +142,8 @@ export default class FormFields extends React.Component {
         fieldValue = get(value, field) || new Date();
       } else if (type === 'file_input') {
         fieldValue = get(value, field) || { file: null, baseString: null, ref: null };
+      } else if (type === 'time_range') {
+        fieldValue = get(value, field) || { time_start: null, time_end: null };
       } else {
         fieldValue = get(value, field) || '';
       }
@@ -164,6 +182,39 @@ export default class FormFields extends React.Component {
             placeholder={placeholder}
             errorMessage={errorMessage}
           />
+        );
+      case 'time':
+        return (
+          <TimePicker
+            disabled={disabled}
+            time={fieldValue}
+            onChange={value => this.onChangeValue(field, value)}
+            hasError={errorIdx >= 0}
+            placeholder={placeholder}
+            errorMessage={errorMessage}
+          />
+        );
+      case 'time_range':
+        return (
+          <TimeRangeWrapper>
+            <TimePicker
+              disabled={disabled}
+              time={fieldValue.time_start}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, time_start: value })}
+              hasError={errorIdx >= 0}
+              placeholder={placeholder}
+              errorMessage={errorMessage}
+            />
+            &nbsp;&nbsp;{'-'}&nbsp;&nbsp;
+            <TimePicker
+              disabled={disabled}
+              time={fieldValue.time_end}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, time_end: value })}
+              hasError={errorIdx >= 0}
+              placeholder={placeholder}
+              errorMessage={errorMessage}
+            />
+          </TimeRangeWrapper>
         );
       case 'select_box':
         return (
