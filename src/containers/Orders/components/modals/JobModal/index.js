@@ -36,6 +36,7 @@ const ModalHeader = styled.div`
 
 const Title = styled.div`
   font-weight: bold;
+  text-transform: uppercase;
 `;
 
 const Actions = styled.div`

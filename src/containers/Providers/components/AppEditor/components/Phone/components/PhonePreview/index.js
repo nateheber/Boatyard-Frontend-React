@@ -13,7 +13,7 @@ const Container = styled.div`
 `;
 
 const SectionName = styled.div`
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   font-weight: normal;
   font-style: normal;

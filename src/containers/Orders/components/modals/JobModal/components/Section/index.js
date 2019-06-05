@@ -38,7 +38,7 @@ export const Column = styled(Col)`
 `;
 
 export const HeaderTitle = styled.div`
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   color: #003247;
   text-align: left;

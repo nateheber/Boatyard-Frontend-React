@@ -10,7 +10,7 @@ import { Input } from 'components/basic/Input';
 import { Section, SectionHeader, SectionContent, Column, DeleteButton } from '../Section';
 
 const HeaderInputLabel = styled.label`
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   color: #003247;
   text-align: center;
@@ -72,13 +72,13 @@ const colourStyles = {
   }),
   singleValue: styles => ({
     ...styles,
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-Regular, sans-serif',
     fontSize: 14,
     color: '#003247'
   }),
   option: styles => ({
     ...styles,
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-Regular, sans-serif',
     fontSize: 14,
     color: '#003247'
   }),
