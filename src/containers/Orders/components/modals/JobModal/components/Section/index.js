@@ -38,10 +38,11 @@ export const Column = styled(Col)`
 `;
 
 export const HeaderTitle = styled.div`
-  font-family: Montserrat-Bold;
+  font-family: Montserrat;
   font-size: 18px;
   color: #003247;
   text-align: left;
+  font-weight: bold;
 `;
 
 export const Image = styled.img`

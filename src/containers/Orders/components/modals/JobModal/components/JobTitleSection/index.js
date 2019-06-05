@@ -10,13 +10,14 @@ import { Input } from 'components/basic/Input';
 import { Section, SectionHeader, SectionContent, Column, DeleteButton } from '../Section';
 
 const HeaderInputLabel = styled.label`
-  font-family: Montserrat-Bold;
+  font-family: Montserrat;
   font-size: 12px;
   color: #003247;
   text-align: center;
   text-decoration: uppercase;
   margin-right: 5px;
   width: 70px;
+  font-weight: bold;
 `;
 
 const TeamMemberChip = styled.div`
