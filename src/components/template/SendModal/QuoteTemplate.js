@@ -18,8 +18,8 @@ const Label = styled(InputLabel)`
 `
 
 const Wrapper = styled.div`
-  padding-left: 30px;
-  padding-right: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
   align-self: flex-start;
   width: 100%;
   box-sizing: border-box;
@@ -71,7 +71,7 @@ export default class TemplateEditor extends React.Component {
     // const { subject, body, quote } = this.props;
     return (
       <Wrapper>
-        <InputWrapper className="primary">
+        <InputWrapper className="primary" style={{ margin: 0 }}>
           <Label>Subject</Label>
           <Input type="text" value="Your Quote from MarineMax" onChange={this.changeSubject} />
         </InputWrapper>
