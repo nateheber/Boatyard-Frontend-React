@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import deepEqual from 'deep-equal';
 
 import Modal from 'components/compound/Modal';
@@ -6,7 +7,7 @@ import Modal from 'components/compound/Modal';
 import QuoteTemplate from './QuoteTemplate';
 import ActionFooter from './ActionFooter';
 
-export default class SendQuoteModal extends React.Component {
+class SendQuoteModal extends React.Component {
   constructor(props) {
     super(props);
     const { subject, quote, body } = props;
@@ -41,3 +42,15 @@ export default class SendQuoteModal extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  privilege: state.auth.privilege,
+  provider: state.provider.loggedInProvider
+})
+
+const mapDispatchToProps = {};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SendQuoteModal);

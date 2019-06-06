@@ -52,15 +52,15 @@ const TextInput = styled(TextArea)`
 
 export default class TemplateEditor extends React.Component {
   changeSubject = (evt) => {
-    const { quote } = this.props;
-    const subject = evt.target.value;
-    this.props.onChange({ quote, subject });
+    // const { quote } = this.props;
+    // const subject = evt.target.value;
+    // this.props.onChange({ quote, subject });
   }
 
   changeQuote = (evt) => {
-    const { subject } = this.props;
-    const quote = evt.target.value;
-    this.props.onChange({ quote, subject });
+    // const { subject } = this.props;
+    // const quote = evt.target.value;
+    // this.props.onChange({ quote, subject });
   }
 
   render() {
@@ -69,12 +69,12 @@ export default class TemplateEditor extends React.Component {
       <Wrapper>
         <InputWrapper className="primary">
           <Label>Subject</Label>
-          <Input type="text" value="Your Quote from 181 Degrees Unlimited" onChange={this.changeSubject} />
+          <Input type="text" value="Your Quote from MarineMax" onChange={this.changeSubject} />
         </InputWrapper>
         <BodyWrapper>
           <Label>Body</Label>
           <BodyContent>
-            Hi Brock Dev Test 44, <br/>
+            Hi Nathan, <br/>
             <br />
             Thank you for the opportunity to provide you with our services. To view your quote, please click here:
           </BodyContent>
@@ -87,19 +87,8 @@ export default class TemplateEditor extends React.Component {
         <FieldWrapper>
           <TextInput
             onChange={this.changeQuote}
-          >
-          {`Once we receive your approval, we will contact you to schedule your service. If you have any questions, or if there is anything else I can do for you, please let me know.
-
-We appreciate your business and look forward to serving you.
-
-
-Thank you,
-
-
-Desire Radford
-
-181 Degrees Unlimited`}
-          </TextInput>
+            value={'Once we receive your approval, we will contact you to schedule your service. If you have any questions, or if there is anything else I can do for you, please let me know.\n\nWe appreciate your business and look forward to serving you.\n\nThank you,'}
+          />
         </FieldWrapper>
       </Wrapper>
     );
