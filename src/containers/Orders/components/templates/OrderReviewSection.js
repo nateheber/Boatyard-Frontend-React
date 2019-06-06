@@ -10,7 +10,6 @@ import { GetOrder, UpdateOrder, SendQuote, SendInvoice, actionTypes } from 'stor
 import { Section } from 'components/basic/InfoSection';
 import { TextArea } from 'components/basic/Input';
 import SendModal from 'components/template/SendModal';
-// import Modal from 'components/compound/Modal';
 import { HollowButton } from 'components/basic/Buttons';
 import OnClickEditor from '../basic/OnClickEditor';
 import TaxEditor from '../basic/TaxEditor';
@@ -209,14 +208,6 @@ class OrderReviewSection extends React.Component {
   render() {
     const { taxRate, deposit, discount, subtotal, total, taxAmount, comments, showQuote, showInvoice } = this.state;
     const { currentStatus, order } = this.props;
-    // const quoteModalActions = [
-    //   <HollowButton onClick={this.hideQuoteModal} key="modal_btn_cancel">Cancel</HollowButton>,
-    //   <OrangeButton onClick={this.sendQuote} key="modal_btn_save">Send</OrangeButton>
-    // ];
-    // const invoiceModalActions = [
-    //   <HollowButton onClick={this.hideInvoiceModal} key="modal_btn_cancel">Cancel</HollowButton>,
-    //   <OrangeButton onClick={this.sendInvoice} key="modal_btn_save">Send</OrangeButton>
-    // ];
     return (
       <Section>
         <Row style={{ paddingBottom: 10 }}>
@@ -254,26 +245,6 @@ class OrderReviewSection extends React.Component {
             </HollowButton>}
           </Column>
         </ButtonGroup>
-        {/* {showQuote && <Modal
-          title={'Send Quote'}
-          actions={quoteModalActions}
-          loading={currentStatus === actionTypes.SEND_QUOTE}
-          normal={true}
-          open={showQuote}
-          onClose={this.hideQuoteModal}
-        >
-          <Description>Are you sure you want to send this quote?</Description>
-        </Modal>} */}
-        {/* {showInvoice && <Modal
-          title={'Send Invoice'}
-          actions={invoiceModalActions}
-          loading={currentStatus === actionTypes.SEND_INVOICE}
-          normal={true}
-          open={showInvoice}
-          onClose={this.hideInvoiceModal}
-        >
-          <Description>Are you sure you want to send this invoice?</Description>
-        </Modal>} */}
         {showInvoice &&
           <SendModal
             type={'invoice'}
