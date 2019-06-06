@@ -10,13 +10,14 @@ import { Input } from 'components/basic/Input';
 import { Section, SectionHeader, SectionContent, Column, DeleteButton } from '../Section';
 
 const HeaderInputLabel = styled.label`
-  font-family: Montserrat-Bold;
+  font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   color: #003247;
   text-align: center;
-  text-decoration: uppercase;
+  text-transform: uppercase;
   margin-right: 5px;
-  width: 70px;
+  width: 80px;
+  font-weight: bold;
 `;
 
 const TeamMemberChip = styled.div`
@@ -43,7 +44,7 @@ const colourStyles = {
     ...styles,
     backgroundColor: 'white',
     fontSize: 14,
-    fontFamily: 'OpenSans-Regular, sans-serif',
+    fontFamily: 'Source Sans Pro, sans-serif',
     fontWeight: 400,
     letterSpacing: -0.3,
     minHeight: 28,
@@ -51,7 +52,8 @@ const colourStyles = {
   }),
   input: styles => ({
     ...styles,
-    fontFamily: 'OpenSans-Regular, sans-serif',
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontWeight: 200,
     fontSize: 14,
     color: '#003247',
     paddingTop: 1,
@@ -71,13 +73,13 @@ const colourStyles = {
   }),
   singleValue: styles => ({
     ...styles,
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: 'Source Sans Pro, sans-serif',
     fontSize: 14,
     color: '#003247'
   }),
   option: styles => ({
     ...styles,
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: 'Source Sans Pro, sans-serif',
     fontSize: 14,
     color: '#003247'
   }),

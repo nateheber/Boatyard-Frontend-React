@@ -92,7 +92,8 @@ const AttachmentsContainer = styled.div`
   display: flex;
   align-items: center;
   height: 130px;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
 `;
 
 const AttachmentTitle = styled.div`

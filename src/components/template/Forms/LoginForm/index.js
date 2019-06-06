@@ -45,7 +45,7 @@ const InputLabel = styled.div`
   margin-bottom: 8px;
   line-height: 20px;
   font-weight: 600;
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   color: #0D485F;
   text-align: center;
@@ -80,7 +80,7 @@ const Button = styled(OrangeButton)`
   width: 100%;
   margin-bottom: 15px;
   height: 48px;
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   color: #000000;
   text-align: center;
@@ -91,7 +91,7 @@ const Button = styled(OrangeButton)`
 
 const ForgotLink = styled(Link)`
   text-decoration: none;
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-size: 12px;
   color: #0D485F;

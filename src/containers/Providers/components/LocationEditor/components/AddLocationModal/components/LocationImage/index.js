@@ -22,7 +22,7 @@ const ControlPart = styled.div`
 `;
 
 const FieldName = styled.span`
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   font-weight: 600;
   font-style: normal;

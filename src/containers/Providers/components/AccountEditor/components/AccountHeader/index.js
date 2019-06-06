@@ -18,7 +18,7 @@ const Wrapper = styled.div`
 const Title = styled.div`
   width: 394px;
   height: 39px;
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-size: 32px;
   font-weight: normal;
   font-style: normal;

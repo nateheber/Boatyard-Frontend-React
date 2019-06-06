@@ -55,7 +55,7 @@ const WelcomeWrapper = styled.div`
 const WelcomeTitle = styled.h1`
   margin-bottom: 14px;
   color: #FFFFFF;
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-size: 42px;
   font-weight: 700;
 `;
@@ -63,14 +63,14 @@ const WelcomeTitle = styled.h1`
 const WelcomeBody = styled.div`
   margin-bottom: 14px;
   color: #FFFFFF;
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-size: 14px;
 `;
 
 const WelcomeFooter = styled.div`
   margin-bottom: 14px;
   color: #FFFFFF;
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   font-style: italic;
   font-size: 14px;
