@@ -52,15 +52,19 @@ const TextInput = styled(TextArea)`
 
 export default class TemplateEditor extends React.Component {
   changeSubject = (evt) => {
-    // const { quote } = this.props;
-    // const subject = evt.target.value;
-    // this.props.onChange({ quote, subject });
+    const { quote, onChange } = this.props;
+    const subject = evt.target.value;
+    if (onChange) {
+      onChange({ quote, subject });
+    }
   }
 
   changeQuote = (evt) => {
-    // const { subject } = this.props;
-    // const quote = evt.target.value;
-    // this.props.onChange({ quote, subject });
+    const { subject, onChange } = this.props;
+    const quote = evt.target.value;
+    if (onChange) {
+      onChange({ quote, subject });
+    }
   }
 
   render() {

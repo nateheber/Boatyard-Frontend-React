@@ -45,7 +45,9 @@ class SendQuoteModal extends React.Component {
 
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
-  provider: state.provider.loggedInProvider
+  provider: state.provider.loggedInProvider,
+  globalTemplates: state.messageTemplate.globalTemplates,
+  localTemplates: state.messageTemplate.localTemplates
 })
 
 const mapDispatchToProps = {};
