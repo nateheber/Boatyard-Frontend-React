@@ -46,7 +46,7 @@ const ViewTemplateButtonWrapper = styled.div`
 `;
 
 class SendModal extends React.Component {
-  handleSend = (file, uri) => {
+  handleSend = (file = null, uri = null) => {
     const { onSend } = this.props;
     if (onSend) {
       onSend(file, uri);

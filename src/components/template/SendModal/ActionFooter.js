@@ -84,6 +84,8 @@ export default class ActionFooter extends React.Component {
         }
       };  
       reader.readAsDataURL(file);  
+    } else {
+      onSend();
     }
   };
 
