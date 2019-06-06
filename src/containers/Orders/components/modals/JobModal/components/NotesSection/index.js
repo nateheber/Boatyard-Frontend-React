@@ -70,7 +70,6 @@ export default class NotesSection extends React.Component {
           </SectionHeader>
           {contentVisible && <SectionContent>
             <InputWrapper className='primary'>
-              <InputLabel>Notes:</InputLabel>
               <TextArea
                 style={{ marginBottom: 0, border: '1px solid #A9B5BB' }}
                 value={notes}

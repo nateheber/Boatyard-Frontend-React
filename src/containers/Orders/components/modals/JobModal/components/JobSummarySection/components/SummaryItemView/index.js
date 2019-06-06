@@ -23,6 +23,7 @@ const Text = styled.div`
   line-height: 23px;
   &.title {
     text-transform: uppercase;
+    font-weight: bold;
   }
 `;
 
