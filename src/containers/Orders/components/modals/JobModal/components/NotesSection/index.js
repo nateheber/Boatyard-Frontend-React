@@ -1,7 +1,7 @@
 import React from 'react';
 import Switch from 'react-switch';
 
-import { InputWrapper, InputLabel, TextArea } from 'components/basic/Input';
+import { InputWrapper, TextArea } from 'components/basic/Input';
 import { Section, SectionHeader, SectionContent, HeaderTitle } from '../Section';
 
 export default class NotesSection extends React.Component {
