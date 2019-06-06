@@ -9,9 +9,8 @@ import { get } from 'lodash';
 import { GetOrder, UpdateOrder, SendQuote, SendInvoice, actionTypes } from 'store/actions/orders';
 import { Section } from 'components/basic/InfoSection';
 import { TextArea } from 'components/basic/Input';
-import { NormalText } from 'components/basic/Typho';
-import Modal from 'components/compound/Modal';
-import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import SendModal from 'components/template/SendModal';
+import { HollowButton } from 'components/basic/Buttons';
 import OnClickEditor from '../basic/OnClickEditor';
 import TaxEditor from '../basic/TaxEditor';
 
@@ -58,11 +57,6 @@ const Column = styled(Col)`
   padding: 0 !important;
   margin-left: -5px;
   margin-right: -5px;
-`;
-
-const Description = styled(NormalText)`
-  font-family: 'Open sans-serif', sans-serif;
-  padding: 10px 0;
 `;
 
 class OrderReviewSection extends React.Component {
@@ -213,15 +207,7 @@ class OrderReviewSection extends React.Component {
 
   render() {
     const { taxRate, deposit, discount, subtotal, total, taxAmount, comments, showQuote, showInvoice } = this.state;
-    const { currentStatus } = this.props;
-    const quoteModalActions = [
-      <HollowButton onClick={this.hideQuoteModal} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.sendQuote} key="modal_btn_save">Send</OrangeButton>
-    ];
-    const invoiceModalActions = [
-      <HollowButton onClick={this.hideInvoiceModal} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.sendInvoice} key="modal_btn_save">Send</OrangeButton>
-    ];
+    const { currentStatus, order } = this.props;
     return (
       <Section>
         <Row style={{ paddingBottom: 10 }}>
@@ -259,34 +245,26 @@ class OrderReviewSection extends React.Component {
             </HollowButton>}
           </Column>
         </ButtonGroup>
-        {showQuote && <Modal
-          title={'Send Quote'}
-          actions={quoteModalActions}
-          loading={currentStatus === actionTypes.SEND_QUOTE}
-          normal={true}
-          open={showQuote}
-          onClose={this.hideQuoteModal}
-        >
-          <Description>Are you sure you want to send this quote?</Description>
-        </Modal>}
-        {showInvoice && <Modal
-          title={'Send Invoice'}
-          actions={invoiceModalActions}
-          loading={currentStatus === actionTypes.SEND_INVOICE}
-          normal={true}
-          open={showInvoice}
-          onClose={this.hideInvoiceModal}
-        >
-          <Description>Are you sure you want to send this invoice?</Description>
-        </Modal>}
-        {/* {privilege === 'provider' && (
-          <SendQuoteModal
+        {showInvoice &&
+          <SendModal
+            type={'invoice'}
+            loading={currentStatus === actionTypes.SEND_INVOICE}
+            order={order}
+            open={showInvoice}
+            onClose={this.hideInvoiceModal}
+            onSend={this.sendInvoice}
+          />
+        }
+        {showQuote &&
+          <SendModal
+            type={'quote'}
             loading={currentStatus === actionTypes.SEND_QUOTE}
+            order={order}
             open={showQuote}
             onClose={this.hideQuoteModal}
-            onSendQuote={this.sendQuote}
+            onSend={this.sendQuote}
           />
-        )} */}
+        }
       </Section>
     )
   }

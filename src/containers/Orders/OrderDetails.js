@@ -4,10 +4,11 @@ import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
-import { get } from 'lodash';
+import { get, findIndex } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, GetOrder, UpdateOrder, SetDispatchedFlag } from 'store/actions/orders';
+import { GetGlobalTemplates, GetLocalTemplates } from 'store/actions/messageTemplates';
 import { orderSelector } from 'store/selectors/orders';
 import {
   getUserFromOrder,
@@ -49,15 +50,30 @@ class OrderDetails extends React.Component {
   };
 
   componentDidMount() {
-    const query = queryString.parse(this.props.location.search);
+    const { GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location } = this.props;
+    const query = queryString.parse(location.search);
     const orderId = query.order;
-    const state = this.props.location.state;
+    const state = location.state;
     if (state && state.hasOwnProperty('dispatched')) {
-      this.props.SetDispatchedFlag(state.dispatched);
+      SetDispatchedFlag(state.dispatched);
     }
     this.setState({ orderId }, () => {
       this.loadOrder();
     });
+    if (privilege === 'admin') {
+      GetGlobalTemplates({ params: { 'per_page': 200 } });
+    } else {
+      GetLocalTemplates({
+        params: { 'per_page': 200 },
+        success: () => {
+          const { localTemplates } = this.props;
+          const idx = findIndex(localTemplates, template => template.triggerKey === 'quote_for_customer');
+          if (idx < 0) {
+            GetGlobalTemplates({ params: { 'per_page': 200 } });
+          }
+        }
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -247,13 +263,17 @@ const mapStateToProps = state => ({
   boatStatus: state.boat.currentStatus,
   privilege: state.auth.privilege,
   provider: state.provider.loggedInProvider,
+  globalTemplates: state.messageTemplate.globalTemplates,
+  localTemplates: state.messageTemplate.localTemplates
 });
 
 const mapDispatchToProps = {
   GetOrder,
   UpdateOrder,
   UpdateBoat,
-  SetDispatchedFlag
+  SetDispatchedFlag,
+  GetGlobalTemplates,
+  GetLocalTemplates
 };
 
 export default withRouter(connect(

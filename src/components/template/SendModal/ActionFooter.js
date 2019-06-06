@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import { startCase } from 'lodash';
 
-import { HollowButton, OrangeButton } from 'components/basic/Buttons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { HollowButton, OrangeButton } from 'components/basic/Buttons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import AttachImg from 'resources/attach.svg';
 
@@ -17,7 +18,7 @@ const Wrapper = styled.div`
 
 const LeftWrapper = styled.div`
   flex: 1;
-`
+`;
 
 const ActionButtons = styled.div`
   display: flex;
@@ -47,7 +48,7 @@ const FileName = styled.span`
   font-size: 14px;
   color: #333;
   font-family: "Source Sans", sans-serif;
-`
+`;
 
 const CloseButton = styled.button`
   display: inline-block;
@@ -57,7 +58,7 @@ const CloseButton = styled.button`
   cursor: pointer;
   margin-left: 15px;
   border: none;
-`
+`;
 
 export default class ActionFooter extends React.Component {
   state = {
@@ -66,36 +67,44 @@ export default class ActionFooter extends React.Component {
 
   setFileRef = (ref) => {
     this.fileComponent = ref;
-  }
+  };
 
   getFileName = () => {
-
     return this.state.file.name
-  }
+  };
 
   onSend = () => {
+    const { onSend } = this.props;
     const { file } = this.state;
-    this.props.onSend(file);
-  }
+    const reader = new FileReader();
+    if (file) {
+      reader.onload = e => {
+        if (onSend) {
+          onSend(file, reader.result);
+        }
+      };  
+      reader.readAsDataURL(file);  
+    }
+  };
 
   uploadFile = () => {
     this.fileComponent.click();
-  }
+  };
 
   fileChanged = (evt) => {
     this.setState({
       file: evt.target.files[0]
     });
-  }
+  };
 
   resetFile = () => {
     this.setState({
       file: null
     });
-  }
+  };
 
   render() {
-    const { onCancel } =  this.props;
+    const { onCancel, type } =  this.props;
     const { file } = this.state;
     return (
       <Wrapper>
@@ -116,7 +125,7 @@ export default class ActionFooter extends React.Component {
         </LeftWrapper>
         <ActionButtons>
           <HollowButton onClick={onCancel} key="modal_btn_cancel">Cancel</HollowButton>
-          <OrangeButton onClick={this.onSend} key="modal_btn_save">Send Quote</OrangeButton>
+          <OrangeButton onClick={this.onSend} key="modal_btn_save">{`Send ${startCase(type)}`}</OrangeButton>
         </ActionButtons>
       </Wrapper>
     )

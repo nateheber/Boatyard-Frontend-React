@@ -18,8 +18,8 @@ const Label = styled(InputLabel)`
 `
 
 const Wrapper = styled.div`
-  padding-left: 30px;
-  padding-right: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
   align-self: flex-start;
   width: 100%;
   box-sizing: border-box;
@@ -52,29 +52,33 @@ const TextInput = styled(TextArea)`
 
 export default class TemplateEditor extends React.Component {
   changeSubject = (evt) => {
-    const { quote } = this.props;
+    const { quote, onChange } = this.props;
     const subject = evt.target.value;
-    this.props.onChange({ quote, subject });
+    if (onChange) {
+      onChange({ quote, subject });
+    }
   }
 
   changeQuote = (evt) => {
-    const { subject } = this.props;
+    const { subject, onChange } = this.props;
     const quote = evt.target.value;
-    this.props.onChange({ quote, subject });
+    if (onChange) {
+      onChange({ quote, subject });
+    }
   }
 
   render() {
     // const { subject, body, quote } = this.props;
     return (
       <Wrapper>
-        <InputWrapper className="primary">
+        <InputWrapper className="primary" style={{ margin: 0 }}>
           <Label>Subject</Label>
-          <Input type="text" value="Your Quote from 181 Degrees Unlimited" onChange={this.changeSubject} />
+          <Input type="text" value="Your Quote from MarineMax" onChange={this.changeSubject} />
         </InputWrapper>
         <BodyWrapper>
           <Label>Body</Label>
           <BodyContent>
-            Hi Brock Dev Test 44, <br/>
+            Hi Nathan, <br/>
             <br />
             Thank you for the opportunity to provide you with our services. To view your quote, please click here:
           </BodyContent>
@@ -87,19 +91,8 @@ export default class TemplateEditor extends React.Component {
         <FieldWrapper>
           <TextInput
             onChange={this.changeQuote}
-          >
-          {`Once we receive your approval, we will contact you to schedule your service. If you have any questions, or if there is anything else I can do for you, please let me know.
-
-We appreciate your business and look forward to serving you.
-
-
-Thank you,
-
-
-Desire Radford
-
-181 Degrees Unlimited`}
-          </TextInput>
+            value={'Once we receive your approval, we will contact you to schedule your service. If you have any questions, or if there is anything else I can do for you, please let me know.\n\nWe appreciate your business and look forward to serving you.\n\nThank you,'}
+          />
         </FieldWrapper>
       </Wrapper>
     );
