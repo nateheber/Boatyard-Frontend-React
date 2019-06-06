@@ -173,7 +173,7 @@ class OrderReviewSection extends React.Component {
     this.setState({ showInvoice: false });
   }
 
-  sendQuote = () => {
+  sendQuote = (file, uri) => {
     const { SendQuote, order } = this.props;
     const orderId = get(order, 'id');
     SendQuote({
@@ -189,7 +189,7 @@ class OrderReviewSection extends React.Component {
     });
   };
 
-  sendInvoice = () => {
+  sendInvoice = (file, uri) => {
     const { SendInvoice, order } = this.props;
     const orderId = get(order, 'id');
     SendInvoice({
