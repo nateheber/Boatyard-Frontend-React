@@ -38,6 +38,9 @@ export const InputWrapper = styled.div`
     font-family: "Open sans-serif", sans-serif;
     text-transform: none;
   }
+  &.upper ${InputLabel} {
+    text-transform: uppercase;
+  }
   margin: 0px 10px;
   &:first-child {
     margin-left: 0px;
@@ -49,7 +52,7 @@ export const InputWrapper = styled.div`
     margin-bottom: 22px;
   }
   &.size-big > ${InputLabel} {
-    font-family: Montserrat;
+    font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     font-weight: 500;
     color: #003247;

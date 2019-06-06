@@ -8,12 +8,10 @@ import { refinedManagementsSelector } from 'store/selectors/managements';
 import { getUserFromOrder, getBoatFromOrder } from 'utils/order';
 import { OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
-import { TextArea } from 'components/basic/Input';
 import GradientButton from '../../basic/GradientButton';
 import {
-  Section, SectionContent, Image,
-  JobTitleSection, JobSummarySection, CustomerInfoSection,
-  LocationInfoSection, BoatInfoSection, AttachmentSection
+  Image, JobTitleSection, JobSummarySection, CustomerInfoSection,
+  LocationInfoSection, BoatInfoSection, AttachmentSection, NotesSection
 } from './components';
 
 import PrintIcon from '../../../../../resources/job/print.png';
@@ -86,8 +84,9 @@ class JobModal extends React.Component {
           fileName: ''
         }
       ],
+      showNotesInfo: false,
+      showCustomerInfo: false,
       showBoatInfo: true,
-      showCustomerInfo: true,
       showLocationInfo: true
     };
   }
@@ -143,16 +142,20 @@ class JobModal extends React.Component {
     this.setState({ selectedTeamMembers: selected });
   };
 
-  handleChangeInstructions = evt => {
-    this.setState({ specialInstructions: evt.target.value });
+  handleChangeNotes = specialInstructions => {
+    this.setState({ specialInstructions });
   };
 
-  handleChangeVisibleOfBoatInfo = (showBoatInfo) => {
-    this.setState({ showBoatInfo });
+  handleChangeVisibleOfNotesInfo = (showNotesInfo) => {
+    this.setState({ showNotesInfo });
   };
 
   handleChangeVisibleOfCustomerInfo = (showCustomerInfo) => {
     this.setState({ showCustomerInfo });
+  };
+
+  handleChangeVisibleOfBoatInfo = (showBoatInfo) => {
+    this.setState({ showBoatInfo });
   };
 
   handleChangeVisibleOfLocationInfo = (showLocationInfo) => {
@@ -199,7 +202,7 @@ class JobModal extends React.Component {
 
   render() {
     const { open, onClose, loading } = this.props;
-    const { showBoatInfo, showCustomerInfo, showLocationInfo, selectedTeamMembers, specialInstructions, attachments } = this.state;
+    const { showNotesInfo, showCustomerInfo, showBoatInfo, showLocationInfo, selectedTeamMembers, specialInstructions, attachments } = this.state;
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const action = [
       <OrangeButton onClick={this.onSend} key='modal_btn_save'>Send</OrangeButton>
@@ -224,23 +227,37 @@ class JobModal extends React.Component {
         onClose={onClose}
         large
       >
-        <JobTitleSection onChange={this.handleTeamMemberChange} selected={selectedTeamMembers} />
+        <JobTitleSection
+          selected={selectedTeamMembers}
+          onChange={this.handleTeamMemberChange}
+        />
         <JobSummarySection />
-        <Section>
-          <SectionContent>
-            <Title className="title">Special Instructions:</Title>
-            <TextArea
-              placeholder={'Special Instructions'}
-              style={{ marginBottom: 0, border: '1px solid #A9B5BB' }}
-              value={specialInstructions}
-              onChange={this.handleChangeInstructions}
-            />
-          </SectionContent>
-        </Section>
-        <CustomerInfoSection contentVisible={showCustomerInfo} customerInfo={customerInfo} onChangeVisible={this.handleChangeVisibleOfCustomerInfo} />
-        <BoatInfoSection contentVisible={showBoatInfo} boatInfo={boatInfo} onChangeVisible={this.handleChangeVisibleOfBoatInfo} />
-        <LocationInfoSection contentVisible={showLocationInfo} boatInfo={boatInfo} onChangeVisible={this.handleChangeVisibleOfLocationInfo} />
-        <AttachmentSection attachments={attachments} onAdd={this.handleAddAttachment} onDelete={this.handleDeleteAttachment} />
+        <NotesSection
+          contentVisible={showNotesInfo}
+          notes={specialInstructions}
+          onChangeVisible={this.handleChangeVisibleOfNotesInfo}
+          onChange={this.handleChangeNotes}
+        />
+        <CustomerInfoSection
+          contentVisible={showCustomerInfo}
+          customerInfo={customerInfo}
+          onChangeVisible={this.handleChangeVisibleOfCustomerInfo}
+        />
+        <BoatInfoSection
+          contentVisible={showBoatInfo}
+          boatInfo={boatInfo}
+          onChangeVisible={this.handleChangeVisibleOfBoatInfo}
+        />
+        <LocationInfoSection
+          contentVisible={showLocationInfo}
+          boatInfo={boatInfo}
+          onChangeVisible={this.handleChangeVisibleOfLocationInfo}
+        />
+        <AttachmentSection
+          attachments={attachments}
+          onAdd={this.handleAddAttachment}
+          onDelete={this.handleDeleteAttachment}
+        />
       </Modal>
     );
   }

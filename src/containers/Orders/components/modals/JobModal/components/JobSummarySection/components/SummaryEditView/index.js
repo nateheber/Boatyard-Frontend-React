@@ -26,7 +26,23 @@ export const Divider = styled.div`
 
 const dueTypes = [
   {
-    value: 'data_time',
+    value: 'flexible',
+    label: 'Flexible'
+  },
+  {
+    value: 'asap',
+    label: 'As Soon As Possible'
+  },
+  {
+    value: 'specific_date',
+    label: 'On a Specific Date'
+  },
+  {
+    value: 'specific_date_time',
+    label: 'Specific Date & Time'
+  },
+  {
+    value: 'data_time_range',
     label: 'Date & Time range'
   }
 ]
@@ -52,7 +68,7 @@ export default class SummaryEditView extends React.Component {
       {
         type: 'select_box',
         field: 'service',
-        className: 'primary',
+        className: 'primary upper',
         label: 'Service:',
         errorMessage: 'Choose Service',
         options: [],
@@ -67,7 +83,7 @@ export default class SummaryEditView extends React.Component {
       {
         type: 'select_box',
         field: 'due_date',
-        className: 'primary',
+        className: 'primary upper',
         label: 'Due Date:',
         errorMessage: 'Choose Due Date',
         options: dueTypes,
@@ -89,7 +105,7 @@ export default class SummaryEditView extends React.Component {
       {
         type: 'date',
         field: 'date',
-        className: 'primary',
+        className: 'primary upper',
         label: 'Date:',
         errorMessage: 'Choose Date',
         required: true,
@@ -103,7 +119,7 @@ export default class SummaryEditView extends React.Component {
       {
         type: 'time_range',
         field: 'time_range',
-        className: 'primary',
+        className: 'primary upper',
         label: 'Time:',
         errorMessage: 'Choose Time Range',
         required: true,
@@ -136,8 +152,8 @@ export default class SummaryEditView extends React.Component {
           />
           <Row>
             <Col xs={12}>
-              <InputWrapper className='primary'>
-                <InputLabel>Descriptions:</InputLabel>
+              <InputWrapper className='primary upper'>
+                <InputLabel>Special Instructions:</InputLabel>
                 <TextArea
                   style={{ marginBottom: 0, border: '1px solid #A9B5BB' }}
                   onChange={this.handleChangeInstructions}

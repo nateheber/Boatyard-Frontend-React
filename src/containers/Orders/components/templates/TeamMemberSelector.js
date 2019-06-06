@@ -31,7 +31,7 @@ const ClearButton = styled.button`
   width: 240px;
   text-align: center;
   font-size: 16px;
-  font-family: Montserrat;
+  font-family: 'Montserrat', sans-serif;
   color: #003247;
   background-color: white;
   outline: none;
