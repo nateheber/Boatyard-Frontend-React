@@ -29,13 +29,40 @@ const Image = styled.img`
   border-radius: 6px;
 `;
 
-const TimeRangeWrapper = styled.div`
+const DateTimeWrapper = styled.div`
   display: flex;
   align-items: center;
   margin: 0;
-  > div {
-    width: calc(50% - 12.5px);
+  > div,
+  > button {
+    width: calc(33% - 8px);
+    min-width: initial;
   }
+  &.range {
+    > div,
+    > button {
+      width: calc(16.67% - 6px);
+    }
+  }
+  > div.hour {
+    margin-left: 0;
+    margin-right: 2px;
+  }
+  > div.minute {
+    margin-left: 2px;
+  }
+  > button {
+    margin-left: 5px;
+  }
+`;
+
+const NoonButton = styled.button`
+  height: 30px;
+  border: 1px solid #dfdfdf;
+  border-radius: 4px;
+  font-family: 'Source Sans Pro',sans-serif;
+  font-size: 14px;
+  color: #555;
 `;
 
 export default class FormFields extends React.Component {
@@ -43,9 +70,30 @@ export default class FormFields extends React.Component {
     super(props);
     const { fields } = props;
     const value = this.getValues(fields);
+    const startHourOptions = [];
+    const startMinuteOptions = [];
+    for (let index = 1; index <= 12; index++) {
+      startHourOptions.push({
+        value: `${index}`,
+        label: `${index}`
+      });
+    }
+    for (let index = 0; index < 12; index++) {
+      const minutes = `0${index * 5}`.slice(-2);
+      startMinuteOptions.push({
+        value: minutes,
+        label: minutes
+      });
+    }
+    const endHourOptions = startHourOptions.slice(0);
+    const endMinuteOptions = startMinuteOptions.slice(0);
     this.state = {
       value,
-      errors: []
+      errors: [],
+      startHourOptions,
+      startMinuteOptions,
+      endHourOptions,
+      endMinuteOptions
     };
   }
 
@@ -74,6 +122,14 @@ export default class FormFields extends React.Component {
         }
       } else if (fields[i].type === 'file_input') {
         set(value, fields[i].field, get(fields[i], 'defaultValue', { file: null, baseString: null, ref: null }));
+      } else if (fields[i].type === 'inputable_time') {
+        set(value, fields[i].field, get(fields[i], 'defaultValue', {
+          hours_start: null, minutes_start: null, noon_start: 'am' }));
+      } else if (fields[i].type === 'inputable_time_range') {
+        set(value, fields[i].field, get(fields[i], 'defaultValue', {
+          hours_start: null, minutes_start: null, noon_start: 'am',
+          hours_end: null, minutes_end: null, noon_end: 'am'
+        }));
       } else if (fields[i].type === 'time_range') {
         set(value, fields[i].field, get(fields[i], 'defaultValue', { time_start: null, time_end: null }));
       } else {
@@ -108,6 +164,14 @@ export default class FormFields extends React.Component {
         if (fields[i].required && !fieldValue) {
           errors.push(fields[i].field);
         }
+      } else if (fields[i].type === 'inputable_time') {
+        if (fields[i].required && !(fieldValue.hours_start || fieldValue.minutes_start)) {
+          errors.push(fields[i].field);
+        }
+      } else if (fields[i].type === 'inputable_time_range') {
+        if (fields[i].required && !(fieldValue.hours_start || fieldValue.minutes_start)) {
+          errors.push(fields[i].field);
+        }
       } else if (fields[i].type === 'time_range') {
         if (fields[i].required && !(fieldValue.time_start || fieldValue.time_end)) {
           errors.push(fields[i].field);
@@ -138,7 +202,7 @@ export default class FormFields extends React.Component {
   getFieldValues = () => this.state.value;
 
   renderInputField = (field, type, mask, maskChar, placeholder, dateFormat, errorMessage, options, size, disabled, title, icon) => {
-    const { value, errors } = this.state;
+    const { value, errors, startHourOptions, startMinuteOptions, endHourOptions, endMinuteOptions } = this.state;
     let fieldValue = '';
       if (type === 'check_box') {
         fieldValue = get(value, field) || false;
@@ -146,6 +210,15 @@ export default class FormFields extends React.Component {
         fieldValue = get(value, field) || new Date();
       } else if (type === 'file_input') {
         fieldValue = get(value, field) || { file: null, baseString: null, ref: null };
+      } else if (type === 'inputable_time') {
+        fieldValue = get(value, field) || {
+          hours_start: null, minutes_start: null, noon_start: 'am'
+        };
+      } else if (type === 'inputable_time_range') {
+        fieldValue = get(value, field) || {
+          hours_start: null, minutes_start: null, noon_start: 'am',
+          hours_end: null, minutes_end: null, noon_end: 'am'
+        };
       } else if (type === 'time_range') {
         fieldValue = get(value, field) || { time_start: null, time_end: null };
       } else {
@@ -200,7 +273,7 @@ export default class FormFields extends React.Component {
         );
       case 'time_range':
         return (
-          <TimeRangeWrapper>
+          <DateTimeWrapper>
             <TimePicker
               disabled={disabled}
               time={fieldValue.time_start}
@@ -216,7 +289,7 @@ export default class FormFields extends React.Component {
               onChange={value => this.onChangeValue(field, { ...fieldValue, time_end: value })}
               placeholder={placeholder.time_end}
             />
-          </TimeRangeWrapper>
+          </DateTimeWrapper>
         );
       case 'select_box':
         return (
@@ -249,27 +322,100 @@ export default class FormFields extends React.Component {
             errorMessage={errorMessage}
           />
         );
-      case 'inputable_time_range':
+      case 'inputable_time':
         return (
-          <TimeRangeWrapper>
+          <DateTimeWrapper>
             <InputableSelect
+              className="hour"
               disabled={disabled}
-              value={fieldValue.time_start}
-              options={options.time_start}
-              onChange={value => this.onChangeValue(field, { ...fieldValue, time_start: value })}
+              value={fieldValue.hours_start}
+              options={startHourOptions}
+              placeholder={'0'}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, hours_start: value })}
               hasError={errorIdx >= 0}
-              placeholder={placeholder.time_start}
               errorMessage={errorMessage}
             />
-            &nbsp;&nbsp;{'-'}&nbsp;&nbsp;
+            {':'}
             <InputableSelect
+              className="minute"
               disabled={disabled}
-              value={fieldValue.time_end}
-              options={options.time_end}
-              onChange={value => this.onChangeValue(field, { ...fieldValue, time_end: value })}
-              placeholder={placeholder.time_end}
+              value={fieldValue.minutes_start}
+              options={startMinuteOptions}
+              placeholder={'00'}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, minutes_start: value })}
             />
-          </TimeRangeWrapper>
+            <NoonButton
+              onClick={() => this.onChangeValue(
+                field,
+                {
+                  ...fieldValue,
+                  noon_start: fieldValue.noon_start.toLowerCase() === 'am' ? 'pm' : 'am'
+                }
+              )}
+            >{fieldValue.noon_start}</NoonButton>
+          </DateTimeWrapper>
+        );
+      case 'inputable_time_range':
+        return (
+          <DateTimeWrapper className="range">
+            <InputableSelect
+              className="hour"
+              disabled={disabled}
+              value={fieldValue.hours_start}
+              options={startHourOptions}
+              placeholder={'0'}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, hours_start: value })}
+              hasError={errorIdx >= 0}
+              errorMessage={errorMessage}
+            />
+            {':'}
+            <InputableSelect
+              className="minute"
+              disabled={disabled}
+              value={fieldValue.minutes_start}
+              options={startMinuteOptions}
+              placeholder={'00'}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, minutes_start: value })}
+            />
+            <NoonButton
+              onClick={() => this.onChangeValue(
+                field,
+                {
+                  ...fieldValue,
+                  noon_start: fieldValue.noon_start.toLowerCase() === 'am' ? 'pm' : 'am'
+                }
+              )}
+            >{fieldValue.noon_start}</NoonButton>
+            &nbsp;{'-'}&nbsp;
+            <InputableSelect
+              className="hour"
+              disabled={disabled}
+              value={fieldValue.hours_end}
+              options={endHourOptions}
+              placeholder={'0'}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, hours_end: value })}
+              hasError={errorIdx >= 0}
+              errorMessage={errorMessage}
+            />
+            {':'}
+            <InputableSelect
+              className="minute"
+              disabled={disabled}
+              value={fieldValue.minutes_end}
+              options={endMinuteOptions}
+              placeholder={'00'}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, minutes_end: value })}
+            />
+            <NoonButton
+              onClick={() => this.onChangeValue(
+                field,
+                {
+                  ...fieldValue,
+                  noon_end: fieldValue.noon_end.toLowerCase() === 'am' ? 'pm' : 'am'
+                }
+              )}
+            >{fieldValue.noon_end}</NoonButton>
+          </DateTimeWrapper>
         );
       case 'text_field':
         return (

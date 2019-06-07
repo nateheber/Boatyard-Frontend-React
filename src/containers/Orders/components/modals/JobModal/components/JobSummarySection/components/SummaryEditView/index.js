@@ -64,7 +64,7 @@ export default class SummaryEditView extends React.Component {
       hourOptions,
       afterOptions,
       summaryInfoFields: [],
-      duemTimeRange: { time_start: '', time_end: ''}
+      dueTimeRange: { time_start: '', time_end: ''}
     };
   }
 
@@ -77,7 +77,6 @@ export default class SummaryEditView extends React.Component {
   };
 
   getSummaryInfoFieldsInfo = (dueType = 'flexible') => {
-    const { hourOptions, afterOptions } = this.state;
     const summaryInfoFields = [
       {
         type: 'select_box',
@@ -144,12 +143,11 @@ export default class SummaryEditView extends React.Component {
           xl: 3
         });
         summaryInfoFields.push({
-          type: 'inputable_select',
+          type: 'inputable_time',
           field: 'due_time',
           className: 'primary upper',
           label: 'Time:',
           placeholder: '',
-          options: hourOptions,
           errorMessage: 'Choose Time',
           required: true,
           xs: 12,
@@ -187,15 +185,13 @@ export default class SummaryEditView extends React.Component {
           field: 'due_time_range',
           className: 'primary upper',
           label: 'Time:',
-          placeholder: { time_start: '', time_end: '' },
-          options: { time_start: hourOptions, time_end: afterOptions },
           errorMessage: 'Choose Time Range',
           required: true,
           xs: 12,
           sm: 6,
-          md: 4,
-          lg: 4,
-          xl: 4
+          md: 5,
+          lg: 5,
+          xl: 5
         });
         break;
       }

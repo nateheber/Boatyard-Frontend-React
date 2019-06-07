@@ -103,8 +103,9 @@ const colourStyles = {
     ...styles,
     fontFamily: 'Source Sans Pro, sans-serif',
     fontWeight: 200,
-    fontSize: 14,
-    color: '#003247',
+    fontSize: 13,
+    color: '#555',
+    textAlign: 'center',
     paddingTop: 1,
     paddingBottom: 1
   }),
@@ -124,14 +125,15 @@ const colourStyles = {
     ...styles,
     fontFamily: 'Source Sans Pro, sans-serif',
     fontSize: 14,
-    color: '#003247',
+    color: '#555',
+    textAlign: 'center',
     textTransform: 'initial'
   }),
   option: styles => ({
     ...styles,
     fontFamily: 'Source Sans Pro, sans-serif',
     fontSize: 14,
-    color: '#003247',
+    color: '#555',
     textTransform: 'initial'
   }),
   placeholder: styles => ({ ...styles }),
