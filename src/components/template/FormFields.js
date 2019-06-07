@@ -15,7 +15,8 @@ import {
   DateSelector,
   TimePicker,
   CurrencyInput,
-  FileInput
+  FileInput,
+  InputableSelect
 } from 'components/basic/Input';
 
 const Image = styled.img`
@@ -32,6 +33,9 @@ const TimeRangeWrapper = styled.div`
   display: flex;
   align-items: center;
   margin: 0;
+  > div {
+    width: calc(50% - 12.5px);
+  }
 `;
 
 export default class FormFields extends React.Component {
@@ -202,7 +206,7 @@ export default class FormFields extends React.Component {
               time={fieldValue.time_start}
               onChange={value => this.onChangeValue(field, { ...fieldValue, time_start: value })}
               hasError={errorIdx >= 0}
-              placeholder={placeholder}
+              placeholder={placeholder.time_start}
               errorMessage={errorMessage}
             />
             &nbsp;&nbsp;{'-'}&nbsp;&nbsp;
@@ -210,9 +214,7 @@ export default class FormFields extends React.Component {
               disabled={disabled}
               time={fieldValue.time_end}
               onChange={value => this.onChangeValue(field, { ...fieldValue, time_end: value })}
-              hasError={errorIdx >= 0}
-              placeholder={placeholder}
-              errorMessage={errorMessage}
+              placeholder={placeholder.time_end}
             />
           </TimeRangeWrapper>
         );
@@ -223,6 +225,7 @@ export default class FormFields extends React.Component {
             value={fieldValue}
             onChange={evt => this.onChangeValue(field, evt.target.value)}
             hasError={errorIdx >= 0}
+            placeholder={placeholder}
             errorMessage={errorMessage}
           >
             <React.Fragment>
@@ -233,6 +236,40 @@ export default class FormFields extends React.Component {
               ))}
             </React.Fragment>
           </Select>
+        );
+      case 'inputable_select':
+        return (
+          <InputableSelect
+            disabled={disabled}
+            value={fieldValue}
+            onChange={value => this.onChangeValue(field, value)}
+            hasError={errorIdx >= 0}
+            placeholder={placeholder}
+            options={options}
+            errorMessage={errorMessage}
+          />
+        );
+      case 'inputable_time_range':
+        return (
+          <TimeRangeWrapper>
+            <InputableSelect
+              disabled={disabled}
+              value={fieldValue.time_start}
+              options={options.time_start}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, time_start: value })}
+              hasError={errorIdx >= 0}
+              placeholder={placeholder.time_start}
+              errorMessage={errorMessage}
+            />
+            &nbsp;&nbsp;{'-'}&nbsp;&nbsp;
+            <InputableSelect
+              disabled={disabled}
+              value={fieldValue.time_end}
+              options={options.time_end}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, time_end: value })}
+              placeholder={placeholder.time_end}
+            />
+          </TimeRangeWrapper>
         );
       case 'text_field':
         return (
