@@ -8,6 +8,7 @@ env:
   global:
     - AWS_S3_REGION=us-east-2
     - STAGING_BRANCH=develop 
+    - SANDBOX_BRANCH=sandbox
     - PRODUCTION_BRANCH=production
 
 install:
@@ -19,6 +20,11 @@ script:
   - set -e
   - export NODE_ENV="staging"
   - export CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID_STAGING
+  - |
+    if [ $TRAVIS_BRANCH == "$SANDBOX_BRANCH" ]; then
+      export NODE_ENV="sandbox"
+      export CLOUDFRONT_DIST_ID=$CLOUDFRONT_DIST_ID_SANDBOX
+    fi    
   - |
     if [ $TRAVIS_BRANCH == "$PRODUCTION_BRANCH" ]; then
       export NODE_ENV="production"
