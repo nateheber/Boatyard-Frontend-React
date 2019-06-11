@@ -1,5 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
+import CreatableSelect from 'react-select/lib/Creatable';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
@@ -139,12 +140,28 @@ const colourStyles = {
   placeholder: styles => ({ ...styles }),
 };
 
-export class InputableSelect extends React.Component {
+export class InputableSelector extends React.Component {
   render() {
     const { hasError, errorMessage, hideError, ...rest } = this.props;
     return (
       <React.Fragment>
         <Select {...rest} styles={colourStyles} />
+        { (!hideError && hasError) &&
+          <ErrorMessage className={classNames({ show: hasError })}>
+            {errorMessage}
+          </ErrorMessage>
+        }
+      </React.Fragment>
+    );
+  }
+}
+
+export class CreatableSelector extends React.Component {
+  render() {
+    const { hasError, errorMessage, hideError, ...rest } = this.props;
+    return (
+      <React.Fragment>
+        <CreatableSelect {...rest} styles={colourStyles} />
         { (!hideError && hasError) &&
           <ErrorMessage className={classNames({ show: hasError })}>
             {errorMessage}
