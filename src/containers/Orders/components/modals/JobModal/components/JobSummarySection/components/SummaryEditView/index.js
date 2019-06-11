@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 import EvilIcon from 'react-evil-icons';
-import { get } from 'lodash';
 
 import FormFields from 'components/template/FormFields';
 import { InputWrapper, InputLabel, TextArea } from 'components/basic/Input';
@@ -43,28 +42,42 @@ const dueTypes = [
   },
   {
     value: 'data_time_range',
-    label: 'Date & Time range'
+    label: 'Date & Time Range'
   }
-]
+];
 
 export default class SummaryEditView extends React.Component {
-  getSummaryInfoFieldsInfo = () => {
-    const summaryInfo = get(this.props, 'summaryInfo', {
-      serviceId: '',
-      dueType: '',
-      dueDate: new Date(),
-      timeStart: '13:00',
-      timeEnd: '15:00'
-    });
-    const {
-      serviceId,
-      dueType,
-      dueDate,
-      timeStart,
-      timeEnd
-    } = summaryInfo;
+  constructor(props) {
+    super(props);
+    const hourOptions = [];
+    for(let index = 0; index < 48; index++) {
+      const value = index * 30;
+      // const hours = ('0' + Math.floor(value / 60)).slice(-2);
+      const hours = Math.floor(value / 60);
+      const minutes = ('0' + value % 60).slice(-2);
+      const label = `${hours > 12 ? hours - 12 : hours}:${minutes} ${index > 24 ? 'pm' : 'am'}`;
+      hourOptions.push({ value, label });
+    }
+    const afterOptions = hourOptions.slice(0);
+    this.state = {
+      service: { label: '', value: '' },
+      hourOptions,
+      afterOptions,
+      summaryInfoFields: [],
+      dueTimeRange: { time_start: '', time_end: ''}
+    };
+  }
 
-    const fields = [
+  componentDidMount() {
+    this.getSummaryInfoFieldsInfo();
+  }
+
+  setSummaryInfoFieldRef = (ref) => {
+    this.summaryInfoFields = ref;
+  };
+
+  getSummaryInfoFieldsInfo = (dueType = 'flexible') => {
+    const summaryInfoFields = [
       {
         type: 'select_box',
         field: 'service',
@@ -73,7 +86,6 @@ export default class SummaryEditView extends React.Component {
         errorMessage: 'Choose Service',
         options: [],
         required: true,
-        defaultValue: serviceId,
         xs: 12,
         sm: 6,
         md: 3,
@@ -82,7 +94,7 @@ export default class SummaryEditView extends React.Component {
       },
       {
         type: 'select_box',
-        field: 'due_date',
+        field: 'due_type',
         className: 'primary upper',
         label: 'Due Date:',
         errorMessage: 'Choose Due Date',
@@ -91,47 +103,102 @@ export default class SummaryEditView extends React.Component {
         defaultValue: dueType,
         xs: 12,
         sm: 6,
-        md: 4,
-        lg: 4,
-        xl: 4
-      },
-      {
-        xs: 12,
-        sm: 12,
-        md: 5,
-        lg: 5,
-        xl: 5
-      },
-      {
-        type: 'date',
-        field: 'date',
-        className: 'primary upper',
-        label: 'Date:',
-        errorMessage: 'Choose Date',
-        required: true,
-        defaultValue: dueDate,
-        xs: 12,
-        sm: 6,
         md: 3,
         lg: 3,
         xl: 3
-      },
-      {
-        type: 'time_range',
-        field: 'time_range',
-        className: 'primary upper',
-        label: 'Time:',
-        errorMessage: 'Choose Time Range',
-        required: true,
-        defaultValue: { time_start: timeStart, time_end: timeEnd },
-        xs: 12,
-        sm: 6,
-        md: 5,
-        lg: 5,
-        xl: 5
       }
-    ]
-    return fields;
+    ];
+
+    switch(dueType) {
+      case 'specific_date': {
+        summaryInfoFields.push({
+          type: 'date',
+          field: 'due_date',
+          className: 'primary upper',
+          dateFormat: 'MM/dd/yyyy',
+          label: 'Date:',
+          errorMessage: 'Choose Date',
+          required: true,
+          xs: 12,
+          sm: 6,
+          md: 3,
+          lg: 3,
+          xl: 3
+        });
+        break;
+      }
+      case 'specific_date_time': {
+        summaryInfoFields.push({
+          type: 'date',
+          field: 'due_date',
+          className: 'primary upper',
+          dateFormat: 'MM/dd/yyyy',
+          label: 'Date:',
+          errorMessage: 'Choose Date',
+          required: true,
+          xs: 12,
+          sm: 6,
+          md: 3,
+          lg: 3,
+          xl: 3
+        });
+        summaryInfoFields.push({
+          type: 'inputable_time',
+          field: 'due_time',
+          className: 'primary upper',
+          label: 'Time:',
+          placeholder: '',
+          errorMessage: 'Choose Time',
+          required: true,
+          xs: 12,
+          sm: 6,
+          md: 3,
+          lg: 3,
+          xl: 3
+        });
+        break;
+      }
+      case 'data_time_range': {
+        summaryInfoFields.push({
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 6,
+          xl: 6
+        });
+        summaryInfoFields.push({
+          type: 'date',
+          field: 'due_date',
+          className: 'primary upper',
+          dateFormat: 'MM/dd/yyyy',
+          label: 'Date:',
+          errorMessage: 'Choose Date',
+          required: true,
+          xs: 12,
+          sm: 6,
+          md: 3,
+          lg: 3,
+          xl: 3
+        });
+        summaryInfoFields.push({
+          type: 'inputable_time_range',
+          field: 'due_time_range',
+          className: 'primary upper',
+          label: 'Time:',
+          errorMessage: 'Choose Time Range',
+          required: true,
+          xs: 12,
+          sm: 6,
+          md: 4,
+          lg: 4,
+          xl: 4
+        });
+        break;
+      }
+      default: {
+      }
+    }
+    this.setState({ summaryInfoFields });
   };
 
   handleChangeVisible = (contentVisible) => {
@@ -141,14 +208,21 @@ export default class SummaryEditView extends React.Component {
     }
   };
 
+  handleFieldChange = (value, field) => {
+    if (field === 'due_type') {
+      this.getSummaryInfoFieldsInfo(value[field]);
+    }
+  };
+
   render() {
-    const summaryFields = this.getSummaryInfoFieldsInfo();
+    const { summaryInfoFields } = this.state;
     return (
         <ContentWrapper>
           <Divider />
           <FormFields
             ref={this.setSummaryInfoFieldRef}
-            fields={summaryFields}
+            fields={summaryInfoFields}
+            onChange={this.handleFieldChange}
           />
           <Row>
             <Col xs={12}>
