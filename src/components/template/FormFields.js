@@ -152,7 +152,8 @@ export default class FormFields extends React.Component {
             hours = hours % 12;
             noon = noon === 'am' ? 'pm' : 'am';
           }
-          let value = `${hours}:${minutes}${noon}`;
+          const minutesString = `0${minutes}`.slice(-2);
+          let value = `${hours}:${minutesString}${noon}`;
           endTimeOptions.push({
             value: value,
             label: value
