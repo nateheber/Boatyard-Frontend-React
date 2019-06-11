@@ -1,7 +1,10 @@
 const mode = process.env.NODE_ENV;
 
 let apiUrl = '';
-switch(mode) {
+switch (mode) {
+  case 'sandbox':
+    apiUrl = 'https://sandbox-api.boatyard.com/api/v2';
+    break;
   case 'staging':
     apiUrl = 'https://staging-api.boatyard.com/api/v2';
     break;
