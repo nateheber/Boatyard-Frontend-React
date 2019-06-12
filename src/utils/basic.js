@@ -77,6 +77,7 @@ export const formatTimeFromString = (value) => {
       }
     }
   }
+  restString = restString.toLowerCase();
   if (timeString.indexOf(':') > -1) {
     const timeArray = timeString.split(':');
     hours = timeArray[0];
@@ -88,25 +89,53 @@ export const formatTimeFromString = (value) => {
       hours = `${parseInt(hours) % 12}`;
       noonValue = 'pm';
     } else {
-      if (restString.indexOf('a') > restString.indexOf('p')) {
-        noonValue = 'pm';
-      } else if (restString.indexOf('a') > restString.indexOf('p')) {
+      const aIndex = restString.indexOf('a');
+      const pIndex = restString.indexOf('p');
+      if (aIndex >= 0 && pIndex >= 0) {
+        if (aIndex > pIndex) {
+          noonValue = 'pm';
+        } else {
+          noonValue = 'am';
+        }
+      } else if (aIndex >= 0) {
         noonValue = 'am';
+      } else if (pIndex >= 0) {
+        noonValue = 'pm';
       }
     }
     if (parseInt(minutes) >= 60 || minutes.length === 0) {
       minutes = '00';
     } else if (parseInt(minutes) < 10) {
-      minutes = `0${minutes}`;
+      minutes = `0${minutes}`.slice(-2);
     }
   } else {
-    if (timeString.length === 1) {
+    if (timeString.length === 0) {
+      hours = moment().format("H");
+      minutes = moment().format("m");
+      if (parseInt(minutes) >= 55) {
+        hours = `${parseInt(hours) + 1}`;
+        minutes = '30';
+      } else if (parseInt(minutes) >= 25) {
+        hours = `${parseInt(hours) + 1}`;
+        minutes = '00';
+      } else {
+        minutes = '30';
+      }
+    } else if (timeString.length === 1) {
       hours = timeString;
       minutes = '00';
-      if (restString.indexOf('a') > restString.indexOf('p')) {
-        noonValue = 'pm';
-      } else if (restString.indexOf('a') > restString.indexOf('p')) {
+      const aIndex = restString.indexOf('a');
+      const pIndex = restString.indexOf('p');
+      if (aIndex >= 0 && pIndex >= 0) {
+        if (aIndex > pIndex) {
+          noonValue = 'pm';
+        } else {
+          noonValue = 'am';
+        }
+      } else if (aIndex >= 0) {
         noonValue = 'am';
+      } else if (pIndex >= 0) {
+        noonValue = 'pm';
       }
     } else if (timeString.length === 2) {
       if (parseInt(timeString) > 24) {
@@ -116,19 +145,35 @@ export const formatTimeFromString = (value) => {
         } else {
           minutes = `${minutes}0`;
         }
-        if (restString.indexOf('a') > restString.indexOf('p')) {
-          noonValue = 'pm';
-        } else if (restString.indexOf('a') > restString.indexOf('p')) {
+        const aIndex = restString.indexOf('a');
+        const pIndex = restString.indexOf('p');
+        if (aIndex >= 0 && pIndex >= 0) {
+          if (aIndex > pIndex) {
+            noonValue = 'pm';
+          } else {
+            noonValue = 'am';
+          }
+        } else if (aIndex >= 0) {
           noonValue = 'am';
+        } else if (pIndex >= 0) {
+          noonValue = 'pm';
         }  
       } else {
         hours = `${parseInt(timeString) % 12 === 0 ? '12' : parseInt(timeString) % 12}`;
         minutes = '00';
-        if (parseInt(timeString) < 12) {
-          if (restString.indexOf('a') > restString.indexOf('p')) {
-            noonValue = 'pm';
-          } else if (restString.indexOf('a') > restString.indexOf('p')) {
+        if (parseInt(timeString) <= 12) {
+          const aIndex = restString.indexOf('a');
+          const pIndex = restString.indexOf('p');
+          if (aIndex >= 0 && pIndex >= 0) {
+            if (aIndex > pIndex) {
+              noonValue = 'pm';
+            } else {
+              noonValue = 'am';
+            }
+          } else if (aIndex >= 0) {
             noonValue = 'am';
+          } else if (pIndex >= 0) {
+            noonValue = 'pm';
           }
         }
       }
@@ -140,18 +185,26 @@ export const formatTimeFromString = (value) => {
         } else if (restString.indexOf('a') > restString.indexOf('p')) {
           minutes = `0${timeString.slice(1)}`.slice(-2);
         }
-        if (restString.indexOf('a') > restString.indexOf('p')) {
-          noonValue = 'pm';
-        } else {
+        const aIndex = restString.indexOf('a');
+        const pIndex = restString.indexOf('p');
+        if (aIndex >= 0 && pIndex >= 0) {
+          if (aIndex > pIndex) {
+            noonValue = 'pm';
+          } else {
+            noonValue = 'am';
+          }
+        } else if (aIndex >= 0) {
           noonValue = 'am';
-        }
+        } else if (pIndex >= 0) {
+          noonValue = 'pm';
+        }  
       } else {
         hours = `${parseInt(timeString.substr(0, 2))% 12 === 0 ? '12' : parseInt(timeString.substr(0, 2)) % 12}`;
         if (parseInt(timeString.slice(2)) > 6) {
           if (timeString.slice(2).length === 1) {
             minutes = `0${timeString.slice(2)}`;
           } else if (timeString.slice(2).length === 2 && parseInt(timeString.slice(2)) < 60) {
-            minutes = timeString.slice(2);
+            minutes = `${timeString.slice(2)}`.slice(-2);
           } else {
             minutes = '00';
           }
@@ -162,12 +215,22 @@ export const formatTimeFromString = (value) => {
             minutes = `0${timeString.slice(2)}`.slice(-2);
           }
         }
-        if (parseInt(timeString.substr(0, 2)) < 12) {
-          if (restString.indexOf('a') > restString.indexOf('p')) {
-            noonValue = 'pm';
-          } else if (restString.indexOf('a') > restString.indexOf('p')) {
+        if (parseInt(timeString.substr(0, 2)) <= 12) {
+          const aIndex = restString.indexOf('a');
+          const pIndex = restString.indexOf('p');
+          if (aIndex >= 0 && pIndex >= 0) {
+            if (aIndex > pIndex) {
+              noonValue = 'pm';
+            } else {
+              noonValue = 'am';
+            }
+          } else if (aIndex >= 0) {
             noonValue = 'am';
+          } else if (pIndex >= 0) {
+            noonValue = 'pm';
           }
+        } else {
+          noonValue = 'pm';
         }
       }
     }

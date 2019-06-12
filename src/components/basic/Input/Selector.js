@@ -138,6 +138,13 @@ const colourStyles = {
     textTransform: 'initial'
   }),
   placeholder: styles => ({ ...styles }),
+  noOptionsMessageCSS: styles => ({
+    ...styles,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontSize: 14,
+    color: '#555',
+    textTransform: 'initial'
+  })
 };
 
 export class InputableSelector extends React.Component {
