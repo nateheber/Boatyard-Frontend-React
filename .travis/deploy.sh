@@ -2,7 +2,7 @@
 set -ex
 
 # deploy run only on prod and stagin
-if [ $TRAVIS_BRANCH != "$PRODUCTION_BRANCH" ] && [ $TRAVIS_BRANCH != "$STAGING_BRANCH" ]; then
+if [ $TRAVIS_BRANCH != "$PRODUCTION_BRANCH" ] && [ $TRAVIS_BRANCH != "$STAGING_BRANCH" ] && [ $TRAVIS_BRANCH != "$SANDBOX_BRANCH" ]; then
   exit 0
 fi;
 

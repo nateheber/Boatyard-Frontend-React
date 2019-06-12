@@ -1,7 +1,7 @@
 const mode = process.env.REACT_APP_STAGE;
 
 let apiUrl = '';
-switch(mode) {
+switch (mode) {
   case 'sandbox':
     apiUrl = 'https://sandbox-api.boatyard.com/api/v2';
     break;
