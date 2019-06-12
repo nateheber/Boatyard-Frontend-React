@@ -1,4 +1,4 @@
-const mode = process.env.NODE_ENV;
+const mode = process.env.REACT_APP_STAGE;
 
 let apiUrl = '';
 switch (mode) {
