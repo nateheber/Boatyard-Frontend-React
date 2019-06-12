@@ -157,7 +157,7 @@ export const formatTimeFromString = (value) => {
           noonValue = 'am';
         } else if (pIndex >= 0) {
           noonValue = 'pm';
-        }  
+        }
       } else {
         hours = `${parseInt(timeString) % 12 === 0 ? '12' : parseInt(timeString) % 12}`;
         minutes = '00';
@@ -175,6 +175,8 @@ export const formatTimeFromString = (value) => {
           } else if (pIndex >= 0) {
             noonValue = 'pm';
           }
+        } else {
+          noonValue = 'pm';
         }
       }
     } else {
@@ -197,7 +199,7 @@ export const formatTimeFromString = (value) => {
           noonValue = 'am';
         } else if (pIndex >= 0) {
           noonValue = 'pm';
-        }  
+        }
       } else {
         hours = `${parseInt(timeString.substr(0, 2))% 12 === 0 ? '12' : parseInt(timeString.substr(0, 2)) % 12}`;
         if (parseInt(timeString.slice(2)) > 6) {
