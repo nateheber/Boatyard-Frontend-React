@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Row, Col } from 'react-flexbox-grid';
 import queryString from 'query-string';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -7,19 +8,21 @@ import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, GetManagement, CreateManagement, UpdateManagement, DeleteManagement } from 'store/actions/managements';
 import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
+import { Section } from 'components/basic/InfoSection';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { NormalText, PageTitle } from 'components/basic/Typho'
-import { OrangeButton, HollowButton } from 'components/basic/Buttons';
+import { OrangeButton, HollowButton, GradientButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 import Modal from 'components/compound/Modal';
 import { TeamDetailsHeader } from '../../components';
 import { validateEmail, formatPhoneNumber } from 'utils/basic';
+import AddIcon from '../../../../resources/job/add.png';
 
 const Wrapper = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  background-color: white;
+  // background-color: white;
   margin: 30px 25px;
 `;
 
@@ -50,6 +53,10 @@ export const Description = styled(NormalText)`
 //   color: #333;
 //   text-transform: capitalize;
 // `;
+
+const Image = styled.img`
+  width: 11px;
+`;
 
 class TeamDetails extends React.Component {
   constructor(props) {
@@ -248,6 +255,9 @@ class TeamDetails extends React.Component {
     });
   };
 
+  handleAddLocations = () => {
+  };
+
   render() {
     const {
       managementId,
@@ -336,23 +346,31 @@ class TeamDetails extends React.Component {
     );
     return (
       <Wrapper>
-        {managementId ? <React.Fragment>
-          {!loading && <React.Fragment>
-            <HeaderWrapper>
-              <TeamDetailsHeader title={`${firstName} ${lastName}`} onAction={this.showConfirmationModal} />
-            </HeaderWrapper>
-            <ContentWrapper>
-              <EditorSection actions={actions} content={editSection} />
-            </ContentWrapper>
-          </React.Fragment>}
-        </React.Fragment>
-        : <React.Fragment>
-            <HeaderWrapper>
-            <PageTitle style={{ padding: '25px 30px' }}>Add New Member</PageTitle>
-            </HeaderWrapper>
-            <ContentWrapper>
-              <EditorSection actions={actions} content={editSection} />
-            </ContentWrapper>          
+        {!loading && <React.Fragment>
+          <HeaderWrapper>
+            {managementId && <TeamDetailsHeader title={`${firstName} ${lastName}`} onAction={this.showConfirmationModal} />}
+            {!managementId && <PageTitle style={{ padding: '25px 30px' }}>Add New Member</PageTitle>}
+          </HeaderWrapper>
+          <ContentWrapper>
+            <Row>
+              <Col xs={12} sm={12} md={9}>
+                <Section title='Contact' headerStyle={{ padding: 25 }}>
+                  <EditorSection containerStype={{ padding: '30px 15px' }} actions={actions} content={editSection} />
+                </Section>
+              </Col>
+              <Col xs={12} sm={12} md={3}>
+                <Section
+                  title='Location'
+                  mode='view'
+                  headerStyle={{ padding: 25 }}
+                  editComponent={<GradientButton onClick={this.handleAddLocations}>
+                    <Image src={AddIcon} />
+                  </GradientButton>}
+                >
+                </Section>
+              </Col>
+            </Row>
+          </ContentWrapper>
         </React.Fragment>}
         <Modal
           title={'Are You Sure?'}

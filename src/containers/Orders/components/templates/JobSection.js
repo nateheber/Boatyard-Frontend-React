@@ -5,7 +5,7 @@ import AddIcon from '../../../../resources/job/add.png';
 
 import { Section } from 'components/basic/InfoSection';
 import JobItem from '../infoSections/JobItem';
-import GradientButton from '../basic/GradientButton';
+import { GradientButton } from 'components/basic/Buttons';
 
 const Wrapper = styled.div`
   margin: -25px -15px;
