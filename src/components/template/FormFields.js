@@ -237,7 +237,37 @@ export default class FormFields extends React.Component {
 
   handleCreateLabel = (inputValue) => {
     return formatTimeFromString(inputValue);
-  }
+  };
+
+  noOptionsMessage = ({ inputValue }) => {
+    return formatTimeFromString(inputValue);
+  };
+
+  checkValidationOfNewData = (inputValue, selectValue, selectOptions) => {
+    const value = formatTimeFromString(inputValue);
+    if (findIndex(selectOptions, option => option.value === value) > -1) {
+      return false;
+    }
+    return true;
+  };
+
+  filterOption = (option, inputValue) => {
+    if (inputValue.length > 0) {
+      const value = formatTimeFromString(inputValue);
+      const timeArray = value.replace(/am/g, '').replace(/pm/g, '').split(':');
+      const aIndex = inputValue.toLowerCase().indexOf('a');
+      const pIndex = inputValue.toLowerCase().indexOf('p');
+      if (aIndex >= 0 || pIndex >= 0) {
+        timeArray.push(value.slice(-2));
+      }
+      return timeArray.reduce(
+        (acc, cur) => acc && option.label.toLowerCase().includes(cur.toLowerCase()),
+        true,
+      );
+    } else {
+      return true;
+    }
+  };
 
   getFieldValues = () => this.state.value;
 
@@ -369,8 +399,11 @@ export default class FormFields extends React.Component {
               value={fieldValue}
               options={startTimeOptions}
               placeholder={placeholder}
-              onChange={(value, actionMeta) => this.onChangeValue(field, value, type, actionMeta)}
+              isValidNewOption={this.checkValidationOfNewData}
+              onChange={value => this.onChangeValue(field, value, type)}
               formatCreateLabel={this.handleCreateLabel}
+              noOptionsMessage={this.noOptionsMessage}
+              filterOption={this.filterOption}
               hasError={errorIdx >= 0}
               errorMessage={errorMessage}
             />
@@ -386,8 +419,11 @@ export default class FormFields extends React.Component {
               value={fieldValue.from_time}
               options={startTimeOptions}
               placeholder={''}
-              onChange={(value, actionMeta) => this.onChangeValue(field, { ...fieldValue, from_time: value }, type, true)}
-              formatCreateLabel={this.handleCreateLabel}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, from_time: value }, type, true)}
+              formatCreateLabel={this.handleCreateLabel
+              }
+              noOptionsMessage={this.noOptionsMessage}
+              filterOption={this.filterOption}
               hasError={errorIdx >= 0}
               errorMessage={errorMessage}
             />
@@ -399,8 +435,10 @@ export default class FormFields extends React.Component {
               value={fieldValue.to_time}
               options={endTimeOptions}
               placeholder={''}
-              onChange={(value, actionMeta) => this.onChangeValue(field, { ...fieldValue, to_time: value }, type)}
-              formatCreateLabel={this.handleCreateLabel}
+              onChange={value => this.onChangeValue(field, { ...fieldValue, to_time: value }, type)}
+              formatCreateLabel={inputValue => this.handleCreateLabel(inputValue, true)}
+              noOptionsMessage={this.noOptionsMessage}
+              filterOption={this.filterOption}
               hasError={errorIdx >= 0}
               errorMessage={errorMessage}
             />
