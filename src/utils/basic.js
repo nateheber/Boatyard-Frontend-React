@@ -199,7 +199,7 @@ export const formatTimeFromString = (value) => {
           noonValue = 'am';
         } else if (pIndex >= 0) {
           noonValue = 'pm';
-        }  
+        }
       } else {
         hours = `${parseInt(timeString.substr(0, 2))% 12 === 0 ? '12' : parseInt(timeString.substr(0, 2)) % 12}`;
         if (parseInt(timeString.slice(2)) > 6) {
