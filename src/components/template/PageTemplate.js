@@ -51,7 +51,8 @@ class PageTemplate extends React.Component {
       if ((location.search !== null || location.search !== undefined) && location.search.indexOf('redirect_url') < 0) {
         if (!(location.pathname.indexOf('/login') > -1 ||
           location.pathname.indexOf('/forgot-password') > -1 ||
-          location.pathname.indexOf('/reset-password') > -1)) {
+          location.pathname.indexOf('/reset-password') > -1 ||
+          location.pathname.indexOf('/create-password') > -1)) {
           history.push({
             pathname: '/login/',
             search: `?redirect_url=${location.pathname}${location.search}`
@@ -61,7 +62,8 @@ class PageTemplate extends React.Component {
     } else {
       if (location.pathname.indexOf('/login') > -1 ||
         location.pathname.indexOf('/forgot-password') > -1 ||
-        location.pathname.indexOf('/reset-password') > -1) {
+        location.pathname.indexOf('/reset-password') > -1 ||
+        location.pathname.indexOf('/create-password') > -1) {
         history.push('/');
       }
     }
