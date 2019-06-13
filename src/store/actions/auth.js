@@ -22,6 +22,10 @@ export const actionTypes = {
   RESET_PASSWORD_SUCCESS: '[AUTH] - Reset password Success',
   RESET_PASSWORD_FAILURE: '[AUTH] - Reset password Failure',
 
+  CREATE_PASSWORD: '[AUTH] - Create password',
+  CREATE_PASSWORD_SUCCESS: '[AUTH] - Create password Success',
+  CREATE_PASSWORD_FAILURE: '[AUTH] - Create password Failure',
+
   SET_PROVIDER_INFO: '[AUTH] - Set provider token and info',
   SET_PRIVILEGE: '[AUTH] - Set privilege',
 
@@ -51,6 +55,10 @@ export const SendResetRequestFailure = createAction(actionTypes.SEND_RESET_REQUE
 export const ResetPassword = createAction(actionTypes.RESET_PASSWORD, payload => payload);
 export const ResetPasswordSuccess = createAction(actionTypes.RESET_PASSWORD_SUCCESS);
 export const ResetPasswordFailure = createAction(actionTypes.RESET_PASSWORD_FAILURE);
+
+export const CreatePassword = createAction(actionTypes.CREATE_PASSWORD, payload => payload);
+export const CreatePasswordSuccess = createAction(actionTypes.CREATE_PASSWORD_SUCCESS);
+export const CreatePasswordFailure = createAction(actionTypes.CREATE_PASSWORD_FAILURE);
 
 export const SetProviderInfo = createAction(actionTypes.SET_PROVIDER_INFO, payload => payload);
 export const SetPrivilege = createAction(actionTypes.SET_PRIVILEGE, payload => payload);
