@@ -176,8 +176,22 @@ class OrderReviewSection extends React.Component {
   sendQuote = (file, uri) => {
     const { SendQuote, order } = this.props;
     const orderId = get(order, 'id');
+    let params = {};
+    if (file && uri) {
+      params = {
+        order: {
+          attachments: [
+            {
+              filename: file.name,
+              attachment: uri
+            }
+          ]
+        }
+      };
+    }
     SendQuote({
       orderId,
+      params,
       success: () => {
         this.setState({ showQuote: false });
         toastr.success('Success', 'Sent quote successfully!');
@@ -192,8 +206,22 @@ class OrderReviewSection extends React.Component {
   sendInvoice = (file, uri) => {
     const { SendInvoice, order } = this.props;
     const orderId = get(order, 'id');
+    let params = {};
+    if (file && uri) {
+      params = {
+        order: {
+          attachments: [
+            {
+              filename: file.name,
+              attachment: uri
+            }
+          ]
+        }
+      };
+    }
     SendInvoice({
       orderId,
+      params,
       success: () => {
         this.setState({ showInvoice: false });
         toastr.success('Success', 'Sent invoice successfully!');
