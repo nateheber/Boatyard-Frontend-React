@@ -1,10 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Intercom from 'react-intercom';
-import { IntercomAPI } from 'react-intercom';
 
 import { isAuthenticatedSelector } from 'store/selectors/auth';
+import Intercom, { IntercomAPI } from 'components/basic/Intercom';
 import { intercomAppId } from '../../api/config';
 import { SetRefreshFlag } from 'store/actions/auth';
 import AuthPageTemplate from './AuthPageTemplate';
@@ -91,7 +90,7 @@ class PageTemplate extends React.Component {
             {this.props.children}
           </AuthPageTemplate>
         }
-        <Intercom appID={intercomAppId} { ...user } />
+        <Intercom appID={intercomAppId}  { ...user } />
       </React.Fragment>
     );
   }
