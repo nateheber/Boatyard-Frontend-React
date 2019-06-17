@@ -20,6 +20,7 @@ class PageTemplate extends React.Component {
 
   componentWillMount() {
     this.unlisten = this.props.history.listen((location, action) => {
+      IntercomAPI('update', { page_changed_at: Date.now() });
     });    
   }
 
