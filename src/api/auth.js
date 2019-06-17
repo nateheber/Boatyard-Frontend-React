@@ -37,9 +37,9 @@ export const resetPassword = (token, password) =>
   });
 
   export const createPassword = (token, password) =>
-  authClient.patch(`${apiBaseUrl}/users/generations`, {
-    user: {
-      authentication_token: token,
+  authClient.patch(`${apiBaseUrl}/users/invitations`, {
+    invitation: {
+      invitation_token: token,
       password: password,
       password_confirmation: password
     }
