@@ -269,7 +269,7 @@ class TeamDetails extends React.Component {
       errorMessage,
       visibleOfConfirmationModal
     } = this.state;
-    const { currentStatus } = this.props;
+    const { privilege, currentStatus } = this.props;
     const loading = currentStatus === actionTypes.GET_MANAGEMENT;
     const actions = (
       <React.Fragment>
@@ -352,13 +352,13 @@ class TeamDetails extends React.Component {
             {!managementId && <PageTitle style={{ padding: '25px 30px' }}>Add New Member</PageTitle>}
           </HeaderWrapper>
           <ContentWrapper>
-            <Row>
-              <Col xs={12} sm={12} md={9}>
+            {privilege === 'provider' && <Row>
+              <Col xs={12} sm={12} md={8} lg={9}>
                 <Section title='Contact' headerStyle={{ padding: 25 }}>
                   <EditorSection containerStype={{ padding: '30px 15px' }} actions={actions} content={editSection} />
                 </Section>
               </Col>
-              <Col xs={12} sm={12} md={3}>
+              <Col xs={12} sm={12} md={4} lg={3}>
                 <Section
                   title='Location'
                   mode='view'
@@ -369,7 +369,14 @@ class TeamDetails extends React.Component {
                 >
                 </Section>
               </Col>
-            </Row>
+            </Row>}
+            {privilege !== 'provider' && <Row>
+              <Col xs={12} sm={12} md={8} lg={9}>
+                <Section title='Contact' headerStyle={{ padding: 25 }}>
+                  <EditorSection containerStype={{ padding: '30px 15px' }} actions={actions} content={editSection} />
+                </Section>
+              </Col>
+            </Row>}
           </ContentWrapper>
         </React.Fragment>}
         <Modal
