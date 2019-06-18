@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const MessageItem = styled.div`
-  padding: 25px 15px;
+  padding: 15px;
   justify-content: center;
   align-items: center;
   cursor: pointer;
@@ -11,4 +11,6 @@ export const MessageItem = styled.div`
   &.active {
     background-color: rgb(245, 245, 245);
   }
+  min-height: 56px;
+  display: flex;
 `;
