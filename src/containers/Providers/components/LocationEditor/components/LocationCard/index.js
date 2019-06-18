@@ -134,7 +134,7 @@ const ContactTrigger = styled.div`
   &::after {
     content: '';
     position: absolute;
-    right: 6px;
+    right: 5px;
     top: 7px;
     display: inline-block;
     width: 11.2px;
