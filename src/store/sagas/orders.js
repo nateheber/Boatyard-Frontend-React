@@ -214,9 +214,9 @@ function* updateOrder(action) {
 
 function* sendQuote(action) {
   const apiClient = yield select(getCustomApiClient);
-  const { orderId, success, error } = action.payload;
+  const { orderId, params, success, error } = action.payload;
   try {
-    const result = yield call(apiClient.post, `/orders/${orderId}/quotes`);
+    const result = yield call(apiClient.post, `/orders/${orderId}/quotes`, params);
     const { data: order } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
@@ -236,9 +236,9 @@ function* sendQuote(action) {
 
 function* sendInvoice(action) {
   const apiClient = yield select(getCustomApiClient);
-  const { orderId, success, error } = action.payload;
+  const { orderId, params, success, error } = action.payload;
   try {
-    const result = yield call(apiClient.post, `/orders/${orderId}/invoices`);
+    const result = yield call(apiClient.post, `/orders/${orderId}/invoices`, params);
     const { data: order } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
     yield put({
