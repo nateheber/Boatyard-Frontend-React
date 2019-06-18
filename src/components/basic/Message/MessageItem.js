@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const MessageItem = styled.div`
-  padding: 15px;
+  padding: 15px 25px;
   justify-content: center;
   align-items: center;
   cursor: pointer;
