@@ -8,6 +8,8 @@ import { customApiClient, createProviderClient, createPreferredProviderClient } 
 
 import { getCustomApiClient } from './sagaSelectors';
 
+const escalationClient = customApiClient('basic');
+
 const refineProviders = (providers) => {
   const refinedProviders = providers.map(provider => {
     return {
@@ -120,7 +122,7 @@ function* loginWithProvider(action) {
         type: authActions.SET_PRIVILEGE,
         payload: 'provider'
       });
-      yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: result });
+      yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: get(result, 'data') });
       if (success) {
         yield call(success);
       }
@@ -130,6 +132,34 @@ function* loginWithProvider(action) {
         yield call(error, { message: 'Invalid Credentials' });
       }
     }
+  } catch (e) {
+    yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
+function* loginWithProviderLocation(action) {
+  const escalationApiClient = yield select(getCustomApiClient);
+  const { params, success, error } = action.payload;
+  try {
+    const result = yield call(escalationApiClient.post, '/users/escalations', {
+      escalation: params
+    });
+    console.log('----------result----------', result);
+    // yield put({
+    //   type: authActions.SET_PROVIDER_INFO,
+    //   payload: get(result, 'data')
+    // });
+    // yield put({
+    //   type: authActions.SET_PRIVILEGE,
+    //   payload: 'provider'
+    // });
+    // yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: result });
+    // if (success) {
+    //   yield call(success);
+    // }
   } catch (e) {
     yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
     if (error) {
@@ -273,4 +303,5 @@ export default function* ProviderSaga() {
   yield takeEvery(actionTypes.UPDATE_PROVIDER, updateProvider);
   yield takeEvery(actionTypes.DELETE_PROVIDER, deleteProvider);
   yield takeEvery(actionTypes.DELETE_PREFERRED_PROVIDER, deletePreferredProvider);
+  yield takeEvery(actionTypes.LOGIN_WITH_PROVIDER_LOCATION, loginWithProviderLocation);
 }
