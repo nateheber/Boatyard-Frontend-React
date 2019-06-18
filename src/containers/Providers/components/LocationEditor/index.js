@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get } from 'lodash';
 
+import { LoginWithProviderLocation } from 'store/actions/providers';
 import { GetProviderLocations } from 'store/actions/providerLocations';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 import { SearchBox } from 'components/basic/Input';
@@ -57,7 +58,14 @@ class LocationEditor extends React.Component {
   }
 
   handleLogin = (location) => {
+    const { LoginWithProviderLocation } = this.props;
     console.log('---------------Location-----------', location);
+    LoginWithProviderLocation({
+      params: {
+        provider_id: location.providerId,
+        provider_location_id: location.id
+      }
+    });
   }
 
   handleCreate = (location) => {
@@ -114,7 +122,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  GetProviderLocations
+  GetProviderLocations,
+  LoginWithProviderLocation
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LocationEditor);
