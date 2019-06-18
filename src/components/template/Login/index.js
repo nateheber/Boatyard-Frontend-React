@@ -85,33 +85,34 @@ class LoginComponent extends React.Component {
         password
       },
       success: () => {
-        GetUserPermission({ success: () => {
-          const index = this.props.location.search.indexOf('redirect_url');
-          if (index > -1) {
-            const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
-            this.props.history.push(redirectUrl);
-          } else {
-            this.props.history.push('/');
-          }
-        },
-        error: (e) => {
-          LoginWithProvider({
-            success: () => {
-              const index = this.props.location.search.indexOf('redirect_url');
-              if (index > -1) {
-                const index = this.props.location.search.indexOf('redirect_url');
-                const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
-                this.props.history.push(redirectUrl);
-              } else {
-                this.props.history.push('/');
-              }
-            },
-            error: (e) => {
-              toastr.error('Error', e.message);
+        GetUserPermission({
+          success: () => {
+            const index = this.props.location.search.indexOf('redirect_url');
+            if (index > -1) {
+              const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
+              this.props.history.push(redirectUrl);
+            } else {
+              this.props.history.push('/');
             }
-          })
-        }
-      });
+          },
+          error: (e) => {
+            LoginWithProvider({
+              success: () => {
+                const index = this.props.location.search.indexOf('redirect_url');
+                if (index > -1) {
+                  const index = this.props.location.search.indexOf('redirect_url');
+                  const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
+                  this.props.history.push(redirectUrl);
+                } else {
+                  this.props.history.push('/');
+                }
+              },
+              error: (e) => {
+                toastr.error('Error', e.message);
+              }
+            });
+          }
+        });
       },
       error: (e) => {
         toastr.error('Error', e.message);
