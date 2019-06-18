@@ -50,13 +50,17 @@ class LocationEditor extends React.Component {
     GetProviderLocations({ providerId });
   }
 
-  onEdit = locationId => () => {
+  handleEdit = locationId => () => {
     const { providerLocations } = this.props;
     const idx = providerLocations.findIndex(location => location.id === locationId);
     this.setState({ location: { ...providerLocations[idx] }, showNewLocation: true });
   }
 
-  onCreate = (location) => {
+  handleLogin = (location) => {
+    console.log('---------------Location-----------', location);
+  }
+
+  handleCreate = (location) => {
     const { onCreateApp } = this.props;
     if (onCreateApp) {
       onCreateApp(location);
@@ -89,8 +93,9 @@ class LocationEditor extends React.Component {
                 <LocationCard
                   providerName={name}
                   location={location}
-                  onEdit={this.onEdit(location.id)}
-                  onCreate={this.onCreate}
+                  onEdit={this.handleEdit(location.id)}
+                  onLogin={this.handleLogin}
+                  onCreate={this.handleCreate}
                   key={`provider_location_${idx}`}
                 />
               ))

@@ -170,7 +170,7 @@ const CreateButton = styled(OrangeButton)`
   margin: 0px;
 `;
 
-export default ({ providerName, location, onEdit, onCreate }) => {
+export default ({ providerName, location, onEdit, onLogin, onCreate }) => {
   const headerImage = get(location, 'homeImage.url');
   const contactName = get(location, 'contactName');
   const contactPhone = get(location, 'contactPhone');
@@ -200,7 +200,7 @@ export default ({ providerName, location, onEdit, onCreate }) => {
           <ContactFieldLabel>Email:</ContactFieldLabel>{contactEmail}
         </ContactField>
         <ButtonWrapper>
-          <LoginButton className="thin-font">LOGIN</LoginButton>
+          <LoginButton className="thin-font" onClick={() => onLogin(location)}>LOGIN</LoginButton>
           <CreateButton className="thin-font" onClick={() => onCreate(location)}>CREATE APP</CreateButton>
         </ButtonWrapper>
       </Content>
