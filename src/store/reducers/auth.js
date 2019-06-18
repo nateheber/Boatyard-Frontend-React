@@ -8,6 +8,7 @@ const initialState = {
   authToken: '',
   adminToken: '',
   providerToken: '',
+  providerLocationToken: '',
   errors: null,
   privilege: '',
   providerId: '',
@@ -56,6 +57,19 @@ export default handleActions(
         draft.currentStatus = type;
         if (authorizationToken) {
           draft.providerToken = authorizationToken;
+        }
+        draft.providerId = id;
+        draft.taxRate = taxRate;
+        draft.errors = null;
+      }),
+    [actionTypes.SET_PROVIDER_LOCATION_INFO]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { id, attributes: { taxRate }} = payload;
+        const authorizationToken = get(payload, 'authorizationToken');
+        draft.currentStatus = type;
+        if (authorizationToken) {
+          draft.providerLocationToken = authorizationToken;
         }
         draft.providerId = id;
         draft.taxRate = taxRate;

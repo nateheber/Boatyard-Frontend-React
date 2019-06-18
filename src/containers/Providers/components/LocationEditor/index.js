@@ -1,7 +1,9 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { LoginWithProviderLocation } from 'store/actions/providers';
 import { GetProviderLocations } from 'store/actions/providerLocations';
@@ -58,12 +60,14 @@ class LocationEditor extends React.Component {
   }
 
   handleLogin = (location) => {
-    const { LoginWithProviderLocation } = this.props;
-    console.log('---------------Location-----------', location);
+    const { LoginWithProviderLocation, history } = this.props;
     LoginWithProviderLocation({
-      params: {
-        provider_id: location.providerId,
-        provider_location_id: location.id
+      location,
+      success: () => {
+        history.push('/dashboard');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
   }
@@ -126,4 +130,4 @@ const mapDispatchToProps = {
   LoginWithProviderLocation
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(LocationEditor);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LocationEditor));

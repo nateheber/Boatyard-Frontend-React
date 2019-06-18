@@ -8,8 +8,6 @@ import { customApiClient, createProviderClient, createPreferredProviderClient } 
 
 import { getCustomApiClient } from './sagaSelectors';
 
-const escalationClient = customApiClient('basic');
-
 const refineProviders = (providers) => {
   const refinedProviders = providers.map(provider => {
     return {
@@ -142,26 +140,30 @@ function* loginWithProvider(action) {
 
 function* loginWithProviderLocation(action) {
   const escalationApiClient = yield select(getCustomApiClient);
-  const { params, success, error } = action.payload;
+  const { location, success, error } = action.payload;
   try {
     const result = yield call(escalationApiClient.post, '/users/escalations', {
-      escalation: params
+      escalation: {
+        provider_location_id: location.id
+      }
     });
-    console.log('----------result----------', result);
-    // yield put({
-    //   type: authActions.SET_PROVIDER_INFO,
-    //   payload: get(result, 'data')
-    // });
-    // yield put({
-    //   type: authActions.SET_PRIVILEGE,
-    //   payload: 'provider'
-    // });
-    // yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: result });
-    // if (success) {
-    //   yield call(success);
-    // }
+    yield put({
+      type: authActions.SET_PROVIDER_LOCATION_INFO,
+      payload: {
+        ...get(location, 'relationships.providers'),
+        authorizationToken: get(result, 'data.authorizationToken')
+      }
+    });
+    yield put({
+      type: authActions.SET_PRIVILEGE,
+      payload: 'provider_location'
+    });
+    yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_LOCATION_SUCCESS, payload: location });
+    if (success) {
+      yield call(success);
+    }
   } catch (e) {
-    yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
+    yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_LOCATION_FAILURE, payload: e });
     if (error) {
       yield call(error, e);
     }
