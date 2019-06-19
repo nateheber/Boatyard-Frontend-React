@@ -124,6 +124,7 @@ class PasswordForm extends React.Component {
   };
 
   render() {
+    const { isCreating } = this.props;
     return (
       <Form
         onSubmit={this.handleSubmit}
@@ -131,7 +132,7 @@ class PasswordForm extends React.Component {
           <Wrapper onSubmit={handleSubmit}>
             <Logo src={LogoImage} />
             <InputRow>
-              <InputLabel>New Password</InputLabel>
+              <InputLabel>{isCreating ? 'Create' : 'New'} Password</InputLabel>
               <InputField
                 name="newPassword"
                 type="password"
@@ -155,7 +156,7 @@ class PasswordForm extends React.Component {
                 type="submit"
                 disabled={submitting}
               >
-                Reset Password
+                {isCreating ? 'Login' : 'Reset Password'}
               </Button>
               <PasswordHint>*Passwords must be at least six characters long.</PasswordHint>
             </ActionWrapper>

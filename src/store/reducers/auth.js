@@ -23,6 +23,12 @@ export default handleActions(
         draft.currentStatus = type;
         draft.authToken = payload;
       }),
+    [actionTypes.CREATE_PASSWORD_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.authToken = payload;
+      }),
     [actionTypes.AUTH_LOGIN_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;

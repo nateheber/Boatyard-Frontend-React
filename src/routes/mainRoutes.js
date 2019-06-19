@@ -6,6 +6,7 @@ import PageTemplate from 'components/template/PageTemplate';
 import Login from 'components/template/Login';
 import ForgotPassword from 'components/template/ForgotPassword';
 import ResetPassword from 'components/template/ResetPassword';
+import CreatePassword from 'components/template/CreatePassword';
 import Dashboard from 'components/template/Dashboard';
 import Order from 'containers/Orders/OrderList';
 import OrderDetails from 'containers/Orders/OrderDetails';
@@ -31,6 +32,7 @@ const MainRoutes = ({ privilege }) => (
       <Route exact path="/login" component={Login} />
       <Route exact path="/forgot-password" component={ForgotPassword} />
       <Route exact path="/reset-password" component={ResetPassword} />
+      <Route exact path="/create-password" component={CreatePassword} />
       <Route exact path="/update-profile" component={UpdateProfile} />
       <Route exact path="/dashboard/" component={Dashboard} />
       <Route exact path="/inbox/" component={Inbox} />

@@ -1,10 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Intercom from 'react-intercom';
-import { IntercomAPI } from 'react-intercom';
 
 import { isAuthenticatedSelector } from 'store/selectors/auth';
+import Intercom, { IntercomAPI } from 'components/basic/Intercom';
 import { intercomAppId } from '../../api/config';
 import { SetRefreshFlag } from 'store/actions/auth';
 import AuthPageTemplate from './AuthPageTemplate';
@@ -21,7 +20,7 @@ class PageTemplate extends React.Component {
 
   componentWillMount() {
     this.unlisten = this.props.history.listen((location, action) => {
-      IntercomAPI('update', { last_request_at: parseInt((new Date()).getTime()/1000) });
+      IntercomAPI('update', { page_changed_at: Date.now() });
     });    
   }
 
@@ -51,7 +50,8 @@ class PageTemplate extends React.Component {
       if ((location.search !== null || location.search !== undefined) && location.search.indexOf('redirect_url') < 0) {
         if (!(location.pathname.indexOf('/login') > -1 ||
           location.pathname.indexOf('/forgot-password') > -1 ||
-          location.pathname.indexOf('/reset-password') > -1)) {
+          location.pathname.indexOf('/reset-password') > -1 ||
+          location.pathname.indexOf('/create-password') > -1)) {
           history.push({
             pathname: '/login/',
             search: `?redirect_url=${location.pathname}${location.search}`
@@ -61,7 +61,8 @@ class PageTemplate extends React.Component {
     } else {
       if (location.pathname.indexOf('/login') > -1 ||
         location.pathname.indexOf('/forgot-password') > -1 ||
-        location.pathname.indexOf('/reset-password') > -1) {
+        location.pathname.indexOf('/reset-password') > -1 ||
+        location.pathname.indexOf('/create-password') > -1) {
         history.push('/');
       }
     }
@@ -89,7 +90,7 @@ class PageTemplate extends React.Component {
             {this.props.children}
           </AuthPageTemplate>
         }
-        <Intercom appID={intercomAppId} { ...user } />
+        <Intercom appID={intercomAppId}  { ...user } />
       </React.Fragment>
     );
   }
