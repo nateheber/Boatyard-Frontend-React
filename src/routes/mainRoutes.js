@@ -49,7 +49,15 @@ const MainRoutes = ({ privilege }) => (
           }
         }}
       />
-      <Route exact path="/provider-details/" component={ProviderEditor} />
+      <Route exact path="/provider-details/"
+        render={() => {
+          if(privilege === 'admin') {
+            return (<ProviderEditor />);
+          } else {
+            return (<Redirect to="/dashboard"/>);
+          }
+        }}
+      />
       <Route exact path="/invoices/"
         render={() => {
           if(privilege === 'provider') {
