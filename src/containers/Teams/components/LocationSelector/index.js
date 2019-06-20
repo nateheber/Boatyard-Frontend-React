@@ -1,32 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
-import { get, findIndex, sortBy } from 'lodash';
+import { get, findIndex, sortBy, orderBy } from 'lodash';
 import deepEqual from 'deep-equal';
 
-import { Input } from 'components/basic/Input';
-
-import { UpdateProvider } from 'store/actions/providers';
 import { GetProviderLocations } from 'store/actions/providerLocations';
+import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
+import { Input } from 'components/basic/Input';
 import { GradientButton } from 'components/basic/Buttons';
-import CloseIcon from 'resources/close.png';
-import ProviderCheck from '../basic/ProviderCheck';
-import AssignConfirmModal from '../modals/AssignConfirmModal';
+import LocationCheck from '../LocationCheck';
+import ConfirmModal from '../ConfirmModal';
 
 import AddIcon from '../../../../resources/job/add.png';
-
-const Button = styled.button`
-  position: relative;
-  width: 30px;
-  height: 30px;
-  background-color: white;
-  border: 1px solid #A9B5BB;
-  border-radius: 5px;
-  padding: 5px;
-  outline: none;
-  cursor: pointer;
-`;
 
 const Wrapper = styled.div`
   position: relative;
@@ -34,41 +21,26 @@ const Wrapper = styled.div`
 `;
 
 const FitlerWrapper = styled.div`
-  padding: 25px 30px;
+  padding: 20px 30px 0;
 `;
 
 const Image = styled.img`
   width: 11px;
 `;
 
-const ClearButton = styled.button`
-  position: relative;
-  height: 30px;
-  width: 240px;
-  text-align: center;
-  font-size: 16px;
+const WrapperTitle = styled.div`
+  color: #184961;
+  font-size: 14px;
   font-family: 'Montserrat', sans-serif;
-  color: #003247;
-  background-color: white;
-  outline: none;
-  border: 1px solid #A9B5BB;
-  border-radius: 5px;
-  &::after {
-    display: inline-block;
-    position: absolute;
-    content: '';
-    width: 20px;
-    height: 20px;
-    right: 5px;
-    background-image: url(${CloseIcon})
-  }
-  cursor: pointer;
+  line-height: 18px;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-bottom: 10px;
 `;
-
 
 const Scroller = styled.div`
   height: 308px;
-  padding: 25px 30px;
+  padding: 10px 30px 20px;
   overflow-y: scroll;
 `;
 
@@ -110,19 +82,8 @@ const DropdownMenu = styled.div`
 `;
 
 const MenuItemLi = styled.div`
-  padding: 8px 0;
+  padding: 5px 0;
 `;
-
-const ClearAssigneeWrapper = styled.div`
-  height: 51px;
-  background-color: #F5F5F5;
-  border-top: 1px solid #DBDBDB;
-  border-bottom: 1px solid #DBDBDB;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-`
 
 class LocationSelector extends React.Component {
   constructor(props) {
@@ -141,11 +102,20 @@ class LocationSelector extends React.Component {
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
+    const { providerId, GetProviderLocations } = this.props;
+    GetProviderLocations({
+      providerId,
+      params: { page: 1, per_page: 100 },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+    this.setLocations();
   }
 
   componentDidUpdate(prevProps) {
-    if (!deepEqual(this.props.dispatchIds, prevProps.dispatchIds)) {
-      this.setState({ dispatchIds: this.props.dispatchIds });
+    if (!deepEqual(this.props.locations, prevProps.locations)) {
+      this.setLocations();
     }
   }
 
@@ -155,54 +125,45 @@ class LocationSelector extends React.Component {
 
   onChangeFilter = (evt) => {
     this.setState({ keyword: evt.target.value }, () => {
-      this.filterProviders();
+      this.filterLocations();
     });
   };
 
-  onFetchProviders = () => {
-    const { dispatchIds, providers } = this.props;
-    const dispatchedProviders = dispatchIds.map(id => {
-      return providers.find(item => `${item.id}` === `${id}`);
+  setLocations = () => {
+    const { providerLocations } = this.props;
+    const locations = orderBy(providerLocations, [function(o){ return o.relationships.locations.attributes.name.toLowerCase(); }], ['asc']);
+    this.setState({ locations }, () => {
+      this.filterLocations();
     });
-    this.setState({
-      providers: providers.slice(0),
-      dispatchedProviders,
-      filteredProviders: providers.slice(0)
-    });
-  };
+  }
 
-  onChangeSelection = (provider) => {
-    const { dispatchedProviders } = this.state;
-    const idx = findIndex(dispatchedProviders, item => `${item.id}` === `${provider.id}`);
+  onChangeSelection = (location) => {
+    const { currentLocations } = this.state;
+    const idx = findIndex(currentLocations, item => `${item.id}` === `${location.id}`);
     let result = [];
     if (idx >= 0) {
-      result = [...dispatchedProviders.slice(0, idx), ...dispatchedProviders.slice(idx + 1)];
+      result = [...currentLocations.slice(0, idx), ...currentLocations.slice(idx + 1)];
     } else {
-      result = [...dispatchedProviders, provider];
+      result = [...currentLocations, location];
     }
-    this.setState({ dispatchedProviders: result });
+    this.setState({ currentLocations: result });
   };
 
   showMenu = () => {
-    this.props.GetProviders({params: { page: 1, per_page: 1000 }, success: this.onFetchProviders});
     this.setState({ showMenu: true });
-  };
-
-  clearAssignees = () => {
-    this.setState({ dispatchedProviders: [] });
   };
 
   setWrapperRef(node) {
     this.wrapperRef = node;
   }
 
-  filterProviders = () => {
-    const { keyword, providers } = this.state;
-    let filteredProviders = providers.slice(0);
+  filterLocations = () => {
+    const { keyword, locations } = this.state;
+    let filteredLocations = locations.slice(0);
     if (keyword && keyword.trim().length > 0) {
-      filteredProviders = providers.filter(provider => get(provider, 'name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
+      filteredLocations = locations.filter(location => get(location, 'relationships.locations.attributes.name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
     }
-    this.setState({ filteredProviders });
+    this.setState({ filteredLocations });
   };
 
   handleClickOutside(event) {
@@ -217,44 +178,60 @@ class LocationSelector extends React.Component {
   }
 
   showModal = () => {
-    const { dispatchedProviders } = this.state;
+    const { currentLocations } = this.state;
     const { dispatchIds } = this.props;
     const originalArray = sortBy(dispatchIds);
-    const targetArray = sortBy(dispatchedProviders.map(provider => provider.id));
+    const targetArray = sortBy(currentLocations.map(provider => provider.id));
     if (!deepEqual(originalArray, targetArray)) {
       this.setState({ showModal: true });
     }
   };
 
   closeModal = () => {
-    this.setState({ dispatchedProviders: [], showModal: false });
+    this.setState({ currentLocations: [], showModal: false });
   };
 
   submitData = () => {
-    const { dispatchedProviders } = this.state;
-    const dispatchIds = dispatchedProviders.map(provider => provider.id);
-    this.props.onChange(dispatchIds);
-    this.setState({ showModal: false, dispatchedProviders: [] });
+    const { currentLocations } = this.state;
+    this.props.onChange(currentLocations);
+    this.setState({ showModal: false, currentLocations: [] });
   };
 
   isChecked = (provider) => {
-    const { dispatchedProviders } = this.state;
-    const idx= findIndex(dispatchedProviders, item => `${provider.id}` === `${item.id}`);
+    const { currentLocations } = this.state;
+    const idx= findIndex(currentLocations, item => `${provider.id}` === `${item.id}`);
     return idx >= 0;
   };
 
-  filterShowingProviders = () => {
-    const { filteredProviders, dispatchedProviders } = this.state;
-    const result = filteredProviders.filter((provider) => {
-      const idx = dispatchedProviders.findIndex(item => `${item.id}` === `${provider.id}`);
+  filterShowingLocations = () => {
+    const { filteredLocations, currentLocations } = this.state;
+    const result = filteredLocations.filter((location) => {
+      const idx = currentLocations.findIndex(item => `${item.id}` === `${location.id}`);
       return idx === -1;
     });
     return result;
   };
 
+  checkedAll = () => {
+    const { locations, currentLocations } = this.state;
+    if (locations.length > 0 && locations.length === currentLocations.length) {
+      return true
+    }
+    return false;
+  };
+
+  onChangeAll = () => {
+    const { locations, currentLocations } = this.state;
+    if (currentLocations.length < locations.length) {
+      this.setState({ currentLocations: locations.slice(0)});
+    } else {
+      this.setState({ currentLocations: [] });
+    }
+  };
+
   render() {
-    const { showMenu, showModal, keyword, dispatchedProviders } = this.state;
-    const filteredProviders = this.filterShowingProviders();
+    const { showMenu, showModal, keyword, currentLocations, filteredLocations } = this.state;
+    // const filteredLocations = this.filterShowingLocations();
     return (
       <Wrapper ref={this.setWrapperRef}>
         <GradientButton onClick={this.showMenu}>
@@ -262,43 +239,48 @@ class LocationSelector extends React.Component {
         </GradientButton>
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
           <FitlerWrapper>
+            <WrapperTitle>Choose Locations</WrapperTitle>
             <Input type="text" value={keyword} onChange={this.onChangeFilter} />
           </FitlerWrapper>
-          <ClearAssigneeWrapper>
-            <ClearButton onClick={this.clearAssignees}>Clear Assignees</ClearButton>
-          </ClearAssigneeWrapper>
           <Scroller>
+            <MenuItemLi>
+              {keyword.trim().length === 0 && <LocationCheck checked={this.checkedAll()} title={'All'} onClick={this.onChangeAll} />}
+            </MenuItemLi>
             {
-              dispatchedProviders.map(( provider, idx ) => (
-                <MenuItemLi key={`provider_${provider.id}`} >
-                  <ProviderCheck checked={this.isChecked(provider)} provider={provider} onClick={() => this.onChangeSelection(provider)} />
+              filteredLocations.map(( location, idx ) => (
+                <MenuItemLi key={`location)${location.id}`} >
+                  <LocationCheck checked={this.isChecked(location)} title={get(location, 'relationships.locations.attributes.name')} onClick={() => this.onChangeSelection(location)} />
+                </MenuItemLi>
+              ))
+            }
+            {/* {
+              currentLocations.map(( location, idx ) => (
+                <MenuItemLi key={`location)${location.id}`} >
+                  <LocationCheck checked={this.isChecked(location)} title={get(location, 'relationships.locations.attributes.name')} onClick={() => this.onChangeSelection(location)} />
                 </MenuItemLi>
               ))
             }
             {
-              filteredProviders.map((provider, idx) => (
-                <MenuItemLi key={`provider_${provider.id}`} >
-                  <ProviderCheck checked={this.isChecked(provider)} provider={provider} onClick={() => this.onChangeSelection(provider)} />
+              filteredLocations.map((location, idx) => (
+                <MenuItemLi key={`location_${location.id}`} >
+                  <LocationCheck checked={this.isChecked(location)} title={get(location, 'relationships.locations.attributes.name')} onClick={() => this.onChangeSelection(location)} />
                 </MenuItemLi>
               ))
-            }
+            } */}
           </Scroller>
         </DropdownMenu>
-        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} assignees={dispatchedProviders} />
+        <ConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} locations={currentLocations} />
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ provider: { providers, page, total, perPage } }) => ({
-  providers,
-  page,
-  total,
-  perPage
+const mapStateToProps = (state) => ({
+  providerId: state.auth.providerId,
+  ...refinedProviderLocationSelector(state),
 });
 
 const mapDispatchToProps = {
-  UpdateProvider,
   GetProviderLocations
 };
 
