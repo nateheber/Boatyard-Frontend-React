@@ -7,16 +7,16 @@ import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, GetManagement, CreateManagement, UpdateManagement, DeleteManagement } from 'store/actions/managements';
+import { UpdateProvider } from 'store/actions/providers';
 import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
 import { Section } from 'components/basic/InfoSection';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { NormalText, PageTitle } from 'components/basic/Typho'
-import { OrangeButton, HollowButton, GradientButton } from 'components/basic/Buttons';
+import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 import Modal from 'components/compound/Modal';
-import { TeamDetailsHeader } from '../../components';
+import { TeamDetailsHeader, LocationSelector } from '../../components';
 import { validateEmail, formatPhoneNumber } from 'utils/basic';
-import AddIcon from '../../../../resources/job/add.png';
 
 const Wrapper = styled.div`
 `;
@@ -54,16 +54,13 @@ export const Description = styled(NormalText)`
 //   text-transform: capitalize;
 // `;
 
-const Image = styled.img`
-  width: 11px;
-`;
-
 class TeamDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       managementId: null,
       management: {},
+      userId: null,
       firstName: '',
       lastName: '',
       phoneNumber: '',
@@ -91,12 +88,13 @@ class TeamDetails extends React.Component {
     this.setState({ managementId }, () => {
       this.props.GetManagement({ managementId,
         success: (management) => {
+          const userId = get(management, 'attributes.userId') || '';
           const firstName = get(management, 'relationships.user.attributes.firstName') || '';
           const lastName = get(management, 'relationships.user.attributes.lastName') || '';
           const phoneNumber = get(management, 'relationships.user.attributes.phoneNumber') || '';
           const email = get(management, 'relationships.user.attributes.email') || '';
           const access = get(management, 'attributes.access') || 'admin';
-          this.setState({ management, firstName, lastName, phoneNumber: formatPhoneNumber(phoneNumber), email, access });
+          this.setState({ management, userId, firstName, lastName, phoneNumber: formatPhoneNumber(phoneNumber), email, access });
         },
         error: () => {
           toastr.error('Error', 'Member does not exist!');
@@ -255,7 +253,33 @@ class TeamDetails extends React.Component {
     });
   };
 
-  handleAddLocations = () => {
+  handleUpdateLocations = (locations) => {
+    console.log('---------------Locations--------------', locations);
+    const { userId } = this.state;
+    const { providerId } = this.props;
+    const managementAttributes = locations.map(location => {
+      return {
+        user_id: userId,
+        provider_location_id: location.id,
+        access: 'admin'
+      };
+    })
+    const { UpdateProvider } = this.props;
+    UpdateProvider({
+      authType: 'provider',
+      providerId,
+      data: {
+        provider: {
+          managements_attributes: managementAttributes
+        }
+      },
+      success: () => {
+        toastr.success('Success', 'Added successfully!');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    })
   };
 
   render() {
@@ -362,10 +386,9 @@ class TeamDetails extends React.Component {
                 <Section
                   title='Location'
                   mode='view'
-                  headerStyle={{ padding: 25 }}
-                  editComponent={<GradientButton onClick={this.handleAddLocations}>
-                    <Image src={AddIcon} />
-                  </GradientButton>}
+                  headerStyle={{ padding: '20px 25px' }}
+                  contentStyle={{ minHeight: 439 }}
+                  editComponent={<LocationSelector onChange={this.handleUpdateLocations}/>}
                 >
                 </Section>
               </Col>
@@ -398,6 +421,7 @@ class TeamDetails extends React.Component {
 
 const mapStateToProps = (state) => ({
   currentStatus: state.management.currentStatus,
+  providerId: state.auth.providerId,
   privilege: state.auth.privilege
 });
 
@@ -405,7 +429,8 @@ const mapDispatchToProps = {
   GetManagement,
   CreateManagement,
   UpdateManagement,
-  DeleteManagement
+  DeleteManagement,
+  UpdateProvider
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamDetails);
