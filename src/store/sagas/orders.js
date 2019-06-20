@@ -7,9 +7,14 @@ import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderD
 
 const addStateAliasOfOrder = (order) => {
   const state = get(order, 'attributes.state');
+  const invoiced = get(order, 'attributes.invoiced');
   let stateAlias = startCase(state);
-  if (AVAILABLE_ALIAS_ORDERS.indexOf(state) > -1) {
-    stateAlias = ORDER_ALIASES[state];
+  if (invoiced && state !== 'completed') {
+    stateAlias = 'Invoiced';
+  } else {
+    if (AVAILABLE_ALIAS_ORDERS.indexOf(state) > -1) {
+      stateAlias = ORDER_ALIASES[state];
+    }
   }
   return {
     ...order,

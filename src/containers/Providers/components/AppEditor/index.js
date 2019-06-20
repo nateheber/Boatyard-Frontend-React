@@ -23,6 +23,7 @@ import {
   Phone,
   CategoryModal
 } from './components';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { ContentWrapper, PreviewWrapper } from '../Wrappers';
 
 const DEFAULT_TEMPLATE = 'request';
@@ -61,6 +62,7 @@ class AppEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      saving: false,
       step: 0,
       banner: null,
       data: {
@@ -716,6 +718,7 @@ class AppEditor extends React.Component {
         ...params,
         service_categories_attributes: categoriesPayload
       };
+      this.setState({ saving: true });
       UpdateProviderLocation({
         providerId: selectedLocation.providerId,
         providerLocationId: selectedLocation.id,
@@ -725,6 +728,10 @@ class AppEditor extends React.Component {
         success: (location) => {
           const categories = get(location, 'relationships.service_categories', []);
           this.updateLocationServices(categories, originServices, currentServiceIds, currentServices);
+        },
+        error: (e) => {
+          this.setState({ saving: false });
+          toastr.error('Error', e.message);
         }
       });
     } else {
@@ -799,6 +806,7 @@ class AppEditor extends React.Component {
       }
     }
     if (promises.length > 0) {
+      this.setState({ saving: true });
       Promise.all(promises).then(results => {
         const payloads = results.map(result => {
           const data = get(result, 'data', {});
@@ -846,6 +854,9 @@ class AppEditor extends React.Component {
           }
         }
       })
+      .catch(error => {
+        this.setState({ saving: false });
+      });
     } else {
       if (!isEmpty(params)) {
         this.updateLocation({
@@ -860,13 +871,19 @@ class AppEditor extends React.Component {
   updateLocation = (data) => {
     const { selectedLocation } = this.state;
     const { UpdateProviderLocation } = this.props;
+    this.setState({ saving: true });
     UpdateProviderLocation({
       providerId: selectedLocation.providerId,
       providerLocationId: selectedLocation.id,
       data,
       success: () => {
+        this.setState({ saving: false });
         toastr.success('Success', 'Saved successfully!');
         this.refreshData();
+      },
+      error: (e) => {
+        this.setState({ saving: false });
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -876,7 +893,7 @@ class AppEditor extends React.Component {
   }
 
   render() {
-    const { step, banner, visibleOfModal, currentItem, currentScreen, selectedLocation } = this.state;
+    const { saving, step, banner, visibleOfModal, currentItem, currentScreen, selectedLocation } = this.state;
     const renderingData = this.getRenderingData();
     const { providerLocations, iconStatus, locationStatus } = this.props;
     return (
@@ -925,6 +942,7 @@ class AppEditor extends React.Component {
             />}
           </Right>
         </Content>
+        {saving && <LoadingSpinner loading={saving} />}
       </Wrapper>
     )
   }
