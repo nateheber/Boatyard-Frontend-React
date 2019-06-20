@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
 import queryString from 'query-string';
 import { get, isEmpty } from 'lodash';
