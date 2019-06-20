@@ -2,10 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
+import { toastr } from 'react-redux-toastr';
 import { get } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
 import { AccountHeader, CompanyInfo, ContactInfo } from './components';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 
 import { getProviderPrimaryLocation } from 'utils/provider';
 import { formatPhoneNumber } from 'utils/basic';
@@ -46,6 +48,12 @@ const ButtonWrapper = styled.div`
 `
 
 class AccountEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      saving: false
+    };
+  }
   getName = () => {
     const { provider, newFlg } = this.props;
     return newFlg ? 'New Provider' : get(provider, 'name', '');
@@ -185,7 +193,14 @@ class AccountEditor extends React.Component {
         provider: params
       },
       providerId,
-      success: onUpdate
+      success: () => {
+        this.setState({ saving: false });
+        onUpdate();
+      },
+      error: (e) => {
+        this.setState({ saving: false });
+        toastr.error('Error', e.message);
+      }
     })
   }
 
@@ -194,7 +209,12 @@ class AccountEditor extends React.Component {
     LoginWithProvider({
       providerId: provider.id,
       success: () => {
+        this.setState({ saving: false });
         this.props.history.push('/dashboard');
+      },
+      error: (e) => {
+        this.setState({ saving: false });
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -204,6 +224,7 @@ class AccountEditor extends React.Component {
     const isCompanyValid = this.companyFields.validateFields();
     const isContactValid = this.contactFields.validateFields();
     if (isCompanyValid && isContactValid) {
+      this.setState({ saving: true });
       if (newFlg) {
         this.createProvider();
       } else {
@@ -221,6 +242,7 @@ class AccountEditor extends React.Component {
   }
 
   render() {
+    const { saving } = this.state;
     const { newFlg } = this.props;
     const name = this.getName();
     const companyInfo = this.getDefaultCompanyInfo();
@@ -237,6 +259,7 @@ class AccountEditor extends React.Component {
             <OrangeButton onClick={this.saveData}>SAVE</OrangeButton>
           </ButtonWrapper>
         </EditorWrapper>
+        {saving && <LoadingSpinner loading={saving}/>}
       </Wrapper>
     )
   }

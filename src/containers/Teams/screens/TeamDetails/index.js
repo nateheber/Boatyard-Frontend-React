@@ -55,6 +55,7 @@ class TeamDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      saving: false,
       managementId: null,
       management: {},
       firstName: '',
@@ -203,6 +204,7 @@ class TeamDetails extends React.Component {
         phone_number: phoneNumber.trim(),
         access
       };
+      this.setState({ saving: true });
       if (managementId) {
         UpdateManagement({
           managementId,
@@ -210,10 +212,12 @@ class TeamDetails extends React.Component {
             management: data
           },
           success: () => {
+            this.setState({ saving: false });
             toastr.success('Success', 'Saved successfully!');
             this.onBack();
           },
           error: (e) => {
+            this.setState({ saving: false });
             toastr.error('Error', e.message);
           }
         });
@@ -226,10 +230,12 @@ class TeamDetails extends React.Component {
             management: data
           },
           success: () => {
+            this.setState({ saving: false });
             toastr.success('Success', 'Created successfully!');
             this.onBack();
           },
           error: (e) => {
+            this.setState({ saving: false });
             toastr.error('Error', e.message);
           }
         });
@@ -250,6 +256,7 @@ class TeamDetails extends React.Component {
 
   render() {
     const {
+      saving,
       managementId,
       firstName,
       lastName,
@@ -363,8 +370,8 @@ class TeamDetails extends React.Component {
         >
           <Description>Deleting {`${firstName} ${lastName}`}&#39;s account is permanent and cannot be undone.</Description>
         </Modal>
-        {(managementId && loading) && <LoadingSpinner
-          loading={loading}
+        {((managementId && loading) || saving) && <LoadingSpinner
+          loading={loading || saving}
         />}
       </Wrapper>
     );

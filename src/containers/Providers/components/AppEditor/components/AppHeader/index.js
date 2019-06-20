@@ -41,34 +41,39 @@ function getLocationName(location) {
   return get(location ,'relationships.locations.attributes.name');
 }
 
-export default ({ selected, locations, onSave, onChangePublishStatus, onChangeLocation }) => (
-  <Wrapper>
-    <HeaderWrapper>
-      <Header>Create App</Header>
-      <Select
-        value={selected.id}
-        onChange={evt => {if(onChangeLocation) { onChangeLocation(evt.target.value)}}}
-      >
-        <React.Fragment>
-          {locations.map(val => (
-            <option value={val.id} key={`location_${val.id}`}>
-              {getLocationName(val)}
-            </option>
-          ))}
-        </React.Fragment>
-      </Select>
-    </HeaderWrapper>
-    <ButtonsWrapper>
-      <HollowButton onClick={onSave}>
-        {selected.published ? 'Save' : 'Save Draft'}
-      </HollowButton>
-      <OrangeButton
-        style={{margin: 5}}
-        className="thin-font"
-        onClick={evt => onChangePublishStatus(!selected.published)}
-      >
-        {selected.published ? 'UNPUBLISH' : 'PUBLISH'}
-      </OrangeButton>
-    </ButtonsWrapper>
-  </Wrapper>
-)
+export default class AppHeader extends React.Component {
+  render () {
+    const { selected, locations, onSave, onChangePublishStatus, onChangeLocation } = this.props;
+    return (
+      <Wrapper>
+        <HeaderWrapper>
+          <Header>Create App</Header>
+          <Select
+            value={selected.id}
+            onChange={evt => {if(onChangeLocation) { onChangeLocation(evt.target.value)}}}
+          >
+            <React.Fragment>
+              {locations.map(val => (
+                <option value={val.id} key={`location_${val.id}`}>
+                  {getLocationName(val)}
+                </option>
+              ))}
+            </React.Fragment>
+          </Select>
+        </HeaderWrapper>
+        <ButtonsWrapper>
+          <HollowButton onClick={onSave}>
+            {selected.published ? 'Save' : 'Save Draft'}
+          </HollowButton>
+          <OrangeButton
+            style={{margin: 5}}
+            className="thin-font"
+            onClick={evt => onChangePublishStatus(!selected.published)}
+          >
+            {selected.published ? 'UNPUBLISH' : 'PUBLISH'}
+          </OrangeButton>
+        </ButtonsWrapper>
+      </Wrapper>
+    );
+  }
+}
