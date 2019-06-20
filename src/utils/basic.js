@@ -10,12 +10,13 @@ export const parsetMomentToDate = (date) => {
 export function validateEmail(email) {
   // const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/ ;
   const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if(reg.test(email) === false) {
-    return false;
-  } else {
-    return true;
-  }
+  return reg.test(email);
 };
+
+export const validateUUID = (uuid) => {
+  const uuidReg = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidReg.test(uuid);
+}
 
 export function formatPhoneNumber(phone, isEditing = false) {
   let formatted = phone;

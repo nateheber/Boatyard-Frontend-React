@@ -1,9 +1,10 @@
 import { put, takeEvery, call } from 'redux-saga/effects';
+import { get } from 'lodash';
 
 import { actionTypes } from '../actions/auth';
 import { actions as ProfileActions } from '../reducers/profile';
 
-import { login, signup, sendResetRequest, resetPassword, createPassword } from '../../api/auth';
+import { login, signup, sendResetRequest, resetPassword, createPassword, createCustomerPassword } from '../../api/auth';
 
 import { customApiClient } from '../../api';
 
@@ -158,6 +159,26 @@ function* createInvitedUser(action) {
   }
 }
 
+
+function* createInvitedCustomer(action) {
+  const { token, password, success, error } = action.payload;
+  try {
+    const result = yield call(createCustomerPassword, token, password);
+    const user = get(result, 'data');
+    yield put({
+      type: actionTypes.CREATE_CUSTOMER_PASSWORD_SUCCESS,
+    });
+    if (success) {
+      yield call(success, user);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.CREATE_CUSTOMER_PASSWORD_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
 function* setRefreshFlag(action) {
   const { flag, success, error } = action.payload;
   try {
@@ -180,5 +201,6 @@ export default function* AuthSaga() {
   yield takeEvery(actionTypes.SEND_RESET_REQUEST, sendRequestToResetPassword);
   yield takeEvery(actionTypes.RESET_PASSWORD, changePassword);
   yield takeEvery(actionTypes.CREATE_PASSWORD, createInvitedUser);
+  yield takeEvery(actionTypes.CREATE_CUSTOMER_PASSWORD, createInvitedCustomer);
   yield takeEvery(actionTypes.SET_REFRESH_FLAG, setRefreshFlag);
 }
