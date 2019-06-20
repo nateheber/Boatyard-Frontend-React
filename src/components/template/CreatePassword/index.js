@@ -10,12 +10,11 @@ import { toastr } from 'react-redux-toastr';
 import { CreatePassword, CreateCustomerPassword, GetUserPermission } from 'store/actions/auth';
 import { LoginWithProvider } from 'store/actions/providers';
 import PasswordForm from '../Forms/PasswordForm';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
+
 import { validateUUID } from 'utils/basic';
 
 import BoatYardLogoImage from '../../../resources/by_logo_2.png';
-import MarineMaxLogoImage from '../../../resources/marinemax_logo.png';
-import AppleStoreIcon from '../../../resources/icons/apple_store.png';
-import PlayStoreIcon from '../../../resources/icons/google_play.png';
 
 const Wrapper = styled.div`
   display: flex;
@@ -68,7 +67,7 @@ const WelcomeTitle = styled.div`
   font-size: 26px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   text-align: center;
 `;
 
@@ -78,15 +77,9 @@ const WelcomeDescription = styled.div`
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
   text-align: center;
-  line-height: 24px;
+  line-height: 26px;
   margin-bottom: 30px;
-`;
-
-const StoreImage = styled.img`
-  width: 100%;
-  padding: 10px 0;
-  object-fit: contain;
-  object-position: center;
+  padding: 0 20px;
 `;
 
 class CreatePasswordComponent extends React.Component {
@@ -105,8 +98,8 @@ class CreatePasswordComponent extends React.Component {
       token,
       isCustomer,
       isDoneByCustomer: false,
-      isMarineMax: false,
-      name: ''
+      name: '',
+      loading: false
     };
   }
 
@@ -114,16 +107,17 @@ class CreatePasswordComponent extends React.Component {
     const { token, isCustomer } = this.state;
     if (token) {
       const { CreatePassword, CreateCustomerPassword, GetUserPermission, LoginWithProvider } = this.props;
+      this.setState({ loading: true });
       if (isCustomer) {
         CreateCustomerPassword({
           token,
           password,
           success: (user) => {
             const name = get(user, 'attributes.firstName') || '';
-            const isMarineMax = get(user, 'attributes.providerId') === 5;
-            this.setState({ isDoneByCustomer: true, name, isMarineMax });
+            this.setState({ isDoneByCustomer: true, name, loading: false });
           },
           error: (e) => {
+            this.setState({ loading: false });
             toastr.error('Error', e.message);
           }
         });
@@ -134,14 +128,17 @@ class CreatePasswordComponent extends React.Component {
           success: () => {
             GetUserPermission({
               success: () => {
+                this.setState({ loading: false });
                 this.props.history.push('/');
               },
               error: (e) => {
                 LoginWithProvider({
                   success: () => {
+                    this.setState({ loading: false });
                     this.props.history.push('/');
                   },
                   error: (e) => {
+                    this.setState({ loading: false });
                     toastr.error('Error', e.message);
                   }
                 });
@@ -158,39 +155,22 @@ class CreatePasswordComponent extends React.Component {
     }
   };
   render() {
-    const { isCustomer, isDoneByCustomer, name, isMarineMax } = this.state;
-    let welcomeText = 'Welcome Mykolas!';
-    let iOSAppURL = 'https://apps.apple.com/us/app/boatyard/id930751133';
-    let androidAppURL = 'https://play.google.com/store/apps/details?id=com.boatyard.clientapp';
+    const { isCustomer, isDoneByCustomer, name, loading } = this.state;
+    let welcomeText = 'Thank you!';
     if (name.length > 0) {
-      welcomeText = `Welcome ${name}!`
-    }
-    if (isMarineMax) {
-      iOSAppURL = 'https://apps.apple.com/us/app/boatyard/id930751133';
-      androidAppURL = 'https://play.google.com/store/apps/details?id=com.boatyard.clientapp';
+      welcomeText = `Thank you. ${name}!`
     }
     return (
       <Wrapper>
-        <SideContent className={isCustomer && 'welcome'}>
+        <SideContent>
           {!isDoneByCustomer && <PasswordForm isCreating isCustomer={isCustomer} onResetPassword={this.handleCreatePassword} />}
           {isDoneByCustomer && <WelcomeWrapper>
-            <Logo src={isMarineMax ? MarineMaxLogoImage : BoatYardLogoImage} />
+            <Logo src={BoatYardLogoImage} />
             <WelcomeTitle>{welcomeText}</WelcomeTitle>
-            <WelcomeDescription>You’ve set your password.<br/>Please use app to fill your information.</WelcomeDescription>
-            <Row>
-              <Col xs={12} sm={6}>
-                <a href={iOSAppURL}>
-                  <StoreImage src={AppleStoreIcon} />
-                </a>
-              </Col>
-              <Col xs={12} sm={6}>
-                <a href={androidAppURL}>
-                  <StoreImage src={PlayStoreIcon} />
-                </a>
-              </Col>
-            </Row>
+            <WelcomeDescription>Your password is set.<br />You can now open your app to log in to your account.</WelcomeDescription>
           </WelcomeWrapper>}
         </SideContent>
+        {loading && <LoadingSpinner loading={loading} />}
       </Wrapper>
     );
   }
