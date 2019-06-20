@@ -104,8 +104,8 @@ class CreatePasswordComponent extends React.Component {
     this.state = {
       token,
       isCustomer,
-      isDoneByCustomer: true,
-      isMarineMax: true,
+      isDoneByCustomer: false,
+      isMarineMax: false,
       name: ''
     };
   }
