@@ -510,7 +510,7 @@ class TeamDetails extends React.Component {
               </Col>
               <Col xs={12} sm={12} md={4} lg={3}>
                 <Section
-                  title='Location'
+                  title='Locations'
                   mode='view'
                   headerStyle={{ padding: '20px 25px' }}
                   contentStyle={{ minHeight: 439 }}
