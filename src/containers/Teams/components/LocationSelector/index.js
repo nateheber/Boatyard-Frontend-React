@@ -1,12 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import { get, findIndex, sortBy, orderBy } from 'lodash';
 import deepEqual from 'deep-equal';
-
-import { GetProviderLocations } from 'store/actions/providerLocations';
-import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
 import { Input } from 'components/basic/Input';
 import { GradientButton } from 'components/basic/Buttons';
@@ -102,20 +98,15 @@ class LocationSelector extends React.Component {
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
-    const { providerId, GetProviderLocations } = this.props;
-    GetProviderLocations({
-      providerId,
-      params: { page: 1, per_page: 100 },
-      error: (e) => {
-        toastr.error('Error', e.message);
-      }
-    });
     this.setLocations();
   }
 
   componentDidUpdate(prevProps) {
     if (!deepEqual(this.props.locations, prevProps.locations)) {
       this.setLocations();
+    }
+    if (!deepEqual(this.props.selected, prevProps.selected)) {
+      this.setState({ currentLocations: this.props.selected });
     }
   }
 
@@ -130,7 +121,7 @@ class LocationSelector extends React.Component {
   };
 
   setLocations = () => {
-    const { providerLocations } = this.props;
+    const { locations: providerLocations } = this.props;
     const locations = orderBy(providerLocations, [function(o){ return o.relationships.locations.attributes.name.toLowerCase(); }], ['asc']);
     this.setState({ locations }, () => {
       this.filterLocations();
@@ -179,27 +170,31 @@ class LocationSelector extends React.Component {
 
   showModal = () => {
     const { currentLocations } = this.state;
-    const { dispatchIds } = this.props;
-    const originalArray = sortBy(dispatchIds);
-    const targetArray = sortBy(currentLocations.map(provider => provider.id));
+    const { selected } = this.props;
+    const originalArray = sortBy(selected.map(location => location.id));
+    const targetArray = sortBy(currentLocations.map(location => location.id));
     if (!deepEqual(originalArray, targetArray)) {
       this.setState({ showModal: true });
     }
   };
 
   closeModal = () => {
-    this.setState({ currentLocations: [], showModal: false });
+    const { selected } = this.props;
+    this.setState({ currentLocations: selected, showModal: false });
   };
 
   submitData = () => {
     const { currentLocations } = this.state;
-    this.props.onChange(currentLocations);
-    this.setState({ showModal: false, currentLocations: [] });
+    const { onChange } = this.props;
+    this.setState({ showModal: false });
+    if (onChange) {
+      onChange(currentLocations);
+    }
   };
 
-  isChecked = (provider) => {
+  isChecked = (location) => {
     const { currentLocations } = this.state;
-    const idx= findIndex(currentLocations, item => `${provider.id}` === `${item.id}`);
+    const idx= findIndex(currentLocations, item => `${location.id}` === `${item.id}`);
     return idx >= 0;
   };
 
@@ -231,7 +226,6 @@ class LocationSelector extends React.Component {
 
   render() {
     const { showMenu, showModal, keyword, currentLocations, filteredLocations } = this.state;
-    // const filteredLocations = this.filterShowingLocations();
     return (
       <Wrapper ref={this.setWrapperRef}>
         <GradientButton onClick={this.showMenu}>
@@ -253,20 +247,6 @@ class LocationSelector extends React.Component {
                 </MenuItemLi>
               ))
             }
-            {/* {
-              currentLocations.map(( location, idx ) => (
-                <MenuItemLi key={`location)${location.id}`} >
-                  <LocationCheck checked={this.isChecked(location)} title={get(location, 'relationships.locations.attributes.name')} onClick={() => this.onChangeSelection(location)} />
-                </MenuItemLi>
-              ))
-            }
-            {
-              filteredLocations.map((location, idx) => (
-                <MenuItemLi key={`location_${location.id}`} >
-                  <LocationCheck checked={this.isChecked(location)} title={get(location, 'relationships.locations.attributes.name')} onClick={() => this.onChangeSelection(location)} />
-                </MenuItemLi>
-              ))
-            } */}
           </Scroller>
         </DropdownMenu>
         <ConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} locations={currentLocations} />
@@ -275,13 +255,10 @@ class LocationSelector extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  providerId: state.auth.providerId,
-  ...refinedProviderLocationSelector(state),
+const mapStateToProps = () => ({
 });
 
 const mapDispatchToProps = {
-  GetProviderLocations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LocationSelector);

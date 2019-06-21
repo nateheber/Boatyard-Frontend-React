@@ -5,9 +5,12 @@ import queryString from 'query-string';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
+import deepEqual from 'fast-deep-equal';
 
-import { actionTypes, GetManagement, CreateManagement, UpdateManagement, DeleteManagement } from 'store/actions/managements';
+import { actionTypes, GetManagement, FilterManagements, CreateManagement, UpdateManagement, DeleteManagement } from 'store/actions/managements';
+import { GetProviderLocations } from 'store/actions/providerLocations';
 import { UpdateProvider } from 'store/actions/providers';
+import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 import { InputRow, InputWrapper, Input, Select } from 'components/basic/Input';
 import { Section } from 'components/basic/InfoSection';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
@@ -17,6 +20,7 @@ import { EditorSection } from 'components/compound/SubSections';
 import Modal from 'components/compound/Modal';
 import { TeamDetailsHeader, LocationSelector } from '../../components';
 import { validateEmail, formatPhoneNumber } from 'utils/basic';
+import CloseIcon from '../../../../resources/job/close.png';
 
 const Wrapper = styled.div`
 `;
@@ -54,6 +58,28 @@ export const Description = styled(NormalText)`
 //   text-transform: capitalize;
 // `;
 
+const LocationItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px 5px 20px;
+  border: 1px solid #A9B5BB;
+  border-radius: 6px;
+  margin-bottom: 12px;
+`;
+
+const LocationTitle = styled.div`
+  font-family: 'Open sans-serif', sans-serif;
+  font-size: 14px;
+  color: #184961;
+  width: calc(100% - 50px);
+  line-height: 16px;
+`;
+
+const DeleteIcon = styled.img`
+  cursor: pointer;
+`;
+
 class TeamDetails extends React.Component {
   constructor(props) {
     super(props);
@@ -73,6 +99,7 @@ class TeamDetails extends React.Component {
         phoneNumber: '',
         email: ''
       },
+      selectedLocations: [],
       visibleOfConfirmationModal: false
     };
   }
@@ -85,23 +112,57 @@ class TeamDetails extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if(!deepEqual(prevProps.managements, this.props.managements)) {
+      this.setSelectedLocations();
+    }
+  }
+
   getManagement = (managementId) => {
     this.setState({ managementId }, () => {
       this.props.GetManagement({ managementId,
         success: (management) => {
           const userId = get(management, 'attributes.userId') || '';
+          const providerId = get(management, 'attributes.providerId') || '';
           const firstName = get(management, 'relationships.user.attributes.firstName') || '';
           const lastName = get(management, 'relationships.user.attributes.lastName') || '';
           const phoneNumber = get(management, 'relationships.user.attributes.phoneNumber') || '';
           const email = get(management, 'relationships.user.attributes.email') || '';
           const access = get(management, 'attributes.access') || 'admin';
-          this.setState({ management, userId, firstName, lastName, phoneNumber: formatPhoneNumber(phoneNumber), email, access });
+          this.setState({ management, userId, providerId, firstName, lastName, phoneNumber: formatPhoneNumber(phoneNumber), email, access }, () => {
+            this.filterManagements();
+          });
+          const { GetProviderLocations } = this.props;
+          GetProviderLocations({
+            providerId,
+            params: { page: 1, per_page: 100 },
+            error: (e) => {
+              toastr.error('Error', e.message);
+            }
+          });
         },
         error: () => {
           toastr.error('Error', 'Member does not exist!');
           this.onBack();
-        } 
+        }
       });
+    });
+  }
+
+  filterManagements = () => {
+    const { FilterManagements } = this.props;
+    const { userId, providerId } = this.state;
+    FilterManagements({
+      params: {
+        'management[user_id]': userId,
+        'management[provider_id]': providerId
+      },
+      success: () => {
+        this.setSelectedLocations();
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
     });
   }
 
@@ -259,33 +320,90 @@ class TeamDetails extends React.Component {
     });
   };
 
+  setSelectedLocations = () => {
+    const { providerId } = this.state;
+    const { providerLocations, managements } = this.props;
+    const filteredManagements = managements.filter(management => management.providerId === providerId && management.providerLocationId);
+    const selectedLocations = providerLocations.filter(
+      location => filteredManagements.filter(management => parseInt(location.id) === parseInt(management.providerLocationId)).length > 0
+    );
+    this.setState({ selectedLocations });
+  }
+
   handleUpdateLocations = (locations) => {
-    console.log('---------------Locations--------------', locations);
-    const { userId } = this.state;
-    const { providerId } = this.props;
-    const managementAttributes = locations.map(location => {
+    const { userId, providerId } = this.state;
+    const { managements } = this.props;
+    const filteredManagements = managements.filter(management => management.providerId === providerId && management.providerLocationId);
+    const newLocations = locations.filter(
+      location => filteredManagements.filter(management => parseInt(location.id) === parseInt(management.providerLocationId)).length === 0
+    );
+
+    const deletedManagements = filteredManagements.filter(
+      management => locations.filter(location => parseInt(location.id) === parseInt(management.providerLocationId)).length === 0
+    );
+    const newManagementAttributes = newLocations.map(location => {
       return {
         user_id: userId,
         provider_location_id: location.id,
         access: 'admin'
       };
-    })
+    });
+
+    const deletedManagementAttributes = deletedManagements.map(management => {
+      return {
+        id: management.id,
+        "_destroy": true
+      };
+    });
+
     const { UpdateProvider } = this.props;
     UpdateProvider({
       authType: 'provider',
       providerId,
       data: {
         provider: {
-          managements_attributes: managementAttributes
+          managements_attributes: deletedManagementAttributes.concat(newManagementAttributes)
         }
       },
       success: () => {
-        toastr.success('Success', 'Added successfully!');
+        toastr.success('Success', 'Updated successfully!');
+        this.filterManagements();
       },
       error: (e) => {
         toastr.error('Error', e.message);
       }
-    })
+    });
+  };
+
+  deleteLocation = (location) => {
+    const { providerId } = this.state;
+    const { managements } = this.props;
+    const filteredManagements = managements.filter(management => management.providerId === providerId && management.providerLocationId);
+    const deletedManagement = filteredManagements.find(management => parseInt(location.id) === parseInt(management.providerLocationId));
+    if (deletedManagement) {
+      const { UpdateProvider } = this.props;
+      UpdateProvider({
+        authType: 'provider',
+        providerId,
+        data: {
+          provider: {
+            managements_attributes: [
+              {
+                id: deletedManagement.id,
+                "_destroy": true
+              }
+            ]
+          }
+        },
+        success: () => {
+          toastr.success('Success', 'Deleted successfully!');
+          this.filterManagements();
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
+        }
+      });
+    }
   };
 
   render() {
@@ -298,9 +416,10 @@ class TeamDetails extends React.Component {
       email,
       access,
       errorMessage,
+      selectedLocations,
       visibleOfConfirmationModal
     } = this.state;
-    const { privilege, currentStatus } = this.props;
+    const { privilege, currentStatus, providerLocations } = this.props;
     const loading = currentStatus === actionTypes.GET_MANAGEMENT;
     const actions = (
       <React.Fragment>
@@ -383,7 +502,7 @@ class TeamDetails extends React.Component {
             {!managementId && <PageTitle style={{ padding: '25px 30px' }}>Add New Member</PageTitle>}
           </HeaderWrapper>
           <ContentWrapper>
-            {privilege === 'provider' && <Row>
+            {(privilege === 'provider' || privilege === 'admin') && <Row>
               <Col xs={12} sm={12} md={8} lg={9}>
                 <Section title='Contact' headerStyle={{ padding: 25 }}>
                   <EditorSection containerStype={{ padding: '30px 15px' }} actions={actions} content={editSection} />
@@ -395,12 +514,22 @@ class TeamDetails extends React.Component {
                   mode='view'
                   headerStyle={{ padding: '20px 25px' }}
                   contentStyle={{ minHeight: 439 }}
-                  editComponent={<LocationSelector onChange={this.handleUpdateLocations}/>}
+                  editComponent={<LocationSelector
+                    locations={providerLocations}
+                    selected={selectedLocations}
+                    onChange={this.handleUpdateLocations}/>
+                  }
                 >
+                  {selectedLocations.map(location => (
+                    <LocationItem key={`location_${location.id}`}>
+                      <LocationTitle>{get(location, 'relationships.locations.attributes.name')}</LocationTitle>
+                      <DeleteIcon src={CloseIcon} onClick={() => this.deleteLocation(location)}/>
+                    </LocationItem>
+                  ))}
                 </Section>
               </Col>
             </Row>}
-            {privilege !== 'provider' && <Row>
+            {!(privilege === 'provider' || privilege === 'admin') && <Row>
               <Col xs={12} sm={12} md={8} lg={9}>
                 <Section title='Contact' headerStyle={{ padding: 25 }}>
                   <EditorSection containerStype={{ padding: '30px 15px' }} actions={actions} content={editSection} />
@@ -428,16 +557,19 @@ class TeamDetails extends React.Component {
 
 const mapStateToProps = (state) => ({
   currentStatus: state.management.currentStatus,
-  providerId: state.auth.providerId,
-  privilege: state.auth.privilege
+  privilege: state.auth.privilege,
+  ...refinedProviderLocationSelector(state),
+  managements: state.management.filteredManagements
 });
 
 const mapDispatchToProps = {
   GetManagement,
+  FilterManagements,
   CreateManagement,
   UpdateManagement,
   DeleteManagement,
-  UpdateProvider
+  UpdateProvider,
+  GetProviderLocations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamDetails);

@@ -24,25 +24,60 @@ function* getManagements(action) {
     const managements = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
+    const refactored = managements.map(management => ({
+      id: management.id,
+      type: management.type,
+      ...management.attributes,
+      relationships: management.relationships,
+    }));
     yield put({
       type: actionTypes.GET_MANAGEMENTS_SUCCESS,
       payload: {
-        managements: managements.map(management => ({
-          id: management.id,
-          type: management.type,
-          ...management.attributes,
-          relationships: management.relationships,
-        })),
+        managements: refactored,
         included,
         perPage,
         total
       }
     });
     if (success) {
-      yield call(success, managements);
+      yield call(success, refactored);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_MANAGEMENTS_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
+function* filterManagements(action) {
+  const managementClient = yield select(getManagementClient);
+  const { params, success, error } = action.payload;
+  try {
+    const result = yield call(managementClient.list, params);
+    const managements = get(result, 'data', []);
+    const included = get(result, 'included', []);
+    const { perPage, total } = result;
+    const refactored = managements.map(management => ({
+      id: management.id,
+      type: management.type,
+      ...management.attributes,
+      relationships: management.relationships,
+    }));
+    yield put({
+      type: actionTypes.FILTER_MANAGEMENTS_SUCCESS,
+      payload: {
+        managements: refactored,
+        included,
+        perPage,
+        total
+      }
+    });
+    if (success) {
+      yield call(success, refactored);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.FILTER_MANAGEMENTS_FAILURE, payload: e });
     if (error) {
       yield call(error, e);
     }
@@ -159,6 +194,7 @@ function* deleteManagement(action) {
 
 export default function* ManagementSaga() {
   yield takeEvery(actionTypes.GET_MANAGEMENTS, getManagements);
+  yield takeEvery(actionTypes.FILTER_MANAGEMENTS, filterManagements);
   yield takeEvery(actionTypes.GET_MANAGEMENT, getManagement);
   yield takeEvery(actionTypes.CREATE_MANAGEMENT, createManagement);
   yield takeEvery(actionTypes.UPDATE_MANAGEMENT, updateManagement);
