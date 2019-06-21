@@ -130,14 +130,6 @@ class AppBanners extends React.Component {
     }
   };
 
-  onChangeKeyword = (keyword) => {
-    if (this.delayTimer) clearTimeout(this.delayTimer);
-    this.delayTimer = setTimeout(function() {
-        // Do the ajax stuff
-        console.log('-------search--------', keyword);
-    }, 500);
-  };
-
   handleChangeBanner = (banner) => () => {
     const { onChangeBanner } = this.props;
     onChangeBanner(banner);
@@ -173,9 +165,6 @@ class AppBanners extends React.Component {
       <SelectorWrapper>
         <Wrapper>
           <HeaderWrapper>
-            {/* <SearchWrapper>
-              <SearchInput placeholder="SEARCH" onChange={this.onChangeKeyword} />
-            </SearchWrapper> */}
             <UploadButton style={{ marginLeft: 10 }} title="Upload Image" accept="image/*" onChange={this.handleFileChange} />
           </HeaderWrapper>
           <ImageList>
