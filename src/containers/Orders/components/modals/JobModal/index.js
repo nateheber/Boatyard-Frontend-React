@@ -6,9 +6,8 @@ import styled from 'styled-components';
 import { GetManagements } from 'store/actions/managements';
 import { refinedManagementsSelector } from 'store/selectors/managements';
 import { getUserFromOrder, getBoatFromOrder } from 'utils/order';
-import { OrangeButton } from 'components/basic/Buttons'
+import { OrangeButton, GradientButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
-import GradientButton from '../../basic/GradientButton';
 import {
   Image, JobTitleSection, JobSummarySection, CustomerInfoSection,
   LocationInfoSection, BoatInfoSection, AttachmentSection, NotesSection

@@ -17,12 +17,12 @@ const Content = styled.div`
   }
 `
 
-export const Section = ({ title, mode, onEdit, children, disabled, editComponent, noPadding, ...rest }) => (
+export const Section = ({ title, mode, onEdit, children, disabled, editComponent, noPadding, headerStyle, contentStyle }) => (
   <div>
     {
-      title && <SectionHeader title={title} mode={mode} onEdit={onEdit} disabled={disabled} editComponent={editComponent} />
+      title && <SectionHeader title={title} mode={mode} onEdit={onEdit} disabled={disabled} editComponent={editComponent} style={headerStyle} />
     }
-    <Content {...rest} className={classNames({ hasBorder: isEmpty(title), noPadding })}>
+    <Content style={contentStyle} className={classNames({ hasBorder: isEmpty(title), noPadding })}>
       {children}
     </Content>
   </div>

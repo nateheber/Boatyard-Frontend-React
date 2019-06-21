@@ -7,6 +7,7 @@ import { refactorIncluded } from 'utils/basic';
 const initialState = {
   currentStatus: '',
   managements: [],
+  filteredManagements: [],
   currentManagement: {},
   page: 1,
   perPage: 20,
@@ -35,6 +36,30 @@ export default handleActions(
         draft.included = refactorIncluded(included);
       }),
     [actionTypes.GET_MANAGEMENTS_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.FILTER_MANAGEMENTS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'params.page', 1);
+        draft.errors = null;
+      }),
+    [actionTypes.FILTER_MANAGEMENTS_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { total, perPage, managements, included } = payload;
+        draft.currentStatus = type;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.filteredManagements = managements;
+        draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.FILTER_MANAGEMENTS_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
