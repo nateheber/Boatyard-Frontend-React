@@ -81,6 +81,7 @@ const Overlay = styled.div`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
   pointer-events: none;
+  border-radius: 6px;
 `;
 
 const DeleteButton = styled.button`
@@ -111,7 +112,7 @@ class AppBanners extends React.Component {
 
   handleFileChange = (file, baseString, ref) => {
     const { GetSiteBanners, CreateSiteBanner, onChangeBanner } = this.props;
-    if (file) {
+    if (file && baseString) {
       CreateSiteBanner({
         data: {
           site_banner: {
@@ -128,14 +129,6 @@ class AppBanners extends React.Component {
         }
       });
     }
-  };
-
-  onChangeKeyword = (keyword) => {
-    if (this.delayTimer) clearTimeout(this.delayTimer);
-    this.delayTimer = setTimeout(function() {
-        // Do the ajax stuff
-        console.log('-------search--------', keyword);
-    }, 500);
   };
 
   handleChangeBanner = (banner) => () => {
@@ -173,9 +166,6 @@ class AppBanners extends React.Component {
       <SelectorWrapper>
         <Wrapper>
           <HeaderWrapper>
-            {/* <SearchWrapper>
-              <SearchInput placeholder="SEARCH" onChange={this.onChangeKeyword} />
-            </SearchWrapper> */}
             <UploadButton style={{ marginLeft: 10 }} title="Upload Image" accept="image/*" onChange={this.handleFileChange} />
           </HeaderWrapper>
           <ImageList>
