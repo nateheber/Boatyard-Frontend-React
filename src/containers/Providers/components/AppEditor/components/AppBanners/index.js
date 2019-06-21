@@ -112,7 +112,7 @@ class AppBanners extends React.Component {
 
   handleFileChange = (file, baseString, ref) => {
     const { GetSiteBanners, CreateSiteBanner, onChangeBanner } = this.props;
-    if (file) {
+    if (file && baseString) {
       CreateSiteBanner({
         data: {
           site_banner: {
