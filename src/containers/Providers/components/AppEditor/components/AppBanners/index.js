@@ -81,6 +81,7 @@ const Overlay = styled.div`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
   pointer-events: none;
+  border-radius: 6px;
 `;
 
 const DeleteButton = styled.button`
