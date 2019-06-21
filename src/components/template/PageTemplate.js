@@ -54,7 +54,7 @@ class PageTemplate extends React.Component {
           location.pathname.indexOf('/create-password') > -1)) {
           history.push({
             pathname: '/login/',
-            search: `?redirect_url=${location.pathname}${location.search}`
+            // search: `?redirect_url=${location.pathname}${location.search}`
           });  
         }
       }
