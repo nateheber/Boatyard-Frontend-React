@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
 
-import GradientButton from '../../../../basic/GradientButton';
-import { UploadButton } from 'components/basic/Buttons';
+import { UploadButton, GradientButton } from 'components/basic/Buttons';
 import { Section, SectionHeader, SectionContent, HeaderTitle, Image } from '../Section';
 
 import PdfIcon from '../../../../../../../resources/job/pdf.png';

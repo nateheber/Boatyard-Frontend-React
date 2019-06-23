@@ -6,6 +6,10 @@ export const actionTypes = {
   GET_MANAGEMENTS_SUCCESS: '[MANAGEMENTS] - Get managements Success',
   GET_MANAGEMENTS_FAILURE: '[MANAGEMENTS] - Get managements Failure',
 
+  FILTER_MANAGEMENTS: '[MANAGEMENTS] - Filter managements',
+  FILTER_MANAGEMENTS_SUCCESS: '[MANAGEMENTS] - Filter managements Success',
+  FILTER_MANAGEMENTS_FAILURE: '[MANAGEMENTS] - Filter managements Failure',
+
   GET_MANAGEMENT: '[MANAGEMENTS] - Get management',
   GET_MANAGEMENT_SUCCESS: '[MANAGEMENTS] - Get management Success',
   GET_MANAGEMENT_FAILURE: '[MANAGEMENTS] - Get management Failure',
@@ -26,6 +30,10 @@ export const actionTypes = {
 export const GetManagements = createAction(actionTypes.GET_MANAGEMENTS, payload => payload);
 export const GetManagementsSuccess = createAction(actionTypes.GET_MANAGEMENTS_SUCCESS);
 export const GetManagementsFailure = createAction(actionTypes.GET_MANAGEMENTS_FAILURE);
+
+export const FilterManagements = createAction(actionTypes.FILTER_MANAGEMENTS, payload => payload);
+export const FilterManagementsSuccess = createAction(actionTypes.FILTER_MANAGEMENTS_SUCCESS);
+export const FilterManagementsFailure = createAction(actionTypes.FILTER_MANAGEMENTS_FAILURE);
 
 export const GetManagement = createAction(actionTypes.GET_MANAGEMENT, payload => payload);
 export const GetManagementSuccess = createAction(actionTypes.GET_MANAGEMENT_SUCCESS);

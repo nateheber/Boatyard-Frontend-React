@@ -24,9 +24,9 @@ const ActionsContainer = styled.div`
   border-top: 1px solid #dfdfdf;
 `;
 
-export const EditorSection = ({ content, actions }) => (
-  <Wrapper>
-    <FieldsContainer>{content}</FieldsContainer>
-    <ActionsContainer>{actions}</ActionsContainer>
+export const EditorSection = ({ content, actions, containerStype, contentStyle, actionsStyle }) => (
+  <Wrapper style={containerStype}>
+    <FieldsContainer style={contentStyle}>{content}</FieldsContainer>
+    <ActionsContainer style={actionsStyle}>{actions}</ActionsContainer>
   </Wrapper>
 );

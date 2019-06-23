@@ -6,7 +6,7 @@ import { actionTypes as authActions } from '../actions/auth';
 
 import { customApiClient, createProviderClient, createPreferredProviderClient } from '../../api';
 
-import { getCustomApiClient } from './sagaSelectors';
+import { getProviderClient, getCustomApiClient } from './sagaSelectors';
 
 const refineProviders = (providers) => {
   const refinedProviders = providers.map(provider => {
@@ -20,7 +20,6 @@ const refineProviders = (providers) => {
 };
 
 const adminApiClient = createProviderClient('admin');
-const providerApiClient = createProviderClient('provider');
 const basicProviderClient = createProviderClient('basic');
 const customManagement = customApiClient('admin');
 const adminPreferredApiClient = createPreferredProviderClient('admin');
@@ -235,11 +234,8 @@ function* addPreferredProvider(action) {
 }
 
 function* updateProvider(action) {
-  const { authType, providerId, data, success, error } = action.payload;
-  let apiClient = adminApiClient;
-  if (authType && authType === 'provider') {
-    apiClient = providerApiClient;
-  }
+  const { providerId, data, success, error } = action.payload;
+  const apiClient = yield select(getProviderClient);
   try {
     const result = yield call(apiClient.update, providerId, data);
     const provider = get(result, 'data', {});
