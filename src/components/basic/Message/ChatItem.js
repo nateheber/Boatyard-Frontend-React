@@ -71,7 +71,7 @@ const MessageBody = styled.div`
   word-wrap: break-word;
   hyphens: auto;
   &.own {
-    background-color: #ffd4aa;
+    background-color: #E6E6E6;
     border-bottom-right-radius: 2px;
     &.has-prev {
       // border-top-right-radius: 2px;
