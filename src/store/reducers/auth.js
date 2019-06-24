@@ -9,6 +9,7 @@ const initialState = {
   adminToken: '',
   providerToken: '',
   providerLocationToken: '',
+  isLocationAdmin: false,
   errors: null,
   privilege: '',
   providerId: '',
@@ -94,9 +95,10 @@ export default handleActions(
       }),
     [actionTypes.SET_PRIVILEGE]: (state, action) =>
       produce(state, draft => {
-        const { type, payload } = action;
+        const { type, payload: {privilege, isLocationAdmin} } = action;
         draft.currentStatus = type;
-        draft.privilege = payload;
+        draft.privilege = privilege;
+        draft.isLocationAdmin = isLocationAdmin;
         draft.errors = null;
       }),
     [actionTypes.SEND_RESET_REQUEST_SUCCESS]: (state, action) =>

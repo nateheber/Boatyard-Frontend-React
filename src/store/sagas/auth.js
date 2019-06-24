@@ -67,7 +67,7 @@ function* userPermissionRequest(action) {
     });
     yield put({
       type: actionTypes.SET_PRIVILEGE,
-      payload: 'admin'
+      payload: {privilege: 'admin', isLocationAdmin: false}
     });
     if (success) {
       yield call(success);

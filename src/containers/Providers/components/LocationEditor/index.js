@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
-import { LoginWithProviderLocation } from 'store/actions/providers';
+import { LoginWithProvider } from 'store/actions/providers';
 import { GetProviderLocations } from 'store/actions/providerLocations';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 import { SearchBox } from 'components/basic/Input';
@@ -60,9 +60,10 @@ class LocationEditor extends React.Component {
   }
 
   handleLogin = (location) => {
-    const { LoginWithProviderLocation, history } = this.props;
-    LoginWithProviderLocation({
-      location,
+    const { LoginWithProvider, history } = this.props;
+    LoginWithProvider({
+      providerId: location.providerId,
+      providerLocationId: location.id,
       success: () => {
         history.push('/dashboard');
       },
@@ -127,7 +128,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   GetProviderLocations,
-  LoginWithProviderLocation
+  LoginWithProvider
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LocationEditor));

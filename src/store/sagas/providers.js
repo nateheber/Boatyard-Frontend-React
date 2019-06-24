@@ -94,7 +94,7 @@ function* getPreferredProviders(action) {
 
 function* loginWithProvider(action) {
   const escalationApiClient = yield select(getCustomApiClient);
-  const { providerId, success, error } = action.payload;
+  const { providerId, success, error, providerLocationId } = action.payload;
   let id = providerId;
   try {
     let result = null;
@@ -108,7 +108,9 @@ function* loginWithProvider(action) {
     if (!isEmpty(id)) {
       result = yield call(escalationApiClient.post, '/users/escalations', {
         escalation: {
-          provider_id: parseInt(id)
+          user_id: providerLocationId ? parseInt(id) : undefined,
+          provider_id: providerLocationId ? undefined : parseInt(id),
+          provider_location_id: providerLocationId ? parseInt(providerLocationId) : undefined
         }
       });  
       yield put({
@@ -117,7 +119,10 @@ function* loginWithProvider(action) {
       });
       yield put({
         type: authActions.SET_PRIVILEGE,
-        payload: 'provider'
+        payload: {
+          privilege: 'provider',
+          isLocationAdmin: !!providerLocationId
+        }
       });
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: get(result, 'data') });
       if (success) {
@@ -131,38 +136,6 @@ function* loginWithProvider(action) {
     }
   } catch (e) {
     yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
-    if (error) {
-      yield call(error, e);
-    }
-  }
-}
-
-function* loginWithProviderLocation(action) {
-  const escalationApiClient = yield select(getCustomApiClient);
-  const { location, success, error } = action.payload;
-  try {
-    const result = yield call(escalationApiClient.post, '/users/escalations', {
-      escalation: {
-        provider_location_id: location.id
-      }
-    });
-    yield put({
-      type: authActions.SET_PROVIDER_LOCATION_INFO,
-      payload: {
-        ...get(location, 'relationships.providers'),
-        authorizationToken: get(result, 'data.authorizationToken')
-      }
-    });
-    yield put({
-      type: authActions.SET_PRIVILEGE,
-      payload: 'provider_location'
-    });
-    yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_LOCATION_SUCCESS, payload: location });
-    if (success) {
-      yield call(success);
-    }
-  } catch (e) {
-    yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_LOCATION_FAILURE, payload: e });
     if (error) {
       yield call(error, e);
     }
@@ -301,5 +274,5 @@ export default function* ProviderSaga() {
   yield takeEvery(actionTypes.UPDATE_PROVIDER, updateProvider);
   yield takeEvery(actionTypes.DELETE_PROVIDER, deleteProvider);
   yield takeEvery(actionTypes.DELETE_PREFERRED_PROVIDER, deletePreferredProvider);
-  yield takeEvery(actionTypes.LOGIN_WITH_PROVIDER_LOCATION, loginWithProviderLocation);
+  // yield takeEvery(actionTypes.LOGIN_WITH_PROVIDER_LOCATION, loginWithProviderLocation);
 }
