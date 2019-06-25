@@ -1,6 +1,6 @@
-import { put, takeEvery, call } from 'redux-saga/effects';
+import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
-
+import { profileSelector } from '../selectors/profile';
 import { actionTypes } from '../actions/auth';
 import { actions as ProfileActions } from '../reducers/profile';
 
@@ -58,22 +58,49 @@ function* loginRequest(action) {
 function* userPermissionRequest(action) {
   const { success, error } = action.payload;
   try {
-    const result = yield call(escalationClient.post, '/users/escalations', {
-      escalation: { admin: true }
-    });
-    yield put({
-      type: actionTypes.GET_USER_PERMISSION_SUCCESS,
-      payload: result.data.attributes.authorizationToken
-    });
-    yield put({
-      type: actionTypes.SET_PRIVILEGE,
-      payload: {privilege: 'admin', isLocationAdmin: false}
-    });
+    const res = yield call(escalationClient.get, '/users/escalations?per_page=100');
+    let result = {};
+    if (res.isBoatyardAdmin) {
+      result = yield call(escalationClient.post, '/users/escalations', {
+        escalation: { admin: true }
+      });
+      yield put({
+        type: actionTypes.GET_USER_PERMISSION_SUCCESS,
+        payload: result.data.attributes.authorizationToken
+      });
+      yield put({
+        type: actionTypes.SET_PRIVILEGE,
+        payload: {privilege: 'admin', isLocationAdmin: false}
+      });
+      yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: get(result, 'data') });
+    } else if (res.data.length > 0) {
+      const profile = yield select(profileSelector);
+      let provider_id = get(res.data[0], 'relationships.provider.data.id', undefined);
+      let provider_location_id = (res.data[0], 'relationships.provider_location.data.id', undefined);
+      provider_id = provider_id && parseInt(provider_id);
+      provider_location_id = provider_location_id && parseInt(provider_location_id)
+      result = yield call(escalationClient.post, '/users/escalations', {
+        escalation: { user_id: parseInt(profile.id), provider_id, provider_location_id }
+      });
+      yield put({
+        type: actionTypes.SET_PROVIDER_INFO,
+        payload: get(result, 'data')
+      });
+      yield put({
+        type: actionTypes.SET_PRIVILEGE,
+        payload: {
+          privilege: 'provider',
+          isLocationAdmin: !!provider_location_id,
+          // locationName
+        }
+      });
+    } 
     if (success) {
       yield call(success);
-    }  
+    }
+    
   } catch (e) {
-    yield put({ type: actionTypes.GET_USER_PERMISSION_FAILURE, payload: e });
+    
     if (error) {
       yield call(error, e);
     }  
@@ -82,8 +109,7 @@ function* userPermissionRequest(action) {
 
 function* signupRequest(action) {
   const { email, password } = action.payload;
-  const result = yield call(signup, email, password);
-  console.log(result);
+  yield call(signup, email, password);
 }
 
 function* sendRequestToResetPassword(action) {

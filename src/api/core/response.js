@@ -8,11 +8,13 @@ export const responseInterceptor = client => {
   client.interceptors.response.use((response) => {
     const perPage = get(response.headers, 'per-page');
     const total = get(response.headers, 'total');
+    const isBoatyardAdmin = get(response.headers, 'boatyard-admin');
     const data = camelize(response.data, { recursive: true });
-    if (perPage || total) {
+    if (perPage || total || isBoatyardAdmin) {
       return ({
         perPage,
         total,
+        isBoatyardAdmin,
         data: get(data, 'data', []),
         included: get(data, 'included', [])
       });

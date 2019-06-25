@@ -7,7 +7,6 @@ import { get, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { CreatePassword, CreateCustomerPassword, GetUserPermission } from 'store/actions/auth';
-import { LoginWithProvider } from 'store/actions/providers';
 import PasswordForm from '../Forms/PasswordForm';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 
@@ -105,7 +104,7 @@ class CreatePasswordComponent extends React.Component {
   handleCreatePassword = (password) => {
     const { token, isCustomer } = this.state;
     if (token) {
-      const { CreatePassword, CreateCustomerPassword, GetUserPermission, LoginWithProvider } = this.props;
+      const { CreatePassword, CreateCustomerPassword, GetUserPermission } = this.props;
       this.setState({ loading: true });
       if (isCustomer) {
         CreateCustomerPassword({
@@ -131,16 +130,8 @@ class CreatePasswordComponent extends React.Component {
                 this.props.history.push('/');
               },
               error: (e) => {
-                LoginWithProvider({
-                  success: () => {
-                    this.setState({ loading: false });
-                    this.props.history.push('/');
-                  },
-                  error: (e) => {
-                    this.setState({ loading: false });
-                    toastr.error('Error', e.message);
-                  }
-                });
+                this.setState({ loading: false });
+                toastr.error('Error', e.message);
               }
             });
           },
@@ -178,8 +169,7 @@ class CreatePasswordComponent extends React.Component {
 const mapDispatchToProps = {
   CreatePassword,
   CreateCustomerPassword,
-  GetUserPermission,
-  LoginWithProvider
+  GetUserPermission
 };
 
 export default withRouter(connect(null, mapDispatchToProps)(CreatePasswordComponent)

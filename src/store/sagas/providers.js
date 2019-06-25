@@ -1,9 +1,9 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty, orderBy } from 'lodash';
+import { get, orderBy } from 'lodash';
 
 import { actionTypes } from '../actions/providers';
 import { actionTypes as authActions } from '../actions/auth';
-
+import { profileSelector } from '../selectors/profile';
 import { customApiClient, createProviderClient, createPreferredProviderClient } from '../../api';
 
 import { getProviderClient, getCustomApiClient } from './sagaSelectors';
@@ -20,7 +20,7 @@ const refineProviders = (providers) => {
 };
 
 const adminApiClient = createProviderClient('admin');
-const basicProviderClient = createProviderClient('basic');
+// const basicProviderClient = createProviderClient('basic');
 const customManagement = customApiClient('admin');
 const adminPreferredApiClient = createPreferredProviderClient('admin');
 
@@ -94,22 +94,23 @@ function* getPreferredProviders(action) {
 
 function* loginWithProvider(action) {
   const escalationApiClient = yield select(getCustomApiClient);
-  const { providerId, success, error, providerLocationId } = action.payload;
-  let id = providerId;
+  const profile = yield select(profileSelector);
+  const { providerId, success, error, providerLocationId, locationName } = action.payload;
+  const id = profile.id ? parseInt(profile.id) : null;
   try {
     let result = null;
-    if (isEmpty(providerId)) {
-      result = yield call(basicProviderClient.list);
-      const { data } = result;
-      if (!isEmpty(data)) {
-        id = get(data[0], 'id', null);
-      }
-    }
-    if (!isEmpty(id)) {
+    // if (isEmpty(providerId)) {
+    //   result = yield call(basicProviderClient.list);
+    //   const { data } = result;
+    //   if (!isEmpty(data)) {
+    //     id = get(data[0], 'id', null);
+    //   }
+    // }
+    if (id) {
       result = yield call(escalationApiClient.post, '/users/escalations', {
         escalation: {
-          user_id: providerLocationId ? parseInt(id) : undefined,
-          provider_id: providerLocationId ? undefined : parseInt(id),
+          user_id: parseInt(profile.id),
+          provider_id: providerId,
           provider_location_id: providerLocationId ? parseInt(providerLocationId) : undefined
         }
       });  
@@ -121,7 +122,8 @@ function* loginWithProvider(action) {
         type: authActions.SET_PRIVILEGE,
         payload: {
           privilege: 'provider',
-          isLocationAdmin: !!providerLocationId
+          isLocationAdmin: !!providerLocationId,
+          locationName
         }
       });
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: get(result, 'data') });
@@ -135,6 +137,7 @@ function* loginWithProvider(action) {
       }
     }
   } catch (e) {
+    console.log(e)
     yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error, e);

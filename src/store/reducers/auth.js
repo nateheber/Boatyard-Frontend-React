@@ -14,7 +14,8 @@ const initialState = {
   privilege: '',
   providerId: '',
   taxRate: '',
-  refreshPage: false
+  refreshPage: false,
+  locationName: '',
 };
 
 export default handleActions(
@@ -95,10 +96,11 @@ export default handleActions(
       }),
     [actionTypes.SET_PRIVILEGE]: (state, action) =>
       produce(state, draft => {
-        const { type, payload: {privilege, isLocationAdmin} } = action;
+        const { type, payload: {privilege, isLocationAdmin, locationName} } = action;
         draft.currentStatus = type;
         draft.privilege = privilege;
         draft.isLocationAdmin = isLocationAdmin;
+        draft.locationName = locationName;
         draft.errors = null;
       }),
     [actionTypes.SEND_RESET_REQUEST_SUCCESS]: (state, action) =>
