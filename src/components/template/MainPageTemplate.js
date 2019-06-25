@@ -2,12 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-
 import { GetNetworks } from 'store/actions/networks';
 import { GetConversations } from 'store/actions/conversations';
+import { SetPrivilege } from 'store/actions/auth';
 import Header from 'components/compound/Header';
 import SideBar from 'components/compound/Sidebar';
 import MessageBar from './MessageBar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Wrapper = styled.div`
   display: flex;
@@ -37,6 +38,18 @@ const ContentWrapper = styled.div`
   }
   @media (max-width: 991px) {
     width: 100vw;
+  }
+`;
+
+const LocationWrapper = styled.div`
+  background: white;
+  color: #004258;
+  font-size: 15px;
+  padding: 10px 0 0 10px;
+  font-weight: bold;
+  span {
+    color: #f7941e;
+    cursor: pointer;
   }
 `;
 
@@ -75,14 +88,26 @@ class MainPageTemplate extends React.Component {
     this.messageToggle = ref;
   }
 
+  switchBack = () => {
+    this.props.SetPrivilege({privilege: 'admin', isLocationAdmin: false});
+    window.setTimeout(() => window.location.reload());
+  }
+
   render() {
     const { showSidebar, showMessage } = this.state;
+    const { locationName, isLocationAdmin } = this.props;
+    
     return (
       <Wrapper>
         <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={this.toggleMessage} />
         <PageContent>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
+            {isLocationAdmin &&
+              <LocationWrapper>
+                <FontAwesomeIcon icon="user-circle" />  You are logged in to {locationName}. <span onClick={this.switchBack}>Switch Back</span>
+              </LocationWrapper>
+            }
             {this.props.children}
           </ContentWrapper>
           <MessageBar show={showMessage} onHide={this.hideMessage} />
@@ -93,12 +118,15 @@ class MainPageTemplate extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  privilege: state.auth.privilege
+  privilege: state.auth.privilege,
+  isLocationAdmin: state.auth.isLocationAdmin,
+  locationName: state.auth.locationName
 });
 
 const mapDispatchToProps = {
   GetNetworks,
-  GetConversations
+  GetConversations,
+  SetPrivilege
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MainPageTemplate));

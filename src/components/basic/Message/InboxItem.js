@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   cursor: pointer;
-  padding: 0px 15px;
+  width: 100%;
 `;
 
 const Content = styled.div`
@@ -31,6 +31,12 @@ const TextBody = styled.div`
   font-size: 14px;
   font-family: 'Source Sans Pro', sans-serif;
   color: rgb(137, 137, 137);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  padding-right: 10px;
 `;
 
 const LeftBody = styled.div``;
@@ -65,8 +71,7 @@ export const InboxItem = ({
           )
         }
         <TextBody>
-          {get(mostRecentMessage, 'attributes.content').slice(0, 3)}
-          ...
+          {get(mostRecentMessage, 'attributes.content')}
         </TextBody>
       </LeftBody>
       <RightBody>

@@ -262,7 +262,6 @@ const mapStateToProps = state => ({
   currentStatus: state.order.currentStatus,
   boatStatus: state.boat.currentStatus,
   privilege: state.auth.privilege,
-  provider: state.provider.loggedInProvider,
   globalTemplates: state.messageTemplate.globalTemplates,
   localTemplates: state.messageTemplate.localTemplates
 });

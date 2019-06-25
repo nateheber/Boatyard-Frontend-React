@@ -32,6 +32,7 @@ export const actionTypes = {
 
   SET_PROVIDER_INFO: '[AUTH] - Set provider token and info',
   SET_PRIVILEGE: '[AUTH] - Set privilege',
+  SET_PROVIDER_LOCATION_INFO: '[AUTH] - Set provider location token and info',
 
   SET_REFRESH_FLAG: '[AUTH] - Set flag to refresh page',
   SET_REFRESH_FLAG_SUCCESS: '[AUTH] - Set flag to refresh page Success',
@@ -70,6 +71,7 @@ export const CreateCustomerPasswordFailure = createAction(actionTypes.CREATE_CUS
 
 export const SetProviderInfo = createAction(actionTypes.SET_PROVIDER_INFO, payload => payload);
 export const SetPrivilege = createAction(actionTypes.SET_PRIVILEGE, payload => payload);
+export const SetProviderLocationInfo = createAction(actionTypes.SET_PROVIDER_LOCATION_INFO, payload => payload);
 
 export const SetRefreshFlag = createAction(actionTypes.SET_REFRESH_FLAG, payload => payload);
 export const SetRefreshFlagSuccess = createAction(actionTypes.SET_REFRESH_FLAG_SUCCESS);
