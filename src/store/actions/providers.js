@@ -39,7 +39,11 @@ export const actionTypes = {
 
   DELETE_PREFERRED_PROVIDER: '[PROVIDERS] - Delete preferred provider',
   DELETE_PREFERRED_PROVIDER_SUCCESS: '[PROVIDERS] - Delete preferred provider Success',
-  DELETE_PREFERRED_PROVIDER_FAILURE: '[PROVIDERS] - Delete preferred provider Failure'
+  DELETE_PREFERRED_PROVIDER_FAILURE: '[PROVIDERS] - Delete preferred provider Failure',
+
+  LOGIN_WITH_PROVIDER_LOCATION: '[PROVIDERS] - Login with provider location',
+  LOGIN_WITH_PROVIDER_LOCATION_SUCCESS: '[PROVIDERS] - Login with provider location Success',
+  LOGIN_WITH_PROVIDER_LOCATION_FAILURE: '[PROVIDERS] - Login with provider location Failure',
 };
 
 export const GetProviders = createAction(actionTypes.GET_PROVIDERS, payload => payload);
@@ -81,3 +85,7 @@ export const DeleteProviderFailure = createAction(actionTypes.DELETE_PROVIDER_FA
 export const DeletePreferredProvider = createAction(actionTypes.DELETE_PREFERRED_PROVIDER, payload => payload);
 export const DeletePreferredProviderSuccess = createAction(actionTypes.DELETE_PREFERRED_PROVIDER_SUCCESS);
 export const DeletePreferredProviderFailure = createAction(actionTypes.DELETE_PREFERRED_PROVIDER_FAILURE);
+
+export const LoginWithProviderLocation = createAction(actionTypes.LOGIN_WITH_PROVIDER_LOCATION, payload => payload);
+export const LoginWithProviderLocationSuccess = createAction(actionTypes.LOGIN_WITH_PROVIDER_LOCATION_SUCCESS);
+export const LoginWithProviderLocationFailure = createAction(actionTypes.LOGIN_WITH_PROVIDER_LOCATION_FAILURE);

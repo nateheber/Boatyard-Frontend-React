@@ -135,7 +135,7 @@ class NewMessage extends React.Component {
 
   getSenderInfo = () => {
     const { privilege, provider, profile } = this.props;
-    const { id, type } = privilege === 'provider' ? provider.data : profile;
+    const { id, type } = privilege === 'provider' ? provider : profile;
     const parsedType = parseUserType(type);
     return { sender_id: id, sender_type: parsedType };
   }

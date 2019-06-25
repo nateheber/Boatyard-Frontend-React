@@ -35,8 +35,10 @@ export default handleActions(
       }),
     [actionTypes.GET_ORDERS]: (state, action) =>
       produce(state, draft => {
+        console.log(state);
         const { type, payload } = action;
         draft.currentStatus = type;
+        console.log(payload)
         set(draft, 'orders.page', get(payload, 'params.page', 1));
         draft.errors = null;
       }),

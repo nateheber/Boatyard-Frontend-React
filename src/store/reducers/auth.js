@@ -8,11 +8,14 @@ const initialState = {
   authToken: '',
   adminToken: '',
   providerToken: '',
+  providerLocationToken: '',
+  isLocationAdmin: false,
   errors: null,
   privilege: '',
   providerId: '',
   taxRate: '',
-  refreshPage: false
+  refreshPage: false,
+  locationName: '',
 };
 
 export default handleActions(
@@ -78,11 +81,26 @@ export default handleActions(
         draft.taxRate = taxRate;
         draft.errors = null;
       }),
-    [actionTypes.SET_PRIVILEGE]: (state, action) =>
+    [actionTypes.SET_PROVIDER_LOCATION_INFO]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
+        const { id, attributes: { taxRate }} = payload;
+        const authorizationToken = get(payload, 'authorizationToken');
         draft.currentStatus = type;
-        draft.privilege = payload;
+        if (authorizationToken) {
+          draft.providerLocationToken = authorizationToken;
+        }
+        draft.providerId = id;
+        draft.taxRate = taxRate;
+        draft.errors = null;
+      }),
+    [actionTypes.SET_PRIVILEGE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: {privilege, isLocationAdmin, locationName} } = action;
+        draft.currentStatus = type;
+        draft.privilege = privilege;
+        draft.isLocationAdmin = isLocationAdmin;
+        draft.locationName = locationName;
         draft.errors = null;
       }),
     [actionTypes.SEND_RESET_REQUEST_SUCCESS]: (state, action) =>

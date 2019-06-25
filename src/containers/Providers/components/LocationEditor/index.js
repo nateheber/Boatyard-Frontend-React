@@ -1,8 +1,11 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
+import { LoginWithProvider } from 'store/actions/providers';
 import { GetProviderLocations } from 'store/actions/providerLocations';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 import { SearchBox } from 'components/basic/Input';
@@ -50,13 +53,30 @@ class LocationEditor extends React.Component {
     GetProviderLocations({ providerId });
   }
 
-  onEdit = locationId => () => {
+  handleEdit = locationId => () => {
     const { providerLocations } = this.props;
     const idx = providerLocations.findIndex(location => location.id === locationId);
     this.setState({ location: { ...providerLocations[idx] }, showNewLocation: true });
   }
 
-  onCreate = (location) => {
+  handleLogin = (location) => {
+    const { LoginWithProvider, history } = this.props;
+    const locationName = get(location, 'relationships.locations.attributes.name');
+    
+    LoginWithProvider({
+      providerId: location.providerId,
+      providerLocationId: location.id,
+      locationName,
+      success: () => {
+        history.push('/dashboard');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+  }
+
+  handleCreate = (location) => {
     const { onCreateApp } = this.props;
     if (onCreateApp) {
       onCreateApp(location);
@@ -89,8 +109,9 @@ class LocationEditor extends React.Component {
                 <LocationCard
                   providerName={name}
                   location={location}
-                  onEdit={this.onEdit(location.id)}
-                  onCreate={this.onCreate}
+                  onEdit={this.handleEdit(location.id)}
+                  onLogin={this.handleLogin}
+                  onCreate={this.handleCreate}
                   key={`provider_location_${idx}`}
                 />
               ))
@@ -109,7 +130,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  GetProviderLocations
+  GetProviderLocations,
+  LoginWithProvider
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(LocationEditor);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LocationEditor));
