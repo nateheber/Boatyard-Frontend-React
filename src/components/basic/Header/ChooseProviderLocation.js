@@ -94,6 +94,16 @@ class LocationSelector extends React.Component {
     }
   }
 
+  handleLocationClick(ev, location) {
+    const  { selected } = this.props;
+    if (selected !== location.providerLocationId) {
+      this.props.onChangeSelection(location);
+    }
+    ev.stopPropagation();
+    ev.preventDefault();
+    return false;
+  }
+
   render() {
     const { keyword } = this.state;
     let { locations, selected } = this.props;
@@ -115,7 +125,7 @@ class LocationSelector extends React.Component {
                   <LocationCheck 
                     checked={selected === location.providerLocationId} 
                     title={location.locationName} 
-                    onClick={() => selected !== location.providerLocationId && this.props.onChangeSelection(location)} />
+                    onClick={(ev) => this.handleLocationClick(ev, location)} />
                 </MenuItemLi>
               ))
             }

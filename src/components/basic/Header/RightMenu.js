@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { toastr } from 'react-redux-toastr';
 import ChooseProviderLocation from './ChooseProviderLocation';
 import MapMarkerIcon from '../../../resources/map-marker-alt-solid.svg';
 import styled from 'styled-components';
@@ -237,8 +238,11 @@ class MenuUI extends React.Component {
       ...location,
       providerId: this.props.providerId,
       success: () => {
-        // window.location.reload();
         this.props.SetRefreshFlag({flag: true});
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+        this.setState({open: false});
       }
     })
   }
