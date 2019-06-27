@@ -99,9 +99,6 @@ const ActionWrapper = styled.div`
 
 const modalStyles = {
   main: {
-    overlay: {
-      background: 'transparent'
-    },
     modal: {
       padding: '0px',
       width: '50%',
