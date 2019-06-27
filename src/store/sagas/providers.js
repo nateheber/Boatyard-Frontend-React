@@ -110,7 +110,7 @@ function* loginWithProvider(action) {
       result = yield call(escalationApiClient.post, '/users/escalations', {
         escalation: {
           user_id: parseInt(profile.id),
-          provider_id: providerId,
+          provider_id: parseInt(providerId),
           provider_location_id: providerLocationId ? parseInt(providerLocationId) : undefined
         }
       });  
@@ -123,6 +123,7 @@ function* loginWithProvider(action) {
         payload: {
           privilege: 'provider',
           isLocationAdmin: !!providerLocationId,
+          providerLocationId: providerLocationId,
           locationName
         }
       });

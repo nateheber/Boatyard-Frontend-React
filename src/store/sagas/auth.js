@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get } from 'lodash';
+import { get, filter, map, find } from 'lodash';
 import { profileSelector } from '../selectors/profile';
 import { actionTypes } from '../actions/auth';
 import { actions as ProfileActions } from '../reducers/profile';
@@ -69,11 +69,31 @@ function* userPermissionRequest(action) {
         payload: result.data.attributes.authorizationToken
       });
       yield put({
+        type: actionTypes.SET_ADMIN,
+        payload: {isAdmin: true}
+      });
+      yield put({
         type: actionTypes.SET_PRIVILEGE,
         payload: {privilege: 'admin', isLocationAdmin: false}
       });
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: get(result, 'data') });
     } else if (res.data.length > 0) {
+      //provider location information from response for provider admin or team member
+      const { included } = res
+      const providerLocations = map(
+        filter(included, {type: "provider_locations"}),
+        providerLocation => {
+          const locationId = get(providerLocation, "attributes.locationId");
+          const location = find(included, {type: "locations", id: `${locationId}`});
+          const locationName = get(location, "attributes.name");
+          
+          return {
+            providerLocationId: parseInt(providerLocation.id),
+            locationName
+          }
+        }
+      );
+      
       const profile = yield select(profileSelector);
       let provider_id = get(res.data[0], 'relationships.provider.data.id', undefined);
       let provider_location_id = (res.data[0], 'relationships.provider_location.data.id', undefined);
@@ -85,6 +105,10 @@ function* userPermissionRequest(action) {
       yield put({
         type: actionTypes.SET_PROVIDER_INFO,
         payload: get(result, 'data')
+      });
+      yield put({
+        type: actionTypes.SET_PROVIDER_LOCATIONS,
+        payload: { providerLocations }
       });
       yield put({
         type: actionTypes.SET_PRIVILEGE,
