@@ -6,7 +6,7 @@ import { actionTypes as authActions } from '../actions/auth';
 import { profileSelector } from '../selectors/profile';
 import { customApiClient, createProviderClient, createPreferredProviderClient } from '../../api';
 
-import { getProviderClient } from './sagaSelectors';
+import { getProviderClient, getCustomApiClient } from './sagaSelectors';
 
 const refineProviders = (providers) => {
   const refinedProviders = providers.map(provider => {
@@ -23,7 +23,6 @@ const adminApiClient = createProviderClient('admin');
 // const basicProviderClient = createProviderClient('basic');
 const customManagement = customApiClient('admin');
 const adminPreferredApiClient = createPreferredProviderClient('admin');
-const escalationApiClient = customApiClient('basic');
 
 function* getProviders(action) {
   let successType = actionTypes.GET_PROVIDERS_SUCCESS;
@@ -94,6 +93,7 @@ function* getPreferredProviders(action) {
 }
 
 function* loginWithProvider(action) {
+  const escalationApiClient = yield select(getCustomApiClient);
   const profile = yield select(profileSelector);
   const { providerId, success, error, providerLocationId, locationName } = action.payload;
   const id = profile.id ? parseInt(profile.id) : null;
