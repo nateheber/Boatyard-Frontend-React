@@ -106,7 +106,7 @@ class MainPageTemplate extends React.Component {
   }
   render() {
     const { showSidebar, showMessage } = this.state;
-    const { privilege, isAdmin, providerLocationId, locationName } = this.props;
+    const { privilege, accessRole, providerLocationId, locationName } = this.props;
     const isProvider = privilege === 'provider';
 
     return (
@@ -115,7 +115,7 @@ class MainPageTemplate extends React.Component {
         <PageContent>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
-            {isAdmin && isProvider &&
+            {accessRole === 'admin' && isProvider &&
               <LocationWrapper>
                 <FontAwesomeIcon icon="user-circle" />  You are logged in to {providerLocationId ? locationName : this.getProviderName()}. <span onClick={this.switchBack}>Switch Back</span>
               </LocationWrapper>
@@ -131,7 +131,7 @@ class MainPageTemplate extends React.Component {
 
 const mapStateToProps = (state) => ({
   privilege: state.auth.privilege,
-  isAdmin: state.auth.isAdmin,
+  accessRole: state.auth.accessRole,
   locationName: state.auth.locationName,
   providerLocationId: state.auth.providerLocationId,
   providerId: state.auth.providerId,

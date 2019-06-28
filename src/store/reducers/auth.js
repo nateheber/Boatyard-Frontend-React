@@ -10,7 +10,7 @@ const initialState = {
   providerToken: '',
   providerLocationToken: '',
   isLocationAdmin: false,
-  isAdmin: false,
+  accessRole: '',
   errors: null,
   privilege: '',
   providerId: '',
@@ -80,7 +80,9 @@ export default handleActions(
         if (authorizationToken) {
           draft.providerToken = authorizationToken;
         }
-        draft.providerId = id;
+        if (payload.type === 'providers') {
+          draft.providerId = id;
+        }
         draft.taxRate = taxRate;
         draft.errors = null;
       }),
@@ -100,10 +102,11 @@ export default handleActions(
         draft.providerLocationId = providerLocationId;
         draft.errors = null;
       }),
-    [actionTypes.SET_ADMIN]: (state, action) =>
+    [actionTypes.SET_ACCESS_ROLE]: (state, action) =>
       produce(state, draft => {
-        const { payload: {isAdmin} } = action;
-        draft.isAdmin = isAdmin;
+        const { type, payload: {accessRole} } = action;
+        draft.currentStatus = type;
+        draft.accessRole = accessRole;
         draft.errors = null;
     }),
     [actionTypes.SEND_RESET_REQUEST_SUCCESS]: (state, action) =>

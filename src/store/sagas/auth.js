@@ -69,17 +69,17 @@ function* userPermissionRequest(action) {
         payload: result.data.attributes.authorizationToken
       });
       yield put({
-        type: actionTypes.SET_ADMIN,
-        payload: {isAdmin: true}
+        type: actionTypes.SET_ACCESS_ROLE,
+        payload: { accessRole: 'admin' }
       });
       yield put({
         type: actionTypes.SET_PRIVILEGE,
         payload: {privilege: 'admin', isLocationAdmin: false}
       });
-      yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: get(result, 'data') });
+      // yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: get(result, 'data') });
     } else if (res.data.length > 0) {
       //provider location information from response for provider admin or team member
-      const { included } = res
+      const { included, data } = res;
       const providerLocations = map(
         filter(included, {type: "provider_locations"}),
         providerLocation => {
@@ -93,12 +93,12 @@ function* userPermissionRequest(action) {
           }
         }
       );
-      
+      const accessRole = find(data, d => d.attributes.access === 'owner') ? 'provider' : 'team';
       const profile = yield select(profileSelector);
       let provider_id = get(res.data[0], 'relationships.provider.data.id', undefined);
       let provider_location_id = (res.data[0], 'relationships.provider_location.data.id', undefined);
-      provider_id = provider_id && parseInt(provider_id);
-      provider_location_id = provider_location_id && parseInt(provider_location_id)
+      provider_id = accessRole === 'team' ? undefined : (provider_id && parseInt(provider_id));
+      provider_location_id = accessRole === 'team' && providerLocations.length > 0 ? providerLocations[0].providerLocationId : undefined;
       result = yield call(escalationClient.post, '/users/escalations', {
         escalation: { user_id: parseInt(profile.id), provider_id, provider_location_id }
       });
@@ -109,6 +109,10 @@ function* userPermissionRequest(action) {
       yield put({
         type: actionTypes.SET_PROVIDER_LOCATIONS,
         payload: { providerLocations }
+      });
+      yield put({
+        type: actionTypes.SET_ACCESS_ROLE,
+        payload: {accessRole}
       });
       yield put({
         type: actionTypes.SET_PRIVILEGE,

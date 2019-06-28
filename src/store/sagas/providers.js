@@ -122,7 +122,6 @@ function* loginWithProvider(action) {
         type: authActions.SET_PRIVILEGE,
         payload: {
           privilege: 'provider',
-          isLocationAdmin: !!providerLocationId,
           providerLocationId: providerLocationId,
           locationName
         }

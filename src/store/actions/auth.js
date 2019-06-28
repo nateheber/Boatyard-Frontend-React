@@ -33,7 +33,7 @@ export const actionTypes = {
   SET_PROVIDER_INFO: '[AUTH] - Set provider token and info',
   SET_PRIVILEGE: '[AUTH] - Set privilege',
   SET_PROVIDER_LOCATIONS: '[AUTH] - Set provider locations',
-  SET_ADMIN: '[AUTH] - Set Is Admin value',
+  SET_ACCESS_ROLE: '[AUTH] - Set Is Admin value',
   SET_REFRESH_FLAG: '[AUTH] - Set flag to refresh page',
   SET_REFRESH_FLAG_SUCCESS: '[AUTH] - Set flag to refresh page Success',
   SET_REFRESH_FLAG_FAILURE: '[AUTH] - Set flag to refresh page Failure',
