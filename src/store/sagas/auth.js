@@ -99,10 +99,12 @@ function* userPermissionRequest(action) {
       let provider_location_id = undefined;
       provider_id = accessRole === 'team' ? undefined : (provider_id && parseInt(provider_id));
       if (accessRole === 'team') {
-        provider_location_id = window.localStorage.getItem(`BT_USER_${profile.id}_LOCATION`);
-        provider_location_id = provider_location_id && parseInt(provider_location_id);
-        provider_location_id = provider_location_id && 
-          (find(providerLocations, {providerLocationId: provider_location_id}) || {}).providerLocationId;
+        if (providerLocations.length > 1) {
+          provider_location_id = window.localStorage.getItem(`BT_USER_${profile.id}_LOCATION`);
+          provider_location_id = provider_location_id && parseInt(provider_location_id);
+          provider_location_id = provider_location_id && 
+            (find(providerLocations, {providerLocationId: provider_location_id}) || {}).providerLocationId;
+        }
         if (!provider_location_id) {
           provider_location_id = providerLocations.length > 0 ? providerLocations[0].providerLocationId : undefined;
         }

@@ -209,14 +209,14 @@ const  LocationsWrapper = styled.div`
   white-space: nowrap;
   cursor: pointer;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 14px;
   padding: 5px 20px;
   color: white;
   border-radius: 5px;
-  border: 2px solid white;
+  border: 1px solid white;
   position: relative;
   img {
-    height: 18px;
+    height: 16px;
     margin-right: 10px;
   }
 `;
