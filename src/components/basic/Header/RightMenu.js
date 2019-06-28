@@ -206,6 +206,7 @@ const Chevron = styled.div`
 const  LocationsWrapper = styled.div`
   display: flex;
   align-items: center;
+  white-space: nowrap;
   cursor: pointer;
   font-weight: bold;
   font-size: 18px;
