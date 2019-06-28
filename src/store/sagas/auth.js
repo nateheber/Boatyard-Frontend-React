@@ -96,9 +96,18 @@ function* userPermissionRequest(action) {
       const accessRole = find(data, d => d.attributes.access === 'owner') ? 'provider' : 'team';
       const profile = yield select(profileSelector);
       let provider_id = get(res.data[0], 'relationships.provider.data.id', undefined);
-      let provider_location_id = (res.data[0], 'relationships.provider_location.data.id', undefined);
+      let provider_location_id = undefined;
       provider_id = accessRole === 'team' ? undefined : (provider_id && parseInt(provider_id));
-      provider_location_id = accessRole === 'team' && providerLocations.length > 0 ? providerLocations[0].providerLocationId : undefined;
+      if (accessRole === 'team') {
+        provider_location_id = window.localStorage.getItem(`BT_USER_${profile.id}_LOCATION`);
+        provider_location_id = provider_location_id && parseInt(provider_location_id);
+        provider_location_id = provider_location_id && 
+          (find(providerLocations, {providerLocationId: provider_location_id}) || {}).providerLocationId;
+        if (!provider_location_id) {
+          provider_location_id = providerLocations.length > 0 ? providerLocations[0].providerLocationId : undefined;
+        }
+      }
+      
       result = yield call(escalationClient.post, '/users/escalations', {
         escalation: { user_id: parseInt(profile.id), provider_id, provider_location_id }
       });
@@ -118,10 +127,13 @@ function* userPermissionRequest(action) {
         type: actionTypes.SET_PRIVILEGE,
         payload: {
           privilege: 'provider',
+          providerLocationId: provider_location_id,
           isLocationAdmin: !!provider_location_id,
-          // locationName
+          locationName: provider_location_id && find(providerLocations, {providerLocationId: provider_location_id}).locationName
         }
       });
+
+      window.localStorage.setItem(`BT_USER_${profile.id}_LOCATION`, provider_location_id);
     } 
     if (success) {
       yield call(success);

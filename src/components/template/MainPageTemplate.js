@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { GetNetworks } from 'store/actions/networks';
 import { GetConversations } from 'store/actions/conversations';
+import { LoginWithProvider } from 'store/actions/providers';
 import { SetPrivilege, SetRefreshFlag } from 'store/actions/auth';
 import Header from 'components/compound/Header';
 import SideBar from 'components/compound/Sidebar';
@@ -91,8 +92,14 @@ class MainPageTemplate extends React.Component {
   }
 
   switchBack = () => {
-    this.props.SetPrivilege({privilege: 'admin', isLocationAdmin: false});
-    window.setTimeout(() => this.props.SetRefreshFlag({flag: true}));
+    const { providerId, accessRole } = this.props;
+    if (accessRole === 'admin') {
+      this.props.SetPrivilege({privilege: 'admin', isLocationAdmin: false});
+      window.setTimeout(() => this.props.SetRefreshFlag({flag: true}));
+    }
+    if (accessRole === 'provider') {
+      this.props.LoginWithProvider({providerId, success: () => this.props.SetRefreshFlag({flag: true}), error: (err) => {}});
+    }
   }
 
   getProviderName = () => {
@@ -115,7 +122,7 @@ class MainPageTemplate extends React.Component {
         <PageContent>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
-            {accessRole === 'admin' && isProvider &&
+            {(accessRole === 'admin' || (providerLocationId && accessRole === 'provider')) && isProvider &&
               <LocationWrapper>
                 <FontAwesomeIcon icon="user-circle" />  You are logged in to {providerLocationId ? locationName : this.getProviderName()}. <span onClick={this.switchBack}>Switch Back</span>
               </LocationWrapper>
@@ -143,6 +150,7 @@ const mapDispatchToProps = {
   GetConversations,
   SetPrivilege,
   SetRefreshFlag,
+  LoginWithProvider,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MainPageTemplate));
