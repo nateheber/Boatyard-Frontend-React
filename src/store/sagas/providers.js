@@ -3,6 +3,7 @@ import { get, orderBy } from 'lodash';
 
 import { actionTypes } from '../actions/providers';
 import { actionTypes as authActions } from '../actions/auth';
+import { getAccessRole } from '../selectors/auth';
 import { profileSelector } from '../selectors/profile';
 import { customApiClient, createProviderClient, createPreferredProviderClient } from '../../api';
 
@@ -95,6 +96,7 @@ function* getPreferredProviders(action) {
 function* loginWithProvider(action) {
   const escalationApiClient = yield select(getCustomApiClient);
   const profile = yield select(profileSelector);
+  const accessRole = yield select(getAccessRole);
   const { providerId, success, error, providerLocationId, locationName } = action.payload;
   const id = profile.id ? parseInt(profile.id) : null;
   try {
@@ -122,12 +124,14 @@ function* loginWithProvider(action) {
         type: authActions.SET_PRIVILEGE,
         payload: {
           privilege: 'provider',
-          isLocationAdmin: !!providerLocationId,
           providerLocationId: providerLocationId,
           locationName
         }
       });
       yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_SUCCESS, payload: get(result, 'data') });
+      if (accessRole === 'team' && providerLocationId) {
+        window.localStorage.setItem(`BT_USER_${profile.id}_LOCATION`, providerLocationId);
+      }
       if (success) {
         yield call(success);
       }

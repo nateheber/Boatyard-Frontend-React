@@ -206,16 +206,17 @@ const Chevron = styled.div`
 const  LocationsWrapper = styled.div`
   display: flex;
   align-items: center;
+  white-space: nowrap;
   cursor: pointer;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 14px;
   padding: 5px 20px;
   color: white;
   border-radius: 5px;
-  border: 2px solid white;
+  border: 1px solid white;
   position: relative;
   img {
-    height: 18px;
+    height: 16px;
     margin-right: 10px;
   }
 `;
@@ -249,13 +250,13 @@ class MenuUI extends React.Component {
 
   render() {
     const { providerLocationId, providerLocations, firstName, lastName, history, toggleMessage, messageToggleRef, 
-      locationName, privilege, isAdmin } = this.props;
+      locationName, accessRole } = this.props;
     const { open } = this.state;
    
     return (
       <Wrapper>
         {
-          privilege === 'provider' && !isAdmin &&
+          accessRole !== 'admin' && providerLocations.length > 1 &&
           <>
             <LocationsWrapper onClick={e => this.setState({open: true})}>
               <img alt="Map Maker" src={MapMarkerIcon} /> { locationName ? locationName : 'LOCATIONS' }
@@ -333,8 +334,7 @@ const mapStateToProps = (state) => ({
   providerId: parseInt(state.auth.providerId),
   providerLocationId: state.auth.providerLocationId,
   locationName: state.auth.locationName,
-  privilege: state.auth.privilege,
-  isAdmin: state.auth.isAdmin,
+  accessRole: state.auth.accessRole,
 });
 
 const mapDispatchToProps = {
