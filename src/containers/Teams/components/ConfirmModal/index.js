@@ -34,7 +34,7 @@ export default class ConfirmModal extends React.Component {
     const names = this.getName();
     const actions = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
-      <OrangeButton onClick={onConfirm} key="modal_btn_save">{(locations && locations.length === 0) ? 'CONFIRM' : 'SEND'}</OrangeButton>
+      <OrangeButton onClick={onConfirm} key="modal_btn_save">CONFIRM</OrangeButton>
     ];
     return (
       <Modal
