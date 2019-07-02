@@ -2,7 +2,6 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, sortBy } from 'lodash';
 
 import { getCreditCardClient } from './sagaSelectors';
-import { createSpreedlyClient } from 'api';
 import { actionTypes } from '../actions/credit-cards';
 
 function* getCreditCards(action) {
@@ -29,59 +28,27 @@ function* getCreditCards(action) {
 function* createCreditCard(action) {
   const { data, success, error } = action.payload;
   const { card_number, cvv, year, month, first_name, last_name, zip, country } = data;
-  const spreedlyClient = createSpreedlyClient();
   const creditCardClient = yield select(getCreditCardClient);
   try {
-    const result = yield call(spreedlyClient.post, '', {
-      payment_method: {
-        credit_card: {
-          first_name,
-          last_name,
-          number: card_number,
-          verification_value: cvv,
-          month: parseInt(month),
-          year: parseInt(year),
-          zip: zip,
-          country: country
-        },
-      }
-    });
-    const {
-      transaction: {
-        paymentMethod: {
-          cardType: name,
-          month: expiration_month,
-          year: expiration_year,
-          token: response,
-          lastFourDigits: last4
-        }
-      }
-    } = result;
     const { user_id, child_account_id } = data;
-    const passData = user_id ? {
-      user_id,
-      name,
-      expiration_month,
-      expiration_year,
-      response,
-      last4,
-      is_default: false
-    }: child_account_id ? {
-      child_account_id,
-      name,
-      expiration_month,
-      expiration_year,
-      response,
-      last4,
-      is_default: false
-    }: {
-      name,
-      expiration_month,
-      expiration_year,
-      response,
-      last4,
-      is_default: false
+    const passData = {
+      expiration_month: parseInt(month),
+      expiration_year: parseInt(year),
+      card_number,
+      card_first_name: first_name,
+      card_last_name: last_name,
+      card_zip_code: zip,
+      card_country: country,
+      is_default: false,
+      cvv
     };
+
+    if (user_id) {
+      passData.user_id = user_id;
+    } else if (child_account_id) {
+      passData.child_account_id = child_account_id;
+    }
+
     yield call(creditCardClient.create, { credit_card: passData });
     yield put({
       type: actionTypes.CREATE_CREDIT_CARD_SUCCESS,
