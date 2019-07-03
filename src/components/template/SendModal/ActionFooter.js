@@ -62,28 +62,34 @@ const CloseButton = styled.button`
 
 export default class ActionFooter extends React.Component {
   state = {
-    file: null
+    files: []
   };
 
   setFileRef = (ref) => {
     this.fileComponent = ref;
   };
 
-  getFileName = () => {
-    return this.state.file.name
-  };
-
+  onSendCallback = () => {
+    const { files } = this.state;
+    if (files.length === this.attachments.length) {
+      console.log(this.attachments);
+      this.props.onSend(this.attachments);
+    }
+  }
+  
   onSend = () => {
     const { onSend } = this.props;
-    const { file } = this.state;
-    const reader = new FileReader();
-    if (file) {
-      reader.onload = e => {
-        if (onSend) {
-          onSend(file, reader.result);
-        }
-      };  
-      reader.readAsDataURL(file);  
+    const { files } = this.state;
+    this.attachments = [];
+    if (files.length > 0) {
+      for(let i=0; i<files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          this.attachments.push({filename: files[i].name, attachment: reader.result});
+          this.onSendCallback();
+        };  
+        reader.readAsDataURL(files[i]);  
+      }
     } else {
       onSend();
     }
@@ -94,36 +100,51 @@ export default class ActionFooter extends React.Component {
   };
 
   fileChanged = (evt) => {
+    const files = [];
+    for (let i =0; i < evt.target.files.length; i++) {
+      files.push(evt.target.files[i]);
+    }
     this.setState({
-      file: evt.target.files[0]
+      files: [...files]
     });
   };
 
   resetFile = () => {
     this.setState({
-      file: null
+      files: []
     });
   };
 
+  removeFile = (idx) => {
+    let files =  this.state.files;
+    files.splice(idx, 1);
+    this.setState({files});
+  }
+
   render() {
     const { onCancel, type } =  this.props;
-    const { file } = this.state;
+    const { files } = this.state;
     return (
       <Wrapper>
         <LeftWrapper>
           {
-            !file ? (
+            files.length === 0 ? (
               <AttachButton onClick={this.uploadFile} />
-            ) : (
-              <React.Fragment>
-                <CloseButton onClick={this.resetFile}>
-                  <FontAwesomeIcon icon="times" size="lg" />
-                </CloseButton>
-                <FileName>{file.name}</FileName>
-              </React.Fragment>
-            )
+            ) : 
+            <>
+              {files.map((file, idx) => 
+                <div key={`file-${idx}`}>
+                  <React.Fragment >
+                    <CloseButton onClick={ev => this.removeFile(idx)}>
+                      <FontAwesomeIcon icon="times" size="lg" />
+                    </CloseButton>
+                    <FileName>{file.name}</FileName>
+                  </React.Fragment>
+                </div>
+              )}
+            </>
           }
-          <HiddenFileInput ref={this.setFileRef} type="file" onChange={this.fileChanged} key={file? 'full' : 'empty'} />
+          <HiddenFileInput ref={this.setFileRef} type="file" onChange={this.fileChanged} key={files.length > 0 ? 'full' : 'empty'} multiple/>
         </LeftWrapper>
         <ActionButtons>
           <HollowButton onClick={onCancel} key="modal_btn_cancel">Cancel</HollowButton>

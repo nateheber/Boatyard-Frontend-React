@@ -173,19 +173,14 @@ class OrderReviewSection extends React.Component {
     this.setState({ showInvoice: false });
   }
 
-  sendQuote = (file, uri) => {
+  sendQuote = (attachments) => {
     const { SendQuote, order } = this.props;
     const orderId = get(order, 'id');
     let params = {};
-    if (file && uri) {
+    if (attachments) {
       params = {
         order: {
-          attachments: [
-            {
-              filename: file.name,
-              attachment: uri
-            }
-          ]
+          attachments
         }
       };
     }
@@ -203,19 +198,14 @@ class OrderReviewSection extends React.Component {
     });
   };
 
-  sendInvoice = (file, uri) => {
+  sendInvoice = (attachments) => {
     const { SendInvoice, order } = this.props;
     const orderId = get(order, 'id');
     let params = {};
-    if (file && uri) {
+    if (attachments) {
       params = {
         order: {
-          attachments: [
-            {
-              filename: file.name,
-              attachment: uri
-            }
-          ]
+          attachments
         }
       };
     }
