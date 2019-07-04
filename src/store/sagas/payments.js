@@ -74,7 +74,7 @@ function* updatePayment(action) {
   const { paymentId, data, success, error } = action.payload;
   const paymentClient = yield select(getPaymentClient);
   try {
-    const result = yield call(paymentClient.patch, paymentId, data);
+    const result = yield call(paymentClient.update, paymentId, data);
     yield put({
       type: actionTypes.UPDATE_PAYMENT_SUCCESS,
       payload: result
