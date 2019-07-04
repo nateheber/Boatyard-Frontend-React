@@ -5,7 +5,7 @@ import { capitalize } from 'lodash';
 
 import CheckedMarker from 'resources/checked_marker.png'
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   height: 35px;
   margin-bottom: 15px;
   margin-top: 35px;
@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   cursor: pointer;
 `;
 
-const CardInfo = styled.div`
+export const CardInfo = styled.div`
   font-size: 14px;
   line-height: 20px;
   font-family: 'Source Sans', sans-serif;
@@ -29,7 +29,7 @@ const CardInfo = styled.div`
   padding-left: 20px;
 `
 
-const RadioButton = styled.span`
+export const RadioButton = styled.span`
   position: relative;
   display: inline-block;
   &::before {

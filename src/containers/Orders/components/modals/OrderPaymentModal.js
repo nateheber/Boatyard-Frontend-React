@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
 import { get } from 'lodash';
 
-import { GetCreditCards } from 'store/actions/credit-cards';
 import { CreatePayment } from 'store/actions/payments';
 import ChargeSelector from '../basic/ChargeSelector';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
@@ -26,10 +25,6 @@ class OrderPaymentModal extends React.Component {
       tab: 'Credit Card',
       paymentMethod: 'cash'
     }
-  }
-
-  componentDidMount() {
-    this.refreshCards();
   }
 
   onSelectCard = (cardId) => {
@@ -86,21 +81,6 @@ class OrderPaymentModal extends React.Component {
     }
   }
 
-  refreshCards = () => {
-    const { order, privilege, GetCreditCards } = this.props;
-    let user = getUserFromOrder(order);
-    if (privilege === 'provider') {
-      user = getChildAccountFromOrder(order);
-    }
-    let params = {};
-    if (user.type === 'child_accounts') {
-      params = {'credit_card[child_account_id]': user.id };
-    } else {
-      params = {'credit_card[user_id]': user.id };
-    }
-    GetCreditCards({ params });
-  }
-
   render() {
     const { open, loading, onClose, creditCards, privilege, order } = this.props;
     const { balance, fee, tab, paymentMethod } = this.state;
@@ -132,7 +112,7 @@ class OrderPaymentModal extends React.Component {
                   user={user}
                   creditCards={creditCards}
                   onChange={this.onSelectCard}
-                  refreshCards={this.refreshCards}
+                  refreshCards={this.props.refreshCards}
                 />
               ) : (
                 <PaymentSelector selected={paymentMethod} onChange={this.onSelectPaymentMethod} />
@@ -154,7 +134,6 @@ const mapStateToProps = ({ creditCard: { creditCards }, auth: { privilege } }) =
 })
 
 const mapDispatchToProps = {
-  GetCreditCards,
   CreatePayment
 }
 
