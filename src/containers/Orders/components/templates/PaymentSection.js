@@ -103,7 +103,8 @@ class PaymentSection extends React.Component {
 
   renderPayments = () => {
     let { payments } = this.props;
-    payments = orderBy(payments, ['updatedAt', 'desc']);
+    console.log(payments);
+    payments = orderBy(payments, ['attributes.updatedAt', 'asc']);
     return payments.map(payment => {
       const { amount, updatedAt, createdAt, paymentType, state } = payment.attributes;
       const amountInFloat = parseFloat(amount);
