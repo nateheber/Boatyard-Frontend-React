@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get, isEmpty, find, filter, map, orderBy } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 import moment from 'moment';
 import { GetCreditCards } from 'store/actions/credit-cards';
 import { actionTypes, GetPayments, CreatePayment, UpdatePayment } from 'store/actions/payments';
@@ -78,9 +79,9 @@ class PaymentSection extends React.Component {
     this.setState({ visibleOfRefundModal: true });
   };
 
-  getCreditCard = ({attributes: {childAccountId}}) => {
+  getCreditCard = ({relationships: {creditCard: {data: {id}}}}) => {
     const { creditCards } = this.props;
-    return find(creditCards, {attributes: {childAccountId}}) || {attributes: {name: '', last4: ''}};
+    return find(creditCards, {id}) || {attributes: {name: '', last4: ''}};
 
   }
 
@@ -103,7 +104,6 @@ class PaymentSection extends React.Component {
 
   renderPayments = () => {
     let { payments } = this.props;
-    console.log(payments);
     payments = orderBy(payments, ['attributes.updatedAt', 'asc']);
     return payments.map(payment => {
       const { amount, updatedAt, createdAt, paymentType, state } = payment.attributes;
@@ -138,6 +138,9 @@ class PaymentSection extends React.Component {
         if (onFinished) {
           onFinished();
         }
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });  
   };

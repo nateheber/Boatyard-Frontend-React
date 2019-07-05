@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { startCase } from 'lodash';
+import { find, startCase } from 'lodash';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,6 +18,8 @@ const Wrapper = styled.div`
 
 const LeftWrapper = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: row;
 `;
 
 const ActionButtons = styled.div`
@@ -72,7 +74,6 @@ export default class ActionFooter extends React.Component {
   onSendCallback = () => {
     const { files } = this.state;
     if (files.length === this.attachments.length) {
-      console.log(this.attachments);
       this.props.onSend(this.attachments);
     }
   }
@@ -102,10 +103,13 @@ export default class ActionFooter extends React.Component {
   fileChanged = (evt) => {
     const files = [];
     for (let i =0; i < evt.target.files.length; i++) {
-      files.push(evt.target.files[i]);
+      const file = evt.target.files[i];
+      if (!find(this.state.files, {name: file.name})) {
+        files.push(file);
+      }  
     }
     this.setState({
-      files: [...files]
+      files: [...this.state.files, ...files]
     });
   };
 
@@ -127,23 +131,19 @@ export default class ActionFooter extends React.Component {
     return (
       <Wrapper>
         <LeftWrapper>
-          {
-            files.length === 0 ? (
-              <AttachButton onClick={this.uploadFile} />
-            ) : 
-            <>
-              {files.map((file, idx) => 
-                <div key={`file-${idx}`}>
-                  <React.Fragment >
-                    <CloseButton onClick={ev => this.removeFile(idx)}>
-                      <FontAwesomeIcon icon="times" size="lg" />
-                    </CloseButton>
-                    <FileName>{file.name}</FileName>
-                  </React.Fragment>
-                </div>
-              )}
-            </>
-          }
+          <AttachButton onClick={this.uploadFile} />
+          <div>
+          {files.map((file, idx) => 
+            <div key={`file-${idx}`}>
+              <React.Fragment >
+                <CloseButton onClick={ev => this.removeFile(idx)}>
+                  <FontAwesomeIcon icon="times" size="lg" />
+                </CloseButton>
+                <FileName>{file.name}</FileName>
+              </React.Fragment>
+            </div>
+          )}
+          </div>
           <HiddenFileInput ref={this.setFileRef} type="file" onChange={this.fileChanged} key={files.length > 0 ? 'full' : 'empty'} multiple/>
         </LeftWrapper>
         <ActionButtons>
