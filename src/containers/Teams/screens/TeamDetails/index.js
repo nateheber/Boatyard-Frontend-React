@@ -331,7 +331,7 @@ class TeamDetails extends React.Component {
   }
 
   handleUpdateLocations = (locations) => {
-    const { userId, providerId } = this.state;
+    const { userId, providerId, access } = this.state;
     const { managements } = this.props;
     const filteredManagements = managements.filter(management => management.providerId === providerId && management.providerLocationId);
     const newLocations = locations.filter(
@@ -345,7 +345,7 @@ class TeamDetails extends React.Component {
       return {
         user_id: userId,
         provider_location_id: location.id,
-        access: 'admin'
+        access
       };
     });
 
@@ -487,6 +487,8 @@ class TeamDetails extends React.Component {
             >
               <React.Fragment>
                 <option value="admin">Admin</option>
+                <option value="team_member">Team Member</option>
+                <option value="contractor">Contractor</option>
               </React.Fragment>
             </Select>
           </InputFieldWrapper>
