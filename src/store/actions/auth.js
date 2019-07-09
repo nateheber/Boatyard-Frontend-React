@@ -38,6 +38,8 @@ export const actionTypes = {
   SET_REFRESH_FLAG_SUCCESS: '[AUTH] - Set flag to refresh page Success',
   SET_REFRESH_FLAG_FAILURE: '[AUTH] - Set flag to refresh page Failure',
   
+  SET_AUTH0_TOKEN: '[AUTH] - Set Auth0 Token',
+  
   AUTH_LOGOUT: '[AUTH] - Log out'
 };
 
@@ -75,6 +77,7 @@ export const SetPrivilege = createAction(actionTypes.SET_PRIVILEGE, payload => p
 export const SetRefreshFlag = createAction(actionTypes.SET_REFRESH_FLAG, payload => payload);
 export const SetRefreshFlagSuccess = createAction(actionTypes.SET_REFRESH_FLAG_SUCCESS);
 export const SetRefreshFlagFailure = createAction(actionTypes.SET_REFRESH_FLAG_FAILURE);
+export const SetAuth0Token = createAction(actionTypes.SET_AUTH0_TOKEN, payload => payload);
 
 export const Logout = createAction(actionTypes.AUTH_LOGOUT, payload => payload);
 

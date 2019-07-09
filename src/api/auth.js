@@ -12,6 +12,12 @@ export const login = (email, password) =>
     }
   });
 
+export const loginWithAuth0Token = (id_token) =>
+  authClient.post(`${apiBaseUrl}/users/authentications`, {
+    authentication: {
+      id_token
+    }
+  });
 export const signup = (email, password) =>
   authClient.post(`${apiBaseUrl}/users/registrations`, {
     user: {

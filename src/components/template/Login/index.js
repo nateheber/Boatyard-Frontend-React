@@ -1,99 +1,91 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
-
-import LoginForm from '../Forms/LoginForm';
-import { Login, GetUserPermission } from 'store/actions/auth';
+import Auth0Lock from 'auth0-lock';
+import { AUTH_CONFIG } from 'utils/auth0';
+import { Login, GetUserPermission, SetAuth0Token, Logout } from 'store/actions/auth';
 import { LoginWithProvider } from 'store/actions/providers';
-import WelcomeImage from '../../../resources/auth/welcome-bg.png';
+import BYLogo from 'resources/by_logo.png';
 
 const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding: 10px;
-  @media (max-width: 800px) {
-    flex-direction: column;
-  }
-  @media (max-width: 402px) {
-    width: calc(100% - 20px);
-  }
-`;
-
-const SideContent =styled.div`
-  display: flex;
-  width: 382px;
-  min-height: 514px;
-  background-color: #ECECEC;
-  &.welcome {
-    background-image: url(${WelcomeImage});
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  @media (max-width: 800px) {
-    &.welcome {
-      display: none;
-    }
-  }
-  @media (max-width: 402px) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  p {
     width: 100%;
-    flex-direction: column;
+    font-size: 30px;
+    color: #0D485F;
+    padding-top: 40%;
+    text-align: center;
+    font-weight: bold;
   }
-`;
-
-const WelcomeWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 54px;
-`;
-
-const WelcomeTitle = styled.h1`
-  margin-bottom: 14px;
-  color: #FFFFFF;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 42px;
-  font-weight: 700;
-`;
-
-const WelcomeBody = styled.div`
-  margin-bottom: 14px;
-  color: #FFFFFF;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
-`;
-
-const WelcomeFooter = styled.div`
-  margin-bottom: 14px;
-  color: #FFFFFF;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  font-style: italic;
-  font-size: 14px;
 `;
 
 class LoginComponent extends React.Component {
-  handleLogin = (email, password) => {
+  
+
+  constructor(props) {
+    super(props);
+    if (!props.auth0Token) {
+      this.lock = new Auth0Lock(AUTH_CONFIG.clientId, AUTH_CONFIG.domain, {
+        closable: false,
+        rememberLastLogin: false,
+        auth: {
+          responseType: 'token id_token',
+        },
+        theme: {
+          primaryColor: '#0D485F',
+          logo: BYLogo,
+        }
+      });
+      this.onAuthenticated = this.onAuthenticated.bind(this);
+      this.onAuthenticated();
+    } else {
+      this.handleLogin(props.auth0Token);
+    } 
+  }
+
+  onAuthenticated() {
+    this.lock.on('authenticated', (authResult) => {
+      console.log('authenticated....');
+      this.props.SetAuth0Token({token: authResult.idToken});
+      this.handleLogin(authResult.idToken);
+    });
+  }
+  
+  componentDidMount() {
+    if ( !(/access_token|id_token|error/.test(this.props.location.hash)) ) {
+      this.lock.show();
+    }
+  }
+
+  handleLogin = (auth0Token) => {
+    console.log('.handleLogin.');
     const { Login, GetUserPermission, LoginWithProvider } = this.props;
     Login({
       params: {
-        email,
-        password
+        auth0Token
       },
       success: () => {
         GetUserPermission({
-          success: () => {
-            const index = this.props.location.search.indexOf('redirect_url');
-            if (index > -1) {
-              const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
-              this.props.history.push(redirectUrl);
-            } else {
-              this.props.history.push('/');
-            }
+          success: (res) => {
+            // if (res) {
+              const index = this.props.location.search.indexOf('redirect_url');
+              if (index > -1) {
+                const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
+                this.props.history.push(redirectUrl);
+              } else {
+                console.log('push...');
+                this.props.history.push('/');
+              }
+            // } else {
+            //   this.props.Logout();
+            //   toastr.error("Error", "Something went wrong. Please login again.");
+            // }
           },
           error: (e) => {
             LoginWithProvider({
@@ -115,37 +107,36 @@ class LoginComponent extends React.Component {
         });
       },
       error: (e) => {
+        this.props.Logout();
         toastr.error('Error', e.message);
       }
     });
   };
 
   render() {
+    const { auth0Token } = this.props;
+    console.log(auth0Token && 'LOADING>>>>');
     return (
       <Wrapper>
-        <SideContent>
-          <LoginForm onLogin={this.handleLogin} />
-        </SideContent>
-        <SideContent className="welcome">
-          <WelcomeWrapper>
-            <WelcomeTitle>Welcome<br /> to Boatyard</WelcomeTitle>
-            <WelcomeBody>We're on a mission to connect our community of boaters, marine pros, dealers and marinas.</WelcomeBody>
-            <WelcomeFooter>We’re happy to have you on board.</WelcomeFooter>
-          </WelcomeWrapper>
-        </SideContent>
+        {
+          auth0Token && <p>Loading...</p>
+        }
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ auth: { errorMessage } }) => ({
-  errorMessage
+const mapStateToProps = ({ auth: { errorMessage, auth0Token } }) => ({
+  errorMessage,
+  auth0Token
 });
 
 const mapDispatchToProps = {
   Login,
   GetUserPermission,
-  LoginWithProvider
+  LoginWithProvider,
+  SetAuth0Token,
+  Logout
 };
 
 export default withRouter(
