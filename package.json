@@ -7,6 +7,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.7.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@ridi/object-case-converter": "^2.0.4",
+    "auth0-lock": "^11.16.3",
     "axios": "^0.18.0",
     "axios-case-converter": "^0.3.0",
     "change-case": "^3.0.2",

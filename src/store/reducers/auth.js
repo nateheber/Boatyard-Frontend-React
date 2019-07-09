@@ -8,6 +8,7 @@ const initialState = {
   authToken: '',
   adminToken: '',
   providerToken: '',
+  auth0Token: '',
   providerLocationToken: '',
   isLocationAdmin: false,
   accessRole: '',
@@ -148,6 +149,12 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
+      }),
+    [actionTypes.SET_AUTH0_TOKEN]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: {token} } = action;
+        draft.currentStatus = type;
+        draft.auth0Token = token;
       })
   },
   initialState

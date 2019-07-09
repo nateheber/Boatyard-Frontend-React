@@ -4,7 +4,7 @@ import { profileSelector } from '../selectors/profile';
 import { actionTypes } from '../actions/auth';
 import { actions as ProfileActions } from '../reducers/profile';
 
-import { login, signup, sendResetRequest, resetPassword, createPassword, createCustomerPassword } from '../../api/auth';
+import { login, signup, sendResetRequest, resetPassword, createPassword, createCustomerPassword, loginWithAuth0Token } from '../../api/auth';
 
 import { customApiClient } from '../../api';
 
@@ -12,9 +12,14 @@ const escalationClient = customApiClient('basic');
 
 function* loginRequest(action) {
   const { params, success, error } = action.payload;
-  const { email, password } = params;
+  const { email, password, auth0Token } = params;
   try {
-    const result = yield call(login, email, password);
+    let result;
+    if (!auth0Token) {
+      result = yield call(login, email, password);
+    } else {
+      result = yield call(loginWithAuth0Token, auth0Token);
+    }
     const {
       id,
       type,
