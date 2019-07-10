@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 
 export const providerLocationsSelector = (state) => state.providerLocation.providerLocations;
 export const includedSelector = (state) => state.providerLocation.included;
+export const locationsSelector = (state) => _.get(state, 'providerLocation.included.locations', {});
 
 export const refinedProviderLocationSelector = createSelector(
   providerLocationsSelector, includedSelector,
