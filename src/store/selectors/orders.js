@@ -167,8 +167,7 @@ export const refinedOrdersSelector = createSelector(
       }
       const providerLocation = find(providerLocations, {id: `${order.providerLocationId}`});
       if (providerLocation && locationsById[providerLocation.locationId]) {
-        const locationData = locationsById[providerLocation.locationId].relationships.address.data;
-        order.locationAddress = `${locationData.street} ${locationData.city}, ${locationData.state} ${locationData.zip}`;
+        order.locationAddress = locationsById[providerLocation.locationId].attributes.name;
       } else {
         order.locationAddress = '';
       }
