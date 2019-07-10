@@ -36,3 +36,7 @@ code {
   font-family: "Open sans-serif-Semi-bold";
   src: url('./resources/Open_sans/OpenSans-SemiBold.ttf') format("truetype");
 }
+
+.auth0-lock-overlay {
+  display: none;
+}

@@ -141,6 +141,8 @@ function* userPermissionRequest(action) {
       });
 
       window.localStorage.setItem(`BT_USER_${profile.id}_LOCATION`, provider_location_id);
+    } else {
+      throw Error("The user is not assigned to any provider.");
     } 
     if (success) {
       yield call(success);
