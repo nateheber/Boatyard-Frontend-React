@@ -60,14 +60,14 @@ const ORDER_COLUMNS = [
   //   width: 2.5
   // },
   { label: 'provider', value: 'relationships.provider.attributes.name', width: 1 },
-  { label: 'location', value: 'locationAddress', width: 2.5 },
+  { label: 'location', value: 'locationAddress', width: 1.2 },
   {
     label: 'boat location',
     street: 'relationships.boat.relationships.location.address.street',
     city: 'relationships.boat.relationships.location.address.city',
     state: 'relationships.boat.relationships.location.address.state',
     isLocation: true,
-    width: 2.5
+    width: 2.3
   },
   { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1.5, },
   { label: 'boat', value: 'relationships.boat.attributes.make', width: 1.2, },
