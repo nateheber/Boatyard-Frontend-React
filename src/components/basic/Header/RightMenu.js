@@ -1,22 +1,26 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { toastr } from 'react-redux-toastr';
+import ChooseProviderLocation from './ChooseProviderLocation';
+import MapMarkerIcon from '../../../resources/map-marker-alt-solid.svg';
 import styled from 'styled-components';
-
 import Bell from '../../../resources/notification-bell.svg';
 import MessageBox from '../../../resources/messages-icon.png';
 import ChevronIcon from '../../../resources/down-chevron.svg';
 import Message from '../../../resources/message.png';
 import CheckCircle from '../../../resources/check_circle.png';
 import Document from '../../../resources/document.png';
-
+import { SetRefreshFlag } from 'store/actions/auth';
 import { isAuthenticatedSelector } from 'store/selectors/auth';
 import { Logout } from '../../../store/actions/auth';
+import { LoginWithProvider } from 'store/actions/providers';
 
 const Wrapper = styled.div`
-  display: inline-block;
+  display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  align-items: center;
 `;
 
 const MenuWrapper = styled.ul`
@@ -199,17 +203,75 @@ const Chevron = styled.div`
   }
 `;
 
+const  LocationsWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 5px 20px;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid white;
+  position: relative;
+  img {
+    height: 16px;
+    margin-right: 10px;
+  }
+`;
 class MenuUI extends React.Component {
+  state = {
+    open: false,
+  }
 
   logout = () => {
     const { Logout } = this.props;
     Logout();
   };
 
+  onCloseLocationModal = () => {
+    this.setState({open: false});
+  }
+
+  handleLocationChange = location => {
+    this.props.LoginWithProvider({
+      ...location,
+      providerId: this.props.providerId,
+      success: () => {
+        this.props.SetRefreshFlag({flag: true});
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+        this.setState({open: false});
+      }
+    })
+  }
+
   render() {
-    const { firstName, lastName, history, toggleMessage, messageToggleRef } = this.props;
+    const { providerLocationId, providerLocations, firstName, lastName, history, toggleMessage, messageToggleRef, 
+      locationName, accessRole } = this.props;
+    const { open } = this.state;
+   
     return (
       <Wrapper>
+        {
+          accessRole !== 'admin' && providerLocations.length > 1 &&
+          <>
+            <LocationsWrapper onClick={e => this.setState({open: true})}>
+              <img alt="Map Maker" src={MapMarkerIcon} /> { locationName ? locationName : 'LOCATIONS' }
+              { 
+                open && 
+                <ChooseProviderLocation 
+                  onClose={ev => this.setState({open: false})}
+                  locations={providerLocations} 
+                  selected={providerLocationId} 
+                  onChangeSelection={this.handleLocationChange} 
+                />
+              }
+            </LocationsWrapper>
+          </>
+        }
         <MenuWrapper>
           <DropdownItem>
             <UsernameWrapper>
@@ -267,11 +329,18 @@ const mapStateToProps = (state) => ({
   lastName: state.profile.lastName,
   isAuthenticated: isAuthenticatedSelector(state),
   providerToken: state.auth.providerToken,
-  adminToken: state.auth.adminToken
+  adminToken: state.auth.adminToken,
+  providerLocations: state.auth.providerLocations,
+  providerId: parseInt(state.auth.providerId),
+  providerLocationId: state.auth.providerLocationId,
+  locationName: state.auth.locationName,
+  accessRole: state.auth.accessRole,
 });
 
 const mapDispatchToProps = {
-  Logout
+  Logout,
+  LoginWithProvider,
+  SetRefreshFlag,
 };
 
 export const RightMenu = withRouter(

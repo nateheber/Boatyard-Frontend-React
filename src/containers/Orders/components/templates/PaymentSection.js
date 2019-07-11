@@ -1,13 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, find, filter, map, orderBy } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 import moment from 'moment';
-
-import { actionTypes, GetPayments, CreatePayment } from 'store/actions/payments';
+import { GetCreditCards } from 'store/actions/credit-cards';
+import { actionTypes, GetPayments, CreatePayment, UpdatePayment } from 'store/actions/payments';
 import { Section } from 'components/basic/InfoSection';
 import { HollowButton } from 'components/basic/Buttons';
 import OrderPaymentModal from '../modals/OrderPaymentModal';
+import RefundPaymentModal from '../modals/RefundPaymentModal';
+import { getUserFromOrder, getChildAccountFromOrder } from 'utils/order'
 
 const PAYMENT_TYPES = {
   cash: 'Cash',
@@ -57,6 +60,7 @@ class PaymentSection extends React.Component {
 
   componentDidMount() {
     this.loadPayments();
+    this.refreshCards();
   }
 
   hideCreateModal = () => {
@@ -75,14 +79,50 @@ class PaymentSection extends React.Component {
     this.setState({ visibleOfRefundModal: true });
   };
 
+  getCreditCard = ({relationships: {creditCard: {data: {id}}}}) => {
+    const { creditCards } = this.props;
+    return find(creditCards, {id}) || {attributes: {name: '', last4: ''}};
+
+  }
+
+  refreshCards = () => {
+    const { order, privilege, GetCreditCards } = this.props;
+    let user = getUserFromOrder(order);
+    if (privilege === 'provider') {
+      user = getChildAccountFromOrder(order);
+    }
+    let params = {};
+    if (user.type === 'child_accounts') {
+      params = {'credit_card[child_account_id]': user.id };
+    } else if (user && user.id) {
+      params = {'credit_card[user_id]': user.id };
+    } else {
+      return;
+    }
+    GetCreditCards({ params });
+  }
+
   renderPayments = () => {
-    const { payments } = this.props;
+    let { payments } = this.props;
+    payments = orderBy(payments, ['attributes.updatedAt', 'asc']);
     return payments.map(payment => {
-      const { amount, paymentType, createdAt } = payment.attributes;
+      const { amount, updatedAt, createdAt, paymentType, state } = payment.attributes;
       const amountInFloat = parseFloat(amount);
+      const cc = this.getCreditCard(payment);
+      const paidText = paymentType === 'credit' ? 
+        `${cc.attributes.name.toUpperCase()} xxxx${cc.attributes.last4}` : PAYMENT_TYPES[paymentType];
+      const subjectText = state === 'refunded' ? 'refunded to' : 'paid by';
       return (
         <InfoItem key={`payment_${payment.id}`}>
-          ${amountInFloat.toFixed(2)} {`paid by ${PAYMENT_TYPES[paymentType]}`} - {moment(createdAt).format('MMM D, YYYY')}
+          ${amountInFloat.toFixed(2)} {subjectText} {paidText} on {moment(updatedAt).format('MMM D, YYYY')} at {moment(updatedAt).format('hh:mm A')}
+          {
+            state === 'refunded' &&
+            <>
+              <br/>
+              ${amountInFloat.toFixed(2)} paid by {paidText} on {moment(createdAt).format('MMM D, YYYY')} at {moment(createdAt).format('hh:mm A')}
+            </>
+          }
+          
         </InfoItem>
       );
     });
@@ -98,8 +138,30 @@ class PaymentSection extends React.Component {
         if (onFinished) {
           onFinished();
         }
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });  
+  };
+
+  onRefund = (paymentId) => {
+    const { UpdatePayment, onFinished } = this.props;
+    UpdatePayment({
+      paymentId,
+      data: {
+        payment: {
+          transition: "refund"
+        }
+      },
+      success: () => {
+        this.hideRefundModal();
+        this.loadPayments();
+        if (onFinished) {
+          onFinished();
+        }
+      }
+    });
   };
 
   loadPayments = () => {
@@ -108,21 +170,29 @@ class PaymentSection extends React.Component {
   };
 
   render() {
-    const { order, currentStatus } = this.props;
-    const { visibleOfCreateModal } = this.state;
-    const balance = get(order, 'attributes.balance');
+    const { order, currentStatus, payments } = this.props;
+    const { visibleOfCreateModal, visibleOfRefundModal } = this.state;
+    const refundablePayments = map(
+      filter(payments, {attributes: {refundable: true}}),
+      payment => { return {...payment, cc: this.getCreditCard(payment)}}
+    );
+    const balance = parseFloat(get(order, 'attributes.balance'));
     return (
       <Section title="Payment">
         <Wrapper>
           <InfoList>
             {this.renderPayments()}
             <InfoItem style={{ marginTop: 5 }}>
-              Balance Remaining: ${parseFloat(balance).toFixed(2)}
+              Balance Remaining: ${balance.toFixed(2)}
             </InfoItem>
           </InfoList>
           <Buttons>
-            <HollowButton onClick={this.showRefundModal}>Refund</HollowButton>
-            <HollowButton onClick={this.showCreateModal}>Enter Payment</HollowButton>
+            {
+              refundablePayments.length > 0 && <HollowButton onClick={this.showRefundModal}>Refund</HollowButton>
+            }
+            {
+              balance > 0 && <HollowButton onClick={this.showCreateModal}>Enter Payment</HollowButton>
+            }
           </Buttons>
         </Wrapper>
         {(!isEmpty(order) && visibleOfCreateModal) && <OrderPaymentModal
@@ -130,7 +200,16 @@ class PaymentSection extends React.Component {
           loading={currentStatus === actionTypes.CREATE_PAYMENT}
           onSave={this.onSave}
           onClose={this.hideCreateModal}
+          refreshCards={this.refreshCards}
           order={order}
+        />}
+        {(!isEmpty(order) && refundablePayments.length > 0 && visibleOfRefundModal) && <RefundPaymentModal
+          open={visibleOfRefundModal}
+          loading={currentStatus === actionTypes.UPDATE_PAYMENT}
+          onRefund={this.onRefund}
+          onClose={this.hideRefundModal}
+          order={order}
+          payments={refundablePayments}
         />}
       </Section>
     )
@@ -138,15 +217,19 @@ class PaymentSection extends React.Component {
 }
 
 
-const mapStateToProps = ({ payment: { payments, currentStatus }, order }) => ({
+const mapStateToProps = ({ payment: { payments, currentStatus }, order, creditCard: {creditCards}, auth: { privilege }}) => ({
   currentStatus,
   payments,
-  orderStatus: order.currentStatus
+  orderStatus: order.currentStatus,
+  creditCards,
+  privilege,
 })
 
 const mapDispatchToProps = {
   GetPayments,
-  CreatePayment
+  CreatePayment,
+  UpdatePayment,
+  GetCreditCards
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PaymentSection);

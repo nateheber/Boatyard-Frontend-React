@@ -4,14 +4,14 @@ import { PersistGate } from 'redux-persist/integration/react';
 import WebFont from 'webfontloader';
 import ReduxToastr from 'react-redux-toastr';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faPlus, faTimes, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTimes, faUserCircle, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 
 import AppRoutes from './routes';
 import store, { persistor } from './store';
 
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 
-library.add(faPlus, faTimes, faUserCircle);
+library.add(faPlus, faTimes, faUserCircle, faMapMarkerAlt);
 
 WebFont.load({
   google: {

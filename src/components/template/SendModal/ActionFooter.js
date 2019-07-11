@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { startCase } from 'lodash';
+import { find, startCase } from 'lodash';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,6 +18,8 @@ const Wrapper = styled.div`
 
 const LeftWrapper = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: row;
 `;
 
 const ActionButtons = styled.div`
@@ -62,28 +64,33 @@ const CloseButton = styled.button`
 
 export default class ActionFooter extends React.Component {
   state = {
-    file: null
+    files: []
   };
 
   setFileRef = (ref) => {
     this.fileComponent = ref;
   };
 
-  getFileName = () => {
-    return this.state.file.name
-  };
-
+  onSendCallback = () => {
+    const { files } = this.state;
+    if (files.length === this.attachments.length) {
+      this.props.onSend(this.attachments);
+    }
+  }
+  
   onSend = () => {
     const { onSend } = this.props;
-    const { file } = this.state;
-    const reader = new FileReader();
-    if (file) {
-      reader.onload = e => {
-        if (onSend) {
-          onSend(file, reader.result);
-        }
-      };  
-      reader.readAsDataURL(file);  
+    const { files } = this.state;
+    this.attachments = [];
+    if (files.length > 0) {
+      for(let i=0; i<files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          this.attachments.push({filename: files[i].name, attachment: reader.result});
+          this.onSendCallback();
+        };  
+        reader.readAsDataURL(files[i]);  
+      }
     } else {
       onSend();
     }
@@ -94,36 +101,50 @@ export default class ActionFooter extends React.Component {
   };
 
   fileChanged = (evt) => {
+    const files = [];
+    for (let i =0; i < evt.target.files.length; i++) {
+      const file = evt.target.files[i];
+      if (!find(this.state.files, {name: file.name})) {
+        files.push(file);
+      }  
+    }
     this.setState({
-      file: evt.target.files[0]
+      files: [...this.state.files, ...files]
     });
   };
 
   resetFile = () => {
     this.setState({
-      file: null
+      files: []
     });
   };
 
+  removeFile = (idx) => {
+    let files =  this.state.files;
+    files.splice(idx, 1);
+    this.setState({files});
+  }
+
   render() {
     const { onCancel, type } =  this.props;
-    const { file } = this.state;
+    const { files } = this.state;
     return (
       <Wrapper>
         <LeftWrapper>
-          {
-            !file ? (
-              <AttachButton onClick={this.uploadFile} />
-            ) : (
-              <React.Fragment>
-                <CloseButton onClick={this.resetFile}>
+          <AttachButton onClick={this.uploadFile} />
+          <div>
+          {files.map((file, idx) => 
+            <div key={`file-${idx}`}>
+              <React.Fragment >
+                <CloseButton onClick={ev => this.removeFile(idx)}>
                   <FontAwesomeIcon icon="times" size="lg" />
                 </CloseButton>
                 <FileName>{file.name}</FileName>
               </React.Fragment>
-            )
-          }
-          <HiddenFileInput ref={this.setFileRef} type="file" onChange={this.fileChanged} key={file? 'full' : 'empty'} />
+            </div>
+          )}
+          </div>
+          <HiddenFileInput ref={this.setFileRef} type="file" onChange={this.fileChanged} key={files.length > 0 ? 'full' : 'empty'} multiple/>
         </LeftWrapper>
         <ActionButtons>
           <HollowButton onClick={onCancel} key="modal_btn_cancel">Cancel</HollowButton>

@@ -1,10 +1,12 @@
 import React from 'react';
+import { find } from 'lodash';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { GetNetworks } from 'store/actions/networks';
 import { GetConversations } from 'store/actions/conversations';
-import { SetPrivilege } from 'store/actions/auth';
+import { LoginWithProvider } from 'store/actions/providers';
+import { SetPrivilege, SetRefreshFlag } from 'store/actions/auth';
 import Header from 'components/compound/Header';
 import SideBar from 'components/compound/Sidebar';
 import MessageBar from './MessageBar';
@@ -53,6 +55,7 @@ const LocationWrapper = styled.div`
   }
 `;
 
+
 class MainPageTemplate extends React.Component {
   state = {
     showSidebar: false,
@@ -89,23 +92,39 @@ class MainPageTemplate extends React.Component {
   }
 
   switchBack = () => {
-    this.props.SetPrivilege({privilege: 'admin', isLocationAdmin: false});
-    window.setTimeout(() => window.location.reload());
+    const { providerId, accessRole } = this.props;
+    if (accessRole === 'admin') {
+      this.props.SetPrivilege({privilege: 'admin', isLocationAdmin: false});
+      window.setTimeout(() => this.props.SetRefreshFlag({flag: true}));
+    }
+    if (accessRole === 'provider') {
+      this.props.LoginWithProvider({providerId, success: () => this.props.SetRefreshFlag({flag: true}), error: (err) => {}});
+    }
   }
 
+  getProviderName = () => {
+    const { providers, providerId } = this.props;
+    if (providerId) {
+      const provider = find(providers, p => `${p.id}` === `${providerId}`);
+      return provider.name;
+    }
+  
+    return '';
+  }
   render() {
     const { showSidebar, showMessage } = this.state;
-    const { locationName, isLocationAdmin } = this.props;
-    
+    const { privilege, accessRole, providerLocationId, locationName } = this.props;
+    const isProvider = privilege === 'provider';
+
     return (
       <Wrapper>
         <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={this.toggleMessage} />
         <PageContent>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
-            {isLocationAdmin &&
+            {(accessRole === 'admin' || (providerLocationId && accessRole === 'provider')) && isProvider &&
               <LocationWrapper>
-                <FontAwesomeIcon icon="user-circle" />  You are logged in to {locationName}. <span onClick={this.switchBack}>Switch Back</span>
+                <FontAwesomeIcon icon="user-circle" />  You are logged in to {providerLocationId ? locationName : this.getProviderName()}. <span onClick={this.switchBack}>Switch Back</span>
               </LocationWrapper>
             }
             {this.props.children}
@@ -119,14 +138,19 @@ class MainPageTemplate extends React.Component {
 
 const mapStateToProps = (state) => ({
   privilege: state.auth.privilege,
-  isLocationAdmin: state.auth.isLocationAdmin,
-  locationName: state.auth.locationName
+  accessRole: state.auth.accessRole,
+  locationName: state.auth.locationName,
+  providerLocationId: state.auth.providerLocationId,
+  providerId: state.auth.providerId,
+  providers: state.provider.providers,
 });
 
 const mapDispatchToProps = {
   GetNetworks,
   GetConversations,
-  SetPrivilege
+  SetPrivilege,
+  SetRefreshFlag,
+  LoginWithProvider,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MainPageTemplate));

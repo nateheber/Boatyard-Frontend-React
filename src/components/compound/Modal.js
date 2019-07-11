@@ -100,7 +100,7 @@ const ActionWrapper = styled.div`
 const modalStyles = {
   main: {
     overlay: {
-      background: 'transparent'
+      background: 'rgba(0, 0, 0, 0.3)'
     },
     modal: {
       padding: '0px',
@@ -117,7 +117,7 @@ const modalStyles = {
   },
   small: {
     overlay: {
-      background: 'transparent'
+      background: 'rgba(0, 0, 0, 0.3)'
     },
     modal: {
       padding: '0px',
@@ -169,7 +169,7 @@ const modalStyles = {
   },
   normal: {
     overlay: {
-      background: 'transparent'
+      background: 'rgba(0, 0, 0, 0.3)',
     },
     modal: {
       padding: '0px',

@@ -8,11 +8,15 @@ const initialState = {
   authToken: '',
   adminToken: '',
   providerToken: '',
+  auth0Token: '',
   providerLocationToken: '',
   isLocationAdmin: false,
+  accessRole: '',
   errors: null,
   privilege: '',
   providerId: '',
+  providerLocationId: '',
+  providerLocations: [],
   taxRate: '',
   refreshPage: false,
   locationName: '',
@@ -77,32 +81,35 @@ export default handleActions(
         if (authorizationToken) {
           draft.providerToken = authorizationToken;
         }
-        draft.providerId = id;
+        if (payload.type === 'providers') {
+          draft.providerId = id;
+        }
         draft.taxRate = taxRate;
         draft.errors = null;
       }),
-    [actionTypes.SET_PROVIDER_LOCATION_INFO]: (state, action) =>
+    [actionTypes.SET_PROVIDER_LOCATIONS]: (state, action) =>
       produce(state, draft => {
-        const { type, payload } = action;
-        const { id, attributes: { taxRate }} = payload;
-        const authorizationToken = get(payload, 'authorizationToken');
-        draft.currentStatus = type;
-        if (authorizationToken) {
-          draft.providerLocationToken = authorizationToken;
-        }
-        draft.providerId = id;
-        draft.taxRate = taxRate;
+        const { payload: {providerLocations} } = action;
+        draft.providerLocations = providerLocations;
         draft.errors = null;
       }),
     [actionTypes.SET_PRIVILEGE]: (state, action) =>
       produce(state, draft => {
-        const { type, payload: {privilege, isLocationAdmin, locationName} } = action;
+        const { type, payload: {privilege, isLocationAdmin, providerLocationId, locationName} } = action;
         draft.currentStatus = type;
         draft.privilege = privilege;
         draft.isLocationAdmin = isLocationAdmin;
         draft.locationName = locationName;
+        draft.providerLocationId = providerLocationId;
         draft.errors = null;
       }),
+    [actionTypes.SET_ACCESS_ROLE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: {accessRole} } = action;
+        draft.currentStatus = type;
+        draft.accessRole = accessRole;
+        draft.errors = null;
+    }),
     [actionTypes.SEND_RESET_REQUEST_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
@@ -142,6 +149,12 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
+      }),
+    [actionTypes.SET_AUTH0_TOKEN]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: {token} } = action;
+        draft.currentStatus = type;
+        draft.auth0Token = token;
       })
   },
   initialState

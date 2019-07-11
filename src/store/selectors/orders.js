@@ -1,5 +1,6 @@
-import { get, set, forEach, sortBy, isEmpty, isArray } from 'lodash';
+import { get, set, forEach, sortBy, isEmpty, isArray,find } from 'lodash';
 import { createSelector } from 'reselect';
+import { providerLocationsSelector, locationsSelector } from './providerLocation';
 
 const setLineItemRelationships = (lineItem, included) => {
   const resultData = {...lineItem};
@@ -133,7 +134,9 @@ export const orderSelector = state => ({
 export const refinedOrdersSelector = createSelector(
   allOrdersSelector,
   includedSelector,
-  (allOrders, included) => {
+  providerLocationsSelector, 
+  locationsSelector,
+  (allOrders, included, providerLocations, locationsById) => {
     return allOrders.map(order => {
       for(const key in order.relationships) {
         let value = get(order, `relationships[${key}].data`);
@@ -161,6 +164,12 @@ export const refinedOrdersSelector = createSelector(
             }
           }
         }
+      }
+      const providerLocation = find(providerLocations, {id: `${order.providerLocationId}`});
+      if (providerLocation && locationsById[providerLocation.locationId]) {
+        order.locationAddress = locationsById[providerLocation.locationId].attributes.name;
+      } else {
+        order.locationAddress = '';
       }
       return order;
     });

@@ -182,7 +182,7 @@ class OrderDetails extends React.Component {
     const canShowCustomerInfo = this.getCustomerInfoCondition();
     return (
       <React.Fragment>
-        {loading && isFirstLoad ? (
+        {loading || isFirstLoad ? (
           <LoadingSpinner loading={true} />
         ) : (
           <React.Fragment>
