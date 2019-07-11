@@ -1,126 +1,151 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 import { toastr } from 'react-redux-toastr';
-import Auth0Lock from 'auth0-lock';
-import { AUTH_CONFIG } from 'utils/auth0';
-import { Login, GetUserPermission, SetAuth0Token, Logout } from 'store/actions/auth';
+
+import LoginForm from '../Forms/LoginForm';
+import { Login, GetUserPermission } from 'store/actions/auth';
 import { LoginWithProvider } from 'store/actions/providers';
-import BYLogo from 'resources/by_logo.png';
+import WelcomeImage from '../../../resources/auth/welcome-bg.png';
 
 const Wrapper = styled.div`
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  p {
-    width: 100%;
-    font-size: 30px;
-    color: #0D485F;
-    padding-top: 60vh;
-    text-align: center;
-    font-weight: bold;
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
+  @media (max-width: 402px) {
+    width: calc(100% - 20px);
   }
 `;
 
-class LoginComponent extends React.Component {
-  
-
-  constructor(props) {
-    super(props);
-    if (!props.auth0Token) {
-      this.lock = new Auth0Lock(AUTH_CONFIG.clientId, AUTH_CONFIG.domain, {
-        closable: false,
-        rememberLastLogin: false,
-        auth: {
-          responseType: 'token id_token',
-        },
-        languageDictionary: {
-          title: 'Boatyard'
-        },
-        theme: {
-          primaryColor: '#0D485F',
-          logo: BYLogo,
-        }
-      });
-      this.onAuthenticated = this.onAuthenticated.bind(this);
-      this.onAuthenticated();
-    } else {
-      this.handleLogin(props.auth0Token);
-    } 
+const SideContent =styled.div`
+  display: flex;
+  width: 382px;
+  min-height: 514px;
+  background-color: #ECECEC;
+  &.welcome {
+    background-image: url(${WelcomeImage});
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
-
-  onAuthenticated() {
-    this.lock.on('authenticated', (authResult) => {
-      this.props.SetAuth0Token({token: authResult.idToken});
-      this.handleLogin(authResult.idToken);
-    });
-  }
-  
-  componentDidMount() {
-    if ( !(/access_token|id_token|error/.test(this.props.location.hash)) ) {
-      this.lock.show();
+  @media (max-width: 800px) {
+    &.welcome {
+      display: none;
     }
   }
+  @media (max-width: 402px) {
+    width: 100%;
+    flex-direction: column;
+  }
+`;
 
-  handleLogin = (auth0Token) => {
-    console.log('.handleLogin.');
-    const { Login, GetUserPermission } = this.props;
+const WelcomeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0 54px;
+`;
+
+const WelcomeTitle = styled.h1`
+  margin-bottom: 14px;
+  color: #FFFFFF;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+`;
+
+const WelcomeBody = styled.div`
+  margin-bottom: 14px;
+  color: #FFFFFF;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+`;
+
+const WelcomeFooter = styled.div`
+  margin-bottom: 14px;
+  color: #FFFFFF;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 14px;
+`;
+
+class LoginComponent extends React.Component {
+  handleLogin = (email, password) => {
+    const { Login, GetUserPermission, LoginWithProvider } = this.props;
     Login({
       params: {
-        auth0Token
+        email,
+        password
       },
       success: () => {
         GetUserPermission({
-          success: (res) => {
-              console.log(res);
-              const index = this.props.location.search.indexOf('redirect_url');
-              if (index > -1) {
-                const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
-                this.props.history.push(redirectUrl);
-              } else {
-                this.props.history.push('/');
-              }
+          success: () => {
+            const index = this.props.location.search.indexOf('redirect_url');
+            if (index > -1) {
+              const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
+              this.props.history.push(redirectUrl);
+            } else {
+              this.props.history.push('/');
+            }
           },
           error: (e) => {
-            this.props.Logout();
-            toastr.error('Error', e.message);
+            LoginWithProvider({
+              success: () => {
+                const index = this.props.location.search.indexOf('redirect_url');
+                if (index > -1) {
+                  const index = this.props.location.search.indexOf('redirect_url');
+                  const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
+                  this.props.history.push(redirectUrl);
+                } else {
+                  this.props.history.push('/');
+                }
+              },
+              error: (e) => {
+                toastr.error('Error', e.message);
+              }
+            });
           }
         });
       },
       error: (e) => {
-        this.props.Logout();
         toastr.error('Error', e.message);
       }
     });
   };
 
   render() {
-    const { auth0Token } = this.props;
-    console.log(auth0Token && 'LOADING>>>>');
     return (
       <Wrapper>
-        {
-          auth0Token && <p>Loading...</p>
-        }
+        <SideContent>
+          <LoginForm onLogin={this.handleLogin} />
+        </SideContent>
+        <SideContent className="welcome">
+          <WelcomeWrapper>
+            <WelcomeTitle>Welcome<br /> to Boatyard</WelcomeTitle>
+            <WelcomeBody>We're on a mission to connect our community of boaters, marine pros, dealers and marinas.</WelcomeBody>
+            <WelcomeFooter>We’re happy to have you on board.</WelcomeFooter>
+          </WelcomeWrapper>
+        </SideContent>
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ auth: { errorMessage, auth0Token } }) => ({
-  errorMessage,
-  auth0Token
+const mapStateToProps = ({ auth: { errorMessage } }) => ({
+  errorMessage
 });
 
 const mapDispatchToProps = {
   Login,
   GetUserPermission,
-  LoginWithProvider,
-  SetAuth0Token,
-  Logout
+  LoginWithProvider
 };
 
 export default withRouter(
