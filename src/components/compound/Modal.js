@@ -216,6 +216,7 @@ export default class CustomModal extends React.Component {
         open={open}
         onClose={onClose}
         style={{width: '300px'}}
+        center={true}
       >
         {(title && title.length > 0) && <Header className={classNames(!isEmpty(tabs) ? 'noBorder' : '', classes)}>{title}</Header>}
         {customHeader && <Header>{customHeader}</Header>}
