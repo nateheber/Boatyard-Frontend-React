@@ -17,6 +17,7 @@ import { Logout } from '../../../store/actions/auth';
 import { LoginWithProvider } from 'store/actions/providers';
 import { readNotification } from 'store/actions/notifications';
 import { notificationsSelector, unreadNotifications } from 'store/selectors/notifications';
+import { SetMessageBarUIStatus } from 'store/actions/conversations';
 
 const Wrapper = styled.div`
   display: flex;
@@ -77,6 +78,7 @@ const DropdownMenu = styled.ul`
   }
   &.notifications {
     min-width: 300px;
+    background: white;
   }
   &::before {
     height: 100%;
@@ -294,9 +296,12 @@ class MenuUI extends React.Component {
 
   handleNotitificationClick({id, data}){
     console.log(data)
-    const { type, order, /*conversation, message*/ } = data;
+    const { type, order, conversation } = data;
     if (type === 'order') {
       this.props.history.push(`/orders/${order}/detail`);
+    }
+    if (type === 'message') {
+      this.props.SetMessageBarUIStatus({opened: true, selected: conversation, newMessage: false});
     }
     this.props.readNotification({id});
   }
@@ -394,6 +399,7 @@ const mapDispatchToProps = {
   LoginWithProvider,
   SetRefreshFlag,
   readNotification,
+  SetMessageBarUIStatus,
 };
 
 export const RightMenu = withRouter(
