@@ -197,7 +197,7 @@ class UserDetails extends React.Component {
   };
 
   toDetails = order => {
-    this.props.history.push(`/order-details/?order=${order.id}`);
+    this.props.history.push(`/orders/${order.id}/detail`);
   };
 
   showBoatModal = () => {

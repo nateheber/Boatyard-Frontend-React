@@ -136,7 +136,6 @@ export const refinedOrdersSelector = createSelector(
   includedSelector,
   getProviderLocations,
   (allOrders, included, providerLocations) => {
-    console.log(providerLocations)
     return allOrders.map(order => {
       for(const key in order.relationships) {
         let value = get(order, `relationships[${key}].data`);

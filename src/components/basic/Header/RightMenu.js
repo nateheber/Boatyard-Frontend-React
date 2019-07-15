@@ -15,6 +15,8 @@ import { SetRefreshFlag } from 'store/actions/auth';
 import { isAuthenticatedSelector } from 'store/selectors/auth';
 import { Logout } from '../../../store/actions/auth';
 import { LoginWithProvider } from 'store/actions/providers';
+import { readNotification } from 'store/actions/notifications';
+import { notificationsSelector, unreadNotifications } from 'store/selectors/notifications';
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,8 +53,13 @@ const DropdownItem = styled.div`
 `;
 
 const DropdownMenu = styled.ul`
-  ${DropdownItem}:hover & {
+  ${DropdownItem}:hover &:not(.notifications) {
     display: block;
+  }
+  &.notifications {
+    max-height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   position: absolute;
   font-family: 'Source Sans Pro', sans-serif;
@@ -65,6 +72,9 @@ const DropdownMenu = styled.ul`
   right: 0;
   min-height: 70px;
   padding: 0;
+  &.show {
+    display: block;
+  }
   &.notifications {
     min-width: 300px;
   }
@@ -95,6 +105,9 @@ const MenuItemLi = styled.div`
   cursor: pointer;
   &:hover {
     background-color: #f6f6f7;
+  }
+  &.read {
+    opacity: 0.8;
   }
 `;
 
@@ -223,6 +236,27 @@ const  LocationsWrapper = styled.div`
 class MenuUI extends React.Component {
   state = {
     open: false,
+    notificationOpen: false,
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside);
+  }
+
+  handleClickOutside = (event) => {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      this.setState({
+        notificationOpen: false
+      });
+    }
+  }
+
+  setWrapperRef = (node) => {
+    this.wrapperRef = node;
   }
 
   logout = () => {
@@ -248,11 +282,34 @@ class MenuUI extends React.Component {
     })
   }
 
+  getNotificationIcon = ({data: {type }}) => {
+    if (type === 'order') {
+      return CheckCircle;
+    }
+    if (type === 'message') {
+      return Message;
+    }
+    return Document;
+  }
+
+  handleNotitificationClick({id, data}){
+    console.log(data)
+    const { type, order, /*conversation, message*/ } = data;
+    if (type === 'order') {
+      this.props.history.push(`/orders/${order}/detail`);
+    }
+    this.props.readNotification({id});
+  }
+
+  handleNotificationsClick() {
+    this.setState({notificationOpen: !this.state.notificationOpen});
+  }
+
   render() {
     const { providerLocationId, providerLocations, firstName, lastName, history, toggleMessage, messageToggleRef, 
-      locationName, accessRole } = this.props;
-    const { open } = this.state;
-   
+      locationName, accessRole, unreadCount, notifications } = this.props;
+    const { open, notificationOpen } = this.state;
+    console.log(notifications);
     return (
       <Wrapper>
         {
@@ -291,28 +348,21 @@ class MenuUI extends React.Component {
               </MenuItemLi>
             </DropdownMenu>
           </DropdownItem>
-          <DropdownItem style={{ display: 'none' }}>
+          <DropdownItem className="notifications" onClick={ev => this.handleNotificationsClick()} ref={this.setWrapperRef}>
             <IconItem>
               <Icon width={20} height={20} src={Bell} alt="bell" />
             </IconItem>
-            <BadgeNum>{'3'}</BadgeNum>
-            {/* <BadgePlus /> */}
-            <DropdownMenu className="notifications">
-              <MenuItemLi>
-                <MenuItem onClick={() => history.push('/')}>
-                  <MenuItemIcon src={Message} />You have a new message.
-                </MenuItem>
-              </MenuItemLi>
-              <MenuItemLi>
-                <MenuItem onClick={() => history.push('/')}>
-                  <MenuItemIcon src={CheckCircle} />Brock has accepted your quote
-                </MenuItem>
-              </MenuItemLi>
-              <MenuItemLi>
-                <MenuItem onClick={() => history.push('/')}>
-                  <MenuItemIcon src={Document} />You have received a new order from Brock
-                </MenuItem>
-              </MenuItemLi>
+            { unreadCount && <BadgeNum>{unreadCount}</BadgeNum> }
+            <DropdownMenu className={`notifications ${notificationOpen ? 'show' : ''}`}>
+              {
+                notifications.map(n =>
+                  <MenuItemLi key={`notification-${n.id}`} className={n.read ? 'read' : ''}>
+                    <MenuItem onClick={() => this.handleNotitificationClick(n)}>
+                      <MenuItemIcon src={this.getNotificationIcon(n)} />{n.subject}
+                    </MenuItem>
+                  </MenuItemLi>
+                )
+              }
             </DropdownMenu>
           </DropdownItem>
           <IconItem ref={messageToggleRef} className="hide-on-mobile" onClick={toggleMessage}>
@@ -335,12 +385,15 @@ const mapStateToProps = (state) => ({
   providerLocationId: state.auth.providerLocationId,
   locationName: state.auth.locationName,
   accessRole: state.auth.accessRole,
+  notifications: notificationsSelector(state),
+  unreadCount: unreadNotifications(state),
 });
 
 const mapDispatchToProps = {
   Logout,
   LoginWithProvider,
   SetRefreshFlag,
+  readNotification,
 };
 
 export const RightMenu = withRouter(

@@ -129,9 +129,9 @@ class OrderItem extends React.Component {
   onGoToDetails = () => {
     const { item } = this.props;
     if (item.state === 'dispatched') {
-      this.props.history.push({pathname: '/order-details/', search: `?order=${item.id}`, state: { dispatched: true }});
+      this.props.history.push({pathname: `/orders/${item.id}/detail`, state: { dispatched: true }});
     } else {
-      this.props.history.push(`/order-details/?order=${item.id}`);
+      this.props.history.push(`/orders/${item.id}/detail`);
     }
   };
 

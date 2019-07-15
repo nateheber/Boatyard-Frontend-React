@@ -93,6 +93,10 @@ export const createIconClient = authType => {
   return new CRUDClient('icons', authType);
 }
 
+export const createNotificationsClient = authType => {
+  return new CRUDClient('notification_deliveries', authType);
+}
+
 export const createDispatchedOrderClient = authType => {
   return new CRUDClient('dispatched_orders', authType);
 }
