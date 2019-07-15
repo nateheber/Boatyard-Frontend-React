@@ -100,9 +100,8 @@ function* userPermissionRequest(action) {
       );
       const accessRole = find(data, d => d.attributes.access === 'owner') ? 'provider' : 'team';
       const profile = yield select(profileSelector);
-      let provider_id = get(res.data[0], 'relationships.provider.data.id', undefined);
+      let provider_id = parseInt(get(res.data[0], 'relationships.provider.data.id', undefined));
       let provider_location_id = undefined;
-      provider_id = accessRole === 'team' ? undefined : (provider_id && parseInt(provider_id));
       if (accessRole === 'team') {
         if (providerLocations.length > 1) {
           provider_location_id = window.localStorage.getItem(`BT_USER_${profile.id}_LOCATION`);
