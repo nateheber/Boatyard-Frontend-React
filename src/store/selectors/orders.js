@@ -131,6 +131,27 @@ export const orderSelector = state => ({
   currentOrder: currentOrderSelector(state),
 });
 
+const getColumns = state => get(state, 'orders.columns');
+const getUnselectedColumns = state => get(state, 'orders.unselectedColumns');
+
+export const columnsSelector = createSelector(
+  getColumns,
+  getPrevilage,
+  (allColumns, previlage) => {
+    let columns = allColumns;
+    if (previlage === 'provider') {
+      columns.splice(4, 1);
+      columns[2]['value'] = ['customerName'];
+    } else {
+      columns.splice(5, 1);
+    }
+  }
+)
+
+export const unselectedColumnsSelector = createSelector(
+  getUnselectedColumns,
+  
+)
 export const refinedOrdersSelector = createSelector(
   allOrdersSelector,
   includedSelector,
