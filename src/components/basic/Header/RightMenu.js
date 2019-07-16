@@ -8,14 +8,20 @@ import styled from 'styled-components';
 import Bell from '../../../resources/notification-bell.svg';
 import MessageBox from '../../../resources/messages-icon.png';
 import ChevronIcon from '../../../resources/down-chevron.svg';
-import Message from '../../../resources/message.png';
-import CheckCircle from '../../../resources/check_circle.png';
-import Document from '../../../resources/document.png';
+
+import AlertIcon from '../../../resources/icons/notifications/alert.png';
+import InvoiceQuoteIcon from '../../../resources/icons/notifications/invoice-quote.png';
+import JobIcon from '../../../resources/icons/notifications/job.png';
+import MsgIcon from '../../../resources/icons/notifications/message.png';
+import OrderIcon from '../../../resources/icons/notifications/order.png';
+import ScheduleIcon from '../../../resources/icons/notifications/schedule.png';
+
+
 import { SetRefreshFlag } from 'store/actions/auth';
 import { isAuthenticatedSelector } from 'store/selectors/auth';
 import { Logout } from '../../../store/actions/auth';
 import { LoginWithProvider } from 'store/actions/providers';
-import { readNotification } from 'store/actions/notifications';
+import { readNotification, GetNotifications } from 'store/actions/notifications';
 import { notificationsSelector, unreadNotifications } from 'store/selectors/notifications';
 import { SetMessageBarUIStatus } from 'store/actions/conversations';
 
@@ -50,6 +56,10 @@ const DropdownItem = styled.div`
     background-color: #265B70;
     cursor: pointer;
   }
+  &.disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
   float: left;
 `;
 
@@ -58,7 +68,7 @@ const DropdownMenu = styled.ul`
     display: block;
   }
   &.notifications {
-    max-height: 450px;
+    max-height: 650px;
     overflow-y: auto;
     overflow-x: hidden;
   }
@@ -105,11 +115,11 @@ const DropdownMenu = styled.ul`
 const MenuItemLi = styled.div`
   padding: 8px 0;
   cursor: pointer;
-  &:hover {
+  &:not(.unread):hover {
     background-color: #f6f6f7;
   }
-  &.read {
-    opacity: 0.8;
+  &.unread {
+    background-color: #edf2fa;
   }
 `;
 
@@ -166,7 +176,7 @@ const IconItem = styled.li`
   text-align: center;
   align-items: center;
   justify-content: center;
-  &:hover {
+  &:not(.disabled):hover {
     background-color: #265B70;
     cursor: pointer;
   }
@@ -179,7 +189,7 @@ const IconItem = styled.li`
 
 const MenuItemIcon = styled.img`
   width: 22px;
-  height: 22px;
+  height: auto;
   margin-right: 13px;
 `;
 
@@ -243,10 +253,16 @@ class MenuUI extends React.Component {
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
+    this.timerId = window.setInterval(this.reloadNotifications, 30*1000);
+  }
+
+  reloadNotifications = () => {
+    this.props.GetNotifications({params: {per_page: 1000, page: 1}});
   }
 
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
+    window.clearInterval(this.timerId);
   }
 
   handleClickOutside = (event) => {
@@ -284,18 +300,32 @@ class MenuUI extends React.Component {
     })
   }
 
-  getNotificationIcon = ({data: {type }}) => {
-    if (type === 'order') {
-      return CheckCircle;
+  _getIcon(text) {
+    const txt = text.toLowerCase();
+    if (txt.indexOf('alert') >= 0) {
+      return AlertIcon;
     }
-    if (type === 'message') {
-      return Message;
+    if (txt.indexOf('job') >= 0) {
+      return JobIcon;
     }
-    return Document;
+    if (txt.indexOf('schedule') >= 0) {
+      return ScheduleIcon;
+    }
+    if (txt.indexOf('invoice') >= 0 || txt.indexOf('quote') >=0 ) {
+      return InvoiceQuoteIcon;
+    }
+    if (txt.indexOf('message') >= 0) {
+      return MsgIcon;
+    }
+    if (txt.indexOf('order')) {
+      return OrderIcon;
+    }
+  }
+  getNotificationIcon = ({subject, content}) => { 
+    return this._getIcon(subject) || this._getIcon(content) || AlertIcon;
   }
 
   handleNotitificationClick({id, data}){
-    console.log(data)
     const { type, order, conversation } = data;
     if (type === 'order') {
       this.props.history.push(`/orders/${order}/detail`);
@@ -307,14 +337,19 @@ class MenuUI extends React.Component {
   }
 
   handleNotificationsClick() {
+    if (!this.state.notificationOpen) {
+      this.props.GetNotifications({params: {per_page: 1000, page: 1, clear: true}});
+    }
     this.setState({notificationOpen: !this.state.notificationOpen});
+    
   }
 
   render() {
     const { providerLocationId, providerLocations, firstName, lastName, history, toggleMessage, messageToggleRef, 
-      locationName, accessRole, unreadCount, notifications } = this.props;
+      locationName, accessRole, notifications, unreadCount } = this.props;
+    const showNotificationBadge = parseInt(unreadNotifications) > 0;
     const { open, notificationOpen } = this.state;
-    console.log(notifications);
+    
     return (
       <Wrapper>
         {
@@ -353,15 +388,18 @@ class MenuUI extends React.Component {
               </MenuItemLi>
             </DropdownMenu>
           </DropdownItem>
-          <DropdownItem className="notifications" onClick={ev => this.handleNotificationsClick()} ref={this.setWrapperRef}>
-            <IconItem>
+          <DropdownItem className={`notifications ${notifications.length === 0 && 'disabled'}`}
+              onClick={ev => notifications.length > 0 && this.handleNotificationsClick()} 
+              ref={this.setWrapperRef}
+          >
+            <IconItem className={`${notifications.length === 0 && 'disabled'}`}>
               <Icon width={20} height={20} src={Bell} alt="bell" />
             </IconItem>
-            { unreadCount && <BadgeNum>{unreadCount}</BadgeNum> }
+            { showNotificationBadge && <BadgeNum>{unreadCount}</BadgeNum> }
             <DropdownMenu className={`notifications ${notificationOpen ? 'show' : ''}`}>
               {
                 notifications.map(n =>
-                  <MenuItemLi key={`notification-${n.id}`} className={n.read ? 'read' : ''}>
+                  <MenuItemLi key={`notification-${n.id}`} className={n.read ? '' : 'unread'}>
                     <MenuItem onClick={() => this.handleNotitificationClick(n)}>
                       <MenuItemIcon src={this.getNotificationIcon(n)} />{n.subject}
                     </MenuItem>
@@ -400,6 +438,7 @@ const mapDispatchToProps = {
   SetRefreshFlag,
   readNotification,
   SetMessageBarUIStatus,
+  GetNotifications,
 };
 
 export const RightMenu = withRouter(

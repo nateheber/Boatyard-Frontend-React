@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { without } from 'lodash';
+import { findIndex, update } from 'lodash';
 import { actionTypes } from '../actions/notifications';
 
 const initialState = {
@@ -43,8 +43,10 @@ export default handleActions(
     [actionTypes.READ_NOTIFICATION_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload: { id }} = action;
-        draft.notifications = without(state.notifications, {id});
-        draft.unreadNotifications = state.unreadNotifications - 1;
+        const idx = findIndex(state.notifications, {id});
+        const notifications = [...state.notifications];
+        update(notifications[idx], 'attributes.read', read => true);
+        draft.notifications = notifications;
         draft.currentStatus = type;
       })
     },
