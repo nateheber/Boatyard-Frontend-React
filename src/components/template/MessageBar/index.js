@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-
+import { get } from 'lodash';
 import { GetNetworks } from 'store/actions/networks';
-import { GetConversations, GetConversation, DeleteConversation } from 'store/actions/conversations';
+import { GetConversations, GetConversation, DeleteConversation, SetMessageBarUIStatus } from 'store/actions/conversations';
 import { refinedConversationSelector } from 'store/selectors/conversations';
 
 import NewMessage from './NewMessage';
@@ -29,11 +29,6 @@ const Wrapper = styled.div`
 `;
 
 class MessageBar extends React.Component {
-  state = {
-    selected: -1,
-    newMessage: false
-  };
-
   componentDidMount() {
     const { GetNetworks } = this.props;
     GetNetworks({ params: { page: 1, per_page: 1000 } });
@@ -51,21 +46,21 @@ class MessageBar extends React.Component {
   }
 
   onNew = () => {
-    this.setState({ newMessage: true });
+    this.props.SetMessageBarUIStatus({newMessage: true});
   }
 
   onCancelNew = () => {
-    this.setState({ newMessage: false });
+    this.props.SetMessageBarUIStatus({newMessage: false});
   }
 
   onSelect = id => () => {
     this.props.GetConversation({ conversationId: id });
-    this.setState({ selected: id, newMessage: false });
+    this.props.SetMessageBarUIStatus({ selected: id, newMessage: false });
   }
 
   onDelete = id => (event) => {
     event.stopPropagation();
-    this.setState({ selected: -1, newMessage: false });
+    this.props.SetMessageBarUIStatus({ selected: -1, newMessage: false });
     this.props.DeleteConversation({
       conversationId: id,
       success: () => {
@@ -76,7 +71,7 @@ class MessageBar extends React.Component {
 
   onBack = () => {
     const { GetNetworks } = this.props;
-    this.setState({ selected: -1, newMessage: false });
+    this.props.SetMessageBarUIStatus({ selected: -1, newMessage: false });
     GetNetworks({ params: { page: 1, per_page: 1000 } });
     this.loadConversations();
   }
@@ -92,8 +87,7 @@ class MessageBar extends React.Component {
   }
 
   render() {
-    const { show, conversations } = this.props;
-    const { selected, newMessage } = this.state;
+    const { show, conversations, selected, newMessage } = this.props;
     return (
       <Wrapper ref={this.setWrapperRef} className={show ? 'show' : 'hide'}>
         { newMessage &&
@@ -122,14 +116,17 @@ class MessageBar extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  ...refinedConversationSelector(state)
+  ...refinedConversationSelector(state),
+  selected: get(state, 'conversation.ui.selected', -1),
+  newMessage: get(state, 'conversation.ui.newMessage', false),
 })
 
 const mapDispatchToProps = {
   GetNetworks,
   GetConversations,
   GetConversation,
-  DeleteConversation
+  DeleteConversation,
+  SetMessageBarUIStatus
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageBar);

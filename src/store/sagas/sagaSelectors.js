@@ -218,6 +218,19 @@ export const getIconClient = state => {
   }
 };
 
+export const getNotificationsClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createNotificationsClient('basic');
+    case 'admin':
+      return APIGenerator.createNotificationsClient('admin');
+    case 'provider':
+      return APIGenerator.createNotificationsClient('provider');
+    default:
+      return APIGenerator.createNotificationsClient('basic');
+  }
+};
+
 export const getNetworkClient = state => {
   switch (state.auth.privilege) {
     case 'basic':

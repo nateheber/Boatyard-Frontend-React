@@ -38,6 +38,7 @@ const MainRoutes = ({ privilege }) => (
       <Route exact path="/inbox/" component={Inbox} />
       <Route exact path="/quick-replies/" component={QRBox} />
       <Route exact path="/templates/" component={TemplateBox} />
+      <Route exact path="/orders/:id/detail" component={OrderDetails} />
       <Route exact path="/orders/" component={Order} />
       <Route exact path="/order-details/" component={OrderDetails} />
       <Route exact path="/providers/"

@@ -50,16 +50,19 @@ class OrderDetails extends React.Component {
   };
 
   componentDidMount() {
-    const { GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location } = this.props;
-    const query = queryString.parse(location.search);
-    const orderId = query.order;
+    const { GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location, match: {params: {id}} } = this.props;
+    let orderId = id;
+    if (!orderId) {
+      const query = queryString.parse(location.search);
+      orderId = query.order;
+    }
     const state = location.state;
     if (state && state.hasOwnProperty('dispatched')) {
       SetDispatchedFlag(state.dispatched);
     }
-    this.setState({ orderId }, () => {
-      this.loadOrder();
-    });
+    // this.setState({ orderId }, () => {
+    this.loadOrder(orderId);
+    // });
     if (privilege === 'admin') {
       GetGlobalTemplates({ params: { 'per_page': 200 } });
     } else {
@@ -76,13 +79,21 @@ class OrderDetails extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const { match: {params: {id}} } = nextProps;
+    if (id !== this.props.match.params.id) {
+      this.loadOrder(id);
+    }
+    return true;
+  }
+  
   componentWillUnmount() {
     this.props.SetDispatchedFlag(false);
   }
 
-  loadOrder = () => {
+  loadOrder = (orderId) => {
     const { GetOrder } = this.props;
-    const { orderId } = this.state;
+    this.setState({orderId})
     GetOrder({
       orderId,
       success: () => {
