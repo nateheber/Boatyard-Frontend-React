@@ -22,7 +22,7 @@ import Conversations from './conversations';
 import SiteBanners from './site-banners';
 import QuickReply from './quickReplies';
 import MessageTemplate from './messageTemplates';
-
+import NotificationsSagas from './notifications';
 export default function* mainSaga() {
   yield all([
     fork(AuthSaga),
@@ -47,5 +47,6 @@ export default function* mainSaga() {
     fork(SiteBanners),
     fork(QuickReply),
     fork(MessageTemplate),
+    fork(NotificationsSagas),
   ]);
 }

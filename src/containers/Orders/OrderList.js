@@ -189,7 +189,7 @@ class OrderList extends React.Component {
     if (state === 'dispatched' && privilege === 'provider') {
       dispatched = true;
     }
-    this.props.history.push({pathname: '/order-details/', search: `?order=${order.id}`, state: { dispatched }});
+    this.props.history.push({pathname: `/orders/${order.id}/detail`, state: { dispatched }});
   };
 
   getPageCount = () => {
@@ -207,7 +207,7 @@ class OrderList extends React.Component {
   };
 
   creationFinished = (orderId) => {
-    this.props.history.push(`/order-details/?order=${orderId}`);
+    this.props.history.push(`/orders/${orderId}/detail`);
   };
 
   render() {

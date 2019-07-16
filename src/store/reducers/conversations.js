@@ -20,7 +20,12 @@ const initialState = {
     perPage: 20,
     total: 0
   },
-  errors: null
+  errors: null,
+  ui: {
+    opened: false,
+    selected: null,
+    newMessage: false
+  }
 };
 
 export default handleActions(
@@ -142,6 +147,12 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
+      }),
+    [actionTypes.SET_UI_STATUS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.ui = {...state.ui, ...payload};
       })
   },
   initialState

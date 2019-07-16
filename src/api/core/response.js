@@ -9,12 +9,14 @@ export const responseInterceptor = client => {
     const perPage = get(response.headers, 'per-page');
     const total = get(response.headers, 'total');
     const isBoatyardAdmin = get(response.headers, 'boatyard-admin');
+    const unreadNotifications = get(response.headers, 'x-unread-notifications');
     const data = camelize(response.data, { recursive: true });
-    if (perPage || total || isBoatyardAdmin) {
+    if (perPage || total || isBoatyardAdmin || unreadNotifications) {
       return ({
         perPage,
         total,
         isBoatyardAdmin,
+        unreadNotifications,
         data: get(data, 'data', []),
         included: get(data, 'included', [])
       });

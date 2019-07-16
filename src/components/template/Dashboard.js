@@ -43,7 +43,7 @@ class Dashboard extends React.Component {
   };
 
   creationFinished = (orderId) => {
-    this.props.history.push(`/order-details/?order=${orderId}`);
+    this.props.history.push(`/orders/${orderId}/detail`);
   };
 
   newOrder = () => {

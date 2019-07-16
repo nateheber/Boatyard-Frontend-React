@@ -15,7 +15,9 @@ export const actionTypes = {
 
   DELETE_CONVERSATION: '[CONVERSATIONS] - Delete Conversation',
   DELETE_CONVERSATION_SUCCESS: '[CONVERSATIONS] - Delete Conversation Success',
-  DELETE_CONVERSATION_FAILURE: '[CONVERSATIONS] - Delete Conversation Failure'
+  DELETE_CONVERSATION_FAILURE: '[CONVERSATIONS] - Delete Conversation Failure',
+
+  SET_UI_STATUS: 'SET_UI_STATUS',
 };
 
 export const GetConversations = createAction(actionTypes.GET_CONVERSATIONS, payload => payload);
@@ -33,3 +35,5 @@ export const CreateMessageFailure = createAction(actionTypes.CREATE_MESSAGE_FAIL
 export const DeleteConversation = createAction(actionTypes.DELETE_CONVERSATION, payload => payload);
 export const DeleteConversationSuccess = createAction(actionTypes.DELETE_CONVERSATION_SUCCESS);
 export const DeleteConversationFailure = createAction(actionTypes.DELETE_CONVERSATION_FAILURE);
+
+export const SetMessageBarUIStatus = createAction(actionTypes.SET_UI_STATUS, payload => payload);

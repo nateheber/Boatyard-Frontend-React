@@ -1,10 +1,11 @@
 import React from 'react';
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { GetNetworks } from 'store/actions/networks';
-import { GetConversations } from 'store/actions/conversations';
+import { GetNotifications } from 'store/actions/notifications';
+import { GetConversations, SetMessageBarUIStatus } from 'store/actions/conversations';
 import { LoginWithProvider } from 'store/actions/providers';
 import { SetPrivilege, SetRefreshFlag } from 'store/actions/auth';
 import Header from 'components/compound/Header';
@@ -59,9 +60,14 @@ const LocationWrapper = styled.div`
 class MainPageTemplate extends React.Component {
   state = {
     showSidebar: false,
-    showMessage: false,
+    // showMessage: false,
   };
 
+  constructor(props) {
+    super(props);
+    props.GetNotifications({params: {per_page: 1000, page: 1}});
+  }
+  
   toggleMenu = () => {
     const { showSidebar } = this.state;
     this.setState({
@@ -70,20 +76,17 @@ class MainPageTemplate extends React.Component {
   };
 
   toggleMessage = () => {
-    const { GetNetworks, GetConversations } = this.props;
-    const { showMessage } = this.state;
+    const { GetNetworks, GetConversations, showMessage, SetMessageBarUIStatus } = this.props;
     if (!showMessage) {
       GetNetworks({ params: { page: 1, per_page: 1000 } });
       GetConversations({ params: { page: 1, per_page: 1000 } });
     }
-    this.setState({
-      showMessage: !showMessage
-    });
+    SetMessageBarUIStatus({opened: !showMessage});
   }
 
   hideMessage = (e) => {
     if (!(this.messageToggle && this.messageToggle.contains(e.target))) {
-      this.setState({ showMessage: false });
+      SetMessageBarUIStatus({opened: false});
     }
   }
 
@@ -112,8 +115,8 @@ class MainPageTemplate extends React.Component {
     return '';
   }
   render() {
-    const { showSidebar, showMessage } = this.state;
-    const { privilege, accessRole, providerLocationId, locationName } = this.props;
+    const { showSidebar } = this.state;
+    const { privilege, accessRole, providerLocationId, locationName, showMessage } = this.props;
     const isProvider = privilege === 'provider';
 
     return (
@@ -143,6 +146,7 @@ const mapStateToProps = (state) => ({
   providerLocationId: state.auth.providerLocationId,
   providerId: state.auth.providerId,
   providers: state.provider.providers,
+  showMessage: get(state, 'conversation.ui.opened', false),
 });
 
 const mapDispatchToProps = {
@@ -151,6 +155,8 @@ const mapDispatchToProps = {
   SetPrivilege,
   SetRefreshFlag,
   LoginWithProvider,
+  GetNotifications,
+  SetMessageBarUIStatus,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MainPageTemplate));
