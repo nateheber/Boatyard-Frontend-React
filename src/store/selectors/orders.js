@@ -1,6 +1,40 @@
-import { get, set, forEach, sortBy, isEmpty, isArray,find } from 'lodash';
+import { get, set, forEach, sortBy, isEmpty, isArray, find, filter } from 'lodash';
 import { createSelector } from 'reselect';
-import { getProviderLocations } from './auth';
+import { getProviderLocations, getPrevilage } from './auth';
+
+const ORDER_COLUMNS = [
+  { label: 'order', value: 'name', width: 1 },
+  { label: 'order placed', value: 'createdAt', width: 1.2 },
+  {
+    label: 'CUSTOMER',
+    value: [
+      'relationships.user.attributes.firstName/relationships.user.attributes.lastName'
+    ],
+    isCustomer: true,
+    width: 1.2
+  },
+  { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
+  // {
+  //   label: 'location',
+  //   value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
+  //   combines: [', ', ', '],
+  //   width: 2.5
+  // },
+  { label: 'provider', value: 'relationships.provider.attributes.name', width: 1 },
+  { label: 'location', value: 'locationAddress', width: 1.2 },
+  {
+    label: 'boat location',
+    street: 'relationships.boat.relationships.location.address.street',
+    city: 'relationships.boat.relationships.location.address.city',
+    state: 'relationships.boat.relationships.location.address.state',
+    isLocation: true,
+    width: 2.3
+  },
+  { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1.5, },
+  { label: 'boat', value: 'relationships.boat.attributes.make', width: 1.2, },
+  { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$', width: 0.8, },
+  { label: 'order status', value: 'stateAlias', width: 1.2 },
+];
 
 const setLineItemRelationships = (lineItem, included) => {
   const resultData = {...lineItem};
@@ -131,27 +165,32 @@ export const orderSelector = state => ({
   currentOrder: currentOrderSelector(state),
 });
 
-const getColumns = state => get(state, 'orders.columns');
-const getUnselectedColumns = state => get(state, 'orders.unselectedColumns');
+const getUnselectedColumns = state => get(state, 'order.unselectedColumns', []);
 
 export const columnsSelector = createSelector(
-  getColumns,
   getPrevilage,
-  (allColumns, previlage) => {
-    let columns = allColumns;
+  (previlage) => {
+    const columns = ORDER_COLUMNS.slice(0)
     if (previlage === 'provider') {
       columns.splice(4, 1);
       columns[2]['value'] = ['customerName'];
     } else {
       columns.splice(5, 1);
     }
+    return columns;
   }
 )
 
-export const unselectedColumnsSelector = createSelector(
+export const selectedColumnsSelector = createSelector(
+  columnsSelector,
   getUnselectedColumns,
-  
+  (columns, unselectedLabels) => {
+    console.log(columns);
+    console.log(unselectedLabels);
+    return filter(columns, c => unselectedLabels.indexOf(c.label) === -1);
+  }
 )
+
 export const refinedOrdersSelector = createSelector(
   allOrdersSelector,
   includedSelector,

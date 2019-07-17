@@ -5,52 +5,6 @@ import { set, get } from 'lodash'
 import { actionTypes } from '../actions/orders';
 import { refactorIncluded } from 'utils/basic';
 
-const ORDER_COLUMNS = [
-  { label: 'order', value: 'name', width: 1 },
-  { label: 'order placed', value: 'createdAt', width: 1.2 },
-  {
-    label: 'CUSTOMER',
-    value: [
-      'relationships.user.attributes.firstName/relationships.user.attributes.lastName'
-    ],
-    isCustomer: true,
-    width: 1.2
-  },
-  { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
-  // {
-  //   label: 'location',
-  //   value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
-  //   combines: [', ', ', '],
-  //   width: 2.5
-  // },
-  { label: 'provider', value: 'relationships.provider.attributes.name', width: 1 },
-  { label: 'location', value: 'locationAddress', width: 1.2 },
-  {
-    label: 'boat location',
-    street: 'relationships.boat.relationships.location.address.street',
-    city: 'relationships.boat.relationships.location.address.city',
-    state: 'relationships.boat.relationships.location.address.state',
-    isLocation: true,
-    width: 2.3
-  },
-  { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1.5, },
-  { label: 'boat', value: 'relationships.boat.attributes.make', width: 1.2, },
-  { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$', width: 0.8, },
-  { label: 'order status', value: 'stateAlias', width: 1.2 },
-];
-const tabs = {
-  admin: [
-    { title: 'ALL', value: ALL_TAB, counts: 0 },
-    { title: 'NEED ASSIGNMENT', value: NEED_ASSIGNMENT_TAB, counts: 0 },
-    { title: 'DISPATCHED', value: DISPATCHED_TAB, counts: 0 },
-  ],
-  provider: [
-    { title: 'ALL', value: ALL_TAB, counts: 0 },
-    { title: 'INVOICED', value: INVOICED_TAB, counts: 0 },
-    { title: 'AWAITING ACCEPTANCE', value: DISPATCHED_TAB, counts: 0 },
-  ]
-};
-
 const ordersState = {
   orders: [],
   included: {},
@@ -58,7 +12,6 @@ const ordersState = {
   perPage: 20,
   total: 0,
   dispatched: false,
-  columns: ORDER_COLUMNS.slice(0),
   unselectedColumns: []
 };
 
@@ -381,8 +334,8 @@ export default handleActions(
       }),
     [actionTypes.UPDATE_SELECTED_COLUMNS]: (state, action) =>
       produce(state, draft => {
-        const { type, payload: { selectedColumns} } = action;
-        draft.selectedColumns = selectedColumns;
+        const { type, payload: { unselectedColumns} } = action;
+        draft.unselectedColumns = unselectedColumns;
         draft.currentStatus = type;
       })
     },
