@@ -253,11 +253,12 @@ class MenuUI extends React.Component {
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
+    this.reloadNotifications();
     this.timerId = window.setInterval(this.reloadNotifications, 30*1000);
   }
 
   reloadNotifications = () => {
-    this.props.GetNotifications({params: {per_page: 1000, page: 1}});
+    this.props.GetNotifications({params: {per_page: 1000, page: 1, 'notification_delivery[order]': 'id', 'notification_delivery[sort]': 'desc'}});
   }
 
   componentWillUnmount() {
@@ -327,7 +328,7 @@ class MenuUI extends React.Component {
 
   handleNotitificationClick({id, data}){
     const { type, order, conversation } = data;
-    if (type === 'order') {
+    if (order) {
       this.props.history.push(`/orders/${order}/detail`);
     }
     if (type === 'message') {
@@ -338,7 +339,7 @@ class MenuUI extends React.Component {
 
   handleNotificationsClick() {
     if (!this.state.notificationOpen) {
-      this.props.GetNotifications({params: {per_page: 1000, page: 1, clear: true}});
+      this.props.GetNotifications({params: {per_page: 1000, page: 1, 'notification_delivery[order]': 'id', 'notification_delivery[sort]': 'desc', clear: true}});
     }
     this.setState({notificationOpen: !this.state.notificationOpen});
     
@@ -347,9 +348,10 @@ class MenuUI extends React.Component {
   render() {
     const { providerLocationId, providerLocations, firstName, lastName, history, toggleMessage, messageToggleRef, 
       locationName, accessRole, notifications, unreadCount } = this.props;
-    const showNotificationBadge = parseInt(unreadNotifications) > 0;
+    const showNotificationBadge = parseInt(unreadCount) > 0;
     const { open, notificationOpen } = this.state;
     
+
     return (
       <Wrapper>
         {
