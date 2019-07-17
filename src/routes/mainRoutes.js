@@ -47,7 +47,7 @@ const Wrapper = styled.div`
 
 
 const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
-  const [key, setKey] = useState(Math.random());
+  const [key, setKey] = useState('Wrapper');
   const WrapperComp = props.isAuthenticated ? MainPageTemplate : Wrapper;
 
   useEffect(() => {
