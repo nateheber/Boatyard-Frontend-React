@@ -1,5 +1,6 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import React, { useState, useEffect }from 'react';
+import styled from 'styled-components';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Login from 'components/template/Login';
 import ForgotPassword from 'components/template/ForgotPassword';
@@ -25,17 +26,48 @@ import OpenedInvoices from 'containers/Invoices/OpenedInvoices';
 import { QRBox, TemplateBox } from 'containers/Message';
 import { Users, UserDetails } from 'containers/Users';
 import { isAuthenticatedSelector } from 'store/selectors/auth';
-import PublicRoute from './publicRoute';
+import { SetRefreshFlag } from 'store/actions/auth';
 import PrivateRoute from './privateRoute';
 import PrivilegeRoute from './privilegeRoute';
 
-const MainRoutes = (props) => (
+import MainPageTemplate from 'components/template/MainPageTemplate';
+import BackgroundImage from '../resources/auth/login-bg.png';
+const Wrapper = styled.div`
+  background-image: url(${BackgroundImage});
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+`;
+
+
+const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
+  const [key, setKey] = useState('Wrapper');
+  const WrapperComp = props.isAuthenticated ? MainPageTemplate : Wrapper;
+
+  useEffect(() => {
+    if (refreshPage) {
+      SetRefreshFlag({
+        flag: false,
+        success: () => {
+          setKey(Math.random());
+        }
+      });
+    }
+  });
+
+  return (
   <Router>
-    <>
-      <PublicRoute path="/login/" component={Login} />
-      <PublicRoute path="/forgot-password/" component={ForgotPassword} />
-      <PublicRoute path="/reset-password/" component={ResetPassword} />
-      <PublicRoute path="/create-password/" component={CreatePassword} />
+    <WrapperComp key={key}>
+      <Route path="/login/" component={Login} />
+      <Route path="/forgot-password/" component={ForgotPassword} />
+      <Route path="/reset-password/" component={ResetPassword} />
+      <Route path="/create-password/" component={CreatePassword} />
 
       <PrivateRoute exact path="/update-profile" component={UpdateProfile} isAuthenticated={props.isAuthenticated} />
       <PrivateRoute exact path="/dashboard/" component={Dashboard} isAuthenticated={props.isAuthenticated} />
@@ -62,11 +94,16 @@ const MainRoutes = (props) => (
       <PrivilegeRoute exact path="/users/" component={Users} privilege='admin' {...props} />
       <PrivilegeRoute exact path="/user-details/" component={UserDetails} privilege='admin' {...props} />
       <PrivateRoute exact path="/" component={Dashboard} {...props}  />
-    </>
+    </WrapperComp>
   </Router>
-);
+)}
 const mapStateToProps = (state) => ({
   isAuthenticated: isAuthenticatedSelector(state),
   loggedInPrivilege: state.auth.privilege,
+  refreshPage: state.auth.refreshPage,
 });
-export default connect(mapStateToProps, null)(MainRoutes);
+
+const mapDispatchToProps = {
+  SetRefreshFlag
+};
+export default connect(mapStateToProps, mapDispatchToProps)(MainRoutes);
