@@ -57,7 +57,7 @@ const MainRoutes = (props) => (
       <PrivilegeRoute exact path="/service-details/" component={ServiceDetails} privilege='provider' {...props}  />
       <PrivilegeRoute exact path="/categories/" component={Categories} privilege='admin' {...props} />
       <PrivilegeRoute exact path="/category-details/" component={CategoryDetails} privilege='admin' {...props} />
-      <PrivilegeRoute exact path="/customers/" component={Customers } privilege='provider' />
+      <PrivilegeRoute exact path="/customers/" component={Customers } privilege='provider' {...props} />
       <PrivilegeRoute exact path="/customer-details/" component={CustomerDetails  } privilege='provider' {...props} />
       <PrivilegeRoute exact path="/users/" component={Users} privilege='admin' {...props} />
       <PrivilegeRoute exact path="/user-details/" component={UserDetails} privilege='admin' {...props} />
