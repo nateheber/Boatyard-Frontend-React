@@ -45,19 +45,22 @@ class PageTemplate extends React.Component {
   }
 
   changeLocation = () => {
+    
     const { isAuthenticated, history, location } = this.props;
+    console.log('changeLocation,', isAuthenticated);
     if (!isAuthenticated) {
-      if ((location.search !== null || location.search !== undefined) && location.search.indexOf('redirect_url') < 0) {
-        if (!(location.pathname.indexOf('/login') > -1 ||
-          location.pathname.indexOf('/forgot-password') > -1 ||
-          location.pathname.indexOf('/reset-password') > -1 ||
-          location.pathname.indexOf('/create-password') > -1)) {
-          history.push({
-            pathname: '/login/',
-            // search: `?redirect_url=${location.pathname}${location.search}`
-          });  
-        }
+      // if ((location.search !== null || location.search !== undefined) && location.search.indexOf('redirect_url') < 0) {
+      if (!(location.pathname.indexOf('/login') > -1 ||
+        location.pathname.indexOf('/forgot-password') > -1 ||
+        location.pathname.indexOf('/reset-password') > -1 ||
+        location.pathname.indexOf('/create-password') > -1)) {
+          console.log('push to login...');
+        history.push({
+          pathname: '/login/',
+          // search: `?redirect_url=${location.pathname}${location.search}`
+        });  
       }
+      // }
     } else {
       if (location.pathname.indexOf('/login') > -1 ||
         location.pathname.indexOf('/forgot-password') > -1 ||

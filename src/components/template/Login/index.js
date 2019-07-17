@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import Auth0Lock from 'auth0-lock';
 import { AUTH_CONFIG } from 'utils/auth0';
+import { isAuthenticatedSelector } from 'store/selectors/auth';
 import { Login, GetUserPermission, SetAuth0Token, Logout } from 'store/actions/auth';
 import { LoginWithProvider } from 'store/actions/providers';
 import BYLogo from 'resources/by_logo.png';
@@ -60,14 +61,14 @@ class LoginComponent extends React.Component {
   }
   
   componentDidMount() {
-    if ( !(/access_token|id_token|error/.test(this.props.location.hash)) ) {
+    if ( !this.props.isAuthenticated && !(/access_token|id_token|error/.test(this.props.location.hash)) ) {
       this.lock.show();
     }
   }
 
   handleLogin = (auth0Token) => {
-    console.log('.handleLogin.');
-    const { Login, GetUserPermission } = this.props;
+    // const that = this;
+    const { Login, GetUserPermission, history } = this.props;
     Login({
       params: {
         auth0Token
@@ -75,14 +76,15 @@ class LoginComponent extends React.Component {
       success: () => {
         GetUserPermission({
           success: (res) => {
-              console.log(res);
-              const index = this.props.location.search.indexOf('redirect_url');
-              if (index > -1) {
-                const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
-                this.props.history.push(redirectUrl);
-              } else {
-                this.props.history.push('/');
-              }
+            window.setTimeout(() => history.push('/dashboard'), 50);
+              // console.log(res);
+              // const index = this.props.location.search.indexOf('redirect_url');
+              // if (index > -1) {
+              //   const redirectUrl = this.props.location.search.slice(index).replace(/redirect_url=/g, '');
+              //   history.push(redirectUrl);
+              // } else {
+              //   history.push('/dashboard/');
+              // }
           },
           error: (e) => {
             this.props.Logout();
@@ -99,7 +101,6 @@ class LoginComponent extends React.Component {
 
   render() {
     const { auth0Token } = this.props;
-    console.log(auth0Token && 'LOADING>>>>');
     return (
       <Wrapper>
         {
@@ -110,9 +111,10 @@ class LoginComponent extends React.Component {
   }
 }
 
-const mapStateToProps = ({ auth: { errorMessage, auth0Token } }) => ({
-  errorMessage,
-  auth0Token
+const mapStateToProps = (state) => ({
+  errorMessage: state.auth.errorMessage,
+  auth0Token: state.auth.auth0Token,
+  isAuthenticated: isAuthenticatedSelector(state),
 });
 
 const mapDispatchToProps = {
