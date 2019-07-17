@@ -147,7 +147,7 @@ export class TableHeader extends React.Component {
     this.setState({ widths });
     this.props.onChangeSize(widths);
   }
-
+  
   render () {
     const { columns, sortColumn, isAsc, onSort, type = 'primary' } = this.props;
     const { widths } = this.state;

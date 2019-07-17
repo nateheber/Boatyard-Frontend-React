@@ -15,16 +15,11 @@ const ContentWrapper =styled.div`
 const Wrapper = styled.div`
   background-color: white;
   width: 100%;
-  overflow-x: scroll;
+  overflow-x: auto;
   padding-bottom: 10px;
-  &::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
-  }
 `;
 
 const TableWrapper = styled.div`
-  width: 100%;
   &.tile {
     width: initial;
     display: flex;
@@ -61,6 +56,12 @@ export default class Table extends React.Component {
     window.removeEventListener("resize", this.updateDimension);
   }
 
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    if (this.props.columns.length !== prevProps.columns.length) {
+      this.updateDimension();
+    }
+    return null;
+  }
   setWrapperRef = (ref) => {
     this.wrapper = ref;
   }

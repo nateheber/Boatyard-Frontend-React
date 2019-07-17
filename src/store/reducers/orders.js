@@ -12,6 +12,7 @@ const ordersState = {
   perPage: 20,
   total: 0,
   dispatched: false,
+  unselectedColumns: []
 };
 
 const initialState = {
@@ -331,6 +332,12 @@ export default handleActions(
         draft.currentStatus = type;
         draft.errors = payload;
       }),
+    [actionTypes.UPDATE_SELECTED_COLUMNS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: { unselectedColumns} } = action;
+        draft.unselectedColumns = unselectedColumns;
+        draft.currentStatus = type;
+      })
     },
   initialState
 );

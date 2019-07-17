@@ -3,14 +3,14 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
-import { get } from 'lodash';
+import { get, filter } from 'lodash';
 
 import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 
-import { GetOrders, SetDispatchedFlag } from 'store/actions/orders';
-import { refinedOrdersSelector } from 'store/selectors/orders';
+import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns } from 'store/actions/orders';
+import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector } from 'store/selectors/orders';
 import { getCustomerName } from 'utils/order';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
@@ -41,39 +41,7 @@ const TableWrapper = styled.div`
   min-width: 100%;
 `;
 
-const ORDER_COLUMNS = [
-  { label: 'order', value: 'name', width: 1 },
-  { label: 'order placed', value: 'createdAt', width: 1.2 },
-  {
-    label: 'CUSTOMER',
-    value: [
-      'relationships.user.attributes.firstName/relationships.user.attributes.lastName'
-    ],
-    isCustomer: true,
-    width: 1.2
-  },
-  { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
-  // {
-  //   label: 'location',
-  //   value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
-  //   combines: [', ', ', '],
-  //   width: 2.5
-  // },
-  { label: 'provider', value: 'relationships.provider.attributes.name', width: 1 },
-  { label: 'location', value: 'locationAddress', width: 1.2 },
-  {
-    label: 'boat location',
-    street: 'relationships.boat.relationships.location.address.street',
-    city: 'relationships.boat.relationships.location.address.city',
-    state: 'relationships.boat.relationships.location.address.state',
-    isLocation: true,
-    width: 2.3
-  },
-  { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1.5, },
-  { label: 'boat', value: 'relationships.boat.attributes.make', width: 1.2, },
-  { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$', width: 0.8, },
-  { label: 'order status', value: 'stateAlias', width: 1.2 },
-];
+
 const tabs = {
   admin: [
     { title: 'ALL', value: ALL_TAB, counts: 0 },
@@ -90,15 +58,9 @@ const tabs = {
 class OrderList extends React.Component {
   constructor(props) {
     super(props);
-    const columns = ORDER_COLUMNS.slice(0);
+    
     let tab = ALL_TAB;
-    if (props.privilege === 'provider') {
-      columns.splice(4, 1);
-      // columns[2]['value'] = ['relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'];
-      columns[2]['value'] = ['customerName'];
-    } else {
-      columns.splice(5, 1);
-    }
+    
     const { state } = props.location;
     if (state && state.hasOwnProperty('tab')) {
       const tabState = get(state, 'tab');
@@ -108,8 +70,6 @@ class OrderList extends React.Component {
     }
     this.state = {
       tab,
-      columns,
-      selectedColumns: columns
     };
   }
 
@@ -170,10 +130,17 @@ class OrderList extends React.Component {
     }
   };
 
-  onChangeColumns = (columns) => {
-    this.setState({
-      selectedColumns: columns
+  onChangeColumns = (selectedColumns) => {
+    const { columns } = this.props;
+    const allLabels = columns.map(c => c.label);
+    const selLabels = selectedColumns.map(c => c.label);
+    const unselectedLabels = filter(allLabels, l => selLabels.indexOf(l) === -1);
+    this.props.UpdateSelectedColumns({
+      unselectedColumns: unselectedLabels
     });
+    // this.props.UpdateSelectedColumns(
+    //   {unselectedLables: without(, )}
+    // );
   };
 
   setNewOrderModalRef = (ref) => {
@@ -232,7 +199,8 @@ class OrderList extends React.Component {
       };
     });
 
-    const { tab, columns, selectedColumns } = this.state;
+    const { tab } = this.state;
+    const { columns, selectedColumns } = this.props;
     return (
       <Wrapper>
         <OrderHeader
@@ -261,6 +229,8 @@ class OrderList extends React.Component {
 
 const mapStateToProps = state => ({
   orders: refinedOrdersSelector(state),
+  columns: columnsSelector(state),
+  selectedColumns: selectedColumnsSelector(state),
   page: get(state, 'order.orders.page', 1),
   perPage: get(state, 'order.orders.perPage', 20),
   total: get(state, 'order.orders.total', 0),
@@ -270,6 +240,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   GetOrders,
   SetDispatchedFlag,
+  UpdateSelectedColumns,
 };
 
 export default withRouter(
