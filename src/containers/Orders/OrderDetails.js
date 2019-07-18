@@ -93,7 +93,7 @@ class OrderDetails extends React.Component {
 
   loadOrder = (orderId) => {
     const { GetOrder } = this.props;
-    this.setState({orderId})
+    this.state.orderId !== orderId && this.setState({orderId});
     GetOrder({
       orderId,
       success: () => {
@@ -216,7 +216,7 @@ class OrderDetails extends React.Component {
                     />
                   </SectionGroup>
                   <SectionGroup>
-                    <PaymentSection order={currentOrder} onFinished={this.loadOrder}/>
+                    <PaymentSection order={currentOrder} onFinished={() => this.loadOrder(orderId)} />
                   </SectionGroup>
                   <SectionGroup>
                     <Scheduler order={currentOrder} />
