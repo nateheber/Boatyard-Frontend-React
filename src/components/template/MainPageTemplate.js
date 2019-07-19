@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { GetNetworks } from 'store/actions/networks';
-import { GetNotifications } from 'store/actions/notifications';
 import { GetConversations, SetMessageBarUIStatus } from 'store/actions/conversations';
 import { LoginWithProvider } from 'store/actions/providers';
 import { SetPrivilege, SetRefreshFlag } from 'store/actions/auth';
@@ -62,11 +61,6 @@ class MainPageTemplate extends React.Component {
     showSidebar: false,
     // showMessage: false,
   };
-
-  constructor(props) {
-    super(props);
-    props.GetNotifications({params: {per_page: 1000, page: 1}});
-  }
   
   toggleMenu = () => {
     const { showSidebar } = this.state;
@@ -155,7 +149,6 @@ const mapDispatchToProps = {
   SetPrivilege,
   SetRefreshFlag,
   LoginWithProvider,
-  GetNotifications,
   SetMessageBarUIStatus,
 };
 

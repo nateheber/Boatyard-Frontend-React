@@ -58,6 +58,8 @@ export const actionTypes = {
   SEND_INVOICE_FAILURE: '[ORDERS] - Send invoice failure',
 
   SET_DISPATCHED_FLAG: '[ORDERS] - Set Dispatched Flag',
+
+  UPDATE_SELECTED_COLUMNS: '[ORDERS] - Update Selected Columns',
 };
 
 export const GetOrders = createAction(actionTypes.GET_ORDERS, payload => payload);
@@ -117,3 +119,5 @@ export const SendInvoiceSuccess = createAction(actionTypes.SEND_INVOICE_SUCCESS)
 export const SendInvoiceFailure = createAction(actionTypes.SEND_INVOICE_FAILURE);
 
 export const SetDispatchedFlag = createAction(actionTypes.SET_DISPATCHED_FLAG);
+
+export const UpdateSelectedColumns = createAction(actionTypes.UPDATE_SELECTED_COLUMNS, payload => payload);

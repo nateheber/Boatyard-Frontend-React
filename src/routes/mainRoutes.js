@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect }from 'react';
+import styled from 'styled-components';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-
-import PageTemplate from 'components/template/PageTemplate';
 import Login from 'components/template/Login';
 import ForgotPassword from 'components/template/ForgotPassword';
 import ResetPassword from 'components/template/ResetPassword';
@@ -23,142 +22,88 @@ import ServiceDetails from 'containers/Services/screens/ServiceDetails';
 import Categories from 'containers/Categories/screens/Categories';
 import CategoryDetails from 'containers/Categories/screens/CategoryDetails';
 import Inbox from 'containers/Message/Inbox';
+import OpenedInvoices from 'containers/Invoices/OpenedInvoices';
 import { QRBox, TemplateBox } from 'containers/Message';
 import { Users, UserDetails } from 'containers/Users';
+import { isAuthenticatedSelector } from 'store/selectors/auth';
+import { SetRefreshFlag } from 'store/actions/auth';
+import PrivateRoute from './privateRoute';
+import PrivilegeRoute from './privilegeRoute';
 
-const MainRoutes = ({ privilege }) => (
+import MainPageTemplate from 'components/template/MainPageTemplate';
+import BackgroundImage from '../resources/auth/login-bg.png';
+const Wrapper = styled.div`
+  background-image: url(${BackgroundImage});
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+`;
+
+
+const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
+  const [key, setKey] = useState('Wrapper');
+  const WrapperComp = props.isAuthenticated ? MainPageTemplate : Wrapper;
+
+  useEffect(() => {
+    if (refreshPage) {
+      SetRefreshFlag({
+        flag: false,
+        success: () => {
+          setKey(Math.random());
+        }
+      });
+    }
+  });
+
+  return (
   <Router>
-    <PageTemplate>
-      <Route exact path="/login" component={Login} />
-      <Route exact path="/forgot-password" component={ForgotPassword} />
-      <Route exact path="/reset-password" component={ResetPassword} />
-      <Route exact path="/create-password" component={CreatePassword} />
-      <Route exact path="/update-profile" component={UpdateProfile} />
-      <Route exact path="/dashboard/" component={Dashboard} />
-      <Route exact path="/inbox/" component={Inbox} />
-      <Route exact path="/quick-replies/" component={QRBox} />
-      <Route exact path="/templates/" component={TemplateBox} />
-      <Route exact path="/orders/:id/detail" component={OrderDetails} />
-      <Route exact path="/orders/" component={Order} />
-      <Route exact path="/order-details/" component={OrderDetails} />
-      <Route exact path="/providers/"
-        render={() => {
-          if(privilege === 'admin') {
-            return (<Providers />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/provider-details/"
-        render={() => {
-          if(privilege === 'admin') {
-            return (<ProviderEditor />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/invoices/"
-        render={() => {
-          if(privilege === 'provider') {
-            return (<Redirect to="/invoices/open"/>);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/services/"
-        render={() => {
-          if(privilege === 'provider') {
-            return (<Services />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/services/new"
-        render={() => {
-          if(privilege === 'provider') {
-            return (<AddService />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/service-details/"
-        render={() => {
-          if(privilege === 'provider') {
-            return (<ServiceDetails />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/categories/"
-        render={() => {
-          if(privilege === 'admin') {
-            return (<Categories />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/category-details/"
-        render={() => {
-          if(privilege === 'admin') {
-            return (<CategoryDetails />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/team/" component={TeamList} />
-      <Route exact path="/team-details/" component={TeamDetails} />
-      <Route exact path="/customers/"
-        render={() => {
-          if(privilege === 'provider') {
-            return (<Customers />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/customer-details/"
-        render={() => {
-          if(privilege === 'provider') {
-            return (<CustomerDetails />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/calendar/" component={Calendar} />
-      <Route exact path="/users/"
-        render={() => {
-          if(privilege === 'admin') {
-            return (<Users />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/user-details/"
-        render={() => {
-          if(privilege === 'admin') {
-            return (<UserDetails />);
-          } else {
-            return (<Redirect to="/dashboard"/>);
-          }
-        }}
-      />
-      <Route exact path="/" component={Dashboard} />
-    </PageTemplate>
-  </Router>
-);
+    <WrapperComp key={key}>
+      <Route path="/login/" component={Login} />
+      <Route path="/forgot-password/" component={ForgotPassword} />
+      <Route path="/reset-password/" component={ResetPassword} />
+      <Route path="/create-password/" component={CreatePassword} />
 
-const mapStateToProps = ({ auth: { privilege } }) => ({
-  privilege
+      <PrivateRoute exact path="/update-profile" component={UpdateProfile} isAuthenticated={props.isAuthenticated} />
+      <PrivateRoute exact path="/dashboard/" component={Dashboard} isAuthenticated={props.isAuthenticated} />
+      <PrivateRoute exact path="/inbox/" component={Inbox} isAuthenticated={props.isAuthenticated} />
+      <PrivateRoute exact path="/quick-replies/" component={QRBox} isAuthenticated={props.isAuthenticated} />
+      <PrivateRoute exact path="/templates/" component={TemplateBox} isAuthenticated={props.isAuthenticated} />
+      <PrivateRoute exact path="/orders/:id/detail" component={OrderDetails} isAuthenticated={props.isAuthenticated} />
+      <PrivateRoute exact path="/orders/" component={Order} isAuthenticated={props.isAuthenticated} />
+      <PrivateRoute exact path="/order-details/" component={OrderDetails} isAuthenticated={props.isAuthenticated} />
+      <PrivateRoute exact path="/team/" component={TeamList} isAuthenticated={props.isAuthenticated} />
+      <PrivateRoute exact path="/team-details/" component={TeamDetails} isAuthenticated={props.isAuthenticated}  />
+      <PrivateRoute exact path="/calendar/" component={Calendar} isAuthenticated={props.isAuthenticated} />
+
+      <PrivilegeRoute exact path="/providers/" component={Providers} privilege='admin' {...props} />
+      <PrivilegeRoute exact path="/provider-details/" component={ProviderEditor} privilege='admin' {...props}  />
+      <PrivilegeRoute exact path="/invoices/" component={OpenedInvoices} privilege='provider' {...props} />
+      <PrivilegeRoute exact path="/services/" component={Services} privilege='provider' {...props} />
+      <PrivilegeRoute exact path="/services/new/" component={AddService} privilege='provider' {...props}  />
+      <PrivilegeRoute exact path="/service-details/" component={ServiceDetails} privilege='provider' {...props}  />
+      <PrivilegeRoute exact path="/categories/" component={Categories} privilege='admin' {...props} />
+      <PrivilegeRoute exact path="/category-details/" component={CategoryDetails} privilege='admin' {...props} />
+      <PrivilegeRoute exact path="/customers/" component={Customers } privilege='provider' {...props} />
+      <PrivilegeRoute exact path="/customer-details/" component={CustomerDetails  } privilege='provider' {...props} />
+      <PrivilegeRoute exact path="/users/" component={Users} privilege='admin' {...props} />
+      <PrivilegeRoute exact path="/user-details/" component={UserDetails} privilege='admin' {...props} />
+      <PrivateRoute exact path="/" component={Dashboard} {...props}  />
+    </WrapperComp>
+  </Router>
+)}
+const mapStateToProps = (state) => ({
+  isAuthenticated: isAuthenticatedSelector(state),
+  loggedInPrivilege: state.auth.privilege,
+  refreshPage: state.auth.refreshPage,
 });
 
-export default connect(mapStateToProps)(MainRoutes);
+const mapDispatchToProps = {
+  SetRefreshFlag
+};
+export default connect(mapStateToProps, mapDispatchToProps)(MainRoutes);

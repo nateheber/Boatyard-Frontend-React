@@ -101,8 +101,7 @@ class OrderDetails extends React.Component {
       },
       error: (e) => {
         toastr.error('Error', e.message);
-        this.props.history.goBack();
-        this.props.history.goBack();
+        this.props.history.push('/');
       }
     });
   }
