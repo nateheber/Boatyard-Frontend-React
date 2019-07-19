@@ -24,7 +24,9 @@ export const actionTypes = {
 
   DELETE_USER: '[USERS] - Delete user',
   DELETE_USER_SUCCESS: '[USERS] - Delete user Success',
-  DELETE_USER_FAILURE: '[USERS] - Delete user Failure'
+  DELETE_USER_FAILURE: '[USERS] - Delete user Failure',
+  
+  FILTER_EXTERNAL_CUSTOMERS: '[USERS] - Filter external connections',
 };
 
 export const GetUsers = createAction(actionTypes.GET_USERS, payload => payload);
@@ -50,3 +52,5 @@ export const UpdateUserFailure = createAction(actionTypes.UPDATE_USER_FAILURE);
 export const DeleteUser = createAction(actionTypes.DELETE_USER, payload => payload);
 export const DeleteUserSuccess = createAction(actionTypes.DELETE_USER_SUCCESS);
 export const DeleteUserFailure = createAction(actionTypes.DELETE_USER_FAILURE);
+
+export const FilterExternalConnections = createAction(actionTypes.FILTER_EXTERNAL_CUSTOMERS, payload => payload);

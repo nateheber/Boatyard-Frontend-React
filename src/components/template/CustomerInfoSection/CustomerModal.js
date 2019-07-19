@@ -1,14 +1,33 @@
 import React from 'react';
 import { get } from 'lodash';
-
+import styled from 'styled-components';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 import { formatPhoneNumber } from 'utils/basic';
+import ExternalCustomerSearch from './ExternalCustomerSearch';
 
 const mainFields = ['first_name', 'last_name', 'phone_number', 'email', 'notes'];
 const locationFields = ['street', 'city', 'state', 'zip'];
+
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const Title = styled.div`
+  font-weight: bold;
+`;
+const SearchContainer = styled.div`
+  flex-grow: 1;
+  margin: 0 30px;
+`;
+
 export default class CustomerModal extends React.Component {
+  state = {
+    externalBoats: [],
+    customerId: ''
+  }
+
   setFormFieldRef = (ref) => {
     this.mainInfoFields = ref;
   }
@@ -182,24 +201,54 @@ export default class CustomerModal extends React.Component {
             ]
           };
         }
-      this.props.onSave({ user });
+      const { externalBoats } = this.state;
+      if (this.state.customerId) {
+        user.customer_id = this.state.customerId;
+      }
+      this.props.onSave({ user, externalBoats });
+    }
+  }
+
+  onExternalCustomerSelected = (customerInfo) => {
+    if (customerInfo) {
+      const { state: {value} } = this.mainInfoFields;
+      const newValue = {...value, 
+        first_name: customerInfo.firstName, 
+        last_name: customerInfo.lastName,
+        phone_number: customerInfo.homePhoneNo,
+        email: customerInfo.emailAddress ? customerInfo.emailAddress.toLowerCase() : undefined
+      };
+      this.mainInfoFields.setState({value: newValue});
+      let externalBoats = get(customerInfo, 'customerBoats.customerBoat', []);
+      externalBoats = Array.isArray(externalBoats) ? externalBoats : [externalBoats];
+      this.setState({customerId: customerInfo.customerId, externalBoats});
     }
   }
 
   render() {
     const fields = this.getFormFieldInfo();
-    const { title, open, onClose, loading } = this.props;
+    const { title, open, onClose, loading, showAdditionalFields } = this.props;
     const action = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>
     ];
+    const headers = (
+      <ModalHeader>
+        <Title>{title || 'Add Customer'}</Title>
+        { showAdditionalFields && 
+          <SearchContainer>
+            <ExternalCustomerSearch onExternalCustomerSelected={this.onExternalCustomerSelected} />
+          </SearchContainer>
+        }
+      </ModalHeader>
+    );
     return (
       <Modal
-        title={title || 'Add Customer'}
         loading={loading}
         actions={action}
         open={open}
         onClose={onClose}
+        customHeader={headers}
       >
         <FormFields
           ref={this.setFormFieldRef}
