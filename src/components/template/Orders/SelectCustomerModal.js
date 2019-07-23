@@ -257,32 +257,32 @@ class SelectCustomerModal extends React.Component {
       data: child_account,
       success: (user) => {
         let promises = [];
-        console.log(externalBoats);
-        // if (externalBoats.length > 0) {
-        //   promises = filter(externalBoats, b => b.boatName || b.brand).map(boatData => {
-        //     const data = {
-        //       name: boatData.boatName || boatData.brand,
-        //       child_account_id: user.id,
-        //       make: boatData.brand,
-        //       model: boatData.model,
-        //       year: boatData.year,
-        //       length: boatData.length,
-        //       location_attributes: {
-        //         locatable_type: 'ChildAccount',
-        //         locatable_id: user.id,
-        //         location_type: 'private_dock',
-        //         address_attributes: {
-        //           street: 'marinemax stree',
-        //           city: 'marinemax city',
-        //           state: 'marinemax state',
-        //           zip: '00000'
-        //         }
-        //       }
-        //     };
 
-        //     return new Promise((resolve, reject) => CreateBoat({data, success: resolve, error: reject}));
-        //   })
-        // }
+        if (externalBoats.length > 0) {
+          promises = filter(externalBoats, b => b.boatName || b.brand).map(boatData => {
+            const data = {
+              name: boatData.boatName || boatData.brand,
+              child_account_id: user.id,
+              make: boatData.brand,
+              model: boatData.model,
+              year: boatData.year,
+              length: boatData.length,
+              location_attributes: {
+                locatable_type: 'ChildAccount',
+                locatable_id: user.id,
+                location_type: 'private_dock',
+                address_attributes: {
+                  street: 'marinemax stree',
+                  city: 'marinemax city',
+                  state: 'marinemax state',
+                  zip: '00000'
+                }
+              }
+            };
+
+            return new Promise((resolve, reject) => CreateBoat({data, success: resolve, error: reject}));
+          })
+        }
         Promise.all(promises).finally(() => {
           this.hideCustomerModal();
           const newUser = {
@@ -375,13 +375,10 @@ class SelectCustomerModal extends React.Component {
         onClose={onClose}
       >
         <Row style={{alignItems: 'center', marginBottom: '10px'}}>
-          <Col sm={12} md={9} lg={9}><SubSectionTitle style={{ marginTop: 0 }}>SELECT A CUSTOMER</SubSectionTitle></Col>
-          <Col sm={12} md={3} lg={3}>
-            <HollowButton style={{ margin: 0, float: 'right' }} onClick={this.showCustomerModal}>Add New</HollowButton>
-          </Col>
+          <Col sm={12}><SubSectionTitle style={{ marginTop: 0 }}>SELECT A CUSTOMER</SubSectionTitle></Col>
         </Row>
         <Row>
-          <Col sm={12} md={12} lg={12}>
+          <Col sm={10} md={9} lg={8}>
             <AsyncSelect
               ref={this.setCustomerSelectRef}
               components={{
@@ -390,13 +387,16 @@ class SelectCustomerModal extends React.Component {
               }}
               isClearable
               defaultOptions
-              loadOptions={AwesomeDebouncePromise(this.loadOptions, 500)}
+              loadOptions={AwesomeDebouncePromise(this.loadOptions, 200)}
               onChange={this.onChangeUser}
               value={customer}
               styles={colourStyles}
               showAdditionalFields={showAdditionalFields}
 
             />
+          </Col>
+          <Col sm={2} md={3} lg={4}>
+            <HollowButton style={{ margin: 0, float: 'right' }} onClick={this.showCustomerModal}>Add New</HollowButton>
           </Col>
         </Row>
         {!isEmpty(customer) && 
@@ -456,7 +456,7 @@ const mapStateToProps = (state) => ({
   currentBoatStatus: state.boat.currentStatus,
   boats: refinedBoatsSelector(state),
   privilege: state.auth.privilege,
-  showAdditionalFields: state.provider.currentProvider.name === 'MarineMax',
+  showAdditionalFields: true,
 });
 
 const mapDispatchToProps = {

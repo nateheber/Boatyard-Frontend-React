@@ -14,32 +14,38 @@ const ExternalCustomerSearch =  ({FilterExternalConnections, onExternalCustomerS
     onExternalCustomerSelected(value || {});
     setCustomer(value);
   }
-  const loadOptions = val => {
-    const params = {};
-    if (val.indexOf('@') > 0) {
-      params['email'] = val;
-    }
-    if (val.indexOf(' ') > 0) {
-      params['name'] = val;
-    }
-    // if phone number
-    if (/(1\s?)?((\([0-9]{3}\))|[0-9]{3})?[\s-]?[0-9]{3}[\s-]?[0-9]{4}/.test(val)) {
-      params['phone'] = val;
-    }
-    if (/[0-9]{6}/.test(val)) {
-      params['customer_id'] = val;
-    }
-    return new Promise((resolve, reject) => {
-      FilterExternalConnections({
-        params,
-        success: (data) => {
-          resolve(data);
-        },
-        error: reject
+  const loadOptions = AwesomeDebouncePromise(
+      val => {
+      console.log(val);
+      const params = {};
+      if (val.indexOf('@') > 0) {
+        params['email'] = val;
+      }
+      if (val.indexOf(' ') > 0) {
+        params['name'] = val;
+      }
+      // if phone number
+      if (/(1\s?)?((\([0-9]{3}\))|[0-9]{3})?[\s-]?[0-9]{3}[\s-]?[0-9]{4}/.test(val)) {
+        params['phone'] = val;
+      }
+      if (/[0-9]{6}/.test(val)) {
+        params['customer_id'] = val;
+      }
+      if (Object.keys(params).length === 0) {
+        return [];
+      }
+      return new Promise((resolve, reject) => {
+        FilterExternalConnections({
+          params,
+          success: (data) => {
+            resolve(data);
+          },
+          error: reject
+        });
       });
-    });
-  }
-  //Travis Fraley
+    },
+    500);
+
   return (
     <AsyncSelect
       components={{
@@ -49,7 +55,7 @@ const ExternalCustomerSearch =  ({FilterExternalConnections, onExternalCustomerS
       cacheOptions
       isClearable
       defaultOptions
-      loadOptions={AwesomeDebouncePromise(loadOptions, 500)}
+      loadOptions={loadOptions}
       onChange={onChangeCustomer}
       value={customer}
       styles={colourStyles}

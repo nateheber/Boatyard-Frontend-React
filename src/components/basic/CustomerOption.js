@@ -36,10 +36,10 @@ const Email = styled.span`
 const NameEmail = styled.div`
   display: flex;
   flex-direction: column;
-  width: 35%;
+  width: 45%;
 `
 const CustomerIdDiv = styled.div`
-  width: 35%;
+  width: 25%;
 `
 const PhoneNumber = styled.div`
   width: 30%;
