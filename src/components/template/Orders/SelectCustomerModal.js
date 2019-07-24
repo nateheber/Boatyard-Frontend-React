@@ -44,17 +44,17 @@ export const colourStyles = {
     ...styles,
     backgroundColor: 'white',
     fontSize: 14,
-    // fontWeight: 400,
+    fontWeight: 400,
     // letterSpacing: -0.3,
-    // minHeight: 28,
+    minHeight: 28,
     border: '1px solid #dfdfdf'
   }),
   input: styles => ({
     ...styles,
     fontSize: 14,
     color: '#555',
-    // paddingTop: 1,
-    // paddingBottom: 1
+    paddingTop: 1,
+    paddingBottom: 1
   }),
   loadingMessage: styles => ({
     ...styles,
@@ -377,7 +377,7 @@ class SelectCustomerModal extends React.Component {
         <Row style={{alignItems: 'center', marginBottom: '10px'}}>
           <Col sm={12}><SubSectionTitle style={{ marginTop: 0 }}>SELECT A CUSTOMER</SubSectionTitle></Col>
         </Row>
-        <Row>
+        <Row style={{alignItems: 'center'}}>
           <Col sm={10} md={9} lg={8}>
             <AsyncSelect
               ref={this.setCustomerSelectRef}
@@ -396,7 +396,7 @@ class SelectCustomerModal extends React.Component {
             />
           </Col>
           <Col sm={2} md={3} lg={4}>
-            <HollowButton style={{ margin: 0, float: 'right' }} onClick={this.showCustomerModal}>Add New</HollowButton>
+            <HollowButton onClick={this.showCustomerModal}>Add New</HollowButton>
           </Col>
         </Row>
         {!isEmpty(customer) && 
