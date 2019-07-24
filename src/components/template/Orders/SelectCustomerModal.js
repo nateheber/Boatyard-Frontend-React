@@ -267,17 +267,17 @@ class SelectCustomerModal extends React.Component {
               model: boatData.model,
               year: boatData.year,
               length: boatData.length,
-              location_attributes: {
-                locatable_type: 'ChildAccount',
-                locatable_id: user.id,
-                location_type: 'private_dock',
-                address_attributes: {
-                  street: 'marinemax stree',
-                  city: 'marinemax city',
-                  state: 'marinemax state',
-                  zip: '00000'
-                }
-              }
+              // location_attributes: {
+              //   locatable_type: 'ChildAccount',
+              //   locatable_id: user.id,
+              //   location_type: 'private_dock',
+              //   // address_attributes: {
+              //   //   street: 'marinemax stree',
+              //   //   city: 'marinemax city',
+              //   //   state: 'marinemax state',
+              //   //   zip: '00000'
+              //   // }
+              // }
             };
 
             return new Promise((resolve, reject) => CreateBoat({data, success: resolve, error: reject}));
