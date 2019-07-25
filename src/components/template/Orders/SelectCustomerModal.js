@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
-import { findIndex, isEmpty, get } from 'lodash';
+import { toastr } from 'react-redux-toastr';
+import { findIndex, isEmpty, get, filter } from 'lodash';
 import styled from 'styled-components';
-
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import {
   actionTypes as customerActions,
   FilterChildAccounts,
@@ -33,20 +34,23 @@ const SubSectionTitle = styled.h5`
   margin-bottom: 5px;
 `;
 
-const colourStyles = {
+export const colourStyles = {
+  option: (provided, state) => ({
+    ...provided,
+    width: '600px',
+    display: 'fixed',
+  }),
   control: styles => ({
     ...styles,
     backgroundColor: 'white',
     fontSize: 14,
-    fontFamily: 'Source Sans Pro, sans-serif',
     fontWeight: 400,
-    letterSpacing: -0.3,
+    // letterSpacing: -0.3,
     minHeight: 28,
     border: '1px solid #dfdfdf'
   }),
   input: styles => ({
     ...styles,
-    fontFamily: 'Source Sans Pro, sans-serif',
     fontSize: 14,
     color: '#555',
     paddingTop: 1,
@@ -54,7 +58,6 @@ const colourStyles = {
   }),
   loadingMessage: styles => ({
     ...styles,
-    fontFamily: 'Source Sans Pro, sans-serif',
     fontSize: 14,
     color: '#555'
   }),
@@ -191,9 +194,10 @@ class SelectCustomerModal extends React.Component {
   };
 
   handleBoatChange = (selectRef) => {
+    console.log(selectRef.selectedIndex);
     const { boats } = this.props;
     const { refinedBoats } = this.state;
-    if (selectRef.selectedIndex) {
+    if (selectRef.selectedIndex >= 0) {
       const refinedBoat = get(refinedBoats, selectRef.selectedIndex);
       if (!isEmpty(boats) && !isEmpty(refinedBoat)) {
         let index = findIndex(boats, item => item.id === refinedBoat.value);
@@ -243,25 +247,59 @@ class SelectCustomerModal extends React.Component {
     });
   };
 
-  onCreateCustomer = (data) => {
-    const { privilege, CreateChildAccount } = this.props;
-    const child_account = data.user;
+  onCreateCustomer = ({user, externalBoats}) => {
+    const { privilege, CreateChildAccount, CreateBoat } = this.props;
+    const child_account = user;
     if (privilege === 'admin') {
       child_account['provider_id'] = 1;
     }
     CreateChildAccount({
       data: child_account,
       success: (user) => {
-        this.hideCustomerModal();
-        const newUser = {
-          id: privilege === 'admin' ? get(user, 'relationships.user.data.id') : user.id,
-          type: privilege === 'admin' ? get(user, 'relationships.user.data.type') : user.type,
-          ...user.attributes
-        };
-        this.customerSelect.setState({
-          defaultOptions: [newUser]
-        });
-        this.onChangeUser(newUser);    
+        let promises = [];
+
+        if (externalBoats.length > 0) {
+          promises = filter(externalBoats, b => b.boatName || b.brand).map(boatData => {
+            const data = {
+              name: boatData.boatName || boatData.brand,
+              child_account_id: user.id,
+              make: boatData.brand,
+              model: boatData.model,
+              year: boatData.year,
+              length: boatData.length,
+              // location_attributes: {
+              //   locatable_type: 'ChildAccount',
+              //   locatable_id: user.id,
+              //   location_type: 'private_dock',
+              //   // address_attributes: {
+              //   //   street: 'marinemax stree',
+              //   //   city: 'marinemax city',
+              //   //   state: 'marinemax state',
+              //   //   zip: '00000'
+              //   // }
+              // }
+            };
+
+            return new Promise((resolve, reject) => CreateBoat({data, success: resolve, error: reject}));
+          })
+        }
+        Promise.all(promises).finally(() => {
+          this.hideCustomerModal();
+          const newUser = {
+            id: privilege === 'admin' ? get(user, 'relationships.user.data.id') : user.id,
+            type: privilege === 'admin' ? get(user, 'relationships.user.data.type') : user.type,
+            ...user.attributes
+          };
+          this.customerSelect.setState({
+            defaultOptions: [newUser]
+          });
+          this.onChangeUser(newUser);   
+          this.refreshBoats(newUser, {}); 
+        })
+        
+      },
+      error: (err) => {
+        toastr.error(err.message);
       }
     });
   }
@@ -279,40 +317,44 @@ class SelectCustomerModal extends React.Component {
     CreateBoat({
       data: { boat },
       success: (newBoat) => {
-        const { customer } = this.state;
         this.hideBoatModal();
         this.setState({
           boat: {},
           refinedBoat: {},
           refinedBoats: []
         }, () => {
-          const params = privilege === 'admin' ?
-            { 'boat[user_id]': customer.id } :
-            { 'boat[child_account_id]': customer.id };
-          this.props.GetBoats({
-            params: params,
-            success: () => {
-              const { boats } = this.props;
-              if (!isEmpty(boats)) {
-                let index = findIndex(boats, boat => boat.id === newBoat.id);
-                if (index < 0) {
-                  index = 0;
-                }
-                this.setState({
-                  boat: boats[index]
-                }, () => {
-                  this.getRefinedBoats();
-                });
-              }
-            }
-          });  
+          this.refreshBoats(this.state.customer, newBoat); 
         });
       }
     })
   };
 
+  refreshBoats = (customer, newBoat) => {
+    const { privilege } = this.props;
+    const params = privilege === 'admin' ?
+      { 'boat[user_id]': customer.id } :
+      { 'boat[child_account_id]': customer.id };
+    this.props.GetBoats({
+      params: params,
+      success: () => {
+        const { boats } = this.props;
+        if (!isEmpty(boats)) {
+          let index = findIndex(boats, boat => boat.id === newBoat.id);
+          if (!index || index < 0) {
+            index = 0;
+          }
+          this.setState({
+            boat: boats[index]
+          }, () => {
+            this.getRefinedBoats();
+          });
+        }
+      }
+    }); 
+  }
+
   render() {
-    const { open, onClose, currentCustomerStatus, currentBoatStatus } = this.props;
+    const { open, onClose, currentCustomerStatus, currentBoatStatus, showAdditionalFields } = this.props;
     const {
       customer, boat, refinedBoats, refinedBoat,
       visibleOfCustomerModal, visibleOfBoatModal
@@ -332,11 +374,11 @@ class SelectCustomerModal extends React.Component {
         open={open}
         onClose={onClose}
       >
-        <Row>
+        <Row style={{alignItems: 'center', marginBottom: '10px'}}>
           <Col sm={12}><SubSectionTitle style={{ marginTop: 0 }}>SELECT A CUSTOMER</SubSectionTitle></Col>
         </Row>
-        <Row style={{ alignItems: 'center'}}>
-          <Col sm={12} md={8} lg={7} style={{ marginBottom: 5 }}>
+        <Row style={{alignItems: 'center'}}>
+          <Col sm={10} md={9} lg={8}>
             <AsyncSelect
               ref={this.setCustomerSelectRef}
               components={{
@@ -345,14 +387,16 @@ class SelectCustomerModal extends React.Component {
               }}
               isClearable
               defaultOptions
-              loadOptions={this.loadOptions}
+              loadOptions={AwesomeDebouncePromise(this.loadOptions, 200)}
               onChange={this.onChangeUser}
               value={customer}
               styles={colourStyles}
+              showAdditionalFields={showAdditionalFields}
+
             />
           </Col>
-          <Col sm={12} md={4} lg={3} lgOffset={2}>
-            <HollowButton style={{ marginTop: 0 }} onClick={this.showCustomerModal}>Add New</HollowButton>
+          <Col sm={2} md={3} lg={4}>
+            <HollowButton onClick={this.showCustomerModal}>Add New</HollowButton>
           </Col>
         </Row>
         {!isEmpty(customer) && 
@@ -393,6 +437,7 @@ class SelectCustomerModal extends React.Component {
           loading={currentCustomerStatus === customerActions.CREATE_CHILD_ACCOUNT}
           onClose={this.hideCustomerModal}
           onSave={this.onCreateCustomer}
+          showAdditionalFields={showAdditionalFields}
         />
         {!isEmpty(customer) && <BoatModal
           open={visibleOfBoatModal}
@@ -410,7 +455,8 @@ const mapStateToProps = (state) => ({
   currentCustomerStatus: state.childAccount.currentStatus,
   currentBoatStatus: state.boat.currentStatus,
   boats: refinedBoatsSelector(state),
-  privilege: state.auth.privilege
+  privilege: state.auth.privilege,
+  showAdditionalFields: true,
 });
 
 const mapDispatchToProps = {

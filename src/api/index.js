@@ -120,3 +120,7 @@ export const createGlobalMessageTemplateClient = authType => {
 export const createLocalMessageTemplateClient = authType => {
   return new CRUDClient('message_templates', authType);
 }
+
+export const createExternalConnectionsClient = authType => {
+  return new CRUDClient('providers/external_connections', authType);
+}
