@@ -225,8 +225,8 @@ class OrderDetailHeader extends React.Component {
     }
 
     const actions = [
-      <HollowButton onClick={() => this.setState({visibleofDeleteModal: false})} key="modal_btn_cancel">No</HollowButton>,
-      <OrangeButton onClick={this.deleteOrder} key="modal_btn_save">Yes</OrangeButton>
+      <HollowButton onClick={() => this.setState({visibleofDeleteModal: false})} key="modal_btn_cancel">Cancel</HollowButton>,
+      <OrangeButton onClick={this.deleteOrder} key="modal_btn_save">Confirm</OrangeButton>
     ];
 
     return (
