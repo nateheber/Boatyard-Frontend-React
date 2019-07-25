@@ -147,6 +147,10 @@ class AccountEditor extends React.Component {
       success: (provider) => {
         const { id } = provider;
         onCreation(id);
+      },
+      error: (e) => {
+        this.setState({ saving: false });
+        toastr.error('Error', e.message);
       }
     });
   }
@@ -188,6 +192,7 @@ class AccountEditor extends React.Component {
     if (logo.baseString && logo.baseString.indexOf('http') !== 0) {
       params['logo'] = logo.baseString;
     };
+    
     UpdateProvider({
       data: {
         provider: params
