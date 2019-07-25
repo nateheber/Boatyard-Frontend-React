@@ -80,20 +80,22 @@ class ChatContent extends React.Component {
   }
 
   updateConversation = (first = false) => {
-    const { conversationId, GetConversation, profile, auth } = this.props;
+    const { conversationId, GetConversation, profile, auth, showMessage } = this.props;
     if (first) {
       this.setState({ loading: true });
     }
-    GetConversation({
-      conversationId,
-      onlyCallback: true,
-      success: (messages) => {
-        const { isMounted } = this.state;
-        if (isMounted) {
-          this.setState({ ...refineMessage(profile, messages, auth), loading: false });
+    if (showMessage) {
+      GetConversation({
+        conversationId,
+        onlyCallback: true,
+        success: (messages) => {
+          const { isMounted } = this.state;
+          if (isMounted) {
+            this.setState({ ...refineMessage(profile, messages, auth), loading: false });
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   getRecipientInfo = () => {
@@ -173,7 +175,8 @@ class ChatContent extends React.Component {
 
 const mapStateToProps = (state) => ({
   profile: profileSelector(state),
-  auth: state.auth
+  auth: state.auth,
+  showMessage: get(state, 'conversation.ui.opened', false),
 })
 
 const mapDispatchToProps = {
