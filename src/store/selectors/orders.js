@@ -1,6 +1,6 @@
 import { get, set, forEach, sortBy, isEmpty, isArray, find, filter } from 'lodash';
 import { createSelector } from 'reselect';
-import { getProviderLocations, getPrevilage } from './auth';
+import { getProviderLocations, getPrevilage, getProviderLocationId } from './auth';
 
 const ORDER_COLUMNS = [
   { label: 'order', value: 'name', width: 1 },
@@ -169,11 +169,15 @@ const getUnselectedColumns = state => get(state, 'order.unselectedColumns', []);
 
 export const columnsSelector = createSelector(
   getPrevilage,
-  (previlage) => {
+  getProviderLocationId,
+  (previlage, providerLocationId) => {
     const columns = ORDER_COLUMNS.slice(0)
     if (previlage === 'provider') {
       columns.splice(4, 1);
       columns[2]['value'] = ['customerName'];
+      if (providerLocationId) {
+        columns.splice(4, 1);
+      }
     } else {
       columns.splice(5, 1);
     }
@@ -185,8 +189,6 @@ export const selectedColumnsSelector = createSelector(
   columnsSelector,
   getUnselectedColumns,
   (columns, unselectedLabels) => {
-    console.log(columns);
-    console.log(unselectedLabels);
     return filter(columns, c => unselectedLabels.indexOf(c.label) === -1);
   }
 )

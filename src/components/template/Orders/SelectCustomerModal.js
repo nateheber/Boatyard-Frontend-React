@@ -44,7 +44,8 @@ export const colourStyles = {
     ...styles,
     backgroundColor: 'white',
     fontSize: 14,
-    fontWeight: 400,
+    fontFamily: 'Montserrat',
+    // fontWeight: 400,
     // letterSpacing: -0.3,
     minHeight: 28,
     border: '1px solid #dfdfdf'
@@ -52,6 +53,7 @@ export const colourStyles = {
   input: styles => ({
     ...styles,
     fontSize: 14,
+    fontFamily: 'Montserrat',
     color: '#555',
     paddingTop: 1,
     paddingBottom: 1
@@ -59,6 +61,7 @@ export const colourStyles = {
   loadingMessage: styles => ({
     ...styles,
     fontSize: 14,
+    fontFamily: 'Montserrat',
     color: '#555'
   }),
   dropdownIndicator: styles => ({

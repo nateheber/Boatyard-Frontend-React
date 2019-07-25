@@ -17,6 +17,7 @@ import {
 } from 'store/actions/providerLocations';
 
 import { getAddressInformation } from 'utils/location';
+import { formatPhoneNumber } from 'utils/basic';
 
 import { LocationImage } from './components';
 
@@ -95,7 +96,7 @@ class AddLocationModal extends React.Component {
           label: 'Phone',
           type: 'text_field',
           className: 'secondary',
-          defaultValue: contactPhone,
+          defaultValue: formatPhoneNumber(contactPhone),
           errorMessage: 'Enter the phone number',
           mask: '(999) 999-9999',
           required: true,
