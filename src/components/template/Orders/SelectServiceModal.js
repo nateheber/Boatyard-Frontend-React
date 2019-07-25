@@ -251,7 +251,7 @@ class SelectServiceModal extends React.Component {
       slotOptions = [{ value: '', label: '' }].concat(slotOptions);
       whenFields.push({
         field: 'slot',
-        label: 'Slot',
+        label: 'Time',
         className: 'primary',
         type: 'select_box',
         options: slotOptions,

@@ -319,7 +319,7 @@ export default class FormFields extends React.Component {
         return (
           <DateSelector
             disabled={disabled}
-            dateFormat={dateFormat || 'dd/MM/yyyy'}
+            dateFormat={dateFormat || 'MM/dd/yyyy'}
             selected={fieldValue}
             onChange={value => this.onChangeValue(field, value, type)}
             hasError={errorIdx >= 0}
