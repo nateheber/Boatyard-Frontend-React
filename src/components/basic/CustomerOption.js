@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { formatPhoneNumber } from 'utils/basic';
 
 const Wrapper = styled.div`
   display: flex;
@@ -57,7 +58,7 @@ export default ({ data: { label, email, firstName, lastName, phoneNumber, custom
       showAdditionalFields && <CustomerIdDiv><Name>{customerId}</Name></CustomerIdDiv>
     }
     {
-      showAdditionalFields && <PhoneNumber><Name>{phoneNumber}</Name></PhoneNumber>
+      showAdditionalFields && <PhoneNumber><Name>{formatPhoneNumber(phoneNumber)}</Name></PhoneNumber>
     }
   </Wrapper>
 );

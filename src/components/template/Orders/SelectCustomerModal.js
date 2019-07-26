@@ -45,6 +45,7 @@ export const colourStyles = {
     backgroundColor: 'white',
     fontSize: 14,
     fontFamily: 'Montserrat',
+    paddingLeft: 5,
     // fontWeight: 400,
     // letterSpacing: -0.3,
     minHeight: 28,
@@ -381,7 +382,7 @@ class SelectCustomerModal extends React.Component {
           <Col sm={12}><SubSectionTitle style={{ marginTop: 0 }}>SELECT A CUSTOMER</SubSectionTitle></Col>
         </Row>
         <Row style={{alignItems: 'center'}}>
-          <Col sm={10} md={9} lg={8}>
+          <Col sm={12} md={9} lg={8}>
             <AsyncSelect
               ref={this.setCustomerSelectRef}
               components={{
@@ -398,7 +399,7 @@ class SelectCustomerModal extends React.Component {
 
             />
           </Col>
-          <Col sm={2} md={3} lg={4}>
+          <Col sm={12} md={3} lg={4}>
             <HollowButton onClick={this.showCustomerModal}>Add New</HollowButton>
           </Col>
         </Row>
@@ -408,7 +409,7 @@ class SelectCustomerModal extends React.Component {
               <Col sm={12}><SubSectionTitle>SELECT A BOAT</SubSectionTitle></Col>
             </Row>
             <Row style={{ marginBottom: 5, alignItems: 'center' }}>
-              <Col sm={12} md={8} lg={7}>
+              <Col sm={12} md={9} lg={8}>
                 <Select
                   value={refinedBoat.value}
                   onChange={event => this.handleBoatChange(event.target)}
@@ -422,7 +423,7 @@ class SelectCustomerModal extends React.Component {
                   </React.Fragment>
                 </Select>
               </Col>
-              <Col sm={12} md={4} lg={3} lgOffset={2}>
+              <Col sm={12} md={3} lg={4}>
                 <HollowButton style={{ marginTop: 0 }} onClick={this.showBoatModal}>Add New</HollowButton>
               </Col>
             </Row>

@@ -15,11 +15,12 @@ function* getNotifications(action) {
     const notifications = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { unreadNotifications } = result;
+
     yield put({
       type: successType,
       payload: {
         notifications,
-        unreadNotifications,
+        unreadNotifications: params.clear ? 0 : unreadNotifications,
         included
       }
     });
