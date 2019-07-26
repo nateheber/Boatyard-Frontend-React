@@ -70,13 +70,15 @@ const ViewTemplateButtonWrapper = styled.div`
 const DELIVERY_OPTIONS = [
   'email',
   'push',
-  'sms'
+  'sms',
+  'app'
 ];
 
 const DELIVERY_LABELS = {
   email: 'Email',
   push: 'Push Notification',
-  sms: 'SMS'
+  sms: 'SMS',
+  app: 'In-App Notification'
 };
 
 export class TemplateEditor extends React.Component {
