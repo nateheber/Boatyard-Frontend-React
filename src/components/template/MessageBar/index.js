@@ -82,7 +82,7 @@ class MessageBar extends React.Component {
 
   handleClickOutside = (event) => {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      this.props.onHide(event);
+      this.props.SetMessageBarUIStatus({opened: false});
     }
   }
 

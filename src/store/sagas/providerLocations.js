@@ -67,7 +67,9 @@ function* getProviderLocations(action) {
   const apiClient = yield select(getProviderLocationClient);
   let successType = actionTypes.GET_PROVIDER_LOCATIONS_SUCCESS;
   let failureType = actionTypes.GET_PROVIDER_LOCATIONS_FAILURE;
-  const { providerId, params, success, error } = action.payload;
+  let { providerId, params, success, error } = action.payload;
+  params = params || {};
+  params.per_page = 1000;
   let submissionParams = {};
   if (!hasIn(params, 'provider_locations[order]')) {
     submissionParams = {

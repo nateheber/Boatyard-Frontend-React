@@ -10,6 +10,7 @@ import { FilterProviders } from 'store/actions/providers';
 import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders';
 import { getCustomerName } from 'utils/order';
 
+import Modal from 'components/compound/Modal';
 import { ActionDropdown } from 'components/basic/Dropdown';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { PageTitle } from 'components/basic/Typho';
@@ -38,6 +39,9 @@ const RightPart = styled.div`
 `;
 
 class OrderDetailHeader extends React.Component {
+  state = {
+    visibleofDeleteModal: false,
+  }
 
   loadOptions = val => {
     return this.onChangeProviderFilter(val)
@@ -196,6 +200,7 @@ class OrderDetailHeader extends React.Component {
 
   render() {
     const { order, privilege } = this.props;
+    const { visibleofDeleteModal } = this.state;
     const orderStatus = get(order, 'attributes.state');
     const canAcceptOrder = privilege === 'provider' && (orderStatus === 'dispatched' || orderStatus === 'assigned');
     let orderId = get(order, 'attributes.providerOrderSequence', null);
@@ -205,7 +210,7 @@ class OrderDetailHeader extends React.Component {
     const items = [
       {
         title: 'Delete Order',
-        action: this.deleteOrder
+        action: () => this.setState({visibleofDeleteModal: true})
       },
       {
         title: 'Cancel Order',
@@ -218,6 +223,12 @@ class OrderDetailHeader extends React.Component {
         action: this.completeOrder
       });
     }
+
+    const actions = [
+      <HollowButton onClick={() => this.setState({visibleofDeleteModal: false})} key="modal_btn_cancel">Cancel</HollowButton>,
+      <OrangeButton onClick={this.deleteOrder} key="modal_btn_save">Confirm</OrangeButton>
+    ];
+
     return (
       <SectionHeaderWrapper>
         <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
@@ -235,6 +246,15 @@ class OrderDetailHeader extends React.Component {
         {
           this.renderStatus()
         }
+        <Modal
+          title={'Are you sure?'}
+          actions={actions}
+          normal={true}
+          open={visibleofDeleteModal}
+          onClose={() => {this.setState({visibleofDeleteModal: false})}}
+        >
+          <div>Are you sure you want to delete this order?</div>
+        </Modal>
       </SectionHeaderWrapper>
     )
   }

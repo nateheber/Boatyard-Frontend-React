@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 const PrivateRoute = ({ isAuthenticated, component: Component, ...rest }) => {
-  console.log('privateroute....');
   return (
   <Route {...rest} render={(props) => (
     isAuthenticated ? <Component {...props} />:

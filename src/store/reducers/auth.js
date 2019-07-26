@@ -2,6 +2,7 @@ import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
 import { actionTypes } from '../actions/auth';
 import { get } from 'lodash';
+import { deleteAllCookies } from 'utils/cookie';
 
 const initialState = {
   currentStatus: '',
@@ -134,9 +135,12 @@ export default handleActions(
         draft.currentStatus = type;
         draft.errors = payload;
       }),
-    [actionTypes.AUTH_LOGOUT]: () => ({
-      ...initialState
-    }),
+    [actionTypes.AUTH_LOGOUT]: () => {
+      deleteAllCookies();
+      return {
+        ...initialState
+      };
+    },
     [actionTypes.SET_REFRESH_FLAG_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;

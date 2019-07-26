@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { findIndex, filter, startsWith } from 'lodash';
+import { get, findIndex, filter, startsWith } from 'lodash';
 
 import { HollowButton } from 'components/basic/Buttons';
 import { CheckBox, SearchBox } from 'components/basic/Input';
@@ -80,8 +80,10 @@ export class InboxSelector extends React.Component {
     const { items } = this.props;
     const { keyword } = this.state;
     return filter(items, item => {
+      const { firstName, lastName } = get(item, 'recipientProfile.attributes', {});
+      const { content } = get(item, 'mostRecentMessage.attributes', {});
       return (
-        startsWith(item.title, keyword) || startsWith(item.textBody, keyword)
+        startsWith(`${firstName} ${lastName}`.toLowerCase(), keyword.toLowerCase()) || startsWith(content.toLowerCase(), keyword.toLowerCase())
       );
     });
   };

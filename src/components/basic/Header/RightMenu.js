@@ -71,6 +71,7 @@ const DropdownMenu = styled.ul`
     max-height: 650px;
     overflow-y: auto;
     overflow-x: hidden;
+    min-height: auto;
   }
   position: absolute;
   font-family: 'Source Sans Pro', sans-serif;
@@ -90,26 +91,26 @@ const DropdownMenu = styled.ul`
     min-width: 300px;
     background: white;
   }
-  &::before {
-    height: 100%;
-    display: block;
-    width: 5px;
-    background: rgba(151, 151, 151, 0.2);
-    content: '';
-    bottom: -6px;
-    right: -5px;
-    position: absolute;
-  }
-  &::after {
-    height: 5px;
-    display: block;
-    width: 100.5%;
-    background: rgba(151, 151, 151, 0.2);
-    content: '';
-    bottom: -6px;
-    left: -1px;
-    position: absolute;
-  }
+  // &::before {
+  //   height: 100%;
+  //   display: block;
+  //   width: 5px;
+  //   background: rgba(151, 151, 151, 0.2);
+  //   content: '';
+  //   bottom: -6px;
+  //   right: -5px;
+  //   position: absolute;
+  // }
+  // &::after {
+  //   height: 5px;
+  //   display: block;
+  //   width: 100.5%;
+  //   background: rgba(151, 151, 151, 0.2);
+  //   content: '';
+  //   bottom: -6px;
+  //   left: -1px;
+  //   position: absolute;
+  // }
 `;
 
 const MenuItemLi = styled.div`

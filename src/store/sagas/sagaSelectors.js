@@ -322,3 +322,16 @@ export const getLocalMessageTemplatesClient = state => {
       return APIGenerator.createLocalMessageTemplateClient('basic');
   }
 };
+
+export const getExternalConnectionsClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createExternalConnectionsClient('basic');
+    case 'admin':
+      return APIGenerator.createExternalConnectionsClient('admin');
+    case 'provider':
+      return APIGenerator.createExternalConnectionsClient('provider');
+    default:
+      return APIGenerator.createExternalConnectionsClient('basic');
+  }
+};

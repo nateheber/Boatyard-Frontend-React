@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
 
 import { actionTypes } from '../actions/users';
-import { getUserClient } from './sagaSelectors';
+import { getUserClient, getExternalConnectionsClient } from './sagaSelectors';
 
 const refineUsers = (users) => {
   return users.map(user => {
@@ -13,6 +13,26 @@ const refineUsers = (users) => {
     };
   });
 };
+
+function* getExternalConnections(action) {
+  const externalClient = yield select(getExternalConnectionsClient);
+  const { params, success, error } = action.payload;
+
+  try {
+    const result = yield call(externalClient.list, params);
+    let customers = (result.marineMaxCustomerInformation || {}).customerInformation || [];
+    if (!Array.isArray(customers)) {
+      customers = [customers];
+    }
+    if (success) {
+      yield call(success, customers);
+    }
+  } catch (e) {
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
 
 function* getUsers(action) {
   const userClient = yield select(getUserClient);
@@ -159,4 +179,5 @@ export default function* UserSaga() {
   yield takeEvery(actionTypes.CREATE_USER, createUser);
   yield takeEvery(actionTypes.UPDATE_USER, updateUser);
   yield takeEvery(actionTypes.DELETE_USER, deleteUser);
+  yield takeEvery(actionTypes.FILTER_EXTERNAL_CUSTOMERS, getExternalConnections);
 }

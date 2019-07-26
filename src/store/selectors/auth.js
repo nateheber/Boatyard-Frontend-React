@@ -8,3 +8,4 @@ export const getPrevilage = state => get(state, 'auth.privilege');
 export const getLocationName = state => get(state, 'auth.locationName');
 export const getAccessRole = state => get(state, 'auth.accessRole');
 export const getProviderLocations = state => get(state, 'auth.providerLocations', []);
+export const getProviderLocationId = state => get(state, 'auth.providerLocationId');
