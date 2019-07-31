@@ -396,7 +396,7 @@ class SelectCustomerModal extends React.Component {
               value={customer}
               styles={colourStyles}
               showAdditionalFields={showAdditionalFields}
-
+              noOptionsMessage={()=>"No Result"}
             />
           </Col>
           <Col sm={12} md={3} lg={4}>

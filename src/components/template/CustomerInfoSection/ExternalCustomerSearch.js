@@ -44,7 +44,7 @@ const ExternalCustomerSearch =  ({FilterExternalConnections, onExternalCustomerS
         });
       });
     },
-    500);
+    1000);
 
   return (
     <AsyncSelect
@@ -59,6 +59,7 @@ const ExternalCustomerSearch =  ({FilterExternalConnections, onExternalCustomerS
       onChange={onChangeCustomer}
       value={customer}
       styles={colourStyles}
+      noOptionsMessage={()=>"No Result"}
     />
   );
 }
