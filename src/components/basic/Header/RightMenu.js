@@ -259,7 +259,7 @@ class MenuUI extends React.Component {
   }
 
   reloadNotifications = () => {
-    this.props.GetNotifications({params: {per_page: 1000, page: 1, 'notification_delivery[order]': 'id', 'notification_delivery[sort]': 'desc'}});
+    this.props.GetNotifications({params: {per_page: 1000, page: 1, 'notification_delivery[order]': 'created_at', 'notification_delivery[sort]': 'desc'}});
   }
 
   componentWillUnmount() {

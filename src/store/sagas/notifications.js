@@ -11,7 +11,7 @@ function* getNotifications(action) {
   let failureType = actionTypes.GET_NOTICATIONS_FAILURE;
   const { params, success, error } = action.payload;
   try {
-    const result = yield call(notificationsClient.list, params);
+    const result = yield call(notificationsClient.list, {...params, source: 'dashboard'});
     const notifications = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { unreadNotifications } = result;

@@ -55,6 +55,8 @@ class NewOrderModal extends React.Component {
     const { CreateOrder, UpdateOrder, AcceptOrder, onFinishCreation, privilege } = this.props;
     const { customer, boat } = this.state;
     const orderData = {
+      transition: "accept",
+      quietly_transition: true,
       boat_id: boat.id,
       ...orderValues,
       line_items_attributes: [
