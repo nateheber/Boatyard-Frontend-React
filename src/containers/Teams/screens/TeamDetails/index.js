@@ -419,7 +419,7 @@ class TeamDetails extends React.Component {
       selectedLocations,
       visibleOfConfirmationModal
     } = this.state;
-    const { privilege, currentStatus, providerLocations } = this.props;
+    const { privilege, currentStatus, providerLocations, locatonBased } = this.props;
     const loading = currentStatus === actionTypes.GET_MANAGEMENT;
     const actions = (
       <React.Fragment>
@@ -431,6 +431,7 @@ class TeamDetails extends React.Component {
       <HollowButton onClick={this.hideConfirmationModal} key="modal_btn_cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.deleteTeamMember} key="modal_btn_save">Confirm</OrangeButton>
     ];
+
     const editSection = (
       <React.Fragment>
         <InputRow>
@@ -484,6 +485,7 @@ class TeamDetails extends React.Component {
             <Select
               value={access}
               onChange={this.handlePermissionChange}
+              disabled={locatonBased}
             >
               <React.Fragment>
                 <option value="admin">Admin</option>
@@ -505,31 +507,34 @@ class TeamDetails extends React.Component {
           </HeaderWrapper>
           <ContentWrapper>
             {(privilege === 'provider' || privilege === 'admin') && <Row>
-              <Col xs={12} sm={12} md={8} lg={9}>
+              <Col xs={12} sm={12} md={locatonBased ? 12 : 8} lg={locatonBased ? 12 : 9}>
                 <Section title='Contact' headerStyle={{ padding: 25 }}>
                   <EditorSection containerStype={{ padding: '30px 15px' }} actions={actions} content={editSection} />
                 </Section>
               </Col>
-              <Col xs={12} sm={12} md={4} lg={3}>
-                <Section
-                  title='Locations'
-                  mode='view'
-                  headerStyle={{ padding: '20px 25px' }}
-                  contentStyle={{ minHeight: 439 }}
-                  editComponent={<LocationSelector
-                    locations={providerLocations}
-                    selected={selectedLocations}
-                    onChange={this.handleUpdateLocations}/>
-                  }
-                >
-                  {selectedLocations.map(location => (
-                    <LocationItem key={`location_${location.id}`}>
-                      <LocationTitle>{get(location, 'relationships.locations.attributes.name')}</LocationTitle>
-                      <DeleteIcon src={CloseIcon} onClick={() => this.deleteLocation(location)}/>
-                    </LocationItem>
-                  ))}
-                </Section>
-              </Col>
+              {
+              !locatonBased && 
+                <Col xs={12} sm={12} md={4} lg={3}>
+                  <Section
+                    title='Locations'
+                    mode='view'
+                    headerStyle={{ padding: '20px 25px' }}
+                    contentStyle={{ minHeight: 439 }}
+                    editComponent={<LocationSelector
+                      locations={providerLocations}
+                      selected={selectedLocations}
+                      onChange={this.handleUpdateLocations}/>
+                    }
+                  >
+                    {selectedLocations.map(location => (
+                      <LocationItem key={`location_${location.id}`}>
+                        <LocationTitle>{get(location, 'relationships.locations.attributes.name')}</LocationTitle>
+                        <DeleteIcon src={CloseIcon} onClick={() => this.deleteLocation(location)}/>
+                      </LocationItem>
+                    ))}
+                  </Section>
+                </Col>
+              }
             </Row>}
             {!(privilege === 'provider' || privilege === 'admin') && <Row>
               <Col xs={12} sm={12} md={8} lg={9}>
@@ -560,6 +565,7 @@ class TeamDetails extends React.Component {
 const mapStateToProps = (state) => ({
   currentStatus: state.management.currentStatus,
   privilege: state.auth.privilege,
+  locatonBased: state.auth.providerLocationId ? true : false,
   ...refinedProviderLocationSelector(state),
   managements: state.management.filteredManagements
 });
