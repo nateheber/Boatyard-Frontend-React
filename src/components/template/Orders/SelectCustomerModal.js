@@ -4,7 +4,7 @@ import { Row, Col } from 'react-flexbox-grid';
 import { toastr } from 'react-redux-toastr';
 import { findIndex, isEmpty, get, filter } from 'lodash';
 import styled from 'styled-components';
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import debounce from "debounce-promise";
 import {
   actionTypes as customerActions,
   FilterChildAccounts,
@@ -391,7 +391,7 @@ class SelectCustomerModal extends React.Component {
               }}
               isClearable
               defaultOptions
-              loadOptions={AwesomeDebouncePromise(this.loadOptions, 200)}
+              loadOptions={debounce(this.loadOptions, 1000, {leading: true})}
               onChange={this.onChangeUser}
               value={customer}
               styles={colourStyles}
