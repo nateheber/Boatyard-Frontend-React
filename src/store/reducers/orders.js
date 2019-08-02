@@ -3,22 +3,16 @@ import { produce } from 'immer'
 import { set, get } from 'lodash'
 
 import { actionTypes } from '../actions/orders';
-
-function refactorIncluded(included) {
-  let refactored = {};
-  for ( let i = 0; i < included.length; i += 1 ) {
-    const { type, id } = included[i]
-    set(refactored, `${type}.${id}`, {...included[i]})
-  }
-  return refactored;
-}
+import { refactorIncluded } from 'utils/basic';
 
 const ordersState = {
   orders: [],
   included: {},
   page: 1,
   perPage: 20,
-  total: 0
+  total: 0,
+  dispatched: false,
+  unselectedColumns: []
 };
 
 const initialState = {
@@ -35,6 +29,11 @@ const initialState = {
 
 export default handleActions(
   {
+    [actionTypes.SET_DISPATCHED_FLAG]: (state, action) => 
+      produce(state, draft => {
+        const { payload } = action;
+        draft.dispatched = payload;
+      }),
     [actionTypes.GET_ORDERS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
@@ -190,13 +189,7 @@ export default handleActions(
         const { type, payload: { order, included } } = action;
         draft.currentStatus = type;
         draft.currentOrder = order;
-        const refactoredIncluded = refactorIncluded(included);
-        for(const key in refactoredIncluded) {
-          const items = refactoredIncluded[key];
-          for(const index in items) {
-            set(draft, `included.${key}.${index}`, items[index]);
-          }          
-        }
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.GET_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -213,8 +206,10 @@ export default handleActions(
       }),
     [actionTypes.CREATE_ORDER_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload: { order, included } } = action;
         draft.currentStatus = type;
+        draft.currentOrder = order;
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.CREATE_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -231,8 +226,10 @@ export default handleActions(
       }),
     [actionTypes.UPDATE_ORDER_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload: { order, included } } = action;
         draft.currentStatus = type;
+        draft.currentOrder = order;
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.UPDATE_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {
@@ -257,6 +254,87 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
+      }),
+    [actionTypes.DISPATCH_ORDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.DISPATCH_ORDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+      }),
+    [actionTypes.DISPATCH_ORDER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.SEND_QUOTE]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.SEND_QUOTE_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: { order } } = action;
+        draft.currentStatus = type;
+        draft.currentOrder = order;
+      }),
+    [actionTypes.SEND_QUOTE_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.SEND_INVOICE]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.SEND_INVOICE_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: { order } } = action;
+        draft.currentStatus = type;
+        draft.currentOrder = order;
+      }),
+    [actionTypes.SEND_INVOICE_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.ACCEPT_ORDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.ACCEPT_ORDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: { order, included } } = action;
+        draft.currentStatus = type;
+        draft.currentOrder = order;
+        draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.ACCEPT_ORDER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+    [actionTypes.UPDATE_SELECTED_COLUMNS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: { unselectedColumns} } = action;
+        draft.unselectedColumns = unselectedColumns;
+        draft.currentStatus = type;
       })
     },
   initialState

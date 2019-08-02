@@ -14,14 +14,21 @@ const TimeInput = styled(Input)`
   width: 35px;
   padding: 3px;
   text-align: center;
-  color: #8f8f8f;
+  color: #555;
+  margin: 0;
+  &.-hours{
+    margin-right: 1px;
+  }
+  // &.-minutes {
+  //   margin-left: 1px;
+  // }
 `
 
 const AMButton = styled.button`
-  margin-left: 3px;
+  margin-left: 4px;
   border: 1px solid #E6E6E6;
-  color: #8f8f8f;
-  border-radius: 5px !important;
+  color: #555;
+  border-radius: 6px !important;
   outline: 0!important;
   box-shadow: none!important;
   background-color: #fff;
@@ -31,7 +38,7 @@ const AMButton = styled.button`
   touch-action: manipulation;
   cursor: pointer;
   white-space: nowrap;
-  padding: 6px 12px;
+  padding: 5px 12px;
   font-size: 14px;
   user-select: none;
   font-family: 'Source Sans Pro', sans-serif;
@@ -85,8 +92,8 @@ export class TimePicker extends React.Component {
     const { hour, min, part } = this.state;
     return (
       <Wrapper>
-        <TimeInput mask="99" value={hour} onChange={this.onChangeHour} hideError />:
-        <TimeInput mask="99" value={min} onChange={this.onChangeMin} hideError /> 
+        <TimeInput className="-hours" mask="99" value={hour} onChange={this.onChangeHour} hideError />:
+        <TimeInput className="-minutes" mask="99" value={min} onChange={this.onChangeMin} hideError /> 
         <AMButton onClick={this.onChangePart}>{part}</AMButton>
       </Wrapper>
     )

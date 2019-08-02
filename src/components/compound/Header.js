@@ -12,15 +12,21 @@ const RightPart = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0px;
-`
+`;
 
-const Header = ({ onMenuToggle }) => (
+const SearchWrapper = styled.div`
+  width: 228px;
+`;
+
+const Header = ({ onMenuToggle, onToggleMessage, messageToggleRef }) => (
   <HeaderWrapper>
     <HamburgerButton onClick={onMenuToggle} />
     <Logo />
     <RightPart xs={10}>
-      <SearchBox placeholder="Search by order number, user, boat, etc" />
-      <RightMenu />
+      <SearchWrapper>
+        <SearchBox secondary placeholder="Search by order number, user, boat, etc" style={{ display: 'none', width: '100%' }} />
+      </SearchWrapper>
+      <RightMenu messageToggleRef={messageToggleRef} toggleMessage={onToggleMessage} />
     </RightPart>
   </HeaderWrapper>
 );

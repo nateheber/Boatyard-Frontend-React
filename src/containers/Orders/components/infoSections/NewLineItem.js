@@ -1,12 +1,16 @@
-import React from 'react'
-import { Row, Col } from 'react-flexbox-grid'
-import { connect } from 'react-redux'
+import React from 'react';
+import styled from 'styled-components';
+import { Row, Col } from 'react-flexbox-grid';
+import { connect } from 'react-redux';
 
-import { FilterServices } from 'store/actions/services'
-
-import { Input, TextArea } from 'components/basic/Input'
-import RemoveButton from '../basic/RemoveButton'
+import { CurrencyInput, TextArea } from 'components/basic/Input';
+import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
+
+const Line = styled(Row)`
+  padding: 5px 0px;
+  position: relative;
+`;
 
 class NewLineItem extends React.Component {
   state = {
@@ -14,71 +18,93 @@ class NewLineItem extends React.Component {
     cost: '0',
     serviceId: -1,
     comment: '',
-  }
+  };
 
-  onChangeFilter = (val) =>  new Promise((resolve, reject) => {
-    if (val === '') {
-      this.props.FilterServices({ success: resolve, error: resolve });
-    } else {
-      this.props.FilterServices({ params: { 'service[name]': val }, success: resolve, error: resolve });
+  onChangeFilter = (inputValue, callback) => {
+    setTimeout(() => {
+      callback(this.filterOptions(inputValue));
+    }, 100);
+  };
+
+  filterOptions = (inputValue) => {
+    const { services } = this.props;
+    let filteredServices = services;
+    if (inputValue && inputValue.trim().length > 0) {
+      filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
     }
-  }).then((services) =>
-    services.map(option => ({
+    const options = filteredServices.map(option => ({
       value: option.id,
       cost: option.cost,
       label: option.name
-    }))
-  ).catch(err => {
-    return [];
-  })
+    }));
+    return options;
+  };
 
   onChangeQuantity = (evt) => {
-    this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) })
-  }
+    this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) });
+  };
 
   onChangeCost = (evt) => {
-    this.setState({ cost: evt.target.value }, () => { this.props.onChange(this.state) })
-  }
+    const value = evt.target.value && evt.target.value.replace('$', '');
+    this.setState({ cost: value }, () => { this.props.onChange(this.state) });
+  };
 
   onChangeService = (service) => {
-    this.setState({ serviceId: service.value, cost: service.cost, quantity: 1 }, () => { this.props.onChange(this.state) })
-  }
+    this.setState({
+      serviceId: service.value,
+      cost: service.cost,
+      quantity: 1
+    }, () => {
+      this.props.onChange(this.state);
+    });
+  };
 
   onChangeComment = (evt) => {
-    this.setState({ comment: evt.target.value }, () => { this.props.onChange(this.state) })
-  }
+    this.setState({ comment: evt.target.value }, () => { this.props.onChange(this.state) });
+  };
 
   render() {
     const { quantity, cost, comment } = this.state;
     return (
       <React.Fragment>
-        <Row>
-          <Col lg={8} sm={8} xs={8} md={8} xl={8}>
-            <Row>
-              <Col lg={6} sm={6} xs={6} md={6} xl={6}>
-                <BoatyardSelect
-                  className="basic-single"
-                  classNamePrefix="select"
-                  cacheOptions
-                  defaultOptions
-                  loadOptions={this.onChangeFilter}
-                  onChange={this.onChangeService}
-                />
-              </Col>
-              <Col lg={3} sm={3} xs={3} md={3} xl={3}>
-                <Input type="text" value={quantity} onChange={this.onChangeQuantity} />
-              </Col>
-              <Col lg={3} sm={3} xs={3} md={3} xl={3}>
-                <Input type="text" value={cost} onChange={this.onChangeCost} />
-              </Col>
-            </Row>
+        <Line>
+          <Col lg={6} sm={6} xs={6} md={6} xl={6}>
+            <BoatyardSelect
+              className="basic-single"
+              classNamePrefix="select"
+              cacheOptions
+              defaultOptions
+              loadOptions={this.onChangeFilter}
+              onChange={this.onChangeService}
+            />
           </Col>
-          <Col lg={4} sm={4} xs={4} md={4} xl={4}>
-            <RemoveButton onClick={this.props.remove} />
+          <Col lg={2} sm={2} xs={2} md={2} xl={2}>
+            <CurrencyInput
+              fixedDecimalScale
+              decimalScale={0}
+              value={quantity}
+              onChange={this.onChangeQuantity}
+              hideError
+            />
           </Col>
-        </Row>
+          <Col lg={2} sm={2} xs={2} md={2} xl={2}>
+            <CurrencyInput
+              fixedDecimalScale
+              prefix='$'
+              decimalScale={2}
+              value={cost}
+              onChange={this.onChangeCost}
+              hideError
+            />
+          </Col>
+          <RemoveButton style={{
+              position: 'absolute',
+              top: 2,
+              right: 12
+            }} onClick={this.props.remove} />
+        </Line>
         <Row>
-          <Col sm={8}>
+          <Col sm={10}>
             <TextArea
               value={comment}
               onChange={this.onChangeComment}
@@ -90,8 +116,9 @@ class NewLineItem extends React.Component {
   }
 }
 
-const mapDispatchToProps = {
-  FilterServices
-}
+const mapStateToProps = state => ({
+  privilege: state.auth.privilege,
+  services: state.service.services
+});
 
-export default connect(null, mapDispatchToProps)(NewLineItem)
+export default connect(mapStateToProps, null)(NewLineItem);

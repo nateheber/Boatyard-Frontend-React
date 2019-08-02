@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { reducer as toastrReducer } from 'react-redux-toastr'
+import { reducer as toastrReducer } from 'react-redux-toastr';
 
 import navigation from './navigation';
 import auth from './auth';
@@ -8,7 +8,7 @@ import provider from './providers';
 import service from './services';
 import category from './categories';
 import user from './users';
-import management from './management';
+import management from './managements';
 import order from './orders';
 import lineItem from './lineItems';
 import boat from './boats';
@@ -17,7 +17,14 @@ import creditCard from './credit-cards';
 import providerLocation from './providerLocations';
 import providerLocationService from './providerLocationServices';
 import childAccount from './child-accounts';
-
+import paymentGateway from './paymentGateway';
+import icon from './icons';
+import network from './networks';
+import conversation from './conversations';
+import siteBanner from './site-banners';
+import quickReply from './quickReplies';
+import messageTemplate from './messageTemplates';
+import notifications from './notifications';
 const rootReducer = combineReducers({
   navigation,
   auth,
@@ -35,7 +42,15 @@ const rootReducer = combineReducers({
   toastr: toastrReducer,
   providerLocation,
   providerLocationService,
-  childAccount
+  childAccount,
+  paymentGateway,
+  icon,
+  network,
+  conversation,
+  siteBanner,
+  quickReply,
+  messageTemplate,
+  notifications,
 });
 
 export default rootReducer;

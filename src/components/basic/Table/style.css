@@ -1,0 +1,11 @@
+.react-resizable-handle {
+  background: none !important;
+  border-right: 1px solid #eaeaea !important;
+  height: 100% !important;
+  right: -1px !important;
+  cursor: col-resize !important;
+}
+
+.secondary > .react-resizable-handle{
+  right: 1px !important;
+}

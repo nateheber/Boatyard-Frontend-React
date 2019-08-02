@@ -2,21 +2,21 @@ import React from 'react'
 import styled from 'styled-components'
 import { Row, Col } from 'react-flexbox-grid'
 
-import { Input } from 'components/basic/Input';
+import { CurrencyInput } from 'components/basic/Input';
 
 const Label = styled.div`
   color: #8f8f8f;
   font-family: "Source Sans Pro", sans-serif;
   font-size: 16px;
   line-height: 20px;
-`
+`;
 
 const Value = styled.div`
   color: #8f8f8f;
   font-family: "Source Sans Pro", sans-serif;
   font-size: 16px;
   line-height: 20px;
-`
+`;
 
 const Placeholder = styled.span`
   cursor: pointer;
@@ -27,7 +27,12 @@ const Placeholder = styled.span`
   &:hover {
     color: #d56f12;
   }
-`
+`;
+
+const UpdatedRow = styled(Row)`
+  min-height: 40px;
+  align-items: center;
+`;
 
 export default class TaxEditor extends React.Component {
   constructor(props) {
@@ -50,10 +55,10 @@ export default class TaxEditor extends React.Component {
     })
   }
 
-  onChange = (evt) => {
-    this.props.onChange(evt.target.value)
+  onChange = (values) => {
+    this.props.onChange(values.value);
     this.setState({
-      value: evt.target.value
+      value: values.value
     })
   }
 
@@ -61,19 +66,26 @@ export default class TaxEditor extends React.Component {
     const { edit, value } = this.state;
     const { taxAmount } = this.props;
     return edit ? (
-      <Row style={{ padding: '10px 0px' }}>
-        <Col sm={6}>
-          <Input type="text" value={value} onChange={this.onChange} onBlur={this.resetEdit} />
+      <UpdatedRow>
+        <Col xs={6}>
+          <CurrencyInput
+            style={{ marginBottom: 0 }}
+            fixedDecimalScale
+            decimalScale={1}
+            value={value}
+            onBlur={this.resetEdit}
+            onValueChange={this.onChange} />
+
         </Col>
-        <Col sm={6}>
+        <Col xs={6}>
           <Value>
-            ${taxAmount}
+            ${parseFloat(taxAmount).toFixed(2)}
           </Value>
         </Col>
-      </Row>
+      </UpdatedRow>
     ) : (
-      <Row style={{ padding: '10px 0px' }}>
-        <Col sm={6}>
+      <UpdatedRow>
+        <Col xs={6}>
           <Label>
             {'Tax '}
             <Placeholder onClick={this.setEdit}>
@@ -81,12 +93,12 @@ export default class TaxEditor extends React.Component {
             </Placeholder> :
           </Label>
         </Col>
-        <Col sm={6}>
+        <Col xs={6}>
           <Value>
-            ${taxAmount}
+            ${parseFloat(taxAmount).toFixed(2)}
           </Value>
         </Col>
-      </Row>    
+      </UpdatedRow>    
     )
   }
 }

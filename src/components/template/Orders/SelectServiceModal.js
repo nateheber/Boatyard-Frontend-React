@@ -2,17 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
-import { get, set, isEmpty, filter, camelCase, startCase, hasIn } from 'lodash';
+import { get, isEmpty, filter, camelCase, startCase, hasIn, sortBy } from 'lodash';
 
 import { FilterServices, GetService } from 'store/actions/services';
-import { actionTypes } from 'store/actions/orders';
 import Modal from 'components/compound/Modal';
 import { OrangeButton } from 'components/basic/Buttons';
 import ProviderOption from 'components/basic/ProviderOption';
 import ProviderOptionValue from 'components/basic/ProviderOptionValue';
 import FormFields from 'components/template/FormFields';
-import { BoatyardSelect } from 'components/basic/Dropdown';
-
+import AsyncSelect from 'react-select/lib/Async';
+import * as constants from 'utils/constants';
 
 const SubSectionTitle = styled.h5`
   text-transform: uppercase;
@@ -24,13 +23,54 @@ const SubSectionTitle = styled.h5`
   margin-bottom: 5px;
 `;
 
+const colourStyles = {
+  control: styles => ({
+    ...styles,
+    backgroundColor: 'white',
+    fontSize: 14,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontWeight: 400,
+    letterSpacing: -0.3,
+    minHeight: 28,
+    border: '1px solid #dfdfdf'
+  }),
+  input: styles => ({
+    ...styles,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontSize: 14,
+    color: '#555',
+    paddingTop: 1,
+    paddingBottom: 1
+  }),
+  loadingMessage: styles => ({
+    ...styles,
+    fontFamily: 'Source Sans Pro, sans-serif',
+    fontSize: 14,
+    color: '#555'
+  }),
+  dropdownIndicator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  indicatorSeparator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  clearIndicator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  placeholder: styles => ({ ...styles }),
+};
+
 const orderFields = [
   {
     type: 'text_area',
     field: 'special_instructions',
     label: 'Special Instructions',
+    className: 'primary',
     errorMessage: 'Enter Special Instructions',
-    required: true,
+    required: false,
     xs: 12,
     sm: 12,
     md: 12,
@@ -45,24 +85,35 @@ class SelectServiceModal extends React.Component {
     this.state = {
       service: {},
       value: {},
+      whenFields: [],
       boatFields: [],
-      serviceFields: [],
+      serviceFields: []
     };
   }
 
   loadOptions = val => {
     return this.onChangeServiceFilter(val)
       .then((filtered) => {
-        return filtered;
+        return sortBy(filtered, 'name');
       }, () => {
         return [];
       });
   };
 
   onChangeServiceFilter = val => {
+    const { privilege } = this.props;
     return new Promise((resolve, reject) => {
+      let params = {
+        'service[discarded_at]': null
+      };
+      if (val && val.trim().length > 0) {
+        params['search_by_name'] = val;
+      }
+      if (privilege === 'admin') {
+        params['service[provider_id]'] = 1;
+      }
       this.props.FilterServices({
-        params: { 'search_by_name': val },
+        params: params,
         success: resolve,
         error: reject
       });
@@ -73,54 +124,209 @@ class SelectServiceModal extends React.Component {
     this.setState({
       service: val
     }, () => {
+      this.getWhenFields();
       this.getServiceFields();
       this.getBoatFields();
     });
   };
 
+  // getServiceFields = () => {
+  //   const { service } = this.state;
+  //   const { included } = this.props;
+  //   const { categoryId } = service;
+  //   const orgProperties = {}; // get(service, `properties`, {});;
+  //   if (categoryId) {
+  //     const categories = get(included, 'categories', []);
+  //     if (!isEmpty(categories)) {
+  //       const category = get(categories, categoryId, {});
+  //       const fields = get(category, 'relationships.serviceFields.data', []);
+  //       const includedFields = get(included, 'service_fields', []);
+  //       const refinedFields = [];
+  //       for (const index in fields) {
+  //         const field = fields[index];
+  //         const filtered = filter(includedFields, item => !isEmpty(item) && item.id === field.id);
+  //         if (!isEmpty(filtered)) {
+  //           refinedFields.push(filtered[0]);
+  //         }
+  //       }
+  //       const serviceFields = [];
+  //       for (const index in refinedFields) {
+  //         const field = refinedFields[index];
+  //         const { name, fieldType, required } = field.attributes;
+  //         const defVal = this.getDefaultValue(fieldType, name, orgProperties);
+  //         const label = startCase(name);
+  //         let formField = {
+  //           field: name,
+  //           label: label,
+  //           type: fieldType,
+  //           required,
+  //           defaultValue: defVal,
+  //           errorMessage: fieldType === 'select_box' ? `Choose ${label}` : `Enter ${label}`,
+  //           xs: 12,
+  //           sm: 12,
+  //           md: 6,
+  //           lg: 6,
+  //           xl: 6
+  //         };
+  //         if (fieldType === 'select_box') {
+  //           const { collectionForSelect } = field.attributes;
+  //           let options = collectionForSelect.map(option => {
+  //             return {
+  //               value: option,
+  //               label: option
+  //             };
+  //           });
+  //           options = [{ value: '', label: '' }].concat(options);
+  //           formField['options'] = options;
+  //         }
+  //         serviceFields.push(formField);
+  //         if (name === 'fuelType') {
+  //           serviceFields.push({
+  //             xs: 12,
+  //             sm: 12,
+  //             md: 6,
+  //             lg: 6,
+  //             xl: 6
+  //           });
+  //         }
+  //       }
+  //       this.setState({ serviceFields });
+  //     }
+  //   }
+  // };
+
+  getWhenFields = (whenValue = null) => {
+    let whenOptions = constants.WHEN_OPTIONS.map(option => {
+      return {
+        label: option,
+        value: option
+      };
+    });
+    whenOptions = [{ value: '', label: '' }].concat(whenOptions);
+    const whenFields = [
+      {
+        field: 'when',
+        label: 'When',
+        className: 'primary',
+        type: 'select_box',
+        options: whenOptions,
+        required: true,
+        defaultValue: whenValue,
+        errorMessage: 'Choose Option',
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      },
+      {
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      }
+    ];
+    if (whenValue === constants.WHEN_SPEICFIC_DATE_OPTION) {
+      whenFields.push({
+        field: 'day',
+        label: 'Day',
+        className: 'primary',
+        type: 'date',
+        required: true,
+        defaultValue: new Date(),
+        errorMessage: `Choose Date`,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      });
+      let slotOptions = constants.SLOT_OPTIONS.map(option => {
+        return {
+          label: option,
+          value: option
+        };
+      });
+      slotOptions = [{ value: '', label: '' }].concat(slotOptions);
+      whenFields.push({
+        field: 'slot',
+        label: 'Time',
+        className: 'primary',
+        type: 'select_box',
+        options: slotOptions,
+        required: true,
+        errorMessage: 'Choose Slot',
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      });
+    }
+    this.setState({ whenFields });
+  };
+
   getServiceFields = () => {
     const { service } = this.state;
     const { included } = this.props;
-    const { categoryId } = service;
-    const properties = {};
-    const orgProperties = get(service, `properties`, {});;
-    if (categoryId) {
-      const categories = get(included, 'categories', []);
-      if (!isEmpty(categories)) {
-        const category = get(categories, categoryId, {});
-        const fields = get(category, 'relationships.fields.data', []);
-        const includedFields = get(included, 'service_fields', []);
-        const refinedFields = [];
-        for (const index in fields) {
-          const field = fields[index];
-          const filtered = filter(includedFields, item => !isEmpty(item) && item.id === field.id);
-          if (!isEmpty(filtered)) {
-            refinedFields.push(filtered[0]);
-          }
-        }
-        const serviceFields = refinedFields.map(field => {
-          const { name, fieldType, required } = field.attributes;
-          const fieldLabel = camelCase(name);
-          const defVal = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
-          set(properties, name, defVal);
-          const label = startCase(name);
-          return {
-            field: fieldLabel,
-            label: label,
-            type: fieldType,
-            required,
-            defaultValue: defVal,
-            errorMessage: `Enter ${label}`,
-            xs: 12,
-            sm: 12,
-            md: 6,
-            lg: 6,
-            xl: 6
-          };
-        });
-        this.setState({ serviceFields });
+    const orgProperties = {}; // get(service, `properties`, {});
+    const fields = get(service, 'relationships.orderFields.data', []);
+    const includedFields = get(included, 'order_fields', []);
+    let refinedFields = [];
+    for (const index in fields) {
+      const field = fields[index];
+      const filtered = filter(includedFields, item => !isEmpty(item) && item.id === field.id);
+      if (!isEmpty(filtered)) {
+        refinedFields.push(filtered[0]);
       }
     }
+    refinedFields = sortBy(refinedFields, 'attributes.position');
+
+    const serviceFields = [];
+    for (const index in refinedFields) {
+      const field = refinedFields[index];
+      const { name, fieldType, required } = field.attributes;
+      const fieldLabel = camelCase(name);
+      const defVal = this.getDefaultValue(fieldType, fieldLabel, orgProperties);
+      const label = startCase(name);
+      let formField = {
+        field: name,
+        label: label,
+        className: 'primary',
+        type: fieldType,
+        required,
+        defaultValue: defVal,
+        errorMessage: fieldType === 'select_box' ? `Choose ${label}` : `Enter ${label}`,
+        xs: 12,
+        sm: 12,
+        md: 6,
+        lg: 6,
+        xl: 6
+      };
+      if (fieldType === 'select_box') {
+        const { collectionForSelect } = field.attributes;
+        let options = collectionForSelect.map(option => {
+          return {
+            value: option,
+            label: option
+          };
+        });
+        options = [{ value: '', label: '' }].concat(options);
+        formField['options'] = options;
+      }
+      serviceFields.push(formField);
+      if (name === 'Fuel Type') {
+        serviceFields.push({
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 6,
+          xl: 6
+        });
+      }
+    }
+    this.setState({ serviceFields });
   };
 
   getBoatFields = () => {
@@ -131,7 +337,8 @@ class SelectServiceModal extends React.Component {
       const slip = get(boat, 'slip', '');
       boatFields.push({
         type: 'text_field',
-        field: 'slipNumber',
+        field: 'slip_number',
+        className: 'primary',
         label: 'Slip Number',
         required: true,
         defaultValue: slip,
@@ -144,6 +351,16 @@ class SelectServiceModal extends React.Component {
       });
     }
     this.setState({ boatFields });
+  };
+
+  getBoatValues = () => {
+    const { boat } = this.props;
+    const locationType = get(boat, 'relationships.location.attributes.locationType', '');
+    if (locationType === 'marina') {
+      const slip_number = get(boat, 'slip', '');
+      return { slip_number };
+    }
+    return {};
   };
 
   getDefaultValue = (type, field, orgProperties) => {
@@ -164,6 +381,20 @@ class SelectServiceModal extends React.Component {
     }
   };
 
+  handleWhenFieldChange = (value, field) => {
+    if (field === 'when') {
+      this.getWhenFields(value[field]);
+    }
+  };
+
+  handleServiceFieldChange = (value, field) => {
+    console.log('----------------------', field, value);
+  };
+
+  setWhenFieldsRef = ref => {
+    this.whenFieldsForm = ref;
+  };
+
   setServiceFieldsRef = ref => {
     this.serviceForm = ref;
   };
@@ -176,13 +407,27 @@ class SelectServiceModal extends React.Component {
     this.orderForm = ref;
   };
 
+  canShowWhenFields = () => {
+    // const { service } = this.state;
+    // const template = get(service, 'emailTemplate');
+    // if (template === 'fuel' || template === 'pumpout' || template.indexOf('book') === 0) {
+    //   return true;
+    // }
+    // return false;
+    return true;
+  }
+
   createOrder = () => {
     const { service } = this.state;
-    let serviceValues = {}, orderValues = {}, boatValues = {};
-    if ((this.serviceForm && !this.serviceForm.validateFields()) ||
+    let whenValues = {}, serviceValues = {}, orderValues = {}, boatValues = this.getBoatValues();
+    if ((this.whenFieldsForm && !this.whenFieldsForm.validateFields()) ||
+    (this.serviceForm && !this.serviceForm.validateFields()) ||
     (this.orderForm && !this.orderForm.validateFields()) ||
     (this.boatForm && !this.boatForm.validateFields())) {
       return;
+    }
+    if (this.whenFieldsForm) {
+      whenValues = this.whenFieldsForm.getFieldValues();
     }
     if (this.serviceForm) {
       serviceValues = this.serviceForm.getFieldValues();
@@ -194,12 +439,12 @@ class SelectServiceModal extends React.Component {
       orderValues = this.orderForm.getFieldValues();
     }
     orderValues = { ...orderValues, ...boatValues };
-    this.props.toNext(service, serviceValues, orderValues);
+    this.props.toNext(service, whenValues, serviceValues, orderValues);
   };
 
   render() {
-    const { open, onClose, currentStatus } = this.props;
-    const { service, serviceFields, boatFields } = this.state;
+    const { open, onClose, loading } = this.props;
+    const { service, whenFields, serviceFields, boatFields } = this.state;
     const action = [
       <OrangeButton
         key="modal_action_button"
@@ -210,7 +455,7 @@ class SelectServiceModal extends React.Component {
     return (
       <Modal
         title="Create Order"
-        loading={currentStatus === actionTypes.CREATE_ORDER}
+        loading={loading}
         minHeight={265}
         actions={action}
         open={open}
@@ -223,14 +468,16 @@ class SelectServiceModal extends React.Component {
             </Row>
             <Row style={{ marginBottom: 15 }}>
               <Col sm={12}>
-                <BoatyardSelect
+                <AsyncSelect
                   defaultOptions
+                  isClearable
                   components={{
                     Option: ProviderOption,
                     SingleValue: ProviderOptionValue
                   }}
                   loadOptions={this.loadOptions}
                   onChange={this.onChangeService}
+                  styles={colourStyles}
                 />
               </Col>
             </Row>
@@ -238,10 +485,22 @@ class SelectServiceModal extends React.Component {
         </Row>
         <Row>
           <Col sm={12}>
-            {!isEmpty(serviceFields) && (
-              <FormFields ref={this.setServiceFieldsRef} fields={serviceFields} />
+            {(!isEmpty(service) && this.canShowWhenFields()) && (
+              <FormFields
+                ref={this.setWhenFieldsRef}
+                fields={whenFields}
+                onChange={this.handleWhenFieldChange}
+              />
             )}
-            {!isEmpty(service) && (
+            {!isEmpty(serviceFields) && (
+              <FormFields
+                ref={this.setServiceFieldsRef}
+                fields={serviceFields}
+                onChange={this.handleServiceFieldChange}
+              />
+            )}
+            {/* {!isEmpty(service) && ( */}
+            {false && (
               <FormFields ref={this.setBoatFieldsRef} fields={boatFields} />
             )}
             {!isEmpty(service) && (
@@ -255,9 +514,9 @@ class SelectServiceModal extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  currentStatus: state.order.currentStatus,
   filteredServices: state.service.filteredServices,
-  included: state.service.included
+  included: state.service.included,
+  privilege: state.auth.privilege
 });
 
 const mapDispatchToProps = { FilterServices, GetService };

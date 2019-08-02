@@ -7,7 +7,7 @@ export const OrangeButton = styled.button`
   height: 30px;
   color: white !important;
   background-color: #f7941e;
-  border: 1.5px solid #f7941e;
+  border: 1px solid #f7941e;
   min-width: 130px;
   cursor: pointer;
   font-size: 12px;
@@ -66,5 +66,12 @@ export const OrangeButton = styled.button`
     vertical-align: middle;
     font-size: 25px !important;
     min-width: 0px !important;
+  }
+  &.big {
+    height: 48px;
+    border-radius: 6px;
+  }
+  &.thin-font {
+    font-weight: 500;
   }
 `;

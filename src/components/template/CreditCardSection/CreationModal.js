@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
-import { get, isNumber } from 'lodash';
+import { get } from 'lodash';
 
 import { actionTypes, CreateCreditCard } from 'store/actions/credit-cards';
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
@@ -13,15 +13,24 @@ const Divider = styled.hr`
   margin: 20px 0;
   border-top: 1px solid #f1f1f1;
 `;
+
+const coutries = [
+  {
+    label: 'United States',
+    value: 'US'
+  }
+];
+
 const cardFields = [
   {
     type: 'text_field',
-    field: 'cardNumber',
+    field: 'card_number',
+    className: 'primary',
     label: 'CARD NUMBER',
     mask: '9999 9999 9999 9999',
     errorMessage: 'Please enter a valid card number.',
     required: true,
-    xs: 6,
+    xs: 12,
     sm: 6,
     md: 6,
     lg: 6,
@@ -30,12 +39,13 @@ const cardFields = [
   {
     type: 'text_field',
     field: 'month',
+    className: 'primary',
     label: 'MONTH',
     mask: '99',
     required: true,
     errorMessage: 'Required',
-    xs: 2,
-    sm: 2,
+    xs: 12,
+    sm: 6,
     md: 2,
     lg: 2,
     xl: 2
@@ -43,12 +53,13 @@ const cardFields = [
   {
     type: 'text_field',
     field: 'year',
+    className: 'primary',
     label: 'YEAR',
     required: true,
     errorMessage: 'Required',
     mask: '9999',
-    xs: 2,
-    sm: 2,
+    xs: 12,
+    sm: 6,
     md: 2,
     lg: 2,
     xl: 2
@@ -56,12 +67,13 @@ const cardFields = [
   {
     type: 'text_field',
     field: 'cvv',
+    className: 'primary',
     label: 'CVV',
     mask: '999',
     required: true,
     errorMessage: 'Required',
-    xs: 2,
-    sm: 2,
+    xs: 12,
+    sm: 6,
     md: 2,
     lg: 2,
     xl: 2
@@ -71,12 +83,13 @@ const cardFields = [
 let infoFields = [
   {
     type: 'text_field',
-    field: 'firstName',
+    field: 'first_name',
+    className: 'primary',
     label: 'First Name',
     required: true,
     errorMessage: 'Required',
     defaultValue: '',
-    xs: 6,
+    xs: 12,
     sm: 6,
     md: 6,
     lg: 6,
@@ -84,12 +97,13 @@ let infoFields = [
   },
   {
     type: 'text_field',
-    field: 'lastName',
+    field: 'last_name',
+    className: 'primary',
     label: 'Last Name',
     required: true,
     errorMessage: 'Required',
     defaultValue: '',
-    xs: 6,
+    xs: 12,
     sm: 6,
     md: 6,
     lg: 6,
@@ -98,14 +112,30 @@ let infoFields = [
   {
     type: 'text_field',
     field: 'zip',
+    className: 'primary',
     label: 'Zip Code',
     required: true,
     errorMessage: 'Required',
-    xs: 4,
-    sm: 4,
-    md: 4,
-    lg: 4,
-    xl: 4
+    xs: 12,
+    sm: 6,
+    md: 6,
+    lg: 6,
+    xl: 6
+  },
+  {
+    type: 'select_box',
+    field: 'country',
+    className: 'primary',
+    label: 'Country',
+    options: coutries,
+    defaultValue: coutries[0].value,
+    required: true,
+    errorMessage: 'Choose Country',
+    xs: 12,
+    sm: 6,
+    md: 6,
+    lg: 6,
+    xl: 6
   }
 ];
 
@@ -132,24 +162,15 @@ class CreateModal extends React.Component {
       const infoValues = this.infoFields.getFieldValues();
       const data = { ...cardValue, ...infoValues };
       if (user.type === 'child_accounts') {
-        data['childAccountId'] = user.id;
+        data['child_account_id'] = user.id;
       } else {
-        data['userId'] = user.id;
+        data['user_id'] = user.id;
       }
       this.props.CreateCreditCard({
         data,
         success: this.onSuccess,
-        error: () => {
-          const { errors } = this.props;
-          if (errors && errors.length > 0) {
-            for (const key in errors) {
-              if (isNumber(key)) {
-                toastr.error(errors[key].join(''));
-              }else {
-                toastr.error(key, errors[key].join(''));
-              }
-            }
-          }
+        error: (e) => {
+          toastr.error('Error', e.message);
         }
       });
     }
@@ -180,8 +201,7 @@ class CreateModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  currentStatus: state.creditCard.currentStatus,
-  errors: state.creditCard.errors
+  currentStatus: state.creditCard.currentStatus
 });
 
 const mapDispatchToProps = {

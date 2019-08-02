@@ -1,21 +1,21 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import deepEqual from 'deep-equal'
-import styled from 'styled-components'
+import React from 'react';
+import { connect } from 'react-redux';
+import deepEqual from 'deep-equal';
+import styled from 'styled-components';
 import { set, get } from 'lodash';
-import { Row, Col } from 'react-flexbox-grid'
+import { Row, Col } from 'react-flexbox-grid';
 
-import { FilterServices } from 'store/actions/services'
-import { Input, TextArea } from 'components/basic/Input'
-import RemoveButton from '../basic/RemoveButton'
+import { CurrencyInput, TextArea } from 'components/basic/Input';
+import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 
 const Record = styled.div`
   padding: 15px 0px;
-`
+`;
 
 const Line = styled(Row)`
-  padding: 10px 0px;
+  padding: 5px 0px;
+  position: relative;
 `;
 
 const Name = styled.div`
@@ -31,99 +31,97 @@ const Value = styled.div`
   font-size: 16px;
   font-weight: 400px;
   color: #07384b;
-`
+`;
 
 const Comment = styled.div`
   font-family: "Source Sans Pro";
   font-size: 16px;
   font-weight: 400px;
   color: #07384b;
-`
+`;
 
 class LineItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      serviceId: props.serviceId,
+      serviceId: props.service.id,
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
-    }
+    };
   }
 
   componentDidUpdate(prevProps) {
     if (!deepEqual(prevProps, this.props)) {
       this.setState({
-        serviceId: this.props.serviceId,
+        serviceId: this.props.service.id,
         quantity: this.props.attributes.quantity,
         cost: this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
-      })
+      });
     }
   }
 
-  componentDidMount() {
-    this.props.FilterServices({ params: {} });
-  }
+  onChangeFilter = (inputValue, callback) => {
+    setTimeout(() => {
+      callback(this.filterOptions(inputValue));
+    }, 100);
+  };
 
-  onChangeFilter = (val) =>  new Promise((resolve, reject) => {
-    if (val === '') {
-      this.props.FilterServices({ success: resolve, error: resolve });
-    } else {
-      this.props.FilterServices({ params: { 'service[name]': val }, success: resolve, error: resolve });
+  filterOptions = (inputValue) => {
+    const { services } = this.props;
+    let filteredServices = services;
+    if (inputValue && inputValue.trim().length > 0) {
+      filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
     }
-  }).then((services) => this.filterOptions(services)
-  ).catch(err => {
-    return [];
-  })
+    const options = filteredServices.map(option => ({
+      value: option.id,
+      cost: option.cost,
+      label: option.name
+    }));
+    const currentOption = this.getCurrentOption();
+    const result = options.filter(option => option.value !== currentOption.value);
+    return [currentOption, ...result];
+  };
 
-  onChange = (evt, field) => {
-    const changeVal = {}
-    set(changeVal, field, evt.target.value)
+  onChange = (value, field) => {
+    const changeVal = {};
+    if (field === 'cost') {
+      value = value && value.replace('$', '');
+    }
+    set(changeVal, field, value);
     this.setState(changeVal, () => {
       this.props.onChange(this.state);
     });
-  }
+  };
 
   onChangeService = (service) => {
-    const serviceId = service.value;
-    this.setState({ serviceId }, () => {
-      this.props.onChange(this.state)
-    })
-  }
+    this.setState({
+      serviceId: service.value,
+      cost: service.cost,
+      quantity: 1
+    }, () => {
+      this.props.onChange(this.state);
+    });
+  };
 
-  getServiceName = () => {
-    const serviceName = get(this.props, 'relationships.service.attributes.name');
-    return serviceName;
-  }
-
-  getServiceId = () => {
-    const { serviceId } = this.props;
-    return serviceId;
-  }
-
-  getCurrentOption = () => ({ value: this.getServiceId(), label: this.getServiceName() })
-
-  filterOptions = (filteredServices) => {
-    const services = filteredServices || [];
-    const options = services.map(option => ({
-      value: option.id,
-      label: option.name
-    }))
-    const currentOption = { value: this.getServiceId(), label: this.getServiceName() };
-    const result = options.filter(option => option.value !== currentOption.value);
-    return [currentOption, ...result];
-  }
+  getCurrentOption = () => {
+    const { service } = this.props
+    return {
+      value:  get(service, 'attributes.id'),
+      cost: get(service, 'attributes.cost'),
+      label: get(service, 'attributes.name')
+    };
+  };
 
   render() {
-    const { mode, onRemove } = this.props;
+    const { mode, onRemove, service } = this.props;
     const { quantity, cost, comment } = this.state;
-    const name = this.getServiceName();
     const currentOption = this.getCurrentOption();
     return (
       <Record>
         <Line>
-          <Col md={4} sm={4} lg={4} xl={4} xs={4}>
+          <Col md={6} sm={6} lg={6} xl={6} xs={6}>
             {mode === 'edit' ? (
               <BoatyardSelect
                 className="basic-single"
@@ -135,29 +133,52 @@ class LineItem extends React.Component {
                 onChange={this.onChangeService}
               />
             ) : (
-              <Name>{name}</Name>
+              <Name>{get(service, 'attributes.name')}</Name>
             )}
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-            {mode === 'edit' ? <Input type="text" value={quantity} onChange={(evt) => this.onChange(evt, 'quantity')} hideError /> : <Value>{quantity}</Value>}
+            {mode === 'edit' ?
+              <CurrencyInput
+                fixedDecimalScale
+                decimalScale={0}
+                value={quantity}
+                onChange={evt => this.onChange(evt.target.value, 'quantity')}
+                hideError
+              />
+            :
+              <Value>{parseInt(quantity)}</Value>
+            }
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-            {mode === 'edit' ? <Input type="text" value={cost} onChange={(evt) => this.onChange(evt, 'cost')} hideError /> : <Value>${cost}</Value>}
+            {mode === 'edit' ?
+              <CurrencyInput
+                fixedDecimalScale
+                prefix='$'
+                decimalScale={2}
+                value={cost}
+                onChange={evt => this.onChange(evt.target.value, 'cost')}
+                hideError
+              />
+            : 
+              <Value>${parseFloat(cost).toFixed(2)}</Value>
+            }
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-            <Value>${parseInt(quantity, 10) * parseFloat(cost)}</Value>
+            <Value>${(parseFloat(parseFloat(quantity) * parseFloat(parseFloat(cost)).toFixed(2))).toFixed(2)}</Value>
           </Col>
           { mode === 'edit' && (
-            <Col md={2} sm={2} lg={2} xl={2} xs={2}>
-              <RemoveButton onClick={onRemove} />
-            </Col>
+            <RemoveButton style={{
+              position: 'absolute',
+              top: 2,
+              right: 12
+            }} onClick={onRemove} />
           )}
         </Line>
         <Row>
-          <Col sm={8}>
+          <Col sm={10}>
             {
               mode === 'edit' ? (
-                <TextArea value={comment} onChange={(evt) => this.onChange(evt, 'comment')} />
+                <TextArea value={comment} onChange={(evt) => this.onChange(evt.target.value, 'comment')} />
               ) : (
                 <Comment>{comment}</Comment>
               )
@@ -169,8 +190,10 @@ class LineItem extends React.Component {
   }
 }
 
-const mapDispatchToProps = {
-  FilterServices
-}
+const mapStateToProps = state => ({
+  privilege: state.auth.privilege,
+  services: state.service.services
+});
 
-export default connect(null, mapDispatchToProps)(LineItem);
+
+export default connect(mapStateToProps, null)(LineItem);

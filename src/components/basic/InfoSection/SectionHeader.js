@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   color: #004258;
   text-transform: uppercase;
   position: relative;
-  padding: 15px 20px;
+  padding: 15px 25px;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -30,11 +30,11 @@ const Title = styled.h5`
   font-family: 'Montserrat', sans-serif !important;
 `;
 
-export default ({ title, mode, onEdit, editComponent }) => (
-  <Wrapper>
+export default ({ title, mode, onEdit, editComponent, disabled, style }) => (
+  <Wrapper style={style}>
     <Title>{title}</Title>
     {
-      mode === 'view' && (editComponent ? editComponent : <EditButton onClick={onEdit} />)
+      mode === 'view' && (editComponent ? editComponent : (!disabled && <EditButton onClick={onEdit} />))
     }
   </Wrapper>
 )

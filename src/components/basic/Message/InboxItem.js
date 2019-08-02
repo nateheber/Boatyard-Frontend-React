@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
+import { hasIn, get } from 'lodash';
 
 import { CheckBox } from '../Input';
 
@@ -9,7 +10,7 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   cursor: pointer;
-  padding: 0px 15px;
+  width: 100%;
 `;
 
 const Content = styled.div`
@@ -26,16 +27,16 @@ const Title = styled.div`
   color: rgb(7, 56, 75);
 `;
 
-const Subject = styled.div`
-  font-size: 12px;
-  font-family: 'Source Sans Pro', sans-serif;
-  color: rgb(137, 137, 137);
-`;
-
 const TextBody = styled.div`
   font-size: 14px;
   font-family: 'Source Sans Pro', sans-serif;
   color: rgb(137, 137, 137);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  padding-right: 10px;
 `;
 
 const LeftBody = styled.div``;
@@ -46,22 +47,6 @@ const RightBody = styled.div`
   justify-content: space-between;
 `;
 
-const UnreadCount = styled.span`
-  background-color: rgb(247, 148, 30);
-  color: rgb(234, 234, 234);
-  font-size: 12px;
-  float: right;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  flex-direction: row;
-  padding: 0px 8px;
-  border-radius: 50% !important;
-  box-sizing: border-box;
-`;
-
 const DateTime = styled.div`
   font-family: 'Source Sans Pro', sans-serif;
   color: rgb(137, 137, 137);
@@ -69,11 +54,7 @@ const DateTime = styled.div`
 `;
 
 export const InboxItem = ({
-  subject,
-  sender,
-  textBody,
-  unread,
-  dateTime,
+  conversation: { id }, mostRecentMessage, recipientProfile,
   selected,
   onCheck,
   onSelect
@@ -82,16 +63,19 @@ export const InboxItem = ({
     <CheckBox checked={selected} onClick={onCheck} />
     <Content>
       <LeftBody>
-        <Title>{sender}</Title>
-        <Subject>{subject}</Subject>
+        {
+          hasIn(recipientProfile, 'attributes.name') ? (
+            <Title>{get(recipientProfile, 'attributes.name')}</Title>
+          ) : (
+            <Title>{get(recipientProfile, 'attributes.firstName')} {get(recipientProfile, 'attributes.lastName')}</Title>
+          )
+        }
         <TextBody>
-          {textBody.slice(0, 3)}
-          ...
+          {get(mostRecentMessage, 'attributes.content')}
         </TextBody>
       </LeftBody>
       <RightBody>
-        {unread > 0 && <UnreadCount>{unread}</UnreadCount>}
-        <DateTime>{moment(dateTime).format('MMM D')}</DateTime>
+        <DateTime>{moment(get(mostRecentMessage, 'attributes.createdAt')).format('MMM D')}</DateTime>
       </RightBody>
     </Content>
   </Wrapper>

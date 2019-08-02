@@ -100,7 +100,7 @@ export default class NewScheduleModal extends React.Component {
         </Row>
         <Row>
           <Col sm={12}>
-            <CheckField checked={needApproval} title="Customer approval required" color="#8f8f8f" onClick={this.changeApprovalState} />
+            <CheckField checked={needApproval} title="Customer approval required" onClick={this.changeApprovalState} />
           </Col>
         </Row>
       </Modal>

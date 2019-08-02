@@ -1,56 +1,165 @@
-import { createAction, handleActions } from 'redux-actions';
+import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-
-export const actions = {
-  signup: 'AUTH/SIGNUP',
-  login: 'AUTH/LOGIN',
-  logout: 'AUTH/LOGOUT',
-  setAuthState: 'AUTH/SET_AUTH_STATE',
-  getUserPermission: 'AUTH/GET_USER_PERMISSION',
-  setAdminToken: 'AUTH/SET_ADMIN_TOKEN',
-  setProviderToken: 'AUTH/SET_PROVIDER_TOKEN',
-  setPrivilege: 'AUTH/SET_PREVILAGE'
-};
-
-export const signup = createAction(actions.signup);
-export const login = createAction(actions.login);
-export const logout = createAction(actions.logout);
+import { actionTypes } from '../actions/auth';
+import { get } from 'lodash';
+import { deleteAllCookies } from 'utils/cookie';
 
 const initialState = {
+  currentStatus: '',
   authToken: '',
   adminToken: '',
   providerToken: '',
-  errorMessage: '',
+  auth0Token: '',
+  providerLocationToken: '',
+  isLocationAdmin: false,
+  accessRole: '',
+  errors: null,
   privilege: '',
-  loading: false
+  providerId: '',
+  providerLocationId: '',
+  providerLocations: [],
+  taxRate: '',
+  refreshPage: false,
+  locationName: '',
 };
 
 export default handleActions(
   {
-    [actions.setAuthState]: (
-      state,
-      { payload: { authToken, errorMessage, loading } }
-    ) =>
-      produce(state, draftState => {
-        draftState.authToken = authToken;
-        draftState.errorMessage = errorMessage;
-        draftState.loading = loading;
+    [actionTypes.AUTH_LOGIN_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.authToken = payload;
       }),
-    [actions.setAdminToken]: (state, { payload }) =>
-      produce(state, draftState => {
-        draftState.adminToken = payload;
+    [actionTypes.CREATE_PASSWORD_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.authToken = payload;
       }),
-    [actions.setProviderToken]: (state, { payload }) =>
-      produce(state, draftState => {
-        draftState.providerToken = payload;
+    [actionTypes.CREATE_PASSWORD_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
       }),
-    [actions.setPrivilege]: (state, { payload }) =>
-      produce(state, draftState => {
-        draftState.privilege = payload;
+    [actionTypes.CREATE_CUSTOMER_PASSWORD_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
       }),
-    [actions.logout]: () => ({
-      ...initialState
-    })
+    [actionTypes.CREATE_CUSTOMER_PASSWORD_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+    [actionTypes.AUTH_LOGIN_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+    [actionTypes.GET_USER_PERMISSION_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.adminToken = payload;
+        draft.errors = null;
+      }),
+    [actionTypes.GET_USER_PERMISSION_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+    [actionTypes.SET_PROVIDER_INFO]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { id, attributes: { taxRate }} = payload;
+        const authorizationToken = get(payload, 'attributes.authorizationToken');
+        draft.currentStatus = type;
+        if (authorizationToken) {
+          draft.providerToken = authorizationToken;
+        }
+        if (payload.type === 'providers') {
+          draft.providerId = id;
+        }
+        draft.taxRate = taxRate;
+        draft.errors = null;
+      }),
+    [actionTypes.SET_PROVIDER_LOCATIONS]: (state, action) =>
+      produce(state, draft => {
+        const { payload: {providerLocations} } = action;
+        draft.providerLocations = providerLocations;
+        draft.errors = null;
+      }),
+    [actionTypes.SET_PRIVILEGE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: {privilege, isLocationAdmin, providerLocationId, locationName} } = action;
+        draft.currentStatus = type;
+        draft.privilege = privilege;
+        draft.isLocationAdmin = isLocationAdmin;
+        draft.locationName = locationName;
+        draft.providerLocationId = providerLocationId;
+        draft.errors = null;
+      }),
+    [actionTypes.SET_ACCESS_ROLE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: {accessRole} } = action;
+        draft.currentStatus = type;
+        draft.accessRole = accessRole;
+        draft.errors = null;
+    }),
+    [actionTypes.SEND_RESET_REQUEST_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.SEND_RESET_REQUEST_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+    [actionTypes.RESET_PASSWORD_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.RESET_PASSWORD_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+    [actionTypes.AUTH_LOGOUT]: () => {
+      deleteAllCookies();
+      return {
+        ...initialState
+      };
+    },
+    [actionTypes.SET_REFRESH_FLAG_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.refreshPage = payload;
+        draft.errors = null;
+      }),
+    [actionTypes.SET_REFRESH_FLAG_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+    [actionTypes.SET_AUTH0_TOKEN]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: {token} } = action;
+        draft.currentStatus = type;
+        draft.auth0Token = token;
+      })
   },
   initialState
 );

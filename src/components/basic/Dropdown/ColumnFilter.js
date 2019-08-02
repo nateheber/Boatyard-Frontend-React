@@ -132,7 +132,7 @@ export class ColumnFilter extends React.Component {
         <ToggleButton
           title="SHOW COLUMNS"
           onClick={() => {
-            this.setState({ showMenu: true });
+            this.setState({ showMenu: !showMenu });
           }}
         />
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>
@@ -146,7 +146,7 @@ export class ColumnFilter extends React.Component {
                     this.select(val);
                   }}
                 />
-                {val.label}
+                {val.label.toUpperCase()}
               </MenuItem>
             </MenuItemLi>
           ))}

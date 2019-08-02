@@ -6,6 +6,9 @@ export const getUsers = state => state.user.users;
 export const getUsersPageNumber = state => state.user.page;
 export const getServicesPageNumber = state => state.service.nextPage;
 export const getOrdersPageNumber = state => state.order.nextPage;
+export const getOrderDispatchedFlag = state => state.order.dispatched;
+export const getPrivilege = state => state.auth.privilege;
+export const getUserId = state => state.profile.id;
 
 export const getCategoryClient = state => {
   switch (state.auth.privilege) {
@@ -72,6 +75,19 @@ export const getOrderClient = state => {
   }
 };
 
+export const getDispatchedOrderClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createDispatchedOrderClient('basic');
+    case 'admin':
+      return APIGenerator.createDispatchedOrderClient('admin');
+    case 'provider':
+      return APIGenerator.createDispatchedOrderClient('provider');
+    default:
+      return APIGenerator.createDispatchedOrderClient('basic');
+  }
+};
+
 export const getBoatClient = state => {
   switch (state.auth.privilege) {
     case 'basic':
@@ -122,7 +138,7 @@ export const getPaymentClient = state => {
     default:
       return APIGenerator.createPaymentClient('basic');
   }
-}
+};
 
 export const getCreditCardClient = state => {
   switch (state.auth.privilege) {
@@ -135,7 +151,7 @@ export const getCreditCardClient = state => {
     default:
       return APIGenerator.createCreditCardClient('basic');
   }
-}
+};
 
 export const getCustomApiClient = state => {
   switch (state.auth.privilege) {
@@ -173,5 +189,149 @@ export const getProviderLocationServiceClient = state => {
       return APIGenerator.createProviderLocationServiceClient('provider');
     default:
       return APIGenerator.createProviderLocationServiceClient('basic');
+  }
+};
+
+export const getPaymentGatewayClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createPaymentGatewayClient('basic');
+    case 'admin':
+      return APIGenerator.createPaymentGatewayClient('admin');
+    case 'provider':
+      return APIGenerator.createPaymentGatewayClient('provider');
+    default:
+      return APIGenerator.createPaymentGatewayClient('basic');
+  }
+};
+
+export const getIconClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createIconClient('basic');
+    case 'admin':
+      return APIGenerator.createIconClient('admin');
+    case 'provider':
+      return APIGenerator.createIconClient('provider');
+    default:
+      return APIGenerator.createIconClient('basic');
+  }
+};
+
+export const getNotificationsClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createNotificationsClient('basic');
+    case 'admin':
+      return APIGenerator.createNotificationsClient('admin');
+    case 'provider':
+      return APIGenerator.createNotificationsClient('provider');
+    default:
+      return APIGenerator.createNotificationsClient('basic');
+  }
+};
+
+export const getNetworkClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createNetworkClient('basic');
+    case 'admin':
+      return APIGenerator.createNetworkClient('admin');
+    case 'provider':
+      return APIGenerator.createNetworkClient('provider');
+    default:
+      return APIGenerator.createNetworkClient('basic');
+  }
+};
+
+export const getConversationClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createConversationsClient('basic');
+    case 'admin':
+      return APIGenerator.createConversationsClient('admin');
+    case 'provider':
+      return APIGenerator.createConversationsClient('provider');
+    default:
+      return APIGenerator.createConversationsClient('basic');
+  }
+};
+
+export const getMessageClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createMessageClient('basic');
+    case 'admin':
+      return APIGenerator.createMessageClient('admin');
+    case 'provider':
+      return APIGenerator.createMessageClient('provider');
+    default:
+      return APIGenerator.createMessageClient('basic');
+  }
+};
+
+export const getSiteBannerClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createSiteBannerClient('basic');
+    case 'admin':
+      return APIGenerator.createSiteBannerClient('admin');
+    case 'provider':
+      return APIGenerator.createSiteBannerClient('provider');
+    default:
+      return APIGenerator.createSiteBannerClient('basic');
+  }
+};
+
+
+export const getQuickRepliesClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createQuickReplyClient('basic');
+    case 'admin':
+      return APIGenerator.createQuickReplyClient('admin');
+    case 'provider':
+      return APIGenerator.createQuickReplyClient('provider');
+    default:
+      return APIGenerator.createQuickReplyClient('basic');
+  }
+};
+
+export const getGlobalMessageTemplatesClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createGlobalMessageTemplateClient('basic');
+    case 'admin':
+      return APIGenerator.createGlobalMessageTemplateClient('admin');
+    case 'provider':
+      return APIGenerator.createGlobalMessageTemplateClient('provider');
+    default:
+      return APIGenerator.createGlobalMessageTemplateClient('basic');
+  }
+};
+
+export const getLocalMessageTemplatesClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createLocalMessageTemplateClient('basic');
+    case 'admin':
+      return APIGenerator.createLocalMessageTemplateClient('admin');
+    case 'provider':
+      return APIGenerator.createLocalMessageTemplateClient('provider');
+    default:
+      return APIGenerator.createLocalMessageTemplateClient('basic');
+  }
+};
+
+export const getExternalConnectionsClient = state => {
+  switch (state.auth.privilege) {
+    case 'basic':
+      return APIGenerator.createExternalConnectionsClient('basic');
+    case 'admin':
+      return APIGenerator.createExternalConnectionsClient('admin');
+    case 'provider':
+      return APIGenerator.createExternalConnectionsClient('provider');
+    default:
+      return APIGenerator.createExternalConnectionsClient('basic');
   }
 };

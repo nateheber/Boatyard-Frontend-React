@@ -20,16 +20,17 @@ const ErrorMessage = styled.div`
 const Input = styled.textarea`
   background: #fff;
   padding: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   border: 1px solid #dfdfdf;
   min-height: 100px;
   width: 100%;
-  border-radius: 5px !important;
+  border-radius: 6px !important;
   outline: none;
   box-sizing: border-box;
   resize: none;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
+  color: #555;
   &:disabled {
     background: #f1f1f1;
   }
@@ -37,13 +38,13 @@ const Input = styled.textarea`
 
 export class TextArea extends React.Component {
   render() {
-    const { hasError, errorMessage, ...rest } = this.props;
+    const { hasError, hideError, errorMessage, ...rest } = this.props;
     return (
       <React.Fragment>
         <Input {...rest} />
-        <ErrorMessage className={className({ show: hasError })}>
+        { (!hideError && hasError) && <ErrorMessage className={className({ show: hasError })}>
           {errorMessage}
-        </ErrorMessage>
+        </ErrorMessage>}
       </React.Fragment>
     );
   }

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import { get, isEmpty } from 'lodash';
 import moment from 'moment';
 
 const Wrapper = styled.div`
@@ -8,6 +9,8 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   border-bottom: 1px solid #e6e6e6;
+  text-decoration: none;
+  cursor: pointer;
   @media (max-width: 778px) {
     box-sizing: border-box;
     // height: 290px;
@@ -59,55 +62,99 @@ const THeader = styled.div`
 `;
 
 function getValue(column, item) {
-  if (column.value === 'id') {
-    if (item.state === 'draft' && column.type === 'new') {
-      return 'New Order';
-    }
-    return `Order #${item.id}`;    
-  }
-  const fields = column.value.split('/');
   let value = '';
-  for (const idx in fields) {
-    const field = fields[idx];
-    const arr = field.split('.');
-    let part = item;
-    for (const subIdx in arr) {
-      const key = arr[subIdx];
-      if (!part) return '_';
-      part = part[key];
-    }
-    if(part && part.length > 0) {
-      value = value.length > 0 ? `${value} ${part}` : part;
-    }    
+  if (column.type && column.type === 'new-customer' && item.state === 'dispatched') {
+    return '_';
   }
-  if(column.isValue && parseInt(value) === 0) {
-    return '';
+  if (column.isCustomer) {
+    for (const idx in column.value) {
+      const val = column.value[idx];
+      const fields = val.split('/');
+      let part = null;
+      for (const subIdx in fields) {
+        if (part === null) {
+          part = get(item, fields[subIdx], '');
+        } else {
+          part = `${part} ${get(item, fields[subIdx], '')}`;
+        }
+      }
+      if (part && !isEmpty(part.trim())) {
+        return part;
+      } else {
+        value = '_';
+      }
+    }
+  } else {
+    if (column.value === 'id') {
+      if (item.state === 'draft' && column.type === 'new') {
+        return 'New Order';
+      }
+      return `Order #${item.id}`;    
+    }
+    const fields = column.value.split('/');
+    let combines = get(column, 'combines', []);
+    for (const idx in fields) {
+      const field = fields[idx];
+      const arr = field.split('.');
+      let part = item;
+      for (const subIdx in arr) {
+        const key = arr[subIdx];
+        if (!part) return '_';
+        part = part[key];
+      }
+      if(part && part.length > 0) {
+        const combineString = get(combines, `${idx - 1}`, ' ');
+        value = value.length > 0 ? `${value}${combineString}${part}` : part;
+      }    
+    }
+  }
+  if (column.isValue && parseInt(value) === 0) {
+    return '_';
+  }
+  if (column.isCurrency) {
+    value = parseFloat(value).toFixed(2);
   }
   if (column.isDate) {
     const date = moment(value);
     if (date.isValid()) {
       value = `${date.format('MMM DD, YYYY')}`;
     } else {
-      value = '_';
+      value = '';
     }
   }
-return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
+  return `${column.prefix || ''}${value || '_'}${column.suffix || ''}`;
 }
 
-export const OrderItem = props => {
-  const { columns, item } = props;
-  return (
-    <Wrapper>
-      {columns.map((column, idx) => {
-        return (
-          <Field className={column.isTitle && 'title'} key={`field_${idx}`} style={{ width: column.width || `${100 / columns.length}%`}}>
-            <THeader>{column.label}</THeader>
-            {column.link && <Link to={`/order-details/?order=${item.id}`}>{getValue(column, item)}</Link>}
-            {!column.link && getValue(column, item)}
-          </Field>
-        );
-      })
-      }
-    </Wrapper>
-  );
-};
+class OrderItem extends React.Component {
+  onGoToDetails = () => {
+    const { item } = this.props;
+    if (item.state === 'dispatched') {
+      this.props.history.push({pathname: `/orders/${item.id}/detail`, state: { dispatched: true }});
+    } else {
+      this.props.history.push(`/orders/${item.id}/detail`);
+    }
+  };
+
+  render() {
+    const { columns, item } = this.props;
+    return (
+      <Wrapper onClick={this.onGoToDetails}>
+        {columns.map((column, idx) => {
+          return (
+            <Field
+              className={column.isTitle && 'title'}
+              key={`field_${idx}`}
+              style={{ width: column.width || `${100 / columns.length}%`}}
+            >
+              <THeader>{column.label}</THeader>
+              {getValue(column, item)}
+            </Field>
+          );
+        })
+        }
+      </Wrapper>
+    );  
+  }
+}
+
+export default withRouter(OrderItem);

@@ -50,7 +50,7 @@ export class CategoryEditor extends React.Component {
         if (get(val, 'fieldInfo.Destroy', false)) {
           return {
             id: val.id,
-            Destroy: true
+            destroy: true
           };
         }
         return {
@@ -68,7 +68,7 @@ export class CategoryEditor extends React.Component {
       }
       this.props.onSave({
         ...mainValues,
-        fieldsAttributes: [
+        fields_attributes: [
           ...additionalFieldValues,
           ...newAdditionalFieldValues
         ]
@@ -116,6 +116,7 @@ export class CategoryEditor extends React.Component {
           field: 'name',
           label: 'Name',
           type: 'text_field',
+          className: 'primary',
           errorMessage: 'Enter the field name',
           required: true,
           defaultValue: '',
@@ -126,9 +127,10 @@ export class CategoryEditor extends React.Component {
           xl: 4
         },
         {
-          field: 'fieldType',
+          field: 'field_type',
           label: 'Field Type',
           type: 'select_box',
+          className: 'primary',
           errorMessage: 'Select Field Type',
           required: true,
           defaultValue: 'text_field',
@@ -148,6 +150,7 @@ export class CategoryEditor extends React.Component {
           field: 'required',
           label: 'Required',
           type: 'check_box',
+          className: 'primary',
           defaultValue: false,
           xs: 6,
           sm: 6,

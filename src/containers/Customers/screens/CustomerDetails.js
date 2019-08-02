@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { Row, Col } from 'react-flexbox-grid';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import styled from 'styled-components';
 
-import { GetChildAccount, DeleteChildAccount } from 'store/actions/child-accounts';
-import { GetBoats, CreateBoat } from 'store/actions/boats';
-import { GetOrders } from 'store/actions/orders';
-import { GetCreditCards } from 'store/actions/credit-cards';
+import { actionTypes as customerActions, GetChildAccount, DeleteChildAccount } from 'store/actions/child-accounts';
+import { actionTypes as orderActions, GetOrders } from 'store/actions/orders';
+import { actionTypes as boatActions, GetBoats, CreateBoat } from 'store/actions/boats';
+import { actionTypes as paymentActions, GetCreditCards } from 'store/actions/credit-cards';
 import { refinedOrdersSelector } from 'store/selectors/orders';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
@@ -22,7 +22,6 @@ import { CustomerDetailsHeader } from '../components/CustomerDetailsHeader';
 import Modal from 'components/compound/Modal';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
-import { actionTypes } from '../../../store/actions/child-accounts';
 import { NormalText } from 'components/basic/Typho'
 
 export const Label = styled(NormalText)`
@@ -37,24 +36,41 @@ const PageContent = styled(Row)`
 class CustomerDetails extends React.Component {
   constructor(props) {
     super(props);
+    const query = queryString.parse(this.props.location.search);
+    const customerId = query.customer;
     this.state = {
-      customerId: -1,
+      customerId,
+      isFirstLoadCustomer: true,
+      isFirstLoadOrders: true,
+      isFirstLoadBoats: true,
+      isFirstLoadPayments: true,
       visibleOfBoatModal: false,
       visibleofDeleteModal: false
     };
-  }
-
-  componentDidMount() {
-    const query = queryString.parse(this.props.location.search);
-    const customerId = query.customer;
-    this.props.GetChildAccount({ childAccountId: customerId });
-    this.props.GetOrders({ params: { 'order[child_account_id]': customerId, page: 1 } });
-    this.props.GetBoats({ params: { 'boat[child_account_id]': customerId } });
-    this.props.GetCreditCards({
-      params: { 'credit_card[child_account_id]': customerId }
+    const { GetChildAccount, GetOrders, GetBoats, GetCreditCards } = this.props;
+    GetChildAccount({
+      childAccountId: customerId,
+      success: () => {
+        this.setState({ isFirstLoadCustomer: false });
+      }
     });
-    this.setState({
-      customerId,
+    GetOrders({
+      params: { 'order[child_account_id]': customerId, page: 1 },
+      success: () => {
+        this.setState({ isFirstLoadOrders: false });
+      }
+    });
+    GetBoats({
+      params: { 'boat[child_account_id]': customerId },
+      success: () => {
+        this.setState({ isFirstLoadBoats: false });
+      }
+    });
+    GetCreditCards({
+      params: { 'credit_card[child_account_id]': customerId },
+      success: () => {
+        this.setState({ isFirstLoadPayments: false });
+      }
     });
   }
 
@@ -85,8 +101,8 @@ class CustomerDetails extends React.Component {
     });
   }
 
-  toDetails = (orderId) => {
-    this.props.history.push(`/order-details/?order=${orderId}`);
+  toDetails = order => {
+    this.props.history.push(`/orders/${order.id}/detail`);
   }
 
   showBoatModal = () => {
@@ -119,7 +135,7 @@ class CustomerDetails extends React.Component {
     CreateBoat({
       data: {
         boat: {
-          childAccountId: customerId,
+          child_account_id: customerId,
           ...data.boat,
         }
       },
@@ -145,80 +161,110 @@ class CustomerDetails extends React.Component {
   };
 
   render() {
-    const { currentChildAccount, page, orders, currentStatus } = this.props
-    const { visibleOfBoatModal, visibleofDeleteModal } = this.state;
+    const {
+      currentChildAccount,
+      page,
+      orders,
+      customerStatus,
+      orderStatus,
+      boatStatus,
+      paymentStatus
+    } = this.props
+    const {
+      isFirstLoadCustomer,
+      isFirstLoadOrders,
+      isFirstLoadBoats,
+      isFirstLoadPayments,
+      visibleOfBoatModal,
+      visibleofDeleteModal
+    } = this.state;
     const customerName = `${get(currentChildAccount, 'firstName')} ${get(currentChildAccount, 'lastName')}`;
     const columns = [
-      { label: 'orders', value: 'id' },
-      { label: 'boat name', value: 'relationships.boat.attributes.name' },
-      { label: 'boat make', value: 'relationships.boat.attributes.make' },
-      { label: 'service', value: 'relationships.service.attributes.name' },
-      { label: 'order placed', value: 'createdAt', isDate: true },
-      { label: 'total', value: 'total', isValue: true, prefix: '$' }
+      { label: 'orders', value: 'id', width: 1 },
+      { label: 'order placed', value: 'createdAt', isDate: true, width: 2 },
+      { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
+      { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1 },
+      { label: 'boat make', value: 'relationships.boat.attributes.make', width: 1 },
+      { label: 'total paid', value: 'totalPayments', isCurrency: true, isValue: true, prefix: '$', width: 1 }
     ]
     const pageCount = this.getPageCount();
     const actions = [
       <HollowButton onClick={this.hideDeleteModal} key="modal_btn_cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.deleteCustomer} key="modal_btn_save">Confirm</OrangeButton>
     ];
+    const loadingCustomer = customerStatus === customerActions.GET_CHILD_ACCOUNT;
+    const loadingOrders = orderStatus === orderActions.GET_ORDERS;
+    const loadingBoats = boatStatus === boatActions.GET_BOATS;
+    const loadingPayments = paymentStatus === paymentActions.GET_PAYMENTS;
 
     return (
       <React.Fragment>
-        <CustomerDetailsHeader name={customerName} onDelete={this.showDeleteModal} />
-        <PageContent>
-          <Col sm={12} md={8} lg={8} xl={8} >
-            <Table
-              type="secondary"
-              columns={columns}
-              records={orders}
-              toDetails={this.toDetails}
-              page={page}
-              pageCount={pageCount}
-              onPageChange={this.changePage}
+        {((loadingCustomer && isFirstLoadCustomer) || isEmpty(currentChildAccount)) ? (
+          <LoadingSpinner loading={true} />
+        ) : (
+          <React.Fragment>
+            <CustomerDetailsHeader name={customerName} onDelete={this.showDeleteModal} />
+            <PageContent>
+              <Col sm={12} md={8} lg={8} xl={8} >
+                {!(loadingOrders && isFirstLoadOrders) && <Table
+                  type="secondary"
+                  columns={columns}
+                  records={orders}
+                  toDetails={this.toDetails}
+                  page={page}
+                  pageCount={pageCount}
+                  onPageChange={this.changePage}
+                />}
+              </Col>
+              <Col sm={12} md={4} lg={4} xl={4}>
+                <SectionGroup>
+                  <Section title={"Customer & Boat Info"}>
+                    <CustomerInfoSection customerInfo={currentChildAccount} refreshInfo={this.refreshInfo} />
+                    {!(loadingBoats && isFirstLoadBoats) && <BoatInfoSection user={currentChildAccount} />}
+                    <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>
+                  </Section>
+                </SectionGroup>
+                <SectionGroup>
+                {!(loadingPayments && isFirstLoadPayments) && <CreditCardSection
+                  user={currentChildAccount} onRefresh={this.refreshCards} 
+                />}
+                </SectionGroup>
+              </Col>
+            </PageContent>
+            <BoatModal
+              open={visibleOfBoatModal}
+              user={currentChildAccount}
+              onClose={this.hideBoatModal}
+              onSave={this.addNewBoat}
             />
-          </Col>
-          <Col sm={12} md={4} lg={4} xl={4}>
-            <SectionGroup>
-              <Section title={"Customer & Boat Info"}>
-                <CustomerInfoSection customerInfo={currentChildAccount} refreshInfo={this.refreshInfo} />
-                <BoatInfoSection user={currentChildAccount} />
-                <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>
-              </Section>
-            </SectionGroup>
-            <SectionGroup>
-              <CreditCardSection user={currentChildAccount} onRefresh={this.refreshCards} />
-            </SectionGroup>
-          </Col>
-        </PageContent>
-        <BoatModal
-          open={visibleOfBoatModal}
-          user={currentChildAccount}
-          onClose={this.hideBoatModal}
-          onSave={this.addNewBoat}
-        />
-        <Modal
-          title={'Are You Sure?'}
-          actions={actions}
-          normal={true}
-          open={visibleofDeleteModal}
-          onClose={this.hideDeleteModal}
-        >
-          <Label>Deleting {customerName}'s account is permanent and cannot be undone.</Label>
-        </Modal>
-        {currentStatus === actionTypes.DELETE_CHILD_ACCOUNT && <LoadingSpinner
-          loading={currentStatus === actionTypes.DELETE_CHILD_ACCOUNT}
-        />}
+            <Modal
+              title={'Are You Sure?'}
+              actions={actions}
+              normal={true}
+              open={visibleofDeleteModal}
+              onClose={this.hideDeleteModal}
+            >
+              <Label>Deleting {customerName}&#39;s team is permanent and cannot be undone.</Label>
+            </Modal>
+            {customerStatus === customerActions.DELETE_CHILD_ACCOUNT && <LoadingSpinner
+              loading={customerStatus === customerActions.DELETE_CHILD_ACCOUNT}
+            />}
+          </React.Fragment>
+        )}
       </React.Fragment>
     )
   }
 }
 
 const mapStateToProps = state => ({
-  currentStatus: state.childAccount.currentStatus,
+  customerStatus: state.childAccount.currentStatus,
+  orderStatus: state.order.currentStatus,
+  boatStatus: state.boat.currentStatus,
+  paymentStatus: state.payment.currentStatus,
   currentChildAccount: state.childAccount.currentChildAccount,
-  page: state.order.newOrders.total,
-  perPage: state.order.newOrders.total,
-  total: state.order.newOrders.total,
+  page: state.order.orders.page,
+  perPage: state.order.orders.perPage,
+  total: state.order.orders.total,
   orders: refinedOrdersSelector(state)
 });
 

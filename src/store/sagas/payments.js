@@ -25,7 +25,7 @@ function* getPayments(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_PAYMENTS_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -45,7 +45,7 @@ function* getPayment(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_PAYMENT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -65,7 +65,7 @@ function* createPayment(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_PAYMENT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -74,7 +74,7 @@ function* updatePayment(action) {
   const { paymentId, data, success, error } = action.payload;
   const paymentClient = yield select(getPaymentClient);
   try {
-    const result = yield call(paymentClient.patch, paymentId, data);
+    const result = yield call(paymentClient.update, paymentId, data);
     yield put({
       type: actionTypes.UPDATE_PAYMENT_SUCCESS,
       payload: result
@@ -85,7 +85,7 @@ function* updatePayment(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_PAYMENT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -104,12 +104,12 @@ function* deletePayment(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_PAYMENT_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
 
-export default function* Profile() {
+export default function* PaymentSaga() {
   yield takeEvery(actionTypes.GET_PAYMENTS, getPayments);
   yield takeEvery(actionTypes.GET_PAYMENT, getPayment);
   yield takeEvery(actionTypes.CREATE_PAYMENT, createPayment);

@@ -67,6 +67,7 @@ export default handleActions(
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
+        draft.currentChildAccount = {};
         draft.errors = null;
       }),
     [actionTypes.GET_CHILD_ACCOUNT_SUCCESS]: (state, action) =>

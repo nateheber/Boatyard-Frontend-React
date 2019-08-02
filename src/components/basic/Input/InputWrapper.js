@@ -3,9 +3,11 @@ import styled from 'styled-components';
 export const InputLabel = styled.div`
   display: flex;
   flex: 1;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: Montserrat, sans-serif;
+  font-weight: 600;
   font-size: 14px;
-  color: #333;
+  color: #003247;
+  text-align: left;  text-transform: capitalize;
 `;
 
 export const InputWrapper = styled.div`
@@ -16,20 +18,28 @@ export const InputWrapper = styled.div`
   text-transform: uppercase;
   margin-bottom: 5px;
   &.primary,
-  &.secondary {
+  &.secondary,
+  &.third {
     flex-direction: column;
     align-items: flex-start;
   }
-  &.primary > ${InputLabel} {
-    font-weight: 400;
+  &.primary ${InputLabel} {
     margin-bottom: 5px;
   }
-  &.secondary > ${InputLabel} {
-    color: #004258;
-    font-weight: 700;
-    margin-bottom: 5px;
-    font-size: 12px;
-    font-family: Montserrat, sans-serif;
+  &.secondary ${InputLabel} {
+    // font-weight: 700;
+    margin-bottom: 20px;
+  }
+  &.third ${InputLabel} {
+    margin: 20px 0px;
+    color: #8f8f8f;
+    font-weight: 400;
+    font-size: 14px;
+    font-family: "Open sans-serif", sans-serif;
+    text-transform: none;
+  }
+  &.upper ${InputLabel} {
+    text-transform: uppercase;
   }
   margin: 0px 10px;
   &:first-child {
@@ -37,6 +47,44 @@ export const InputWrapper = styled.div`
   }
   &:last-child {
     margin-right: 0px;
+  }
+  &.size-big {
+    margin-bottom: 22px;
+  }
+  &.size-big > ${InputLabel} {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #003247;
+    margin-bottom: 21px;
+    text-transform: none;
+  }
+  .field-section {
+    width: 100%;
+  }
+  &.upload {
+    display: flex;
+    flex-direction: row;
+    .field-section {
+      width: 50px;
+    }
+    .file-section {
+      width: calc(100% - 50px);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FFFFFF;
+      border: 1px solid #D8D8D8;
+      border-radius: 6px;
+      label {
+        font-family: Helvetica;
+        font-size: 14px;
+        color: #D8D8D8;
+        text-align: center;
+        padding: 0 20px;
+      }
+    }
   }
 `;
 

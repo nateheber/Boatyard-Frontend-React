@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { formatPhoneNumber } from 'utils/basic';
 
 const Wrapper = styled.div`
   margin-bottom: 15px;
@@ -14,10 +16,12 @@ const Label = styled.div`
   text-transform: uppercase;
 `;
 
-const Name = styled.div`
+const Name = styled(Link)`
   color: #004258 !important;
   font-family: 'Source Sans', sans-serif !important;
   font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
 `;
 
 const FieldValue = styled.div`
@@ -27,13 +31,11 @@ const FieldValue = styled.div`
   margin-top: 1px;
 `;
 
-export default ({ firstName, lastName, email, phoneNumber }) => (
+export default ({ id, type, firstName, lastName, email, phoneNumber }) => (
   <Wrapper>
     <Label>Customer Info</Label>
-    <Name>
-      {firstName} {lastName}
-    </Name>
-    <FieldValue>{phoneNumber}</FieldValue>
+    <Name to={type === 'users' ? `/user-details/?user=${id}` : `/customer-details/?customer=${id}`}>{firstName} {lastName}</Name>
+    <FieldValue>{formatPhoneNumber(phoneNumber)}</FieldValue>
     <FieldValue>{email}</FieldValue>
   </Wrapper>
 );

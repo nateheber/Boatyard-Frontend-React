@@ -4,9 +4,9 @@ import { Section } from 'components/basic/InfoSection';
 import CustomerInfo from '../infoSections/CustomerInfo';
 import BoatInfo from '../infoSections/BoatInfo';
 
-export default ({ customerInfo, boatInfo, boatLocation, onEditBoat }) => (
-  <Section title="Customer & Boat Info">
-    <CustomerInfo {...customerInfo} />
-    <BoatInfo {...boatInfo} boatLocation={boatLocation} onEdit={onEditBoat} />
+export default ({ customerInfo, boatInfo, onEditBoat, canShowCustomerInfo }) => (
+  <Section title={"Customer & Boat Info"}>
+    { canShowCustomerInfo && <CustomerInfo {...customerInfo} />}
+    <BoatInfo boatInfo={boatInfo} onEdit={onEditBoat} />
   </Section>
 )

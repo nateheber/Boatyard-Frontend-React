@@ -27,7 +27,7 @@ const INVOICE_COLUMNS = [
   { label: 'ORDER', value: 'id', isTitle: true },
   { label: 'Due Date', value: 'invoiceDueOn', isDate: true },
   { label: 'CUSTOMER', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
-  { label: 'Total', value: 'total', prefix: '$', isValue: true },
+  { label: 'Total', value: 'total', prefix: '$', isValue: true, isCurrency: true },
   { label: 'PAYMENT STATUS', value: 'status' }
 ];
 
@@ -83,8 +83,8 @@ class Invoices extends React.Component {
     }
   }
 
-  toDetails = orderId => {
-    this.props.history.push(`/order-details/?order=${orderId}`);
+  toDetails = order => {
+    this.props.history.push(`/orders/${order.id}/detail`);
   };
 
   getPageCount = () => {

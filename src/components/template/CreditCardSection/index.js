@@ -1,63 +1,57 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { findIndex, isEmpty } from 'lodash'
+import React from 'react';
+import { connect } from 'react-redux';
 
-import { Section } from 'components/basic/InfoSection'
-import { NormalText } from 'components/basic/Typho'
-import InfoSection from './InfoSection'
-import ListModal from './ListModal'
-import CreationModal from './CreationModal'
+import { Section } from 'components/basic/InfoSection';
+import { NormalText } from 'components/basic/Typho';
+import InfoSection from './InfoSection';
+import ListModal from './ListModal';
+import CreationModal from './CreationModal';
 
 
 class CreditCardSection extends React.Component {
   state = {
     showPaymentModal: false,
     showNewPaymentModal: false,
-  }
+  };
 
   showListModal = () => {
     this.setState({
       showPaymentModal: true,
     })
-  }
+  };
 
   closeListModal = () => {
     this.setState({
       showPaymentModal: false,
     })
-  }
+  };
 
   showCreationModal = () => {
     this.setState({
       showListModal: false,
       showNewPaymentModal: true,
     })
-  }
+  };
 
   closeCreationModal = () => {
     this.setState({
       showNewPaymentModal: false,
     })
-  }
-
-  getDefaultCard = () => {
-    const { creditCards } = this.props;
-    const idx = findIndex(creditCards, card => card.attributes.isDefault);
-    if (idx >= 0) {
-      return creditCards[idx].attributes;
-    }
-    return {}
-  }
+  };
 
   render() {
-    const card = this.getDefaultCard();
+    const { creditCards } = this.props;
     const { showPaymentModal, showNewPaymentModal } = this.state;
     const { user } = this.props;
     return (
       <React.Fragment>
-        <Section title="Payment Methods" mode="view" onEdit={this.showListModal} >
-          {!isEmpty(card) ?
-           <InfoSection creditCard={card} />
+        <Section title="Payment Methods" mode="view" disabled={user.isDisabled} onEdit={this.showListModal} >
+          {(creditCards && creditCards.length > 0) ?
+            <React.Fragment>
+              {creditCards.map(card => (
+                <InfoSection key={`card_${card.id}`} creditCard={card.attributes} />
+              ))}
+            </React.Fragment>
            :
            <NormalText>There are no payment methods.</NormalText>
           }

@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 const PROVIDER_COLUMNS = [
   { label: 'provider name', value: 'name', sort: 'name' },
   { label: 'contact name', value: 'contact_name' },
-  { label: 'phone', value: 'phoneNumber', sort: 'phone_number' },
+  { label: 'phone', value: 'phoneNumber', sort: 'phone_number', isPhone: true },
   { label: 'email', value: 'email' },
   { label: 'location', value: 'location' }
 ];
@@ -68,8 +68,8 @@ class Providers extends React.Component {
     GetProviders({ params });
   };
 
-  toDetails = providerId => {
-    this.props.history.push(`/providers/${providerId}/`);
+  toDetails = provider => {
+    this.props.history.push(`/provider-details?provider=${provider.id}`);
   };
 
   createNew = () => {

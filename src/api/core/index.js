@@ -1,5 +1,4 @@
 import axios from 'axios';
-import applyCaseConverter from 'axios-case-converter';
 
 import { apiBaseUrl, spreedlyApiToken, spreedlyApiUrl } from '../config';
 import { authInterceptor } from './auth';
@@ -7,14 +6,12 @@ import { responseInterceptor, spreedlyResponseInterceptor } from './response';
 
 export const createAuthClient = () => {
   const client = responseInterceptor(
-    applyCaseConverter(
-      axios.create({
-        header: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache'
-        }
-      })
-    )
+    axios.create({
+      header: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache'
+      }
+    })
   );
   return client;
 };
@@ -22,14 +19,12 @@ export const createAuthClient = () => {
 export const createMainClient = authType => {
   const client = responseInterceptor(
     authInterceptor(
-      applyCaseConverter(
-        axios.create({
-          header: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache'
-          }
-        })
-      ),
+      axios.create({
+        header: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        }
+      }),
       authType
     )
   );
@@ -38,15 +33,13 @@ export const createMainClient = authType => {
 
 export const createSpreedlyClient = () => {
   const client = spreedlyResponseInterceptor(
-    applyCaseConverter(
-      axios.create({
-        header: {
-          'Content-Type': 'application/json',
-          'Cache-control': 'no-cache',
-          'Authorization': `Bearer ${spreedlyApiToken}`
-        }
-      })
-    )
+    axios.create({
+      header: {
+        'Content-Type': 'application/json',
+        'Cache-control': 'no-cache',
+        'Authorization': `Bearer ${spreedlyApiToken}`
+      }
+    })
   )
   return client;
 }
@@ -148,18 +141,39 @@ export class MultiLayerCRUDClient {
   generateUrl = params => {
     let url = apiBaseUrl;
     for (let i = 0; i < params.length; i += 1) {
-      url = `${url}${this.layers[i]}/${params[i]}/`;
+      url = `${url}/${this.layers[i]}/${params[i]}`;
     }
     if (params.length + 1 === this.layers.length) {
       url = `${url}/${this.layers[this.layers.length - 1]}/`;
+      return url;
     } else if (params.length === this.layers.length) {
       return url;
     }
     throw new Error('Invalid params configuration');
   };
-  list = params => {
-    const url = this.generateUrl(params);
-    return this.client.get(url);
+  list = (baseParams, params) => {
+    const url = this.generateUrl(baseParams);
+    let paramsString = '';
+
+    if (params) {
+      params = {
+        page: 1,
+        ...params
+      };
+    } else {
+      params = {
+        page: 1
+      };
+    }
+
+    const array = [];
+    for  (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        array.push(`${key}=${params[key]}`);
+      }
+    }
+    paramsString = array.join('&');
+    return this.client.get(`${url}?${paramsString}`);
   };
   create = (params, data) => {
     const url = this.generateUrl(params);

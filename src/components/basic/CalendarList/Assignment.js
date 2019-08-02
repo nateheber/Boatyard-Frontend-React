@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import moment from 'moment'
 
-import { parsetMomentToDate } from 'utils/date'
+import { parsetMomentToDate } from 'utils/basic';
 
 const Wrapper = styled.div`
   position: absolute;

@@ -15,9 +15,6 @@ import OrdersIcon from '../../resources/shopping_cart.svg';
 import CalendarActiveIcon from '../../resources/calendar_active.svg';
 import CalendarIcon from '../../resources/calendar.svg';
 
-import InvoicesActiveIcon from '../../resources/money_bag_active.svg';
-import InvoicesIcon from '../../resources/money_bag.svg';
-
 import ProviderActiveIcon from '../../resources/provider_icon_active.svg';
 import ProviderIcon from '../../resources/provider_icon.svg';
 
@@ -66,13 +63,6 @@ const navItems = [
     privileges: ['admin']
   },
   {
-    activeImage: InvoicesActiveIcon,
-    mainImage: InvoicesIcon,
-    title: 'INVOICES',
-    link: '/invoices/',
-    privileges: ['provider']
-  },
-  {
     activeImage: MessageActiveIcon,
     mainImage: MessageIcon,
     title: 'MESSAGES',
@@ -98,6 +88,13 @@ const navItems = [
     title: 'ANALYTICS',
     link: '/analytics/',
     privileges: ['admin', 'provider']
+  },
+  {
+    activeImage: ServicesActiveIcon,
+    mainImage: ServicesIcon,
+    title: 'CATEGORIES',
+    link: '/categories/',
+    privileges: ['admin']
   },
   {
     activeImage: ServicesActiveIcon,
@@ -131,7 +128,7 @@ const navItems = [
 
 const SideBarContainer = styled.div`
   display: block;
-  background-color: #01556d;
+  background-color: #FFFFFF;
   overflow-y: scroll;
   overflow-x: hidden;
   width: 195px !important;

@@ -1,13 +1,56 @@
-import { get, set, filter, forEach, findIndex, sortBy, isEmpty } from 'lodash';
+import { get, set, forEach, sortBy, isEmpty, isArray, find, filter } from 'lodash';
 import { createSelector } from 'reselect';
+import { getProviderLocations, getPrevilage, getProviderLocationId } from './auth';
+
+const ORDER_COLUMNS = [
+  { label: 'order', value: 'name', width: 1 },
+  { label: 'order placed', value: 'createdAt', width: 1.2 },
+  {
+    label: 'CUSTOMER',
+    value: [
+      'relationships.user.attributes.firstName/relationships.user.attributes.lastName'
+    ],
+    isCustomer: true,
+    width: 1.2
+  },
+  { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
+  // {
+  //   label: 'location',
+  //   value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
+  //   combines: [', ', ', '],
+  //   width: 2.5
+  // },
+  { label: 'provider', value: 'relationships.provider.attributes.name', width: 1 },
+  { label: 'location', value: 'locationAddress', width: 1.2 },
+  {
+    label: 'boat location',
+    street: 'relationships.boat.relationships.location.address.street',
+    city: 'relationships.boat.relationships.location.address.city',
+    state: 'relationships.boat.relationships.location.address.state',
+    isLocation: true,
+    width: 2.3
+  },
+  { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1.5, },
+  { label: 'boat', value: 'relationships.boat.attributes.make', width: 1.2, },
+  { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$', width: 0.8, },
+  { label: 'order status', value: 'stateAlias', width: 1.2 },
+];
 
 const setLineItemRelationships = (lineItem, included) => {
   const resultData = {...lineItem};
   const { relationships } = lineItem;
   for(const key in relationships) {
-    let value = relationships[key].data;
-    if (value) {
-      resultData.relationships[key] = included[value.type][value.id];
+    let value = get(relationships, `[${key}].data`);
+    if (value && !isEmpty(value)) {
+      if (isArray(value)) {
+        set(resultData, `relationships[${key}]`, []);
+        for(const index in value) {
+          const subValue = value[index];
+          set(resultData, `relationships[${key}][${index}]`, get(included, `[${subValue.type}][${subValue.id}]`));
+        }
+      } else {
+        set(resultData, `relationships[${key}]`, get(included, `[${value.type}][${value.id}]`));
+      }
     }
   }
   return lineItem;
@@ -18,16 +61,9 @@ const currentOrderSelector = state => {
   const included = state.order.included;
   if (!isEmpty(order)) {
     for(const key in order.relationships) {
-      const value = order.relationships[key].data;
+      const value = get(order, `relationships[${key}].data`);
       if(value) {
-        if (key !== 'lineItems') {
-          order.relationships[key] = included[value.type][value.id];
-          if (key === 'boat') {
-            const location = get(order.relationships[key], 'relationships.location.data');
-            const locationInfo = get(included, `[${location.type}][${location.id}]`);
-            set(order, `relationships[${key}].location`, locationInfo )
-          }
-        } else {
+        if (key === 'lineItems') {
           const lineItemRelation = get(order, `relationships[${key}].data`, []);
           const lineItems = [];
           forEach(lineItemRelation, (info) => {
@@ -36,6 +72,22 @@ const currentOrderSelector = state => {
             lineItems.push(parsedLineItem);
           })
           set(order, 'lineItems', lineItems);
+        } else if (key === 'orderDispatches') {
+          const dispatchRelation = get(order, `relationships[${key}].data`, []);
+          const dispatchIds = [];
+          forEach(dispatchRelation, (info) => {
+            const dispatchDetail = get(included, `[${info.type}][${info.id}].attributes`);
+            const dispatchId = get(dispatchDetail, 'providerId');
+            dispatchIds.push(dispatchId);
+          })
+          set(order, 'dispatchIds', dispatchIds);
+        } else {
+          order.relationships[key] = get(included, `[${value.type}][${value.id}]`);
+          if (key === 'boat') {
+            const location = get(order.relationships[key], 'relationships.location.data');
+            const locationInfo = get(included, `[${location.type}][${location.id}]`);
+            set(order, `relationships[${key}].location`, locationInfo )
+          }
         }
       }
     }
@@ -90,23 +142,21 @@ const includedSelector = (state, orderType) => {
 
 const lineItemsSelector = state => {
   const currentOrder = state.order.currentOrder;
-  const lineItems = get(currentOrder, 'data.relationships.lineItems.data');
-  const included = get(currentOrder, 'included');
-  const lineItemDetail = filter(included, info => info.type === 'line_items');
+  const lineItems = get(currentOrder, 'relationships.lineItems.data');
+  const included = state.order.included;
+  const lineItemsDetail = (included && included.hasOwnProperty('line_items')) ? included['line_items'] : {};
   const data = [];
   forEach(lineItems, (lineItem) => {
-    const includedIdx = findIndex(lineItemDetail, detail => detail.id === lineItem.id && detail.type === lineItem.type);
-    const attributes= get(lineItemDetail, `[${includedIdx}].attributes`);
-    const serviceInfo = get(lineItemDetail, `[${includedIdx}].relationships.service.data`);
-    const serviceIdx = findIndex(included, info => info.type === serviceInfo.type && info.id === serviceInfo.id);
-    const serviceAttributes = get(included, `[${serviceIdx}].attributes`);
+    const attributes= get(lineItemsDetail, `${lineItem.id}.attributes`);
+    const serviceInfo = get(lineItemsDetail, `${lineItem.id}.relationships.service`);
+    const serviceAttributes = get(serviceInfo, 'attributes');
     return data.push({
       ...lineItem,
       attributes,
       serviceId: serviceInfo.id,
       serviceAttributes,
     })
-  })
+  });
   return sortBy(data, ['id']);
 };
 
@@ -115,30 +165,72 @@ export const orderSelector = state => ({
   currentOrder: currentOrderSelector(state),
 });
 
+const getUnselectedColumns = state => get(state, 'order.unselectedColumns', []);
+
+export const columnsSelector = createSelector(
+  getPrevilage,
+  getProviderLocationId,
+  (previlage, providerLocationId) => {
+    const columns = ORDER_COLUMNS.slice(0)
+    if (previlage === 'provider') {
+      columns.splice(4, 1);
+      columns[2]['value'] = ['customerName'];
+      if (providerLocationId) {
+        columns.splice(4, 1);
+      }
+    } else {
+      columns.splice(5, 1);
+    }
+    return columns;
+  }
+)
+
+export const selectedColumnsSelector = createSelector(
+  columnsSelector,
+  getUnselectedColumns,
+  (columns, unselectedLabels) => {
+    return filter(columns, c => unselectedLabels.indexOf(c.label) === -1);
+  }
+)
+
 export const refinedOrdersSelector = createSelector(
   allOrdersSelector,
   includedSelector,
-  (allOrders, included) => {
+  getProviderLocations,
+  (allOrders, included, providerLocations) => {
     return allOrders.map(order => {
       for(const key in order.relationships) {
-        let value = order.relationships[key].data;
+        let value = get(order, `relationships[${key}].data`);
         if(value) {
           if (key === 'lineItems') {
             if (value.length > 0) {
-              order.relationships[key] = value.map(obj => {
-                return included[obj.type][obj.id];
-              });
-              for(const subKey in order.relationships[key][0].relationships) {
-                const subValue = order.relationships[key][0].relationships[subKey].data;
+              set(order.relationships, `[${key}]`, value.map(obj => {
+                return get(included, `[${obj.type}][${obj.id}]`);
+              }))
+              for(const subKey in get(order, `relationships[${key}][0].relationships`)) {
+                const subValue = get(order, `relationships[${key}][0].relationships[${subKey}].data`);
                 if (subValue) {
-                  order.relationships[subKey] = included[subValue.type][subValue.id];
+                  order.relationships[subKey] = get(included, `[${subValue.type}][${subValue.id}]`);
                 }
               }
             }
           } else {
-            order.relationships[key] = included[value.type][value.id];
+            order.relationships[key] = get(included, `[${value.type}][${value.id}]`);
+            if (key === 'boat') {
+              const boatLocationInfo = get(order.relationships[key], 'relationships.location.data');
+              if (boatLocationInfo) {
+                const locationInfo = get(included, `[${boatLocationInfo.type}][${boatLocationInfo.id}]`);
+                set(order.relationships[key], 'relationships.location', { attributes: locationInfo.attributes, address: get(locationInfo, 'relationships.address.data') });
+              }
+            }
           }
         }
+      }
+      const providerLocation = find(providerLocations, {providerLocationId: order.providerLocationId});
+      if (providerLocation) {
+        order.locationAddress = providerLocation.locationName;
+      } else {
+        order.locationAddress = '';
       }
       return order;
     });

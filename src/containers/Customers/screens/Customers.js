@@ -4,7 +4,7 @@ import { toastr } from 'react-redux-toastr';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
-import { isNumber } from 'lodash';
+import { isEmpty } from 'lodash';
 
 import {
   actionTypes,
@@ -13,62 +13,66 @@ import {
   CreateChildAccount
 } from 'store/actions/child-accounts';
 import Table from 'components/basic/Table';
-import CustomerOption from 'components/basic/CustomerOption';
-import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 import CustomerModal from 'components/template/CustomerInfoSection/CustomerModal';
 import { CustomersHeader } from '../components/CustomersHeader';
-import { BoatyardSelect } from 'components/basic/Dropdown';
+import { SearchBox } from 'components/basic/Input';
 
 const Wrapper = styled.div`
   height: 100%;
   background-color: white;
 `;
 
-const SearchWrapper = styled.div`
-  padding: 0 30px 15px;
+const SearchSection = styled(Row)`
+  border-top: 1px solid #D5DBDE;
+  border-bottom: 1px solid #D5DBDE;
+  margin: 0 0 20px 0 !important;
+`;
+
+const SearchCotainer = styled(Col)`
+  padding: 24px 20px;
+  width: 305px;
 `;
 
 class Customers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showNewModal: false
+      showNewModal: false,
+      sort: { col: 'last_name', direction: 'asc' },
     };
   }
 
   componentDidMount() {
-    this.loadCustomers();
+    this.loadPage(1);
   }
 
-  loadCustomers = (page) => {
-    this.props.GetChildAccounts({
-      params: { page: page || 1 }
+
+  loadPage = (page) => {
+    const { keyword } = this.state;
+    const { GetChildAccounts } = this.props;
+    const { sort } = this.state;
+    const params = isEmpty(keyword) ? {
+      page: page,
+      'child_account[sort]': sort.direction,
+      'child_account[order]': sort.col
+    } : {
+      page: page,
+      'child_account[sort]': sort.direction,
+      'child_account[order]': sort.col,
+      search_by_full_name: keyword
+    };
+    GetChildAccounts({ params });
+  };
+
+  onSortChange = (sort) => {
+    this.setState({ sort: sort }, () => {
+      this.loadPage(1);
     });
   };
 
-  loadOptions = val => {
-    return this.onChangeCustomerFilter(val)
-    .then((filtered) => {
-      return filtered.map(childAccount => ({
-        value: childAccount.id,
-        firstName: childAccount.firstName,
-        lastName: childAccount.lastName,
-        email: childAccount.email
-      }));
-    }, () => {
-      return [];
-    });
-  };
-
-  onChangeCustomerFilter = val => {
-    return new Promise((resolve, reject) => {
-      this.props.FilterChildAccounts({
-        params: {
-          'search_by_full_name': val
-        },
-        success: resolve,
-        error: reject
-      });
+  handleInputChange = (keyword) => {
+    this.setState({ keyword }, () => {
+      this.loadPage(1);
     });
   };
 
@@ -82,19 +86,10 @@ class Customers extends React.Component {
       data: { child_account: { ...data.user } },
       success: () => {
         this.closeNewModal();
-        this.loadCustomers();
+        this.loadPage(1);
       },
-      error: () => {
-        const { errors } = this.props;
-        if (errors && errors.length > 0) {
-          for (const key in errors) {
-            if (isNumber(key)) {
-              toastr.error(errors[key].join(''));
-            }else {
-              toastr.error(key, errors[key].join(''));
-            }
-          }
-        }
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -111,12 +106,12 @@ class Customers extends React.Component {
     });
   };
 
-  toDetails = customerId => {
-    this.props.history.push(`/customer-details/?customer=${customerId}`);
+  toDetails = customer => {
+    this.props.history.push(`/customer-details/?customer=${customer.id}`);
   };
 
   changePage = (page) => {
-    this.loadCustomers(page);
+    this.loadPage(page);
   };
 
   getPageCount = () => {
@@ -126,12 +121,12 @@ class Customers extends React.Component {
 
   render() {
     const { currentStatus, page, childAccounts } = this.props;
-    const { showNewModal } = this.state;
+    const { showNewModal, sort } = this.state;
     const pageCount = this.getPageCount();
     const columns = [
-      { label: 'name', value: 'firstName/lastName' },
-      { label: 'phone', value: 'phoneNumber' },
-      { label: 'email', value: 'email' },
+      { label: 'name', value: 'firstName/lastName', sort: 'last_name' },
+      { label: 'phone', value: 'phoneNumber', sort: 'phone_number', isPhone: true },
+      { label: 'email', value: 'email', sort: 'email' },
       { label: 'location', value: 'location' },
       { label: 'last order', value: 'lastOrder' },
       { label: 'orders', value: 'orders' },
@@ -140,25 +135,16 @@ class Customers extends React.Component {
     return (
       <Wrapper>
         <CustomersHeader onNew={this.openNewModal} />
-        <Row>
-          <Col md={8} lg={4} sm={12}>
-            <SearchWrapper>
-              <BoatyardSelect
-                components={{
-                  Option: CustomerOption,
-                  SingleValue: CustomerOptionValue
-                }}
-                defaultOptions
-                loadOptions={this.loadOptions}
-                onChange={this.onChangeCustomer}
-              />
-            </SearchWrapper>
-          </Col>
-        </Row>
+        <SearchSection>
+          <SearchCotainer>
+            <SearchBox placeholder="SEARCH CUSTOMERS" onChange={this.handleInputChange} />
+          </SearchCotainer>
+        </SearchSection>
         <Table
           columns={columns}
           records={childAccounts}
-          sortColumn="order"
+          sort={sort}
+          onSortChange={this.onSortChange}
           toDetails={this.toDetails}
           page={page}
           pageCount={pageCount}
@@ -180,8 +166,7 @@ const mapStateToProps = (state) => ({
   childAccounts: state.childAccount.childAccounts,
   page: state.childAccount.page,
   perPage: state.childAccount.perPage,
-  total: state.childAccount.total,
-  errors: state.childAccount.errors
+  total: state.childAccount.total
 });
 
 const mapDispatchToProps = {

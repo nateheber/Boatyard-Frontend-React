@@ -15,7 +15,7 @@ const LOCATION_TYPES = [
 ];
 
 const BOAT_FIELDS = ['name', 'make', 'model', 'year', 'length', 'slip'];
-const LOCATION_FIELDS = ['locationName', 'locationType'];
+const LOCATION_FIELDS = ['location_name', 'location_type'];
 const ADDRESS_FILEDS = ['street', 'city', 'state', 'zip']
 
 class BoatModal extends React.Component {
@@ -33,15 +33,15 @@ class BoatModal extends React.Component {
     this.getOptionalFields();
   }
 
-  setMainFieldRef = (ref) => {
+  setMainFieldsRef = (ref) => {
     this.mainInfoFields = ref;
   };
 
-  setOptionalFieldRef = (ref) => {
+  setOptionalFieldsRef = (ref) => {
     this.optionalFields = ref;
   };
 
-  setLocationFieldRef = (ref) => {
+  setLocationFieldsRef = (ref) => {
     this.locationFields = ref;
   };
 
@@ -51,6 +51,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'name',
+        className: 'primary',
         label: 'Name',
         errorMessage: 'Enter the boat name',
         required: true,
@@ -64,6 +65,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'make',
+        className: 'primary',
         label: 'Make',
         errorMessage: 'Enter the boat make',
         required: true,
@@ -77,6 +79,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'model',
+        className: 'primary',
         label: 'Boat Model',
         errorMessage: 'Enter the boat model',
         required: true,
@@ -90,6 +93,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'year',
+        className: 'primary',
         label: 'Year',
         errorMessage: 'Enter the boat year',
         required: true,
@@ -104,6 +108,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'length',
+        className: 'primary',
         label: 'Boat Length',
         defaultValue: get(boatInfo, 'length', ''),
         xs: 6,
@@ -118,21 +123,26 @@ class BoatModal extends React.Component {
 
   getOptionalFields = (locationType) => {
     const { boatInfo } = this.props;
+    let boatLocation = get(boatInfo, 'location');
+    if (isEmpty(boatLocation)) {
+      boatLocation = get(boatInfo, 'relationships.location');
+    }
     let slip = '', locationName = '';
     if (isEmpty(locationType)) {
       if (!isEmpty(boatInfo)) {
-        locationType = get(boatInfo, 'relationships.location.attributes.locationType', '');
-        locationName = get(boatInfo, 'relationships.location.attributes.name', '');
+        locationType = get(boatLocation, 'attributes.locationType', '');
+        locationName = get(boatLocation, 'attributes.name', '');
         slip = get(boatInfo, 'slip', '');
       } else {
-        locationType = 'marina';
+        locationType = 'private_dock';
       }
     }
 
     const optionalFields = [
       {
         type: 'select_box',
-        field: 'locationType',
+        field: 'location_type',
+        className: 'primary',
         label: 'Boat Location',
         errorMessage: 'Select Location Type',
         required: true,
@@ -151,7 +161,8 @@ class BoatModal extends React.Component {
         optionalFields.push(
           {
             type: 'text_field',
-            field: 'locationName',
+            field: 'location_name',
+            className: 'primary',
             label: 'Marina Name',
             errorMessage: 'Set Marina Name',
             required: true,
@@ -167,6 +178,7 @@ class BoatModal extends React.Component {
           {
             type: 'text_field',
             field: 'slip',
+            className: 'primary',
             label: 'Slip',
             errorMessage: 'Set Slip',
             required: true,
@@ -184,7 +196,8 @@ class BoatModal extends React.Component {
         optionalFields.push(
           {
             type: 'text_field',
-            field: 'locationName',
+            field: 'location_name',
+            className: 'primary',
             label: 'Location Name',
             errorMessage: 'Set Location Name',
             required: true,
@@ -205,11 +218,16 @@ class BoatModal extends React.Component {
 
   getLocationFieldInfo = () => {
     const { boatInfo } = this.props;
-    const locatoinValues = get(boatInfo, 'relationships.location.relationships.address.data', {});
+    let boatLocation = get(boatInfo, 'location');
+    if (isEmpty(boatLocation)) {
+      boatLocation = get(boatInfo, 'relationships.location');
+    }
+    const locatoinValues = get(boatLocation, 'relationships.address.data', {});
     const fields = [
       {
         type: 'text_field',
         field: 'street',
+        className: 'primary',
         label: 'Address',
         errorMessage: 'Set Location Address',
         required: true,
@@ -223,6 +241,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'city',
+        className: 'primary',
         label: 'City',
         errorMessage: 'Set City',
         required: true,
@@ -236,6 +255,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'state',
+        className: 'primary',
         label: 'State',
         errorMessage: 'Set State',
         required: true,
@@ -249,6 +269,7 @@ class BoatModal extends React.Component {
       {
         type: 'text_field',
         field: 'zip',
+        className: 'primary',
         label: 'Zip',
         errorMessage: 'Set Zip',
         required: true,
@@ -268,8 +289,8 @@ class BoatModal extends React.Component {
   };
 
   onLocationTypeChange = (field, value) => {
-    if (value === 'locationType') {
-      this.getOptionalFields(field.locationType);
+    if (value === 'location_type') {
+      this.getOptionalFields(field.location_type);
     }
   };
 
@@ -294,7 +315,7 @@ class BoatModal extends React.Component {
         if (BOAT_FIELDS.indexOf(key) > -1) {
           boat[key] = values[key];
         } else if (LOCATION_FIELDS.indexOf(key) > -1) {
-          if (key === 'locationName') {
+          if (key === 'location_name') {
             locationAttrs['name'] = values[key];
           } else {
             locationAttrs[key] = values[key];
@@ -333,17 +354,17 @@ class BoatModal extends React.Component {
         onClose={onClose}
       >
         <FormFields
-          ref={this.setMainFieldRef}
+          ref={this.setMainFieldsRef}
           fields={mainFields}
         />
         <FormFields
-          ref={this.setOptionalFieldRef}
+          ref={this.setOptionalFieldsRef}
           fields={optionalFields}
           onChange={this.onLocationTypeChange}
         />
         <div style={{ height: 15 }} />
         <FormFields
-          ref={this.setLocationFieldRef}
+          ref={this.setLocationFieldsRef}
           fields={locationFields}
         />
       </Modal>

@@ -1,56 +1,226 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { Col, Row } from 'react-flexbox-grid';
+import { get, isEmpty } from 'lodash';
+
+import {
+  actionTypes as categoryActions,
+  GetCategories,
+  CreateCategory,
+  UpdateCategory,
+  DeleteCategory
+} from 'store/actions/categories';
+import { refinedCategoriesSelector } from 'store/selectors/categories';
+import {
+  actionTypes as iconActions,
+  CreateIcon
+} from 'store/actions/icons';
 
 import Table from 'components/basic/Table';
 import { CategoryHeader } from 'components/compound/SectionHeader';
-
-import { fetchCategories } from 'store/reducers/categories';
+import { SearchBox } from 'components/basic/Input';
+import CategoryModal from '../components/CategoryModal';
 
 const Wrapper = styled.div`
   height: 100%;
   background-color: white;
 `;
+const SearchSection = styled(Row)`
+  border-top: 1px solid #D5DBDE;
+  border-bottom: 1px solid #D5DBDE;
+  margin: 0 0 20px 0 !important;
+`;
+
+const SearchCotainer = styled(Col)`
+  padding: 24px 20px;
+  width: 305px;
+`;
 
 class Categories extends React.Component {
-  componentDidMount() {
-    this.props.fetchCategories();
+  constructor(props) {
+    super(props);
+    this.state = {
+      keyword: '',
+      selectedCategory: {},
+      visibleOfCategoryModal: false
+    };
   }
-  toDetails = categoryId => {
-    this.props.history.push(`/category-details/?category=${categoryId}`);
+
+  componentDidMount() {
+    this.loadPage(1);
+  }
+
+  loadPage = (page) => {
+    const { keyword } = this.state;
+    const { GetCategories } = this.props;
+    const params = isEmpty(keyword) ? {
+      page: page,
+      per_page: 24,
+      'category[discarded_at]': null
+    } : {
+      page: page,
+      per_page: 24,
+      'category[discarded_at]': null,
+      search_by_name: keyword
+    };
+    GetCategories({ params });
   };
-  createCategory = () => {
-    this.props.history.push(`/category-details/`);
+
+  handleInputChange = (keyword) => {
+    this.setState({ keyword }, () => {
+      this.loadPage(1);
+    });
+  }
+
+  handleUpdateCategory = category => {
+    this.setState({ selectedCategory: category }, () => {
+      this.showCategoryModal();
+    })
   };
+
+  handleCreateCategory = () => {
+    this.setState({ selectedCategory: {} }, () => {
+      this.showCategoryModal();
+    })
+  };
+
+  showCategoryModal = () => {
+    this.setState({ visibleOfCategoryModal: true });
+  };
+
+  hideCategoryModal = () => {
+    this.setState({ visibleOfCategoryModal: false });
+  };
+
+  onSave = (data, iconFile, customIcon = null) => {
+    const { CreateIcon } = this.props;
+    if (customIcon && iconFile) {
+      CreateIcon({
+        data: {
+          icon: {
+            name: iconFile.name,
+            icon: customIcon
+          }
+        },
+        success: (icon) => {
+          this.saveCategory({
+            ...data,
+            icon_id: icon.id
+          });
+        }
+      })
+    } else {
+      this.saveCategory(data);
+    }
+  }
+
+  saveCategory = (data) => {
+    const { CreateCategory, UpdateCategory, page } = this.props;
+    const { selectedCategory } = this.state;
+    if (isEmpty(selectedCategory)) {
+      CreateCategory({
+        data,
+        success: () => {
+          this.hideCategoryModal();
+          this.loadPage(page);
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
+        }
+      });  
+    } else {
+      const categoryId = get(selectedCategory, 'id');
+      UpdateCategory({
+        categoryId,
+        data,
+        success: () => {
+          this.hideCategoryModal();
+          this.loadPage(page);
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
+        }
+      });  
+    }
+  }
+
+  deleteCategory = () => {
+    const { DeleteCategory, page } = this.props;
+    const { selectedCategory } = this.state;
+    const categoryId = get(selectedCategory, 'id');
+    DeleteCategory({
+      categoryId,
+      success: () => {
+        this.hideCategoryModal();
+        this.loadPage(page);
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    })
+  };
+
   render() {
-    const { categories } = this.props;
+    const { categories, categoryStatus, iconStatus, page, perPage, total } = this.props;
+    const { selectedCategory, visibleOfCategoryModal } = this.state;
     const columns = [
-      { label: 'name', value: 'name' },
-      { label: 'subtitle', value: 'subtitle' },
-      { label: 'description', value: 'description' },
-      { label: 'app identifier', value: 'app identifier' }
+      { label: 'category name', value: 'name' },
     ];
+    const pageCount = Math.ceil(total/perPage);
+
     return (
       <Wrapper>
-        <CategoryHeader onAdd={this.createCategory} />
+        <CategoryHeader onAdd={this.handleCreateCategory} />
+        <SearchSection>
+          <SearchCotainer>
+            <SearchBox placeholder="SEARCH CATEGORIES" onChange={this.handleInputChange} />
+          </SearchCotainer>
+        </SearchSection>
         <Table
+          type={'tile'}
           columns={columns}
           records={categories}
-          sortColumn="order"
-          toDetails={this.toDetails}
+          page={page}
+          pageCount={pageCount}
+          onPageChange={this.loadPage}
+          toDetails={this.handleUpdateCategory}
         />
+        {visibleOfCategoryModal && <CategoryModal
+          title={'New Category'}
+          category={selectedCategory}
+          loading={
+            iconStatus === iconActions.CREATE_ICON ||
+            categoryStatus === categoryActions.CREATE_CATEGORY ||
+            categoryStatus === categoryActions.UPDATE_CATEGORY
+          }
+          open={visibleOfCategoryModal}
+          onClose={this.hideCategoryModal}
+          onDelete={this.deleteCategory}
+          onSave={this.onSave}
+        />}
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ category: { categories } }) => ({
-  categories
+const mapStateToProps = (state) => ({
+  categories: refinedCategoriesSelector(state, ''),
+  categoryStatus: state.category.currentStatus,
+  page: state.category.page,
+  perPage: state.category.perPage,
+  total: state.category.total,
+  iconStatus: state.icon.currentStatus
 });
 
 const mapDispatchToProps = {
-  fetchCategories
+  GetCategories,
+  CreateCategory,
+  UpdateCategory,
+  DeleteCategory,
+  CreateIcon
 };
 
 export default withRouter(

@@ -26,9 +26,9 @@ class OpenInvoices extends React.Component {
       params: {
         page: 1,
         per_page: 5,
-        'order[state]': 'invoiced',
-        'order[sort]': 'desc',
-        'order[order]': 'created_at'  
+        'invoices': true,
+        'order[order]': 'provider_order_sequence',
+        'order[sort]': 'desc'
       }
     });
   }
@@ -36,19 +36,28 @@ class OpenInvoices extends React.Component {
   render() {
     const { total, orders, history } = this.props;
     const columns = [
-      { label: 'ORDER', value: 'id', width: '35%', isTitle: true, link: true },
+      { label: 'ORDER', value: 'name', width: '35%', isTitle: true, link: true },
       { label: 'CUSTOMER', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName', width: '65%' }
     ];
-
+    const processedOrders = (orders || []).map(order => {
+      let name = `Order #${order.id}`;
+      if (order.providerOrderSequence) {
+        name = `Order #${order.providerOrderSequence}`;
+      }
+      return {
+        ...order,
+        name,
+      };
+    });
     return (
       <Wrapper>
       <OpenInvoicesSection count={total} />
       <OrderTable
         columns={columns}
-        items={orders}
+        items={processedOrders}
         hiddenHeader={true}
       />
-      <HollowButton className="btn-view-all" onClick={() => history.push('/invoices/')}>
+      <HollowButton className="btn-view-all" onClick={() => history.push({ pathname: '/orders/', state: { tab: 'invoiced' } })}>
         VIEW ALL
       </HollowButton>
     </Wrapper>  

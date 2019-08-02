@@ -1,25 +1,36 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import queryString from 'query-string'
-import { Row, Col } from 'react-flexbox-grid'
-import styled from 'styled-components'
-import { get } from 'lodash'
+import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import queryString from 'query-string';
+import { Row, Col } from 'react-flexbox-grid';
+import styled from 'styled-components';
+import { get, findIndex } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
-import { actionTypes, GetOrder, UpdateOrder } from 'store/actions/orders'
-import { orderSelector } from 'store/selectors/orders'
-import { getUserFromOrder, getBoatFromOrder, getProviderFromOrder } from 'utils/order'
+import { actionTypes, GetOrder, UpdateOrder, SetDispatchedFlag } from 'store/actions/orders';
+import { GetGlobalTemplates, GetLocalTemplates } from 'store/actions/messageTemplates';
+import { orderSelector } from 'store/selectors/orders';
+import {
+  getUserFromOrder,
+  getBoatFromOrder,
+  getProviderFromOrder
+} from 'utils/order';
+import { actionTypes as boatActions, UpdateBoat } from 'store/actions/boats';
 
-import { SectionGroup } from 'components/basic/InfoSection'
+import { SectionGroup } from 'components/basic/InfoSection';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
-import CustomerBoat from './components/templates/CustomerBoat'
-import LineItemSection from './components/templates/LineItemSection'
-import OrderSummarySection from './components/templates/OrderSummarySection'
-import OrderReviewSection from './components/templates/OrderReviewSection'
-import OrderDetailHeader from './components/templates/OrderDetailHeader'
-import Scheduler from './components/templates/Scheduler'
-import PaymentSection from './components/templates/PaymentSection'
-import Timeline from './components/templates/Timeline'
-import OrderAssignment from './components/templates/OrderAssignment'
+import CustomerBoat from './components/templates/CustomerBoat';
+import JobSection from './components/templates/JobSection';
+import LineItemSection from './components/templates/LineItemSection';
+import OrderSummarySection from './components/templates/OrderSummarySection';
+import OrderReviewSection from './components/templates/OrderReviewSection';
+import OrderDetailHeader from './components/templates/OrderDetailHeader';
+import Scheduler from './components/templates/Scheduler';
+import PaymentSection from './components/templates/PaymentSection';
+import TimeLineSection from './components/templates/TimeLineSection';
+import OrderAssignment from './components/templates/OrderAssignment';
+import BoatModal from 'components/template/BoatInfoSection/BoatModal';
+import JobModal from './components/modals/JobModal';
 
 const Wrapper = styled.div`
   padding: 30px 25px;
@@ -33,157 +44,248 @@ const Column = styled(Col)`
 class OrderDetails extends React.Component {
   state = {
     orderId: -1,
-    isFirstLoad: true
-  }
+    isFirstLoad: true,
+    visibleOfBoatModal: false,
+    visibleOfJobModal: false
+  };
 
   componentDidMount() {
-    const query = queryString.parse(this.props.location.search);
-    const orderId = query.order;
-    const { GetOrder } = this.props;
-    this.setState({ orderId }, () => {
-      GetOrder({
-        orderId,
+    const { GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location, match: {params: {id}} } = this.props;
+    let orderId = id;
+    if (!orderId) {
+      const query = queryString.parse(location.search);
+      orderId = query.order;
+    }
+    const state = location.state;
+    if (state && state.hasOwnProperty('dispatched')) {
+      SetDispatchedFlag(state.dispatched);
+    }
+    // this.setState({ orderId }, () => {
+    this.loadOrder(orderId);
+    // });
+    if (privilege === 'admin') {
+      GetGlobalTemplates({ params: { 'per_page': 200 } });
+    } else {
+      GetLocalTemplates({
+        params: { 'per_page': 200 },
         success: () => {
-          this.setState({ isFirstLoad: false });
+          const { localTemplates } = this.props;
+          const idx = findIndex(localTemplates, template => template.triggerKey === 'quote_for_customer');
+          if (idx < 0) {
+            GetGlobalTemplates({ params: { 'per_page': 200 } });
+          }
         }
       });
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const { match: {params: {id}} } = nextProps;
+    if (id !== this.props.match.params.id) {
+      this.loadOrder(id);
+    }
+    return true;
+  }
+  
+  componentWillUnmount() {
+    this.props.SetDispatchedFlag(false);
+  }
+
+  loadOrder = (orderId) => {
+    const { GetOrder } = this.props;
+    this.state.orderId !== orderId && this.setState({orderId});
+    GetOrder({
+      orderId,
+      success: () => {
+        this.setState({ isFirstLoad: false });
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+        this.props.history.push('/');
+      }
     });
   }
 
   getOrderInfo = () => {
-    const { currentOrder } = this.props;
-    const customerInfo = getUserFromOrder(currentOrder);
+    const { currentOrder, privilege } = this.props;
+    const customerInfo = getUserFromOrder(currentOrder, privilege);
     const boatInfo = getBoatFromOrder(currentOrder);
     return { boatInfo, customerInfo };
-  }
+  };
 
   getProviderId = () => {
     const { currentOrder } = this.props;
-    return get(getProviderFromOrder(currentOrder),'id', '');
-  }
-
-  getSummaryInfo = () => {
-    const { currentOrder } = this.props;
-    const total = get(currentOrder, 'attributes.total');
-    const subtotal = get(currentOrder, 'attributes.subTotal');
-    const taxRate = get(currentOrder, 'attributes.taxRate');
-    const taxAmount = get(currentOrder, 'attributes.taxAmount');
-    const discount = get(currentOrder, 'attributes.discount');
-    const deposit = get(currentOrder, 'attributes.deposit');
-    const comments = get(currentOrder, 'attributes.comments');
-    return ({
-      total, subtotal, taxRate, discount, deposit, taxAmount, comments
-    });
-  }
-
-  getSpecialInstructions = () => {
-    const { currentOrder } = this.props;
-    return get(currentOrder, 'attributes.specialInstructions');
-  }
-
-  getSlipNumber = () => {
-    const { currentOrder } = this.props;
-    return get(currentOrder, 'attributes.slipNumber');
-  }
+    return get(getProviderFromOrder(currentOrder), 'id', '');
+  };
 
   getUdpatedDate = () => {
     const { currentOrder } = this.props;
     const updatedAt = get(currentOrder, 'attributes.updatedAt');
     return updatedAt;
+  };
+
+  getCustomerInfoCondition = () => {
+    // const { currentOrder, privilege, provider } = this.props;
+    const { currentOrder, privilege } = this.props;
+    if (privilege === 'admin') {
+      return true;
+    }
+    // const providerId = get(currentOrder, 'attributes.providerId');
+    // const myProviderId = get(provider, 'data.id');
+    // if (providerId === parseInt(myProviderId)) {
+    //   return true;
+    // }
+    const orderStatus = get(currentOrder, 'attributes.state' );
+    if (orderStatus === 'assigned' || orderStatus === 'dispatched') { 
+      return false;
+    }
+    return true;
   }
 
-  editBoat = () => {
-    this.setState({ editBoat: true })
-  }
+  showBoatModal = () => {
+    this.setState({ visibleOfBoatModal: true });
+  };
 
-  closeBoatEditor = () => {
-    this.setState({ editBoat: false })
-  }
+  hideBoatModal = () => {
+    this.setState({ visibleOfBoatModal: false });
+  };
 
-  updateBoat = (data) => {
-    const { boatInfo: { id } } = this.getOrderInfo();
+  updateBoat = data => {
+    const { UpdateBoat, GetOrder } = this.props;
+    const {
+      boatInfo: { id }
+    } = this.getOrderInfo();
     const { orderId } = this.state;
-    this.props.updateBoats({ id, data, callback: () => { this.props.GetOrder({ orderId }) } })
-    this.setState({ editBoat: false })
-  }
+    UpdateBoat({
+      boatId: id,
+      data,
+      success: () => {
+        this.hideBoatModal();
+        GetOrder({ orderId });
+      }
+    });
+  };
 
-  updateOrder = (data) => {
+  updateOrder = data => {
     const { orderId } = this.state;
-    this.props.UpdateOrder({ orderId, data});
-  }
+    this.props.UpdateOrder({ orderId, data });
+  };
+
+  showJobModal = () => {
+    this.setState({ visibleOfJobModal: true });
+  };
+
+  hideJobModal = () => {
+    this.setState({ visibleOfJobModal: false });
+  };
 
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
-    const boatLocation = boatInfo.location;
     const updatedDate = this.getUdpatedDate();
-    const { orderId, isFirstLoad } = this.state;
+    const { orderId, isFirstLoad, visibleOfBoatModal, visibleOfJobModal } = this.state;
     const providerId = this.getProviderId();
-    const { currentOrder, currentStatus, privilege } = this.props;
+    const { currentOrder, currentStatus, boatStatus, privilege } = this.props;
     const lineItems = get(currentOrder, 'lineItems', []);
-    const summaryInfo = this.getSummaryInfo();
     const loading = currentStatus === actionTypes.GET_ORDER;
-
+    const orderStatus = get(currentOrder, 'attributes.state' );
+    const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
+    const canShowCustomerInfo = this.getCustomerInfoCondition();
     return (
       <React.Fragment>
-        {loading && isFirstLoad ? 
+        {loading || isFirstLoad ? (
           <LoadingSpinner loading={true} />
-        : <React.Fragment>
-          <OrderDetailHeader order={currentOrder} />
-          <Wrapper>
-            <Row>
-              <Column md={12} sm={12} xs={12} lg={8} xl={8}>
-                <SectionGroup>
-                  <OrderSummarySection
-                    lineItem={get(lineItems, '0', {})}
-                    specialInstructions={this.getSpecialInstructions()}
-                    slipNumber={this.getSlipNumber()}
-                  />
-                  <LineItemSection updatedAt={updatedDate} orderId={orderId} providerId={providerId} />
-                  <OrderReviewSection {...summaryInfo} updateOrder={this.updateOrder}/>
-                </SectionGroup>
-                <SectionGroup>
-                  <PaymentSection order={currentOrder} />
-                </SectionGroup>
-                <SectionGroup>
-                  <Scheduler orderId={orderId} />
-                </SectionGroup>
-              </Column>
-              <Column md={12} sm={12} xs={12} lg={4} xl={4}>
-                {(privilege === 'admin' && !providerId) && <SectionGroup>
-                  <OrderAssignment />
-                </SectionGroup>}
-                <SectionGroup>
-                  <CustomerBoat
-                    boatInfo={boatInfo}
-                    boatLocation={boatLocation}
-                    customerInfo={customerInfo}
-                    onEditBoat={() => this.editBoat()}
-                  />
-                </SectionGroup>
-                <SectionGroup>
-                  <Timeline order={currentOrder} />
-                </SectionGroup>
-              </Column>
-            </Row>
-          </Wrapper>
-        </React.Fragment>}
+        ) : (
+          <React.Fragment>
+            <OrderDetailHeader order={currentOrder} />
+            <Wrapper>
+              <Row>
+                <Column md={12} sm={12} xs={12} lg={8} xl={8}>
+                  <SectionGroup>
+                    <OrderSummarySection
+                      lineItem={get(lineItems, '0', {})}
+                      order={currentOrder}
+                    />
+                    <LineItemSection
+                      updatedAt={updatedDate}
+                      orderId={orderId}
+                      providerId={providerId}
+                    />
+                    <OrderReviewSection
+                      order={currentOrder}
+                      updateOrder={this.updateOrder}
+                    />
+                  </SectionGroup>
+                  <SectionGroup>
+                    <PaymentSection order={currentOrder} onFinished={() => this.loadOrder(orderId)} />
+                  </SectionGroup>
+                  <SectionGroup>
+                    <Scheduler order={currentOrder} />
+                  </SectionGroup>
+                </Column>
+                <Column md={12} sm={12} xs={12} lg={4} xl={4}>
+                  {canAssignOrder && <SectionGroup>
+                    <OrderAssignment />
+                  </SectionGroup>}
+                  <SectionGroup>
+                    <CustomerBoat
+                      canShowCustomerInfo={canShowCustomerInfo}
+                      boatInfo={boatInfo}
+                      customerInfo={customerInfo}
+                      onEditBoat={() => this.showBoatModal()}
+                    />
+                  </SectionGroup>
+                  {privilege === 'provider' && <SectionGroup>
+                    <JobSection order={currentOrder} addJob={this.showJobModal} />
+                  </SectionGroup>}
+                  <SectionGroup>
+                    <TimeLineSection order={currentOrder} />
+                  </SectionGroup>
+                </Column>
+              </Row>
+            </Wrapper>
+            {visibleOfBoatModal && (
+              <BoatModal
+                open={visibleOfBoatModal}
+                loading={boatStatus === boatActions.UPDATE_BOAT}
+                user={customerInfo}
+                onClose={this.hideBoatModal}
+                onSave={this.updateBoat}
+                boatInfo={boatInfo}
+              />
+            )}
+            {visibleOfJobModal && <JobModal
+              order={currentOrder}
+              open={visibleOfJobModal}
+              customerInfo={customerInfo}
+              onClose={this.hideJobModal}
+              onSave={this.onSaveJob}
+            />}
+          </React.Fragment>
+        )}
       </React.Fragment>
-    )
+    );
   }
 }
 
 const mapStateToProps = state => ({
   ...orderSelector(state),
   currentStatus: state.order.currentStatus,
-  privilege: state.auth.privilege
- });
+  boatStatus: state.boat.currentStatus,
+  privilege: state.auth.privilege,
+  globalTemplates: state.messageTemplate.globalTemplates,
+  localTemplates: state.messageTemplate.localTemplates
+});
 
 const mapDispatchToProps = {
   GetOrder,
-  UpdateOrder
+  UpdateOrder,
+  UpdateBoat,
+  SetDispatchedFlag,
+  GetGlobalTemplates,
+  GetLocalTemplates
 };
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(OrderDetails);
+)(OrderDetails));

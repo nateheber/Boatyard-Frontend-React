@@ -15,8 +15,8 @@ const Img = styled.img`
   object-fit: contain
 `
 
-export default ({ onClick }) => (
-  <Btn onClick={onClick}>
+export default ({ onClick, ...rest }) => (
+  <Btn {...rest} onClick={onClick}>
     <Img src={Trash} />
   </Btn>
 )

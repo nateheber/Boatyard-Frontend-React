@@ -2,7 +2,6 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, sortBy } from 'lodash';
 
 import { getCreditCardClient } from './sagaSelectors';
-import { createSpreedlyClient } from 'api';
 import { actionTypes } from '../actions/credit-cards';
 
 function* getCreditCards(action) {
@@ -21,66 +20,36 @@ function* getCreditCards(action) {
   } catch (e) {
     yield put({ type: actionTypes.GET_CREDIT_CARDS_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
 
 function* createCreditCard(action) {
   const { data, success, error } = action.payload;
-  const { cardNumber, cvv, year, month, firstName, lastName } = data;
-  const spreedlyClient = createSpreedlyClient();
+  const { card_number, cvv, year, month, first_name, last_name, zip, country } = data;
   const creditCardClient = yield select(getCreditCardClient);
   try {
-    const result = yield call(spreedlyClient.post, '', {
-      paymentMethod: {
-        creditCard: {
-          firstName,
-          lastName,
-          number: cardNumber,
-          verificationValue: cvv,
-          month: parseInt(month),
-          year: parseInt(year)
-        },
-      }
-    });
-    const {
-      transaction: {
-        paymentMethod: {
-          cardType: name,
-          month: expirationMonth,
-          year: expirationYear,
-          token: response,
-          lastFourDigits: last4
-        }
-      }
-    } = result;
-    const { userId, childAccountId } = data;
-    const passData = userId ? {
-      userId,
-      name,
-      expirationMonth,
-      expirationYear,
-      response,
-      last4,
-      isDefault: false
-    }: childAccountId ? {
-      childAccountId,
-      name,
-      expirationMonth,
-      expirationYear,
-      response,
-      last4,
-      isDefault: false
-    }: {
-      name,
-      expirationMonth,
-      expirationYear,
-      response,
-      last4,
-      isDefault: false
+    const { user_id, child_account_id } = data;
+    const passData = {
+      expiration_month: parseInt(month),
+      expiration_year: parseInt(year),
+      card_number,
+      card_first_name: first_name,
+      card_last_name: last_name,
+      card_zip_code: zip,
+      card_country: country,
+      is_default: false,
+      cvv
     };
-    yield call(creditCardClient.create, { creditCard: passData });
+
+    if (user_id) {
+      passData.user_id = user_id;
+    } else if (child_account_id) {
+      passData.child_account_id = child_account_id;
+    }
+
+    yield call(creditCardClient.create, { credit_card: passData });
     yield put({
       type: actionTypes.CREATE_CREDIT_CARD_SUCCESS,
     });
@@ -90,7 +59,7 @@ function* createCreditCard(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_CREDIT_CARD_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -109,7 +78,7 @@ function* deleteCreditCard(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_CREDIT_CARD_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -128,7 +97,7 @@ function* updateCreditCard(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_CREDIT_CARD_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }

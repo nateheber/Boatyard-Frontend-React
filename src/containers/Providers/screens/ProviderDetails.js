@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
 
-import { ProviderDetails, ProviderHeader } from '../components';
+import { actionTypes, LoginWithProvider, DeleteProvider } from 'store/actions/providers';
+import { ProviderInfo, ProviderDetailHeader } from '../components';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
 
-import { LoginWithProvider, DeleteProvider } from 'store/actions/providers';
 
-class ServiceDetails extends React.Component {
+class ProviderDetails extends React.Component {
   onCancel = () => {
     this.props.history.goBack();
   };
@@ -29,7 +30,12 @@ class ServiceDetails extends React.Component {
     const provider = this.getProvider();
     const { id } = provider;
     const { LoginWithProvider } = this.props;
-    LoginWithProvider({ providerId: id });
+    LoginWithProvider({
+      providerId: id,
+      success: () => {
+        this.props.history.push('/dashboard');
+      }
+    });
   };
   deleteProvider = () => {
     const provider = this.getProvider();
@@ -40,25 +46,28 @@ class ServiceDetails extends React.Component {
   render() {
     const provider = this.getProvider();
     const { name } = provider;
+    const { currentStatus } = this.props;
     return (
       <div>
-        <ProviderHeader
+        <ProviderDetailHeader
           title={name}
           selectProvider={this.selectProvider}
           deleteProvider={this.deleteProvider}
         />
-        <ProviderDetails
+        <ProviderInfo
           {...provider}
           onCancel={this.onCancel}
           onEdit={this.onEdit}
         />
+        {currentStatus === actionTypes.LOGIN_WITH_PROVIDER && <LoadingSpinner loading={true} />}
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ provider: { providers } }) => ({
-  providers
+const mapStateToProps = ({ provider: { providers, currentStatus } }) => ({
+  providers,
+  currentStatus
 });
 
 const mapDispatchToProps = {
@@ -70,5 +79,5 @@ export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(ServiceDetails)
+  )(ProviderDetails)
 );

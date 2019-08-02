@@ -15,7 +15,7 @@ const Field = styled.div`
 
 export default () => (
   <Row>
-    <Col md={4} sm={4} lg={4} xl={4} xs={4}>
+    <Col md={6} sm={6} lg={6} xl={6} xs={6}>
       <Field>Item name</Field>
     </Col>
     <Col md={2} sm={2} lg={2} xl={2} xs={2}>

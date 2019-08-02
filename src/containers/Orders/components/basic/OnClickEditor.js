@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { isEmpty } from 'lodash'
 import { Row, Col } from 'react-flexbox-grid'
 
-import { Input } from 'components/basic/Input';
+import { CurrencyInput } from 'components/basic/Input';
 
 const Label = styled.div`
   color: #8f8f8f;
@@ -11,7 +11,7 @@ const Label = styled.div`
   font-size: 16px;
   line-height: 20px;
   font-weight:  regular;
-`
+`;
 
 const Placeholder = styled.div`
   cursor: pointer;
@@ -22,7 +22,12 @@ const Placeholder = styled.div`
   &:hover {
     color: #d56f12;
   }
-`
+`;
+
+const UpdatedRow = styled(Row)`
+  min-height: 40px;
+  align-items: center;
+`;
 
 export default class OnClickEditor extends React.Component {
   constructor(props) {
@@ -46,34 +51,44 @@ export default class OnClickEditor extends React.Component {
   }
 
   onChange = (evt) => {
-    this.setState({ value: evt.target.value })
-    this.props.onChange(evt.target.value);
+    const value = evt.target.value && evt.target.value.replace('$', '');
+    this.setState({ value });
+    this.props.onChange(value);
   }
   
-
   render() {
     const { edit, value } = this.state;
     const { label } = this.props;
     return edit ? (
-      <Row style={{ padding: '10px 0px' }}>
-        <Col sm={6}>
+      <UpdatedRow>
+        <Col xs={6}>
           <Label>{label}:</Label>
         </Col>
-        <Col sm={6}>
-          <Input autoFocus type="text" pattern="[0-9]*" value={value} onChange={this.onChange} onBlur={this.resetEdit} />
+        <Col xs={6}>
+          <CurrencyInput
+            style={{ marginBottom: 0 }}
+            autoFocus
+            fixedDecimalScale
+            prefix='$'
+            decimalScale={2}
+            value={value}
+            onChange={this.onChange}
+            onBlur={this.resetEdit}
+            hideError
+          />
         </Col>
-      </Row>
+      </UpdatedRow>
     ) : (
-      <Row style={{ padding: '10px 0px' }}>
-        <Col sm={6}>
+      <UpdatedRow>
+        <Col xs={6}>
           <Label>{label}:</Label>
         </Col>
-        <Col sm={6}>
+        <Col xs={6}>
           <Placeholder onClick={this.setEdit}>
-            {isEmpty(value) ? 'Add' : `$${value}`}
+            {isEmpty(value) ? 'Add' : `$${parseFloat(value).toFixed(2)}`}
           </Placeholder>
         </Col>
-      </Row>
+      </UpdatedRow>
     )
   }
 }

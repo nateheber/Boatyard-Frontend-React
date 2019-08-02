@@ -11,7 +11,6 @@ const DropdownMenu = styled.ul`
   &.show {
     display: block;
   }
-  z-index: 100;
   position: absolute;
   font-family: 'Source Sans Pro', sans-serif;
   display: none;
@@ -19,6 +18,7 @@ const DropdownMenu = styled.ul`
   background-color: white;
   position: absolute;
   width: 200px;
+  z-index: 1;
   padding: 0;
   &::before {
     height: 100%;
@@ -97,7 +97,7 @@ export class ActionDropdown extends React.Component {
         <ToggleButton
           title="ACTION"
           onClick={() => {
-            this.setState({ showMenu: true });
+            this.setState({ showMenu: !showMenu });
           }}
         />
         <DropdownMenu className={showMenu ? 'show' : 'hide'}>

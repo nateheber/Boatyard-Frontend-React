@@ -1,16 +1,8 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get, set } from 'lodash';
+import { get } from 'lodash';
 import { actionTypes } from '../actions/services';
-
-function refactorIncluded(included) {
-  let refactored = {};
-  for ( let i = 0; i < included.length; i += 1 ) {
-    const { type, id } = included[i]
-    set(refactored, `${type}.${id}`, {...included[i]})
-  }
-  return refactored;
-}
+import { refactorIncluded } from 'utils/basic';
 
 const initialState = {
   currentStatus: '',
@@ -61,11 +53,12 @@ export default handleActions(
     [actionTypes.FILTER_SERVICES_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
-        const { total, perPage, services } = payload;
+        const { total, perPage, services, included } = payload;
         draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
         draft.filteredServices = services;
+        draft.included = refactorIncluded(included);
       }),
     [actionTypes.FILTER_SERVICES_FAILURE]: (state, action) =>
       produce(state, draft => {

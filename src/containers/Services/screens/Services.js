@@ -1,39 +1,63 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { Col, Row } from 'react-flexbox-grid';
 import { withRouter } from 'react-router-dom';
+import { get, isEmpty } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
+import { actionTypes, GetServices, UpdateService, DeleteService } from 'store/actions/services';
 import Table from 'components/basic/Table';
 import { ServiceHeader } from 'components/compound/SectionHeader';
-
-import { GetServices } from 'store/actions/services';
-import { fetchCategories } from 'store/reducers/categories';
+import EditServiceModal from '../components/EditServiceModal';
+import { SearchBox } from 'components/basic/Input';
 
 const Wrapper = styled.div`
   height: 100%;
   background-color: white;
 `;
 
+const SearchSection = styled(Row)`
+  border-top: 1px solid #D5DBDE;
+  border-bottom: 1px solid #D5DBDE;
+  margin: 0 0 20px 0 !important;
+`;
+
+const SearchCotainer = styled(Col)`
+  padding: 24px 20px;
+  width: 305px;
+`;
+
 class Services extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sort: { col: 'name', direction: 'asc' }
+      keyword: '',
+      sort: { col: 'name', direction: 'asc' },
+      visibleOfEditServiceModal: false,
+      selectedService: {}
     };
   }
 
   componentDidMount() {
     this.loadPage(1);
-    this.props.fetchCategories();
   }
 
   loadPage = (page) => {
+    const { keyword } = this.state;
     const { GetServices } = this.props;
     const { sort } = this.state;
-    const params = {
+    const params = isEmpty(keyword) ? {
       page: page,
+      'service[discarded_at]': null,
       'service[sort]': sort.direction,
       'service[order]': sort.col
+    } : {
+      page: page,
+      'service[sort]': sort.direction,
+      'service[order]': sort.col,
+      'service[discarded_at]': null,
+      search_by_name: keyword
     };
     GetServices({ params });
   };
@@ -44,29 +68,81 @@ class Services extends React.Component {
     });
   }
 
-  toDetails = serviceId => {
-    this.props.history.push(`/service-details/?service=${serviceId}`);
+  handleInputChange = (keyword) => {
+    this.setState({ keyword }, () => {
+      this.loadPage(1);
+    });
+  }
+
+  toDetails = service => {
+    this.setState({ selectedService: service }, () => {
+      // this.props.history.push(`/service-details/?service=${service.id}`);
+      this.showEditModal();
+    })
   };
 
   createService = () => {
-    this.props.history.push(`/service-details/`);
+    this.props.history.push(`/services/new`);
   };
+
+  showEditModal = () => {
+    this.setState({ visibleOfEditServiceModal: true });
+  }
+
+  hideEditModal = () => {
+    this.setState({ visibleOfEditServiceModal: false });
+  }
+
+  deleteService = () => {
+    const { selectedService } = this.state;
+    const { page, DeleteService } = this.props;
+    DeleteService({
+      serviceId: get(selectedService, 'id'),
+      success: () => {
+        this.hideEditModal();
+        this.loadPage(page);
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+  }
+
+  updateService = (data) => {
+    const { selectedService } = this.state;
+    const { page, UpdateService } = this.props;
+    UpdateService({
+      serviceId: get(selectedService, 'id'),
+      data,
+      success: () => {
+        this.hideEditModal();
+        this.loadPage(page);
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+  }
 
   render() {
     const columns = [
-      { label: 'serivce name', value: 'name', sort: 'name' },
-      { label: 'price', value: 'cost', sort: 'cost', prefix: '$', isValue: true },
+      { label: 'service name', value: 'name', sort: 'name' },
+      { label: 'price', value: 'cost', sort: 'cost', prefix: '$', isValue: true, isCurrency: true },
       { label: 'price type', value: 'costType', sort: 'cost_type' }
     ];
 
-    const { services, loading, page, perPage, total } = this.props;
-    const { sort } = this.state;
+    const { services, currentStatus, page, perPage, total } = this.props;
+    const { sort, visibleOfEditServiceModal, selectedService } = this.state;
     const pageCount = Math.ceil(total/perPage);
     return (
       <Wrapper>
         <ServiceHeader onAdd={this.createService} />
+        <SearchSection>
+          <SearchCotainer>
+            <SearchBox placeholder="SEARCH SERVICES" onChange={this.handleInputChange} />
+          </SearchCotainer>
+        </SearchSection>
         <Table
-          loading={loading}
           columns={columns}
           records={services}
           sort={sort}
@@ -76,14 +152,22 @@ class Services extends React.Component {
           onPageChange={this.loadPage}
           toDetails={this.toDetails}
         />
+        {visibleOfEditServiceModal && <EditServiceModal
+          loading={currentStatus === actionTypes.UPDATE_SERVICE}
+          open={visibleOfEditServiceModal}
+          service={selectedService}
+          onClose={this.hideEditModal}
+          onDelete={this.deleteService}
+          onSave={this.updateService}
+        />}
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ service: { services, loading, page, perPage, total } }) => ({
+const mapStateToProps = ({ service: { services, currentStatus, page, perPage, total } }) => ({
   services,
-  loading,
+  currentStatus,
   page,
   perPage,
   total
@@ -91,7 +175,8 @@ const mapStateToProps = ({ service: { services, loading, page, perPage, total } 
 
 const mapDispatchToProps = {
   GetServices,
-  fetchCategories
+  UpdateService,
+  DeleteService
 };
 
 export default withRouter(

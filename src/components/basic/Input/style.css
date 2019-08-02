@@ -1,10 +1,3 @@
-.searchIcon {
-  color: white;
-}
-.searchIcon.secondary {
-  color: rgb(51, 51, 51);
-}
-
 .react-select-container {
   width: 100%;
   max-width: 100%;
@@ -65,3 +58,22 @@
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   padding: 0;
 }
+
+.switch-job {
+  border-radius: 6px !important;
+  background: none !important;
+  border: 1px solid rgb(169, 181, 187) !important;
+}
+
+.switch-job .react-switch-bg {
+  width: 58px !important;
+  margin: 0 -1px !important;
+}
+.switch-job .react-switch-handle {
+  background: #FFFFFF !important;
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0.12) 100%) !important;
+  border-radius: 6px !important;
+  top: 0 !important;
+  height: 28px !important;
+}
+

@@ -11,6 +11,7 @@ const TypeText = styled.div`
   font-size: 18px;
   color: rgb(7, 56, 75);
   font-weight: bold;
+  text-transform: capitalize;
 `;
 
 const Description = styled.div`
@@ -20,9 +21,9 @@ const Description = styled.div`
   font-weight: bold;
 `;
 
-export const TemplateItem = ({ type, description }) => (
+export const TemplateItem = ({ title, description }) => (
   <Wrapper>
-    <TypeText>{type}</TypeText>
+    <TypeText>{title}</TypeText>
     <Description>{description}</Description>
   </Wrapper>
 );

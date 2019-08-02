@@ -8,8 +8,10 @@ const refineServices = (services) => {
   return services.map(service => {
     return {
       id: service.id,
+      type: service.type,
       ...service.attributes,
-      ...service.relationships
+      // ...service.relationships,
+      relationships: service.relationships
     };
   });
 };
@@ -19,9 +21,8 @@ function* getServices(action) {
   let successType = actionTypes.GET_SERVICES_SUCCESS;
   let failureType = actionTypes.GET_SERVICES_FAILURE;
   const { params, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(serviceClient.list, params);
+    const result = yield call(serviceClient.list, params);
     const services = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
@@ -49,7 +50,7 @@ function* getServices(action) {
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -57,21 +58,27 @@ function* getServices(action) {
 function* getService(action) {
   const serviceClient = yield select(getServiceClient);
   const { serviceId, success, error } = action.payload;
-  let result = null;
   try {
-    result = yield call(serviceClient.read, serviceId);
+    const result = yield call(serviceClient.read, serviceId);
     const { data, included } = result;
+    const refinedData = {
+      id: data.id,
+      type: data.type,
+      ...data.attributes,
+      ...data.relationships
+    };
+
     yield put({
       type: actionTypes.GET_SERVICE_SUCCESS,
-      payload: data
+      payload: refinedData
     });
     if (success) {
-      yield call(success, data, included);
+      yield call(success, refinedData, included);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_SERVICE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -90,7 +97,7 @@ function* createService(action) {
   } catch (e) {
     yield put({ type: actionTypes.CREATE_SERVICE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -109,7 +116,7 @@ function* updateService(action) {
   } catch (e) {
     yield put({ type: actionTypes.UPDATE_SERVICE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
@@ -128,12 +135,12 @@ function* deleteService(action) {
   } catch (e) {
     yield put({ type: actionTypes.DELETE_SERVICE_FAILURE, payload: e });
     if (error) {
-      yield call(error);
+      yield call(error, e);
     }
   }
 }
 
-export default function* Profile() {
+export default function* ServiceSaga() {
   yield takeEvery(actionTypes.GET_SERVICES, getServices);
   yield takeEvery(actionTypes.FILTER_SERVICES, getServices);
   yield takeEvery(actionTypes.GET_SERVICE, getService);

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import InputMask from 'react-input-mask';
 import classNames from 'classnames';
+import NumberFormat from 'react-number-format';
 
 const ErrorMessage = styled.div`
   color: #f7941e !important;
@@ -25,15 +26,19 @@ const MaskInput = styled(InputMask)`
   padding: 0 15px;
   margin-bottom: 5px;
   border: 1px solid #dfdfdf;
-  height: 35px;
+  height: 30px;
   width: 100%;
-  border-radius: 5px !important;
+  border-radius: 6px !important;
   outline: none;
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
+  color: #555;
   &:disabled {
     background: #f1f1f1;
+  }
+  &.size-big {
+    height: 36px;
   }
 `;
 
@@ -53,18 +58,54 @@ export class Input extends React.Component {
   }
 }
 
+const NumberInput = styled(NumberFormat)`
+  position: relative;
+  background: #fff;
+  padding: 0 15px;
+  margin-bottom: 5px;
+  border: 1px solid #dfdfdf;
+  height: 30px;
+  width: 100%;
+  border-radius: 6px !important;
+  outline: none;
+  box-sizing: border-box;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14px;
+  color: #555;
+  &:disabled {
+    background: #f1f1f1;
+  }
+`;
+
+export class CurrencyInput extends React.Component {
+  render() {
+    const { hasError, errorMessage, hideError, ...rest } = this.props;
+    return (
+      <React.Fragment>
+        <NumberInput {...rest} />
+        { (!hideError && hasError) &&
+          <ErrorMessage className={classNames({ show: hasError })}>
+            {errorMessage}
+          </ErrorMessage>
+        }
+      </React.Fragment>
+    );
+  }
+}
+
 const Selector = styled.select`
   background: #fff;
   padding: 0 15px;
   margin-bottom: 5px;
   border: 1px solid #dfdfdf;
-  height: 35px;
+  height: 30px;
   width: 100%;
   border-radius: 5px !important;
   outline: none;
   box-sizing: border-box;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
+  color: #555;
   &:disabled {
     background: #f1f1f1;
   }

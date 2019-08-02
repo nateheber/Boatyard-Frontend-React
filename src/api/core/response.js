@@ -1,28 +1,50 @@
-import { get } from 'lodash';
+import { get, isEmpty, isArray, startCase } from 'lodash';
+import { camelize } from '@ridi/object-case-converter';
 
 import store from 'store';
-import { logout } from 'store/reducers/auth';
+import { Logout } from 'store/actions/auth';
 
 export const responseInterceptor = client => {
   client.interceptors.response.use((response) => {
-    const { perPage, total } = response.headers;
-    if (perPage || total) {
+    const perPage = get(response.headers, 'per-page');
+    const total = get(response.headers, 'total');
+    const isBoatyardAdmin = get(response.headers, 'boatyard-admin');
+    const unreadNotifications = get(response.headers, 'x-unread-notifications');
+    const data = camelize(response.data, { recursive: true });
+    if (perPage || total || isBoatyardAdmin || unreadNotifications) {
       return ({
         perPage,
         total,
-        data: get(response.data, 'data', []),
-        included: get(response.data, 'included', [])
+        isBoatyardAdmin,
+        unreadNotifications,
+        data: get(data, 'data', []),
+        included: get(data, 'included', [])
       });
     }
-    return response.data;
+    return data;
   }, (error) => {
     const errorData = get(error, 'response.data', {});
-    const message = get(error, 'response.data.message', '');
+    let message = 'Unknown Error';
+    if (errorData && !isEmpty(errorData)) {
+      message = get(error, 'response.data.message', '');
+      if (!(message && message.length > 0)) {
+        const keys = Object.keys(errorData);
+        if (keys.length > 0) {
+          message = `${startCase(keys[0])} ${get(errorData, `${keys[0]}`, '')}`;
+        } else {
+          message = errorData;
+        }
+      }
+    }
+    if(isArray(message) && message.length > 0) {
+      message = message[0];
+    }
     if (message === 'Signature has expired') {
-      store.dispatch(logout());
+      store.dispatch(Logout());
       return false;
     } else {
-      throw errorData;
+      const err = { message };
+      throw err;
     }
   });
   return client;
@@ -30,7 +52,7 @@ export const responseInterceptor = client => {
 
 export const spreedlyResponseInterceptor = client => {
   client.interceptors.response.use((response) => {
-    return response.data;
+    return camelize(response.data, { recursive: true });
   }, (error) => {
     return get(error, 'response.data.errors', []);
   });

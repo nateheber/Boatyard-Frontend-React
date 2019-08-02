@@ -17,8 +17,8 @@ class Services extends React.Component {
   componentDidMount() {
     this.props.GetBoats({ params: { page: 1 } });
   }
-  toDetails = boatId => {
-    this.props.history.push(`/boat-details/?boat=${boatId}`);
+  toDetails = boat => {
+    this.props.history.push(`/boat-details/?boat=${boat.id}`);
   };
   createService = () => {
     this.props.history.push(`/boat-details/`);

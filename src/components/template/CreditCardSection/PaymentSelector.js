@@ -11,22 +11,18 @@ const Title = styled.div`
   color: #07384b;
   margin-top: 0;
   margin-bottom: 20px;
+  font-size: 14px;
 `;
 
-const options = ['cache', 'check']
+const options = ['cash', 'check']
 
 export default class PaymentOptionSelector extends React.Component {
-  state = {
-    selected: ''
-  }
-
   onSelect = (selected) => {
-    this.setState({ selected })
-    this.props.onChange(selected)
-  }
+    this.props.onChange(selected);
+  };
 
   render() {
-    const { selected } = this.state;
+    const { selected } = this.props;
     return (
       <Wrapper>
         <Title>Payment Method</Title>

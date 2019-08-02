@@ -1,6 +1,9 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+
+import { SetRefreshFlag } from 'store/actions/auth';
 
 const NavItem = styled.li`
   display: block;
@@ -9,7 +12,7 @@ const NavItem = styled.li`
   border: 0px;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #aaa2aa !important;
+  border-bottom: 1px solid #AAA2AA;
   font-family: 'Montserrat', sans-serif;
 `;
 
@@ -18,14 +21,14 @@ const Link = styled.a`
   flex-flow: column;
   justify-content: center;
   align-items: center;
-  padding: 15px 0px !important;
-  text-decoration: none !important;
+  padding: 15px 0px;
+  text-decoration: none;
   &:hover {
-    background-color: #00485e !important;
+    background-color: #F5F5F5;
     cursor: pointer;
   }
   &.active {
-    background-color: #00485e !important;
+    background-color: #F5F5F5;
   }
   @media (max-width: 1091px) {
     transition: 0.3s;
@@ -49,7 +52,7 @@ const Title = styled.span`
   text-align: center;
   margin-top: 5px;
   box-sizing: border-box;
-  color: #b4bcc8;
+  color: #9CAFB7;
   font-size: 13px;
   line-height: 18px;
   font-weight: 500;
@@ -58,10 +61,10 @@ const Title = styled.span`
     font-size: 10px !important;
   }
   &.active {
-    color: white;
+    color: #07384B;
   }
   ${Link}:hover &.active {
-    color: #b4bcc8;
+    // color: #b4bcc8;
   }
 `;
 
@@ -98,44 +101,58 @@ const SubMenuItem = styled.a`
     font-size: 10px !important;
   }
   &.active {
-    color: #f7941e;
+    color: #07384B;
   }
 `;
 
-const NavComp = ({
-  mainImage,
-  activeImage,
-  isActive,
-  title,
-  link,
-  subItems,
-  history,
-  location: { pathname }
-}) => {
-  const className = isActive ? 'active' : 'deactive';
-  return (
-    <NavItem>
-      <Link onClick={() => { if (link) history.push(link); }} className={className} >
-        <NavIcon className={className} mainImage={mainImage} activeImage={activeImage} />
-        <Title className={className} >{title}</Title>
-      </Link>
-      {subItems && (
-        <SubHeader>
-          {subItems.map((item, idx) => (
-            <SubMenuItem
-              className={item.link === pathname ? 'active' : 'deactive'}
-              key={`sub_item_${idx}`}
-              onClick={() => {
-                history.push(item.link);
-              }}
-            >
-              {item.title}
-            </SubMenuItem>
-          ))}
-        </SubHeader>
-      )}
-    </NavItem>
-  );
+class NavComponent extends React.Component {
+  handleClick = () => {
+    const { link, location: { pathname }, history, SetRefreshFlag } = this.props;
+    if (link === pathname) {
+      SetRefreshFlag({ flag: true });
+    } else {
+      history.push(link);
+    }
+  };
+  render () {
+    const {
+      mainImage,
+      activeImage,
+      isActive,
+      title,
+      subItems,
+      history,
+      location: { pathname }
+    } = this.props;
+    const className = isActive ? 'active' : 'deactive';
+    return (
+      <NavItem>
+        <Link onClick={this.handleClick} className={className} >
+          <NavIcon className={className} mainImage={mainImage} activeImage={activeImage} />
+          <Title className={className} >{title}</Title>
+        </Link>
+        {subItems && (
+          <SubHeader>
+            {subItems.map((item, idx) => (
+              <SubMenuItem
+                className={item.link === pathname ? 'active' : 'deactive'}
+                key={`sub_item_${idx}`}
+                onClick={() => {
+                  history.push(item.link);
+                }}
+              >
+                {item.title}
+              </SubMenuItem>
+            ))}
+          </SubHeader>
+        )}
+      </NavItem>
+    );
+  }
+}
+
+const mapDispatchToProps = {
+  SetRefreshFlag
 };
 
-export const SideBarItem = withRouter(NavComp);
+export const SideBarItem = withRouter(connect(null, mapDispatchToProps)(NavComponent));

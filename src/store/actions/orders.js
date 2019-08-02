@@ -37,6 +37,10 @@ export const actionTypes = {
   UPDATE_ORDER_SUCCESS: '[ORDERS] - Update order Success',
   UPDATE_ORDER_FAILURE: '[ORDERS] - Update order Failure',
 
+  DISPATCH_ORDER: '[ORDERS] - Dispatch Order',
+  DISPATCH_ORDER_SUCCESS: '[ORDERS] - Dispatch order Success',
+  DISPATCH_ORDER_FAILURE: '[ORDERS] - Dispatch order Failure',
+
   DELETE_ORDER: '[ORDERS] - Delete order',
   DELETE_ORDER_SUCCESS: '[ORDERS] - Delete order Success',
   DELETE_ORDER_FAILURE: '[ORDERS] - Delete order Failure',
@@ -44,6 +48,18 @@ export const actionTypes = {
   ACCEPT_ORDER: '[ORDERS] - Accept order',
   ACCEPT_ORDER_SUCCESS: '[ORDERS] - Accept order success',
   ACCEPT_ORDER_FAILURE: '[ORDERS] - Accept order failure',
+
+  SEND_QUOTE: '[ORDERS] - Send quote',
+  SEND_QUOTE_SUCCESS: '[ORDERS] - Send quote success',
+  SEND_QUOTE_FAILURE: '[ORDERS] - Send quote failure',
+
+  SEND_INVOICE: '[ORDERS] - Send invoice',
+  SEND_INVOICE_SUCCESS: '[ORDERS] - Send invoice success',
+  SEND_INVOICE_FAILURE: '[ORDERS] - Send invoice failure',
+
+  SET_DISPATCHED_FLAG: '[ORDERS] - Set Dispatched Flag',
+
+  UPDATE_SELECTED_COLUMNS: '[ORDERS] - Update Selected Columns',
 };
 
 export const GetOrders = createAction(actionTypes.GET_ORDERS, payload => payload);
@@ -89,3 +105,19 @@ export const DeleteOrderFailure = createAction(actionTypes.DELETE_ORDER_FAILURE)
 export const AcceptOrder = createAction(actionTypes.ACCEPT_ORDER, payload => payload);
 export const AcceptOrderSuccess = createAction(actionTypes.ACCEPT_ORDER_SUCCESS);
 export const AcceptOrderFailure = createAction(actionTypes.ACCEPT_ORDER_FAILURE);
+
+export const DispatchOrder = createAction(actionTypes.DISPATCH_ORDER, payload => payload);
+export const DispatchOrderSuccess = createAction(actionTypes.DISPATCH_ORDER_SUCCESS);
+export const DispatchOrderFailure = createAction(actionTypes.DISPATCH_ORDER_FAILURE);
+
+export const SendQuote = createAction(actionTypes.SEND_QUOTE, payload => payload);
+export const SendQuoteSuccess = createAction(actionTypes.SEND_QUOTE_SUCCESS);
+export const SendQuoteFailure = createAction(actionTypes.SEND_QUOTE_FAILURE);
+
+export const SendInvoice = createAction(actionTypes.SEND_INVOICE, payload => payload);
+export const SendInvoiceSuccess = createAction(actionTypes.SEND_INVOICE_SUCCESS);
+export const SendInvoiceFailure = createAction(actionTypes.SEND_INVOICE_FAILURE);
+
+export const SetDispatchedFlag = createAction(actionTypes.SET_DISPATCHED_FLAG);
+
+export const UpdateSelectedColumns = createAction(actionTypes.UPDATE_SELECTED_COLUMNS, payload => payload);

@@ -9,6 +9,7 @@ import { refinedOrdersSelector } from 'store/selectors/orders'
 import { NewOrderSection } from 'components/basic/SubSection';
 import { OrderTable } from 'components/basic/Order';
 import { HollowButton } from 'components/basic/Buttons'
+import { getCustomerName } from 'utils/order';
 
 const Wrapper = styled.div`
   background-color: #fff;
@@ -20,48 +21,80 @@ const Wrapper = styled.div`
 `;
 
 class NewOrders extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state ={
+      loaded: false,
+      total: 0,
+      orders: []
+    };
+  }
 
   componentDidMount() {
-    this.props.GetNewOrders({
+    const { GetNewOrders } = this.props;
+    GetNewOrders({
       params: {
         page: 1,
         per_page: 5,
-        'order[state]': 'draft',
-        'order[sort]': 'desc',
-        'order[order]': 'created_at'
+        'order[order]': 'provider_order_sequence',
+        'order[sort]': 'desc'
       }
     });
   }
 
   render() {
-    const { orders, total, history } = this.props;
+    const { history, total, orders, privilege } = this.props;
+    let newOrders = orders;
+    if (total > 5) {
+      newOrders = orders.slice(0, 5);
+    }
+    const processedOrders = (newOrders || []).map(order => {
+      let name = `Order #${order.id}`;
+      let customerName = getCustomerName(order, privilege);
+      if (order.state === 'dispatched' || order.state === 'assigned') {
+        name = '_';
+        customerName = '_';
+      } else if (order.providerOrderSequence) {
+        name = `Order #${order.providerOrderSequence}`;
+      }
+      return {
+        ...order,
+        customerName,
+        name
+      };
+    });
     const columns = [
-      { label: 'ORDER', value: 'id', isTitle: true, type: 'new', link: true },
-      { label: 'CUSTOMER', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName' },
+      { label: 'ORDER', value: 'name', isTitle: true, type: 'new', link: true },
+      {
+        label: 'CUSTOMER',
+        value: ['customerName'],
+        isCustomer: true,
+        // type: 'new-customer'
+      },
       { label: 'SERVICE', value: 'relationships.service.attributes.name' },
       { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' },
       { label: 'BOAT MAKE', value: 'relationships.boat.attributes.make' },
-      { label: 'ORDER STATUS', value: 'status' }
+      { label: 'ORDER STATUS', value: 'stateAlias' }
     ];
-
     return (
       <Wrapper>
-      <NewOrderSection count={total} />
+      <NewOrderSection count={total >= 5 ? 5 : total } />
       <OrderTable
         columns={columns}
-        items={orders}
+        items={processedOrders}
       />
-      <HollowButton className="btn-view-all" onClick={() => history.push('/orders/')}>
+      {total > 5 && <HollowButton className="btn-view-all" onClick={() => history.push('/orders/')}>
         VIEW ALL
-      </HollowButton>
+      </HollowButton>}
     </Wrapper>  
     );
   }
 }
 
 const mapStateToProps = state => ({
-  total: get(state, 'order.newOrders.total'),
-  orders: refinedOrdersSelector(state, 'new')
+  total: get(state, 'order.newOrders.total', 0),
+  orders: refinedOrdersSelector(state, 'new'),
+  privilege: get(state, 'auth.privilege')
 });
 
 const mapDispatchToProps = {
