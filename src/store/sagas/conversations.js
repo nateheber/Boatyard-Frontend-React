@@ -48,12 +48,10 @@ function* getConversation(action) {
   try {
     const result = yield call(apiClient.get, `/conversations/${conversationId}/messages`, params);
     const { data, included, perPage, total } = result;
-    if (!onlyCallback) {
-      yield put({
-        type: actionTypes.GET_CONVERSATION_SUCCESS,
-        payload: { data, included, perPage, total }
-      });
-    }
+    yield put({
+      type: actionTypes.GET_CONVERSATION_SUCCESS,
+      payload: { data, included, perPage, total }
+    });
     if (success) {
       yield call(success, { data, included });
     }

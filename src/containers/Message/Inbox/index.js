@@ -32,7 +32,7 @@ class Inbox extends React.Component {
 
   onShowItem = id => {
     const { GetConversation } = this.props;
-    GetConversation({ conversationId: id });
+    GetConversation({ conversationId: id, first: true });
     this.setState({
       createNew: false,
       showContent: true,
