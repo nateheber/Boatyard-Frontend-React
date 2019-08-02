@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
+import { get } from 'lodash';
 import { GetNetworks } from 'store/actions/networks';
 import { GetConversations, GetConversation } from 'store/actions/conversations';
 import { refinedNetworkSelector } from 'store/selectors/network';
@@ -32,7 +32,7 @@ class Inbox extends React.Component {
 
   onShowItem = id => {
     const { GetConversation } = this.props;
-    GetConversation({ conversationId: id, first: true });
+    this.state.showing && GetConversation({ conversationId: id, first: true });
     this.setState({
       createNew: false,
       showContent: true,
@@ -48,7 +48,7 @@ class Inbox extends React.Component {
 
   render() {
     const { showContent, showing, createNew } = this.state;
-    const { conversations } = this.props;
+    const { conversations, sideBarActive } = this.props;
     return (
       <MessageBasic
         left={
@@ -64,7 +64,7 @@ class Inbox extends React.Component {
           />
         }
         right={
-          <InboxContent
+          sideBarActive ? <></> : <InboxContent
             createNew={createNew}
             empty={!(showing >= 0)}
             conversationId={showing}
@@ -81,6 +81,7 @@ class Inbox extends React.Component {
 const mapStateToProps = (state) => ({
   ...refinedNetworkSelector(state),
   ...refinedConversationSelector(state),
+  sideBarActive: get(state, 'conversation.ui.opened') && (get(state, 'conversation.ui.selected', -1) > -1),
 })
 
 const mapDispatchToProps = {

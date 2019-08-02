@@ -64,10 +64,13 @@ class ChatContent extends React.Component {
   componentDidMount() {
     const { GetConversation, conversationId } = this.props;
     GetConversation({ conversationId, first: true });
-    const timerId = setInterval(() => {
-      GetConversation({ conversationId, first: false });
-    }, 3000);
+    const timerId = setInterval(this.reloadMessages, 5000);
     this.setState({ timerId });
+  }
+
+  reloadMessages = () => {
+    const { GetConversation, conversationId, active } = this.props;
+    active && GetConversation({ conversationId, first: false });
   }
 
   componentWillUnmount() {
@@ -151,6 +154,7 @@ class ChatContent extends React.Component {
 const mapStateToProps = (state) => ({
   profile: profileSelector(state),
   curConversation: refinedMessageSelector(state),
+  active: get(state, 'conversation.ui.opened') && (get(state, 'conversation.ui.selected', -1) > -1),
   loading: state.conversation.message.loading,
 })
 

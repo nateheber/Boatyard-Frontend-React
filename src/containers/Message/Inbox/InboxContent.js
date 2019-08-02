@@ -27,26 +27,20 @@ class InboxContent extends React.Component {
     timerId: -1,
   };
 
-  componentDidUpdate(prevProps) {
-    const { conversationId } = this.props;
-    const _this = this;
-    if (prevProps.conversationId !== conversationId) {
-      if (conversationId !== -1) {
-        clearInterval(this.state.timerId);
-        const timerId = setInterval(() => {
-          _this.loadConversation();
-        }, 3000);
-        this.setState({ timerId });
-      }
-    }
+  componentWillMount() {
+    this.loadConversation(true);
+    const timerId = setInterval(this.loadConversation, 5000);
+    this.setState({ timerId });
   }
 
-  loadConversation = () => {
+  loadConversation = (first) => {
     const { conversationId, GetConversation } = this.props;
-    GetConversation({
-      conversationId,
-      onlyCallback: true
-    });
+    if (conversationId !== -1) {
+      GetConversation({
+        conversationId,
+        first
+      });
+    }
   }
 
   componentWillUnmount() {
