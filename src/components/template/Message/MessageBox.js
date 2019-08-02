@@ -11,6 +11,7 @@ const Wrapper = styled.div`
   flex-grow: 1;
   overflow-y: scroll;
   padding-bottom: 20px;
+  position: relative;
 `;
 
 export class MessageBox extends React.Component {
@@ -33,9 +34,13 @@ export class MessageBox extends React.Component {
   }
 
   render() {
-    const { chatHistory, secondary, loading } = this.props;
-    return loading ? <LoadingSpinner color="white" /> : (
+    const { chatHistory, secondary, loading, inBox } = this.props;
+    if (loading && !inBox) {
+      return <LoadingSpinner color="white" />
+    }
+    return (
       <Wrapper>
+        { loading && <LoadingSpinner color="#0D485F" opacity={0}/> }
         {chatHistory.map((chat, key) => (
           <ChatItem secondary={secondary} {...chat} key={`chat_${key}`} />
         ))}

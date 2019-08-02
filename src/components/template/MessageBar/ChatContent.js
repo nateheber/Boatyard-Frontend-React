@@ -2,13 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { isEmpty, get } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { MessageBox } from 'components/template/Message/MessageBox';
 import ChatBox from 'components/template/Message/ChatBox';
 
 import { GetConversation, CreateMessage } from 'store/actions/conversations';
-import { profileSelector } from 'store/selectors/conversations';
-import { refineMessage } from 'utils/conversations';
+import { profileSelector, refinedMessageSelector } from 'store/selectors/conversations';
 
 import BackImage from 'resources/back.svg';
 
@@ -59,48 +59,27 @@ const RecipientName = styled.div`
 class ChatContent extends React.Component {
   state = {
     timerId: -1,
-    messages: [],
-    included: [],
-    loading: false,
-    isMounted: false,
   }
 
   componentDidMount() {
-    this.updateConversation(true);
-    const timerId = setInterval(() => {
-      this.updateConversation();
-    }, 3000);
-    this.setState({ timerId, isMounted: true });
+    const { GetConversation, conversationId } = this.props;
+    GetConversation({ conversationId, first: true });
+    const timerId = setInterval(this.reloadMessages, 5000);
+    this.setState({ timerId });
+  }
+
+  reloadMessages = () => {
+    const { GetConversation, conversationId, active } = this.props;
+    active && GetConversation({ conversationId, first: false });
   }
 
   componentWillUnmount() {
     const { timerId } = this.state;
-    this.setState({ isMounted: false });
     clearInterval(timerId);
   }
 
-  updateConversation = (first = false) => {
-    const { conversationId, GetConversation, profile, auth, showMessage } = this.props;
-    if (first) {
-      this.setState({ loading: true });
-    }
-    if (showMessage) {
-      GetConversation({
-        conversationId,
-        onlyCallback: true,
-        success: (messages) => {
-          const { isMounted } = this.state;
-          if (isMounted) {
-            this.setState({ ...refineMessage(profile, messages, auth), loading: false });
-          }
-        }
-      });
-    }
-  }
-
   getRecipientInfo = () => {
-    const { conversationId } = this.props;
-    const { included } = this.state;
+    const { conversationId, curConversation: {included} } = this.props;
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const { id } = recipientInfo;
@@ -111,8 +90,7 @@ class ChatContent extends React.Component {
   }
 
   getRecipientName = () => {
-    const { conversationId } = this.props;
-    const { included } = this.state;
+    const { conversationId, curConversation: {included} } = this.props;
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const id = get(recipientInfo, 'id');
@@ -148,13 +126,13 @@ class ChatContent extends React.Component {
           file: get(data, 'image')
         }
       },
+      error: (e) => toastr.error('Error', e.message),
       success: this.onSendingSuccess
     });
   }
 
   render() {
-    const { onBack } = this.props;
-    const { messages, loading } = this.state;
+    const { onBack, loading, curConversation: { messages } } = this.props;
     const recipientName = this.getRecipientName();
     return (
       <React.Fragment>
@@ -175,8 +153,9 @@ class ChatContent extends React.Component {
 
 const mapStateToProps = (state) => ({
   profile: profileSelector(state),
-  auth: state.auth,
-  showMessage: get(state, 'conversation.ui.opened', false),
+  curConversation: refinedMessageSelector(state),
+  active: get(state, 'conversation.ui.opened') && (get(state, 'conversation.ui.selected', -1) > -1),
+  loading: state.conversation.message.loading,
 })
 
 const mapDispatchToProps = {

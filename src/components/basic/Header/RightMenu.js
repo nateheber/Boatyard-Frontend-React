@@ -256,6 +256,7 @@ class MenuUI extends React.Component {
     document.addEventListener('mousedown', this.handleClickOutside);
     this.reloadNotifications();
     this.timerId = window.setInterval(this.reloadNotifications, 30*1000);
+    this.props.SetMessageBarUIStatus({opened: false, selected: -1});
   }
 
   reloadNotifications = () => {
@@ -411,7 +412,7 @@ class MenuUI extends React.Component {
               }
             </DropdownMenu>
           </DropdownItem>
-          <IconItem ref={messageToggleRef} className="hide-on-mobile" onClick={toggleMessage}>
+          <IconItem ref={messageToggleRef} className="hide-on-mobile" onClick={toggleMessage} id="msgIcon">
             <Icon width={32} height={20} src={MessageBox} alt="message" />
           </IconItem>
         </MenuWrapper>

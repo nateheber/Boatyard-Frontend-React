@@ -29,7 +29,7 @@ export default class LoadingSpinner extends React.Component {
         <SpinnerOverlay 
           style={{
             backgroundColor: backgroundColor || '#000',
-            opacity: opacity || 0.2
+            opacity: typeof(opacity) === 'undefined' ? 0.2 : opacity,
           }}
         />
         <ClipLoader

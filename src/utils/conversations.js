@@ -47,7 +47,7 @@ export const parseMessageDetails = (profile, message, included, auth) => {
 };
 
 export const refineMessage = (profile, currentConversation, auth) => {
-  if(isEmpty(currentConversation))
+  if(isEmpty(currentConversation) || isEmpty(currentConversation.included))
       return { messages: [] };
     const { data, included } = currentConversation;
     const parsedIncluded = parseIncludedForMessages(included);
