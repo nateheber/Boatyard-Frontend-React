@@ -82,7 +82,16 @@ class MessageBar extends React.Component {
 
   handleClickOutside = (event) => {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      this.props.SetMessageBarUIStatus({opened: false});
+      let flag = false;
+      let elem = event.target;
+      while(!flag && elem && elem.tagName.toLowerCase() !== 'body') {
+        if (elem.getAttribute('id') === 'msgIcon') {
+          flag = true;
+        }
+        elem = elem.parentNode;
+      }
+
+      !flag && this.props.SetMessageBarUIStatus({opened: false});
     }
   }
 

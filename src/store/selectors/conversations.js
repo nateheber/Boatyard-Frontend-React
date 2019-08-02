@@ -5,7 +5,7 @@ import { refineMessage } from 'utils/conversations';
 
 export const conversationsSelector = (state) => state.conversation.conversations;
 export const includedSelector = (state) => state.conversation.included;
-export const currentConversationSelector = (state) => state.conversation.currentConversation;
+export const currentConversationSelector = (state) => state.conversation.message;
 export const privilegeSelector = (state) => state.auth.privilege;
 export const profileSelector = (state) => state.profile;
 export const authSelector = (state) => state.auth;

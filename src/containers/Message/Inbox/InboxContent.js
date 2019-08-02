@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
-
+import { toastr } from 'react-redux-toastr';
 import { MessageEmptyState } from 'components/basic/Message';
 import {
   MessageBox,
@@ -10,9 +10,8 @@ import {
 } from '../components';
 import NewMessage from '../components/NewMessage';
 import { InboxContentHeader } from '../components/MessageHeader';
-import { profileSelector } from 'store/selectors/conversations';
+import { profileSelector, refinedMessageSelector } from 'store/selectors/conversations';
 import { GetConversation, CreateMessage } from 'store/actions/conversations';
-import { refineMessage } from 'utils/conversations';
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,46 +25,22 @@ const Wrapper = styled.div`
 class InboxContent extends React.Component {
   state = {
     timerId: -1,
-    messages: [],
-    included: []
   };
 
-  // componentDidMount() {
-  //   const { conversationId } = this.props;
-  //   const _this = this;
-  //   if (conversationId !== -1) {
-  //     const timerId = setInterval(() => {
-  //       _this.loadConversation();
-  //     }, 3000);
-  //     this.setState({ timerId });
-  //   }
-  // }
-
-  componentDidUpdate(prevProps) {
-    const { conversationId } = this.props;
-    const _this = this;
-    if (prevProps.conversationId !== conversationId) {
-      if (conversationId !== -1) {
-        const { timerId: curTimerId } = this.state;
-        this.setState({ messages: [] });
-        clearInterval(curTimerId);
-        const timerId = setInterval(() => {
-          _this.loadConversation();
-        }, 3000);
-        this.setState({ timerId });
-      }
-    }
+  componentWillMount() {
+    this.loadConversation(true);
+    const timerId = setInterval(this.loadConversation, 5000);
+    this.setState({ timerId });
   }
 
-  loadConversation = () => {
-    const { conversationId, GetConversation, profile, auth } = this.props;
-    GetConversation({
-      conversationId,
-      onlyCallback: true,
-      success: (messages) => {
-        this.setState({ ...refineMessage(profile, messages, auth) });
-      }
-    });
+  loadConversation = (first) => {
+    const { conversationId, GetConversation } = this.props;
+    if (conversationId !== -1) {
+      GetConversation({
+        conversationId,
+        first
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -74,8 +49,7 @@ class InboxContent extends React.Component {
   }
 
   getRecipientInfo = () => {
-    const { conversationId } = this.props;
-    const { included } = this.state;
+    const { conversationId, curConversation: {included} } = this.props;
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const { id } = recipientInfo;
@@ -101,14 +75,15 @@ class InboxContent extends React.Component {
           file: get(data, 'image')
         }
       },
+      error: (e) => toastr.error('Error', e.message),
       success: this.onSendingSuccess
     });
   }
 
 
   render() {
-    const { empty, onBack, createNew } = this.props;
-    const { messages } = this.state;
+    
+    const { empty, onBack, createNew, curConversation: {messages}, loading } = this.props;
     return createNew ? (
       <Wrapper>
         <InboxContentHeader onBack={onBack} name="New Message" />
@@ -126,7 +101,7 @@ class InboxContent extends React.Component {
         <InboxContentHeader
           onBack={onBack}
         />
-        <MessageBox chatHistory={messages} />
+        <MessageBox chatHistory={messages} loading={loading} inBox/>
         <ChatBox onSend={this.onSend} />
       </Wrapper>
     );
@@ -135,7 +110,8 @@ class InboxContent extends React.Component {
 
 const mapStateToProps = (state) => ({
   profile: profileSelector(state),
-  auth: state.auth
+  curConversation: refinedMessageSelector(state),
+  loading: state.conversation.message.loading,
 })
 
 const mapDispatchToProps = {

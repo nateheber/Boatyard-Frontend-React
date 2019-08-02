@@ -1,5 +1,5 @@
 import React from 'react';
-import { find, get } from 'lodash';
+import { find } from 'lodash';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
@@ -59,7 +59,6 @@ const LocationWrapper = styled.div`
 class MainPageTemplate extends React.Component {
   state = {
     showSidebar: false,
-    // showMessage: false,
   };
   
   toggleMenu = () => {
@@ -69,7 +68,7 @@ class MainPageTemplate extends React.Component {
     });
   };
 
-  toggleMessage = () => {
+  toggleMessage() {
     const { GetNetworks, GetConversations, showMessage, SetMessageBarUIStatus } = this.props;
     if (!showMessage) {
       GetNetworks({ params: { page: 1, per_page: 1000 } });
@@ -112,10 +111,10 @@ class MainPageTemplate extends React.Component {
     const { showSidebar } = this.state;
     const { privilege, accessRole, providerLocationId, locationName, showMessage } = this.props;
     const isProvider = privilege === 'provider';
-
+    console.log(showMessage);
     return (
       <Wrapper>
-        <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={this.toggleMessage} />
+        <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={() => this.props.SetMessageBarUIStatus({opened: !showMessage})} />
         <PageContent>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
@@ -140,7 +139,7 @@ const mapStateToProps = (state) => ({
   providerLocationId: state.auth.providerLocationId,
   providerId: state.auth.providerId,
   providers: state.provider.providers,
-  showMessage: get(state, 'conversation.ui.opened', false),
+  showMessage: state.conversation.ui.opened,
 });
 
 const mapDispatchToProps = {
