@@ -85,7 +85,7 @@ const currentOrderSelector = state => {
           order.relationships[key] = get(included, `[${value.type}][${value.id}]`);
           if (key === 'boat') {
             const location = get(order.relationships[key], 'relationships.location.data');
-            const locationInfo = get(included, `[${location.type}][${location.id}]`);
+            const locationInfo = location ? get(included, `[${location.type}][${location.id}]`) : {};
             set(order, `relationships[${key}].location`, locationInfo )
           }
         }

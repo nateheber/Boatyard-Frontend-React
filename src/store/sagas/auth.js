@@ -98,7 +98,10 @@ function* userPermissionRequest(action) {
           }
         }
       );
-      const accessRole = find(data, d => d.attributes.access === 'owner') ? 'provider' : 'team';
+      const accessRole = find(
+        data, 
+        d => !d.attributes.provider_location_id && (d.attributes.access === 'admin' || d.attributes.access === 'owner')
+       ) ? 'provider' : 'team';
       const profile = yield select(profileSelector);
       let provider_id = parseInt(get(res.data[0], 'relationships.provider.data.id', undefined));
       let provider_location_id = undefined;
