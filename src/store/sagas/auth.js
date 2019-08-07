@@ -118,7 +118,7 @@ function* userPermissionRequest(action) {
       }
       
       result = yield call(escalationClient.post, '/users/escalations', {
-        escalation: { user_id: parseInt(profile.id), provider_id, provider_location_id }
+        escalation: { provider_id: provider_location_id ? undefined : provider_id, provider_location_id }
       });
       yield put({
         type: actionTypes.SET_PROVIDER_INFO,
