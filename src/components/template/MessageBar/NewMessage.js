@@ -1,14 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, filter } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
 import ChatBox from 'components/template/Message/ChatBox';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 import MessageCustomerOption from 'components/basic/MessageCustomerOption';
-
-import { refinedNetworkSelector } from 'store/selectors/network';
+import CustomerOptionValue from 'components/basic/CustomerOptionValue';
+import { refinedNetworkSelector, getRecipients } from 'store/selectors/network';
 import { CreateNetwork } from 'store/actions/networks';
 import { CreateMessage } from 'store/actions/conversations';
 import {
@@ -119,18 +119,21 @@ class NewMessage extends React.Component {
   }
 
   loadOptions = val => {
-    return this.onChangeUserFilter(val)
-      .then((filtered) => {
-        return filtered.map(user => {
-          const value = get(user, 'id');
-          const label = `${get(user, 'firstName')} ${get(user, 'lastName')}`;
-          const type = get(user, 'type');
-          const email = get(user, 'email');
-          return { value, label, email, type };
-        });
-      }, () => {
-        return [];
-      });
+    return new Promise((resolve, reject) => {
+      const { recipients } = this.props;
+      if (!val || val.length === 0) {
+        resolve(recipients.slice(0, 15));
+      }
+      const v = val.toLowerCase();
+      
+      resolve(
+        filter(
+          recipients, 
+          r => `${r.firstName.toLowerCase()} ${r.lastName.toLowerCase()}`.indexOf(v) > -1 
+                    || r.email.toLowerCase().indexOf(v) > -1
+        )
+      );
+    });
   };
 
   getSenderInfo = () => {
@@ -141,9 +144,9 @@ class NewMessage extends React.Component {
   }
 
   getRecipientInfo = (user) => {
-    const { value, type } = user;
+    const { id, type } = user;
     const parsedType = parseUserType(type);
-    return { recipient_id: value, recipient_type: parsedType };
+    return { recipient_id: id, recipient_type: parsedType };
   }
 
   onChangeUserFilter = val => {
@@ -235,14 +238,14 @@ class NewMessage extends React.Component {
           <InputLabel>To:</InputLabel>
           <Select
             // isMulti
-            cacheOptions
             defaultOptions
             components={{
               Option: MessageCustomerOption,
+              SingleValue: CustomerOptionValue
               // MultiValueLabel
             }}
             loadOptions={this.loadOptions}
-            onInputChange={this.onChangeUserFilter}
+            onInputChange={this.loadOptions}
             styles={selectorStyle}
             onChange={this.onChangeUser}
             value={users}
@@ -256,6 +259,7 @@ class NewMessage extends React.Component {
 
 const mapStateToProps = (state) => ({
   ...refinedNetworkSelector(state),
+  recipients: getRecipients(state),
   currentCustomerStatus: state.childAccount.currentStatus,
   profile: state.profile,
   provider: state.provider.loggedInProvider,

@@ -1,14 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, filter } from 'lodash';
 import { Row, Col } from 'react-flexbox-grid';
 
 import { BoatyardSelect } from 'components/basic/Dropdown';
 import CustomerOption from 'components/basic/CustomerOption';
 import ChatBox from 'components/template/Message/ChatBox';
 
-import { refinedNetworkSelector } from 'store/selectors/network';
+import { refinedNetworkSelector, getRecipients } from 'store/selectors/network';
 import { CreateNetwork } from 'store/actions/networks';
 import { CreateMessage } from 'store/actions/conversations';
 import {
@@ -104,12 +104,21 @@ class NewMessage extends React.Component {
   }
 
   loadOptions = val => {
-    return this.onChangeUserFilter(val)
-      .then((filtered) => {
-        return filtered;
-      }, () => {
-        return [];
-      });
+    return new Promise((resolve, reject) => {
+      const { recipients } = this.props;
+      if (!val || val.length === 0) {
+        resolve(recipients.slice(0, 15));
+      }
+      const v = val.toLowerCase();
+      
+      resolve(
+        filter(
+          recipients, 
+          r => `${r.firstName.toLowerCase()} ${r.lastName.toLowerCase()}`.indexOf(v) > -1 
+                    || r.email.toLowerCase().indexOf(v) > -1
+        )
+      );
+    });
   };
 
   getSenderInfo = () => {
@@ -197,6 +206,7 @@ class NewMessage extends React.Component {
 
   render() {
     const { users } = this.state;
+
     return (
       <React.Fragment>
         <InputWrapper>
@@ -226,6 +236,7 @@ class NewMessage extends React.Component {
 
 const mapStateToProps = (state) => ({
   ...refinedNetworkSelector(state),
+  recipients: getRecipients(state),
   currentCustomerStatus: state.childAccount.currentStatus,
   profile: state.profile,
   provider: state.provider.loggedInProvider,
