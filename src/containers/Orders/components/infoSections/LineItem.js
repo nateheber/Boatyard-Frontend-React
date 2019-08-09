@@ -7,7 +7,6 @@ import { Row, Col } from 'react-flexbox-grid';
 
 import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
-import { BoatyardSelect } from 'components/basic/Dropdown';
 import ServiceDropdown from '../basic/ServiceDropdown';
 
 const Record = styled.div`
