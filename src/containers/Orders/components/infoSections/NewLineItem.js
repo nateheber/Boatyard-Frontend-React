@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
-import { BoatyardSelect } from 'components/basic/Dropdown';
+import ServiceDropdown from '../basic/ServiceDropdown';
 
 const Line = styled(Row)`
   padding: 5px 0px;
@@ -69,13 +69,8 @@ class NewLineItem extends React.Component {
       <React.Fragment>
         <Line>
           <Col lg={6} sm={6} xs={6} md={6} xl={6}>
-            <BoatyardSelect
-              className="basic-single"
-              classNamePrefix="select"
-              cacheOptions
-              defaultOptions
-              loadOptions={this.onChangeFilter}
-              onChange={this.onChangeService}
+            <ServiceDropdown
+              onChangeService={this.onChangeService}
             />
           </Col>
           <Col lg={2} sm={2} xs={2} md={2} xl={2}>

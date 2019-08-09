@@ -9,3 +9,4 @@ export const getLocationName = state => get(state, 'auth.locationName');
 export const getAccessRole = state => get(state, 'auth.accessRole');
 export const getProviderLocations = state => get(state, 'auth.providerLocations', []);
 export const getProviderLocationId = state => get(state, 'auth.providerLocationId');
+export const getToken = state =>  get(state, 'auth.adminToken') || get(state, 'auth.providerToken');

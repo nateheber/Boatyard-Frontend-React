@@ -8,6 +8,7 @@ import { Row, Col } from 'react-flexbox-grid';
 import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
 import { BoatyardSelect } from 'components/basic/Dropdown';
+import ServiceDropdown from '../basic/ServiceDropdown';
 
 const Record = styled.div`
   padding: 15px 0px;
@@ -123,14 +124,9 @@ class LineItem extends React.Component {
         <Line>
           <Col md={6} sm={6} lg={6} xl={6} xs={6}>
             {mode === 'edit' ? (
-              <BoatyardSelect
-                className="basic-single"
-                classNamePrefix="select"
-                cacheOptions
-                defaultOptions
-                defaultValue={currentOption}
-                loadOptions={this.onChangeFilter}
-                onChange={this.onChangeService}
+              <ServiceDropdown
+                value={currentOption}
+                onChangeService={this.onChangeService}
               />
             ) : (
               <Name>{get(service, 'attributes.name')}</Name>

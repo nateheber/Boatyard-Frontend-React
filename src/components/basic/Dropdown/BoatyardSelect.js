@@ -5,7 +5,7 @@ import AsyncSelect from 'react-select/lib/Async';
 export const BoatyardSelect = styled(AsyncSelect)`
   font-size: 13px;
   font-weight: 400;
-  letter-spacing: -0.3px;
+  letter-spacing: normal;
   .css-bl6clz {
     font-family: 'Source Sans Pro', sans-serif;
     font-size: 14px;
