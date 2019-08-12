@@ -31,23 +31,26 @@ function* loginRequest(action) {
         authorizationToken
       }
     } = result.data;
+
+    const profileData = {
+      id,
+      email: userEmail || '',
+      firstName: firstName || '',
+      lastName: lastName || '',
+      phoneNumber: phoneNumber || '',
+      type
+    };
+
     yield put({
       type: actionTypes.AUTH_LOGIN_SUCCESS,
       payload: authorizationToken
     });
     yield put({
       type: ProfileActions.setProfile,
-      payload: {
-        id,
-        email: userEmail || '',
-        firstName: firstName || '',
-        lastName: lastName || '',
-        phoneNumber: phoneNumber || '',
-        type
-      }
+      payload: profileData
     });
     if (success) {
-      yield call(success);
+      yield call(success, profileData);
     }
   } catch (e) {
     yield put({

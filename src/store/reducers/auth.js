@@ -137,9 +137,11 @@ export default handleActions(
       }),
     [actionTypes.AUTH_LOGOUT]: () => {
       deleteAllCookies();
+      window.location.replace('https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0');
       return {
         ...initialState
       };
+     
     },
     [actionTypes.SET_REFRESH_FLAG_SUCCESS]: (state, action) =>
       produce(state, draft => {
