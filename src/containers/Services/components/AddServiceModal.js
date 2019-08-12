@@ -4,7 +4,7 @@ import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import { get, isEmpty, startCase } from 'lodash';
 
-import { actionTypes, GetCategory } from 'store/actions/categories';
+import { actionTypes, GetCategory, GetCategories } from 'store/actions/categories';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 import { OrangeButton } from 'components/basic/Buttons';
@@ -25,6 +25,9 @@ class AddServiceModal extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.showCat) {
+      this.loadCategories();
+    }
     const { GetCategory, category } = this.props;
     const categoryId = get(category, 'id');
     GetCategory({ categoryId: categoryId, success: (category, included) => {
@@ -34,12 +37,29 @@ class AddServiceModal extends React.Component {
 
   }
 
+  loadCategories = () => {
+    const { GetCategories } = this.props;
+    const params = {
+      page: 1,
+      per_page: 200
+    };
+    GetCategories({
+      params,
+      success: () => {
+        const mainFields = this.getMainFields();
+        this.setState({ mainFields });
+      }
+    });
+  }
+
   getMainFields = () => {
-    const { category } = this.props;
+    const { category, showCat } = this.props;
     const name = get(category, 'name');
     const cost = get(category, 'cost');
     const costType = get(category, 'costType');
     const isTaxable = get(category, 'isTaxable');
+    const categoryId = get(category, 'id');
+
     const priceTypes = [
       {
         value: null,
@@ -62,61 +82,138 @@ class AddServiceModal extends React.Component {
         label: 'Quantity'
       }
     ];
-
-    return [
-      {
-        field: 'name',
-        label: 'Name',
-        className: 'primary',
-        type: 'text_field',
-        errorMessage: 'Enter the service name',
-        required: true,
-        defaultValue: name,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 4,
-        xl: 4
-      },
-      {
-        field: 'cost',
-        label: 'Price',
-        className: 'primary',
-        type: 'currency_field',
-        defaultValue: cost,
-        placeholder: '$0.00',
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 3,
-        xl: 3
-      },
-      {
-        field: 'cost_type',
-        label: 'Price Type',
-        className: 'primary',
-        type: 'select_box',
-        options: priceTypes,
-        defaultValue: costType,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 3,
-        xl: 3
-      },
-      {
-        field: 'is_taxable',
-        label: 'Taxable',
-        className: 'primary',
-        type: 'check_box',
-        defaultValue: isTaxable,
-        xs: 12,
-        sm: 12,
-        md: 6,
-        lg: 2,
-        xl: 2
-      }
-    ];
+    if (!showCat) {
+      return [
+        {
+          field: 'name',
+          label: 'Name',
+          className: 'primary',
+          type: 'text_field',
+          errorMessage: 'Enter the service name',
+          required: true,
+          defaultValue: name,
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 4,
+          xl: 4
+        },
+        {
+          field: 'cost',
+          label: 'Price',
+          className: 'primary',
+          type: 'currency_field',
+          defaultValue: cost,
+          placeholder: '$0.00',
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 3,
+          xl: 3
+        },
+        {
+          field: 'cost_type',
+          label: 'Price Type',
+          className: 'primary',
+          type: 'select_box',
+          options: priceTypes,
+          defaultValue: costType,
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 3,
+          xl: 3
+        },
+        {
+          field: 'is_taxable',
+          label: 'Taxable',
+          className: 'primary',
+          type: 'check_box',
+          defaultValue: isTaxable,
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 2,
+          xl: 2
+        }
+      ];
+    } else {
+      const categories = get(this.props, 'categories', []);
+      const categoryOptions = categories.map(val => ({
+        value: val.id,
+        label: startCase(val.name)
+      }));
+      
+      return [
+        {
+          field: 'name',
+          label: 'Name',
+          className: 'primary',
+          type: 'text_field',
+          errorMessage: 'Enter the service name',
+          required: true,
+          defaultValue: name,
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 5,
+          xl: 5
+        },
+        {
+          field: 'category_id',
+          label: 'Category',
+          className: 'primary',
+          type: 'select_box',
+          errorMessage: 'Select category',
+          options: categoryOptions,
+          required: true,
+          defaultValue: `${categoryId}`,
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 5,
+          xl: 5
+        },
+        {
+          field: 'cost',
+          label: 'Price',
+          className: 'primary',
+          type: 'currency_field',
+          defaultValue: cost,
+          placeholder: '$0.00',
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 5,
+          xl: 5
+        },
+        {
+          field: 'cost_type',
+          label: 'Price Type',
+          className: 'primary',
+          type: 'select_box',
+          options: priceTypes,
+          defaultValue: costType,
+          xs: 12,
+          sm: 12,
+          md: 6,
+          lg: 5,
+          xl: 5
+        },
+        {
+          field: 'is_taxable',
+          label: 'Taxable',
+          className: 'primary',
+          type: 'check_box',
+          defaultValue: isTaxable,
+          xs: 12,
+          sm: 12,
+          md: 12,
+          lg: 2,
+          xl: 2
+        }
+      ];
+    }
   };
 
   getServiceValues = (included) => {
@@ -231,11 +328,13 @@ class AddServiceModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  categories: state.category.categories,
   currentStatus: state.category.currentStatus
 });
 
 const mapDispatchToProps = {
-  GetCategory
+  GetCategory,
+  GetCategories
 };
 
 export default connect(

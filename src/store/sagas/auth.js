@@ -276,7 +276,7 @@ function* setRefreshFlag(action) {
 
 function* logoutRequest(action) {
   const profile = yield select(profileSelector);
-  if (profile.email.indexOf('marinemax.com') >= -1) {
+  if (profile.email.indexOf('marinemax.com') > -1) {
     setTimeout(() => window.location.replace('https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0'), 1000);
   }
   

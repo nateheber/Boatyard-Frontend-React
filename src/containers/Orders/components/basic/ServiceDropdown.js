@@ -113,6 +113,7 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
           loading={serviceStatus === serviceActions.CREATE_SERVICE}
           open={showServiceModal}
           category={miscCategory}
+          showCat
           onClose={() => setShowServiceModal(false)}
           onSave={handleCreateService}
         />}
