@@ -135,11 +135,12 @@ export default handleActions(
         draft.currentStatus = type;
         draft.errors = payload;
       }),
-    [actionTypes.AUTH_LOGOUT]: () => {
+    [actionTypes.AUTH_LOGOUT]: (state, action) => {
       deleteAllCookies();
       return {
         ...initialState
       };
+     
     },
     [actionTypes.SET_REFRESH_FLAG_SUCCESS]: (state, action) =>
       produce(state, draft => {

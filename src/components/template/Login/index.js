@@ -57,6 +57,7 @@ class LoginComponent extends React.Component {
     this.lock.on('authenticated', (authResult) => {
       this.props.SetAuth0Token({token: authResult.idToken});
       this.handleLogin(authResult.idToken);
+
     });
   }
   
@@ -73,9 +74,15 @@ class LoginComponent extends React.Component {
       params: {
         auth0Token
       },
-      success: () => {
+      success: (profileData) => {
+        console.log(profileData);
+        // if (profileData.email.indexOf('@marinemax.com') > -1) {
+        //   // window.open('https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0');
+        //   document.getElementById('frame').src="https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0";
+        // }
         GetUserPermission({
           success: (res) => {
+            console.log(res);
             window.setTimeout(() => history.push('/dashboard'), 50);
               // console.log(res);
               // const index = this.props.location.search.indexOf('redirect_url');

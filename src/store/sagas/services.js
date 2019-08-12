@@ -4,16 +4,17 @@ import { get } from 'lodash';
 import { actionTypes } from '../actions/services';
 import { getServiceClient } from './sagaSelectors';
 
+const refineService = (service) => {
+  return {
+    id: service.id,
+    type: service.type,
+    ...service.attributes,
+    // ...service.relationships,
+    relationships: service.relationships
+  };
+}
 const refineServices = (services) => {
-  return services.map(service => {
-    return {
-      id: service.id,
-      type: service.type,
-      ...service.attributes,
-      // ...service.relationships,
-      relationships: service.relationships
-    };
-  });
+  return services.map(service => refineService(service));
 };
 
 function* getServices(action) {
@@ -88,11 +89,13 @@ function* createService(action) {
   const { data, success, error } = action.payload;
   try {
     const result = yield call(serviceClient.create, data);
+    const service = refineService(get(result, 'data', {}));
     yield put({
       type: actionTypes.CREATE_SERVICE_SUCCESS,
+      payload: service
     });
     if (success) {
-      yield call(success, get(result, 'data', {}));
+      yield call(success, service);
     }
   } catch (e) {
     yield put({ type: actionTypes.CREATE_SERVICE_FAILURE, payload: e });
