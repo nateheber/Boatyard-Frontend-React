@@ -135,9 +135,8 @@ export default handleActions(
         draft.currentStatus = type;
         draft.errors = payload;
       }),
-    [actionTypes.AUTH_LOGOUT]: () => {
+    [actionTypes.AUTH_LOGOUT]: (state, action) => {
       deleteAllCookies();
-      window.location.replace('https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0');
       return {
         ...initialState
       };

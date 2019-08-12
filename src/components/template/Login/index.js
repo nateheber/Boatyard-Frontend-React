@@ -9,7 +9,6 @@ import { isAuthenticatedSelector } from 'store/selectors/auth';
 import { Login, GetUserPermission, SetAuth0Token, Logout } from 'store/actions/auth';
 import { LoginWithProvider } from 'store/actions/providers';
 import BYLogo from 'resources/by_logo.png';
-import axios from 'axios';
 
 const Wrapper = styled.div`
   position: fixed;

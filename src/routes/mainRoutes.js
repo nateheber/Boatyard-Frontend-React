@@ -29,9 +29,11 @@ import { isAuthenticatedSelector } from 'store/selectors/auth';
 import { SetRefreshFlag } from 'store/actions/auth';
 import PrivateRoute from './privateRoute';
 import PrivilegeRoute from './privilegeRoute';
-
+import Intercom from 'components/basic/Intercom';
+import { intercomAppId } from '../api/config';
 import MainPageTemplate from 'components/template/MainPageTemplate';
 import BackgroundImage from '../resources/auth/login-bg.png';
+import IntercomProvider from './IntercomProvider';
 const Wrapper = styled.div`
   background-image: url(${BackgroundImage});
   background-repeat: no-repeat;
@@ -46,9 +48,9 @@ const Wrapper = styled.div`
 `;
 
 
-const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
+const MainRoutes = ({refreshPage, SetRefreshFlag, isAuthenticated, profile, ...props}) => {
   const [key, setKey] = useState('Wrapper');
-  const WrapperComp = props.isAuthenticated ? MainPageTemplate : Wrapper;
+  const WrapperComp = isAuthenticated ? MainPageTemplate : Wrapper;
 
   useEffect(() => {
     if (refreshPage) {
@@ -61,46 +63,60 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
     }
   });
 
+  let user = {};
+  if (isAuthenticated) {
+    user = {
+      user_id: profile.id,
+      email: profile.email,
+      name: `${profile.firstName} ${profile.lastName}`
+    };
+  }
   return (
+  <>
   <Router>
-    <WrapperComp key={key}>
-      <Route path="/login/" component={Login} />
-      <Route path="/forgot-password/" component={ForgotPassword} />
-      <Route path="/reset-password/" component={ResetPassword} />
-      <Route path="/create-password/" component={CreatePassword} />
+    <IntercomProvider>
+      <WrapperComp key={key}>
+        <Route path="/login/" component={Login} />
+        <Route path="/forgot-password/" component={ForgotPassword} />
+        <Route path="/reset-password/" component={ResetPassword} />
+        <Route path="/create-password/" component={CreatePassword} />
 
-      <PrivateRoute exact path="/update-profile" component={UpdateProfile} isAuthenticated={props.isAuthenticated} />
-      <PrivateRoute exact path="/dashboard/" component={Dashboard} isAuthenticated={props.isAuthenticated} />
-      <PrivateRoute exact path="/inbox/" component={Inbox} isAuthenticated={props.isAuthenticated} />
-      <PrivateRoute exact path="/quick-replies/" component={QRBox} isAuthenticated={props.isAuthenticated} />
-      <PrivateRoute exact path="/templates/" component={TemplateBox} isAuthenticated={props.isAuthenticated} />
-      <PrivateRoute exact path="/orders/:id/detail" component={OrderDetails} isAuthenticated={props.isAuthenticated} />
-      <PrivateRoute exact path="/orders/" component={Order} isAuthenticated={props.isAuthenticated} />
-      <PrivateRoute exact path="/order-details/" component={OrderDetails} isAuthenticated={props.isAuthenticated} />
-      <PrivateRoute exact path="/team/" component={TeamList} isAuthenticated={props.isAuthenticated} />
-      <PrivateRoute exact path="/team-details/" component={TeamDetails} isAuthenticated={props.isAuthenticated}  />
-      <PrivateRoute exact path="/calendar/" component={Calendar} isAuthenticated={props.isAuthenticated} />
+        <PrivateRoute exact path="/update-profile" component={UpdateProfile} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/dashboard/" component={Dashboard} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/inbox/" component={Inbox} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/quick-replies/" component={QRBox} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/templates/" component={TemplateBox} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/orders/:id/detail" component={OrderDetails} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/orders/" component={Order} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/order-details/" component={OrderDetails} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/team/" component={TeamList} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/team-details/" component={TeamDetails} isAuthenticated={isAuthenticated}  />
+        <PrivateRoute exact path="/calendar/" component={Calendar} isAuthenticated={isAuthenticated} />
 
-      <PrivilegeRoute exact path="/providers/" component={Providers} privilege='admin' {...props} />
-      <PrivilegeRoute exact path="/provider-details/" component={ProviderEditor} privilege='admin' {...props}  />
-      <PrivilegeRoute exact path="/invoices/" component={OpenedInvoices} privilege='provider' {...props} />
-      <PrivilegeRoute exact path="/services/" component={Services} privilege='provider' {...props} />
-      <PrivilegeRoute exact path="/services/new/" component={AddService} privilege='provider' {...props}  />
-      <PrivilegeRoute exact path="/service-details/" component={ServiceDetails} privilege='provider' {...props}  />
-      <PrivilegeRoute exact path="/categories/" component={Categories} privilege='admin' {...props} />
-      <PrivilegeRoute exact path="/category-details/" component={CategoryDetails} privilege='admin' {...props} />
-      <PrivilegeRoute exact path="/customers/" component={Customers } privilege='provider' {...props} />
-      <PrivilegeRoute exact path="/customer-details/" component={CustomerDetails  } privilege='provider' {...props} />
-      <PrivilegeRoute exact path="/users/" component={Users} privilege='admin' {...props} />
-      <PrivilegeRoute exact path="/user-details/" component={UserDetails} privilege='admin' {...props} />
-      <PrivateRoute exact path="/" component={Dashboard} {...props}  />
-    </WrapperComp>
+        <PrivilegeRoute exact path="/providers/" component={Providers} privilege='admin' {...props} />
+        <PrivilegeRoute exact path="/provider-details/" component={ProviderEditor} privilege='admin' {...props}  />
+        <PrivilegeRoute exact path="/invoices/" component={OpenedInvoices} privilege='provider' {...props} />
+        <PrivilegeRoute exact path="/services/" component={Services} privilege='provider' {...props} />
+        <PrivilegeRoute exact path="/services/new/" component={AddService} privilege='provider' {...props}  />
+        <PrivilegeRoute exact path="/service-details/" component={ServiceDetails} privilege='provider' {...props}  />
+        <PrivilegeRoute exact path="/categories/" component={Categories} privilege='admin' {...props} />
+        <PrivilegeRoute exact path="/category-details/" component={CategoryDetails} privilege='admin' {...props} />
+        <PrivilegeRoute exact path="/customers/" component={Customers } privilege='provider' {...props} />
+        <PrivilegeRoute exact path="/customer-details/" component={CustomerDetails  } privilege='provider' {...props} />
+        <PrivilegeRoute exact path="/users/" component={Users} privilege='admin' {...props} />
+        <PrivilegeRoute exact path="/user-details/" component={UserDetails} privilege='admin' {...props} />
+        <PrivateRoute exact path="/" component={Dashboard} {...props}  />
+      </WrapperComp>
+    </IntercomProvider>
   </Router>
+  <Intercom appID={intercomAppId}  { ...user } />
+  </>
 )}
 const mapStateToProps = (state) => ({
   isAuthenticated: isAuthenticatedSelector(state),
   loggedInPrivilege: state.auth.privilege,
   refreshPage: state.auth.refreshPage,
+  profile: state.profile
 });
 
 const mapDispatchToProps = {

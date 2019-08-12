@@ -274,6 +274,14 @@ function* setRefreshFlag(action) {
   }
 }
 
+function* logoutRequest(action) {
+  const profile = yield select(profileSelector);
+  if (profile.email.indexOf('marinemax.com') >= -1) {
+    setTimeout(() => window.location.replace('https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0'), 1000);
+  }
+  
+}
+
 export default function* AuthSaga() {
   yield takeEvery(actionTypes.AUTH_LOGIN, loginRequest);
   yield takeEvery(actionTypes.AUTH_SIGNUP, signupRequest);
@@ -283,4 +291,5 @@ export default function* AuthSaga() {
   yield takeEvery(actionTypes.CREATE_PASSWORD, createInvitedUser);
   yield takeEvery(actionTypes.CREATE_CUSTOMER_PASSWORD, createInvitedCustomer);
   yield takeEvery(actionTypes.SET_REFRESH_FLAG, setRefreshFlag);
+  yield takeEvery(actionTypes.AUTH_LOGOUT, logoutRequest);
 }
