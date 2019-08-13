@@ -48,8 +48,9 @@ const Wrapper = styled.div`
 `;
 
 
-const MainRoutes = ({refreshPage, SetRefreshFlag, isAuthenticated, profile, ...props}) => {
+const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
   const [key, setKey] = useState('Wrapper');
+  const { profile, isAuthenticated } = props;
   const WrapperComp = isAuthenticated ? MainPageTemplate : Wrapper;
 
   useEffect(() => {
@@ -64,6 +65,7 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, isAuthenticated, profile, ...p
   });
 
   let user = {};
+ 
   if (isAuthenticated) {
     user = {
       user_id: profile.id,
