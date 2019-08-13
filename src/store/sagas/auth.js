@@ -31,23 +31,26 @@ function* loginRequest(action) {
         authorizationToken
       }
     } = result.data;
+
+    const profileData = {
+      id,
+      email: userEmail || '',
+      firstName: firstName || '',
+      lastName: lastName || '',
+      phoneNumber: phoneNumber || '',
+      type
+    };
+
     yield put({
       type: actionTypes.AUTH_LOGIN_SUCCESS,
       payload: authorizationToken
     });
     yield put({
       type: ProfileActions.setProfile,
-      payload: {
-        id,
-        email: userEmail || '',
-        firstName: firstName || '',
-        lastName: lastName || '',
-        phoneNumber: phoneNumber || '',
-        type
-      }
+      payload: profileData
     });
     if (success) {
-      yield call(success);
+      yield call(success, profileData);
     }
   } catch (e) {
     yield put({
@@ -118,7 +121,7 @@ function* userPermissionRequest(action) {
       }
       
       result = yield call(escalationClient.post, '/users/escalations', {
-        escalation: { user_id: parseInt(profile.id), provider_id, provider_location_id }
+        escalation: { provider_id: provider_location_id ? undefined : provider_id, provider_location_id }
       });
       yield put({
         type: actionTypes.SET_PROVIDER_INFO,
@@ -271,6 +274,14 @@ function* setRefreshFlag(action) {
   }
 }
 
+function* logoutRequest(action) {
+  const profile = yield select(profileSelector);
+  if (profile.email.indexOf('marinemax.com') > -1) {
+    setTimeout(() => window.location.replace('https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0'), 1000);
+  }
+  
+}
+
 export default function* AuthSaga() {
   yield takeEvery(actionTypes.AUTH_LOGIN, loginRequest);
   yield takeEvery(actionTypes.AUTH_SIGNUP, signupRequest);
@@ -280,4 +291,5 @@ export default function* AuthSaga() {
   yield takeEvery(actionTypes.CREATE_PASSWORD, createInvitedUser);
   yield takeEvery(actionTypes.CREATE_CUSTOMER_PASSWORD, createInvitedCustomer);
   yield takeEvery(actionTypes.SET_REFRESH_FLAG, setRefreshFlag);
+  yield takeEvery(actionTypes.AUTH_LOGOUT, logoutRequest);
 }

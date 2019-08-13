@@ -97,6 +97,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.currentService = payload;
+        draft.services = [...draft.services, payload];
       }),
     [actionTypes.CREATE_SERVICE_FAILURE]: (state, action) =>
       produce(state, draft => {

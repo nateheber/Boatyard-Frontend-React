@@ -2,7 +2,7 @@ import Auth0Lock from 'auth0-lock';
 
 export const AUTH_CONFIG = {
   domain: 'boatyard.auth0.com',
-  clientId: 'gfgy9ShWFqBnHpPCOonIuXkPV0YRZ3K3',
+  clientId: 'NBL64luwiwLVcHHwdcsyEhDdve5ZyU55',
 }
 
 export const Auth0Logout = () => {
