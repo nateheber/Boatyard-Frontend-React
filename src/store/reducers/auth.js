@@ -16,6 +16,7 @@ const initialState = {
   errors: null,
   privilege: '',
   providerId: '',
+  providerName: '',
   providerLocationId: '',
   providerLocations: [],
   taxRate: '',
@@ -76,7 +77,7 @@ export default handleActions(
     [actionTypes.SET_PROVIDER_INFO]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
-        const { id, attributes: { taxRate }} = payload;
+        const { id, attributes: { name, taxRate }} = payload;
         const authorizationToken = get(payload, 'attributes.authorizationToken');
         draft.currentStatus = type;
         if (authorizationToken) {
@@ -84,6 +85,7 @@ export default handleActions(
         }
         if (payload.type === 'providers') {
           draft.providerId = id;
+          draft.providerName = name;
         }
         draft.taxRate = taxRate;
         draft.errors = null;
