@@ -12,7 +12,7 @@ switch (mode) {
     apiUrl = 'https://production-api.boatyard.com/api/v2';
     break;
   default:
-    apiUrl = 'https://production-api.boatyard.com/api/v2';
+    apiUrl = 'https://staging-api.boatyard.com/api/v2';
 }
 
 export const apiBaseUrl = apiUrl;
