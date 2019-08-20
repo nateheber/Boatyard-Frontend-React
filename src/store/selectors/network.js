@@ -9,7 +9,7 @@ export const refinedNetworkSelector = createSelector(
   networksSelector, includedSelector,
   (networks, included) => {
 
-    const parsedData = networks.filter(network => get(network, 'relationships.recipient.data'))
+    const parsedData = networks.filter(network => get(network, 'relationships.recipient.data') && get(network, 'relationships.sender.data'))
       .map((network) => {
       const senderInfo = get(network, 'relationships.sender.data');
       const senderDetail = get(included, `[${senderInfo.type}][${senderInfo.id}]`);
@@ -33,6 +33,6 @@ export const getRecipients = createSelector(
       return refineUsers(filter(included.users, u => `${get(u, 'attributes.providerId')}` === `${providerId}`));
     }
 
-    return refineUsers(included.users);
+    return refineUsers(Object.values(included.users));
   }
 )

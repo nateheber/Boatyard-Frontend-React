@@ -105,7 +105,7 @@ class MessageBar extends React.Component {
             onCreationSuccess={this.onSelect}
           />
         }
-        {selected === -1 && !newMessage && 
+        {selected === -1 && !newMessage &&
           <ChatHistory
             onNew={this.onNew}
             onSelect={this.onSelect}
