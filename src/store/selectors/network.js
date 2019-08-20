@@ -8,12 +8,12 @@ export const selectProviderId = (state) => state.auth.providerId;
 export const refinedNetworkSelector = createSelector(
   networksSelector, includedSelector,
   (networks, included) => {
-    const parsedData = networks.map((network) => {
+
+    const parsedData = networks.filter(network => get(network, 'relationships.recipient.data'))
+      .map((network) => {
       const senderInfo = get(network, 'relationships.sender.data');
       const senderDetail = get(included, `[${senderInfo.type}][${senderInfo.id}]`);
       const recipientInfo = get(network, 'relationships.recipient.data');
-      // console.log(network);
-      // console.log(recipientInfo);
       const recipientDetail = get(included, `[${recipientInfo.type}][${recipientInfo.id}]`);
       return ({
         id: network.id,
