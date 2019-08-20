@@ -17,6 +17,22 @@ const refineServices = (services) => {
   return services.map(service => refineService(service));
 };
 
+function refineServceData(data) {
+  if(data.cost_type === 'Length') {
+    return {...data, cost_unit_text: '/ft'};
+  }
+
+  if (data.cost_type === 'Gallons') {
+    return {...data, cost_unit_text: '/gal'};
+  }
+
+  if (data.cost_type === 'Hour') {
+    return {...data, cost_unit_text: '/hr'};
+  }
+
+  return data;
+}
+
 function* getServices(action) {
   const serviceClient = yield select(getServiceClient);
   let successType = actionTypes.GET_SERVICES_SUCCESS;
@@ -88,7 +104,7 @@ function* createService(action) {
   const serviceClient = yield select(getServiceClient);
   const { data, success, error } = action.payload;
   try {
-    const result = yield call(serviceClient.create, data);
+    const result = yield call(serviceClient.create, refineServceData(data));
     const service = refineService(get(result, 'data', {}));
     yield put({
       type: actionTypes.CREATE_SERVICE_SUCCESS,
@@ -109,7 +125,8 @@ function* updateService(action) {
   const serviceClient = yield select(getServiceClient);
   const { serviceId, data, success, error } = action.payload;
   try {
-    yield call(serviceClient.update, serviceId, data);
+
+    yield call(serviceClient.update, serviceId, refineServceData(data));
     yield put({
       type: actionTypes.UPDATE_SERVICE_SUCCESS,
     });
