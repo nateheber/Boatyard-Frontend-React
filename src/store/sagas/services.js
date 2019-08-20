@@ -30,6 +30,10 @@ function refineServceData(data) {
     return {...data, cost_unit_text: '/hr'};
   }
 
+  if (data.cost_type === 'Quantity') {
+    return {...data, cost_unit_text: '/each'};
+  }
+
   return data;
 }
 
