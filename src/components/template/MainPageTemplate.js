@@ -60,7 +60,7 @@ class MainPageTemplate extends React.Component {
   state = {
     showSidebar: false,
   };
-  
+
   toggleMenu = () => {
     const { showSidebar } = this.state;
     this.setState({
@@ -104,7 +104,7 @@ class MainPageTemplate extends React.Component {
       const provider = find(providers, p => `${p.id}` === `${providerId}`);
       return provider.name;
     }
-  
+
     return '';
   }
   render() {
@@ -114,7 +114,7 @@ class MainPageTemplate extends React.Component {
     console.log(showMessage);
     return (
       <Wrapper>
-        <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={() => this.props.SetMessageBarUIStatus({opened: !showMessage})} />
+        <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={() => this.toggleMessage()} />
         <PageContent>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
