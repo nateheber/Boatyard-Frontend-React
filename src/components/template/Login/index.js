@@ -58,7 +58,7 @@ const WelcomeWrapper = styled.div`
 `;
 
 const Logo = styled.img`
-  max-width: 212px;
+  max-width: 100px;
   width: 100%;
   margin-bottom: 20px;
   object-fit: contain;
@@ -66,8 +66,8 @@ const Logo = styled.img`
 `;
 
 const WelcomeTitle = styled.div`
-  color: #003247;
-  font-size: 26px;
+  color: #0D485F;
+  font-size: 30px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   margin-bottom: 30px;
@@ -75,8 +75,8 @@ const WelcomeTitle = styled.div`
 `;
 
 const WelcomeDescription = styled.div`
-  color: #333;
-  font-size: 18px;
+  color: #0D485F;
+  font-size: 20px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
   text-align: center;
@@ -85,6 +85,12 @@ const WelcomeDescription = styled.div`
   padding: 0 20px;
 `;
 
+const Button = styled(OrangeButton)`
+  font-size: 16px;
+  min-width: 180px;
+  margin-top: 100px;
+  height: 60px;
+`;
 class LoginComponent extends React.Component {
   state = {
     showConfirm: false
@@ -188,8 +194,8 @@ class LoginComponent extends React.Component {
             <WelcomeWrapper>
             <Logo src={BYLogo} />
             <WelcomeTitle>Welcome</WelcomeTitle>
-            <WelcomeDescription>Please Check your mailbox to confirm your signup.</WelcomeDescription>
-            <OrangeButton onClick={() => document.location.reload(true)}>Login</OrangeButton>
+            <WelcomeDescription>Please click the link in your email to verify your account.</WelcomeDescription>
+            <Button onClick={() => document.location.reload(true)}>Login</Button>
           </WelcomeWrapper>
           </SideContent>
         }

@@ -1,4 +1,4 @@
-import { get,   filter } from 'lodash';
+import { get } from 'lodash';
 import { createSelector } from 'reselect';
 import { refineUsers } from 'utils/users';
 
@@ -27,12 +27,7 @@ export const refinedNetworkSelector = createSelector(
 
 export const getRecipients = createSelector(
   includedSelector,
-  selectProviderId,
-  (included, providerId) => {
-    if (providerId) {
-      return refineUsers(filter(included.users || [], u => `${get(u, 'attributes.providerId')}` === `${providerId}`));
-    }
-
+  (included) => {
     return refineUsers(Object.values(included.users || {}));
   }
 )
