@@ -30,9 +30,9 @@ export const getRecipients = createSelector(
   selectProviderId,
   (included, providerId) => {
     if (providerId) {
-      return refineUsers(filter(included.users, u => `${get(u, 'attributes.providerId')}` === `${providerId}`));
+      return refineUsers(filter(included.users || [], u => `${get(u, 'attributes.providerId')}` === `${providerId}`));
     }
 
-    return refineUsers(Object.values(included.users));
+    return refineUsers(Object.values(included.users || {}));
   }
 )

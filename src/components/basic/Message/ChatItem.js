@@ -90,9 +90,14 @@ const Image = styled.img`
   width: 100%;
   height: auto;
   margin-top: 10px;
+  cursor: pointer;
 `
 
 export class ChatItem extends React.Component {
+  handleDownload(file) {
+    window.open(file, '_blank');
+  }
+
   render() {
     const { name, time, body, own, secondary, file, showDate, hasPrev, hasNext } = this.props;
     return (
@@ -106,7 +111,7 @@ export class ChatItem extends React.Component {
         </UserDetailsCotainer>}
         <MessageBody className={`${own ? 'own' : 'op'} ${hasPrev ? 'has-prev': ''} ${hasNext ? 'has-next' : ''}`}>
           {body}
-          { !isEmpty(file) && <Image src={file} /> }
+          { !isEmpty(file) && <Image src={file} onClick={ev=> this.handleDownload(file)} /> }
         </MessageBody>
       </Wrapper>
     );

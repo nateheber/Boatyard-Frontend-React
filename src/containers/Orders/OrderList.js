@@ -58,9 +58,9 @@ const tabs = {
 class OrderList extends React.Component {
   constructor(props) {
     super(props);
-    
+
     let tab = ALL_TAB;
-    
+
     const { state } = props.location;
     if (state && state.hasOwnProperty('tab')) {
       const tabState = get(state, 'tab');
@@ -190,7 +190,7 @@ class OrderList extends React.Component {
         } else if (order.providerOrderSequence) {
           name = `Order #${order.providerOrderSequence}`;
         }
-      }  
+      }
       return {
       ...order,
       name,
