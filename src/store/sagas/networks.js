@@ -32,7 +32,7 @@ function* getNetworks(action) {
       }
     });
     if (success) {
-      yield call(success);
+      yield call(success, refineNetworks(networks), included);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_NETWORKS_FAILURE, payload: e });
