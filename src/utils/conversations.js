@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { isEmpty, get, set, reverse, hasIn } from 'lodash';
+import { isEmpty, get, set, reverse } from 'lodash';
 
 const MERGE_RANGE_MINUTES = 5;
 
@@ -10,7 +10,10 @@ export const getProfileData = (included, profileId) => {
   return get(included, `[${type}][${id}]`);
 }
 
-export const getOwnership = (profile, senderProfile) => {
+export const getOwnership = (profile, senderProfile, auth) => {
+  if (get(senderProfile, 'type') === 'provider_locations' && `${senderProfile.id}` === `${auth.providerLocationId}`) {
+    return true;
+  }
   const senderProfileId = get(senderProfile, 'id');
   const senderProfileType = get(senderProfile, 'type');
   const profileId = get(profile, 'id');
@@ -22,13 +25,26 @@ export const parseIncludedForMessages = (included) => {
   return included.reduce((prev, item) => {
     const { id, type, attributes, relationships } = item;
     const target = {...prev};
-    if (type === 'provider_profiles' || type === 'user_profiles') {
+    if (type === 'provider_profiles' || type === 'user_profiles' || type === 'provider_location_profiles') {
       set(target, `[profiles][${id}]`, { id, type, attributes, relationships });
     } else {
       set(target, `${type}[${id}]`, { id, type, attributes, relationships });
     }
     return target;
   }, {});
+}
+
+export const getSenderName = (profile) => {
+  const type = get(profile, 'type');
+  if (type === 'users') {
+    return get(profile, 'attributes.firstName') || '';
+  }
+
+  if (type === 'provider_locations') {
+    return get(profile, 'attributes.contactName') || '';
+  }
+
+  return get(profile, 'attriutes.name') || '';
 }
 
 export const parseMessageDetails = (profile, message, included, auth) => {
@@ -41,8 +57,8 @@ export const parseMessageDetails = (profile, message, included, auth) => {
     senderProfile = profile;
   }
   // const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName') || ''} ${get(senderProfile, 'attributes.lastName') || ''}`;
-  const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName') || ''}`;
-  const own = getOwnership(profile, senderProfile);
+  const senderName = getSenderName(senderProfile);
+  const own = getOwnership(profile, senderProfile, auth);
   return { profileId, senderName, content, file, own, sentAt };
 };
 

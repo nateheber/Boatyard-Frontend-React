@@ -8,6 +8,7 @@ import { get, findIndex } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes, GetOrder, UpdateOrder, SetDispatchedFlag } from 'store/actions/orders';
+import { GetServices } from 'store/actions/services';
 import { GetGlobalTemplates, GetLocalTemplates } from 'store/actions/messageTemplates';
 import { orderSelector } from 'store/selectors/orders';
 import {
@@ -50,7 +51,11 @@ class OrderDetails extends React.Component {
   };
 
   componentDidMount() {
-    const { GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location, match: {params: {id}} } = this.props;
+    const { services, providerId, GetServices, GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location, match: {params: {id}} } = this.props;
+    // load services if empty
+    if (services.length === 0) {
+      GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
+    }
     let orderId = id;
     if (!orderId) {
       const query = queryString.parse(location.search);
@@ -86,7 +91,7 @@ class OrderDetails extends React.Component {
     }
     return true;
   }
-  
+
   componentWillUnmount() {
     this.props.SetDispatchedFlag(false);
   }
@@ -136,7 +141,7 @@ class OrderDetails extends React.Component {
     //   return true;
     // }
     const orderStatus = get(currentOrder, 'attributes.state' );
-    if (orderStatus === 'assigned' || orderStatus === 'dispatched') { 
+    if (orderStatus === 'assigned' || orderStatus === 'dispatched') {
       return false;
     }
     return true;
@@ -273,11 +278,14 @@ const mapStateToProps = state => ({
   boatStatus: state.boat.currentStatus,
   privilege: state.auth.privilege,
   globalTemplates: state.messageTemplate.globalTemplates,
-  localTemplates: state.messageTemplate.localTemplates
+  localTemplates: state.messageTemplate.localTemplates,
+  providerId: state.auth.providerId,
+  services: state.service.services,
 });
 
 const mapDispatchToProps = {
   GetOrder,
+  GetServices,
   UpdateOrder,
   UpdateBoat,
   SetDispatchedFlag,
