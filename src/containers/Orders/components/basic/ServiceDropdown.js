@@ -59,7 +59,7 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
   const [service, setService] = useState(value);
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [miscCategory, setMiscCategory]  = useState({});
-  
+
   const filterOptions = (inputValue) => {
     let filteredServices = services;
     if (inputValue && inputValue.trim().length > 0) {
@@ -78,7 +78,7 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
   };
 
   const handleCreateService = (values) => {
-    CreateService({ 
+    CreateService({
       data: {
         service: values,
       },
@@ -99,7 +99,7 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
       setMiscCategory({...attributes, id, type, name: inputValue});
       setShowServiceModal(true);
     })
-    
+
   }
   const handleChange = (service) => {
     onChangeService(service);
