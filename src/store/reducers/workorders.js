@@ -13,7 +13,7 @@ const initialWorkOrder = {
   },
   file_attachments_attributes: [],
   showOrderService: true,
-  services: [{}],
+  services: [{due_type: 'flexible'}],
   job_number: ''
 };
 
