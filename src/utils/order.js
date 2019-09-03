@@ -1,4 +1,4 @@
-import { findIndex, get, isEmpty, sortBy } from 'lodash';
+import { findIndex, get, isEmpty, sortBy, /*filter,*/find } from 'lodash';
 import moment from 'moment';
 
 export const getUserFromOrder = (order, privilege = 'admin') => {
@@ -160,3 +160,11 @@ export const getLocationAddressFromOrder = order => {
   const idx = findIndex(included, item => item.type === 'locations');
   return get(included, `[${idx}].relationships.address`);
 };
+
+export const getTeamMemberData = (data, included) => {
+  // filter(data, ({attributes: {access }}) => access !== 'admin')
+  return data.map(({attributes: {userId}}) => {
+    const {id, attributes: {firstName, lastName }} = find(included, {id: `${userId}`, type: "users"});
+    return {id, fullName: `${firstName} ${lastName}` };
+  })
+}

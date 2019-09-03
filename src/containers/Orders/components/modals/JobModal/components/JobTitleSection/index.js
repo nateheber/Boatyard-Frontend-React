@@ -5,7 +5,7 @@ import Select from 'react-select';
 import EvilIcon from 'react-evil-icons';
 
 import { GetManagements } from 'store/actions/managements';
-import { refinedManagementsSelector } from 'store/selectors/managements';
+import { SetWorkOrder } from 'store/actions/workorders';
 import { Input } from 'components/basic/Input';
 import { Section, SectionHeader, SectionContent, Column, DeleteButton } from '../Section';
 
@@ -93,6 +93,7 @@ class JobTitleSection extends React.Component {
   }
 
   handleChange = member => {
+    console.log(member);
     const { onChange } = this.props;
     if (onChange) {
       onChange(member);
@@ -112,7 +113,7 @@ class JobTitleSection extends React.Component {
       const options = managements.map(management => (
         {
           value: management.id,
-          label: `${management.relationships.user.attributes.firstName} ${management.relationships.user.attributes.lastName}`
+          label: `${management.fullName}`
         }
       ));
       return options.filter(o1 => selected.filter(o2 => o2.value === o1.value).length === 0);
@@ -121,13 +122,13 @@ class JobTitleSection extends React.Component {
   };
 
   render() {
-    const { selected } = this.props;
+    const { selected, workorder, SetWorkOrder } = this.props;
     const options = this.getOptions();
     return (
       <Section>
         <SectionHeader>
           <Column>
-            <Input style={{ width: 205 }} placeholder='Job Title' />
+            <Input style={{ width: 205 }} placeholder='Job Title' value={workorder.job_number} onChange={e => SetWorkOrder({job_number: e.target.value}) } />
           </Column>
           <Column>
             <HeaderInputLabel>Assign To:</HeaderInputLabel>
@@ -159,11 +160,13 @@ class JobTitleSection extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  managements: refinedManagementsSelector(state)
+  managements: state.order.teamMemberData,
+  workorder: state.workorders.workorder,
 });
 
 const mapDispatchToProps = {
-  GetManagements
+  GetManagements,
+  SetWorkOrder,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(JobTitleSection);

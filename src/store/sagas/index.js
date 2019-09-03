@@ -23,6 +23,8 @@ import SiteBanners from './site-banners';
 import QuickReply from './quickReplies';
 import MessageTemplate from './messageTemplates';
 import NotificationsSagas from './notifications';
+import WorkOrdersSagas from './workorders';
+
 export default function* mainSaga() {
   yield all([
     fork(AuthSaga),
@@ -48,5 +50,6 @@ export default function* mainSaga() {
     fork(QuickReply),
     fork(MessageTemplate),
     fork(NotificationsSagas),
+    fork(WorkOrdersSagas),
   ]);
 }

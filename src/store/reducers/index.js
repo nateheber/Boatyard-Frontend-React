@@ -25,6 +25,8 @@ import siteBanner from './site-banners';
 import quickReply from './quickReplies';
 import messageTemplate from './messageTemplates';
 import notifications from './notifications';
+import workorders from './workorders';
+
 const rootReducer = combineReducers({
   navigation,
   auth,
@@ -51,6 +53,7 @@ const rootReducer = combineReducers({
   quickReply,
   messageTemplate,
   notifications,
+  workorders,
 });
 
 export default rootReducer;

@@ -1,24 +1,67 @@
 import React from 'react';
-
+import styled from 'styled-components';
 import { GradientButton } from 'components/basic/Buttons';
 import { Section, SectionHeader, SectionContent, HeaderTitle, Image } from '../Section';
-import { SummaryItemView, SummaryEditView } from './components';
-
+import { SummaryEditView } from './components';
 import AddIcon from '../../../../../../../resources/job/add.png';
 
+export const Divider = styled.div`
+  border-top: 1px solid #A9B5BB;
+  margin: 20px -25px;
+  height: 1px;
+`;
+
 export default class JobSummarySection extends React.Component {
+  addService = (service) => {
+    const  { workorder: {services}, SetWorkOrder } = this.props;
+    SetWorkOrder({services: [...services, service]});
+  }
+
+  handleDeleteService(index) {
+    const  { workorder: {services}, SetWorkOrder } = this.props;
+    const newServices = [...services];
+    newServices.splice(index, 1);
+    SetWorkOrder({services: newServices});
+  }
+
+  handleServiceChange(service, index) {
+    const  { workorder: {services}, SetWorkOrder } = this.props;
+    services[index] = service;
+    SetWorkOrder({services: [...services]});
+  }
+
+  handleAddSevice = () => {
+    const { workorder: {services}, SetWorkOrder } = this.props;
+    SetWorkOrder({services: [...services, {}]});
+  }
+
   render() {
+    const { workorder: {services } } = this.props;
     return (
       <Section>
         <SectionHeader>
           <HeaderTitle>Job Summary</HeaderTitle>
-            <GradientButton onClick={this.handleAddSummary}>
+            <GradientButton onClick={this.handleAddSevice}>
               <Image src={AddIcon} />
             </GradientButton>
         </SectionHeader>
         <SectionContent>
-          <SummaryItemView />
-          <SummaryEditView />
+          {
+            services.map((service, index) =>
+            <>
+              { index !== 0 && <Divider /> }
+              <SummaryEditView
+                services={this.props.services}
+                key={`service-${index}`}
+                service={service}
+                servicesValidationCnt={this.props.servicesValidationCnt}
+                handleDelete={() => this.handleDeleteService(index)}
+                onChange={(service) => this.handleServiceChange(service, index)}
+              />
+            </>
+            )
+          }
+
         </SectionContent>
       </Section>
     );
