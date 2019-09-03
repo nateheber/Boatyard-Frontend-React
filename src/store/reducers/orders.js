@@ -12,6 +12,7 @@ const ordersState = {
   perPage: 20,
   total: 0,
   dispatched: false,
+  teamMemberData: [],
   unselectedColumns: []
 };
 
@@ -29,7 +30,7 @@ const initialState = {
 
 export default handleActions(
   {
-    [actionTypes.SET_DISPATCHED_FLAG]: (state, action) => 
+    [actionTypes.SET_DISPATCHED_FLAG]: (state, action) =>
       produce(state, draft => {
         const { payload } = action;
         draft.dispatched = payload;
@@ -190,6 +191,12 @@ export default handleActions(
         draft.currentStatus = type;
         draft.currentOrder = order;
         draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.GET_ORDER_PROVIDER_LOCATION_TEAM_MEMBER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: { teamMemberData} } = action;
+        draft.currentStatus = type;
+        draft.teamMemberData = teamMemberData;
       }),
     [actionTypes.GET_ORDER_FAILURE]: (state, action) =>
       produce(state, draft => {

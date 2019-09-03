@@ -131,10 +131,10 @@ export default class AttachmentSection extends React.Component {
   handleFileChange = (file, baseString, ref) => {
     if (file && baseString && ref) {
       const { onAdd } = this.props;
-      const fileName = file.name;
+      const filename = file.name;
       const fileType = file.type.indexOf('image') >= 0 ? 'image' : file.type.indexOf('pdf') ? 'pdf' : 'other';
       if (onAdd) {
-        onAdd({ fileName, fileType, fileUri: baseString }, () => {
+        onAdd({ filename, fileType, file_attachment: baseString }, () => {
           if (this.containerRef.current) {
             const scrollWidth = this.containerRef.current.scrollWidth;
             this.containerRef.current.scrollTo({
@@ -198,8 +198,8 @@ export default class AttachmentSection extends React.Component {
             <AttachmentsContainer ref={this.containerRef}>
               {attachments.map((attachment, index) => (
               <Attachment key={`attachment_${index}`} className={attachment.fileType} ref={index}>
-                <Image src={attachment.fileType !== 'image' ? PdfIcon : attachment.fileUri}></Image>
-                {attachment.fileType !== 'image' && <AttachmentTitle>{attachment.fileName}</AttachmentTitle>}
+                <Image src={attachment.fileType !== 'image' ? PdfIcon : attachment.file_attachment}></Image>
+                {attachment.fileType !== 'image' && <AttachmentTitle>{attachment.filename}</AttachmentTitle>}
                 <Overlay className="overlay" />
                 <DeleteButton className="btn-close" onClick={this.handleDelete(index)}>
                   <EvilIcon name="ei-close-o" size="s" className="close-icon" />

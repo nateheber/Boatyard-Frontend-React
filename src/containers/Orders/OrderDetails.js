@@ -189,7 +189,7 @@ class OrderDetails extends React.Component {
     const updatedDate = this.getUdpatedDate();
     const { orderId, isFirstLoad, visibleOfBoatModal, visibleOfJobModal } = this.state;
     const providerId = this.getProviderId();
-    const { currentOrder, currentStatus, boatStatus, privilege } = this.props;
+    const { currentOrder, currentStatus, boatStatus, privilege, workorders } = this.props;
     const lineItems = get(currentOrder, 'lineItems', []);
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
@@ -240,7 +240,7 @@ class OrderDetails extends React.Component {
                     />
                   </SectionGroup>
                   {privilege === 'provider' && <SectionGroup>
-                    <JobSection order={currentOrder} addJob={this.showJobModal} />
+                    <JobSection workorders={workorders} addJob={this.showJobModal} />
                   </SectionGroup>}
                   <SectionGroup>
                     <TimeLineSection order={currentOrder} />
@@ -281,6 +281,7 @@ const mapStateToProps = state => ({
   localTemplates: state.messageTemplate.localTemplates,
   providerId: state.auth.providerId,
   services: state.service.services,
+  workorders: state.workorders.workorders
 });
 
 const mapDispatchToProps = {

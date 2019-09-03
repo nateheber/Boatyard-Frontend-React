@@ -1,9 +1,12 @@
 import React from 'react';
+import moment from 'moment';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, filter, find } from 'lodash';
 import styled from 'styled-components';
-
+import { toastr } from 'react-redux-toastr';
+import { getWhenValue } from 'utils/lineitem';
 import { GetManagements } from 'store/actions/managements';
+import { SetWorkOrder, AddNewWorkOrder, ResetWorkOrder, ServicesValidation } from 'store/actions/workorders';
 import { refinedManagementsSelector } from 'store/selectors/managements';
 import { getUserFromOrder, getBoatFromOrder } from 'utils/order';
 import { OrangeButton, GradientButton } from 'components/basic/Buttons'
@@ -12,14 +15,9 @@ import {
   Image, JobTitleSection, JobSummarySection, CustomerInfoSection,
   LocationInfoSection, BoatInfoSection, AttachmentSection, NotesSection
 } from './components';
+import { dueTypes } from './components/JobSummarySection/components/SummaryEditView';
 
 import PrintIcon from '../../../../../resources/job/print.png';
-import TestImage1 from '../../../../../resources/test_images/1.png';
-import TestImage2 from '../../../../../resources/test_images/2.png';
-import TestImage3 from '../../../../../resources/test_images/3.png';
-import TestImage4 from '../../../../../resources/test_images/4.png';
-import TestImage5 from '../../../../../resources/test_images/5.png';
-import TestImage6 from '../../../../../resources/test_images/6.jpeg';
 
 // const mainFields = ['first_name', 'last_name', 'phone_number', 'email', 'notes'];
 // const locationFields = ['street', 'city', 'state', 'zip'];
@@ -45,49 +43,8 @@ class JobModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTeamMembers: [],
       specialInstructions: get(props.order, 'attributes.specialInstructions') || '',
-      attachments: [
-        {
-          fileUri: TestImage1,
-          fileType: 'image',
-          fileName: ''
-        },
-        {
-          fileType: 'pdf',
-          fileName: 'MM_invoice.pdf'
-        },
-        {
-          fileUri: TestImage2,
-          fileType: 'image',
-          fileName: ''
-        },
-        {
-          fileUri: TestImage3,
-          fileType: 'image',
-          fileName: ''
-        },
-        {
-          fileUri: TestImage4,
-          fileType: 'image',
-          fileName: ''
-        },
-        {
-          fileUri: TestImage5,
-          fileType: 'image',
-          title: ''
-        },
-        {
-          fileUri: TestImage6,
-          fileType: 'image',
-          fileName: ''
-        }
-      ],
-      showNotesInfo: false,
-      showCustomerInfo: false,
-      showBoatInfo: true,
-      showLocationInfo: true
-    };
+    }
   }
 
   componentDidMount() {
@@ -95,86 +52,102 @@ class JobModal extends React.Component {
     GetManagements({ params: { page: 1, per_page: 1000 } });
   }
 
+  getScheduleText = ({due_type, due_date, due_time, due_time_range }) => {
+    if (!due_type) {
+      return false;
+    }
+    const dueTypeLabel = find(dueTypes, {value: due_type});
+    due_date = due_date && moment(due_date).format("MM/DD/YYYY");
+    due_time = due_time && due_time.value;
+    due_time_range = due_time_range && `${due_time_range.from_time.value} ~ ${due_time_range.to_time.value}`;
+
+    if (due_type === 'specific_date') {
+      return due_date ? due_date : false;
+    }
+    if (due_type === 'specific_date_time') {
+      return (due_date && due_time) ? `${due_date} ${due_time}` : false;
+    }
+    if (due_type === 'data_time_range') {
+      return (due_date && due_time_range) ? `${due_date} ${due_time_range}` : false;
+    }
+
+    return dueTypeLabel.label;
+  }
+
   onSend = () => {
-    // if (this.mainInfoFields.validateFields()) {
-    //   const values = this.mainInfoFields.getFieldValues();
-    //   let user = {};
-    //   const address_attributes = {}
-    //   for (const key in values) {
-    //     const value = get(values, key, '');
-    //     if(mainFields.indexOf(key) > -1) {
-    //       user[key] = value;
-    //     } else if (locationFields.indexOf(key) > -1) {
-    //       address_attributes[key] = value;
-    //     }
-    //   }
-    //   if (address_attributes.street.trim().length > 0 ||
-    //     address_attributes.city.trim().length > 0 ||
-    //     address_attributes.state.trim().length > 0 ||
-    //     address_attributes.zip.trim().length > 0) {
-    //       user = {
-    //         ...user,
-    //         locations_attributes: [
-    //           {
-    //             name: 'Home Address',
-    //             location_type: 'residential_address',
-    //             address_attributes
-    //           }
-    //         ]
-    //       };
-    //     }
-    //   this.props.onSave({ user });
-    // }
+    this.props.ServicesValidation();
+    const { workorder: {services, selectedTeamMembers, job_number} } = this.props;
+    if (services.length === 0) {
+      toastr.error('Error', "Please add at least one service!");
+    } else if (selectedTeamMembers.length === 0) {
+      toastr.error('Error', "Please add at least one team member!");
+    } else if (!job_number) {
+      toastr.error('Error', "Please input job title!");
+    } else {
+        const newServices = services.map(service => {
+          return {
+            name: service.service,
+            scheduled_text: this.getScheduleText(service),
+            notes: service.notes,
+          }
+        });
+        if (filter(newServices, s => !s.name || !s.scheduled_text).length === 0) {
+          this.props.AddNewWorkOrder({
+            services: newServices,
+            success: () => {
+              toastr.success('Success', "Successfully added!");
+              this.props.ResetWorkOrder();
+              this.props.onClose();
+            },
+            error: (e) => {
+              toastr.error('Error', e.message);
+            }
+          });
+        }
+      // }
+    }
   };
 
   handlePrint = () => {
   };
 
   handleTeamMemberChange = (member, isDeleting = false) => {
-    const { selectedTeamMembers } = this.state;
+    const { selectedTeamMembers } = this.props.workorder;
+
     let selected = selectedTeamMembers.slice(0);
     if (isDeleting) {
       selected = selected.filter(item => item.value !== member.value);
     } else {
       selected.push(member);
     }
-    this.setState({ selectedTeamMembers: selected });
+
+    this.props.SetWorkOrder({ selectedTeamMembers: selected });
   };
 
   handleChangeNotes = specialInstructions => {
     this.setState({ specialInstructions });
   };
 
-  handleChangeVisibleOfNotesInfo = (showNotesInfo) => {
-    this.setState({ showNotesInfo });
-  };
-
-  handleChangeVisibleOfCustomerInfo = (showCustomerInfo) => {
-    this.setState({ showCustomerInfo });
-  };
-
-  handleChangeVisibleOfBoatInfo = (showBoatInfo) => {
-    this.setState({ showBoatInfo });
-  };
-
-  handleChangeVisibleOfLocationInfo = (showLocationInfo) => {
-    this.setState({ showLocationInfo });
-  };
+  handleVisibleChange = (fieldName, value) => {
+    const { workorder: {settings}} = this.props;
+    const newSettings = {...settings};
+    newSettings[fieldName] = value;
+    this.props.SetWorkOrder({settings: newSettings});
+  }
 
   handleAddAttachment = (attachment, resolve) => {
-    const attachments = this.state.attachments.slice(0);
+    const { workorder: {file_attachments_attributes}} = this.props;
+    const attachments = file_attachments_attributes.slice(0);
     attachments.push(attachment);
-    this.setState({ attachments }, () => {
-      if(resolve) {
-        resolve();
-      }
-    })
+    this.props.SetWorkOrder({file_attachments_attributes: attachments});
+    window.setTimeout(() => resolve(), 10);
   };
 
   handleDeleteAttachment = (index) => {
-    const attachments = this.state.attachments.slice(0);
+    const { workorder: {file_attachments_attributes}} = this.props;
+    const attachments = file_attachments_attributes.slice(0);
     attachments.splice(index, 1);
-    this.setState({ attachments });
+    this.props.SetWorkOrder({file_attachments_attributes: attachments});
   }
 
   getOptions = () => {
@@ -199,9 +172,32 @@ class JobModal extends React.Component {
     return { boatInfo, customerInfo };
   };
 
+  getOrderService = () => {
+    const { order: { attributes: {specialInstructions}, lineItems } } = this.props;
+    if (lineItems.length > 0) {
+      // orderService = {
+      //   name: get(lineItems[0], 'relationships.service')
+      // }
+      const { name, subtitle, description, secondary_description, cost, cost_type, delivery_fee, position } =  get(lineItems[0], 'relationships.service.attributes');
+      return { name, subtitle, description, secondary_description, cost, cost_type, delivery_fee, position,
+        scheduled_text: getWhenValue(lineItems[0]),
+        notes: specialInstructions
+      };
+    }
+  }
+
   render() {
-    const { open, onClose, loading } = this.props;
-    const { showNotesInfo, showCustomerInfo, showBoatInfo, showLocationInfo, selectedTeamMembers, specialInstructions, attachments } = this.state;
+    const { open, onClose, loading, services,
+      workorder: {
+        selectedTeamMembers,
+        settings: {
+          notes, customer_info, boat_info, location
+        },
+        file_attachments_attributes: attachments
+      }
+    } = this.props;
+    const { specialInstructions } = this.state;
+
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const action = [
       <OrangeButton onClick={this.onSend} key='modal_btn_save'>Send</OrangeButton>
@@ -230,27 +226,33 @@ class JobModal extends React.Component {
           selected={selectedTeamMembers}
           onChange={this.handleTeamMemberChange}
         />
-        <JobSummarySection />
+        <JobSummarySection
+          orderService = {this.getOrderService()}
+          services={services}
+          workorder={this.props.workorder}
+          SetWorkOrder={this.props.SetWorkOrder}
+          servicesValidationCnt={this.props.servicesValidationCnt}
+        />
         <NotesSection
-          contentVisible={showNotesInfo}
+          contentVisible={notes}
           notes={specialInstructions}
-          onChangeVisible={this.handleChangeVisibleOfNotesInfo}
+          onChangeVisible={notes => this.handleVisibleChange('notes', notes)}
           onChange={this.handleChangeNotes}
         />
         <CustomerInfoSection
-          contentVisible={showCustomerInfo}
+          contentVisible={customer_info}
           customerInfo={customerInfo}
-          onChangeVisible={this.handleChangeVisibleOfCustomerInfo}
+          onChangeVisible={customer_info => this.handleVisibleChange('customer_info', customer_info)}
         />
         <BoatInfoSection
-          contentVisible={showBoatInfo}
+          contentVisible={boat_info}
           boatInfo={boatInfo}
-          onChangeVisible={this.handleChangeVisibleOfBoatInfo}
+          onChangeVisible={boat_info => this.handleVisibleChange('boat_info', boat_info)}
         />
         <LocationInfoSection
-          contentVisible={showLocationInfo}
+          contentVisible={location}
           boatInfo={boatInfo}
-          onChangeVisible={this.handleChangeVisibleOfLocationInfo}
+          onChangeVisible={location => this.handleVisibleChange('location', location)}
         />
         <AttachmentSection
           attachments={attachments}
@@ -264,11 +266,19 @@ class JobModal extends React.Component {
 
 const mapStateToProps = (state) => ({
   privilege: state.auth.privilege,
-  managements: refinedManagementsSelector(state)
+  order: state.order.currentOrder,
+  managements: refinedManagementsSelector(state),
+  services: state.service.services,
+  workorder: state.workorders.workorder,
+  servicesValidationCnt: state.workorders.servicesValidationCnt,
 });
 
 const mapDispatchToProps = {
-  GetManagements
+  GetManagements,
+  SetWorkOrder,
+  AddNewWorkOrder,
+  ResetWorkOrder,
+  ServicesValidation
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(JobModal);

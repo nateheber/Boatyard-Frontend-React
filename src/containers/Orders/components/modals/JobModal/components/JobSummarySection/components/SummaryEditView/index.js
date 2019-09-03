@@ -1,29 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
+import moment from 'moment';
 import EvilIcon from 'react-evil-icons';
-
 import FormFields from 'components/template/FormFields';
 import { InputWrapper, InputLabel, TextArea } from 'components/basic/Input';
+import  { find, debounce } from 'lodash';
 import { DeleteButton } from '../../../Section';
 
 const ContentWrapper = styled.div`
   display: flex;
-  position: relative;
   flex-direction: column;
-  .btn-delete {
+`;
+
+const FormFieldWrapper = styled.div`
+  position: relative;
+  .btnAddService {
     position: absolute;
-    top: 30px;
-    right: -15px;
+    top: 0;
+    right: 0;
   }
 `;
-
-export const Divider = styled.div`
-  border-top: 1px solid #A9B5BB;
-  margin: 20px -25px;
-`;
-
-const dueTypes = [
+export const dueTypes = [
   {
     value: 'flexible',
     label: 'Flexible'
@@ -47,50 +45,45 @@ const dueTypes = [
 ];
 
 export default class SummaryEditView extends React.Component {
-  constructor(props) {
-    super(props);
-    const hourOptions = [];
-    for(let index = 0; index < 48; index++) {
-      const value = index * 30;
-      // const hours = ('0' + Math.floor(value / 60)).slice(-2);
-      const hours = Math.floor(value / 60);
-      const minutes = ('0' + value % 60).slice(-2);
-      const label = `${hours > 12 ? hours - 12 : hours}:${minutes} ${index > 24 ? 'pm' : 'am'}`;
-      hourOptions.push({ value, label });
-    }
-    const afterOptions = hourOptions.slice(0);
-    this.state = {
-      service: { label: '', value: '' },
-      hourOptions,
-      afterOptions,
-      summaryInfoFields: [],
-      dueTimeRange: { time_start: '', time_end: ''}
-    };
+  state = {
+    summaryInfoFields: [],
+    notes: ''
   }
 
   componentDidMount() {
+    const { notes } = this.props.service;
+    this.setState({notes});
     this.getSummaryInfoFieldsInfo();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.servicesValidationCnt !== this.props.servicesValidationCnt && this.summaryInfoFields) {
+      this.summaryInfoFields.validateFields();
+    }
   }
 
   setSummaryInfoFieldRef = (ref) => {
     this.summaryInfoFields = ref;
   };
 
-  getSummaryInfoFieldsInfo = (dueType = 'flexible') => {
+  getSummaryInfoFieldsInfo = (dueType='flexible') => {
+    const { services, service: {service, due_type, due_date, due_time, due_time_range} } = this.props;
+    const serviceOptions = services.map(s => {return {label: s.name, value: s.id}});
     const summaryInfoFields = [
       {
-        type: 'select_box',
+        type: 'auto_suggest',
         field: 'service',
         className: 'primary upper',
         label: 'Service:',
-        errorMessage: 'Choose Service',
-        options: [],
+        errorMessage: 'Input Service',
+        options: serviceOptions,
         required: true,
         xs: 12,
         sm: 6,
         md: 3,
         lg: 3,
-        xl: 3
+        xl: 3,
+        defaultValue: service
       },
       {
         type: 'select_box',
@@ -100,7 +93,7 @@ export default class SummaryEditView extends React.Component {
         errorMessage: 'Choose Due Date',
         options: dueTypes,
         required: true,
-        defaultValue: dueType,
+        defaultValue: dueType || due_type,
         xs: 12,
         sm: 6,
         md: 3,
@@ -118,6 +111,7 @@ export default class SummaryEditView extends React.Component {
           dateFormat: 'MM/dd/yyyy',
           label: 'Date:',
           errorMessage: 'Choose Date',
+          defaultValue: due_date || new Date(),
           required: true,
           xs: 12,
           sm: 6,
@@ -135,6 +129,7 @@ export default class SummaryEditView extends React.Component {
           dateFormat: 'MM/dd/yyyy',
           label: 'Date:',
           errorMessage: 'Choose Date',
+          defaultValue: due_date || new Date(),
           required: true,
           xs: 12,
           sm: 6,
@@ -150,6 +145,7 @@ export default class SummaryEditView extends React.Component {
           placeholder: '',
           errorMessage: 'Choose Time',
           required: true,
+          defaultValue: due_time ? due_time : undefined,
           xs: 12,
           sm: 6,
           md: 3,
@@ -173,6 +169,7 @@ export default class SummaryEditView extends React.Component {
           dateFormat: 'MM/dd/yyyy',
           label: 'Date:',
           errorMessage: 'Choose Date',
+          defaultValue: due_date || new Date(),
           required: true,
           xs: 12,
           sm: 6,
@@ -187,6 +184,7 @@ export default class SummaryEditView extends React.Component {
           label: 'Time:',
           errorMessage: 'Choose Time Range',
           required: true,
+          defaultValue: due_time_range ? due_time_range : undefined,
           xs: 12,
           sm: 6,
           md: 4,
@@ -209,16 +207,54 @@ export default class SummaryEditView extends React.Component {
   };
 
   handleFieldChange = (value, field) => {
+    console.log('handleFieldChange...');
+    const { service } = this.props;
+    this.handleServiceChange({...service, ...value});
     if (field === 'due_type') {
       this.getSummaryInfoFieldsInfo(value[field]);
     }
   };
 
+  handleServiceChange = debounce((service) => {
+    this.props.onChange(service);
+  }, 400);
+
+  getScheduleText = ({due_type, due_date, due_time, due_time_range }) => {
+    const dueTypeLabel = find(dueTypes, {value: due_type});
+    due_date = due_date && moment(due_date).format("MM/DD/YYYY");
+    due_time = due_time && due_time.value;
+    due_time_range = due_time_range && `${due_time_range.from_time.value} ~ ${due_time_range.to_time.value}`;
+
+    if (due_type === 'specific_date') {
+      return due_date;
+    }
+    if (due_type === 'specific_date_time') {
+      return `${due_date} ${due_time}`;
+    }
+    if (due_type === 'data_time_range') {
+      return `${due_date} ${due_time_range}`;
+    }
+
+    return dueTypeLabel.label;
+  }
+
+  handleNotesChange = (notes) => {
+    const { service } = this.props;
+    this.setState({notes});
+    this.handleServiceChange({...service, notes});
+  }
+
   render() {
     const { summaryInfoFields } = this.state;
     return (
         <ContentWrapper>
-          <Divider />
+          <FormFieldWrapper>
+            <div className="btnAddService">
+              <DeleteButton className="btn-delete" onClick={this.props.handleDelete}>
+                <EvilIcon name="ei-close" size="s" className="close-icon" />
+              </DeleteButton>
+            </div>
+          </FormFieldWrapper>
           <FormFields
             ref={this.setSummaryInfoFieldRef}
             fields={summaryInfoFields}
@@ -229,15 +265,13 @@ export default class SummaryEditView extends React.Component {
               <InputWrapper className='primary upper'>
                 <InputLabel>Special Instructions:</InputLabel>
                 <TextArea
+                  value={this.state.notes}
                   style={{ marginBottom: 0, border: '1px solid #A9B5BB' }}
-                  onChange={this.handleChangeInstructions}
+                  onChange={ev=>this.handleNotesChange(ev.target.value)}
                 />
               </InputWrapper>
             </Col>
           </Row>
-          <DeleteButton className="btn-delete" onClick={() => this.handleDelete}>
-            <EvilIcon name="ei-close" size="s" className="close-icon" />
-          </DeleteButton>
         </ContentWrapper>
     );
   }
