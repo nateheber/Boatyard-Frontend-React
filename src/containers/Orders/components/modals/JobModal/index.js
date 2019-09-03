@@ -1,10 +1,9 @@
 import React from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { get, filter, find } from 'lodash';
+import { filter, find } from 'lodash';
 import styled from 'styled-components';
 import { toastr } from 'react-redux-toastr';
-import { getWhenValue } from 'utils/lineitem';
 import { GetManagements } from 'store/actions/managements';
 import { SetWorkOrder, AddNewWorkOrder, ResetWorkOrder, ServicesValidation } from 'store/actions/workorders';
 import { refinedManagementsSelector } from 'store/selectors/managements';
@@ -42,14 +41,19 @@ const Actions = styled.div`
 class JobModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      specialInstructions: get(props.order, 'attributes.specialInstructions') || '',
+    const { SetWorkOrder, workorder: { services }, order } = props;
+    if (services.length > 0 && order.lineItems.length > 0 && !services[0].service) {
+      console.log('setting...');
+      console.log(services);
+      services[0].service = order.lineItems[0].relationships.service.attributes.name;
+      SetWorkOrder({services: [...services]});
     }
   }
 
   componentDidMount() {
     const { GetManagements } = this.props;
     GetManagements({ params: { page: 1, per_page: 1000 } });
+
   }
 
   getScheduleText = ({due_type, due_date, due_time, due_time_range }) => {
@@ -76,19 +80,19 @@ class JobModal extends React.Component {
 
   onSend = () => {
     this.props.ServicesValidation();
-    const { workorder: {services, selectedTeamMembers, job_number} } = this.props;
+    const { workorder: {services, selectedTeamMembers, title} } = this.props;
     if (services.length === 0) {
       toastr.error('Error', "Please add at least one service!");
     } else if (selectedTeamMembers.length === 0) {
       toastr.error('Error', "Please add at least one team member!");
-    } else if (!job_number) {
+    } else if (!title) {
       toastr.error('Error', "Please input job title!");
     } else {
         const newServices = services.map(service => {
           return {
             name: service.service,
             scheduled_text: this.getScheduleText(service),
-            notes: service.notes,
+            special_instructions: service.notes,
           }
         });
         if (filter(newServices, s => !s.name || !s.scheduled_text).length === 0) {
@@ -124,8 +128,9 @@ class JobModal extends React.Component {
     this.props.SetWorkOrder({ selectedTeamMembers: selected });
   };
 
-  handleChangeNotes = specialInstructions => {
-    this.setState({ specialInstructions });
+  handleChangeNotes = notes => {
+    const {SetWorkOrder} = this.props;
+    SetWorkOrder({ notes });
   };
 
   handleVisibleChange = (fieldName, value) => {
@@ -172,20 +177,6 @@ class JobModal extends React.Component {
     return { boatInfo, customerInfo };
   };
 
-  getOrderService = () => {
-    const { order: { attributes: {specialInstructions}, lineItems } } = this.props;
-    if (lineItems.length > 0) {
-      // orderService = {
-      //   name: get(lineItems[0], 'relationships.service')
-      // }
-      const { name, subtitle, description, secondary_description, cost, cost_type, delivery_fee, position } =  get(lineItems[0], 'relationships.service.attributes');
-      return { name, subtitle, description, secondary_description, cost, cost_type, delivery_fee, position,
-        scheduled_text: getWhenValue(lineItems[0]),
-        notes: specialInstructions
-      };
-    }
-  }
-
   render() {
     const { open, onClose, loading, services,
       workorder: {
@@ -196,7 +187,6 @@ class JobModal extends React.Component {
         file_attachments_attributes: attachments
       }
     } = this.props;
-    const { specialInstructions } = this.state;
 
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const action = [
@@ -227,7 +217,6 @@ class JobModal extends React.Component {
           onChange={this.handleTeamMemberChange}
         />
         <JobSummarySection
-          orderService = {this.getOrderService()}
           services={services}
           workorder={this.props.workorder}
           SetWorkOrder={this.props.SetWorkOrder}
@@ -235,7 +224,7 @@ class JobModal extends React.Component {
         />
         <NotesSection
           contentVisible={notes}
-          notes={specialInstructions}
+          notes={this.props.workorder.notes}
           onChangeVisible={notes => this.handleVisibleChange('notes', notes)}
           onChange={this.handleChangeNotes}
         />

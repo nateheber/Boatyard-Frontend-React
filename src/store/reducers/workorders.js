@@ -6,7 +6,7 @@ import { actionTypes } from '../actions/workorders';
 const initialWorkOrder = {
   selectedTeamMembers: [],
   settings: {
-    notes: true,
+    notes: false,
     customer_info: true,
     boat_info: true,
     location: true

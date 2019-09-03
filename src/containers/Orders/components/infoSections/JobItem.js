@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { startCase } from 'lodash';
 
 const Wrapper = styled.div`
   position: relative;
@@ -25,12 +26,12 @@ const JobTitle = styled.div`
   line-height: 23px;
 `;
 
-// const JobID = styled.div`
-//   font-family: Helvetica;
-//   font-size: 12px;
-//   color: #999999;
-//   text-align: left;
-// `;
+const JobID = styled.div`
+  font-family: Helvetica;
+  font-size: 12px;
+  color: #999999;
+  text-align: left;
+`;
 
 const RightSection = styled.div`
 `;
@@ -68,11 +69,12 @@ export default class JobItem extends React.Component {
     return (
       <Wrapper>
         <LeftSection>
-          <JobTitle>{job.attributes.jobNumber}</JobTitle>
+          <JobTitle>{job.attributes.title}</JobTitle>
+          <JobID>{job.attributes.jobNumber}</JobID>
         </LeftSection>
         <RightSection>
           {/* <Button className={job.status}>{startCase(job.status)}</Button> */}
-          <Button className="pending">Pending</Button>
+          <Button className={job.attributes.state}>{startCase(job.attributes.state)}</Button>
         </RightSection>
       </Wrapper>
     )

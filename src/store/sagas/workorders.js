@@ -7,7 +7,7 @@ function* addNewWorkorder(action) {
   const { services, success, error } = action.payload;
   const workorderApi = yield select(getCustomApiClient)
   const {id: orderId } = yield select(state => state.order.currentOrder);
-  const {selectedTeamMembers, job_number, file_attachments_attributes, settings} = yield select(state => state.workorders.workorder);
+  const {selectedTeamMembers, title, file_attachments_attributes, settings, notes} = yield select(state => state.workorders.workorder);
   const assignments_attributes = selectedTeamMembers.map(m => {
     return {
       assignable_type: 'User',
@@ -19,9 +19,10 @@ function* addNewWorkorder(action) {
   const payload = {
     file_attachments_attributes,
     assignments_attributes,
-    job_number,
+    title,
     settings,
     services,
+    notes
   };
 
   try {
