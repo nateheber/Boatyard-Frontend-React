@@ -6,14 +6,14 @@ import { actionTypes } from '../actions/workorders';
 const initialWorkOrder = {
   selectedTeamMembers: [],
   settings: {
-    notes: true,
+    notes: false,
     customer_info: true,
     boat_info: true,
     location: true
   },
   file_attachments_attributes: [],
   showOrderService: true,
-  services: [{}],
+  services: [{due_type: 'flexible'}],
   job_number: ''
 };
 

@@ -128,7 +128,7 @@ class JobTitleSection extends React.Component {
       <Section>
         <SectionHeader>
           <Column>
-            <Input style={{ width: 205 }} placeholder='Job Title' value={workorder.job_number} onChange={e => SetWorkOrder({job_number: e.target.value}) } />
+            <Input style={{ width: 205 }} placeholder='Job Title' value={workorder.title} onChange={e => SetWorkOrder({title: e.target.value}) } />
           </Column>
           <Column>
             <HeaderInputLabel>Assign To:</HeaderInputLabel>
