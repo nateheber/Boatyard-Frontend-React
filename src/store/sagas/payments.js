@@ -10,13 +10,14 @@ function* getPayments(action) {
   try {
     const result = yield call(paymentClient.list, params);
     const payments = get(result, 'data', []);
-    const { perPage, total } = result;
+    const { perPage, total, included } = result;
     yield put({
       type: actionTypes.GET_PAYMENTS_SUCCESS,
       payload: {
         payments,
         perPage,
         total,
+        included,
       }
     });
     if (success) {
