@@ -39,7 +39,7 @@ export const dueTypes = [
     label: 'Specific Date & Time'
   },
   {
-    value: 'data_time_range',
+    value: 'date_time_range',
     label: 'Date & Time Range'
   }
 ];
@@ -66,8 +66,8 @@ export default class SummaryEditView extends React.Component {
     this.summaryInfoFields = ref;
   };
 
-  getSummaryInfoFieldsInfo = (dueType='flexible') => {
-    const { services, service: {service, due_type, due_date, due_time, due_time_range} } = this.props;
+  getSummaryInfoFieldsInfo = (dueType) => {
+    const { services, service: {service, due_type, due_date, due_time, due_time_range}, disabled } = this.props;
     const serviceOptions = services.map(s => {return {label: s.name, value: s.id}});
     const summaryInfoFields = [
       {
@@ -83,7 +83,8 @@ export default class SummaryEditView extends React.Component {
         md: 3,
         lg: 3,
         xl: 3,
-        defaultValue: service
+        defaultValue: service,
+        disabled
       },
       {
         type: 'select_box',
@@ -93,16 +94,17 @@ export default class SummaryEditView extends React.Component {
         errorMessage: 'Choose Due Date',
         options: dueTypes,
         required: true,
-        defaultValue: dueType || due_type,
+        defaultValue: dueType ? dueType : (due_type || 'flexible'),
         xs: 12,
         sm: 6,
         md: 3,
         lg: 3,
-        xl: 3
+        xl: 3,
+        disabled
       }
     ];
 
-    switch(dueType) {
+    switch(dueType || due_type) {
       case 'specific_date': {
         summaryInfoFields.push({
           type: 'date',
@@ -117,7 +119,8 @@ export default class SummaryEditView extends React.Component {
           sm: 6,
           md: 3,
           lg: 3,
-          xl: 3
+          xl: 3,
+          disabled
         });
         break;
       }
@@ -135,7 +138,8 @@ export default class SummaryEditView extends React.Component {
           sm: 6,
           md: 3,
           lg: 3,
-          xl: 3
+          xl: 3,
+          disabled
         });
         summaryInfoFields.push({
           type: 'inputable_time',
@@ -150,11 +154,12 @@ export default class SummaryEditView extends React.Component {
           sm: 6,
           md: 3,
           lg: 3,
-          xl: 3
+          xl: 3,
+          disabled
         });
         break;
       }
-      case 'data_time_range': {
+      case 'date_time_range': {
         summaryInfoFields.push({
           xs: 12,
           sm: 12,
@@ -175,7 +180,8 @@ export default class SummaryEditView extends React.Component {
           sm: 6,
           md: 3,
           lg: 3,
-          xl: 3
+          xl: 3,
+          disabled
         });
         summaryInfoFields.push({
           type: 'inputable_time_range',
@@ -189,7 +195,8 @@ export default class SummaryEditView extends React.Component {
           sm: 6,
           md: 4,
           lg: 4,
-          xl: 4
+          xl: 4,
+          disabled
         });
         break;
       }
@@ -207,7 +214,6 @@ export default class SummaryEditView extends React.Component {
   };
 
   handleFieldChange = (value, field) => {
-    console.log('handleFieldChange...');
     const { service } = this.props;
     this.handleServiceChange({...service, ...value});
     if (field === 'due_type') {
@@ -231,7 +237,7 @@ export default class SummaryEditView extends React.Component {
     if (due_type === 'specific_date_time') {
       return `${due_date} ${due_time}`;
     }
-    if (due_type === 'data_time_range') {
+    if (due_type === 'date_time_range') {
       return `${due_date} ${due_time_range}`;
     }
 
@@ -246,14 +252,17 @@ export default class SummaryEditView extends React.Component {
 
   render() {
     const { summaryInfoFields } = this.state;
+    const { disabled } = this.props;
     return (
         <ContentWrapper>
           <FormFieldWrapper>
+            {!disabled &&
             <div className="btnAddService">
               <DeleteButton className="btn-delete" onClick={this.props.handleDelete}>
                 <EvilIcon name="ei-close" size="s" className="close-icon" />
               </DeleteButton>
             </div>
+            }
           </FormFieldWrapper>
           <FormFields
             ref={this.setSummaryInfoFieldRef}
@@ -266,6 +275,7 @@ export default class SummaryEditView extends React.Component {
                 <InputLabel>Special Instructions:</InputLabel>
                 <TextArea
                   value={this.state.notes}
+                  disabled={disabled}
                   style={{ marginBottom: 0, border: '1px solid #A9B5BB' }}
                   onChange={ev=>this.handleNotesChange(ev.target.value)}
                 />

@@ -163,8 +163,8 @@ export const getLocationAddressFromOrder = order => {
 
 export const getTeamMemberData = (data, included) => {
   // filter(data, ({attributes: {access }}) => access !== 'admin')
-  return data.map(({attributes: {userId}}) => {
-    const {id, attributes: {firstName, lastName }} = find(included, {id: `${userId}`, type: "users"});
+  return data.map(row => {
+    const {id, attributes: {firstName, lastName }} = find(included, row);
     return {id, fullName: `${firstName} ${lastName}` };
   })
 }

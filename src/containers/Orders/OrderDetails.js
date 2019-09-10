@@ -1,16 +1,18 @@
 import React from 'react';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
-import { get, findIndex } from 'lodash';
+import { get, findIndex, filter, find } from 'lodash';
 import { toastr } from 'react-redux-toastr';
-
+import { SetWorkOrder, UpserWorkOrder, ServicesValidation, ResetWorkOrder, DeleteWorkOrder } from 'store/actions/workorders';
 import { actionTypes, GetOrder, UpdateOrder, SetDispatchedFlag } from 'store/actions/orders';
 import { GetServices } from 'store/actions/services';
 import { GetGlobalTemplates, GetLocalTemplates } from 'store/actions/messageTemplates';
 import { orderSelector } from 'store/selectors/orders';
+import { withAssignmentSelector } from 'store/selectors/workorders';
 import {
   getUserFromOrder,
   getBoatFromOrder,
@@ -32,6 +34,9 @@ import TimeLineSection from './components/templates/TimeLineSection';
 import OrderAssignment from './components/templates/OrderAssignment';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
 import JobModal from './components/modals/JobModal';
+import JobModalCloseConfirm from './components/modals/JobModalCloseConfirm';
+import JobDeleteConfirmModal from './components/modals/JobDeleteConfirmModal';
+import { dueTypes } from './components/modals/JobModal/components/JobSummarySection/components/SummaryEditView';
 
 const Wrapper = styled.div`
   padding: 30px 25px;
@@ -47,7 +52,9 @@ class OrderDetails extends React.Component {
     orderId: -1,
     isFirstLoad: true,
     visibleOfBoatModal: false,
-    visibleOfJobModal: false
+    visibleOfJobModal: false,
+    visibleOfConfirm: false,
+    visibleOfJobDeleteConfirm: false,
   };
 
   componentDidMount() {
@@ -177,19 +184,137 @@ class OrderDetails extends React.Component {
   };
 
   showJobModal = () => {
-    this.setState({ visibleOfJobModal: true });
+    this.props.SetWorkOrder({modalShow: true});
   };
 
   hideJobModal = () => {
-    this.setState({ visibleOfJobModal: false });
+    const { workorder } = this.props;
+    if (!workorder.id) {
+      this.setState({visibleOfConfirm: true});
+    } else {
+      if (workorder.state === 'draft') {
+        this.onSaveJob();
+      }
+      this.props.SetWorkOrder({modalShow: false, reset: !!workorder.id});
+    }
   };
+
+  hideConfirm = () => {
+    const { workorder } = this.props;
+    this.setState({visibleOfConfirm: false});
+    this.props.SetWorkOrder({modalShow: false, reset: !!workorder.id});
+  }
+
+  onSaveJob = () => {
+    const confirmShown = this.state.visibleOfConfirm;
+    this.setState({visibleOfConfirm: false});
+    const { workorder } = this.props;
+    const newServices = workorder.services.map(service => {
+      return {
+        name: service.service,
+        scheduled_text: this.getScheduleText(service),
+        special_instructions: service.notes,
+      }
+    });
+    // if (filter(newServices, s => !s.name || !s.scheduled_text).length === 0) {
+      this.props.UpserWorkOrder({
+        services: newServices,
+        success: () => {
+          confirmShown && toastr.success('Success', "Successfully added!");
+          this.props.ResetWorkOrder();
+          this.props.SetWorkOrder({modalShow: false, reset: !!workorder.id});
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
+        }
+      });
+
+    // }
+  }
+
+  getScheduleText = ({due_type, due_date, due_time, due_time_range }) => {
+    if (!due_type) {
+      return false;
+    }
+    const dueTypeLabel = find(dueTypes, {value: due_type});
+    due_date = due_date && moment(due_date).format("MM/DD/YYYY");
+    due_time = due_time && due_time.value;
+    due_time_range = due_time_range && `${due_time_range.from_time.value} ~ ${due_time_range.to_time.value}`;
+
+    if (due_type === 'specific_date') {
+      return due_date ? due_date : false;
+    }
+    if (due_type === 'specific_date_time') {
+      return (due_date && due_time) ? `${due_date} ${due_time}` : false;
+    }
+    if (due_type === 'date_time_range') {
+      return (due_date && due_time_range) ? `${due_date} ${due_time_range}` : false;
+    }
+
+    return dueTypeLabel.label;
+  }
+
+  onJobSend = () => {
+    this.props.ServicesValidation();
+    const { workorder: {services, assignee, title} } = this.props;
+    console.log(assignee);
+    if (services.length === 0) {
+      toastr.error('Error', "Please add at least one service!");
+    } else if (!assignee || !assignee.value) {
+      toastr.error('Error', "Please select team member or contractor!");
+    } else if (!title) {
+      toastr.error('Error', "Please input job title!");
+    } else {
+        const newServices = services.map(service => {
+          return {
+            name: service.service,
+            scheduled_text: this.getScheduleText(service),
+            special_instructions: service.notes,
+          }
+        });
+        if (filter(newServices, s => !s.name || !s.scheduled_text).length === 0) {
+          this.props.UpserWorkOrder({
+            services: newServices,
+            transition: 'dispatch',
+            success: () => {
+              toastr.success('Success', "Successfully Sent!");
+              this.props.ResetWorkOrder();
+              this.props.SetWorkOrder({modalShow: false, reset: true});
+            },
+            error: (e) => {
+              toastr.error('Error', e.message);
+            }
+          });
+        }
+      // }
+    }
+  };
+
+  onConfirmDelete = () => {
+    this.setState({visibleOfJobDeleteConfirm: false});
+    this.handleJobDelete();
+  }
+  handleJobDelete = () => {
+    const { workorder: {id} } = this.props;
+    this.props.DeleteWorkOrder({
+      id,
+      success: () => {
+        toastr.success('Success', "Successfully Deleted!");
+        this.props.ResetWorkOrder();
+        this.props.SetWorkOrder({modalShow: false, reset: true});
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+  }
 
   render() {
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const updatedDate = this.getUdpatedDate();
-    const { orderId, isFirstLoad, visibleOfBoatModal, visibleOfJobModal } = this.state;
+    const { orderId, isFirstLoad, visibleOfBoatModal, visibleOfConfirm, visibleOfJobDeleteConfirm } = this.state;
     const providerId = this.getProviderId();
-    const { currentOrder, currentStatus, boatStatus, privilege, workorders } = this.props;
+    const { currentOrder, currentStatus, boatStatus, privilege, workorders, workorder } = this.props;
     const lineItems = get(currentOrder, 'lineItems', []);
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
@@ -240,7 +365,7 @@ class OrderDetails extends React.Component {
                     />
                   </SectionGroup>
                   {privilege === 'provider' && <SectionGroup>
-                    <JobSection workorders={workorders} addJob={this.showJobModal} />
+                    <JobSection workorders={workorders} addJob={this.showJobModal} SetWorkOrder={this.props.SetWorkOrder} />
                   </SectionGroup>}
                   <SectionGroup>
                     <TimeLineSection order={currentOrder} />
@@ -258,13 +383,36 @@ class OrderDetails extends React.Component {
                 boatInfo={boatInfo}
               />
             )}
-            {visibleOfJobModal && <JobModal
-              order={currentOrder}
-              open={visibleOfJobModal}
-              customerInfo={customerInfo}
-              onClose={this.hideJobModal}
-              onSave={this.onSaveJob}
-            />}
+            {workorder.modalShow &&
+              <JobModal
+                order={currentOrder}
+                open={workorder.modalShow}
+                customerInfo={customerInfo}
+                onClose={this.hideJobModal}
+                onSend={this.onJobSend}
+                onDelete={ev => this.setState({visibleOfJobDeleteConfirm: true})}
+              />
+            }
+            {
+              visibleOfConfirm &&
+              (
+                <JobModalCloseConfirm
+                  open={visibleOfConfirm}
+                  onClose={this.hideConfirm}
+                  onConfirm={this.onSaveJob}
+                />
+              )
+            }
+            {
+              visibleOfJobDeleteConfirm &&
+              (
+                <JobDeleteConfirmModal
+                  open={visibleOfJobDeleteConfirm}
+                  onClose={ev => this.setState({visibleOfJobDeleteConfirm: false})}
+                  onConfirm={this.onConfirmDelete}
+                />
+              )
+            }
           </React.Fragment>
         )}
       </React.Fragment>
@@ -281,7 +429,8 @@ const mapStateToProps = state => ({
   localTemplates: state.messageTemplate.localTemplates,
   providerId: state.auth.providerId,
   services: state.service.services,
-  workorders: state.workorders.workorders
+  workorders: withAssignmentSelector(state),
+  workorder: state.workorders.workorder,
 });
 
 const mapDispatchToProps = {
@@ -291,7 +440,12 @@ const mapDispatchToProps = {
   UpdateBoat,
   SetDispatchedFlag,
   GetGlobalTemplates,
-  GetLocalTemplates
+  GetLocalTemplates,
+  SetWorkOrder,
+  ServicesValidation,
+  UpserWorkOrder,
+  ResetWorkOrder,
+  DeleteWorkOrder,
 };
 
 export default withRouter(connect(

@@ -33,11 +33,12 @@ export default class JobSection extends React.Component {
 
   render () {
     const {workorders} = this.props;
+    console.log(workorders);
     return (
       <Section title='Jobs' mode='view' editComponent={this.renderAddButton()}>
         <Wrapper>
           {workorders.map((item, idx) => (
-            <JobItem key={`timeline_${idx}`} job={item} />
+            <JobItem key={`timeline_${idx}`} job={item} SetWorkOrder={this.props.SetWorkOrder} />
           ))}
         </Wrapper>
       </Section>

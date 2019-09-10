@@ -1,22 +1,21 @@
 import React from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { filter, find } from 'lodash';
+import { find } from 'lodash';
 import styled from 'styled-components';
-import { toastr } from 'react-redux-toastr';
 import { GetManagements } from 'store/actions/managements';
-import { SetWorkOrder, AddNewWorkOrder, ResetWorkOrder, ServicesValidation } from 'store/actions/workorders';
+import { SetWorkOrder, UpserWorkOrder, ResetWorkOrder, ServicesValidation } from 'store/actions/workorders';
 import { refinedManagementsSelector } from 'store/selectors/managements';
 import { getUserFromOrder, getBoatFromOrder } from 'utils/order';
-import { OrangeButton, GradientButton } from 'components/basic/Buttons'
+import { OrangeButton, HollowButton /*, GradientButton*/ } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import {
-  Image, JobTitleSection, JobSummarySection, CustomerInfoSection,
+  /*Image, */ JobTitleSection, JobSummarySection, CustomerInfoSection,
   LocationInfoSection, BoatInfoSection, AttachmentSection, NotesSection
 } from './components';
 import { dueTypes } from './components/JobSummarySection/components/SummaryEditView';
 
-import PrintIcon from '../../../../../resources/job/print.png';
+//import PrintIcon from '../../../../../resources/job/print.png';
 
 // const mainFields = ['first_name', 'last_name', 'phone_number', 'email', 'notes'];
 // const locationFields = ['street', 'city', 'state', 'zip'];
@@ -43,8 +42,6 @@ class JobModal extends React.Component {
     super(props);
     const { SetWorkOrder, workorder: { services }, order } = props;
     if (services.length > 0 && order.lineItems.length > 0 && !services[0].service) {
-      console.log('setting...');
-      console.log(services);
       services[0].service = order.lineItems[0].relationships.service.attributes.name;
       SetWorkOrder({services: [...services]});
     }
@@ -71,61 +68,18 @@ class JobModal extends React.Component {
     if (due_type === 'specific_date_time') {
       return (due_date && due_time) ? `${due_date} ${due_time}` : false;
     }
-    if (due_type === 'data_time_range') {
+    if (due_type === 'date_time_range') {
       return (due_date && due_time_range) ? `${due_date} ${due_time_range}` : false;
     }
 
     return dueTypeLabel.label;
   }
 
-  onSend = () => {
-    this.props.ServicesValidation();
-    const { workorder: {services, selectedTeamMembers, title} } = this.props;
-    if (services.length === 0) {
-      toastr.error('Error', "Please add at least one service!");
-    } else if (selectedTeamMembers.length === 0) {
-      toastr.error('Error', "Please add at least one team member!");
-    } else if (!title) {
-      toastr.error('Error', "Please input job title!");
-    } else {
-        const newServices = services.map(service => {
-          return {
-            name: service.service,
-            scheduled_text: this.getScheduleText(service),
-            special_instructions: service.notes,
-          }
-        });
-        if (filter(newServices, s => !s.name || !s.scheduled_text).length === 0) {
-          this.props.AddNewWorkOrder({
-            services: newServices,
-            success: () => {
-              toastr.success('Success', "Successfully added!");
-              this.props.ResetWorkOrder();
-              this.props.onClose();
-            },
-            error: (e) => {
-              toastr.error('Error', e.message);
-            }
-          });
-        }
-      // }
-    }
-  };
-
   handlePrint = () => {
   };
 
-  handleTeamMemberChange = (member, isDeleting = false) => {
-    const { selectedTeamMembers } = this.props.workorder;
-
-    let selected = selectedTeamMembers.slice(0);
-    if (isDeleting) {
-      selected = selected.filter(item => item.value !== member.value);
-    } else {
-      selected.push(member);
-    }
-
-    this.props.SetWorkOrder({ selectedTeamMembers: selected });
+  handleTeamMemberChange = (member) => {
+    this.props.SetWorkOrder({ assignee: member });
   };
 
   handleChangeNotes = notes => {
@@ -180,40 +134,47 @@ class JobModal extends React.Component {
   render() {
     const { open, onClose, loading, services,
       workorder: {
-        selectedTeamMembers,
+        id,
+        jobNumber,
+        assignee,
+        state,
         settings: {
           notes, customer_info, boat_info, location
         },
         file_attachments_attributes: attachments
       }
     } = this.props;
-
+    const showSendBtn = !state || state === 'draft';
+    const showDeleteBtn = !!id;
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const action = [
-      <OrangeButton onClick={this.onSend} key='modal_btn_save'>Send</OrangeButton>
+      showDeleteBtn && <HollowButton onClick={this.props.onDelete} key='modal_btn_delete'>Delete</HollowButton>,
+      showSendBtn && <OrangeButton onClick={this.props.onSend} key='modal_btn_save'>Send</OrangeButton>,
     ];
     const headers = (
       <ModalHeader>
-        <Title>{'Job #1234-1'}</Title>
+        <Title>{id ? `Job #${jobNumber}` : 'New Job'}</Title>
         <Actions>
-          <GradientButton onClick={this.handlePrint}>
+          {/*<GradientButton onClick={this.handlePrint}>
             <Image className='print' src={PrintIcon} />
           </GradientButton>
-          <OrangeButton style={{ marginLeft: 30 }} onClick={this.onSend} key='modal_btn_save'>Send</OrangeButton>
+          */}
+          { showSendBtn && <OrangeButton style={{ marginLeft: 30 }} onClick={this.props.onSend} key='modal_btn_save'>Send</OrangeButton> }
         </Actions>
       </ModalHeader>
     );
     return (
       <Modal
         customHeader={headers}
-        loading={loading}
         actions={action}
         open={open}
         onClose={onClose}
         large
+        classes='space-between'
+        loading={loading}
       >
         <JobTitleSection
-          selected={selectedTeamMembers}
+          assignee={assignee}
           onChange={this.handleTeamMemberChange}
         />
         <JobSummarySection
@@ -247,6 +208,7 @@ class JobModal extends React.Component {
           attachments={attachments}
           onAdd={this.handleAddAttachment}
           onDelete={this.handleDeleteAttachment}
+          disabled={!showSendBtn}
         />
       </Modal>
     );
@@ -259,13 +221,14 @@ const mapStateToProps = (state) => ({
   managements: refinedManagementsSelector(state),
   services: state.service.services,
   workorder: state.workorders.workorder,
+  loading: state.workorders.loading,
   servicesValidationCnt: state.workorders.servicesValidationCnt,
 });
 
 const mapDispatchToProps = {
   GetManagements,
   SetWorkOrder,
-  AddNewWorkOrder,
+  UpserWorkOrder,
   ResetWorkOrder,
   ServicesValidation
 };
