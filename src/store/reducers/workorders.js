@@ -7,7 +7,7 @@ const initialWorkOrder = {
   selectedTeamMembers: [],
   settings: {
     notes: false,
-    customer_info: true,
+    customer_info: false,
     boat_info: true,
     location: true
   },
