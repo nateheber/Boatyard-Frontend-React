@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { concat, find, get, filter } from 'lodash';
+import { concat, find, get, filter, sortBy } from 'lodash';
 import { actionTypes } from '../actions/workorders';
 import { getCustomApiClient } from './sagaSelectors';
 
@@ -63,8 +63,15 @@ function* getWorkOrders(action) {
   const workorderApi = yield select(getCustomApiClient);
 
   try {
-    const {data, included} = yield call(workorderApi.get, `/orders/${orderId}/work_orders`,  {page_size: 1000});
-    yield put({ type: actionTypes.GET_WORKORDERS_SUCCESS, payload: {data, included}});
+    const {data, included} = yield call(
+      workorderApi.get, `/orders/${orderId}/work_orders`,
+      {
+        page_size: 1000,
+        'work_orders[order]': 'id',
+        'work_orders[sort]': 'desc',
+      }
+    );
+    yield put({ type: actionTypes.GET_WORKORDERS_SUCCESS, payload: {data: sortBy(data, d => parseInt(d.id)).reverse(), included}});
     if (success) {
       yield call(success);
     }
