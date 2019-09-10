@@ -130,6 +130,10 @@ class OrderDetails extends React.Component {
     return get(getProviderFromOrder(currentOrder), 'id', '');
   };
 
+  getProviderLocationId = () => {
+    const { currentOrder } = this.props;
+    return get(currentOrder, 'attributes.providerLocationId');
+  }
   getUdpatedDate = () => {
     const { currentOrder } = this.props;
     const updatedAt = get(currentOrder, 'attributes.updatedAt');
@@ -314,12 +318,16 @@ class OrderDetails extends React.Component {
     const updatedDate = this.getUdpatedDate();
     const { orderId, isFirstLoad, visibleOfBoatModal, visibleOfConfirm, visibleOfJobDeleteConfirm } = this.state;
     const providerId = this.getProviderId();
+    const providerLocationId = this.getProviderLocationId();
+
     const { currentOrder, currentStatus, boatStatus, privilege, workorders, workorder } = this.props;
     const lineItems = get(currentOrder, 'lineItems', []);
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
     const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
     const canShowCustomerInfo = this.getCustomerInfoCondition();
+
+    console.log(providerId, providerLocationId);
     return (
       <React.Fragment>
         {loading || isFirstLoad ? (
@@ -364,7 +372,7 @@ class OrderDetails extends React.Component {
                       onEditBoat={() => this.showBoatModal()}
                     />
                   </SectionGroup>
-                  {privilege === 'provider' && <SectionGroup>
+                  {privilege === 'provider' && providerId && providerLocationId && <SectionGroup>
                     <JobSection workorders={workorders} addJob={this.showJobModal} SetWorkOrder={this.props.SetWorkOrder} />
                   </SectionGroup>}
                   <SectionGroup>
