@@ -36,14 +36,16 @@ export default class JobSummarySection extends React.Component {
   }
 
   render() {
-    const { workorder: {services } } = this.props;
+    const { workorder: {services, state } } = this.props;
+    const disabled = !(!state || state === 'draft');
     return (
       <Section>
         <SectionHeader>
           <HeaderTitle>Job Summary</HeaderTitle>
-            <GradientButton onClick={this.handleAddSevice}>
+            {!disabled && <GradientButton onClick={this.handleAddSevice}>
               <Image src={AddIcon} />
             </GradientButton>
+            }
         </SectionHeader>
         <SectionContent>
           {
@@ -54,6 +56,7 @@ export default class JobSummarySection extends React.Component {
                 services={this.props.services}
                 key={`service-${index}`}
                 service={service}
+                disabled={disabled}
                 servicesValidationCnt={this.props.servicesValidationCnt}
                 handleDelete={() => this.handleDeleteService(index)}
                 onChange={(service) => this.handleServiceChange(service, index)}

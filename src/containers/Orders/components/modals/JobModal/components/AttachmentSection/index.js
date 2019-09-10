@@ -181,35 +181,42 @@ export default class AttachmentSection extends React.Component {
   }
 
   render() {
-    const { attachments } = this.props;
+    const { attachments, disabled } = this.props;
     return (
       <Section>
         <SectionHeader>
           <HeaderTitle>Attachments</HeaderTitle>
-            <AddAttachmentButton accept='*' onChange={this.handleFileChange}>
+            {!disabled && <AddAttachmentButton accept='*' onChange={this.handleFileChange}>
               <Image src={AddIcon} />
             </AddAttachmentButton>
+            }
         </SectionHeader>
         <SectionContent>
           <AttachmentSlider>
+            { attachments.length > 5 &&
             <GradientButton onClick={this.handleMoveLeft}>
               <Image className='arrow' src={LeftArrowIcon} />
             </GradientButton>
+            }
             <AttachmentsContainer ref={this.containerRef}>
               {attachments.map((attachment, index) => (
               <Attachment key={`attachment_${index}`} className={attachment.fileType} ref={index}>
                 <Image src={attachment.fileType !== 'image' ? PdfIcon : attachment.file_attachment}></Image>
                 {attachment.fileType !== 'image' && <AttachmentTitle>{attachment.filename}</AttachmentTitle>}
                 <Overlay className="overlay" />
+                { !disabled &&
                 <DeleteButton className="btn-close" onClick={this.handleDelete(index)}>
                   <EvilIcon name="ei-close-o" size="s" className="close-icon" />
                 </DeleteButton>
+                }
               </Attachment>
               ))}
             </AttachmentsContainer>
+            { attachments.length > 5 &&
             <GradientButton onClick={this.handleMoveRight}>
               <Image className='arrow' src={RightArrowIcon} />
             </GradientButton>
+            }
           </AttachmentSlider>
         </SectionContent>
       </Section>

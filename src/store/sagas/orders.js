@@ -5,7 +5,7 @@ import { ORDER_ALIASES, AVAILABLE_ALIAS_ORDERS } from 'utils/basic';
 import { getTeamMemberData } from 'utils/order';
 import { actionTypes } from '../actions/orders';
 import { actionTypes as workorderActionTypes } from '../actions/workorders';
-import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag, getPrivilege, getManagementClient } from './sagaSelectors';
+import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag, getPrivilege } from './sagaSelectors';
 
 const addStateAliasOfOrder = (order) => {
   const state = get(order, 'attributes.state');
@@ -126,10 +126,13 @@ function* getOrder(action) {
     const result = yield call(orderClient.read, orderId);
     const { data: order, included } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
-    const managementClient = yield select(getManagementClient);
     const providerLocationId = get(order, 'attributes.providerLocationId');
-    const { data: mngData, included: mngIncluded } = yield call(managementClient.list, {per_page: 1000, 'management[provider_location_id]': providerLocationId})
-    const teamMemberData = getTeamMemberData(mngData, mngIncluded);
+    const providerId = get(order, 'attributes.providerId');
+    const apiClient = yield select(getCustomApiClient);
+    const { data: {relationships: {teamMembers: {data : tmData}} }, included: directoryIncluded }  = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
+    console.log(tmData);
+    const teamMemberData = getTeamMemberData(tmData, directoryIncluded);
+    console.log(teamMemberData);
     yield put({
       type: workorderActionTypes.RESET
     });

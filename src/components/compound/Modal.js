@@ -39,17 +39,17 @@ const Content = styled.div`
   &.new {
     padding: 35px 100px 15px;
     @media (max-width: 1200px) {
-      padding: 35px 70px 15px;    
+      padding: 35px 70px 15px;
     }
     @media (max-width: 1200px) {
-      padding: 35px 60px 15px;    
+      padding: 35px 60px 15px;
     }
     @media (max-width: 768px) {
-      padding: 35px 40px 15px;    
+      padding: 35px 40px 15px;
     }
     @media (max-width: 600px) {
-      padding: 30px 20px 5px;    
-    }  
+      padding: 30px 20px 5px;
+    }
   }
 `;
 
@@ -59,6 +59,9 @@ const ActionWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
   border-top: 1px solid #e5e5e5;
+  &.space-between {
+    justify-content: space-between;
+  }
   @media (max-width: 820px) {
     flex-direction: column-reverse;
     justify-content: center;
@@ -76,10 +79,10 @@ const ActionWrapper = styled.div`
       height: 48px;
     }
     @media (max-width: 1200px) {
-      padding: 10px 70px 30px;    
+      padding: 10px 70px 30px;
     }
     @media (max-width: 1200px) {
-      padding: 10px 60px 30px;    
+      padding: 10px 60px 30px;
     }
     @media (max-width: 820px) {
       flex-direction: column-reverse;
@@ -89,11 +92,11 @@ const ActionWrapper = styled.div`
       }
     }
     @media (max-width: 768px) {
-      padding: 10px 40px 30px;    
+      padding: 10px 40px 30px;
     }
     @media (max-width: 600px) {
-      padding: 10px 20px 20px;    
-    }  
+      padding: 10px 20px 20px;
+    }
   }
 `;
 

@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-// import { get } from 'lodash';
+import { find } from 'lodash';
 import { actionTypes } from '../actions/workorders';
 
 const initialWorkOrder = {
@@ -14,13 +14,16 @@ const initialWorkOrder = {
   file_attachments_attributes: [],
   showOrderService: true,
   services: [{due_type: 'flexible'}],
-  job_number: ''
+  job_number: '',
+  modalShow: false
 };
 
 const initialState = {
   workorder: initialWorkOrder,
   workorders: [],
+  included: {},
   servicesValidationCnt: 0,
+  loading: false,
 };
 
 
@@ -30,13 +33,52 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
-        draft.workorder = {...draft.workorder, ...payload};
+        const reset = payload.reset;
+        delete payload['reset'];
+        if (reset) {
+          draft.workorder = { ...initialWorkOrder, ...payload };
+        } else {
+          draft.workorder = { ...draft.workorder, ...payload };
+        }
+        draft.loading = false;
       }),
-    [actionTypes.ADD_NEW_WORKORDER_SUCCESS]: (state, action) =>
+    [actionTypes.UPSERT_WORKORDER]: (state, action) =>
       produce(state, draft => {
-        const { type, payload: {newWorkorder} } = action;
+        const { type } = action
+        draft.currentStatus = type;
+        draft.loading = true;
+      }),
+    [actionTypes.UPSERT_WORKORDER_ERROR]: (state, action) =>
+      produce(state, draft => {
+        const { type} = action;
+        draft.currentStatus = type;
+        draft.loading = false;
+      }),
+    [actionTypes.UPSERT_WORKORDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload: {newWorkorder, included} } = action;
         draft.currentStatus = type;
         draft.workorders = [...state.workorders, newWorkorder];
+        draft.included = [...draft.included, ...included];
+        draft.loading = false;
+      }),
+      [actionTypes.DELETE_WORKORDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action
+        draft.currentStatus = type;
+        draft.loading = true;
+      }),
+    [actionTypes.DELETE_WORKORDER_ERROR]: (state, action) =>
+      produce(state, draft => {
+        const { type} = action;
+        draft.currentStatus = type;
+        draft.loading = false;
+      }),
+    [actionTypes.DELETE_WORKORDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type} = action;
+        draft.currentStatus = type;
+        draft.loading = false;
       }),
     [actionTypes.RESET_NEW_WORKORDER]: (state, action) =>
       produce(state, draft => {
@@ -46,9 +88,16 @@ export default handleActions(
       }),
     [actionTypes.GET_WORKORDERS_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type, payload } = action;
+        const { type, payload: {data, included} } = action;
         draft.currentStatus = type;
-        draft.workorders = payload;
+        data.forEach(({relationships}) => {
+          Object.keys(relationships).forEach(key => {
+            relationships[key].data = relationships[key].data.map(item => find(included, item));
+          });
+        });
+        console.log(data);
+        draft.workorders = data;
+        draft.included = included;
       }),
     [actionTypes.RESET]: (state, action) =>
       produce(state, draft => {
