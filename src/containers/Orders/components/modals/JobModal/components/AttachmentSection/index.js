@@ -186,7 +186,7 @@ export default class AttachmentSection extends React.Component {
       <Section>
         <SectionHeader>
           <HeaderTitle>Attachments</HeaderTitle>
-            {!disabled && <AddAttachmentButton accept='*' onChange={this.handleFileChange}>
+            {!disabled && <AddAttachmentButton accept='image/*,application/pdf' onChange={this.handleFileChange}>
               <Image src={AddIcon} />
             </AddAttachmentButton>
             }
