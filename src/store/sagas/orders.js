@@ -128,11 +128,12 @@ function* getOrder(action) {
     const refactoredOrder = addStateAliasOfOrder(order);
     const providerLocationId = get(order, 'attributes.providerLocationId');
     const providerId = get(order, 'attributes.providerId');
-    const apiClient = yield select(getCustomApiClient);
-    const { data: {relationships: {teamMembers: {data : tmData}} }, included: directoryIncluded }  = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
-    console.log(tmData);
-    const teamMemberData = getTeamMemberData(tmData, directoryIncluded);
-    console.log(teamMemberData);
+    let teamMemberData = [];
+    if (providerLocationId && providerId) {
+      const apiClient = yield select(getCustomApiClient);
+      const { data: {relationships: {teamMembers: {data : tmData}} }, included: directoryIncluded }  = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
+      teamMemberData = getTeamMemberData(tmData, directoryIncluded);
+    }
     yield put({
       type: workorderActionTypes.RESET
     });
