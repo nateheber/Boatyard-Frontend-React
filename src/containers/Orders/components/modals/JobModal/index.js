@@ -1,7 +1,5 @@
 import React from 'react';
-import moment from 'moment';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
 import styled from 'styled-components';
 import { GetManagements } from 'store/actions/managements';
 import { SetWorkOrder, UpserWorkOrder, ResetWorkOrder, ServicesValidation } from 'store/actions/workorders';
@@ -13,7 +11,6 @@ import {
   /*Image, */ JobTitleSection, JobSummarySection, CustomerInfoSection,
   LocationInfoSection, BoatInfoSection, AttachmentSection, NotesSection
 } from './components';
-import { dueTypes } from './components/JobSummarySection/components/SummaryEditView';
 
 //import PrintIcon from '../../../../../resources/job/print.png';
 
@@ -51,28 +48,6 @@ class JobModal extends React.Component {
     const { GetManagements } = this.props;
     GetManagements({ params: { page: 1, per_page: 1000 } });
 
-  }
-
-  getScheduleText = ({due_type, due_date, due_time, due_time_range }) => {
-    if (!due_type) {
-      return false;
-    }
-    const dueTypeLabel = find(dueTypes, {value: due_type});
-    due_date = due_date && moment(due_date).format("MM/DD/YYYY");
-    due_time = due_time && due_time.value;
-    due_time_range = due_time_range && `${due_time_range.from_time.value} ~ ${due_time_range.to_time.value}`;
-
-    if (due_type === 'specific_date') {
-      return due_date ? due_date : false;
-    }
-    if (due_type === 'specific_date_time') {
-      return (due_date && due_time) ? `${due_date} ${due_time}` : false;
-    }
-    if (due_type === 'date_time_range') {
-      return (due_date && due_time_range) ? `${due_date} ${due_time_range}` : false;
-    }
-
-    return dueTypeLabel.label;
   }
 
   handlePrint = () => {
@@ -188,6 +163,7 @@ class JobModal extends React.Component {
           notes={this.props.workorder.notes}
           onChangeVisible={notes => this.handleVisibleChange('notes', notes)}
           onChange={this.handleChangeNotes}
+          disabled={!showSendBtn}
         />
         <CustomerInfoSection
           contentVisible={customer_info}

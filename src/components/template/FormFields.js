@@ -560,7 +560,7 @@ export default class FormFields extends React.Component {
               onSuggestionsClearRequested={this.onSuggestionsClearRequested}
               getSuggestionValue={suggestion => suggestion.label}
               renderSuggestion={suggestion => <div>{suggestion.label}</div>}
-              inputProps={{placeholder, value: fieldValue, onChange: (ev, {newValue}) => this.onChangeValue(field, newValue, type)}}
+              inputProps={{disabled, placeholder, value: fieldValue, onChange: (ev, {newValue}) => this.onChangeValue(field, newValue, type)}}
             />
             {
               errorIdx >= 0 &&

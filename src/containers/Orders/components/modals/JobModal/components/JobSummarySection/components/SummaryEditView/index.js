@@ -47,18 +47,19 @@ export const dueTypes = [
 export default class SummaryEditView extends React.Component {
   state = {
     summaryInfoFields: [],
-    notes: ''
+    special_instructions: ''
   }
 
   componentDidMount() {
-    const { notes } = this.props.service;
-    this.setState({notes});
+    const { special_instructions } = this.props.service;
+    this.setState({special_instructions});
     this.getSummaryInfoFieldsInfo();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.servicesValidationCnt !== this.props.servicesValidationCnt && this.summaryInfoFields) {
-      this.summaryInfoFields.validateFields();
+      const { service } = this.props;
+      this.props.onChange({...service, validateResult: this.summaryInfoFields.validateFields()});
     }
   }
 
@@ -244,10 +245,10 @@ export default class SummaryEditView extends React.Component {
     return dueTypeLabel.label;
   }
 
-  handleNotesChange = (notes) => {
+  handleNotesChange = (special_instructions) => {
     const { service } = this.props;
-    this.setState({notes});
-    this.handleServiceChange({...service, notes});
+    this.setState({special_instructions});
+    this.handleServiceChange({...service, special_instructions});
   }
 
   render() {
@@ -274,7 +275,7 @@ export default class SummaryEditView extends React.Component {
               <InputWrapper className='primary upper'>
                 <InputLabel>Special Instructions:</InputLabel>
                 <TextArea
-                  value={this.state.notes}
+                  value={this.state.special_instructions}
                   disabled={disabled}
                   style={{ marginBottom: 0, border: '1px solid #A9B5BB' }}
                   onChange={ev=>this.handleNotesChange(ev.target.value)}
