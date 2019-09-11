@@ -85,7 +85,6 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
       success: (data) => {
         setShowServiceModal(false);
         const option = {value: data.id, cost: data.cost, label: data.name};
-        console.log(option);
         onChangeService(option);
         setService(option);
       }

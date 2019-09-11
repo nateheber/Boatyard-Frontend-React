@@ -83,41 +83,41 @@ const Button = styled.button`
 
 export default class JobItem extends React.Component {
   reviseServices(services) {
-    return services.map(({scheduledText, name}) => {
-      let due_type;
+    return services.map(({name, dueDate, time:dueTime, specialInstructions: special_instructions}) => {
+      let due_type = 'flexible';
       let due_date = undefined;
       let due_time = undefined;
       let due_time_range = undefined;
 
-      if (scheduledText === 'Flexible') {
+      if (dueDate === 'Flexible') {
         due_type = 'flexible';
-      } else if (scheduledText === 'As Soon As Possible') {
+      } else if (dueDate === 'As Soon As Possible') {
         due_type = 'asap';
-      } else {
-        if (scheduledText.indexOf(' ') > 1) {
-          const vals = scheduledText.split(' ');
-          if (scheduledText.indexOf ('~') > 1) {
-            due_type = 'date_time_range';
-            due_time_range = {
-              from_time: {value: vals[1], label: vals[1]},
-              to_time: {value: vals[3], label: vals[3]}
-            };
-          } else {
-            due_type = 'specific_date_time';
-            due_time = {value: vals[1], label: vals[1]};
-          }
-          due_date = new Date(vals[0]);
+      } else if (dueDate && !dueTime) {
+        due_type = 'specific_date';
+        due_date = new Date(dueDate);
+      } else if (dueDate && dueTime) {
+        due_date = new Date(dueDate);
+        if (dueTime.indexOf(' ~ ') > 1) {
+          due_type = 'date_time_range';
+          const vals = dueTime.split(' ~ ');
+          due_time_range = {
+            from_time: {value: vals[0], label: vals[0]},
+            to_time: {value: vals[1], label: vals[1]}
+          };
         } else {
-          due_type = 'specific_date';
-          due_date= new Date(scheduledText);
+          due_type = 'specific_date_time';
+          due_time = {value: dueTime, label: dueTime};
         }
       }
+
       return {
         service: name,
         due_type,
         due_date,
         due_time,
-        due_time_range
+        due_time_range,
+        special_instructions
       }
     })
   }

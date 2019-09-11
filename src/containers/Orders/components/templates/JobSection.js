@@ -33,7 +33,6 @@ export default class JobSection extends React.Component {
 
   render () {
     const {workorders} = this.props;
-    console.log(workorders);
     return (
       <Section title='Jobs' mode='view' editComponent={this.renderAddButton()}>
         <Wrapper>

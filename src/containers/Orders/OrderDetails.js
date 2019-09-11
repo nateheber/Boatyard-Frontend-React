@@ -216,7 +216,7 @@ class OrderDetails extends React.Component {
     const newServices = workorder.services.map(service => {
       return {
         name: service.service,
-        scheduled_text: this.getScheduleText(service),
+        ...this.getDueDateAndTime(service),
         special_instructions: service.notes,
       }
     });
@@ -236,62 +236,66 @@ class OrderDetails extends React.Component {
     // }
   }
 
-  getScheduleText = ({due_type, due_date, due_time, due_time_range }) => {
+  getDueDateAndTime = ({due_type, due_date, due_time, due_time_range }) => {
     if (!due_type) {
       return false;
     }
-    const dueTypeLabel = find(dueTypes, {value: due_type});
-    due_date = due_date && moment(due_date).format("MM/DD/YYYY");
+    const scheduled_text = find(dueTypes, {value: due_type}).label;
+    due_date = due_date && moment(due_date).format("MMM D, YYYY");
     due_time = due_time && due_time.value;
     due_time_range = due_time_range && `${due_time_range.from_time.value} ~ ${due_time_range.to_time.value}`;
 
     if (due_type === 'specific_date') {
-      return due_date ? due_date : false;
+      return { due_date };
     }
     if (due_type === 'specific_date_time') {
-      return (due_date && due_time) ? `${due_date} ${due_time}` : false;
+      return { due_date, time: due_time };
     }
     if (due_type === 'date_time_range') {
-      return (due_date && due_time_range) ? `${due_date} ${due_time_range}` : false;
+      return { due_date,  time: due_time_range };
     }
 
-    return dueTypeLabel.label;
+    return {due_date: scheduled_text};
   }
 
   onJobSend = () => {
     this.props.ServicesValidation();
-    const { workorder: {services, assignee, title} } = this.props;
-    console.log(assignee);
-    if (services.length === 0) {
-      toastr.error('Error', "Please add at least one service!");
-    } else if (!assignee || !assignee.value) {
-      toastr.error('Error', "Please select team member or contractor!");
-    } else if (!title) {
-      toastr.error('Error', "Please input job title!");
-    } else {
+    setTimeout(() => {
+      const { workorder: {services, assignee, title} } = this.props;
+      const invalidServiceCount = filter(services, {validateResult: false}).length;
+      if (services.length === 0) {
+        toastr.error('Error', "Please add at least one service!");
+      } else if (invalidServiceCount > 0) {
+        toastr.error('Error', "Please check invalid service fields!");
+      } else if (!assignee || !assignee.value) {
+        toastr.error('Error', "Please select team member or contractor!");
+      } else if (!title) {
+        toastr.error('Error', "Please input job title!");
+      } else {
         const newServices = services.map(service => {
           return {
             name: service.service,
-            scheduled_text: this.getScheduleText(service),
-            special_instructions: service.notes,
+            ...this.getDueDateAndTime(service),
+            special_instructions: service.special_instructions,
           }
         });
-        if (filter(newServices, s => !s.name || !s.scheduled_text).length === 0) {
-          this.props.UpserWorkOrder({
-            services: newServices,
-            transition: 'dispatch',
-            success: () => {
-              toastr.success('Success', "Successfully Sent!");
-              this.props.ResetWorkOrder();
-              this.props.SetWorkOrder({modalShow: false, reset: true});
-            },
-            error: (e) => {
-              toastr.error('Error', e.message);
-            }
-          });
-        }
-      // }
-    }
+
+        this.props.UpserWorkOrder({
+          services: newServices,
+          transition: 'dispatch',
+          success: () => {
+            toastr.success('Success', "Successfully Sent!");
+            this.props.ResetWorkOrder();
+            this.props.SetWorkOrder({modalShow: false, reset: true});
+          },
+          error: (e) => {
+            toastr.error('Error', e.message);
+          }
+        });
+
+      }
+    });
+
   };
 
   onConfirmDelete = () => {
@@ -327,7 +331,6 @@ class OrderDetails extends React.Component {
     const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
     const canShowCustomerInfo = this.getCustomerInfoCondition();
 
-    console.log(providerId, providerLocationId);
     return (
       <React.Fragment>
         {loading || isFirstLoad ? (
