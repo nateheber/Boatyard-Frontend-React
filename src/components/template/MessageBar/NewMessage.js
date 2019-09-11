@@ -195,16 +195,11 @@ class NewMessage extends React.Component {
     this.props.onCreationSuccess(conversationId)();
   }
 
-  sendMessage = (data, recipientInfo) => () => {
+  sendMessage = (message, recipientInfo) => () => {
     this.props.CreateMessage({
       data: {
         ...recipientInfo,
-        message: isEmpty(data.image) ? {
-          content: data.text,
-        } : {
-          content: data.text,
-          file: get(data, 'image'),
-        }
+        message
       },
       success: this.onSendingSuccess
     })

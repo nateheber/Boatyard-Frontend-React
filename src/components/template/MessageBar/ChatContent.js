@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { isEmpty, get } from 'lodash';
+import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { MessageBox } from 'components/template/Message/MessageBox';
@@ -83,7 +83,7 @@ class ChatContent extends React.Component {
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const { id } = recipientInfo;
-    const recipientData = get(included, `[profiles][${id}]`); 
+    const recipientData = get(included, `[profiles][${id}]`);
     const info = get(recipientData, 'relationships.owner.data');
     const recipient_type = get(info, 'type') === 'users' ? 'User' : 'Provider';
     return { recipient_type, recipient_id: info.id };
@@ -94,7 +94,7 @@ class ChatContent extends React.Component {
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const id = get(recipientInfo, 'id');
-    const recipientData = get(included, `[profiles][${id}]`); 
+    const recipientData = get(included, `[profiles][${id}]`);
     const info = get(recipientData, 'relationships.owner.data');
     const recipientType = get(info, 'type');
     const recipientId = get(info, 'id');
@@ -114,17 +114,12 @@ class ChatContent extends React.Component {
     GetConversation({ conversationId, first: false });
   }
 
-  onSend = (data) => {
+  onSend = (message) => {
     const recipientInfo = this.getRecipientInfo();
     this.props.CreateMessage({
       data: {
         ...recipientInfo,
-        message: isEmpty(data.image) ? {
-          content: data.text
-        } : {
-          content: data.text,
-          file: get(data, 'image')
-        }
+        message
       },
       error: (e) => toastr.error('Error', e.message),
       success: this.onSendingSuccess

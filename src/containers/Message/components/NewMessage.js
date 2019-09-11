@@ -134,7 +134,6 @@ class NewMessage extends React.Component {
     const { users } = this.state;
     const senderInfo = this.getSenderInfo();
     const recipientInfo = this.getRecipientInfo(users);
-    console.log('onSend1');
     this.props.CreateNetwork({
       data: {
         network: {
@@ -156,15 +155,10 @@ class NewMessage extends React.Component {
     }
   }
 
-  sendMessage = (data, recipientInfo) => () => {
+  sendMessage = (message, recipientInfo) => () => {
     this.props.CreateMessage({
       data: {
-        message: isEmpty(data.image) ? {
-          content: data.text,
-        } : {
-          content: data.text,
-          file: get(data, 'image'),
-        },
+        message,
         ...recipientInfo
       },
       success: this.onSendingSuccess

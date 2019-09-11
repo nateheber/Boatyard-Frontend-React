@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { isEmpty, get, set, reverse } from 'lodash';
+import { isEmpty, get, set, reverse, find } from 'lodash';
 
 const MERGE_RANGE_MINUTES = 5;
 
@@ -49,7 +49,8 @@ export const getSenderName = (profile) => {
 
 export const parseMessageDetails = (profile, message, included, auth) => {
   const profileId = get(message, 'attributes.profileId');
-  const file = get(message, 'attributes.file.url');
+  // const file = get(message, 'attributes.file.url');
+  const attachments = get(message, 'relationships.fileAttachments.data', []).map(attachment => find(get(included, 'file_attachments', []), attachment));
   const content = get(message, 'attributes.content', '');
   const sentAt = get(message, 'attributes.data.sentAt');
   let senderProfile = getProfileData(included, profileId);
@@ -59,7 +60,7 @@ export const parseMessageDetails = (profile, message, included, auth) => {
   // const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName') || ''} ${get(senderProfile, 'attributes.lastName') || ''}`;
   const senderName = getSenderName(senderProfile);
   const own = getOwnership(profile, senderProfile, auth);
-  return { profileId, senderName, content, file, own, sentAt };
+  return { profileId, senderName, content, attachments, own, sentAt };
 };
 
 export const refineMessage = (profile, currentConversation, auth) => {
@@ -93,7 +94,7 @@ export const refineMessage = (profile, currentConversation, auth) => {
       return ({
         name: currMessage.senderName,
         body: currMessage.content,
-        file: currMessage.file,
+        attachments: currMessage.attachments,
         own: currMessage.own,
         showDate,
         hasPrev,
