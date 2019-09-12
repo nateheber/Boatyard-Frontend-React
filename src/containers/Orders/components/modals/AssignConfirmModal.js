@@ -12,28 +12,13 @@ const Text = styled.div`
 `;
 
 export default class AssignConfirmModal extends React.Component {
-  getName = () => {
-    const { assignees } = this.props;
-    if (assignees) {
-      const names = assignees.map(assignee => assignee.name);
-      if (names.length > 2) {
-        const prefNames = names.slice(0, names.length - 1);
-        return `${prefNames.join(', ')} and ${names[names.length - 1]}`;
-      } else if (names.length === 2) {
-        return names.join(' and ');
-      } else {
-        return names.join('');
-      }
-    }
-    return '';
-  };
+
 
   render() {
-    const { open, onClose, onConfirm, assignees } = this.props;
-    const names = this.getName();
+    const { open, onClose, onConfirm, selected, selectedName } = this.props;
     const actions = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
-      <OrangeButton onClick={onConfirm} key="modal_btn_save">{(assignees && assignees.length === 0) ? 'CONFIRM' : 'SEND'}</OrangeButton>
+      <OrangeButton onClick={onConfirm} key="modal_btn_save">{!selected ? 'CONFIRM' : 'SEND'}</OrangeButton>
     ];
     return (
       <Modal
@@ -42,10 +27,10 @@ export default class AssignConfirmModal extends React.Component {
         open={open}
         onClose={onClose}
       >
-        {(assignees && assignees.length === 0) ? (
-            <Text>Please confirm that you would like to remove all assignees from this order.</Text>
+        {!selected ? (
+            <Text>Please confirm that you would like to remove assignee from this order.</Text>
           ) : (
-            <Text>Please confirm that you would like to dispatch this order to {names}.</Text>
+            <Text>Please confirm that you would like to assign this order to {selectedName}.</Text>
           )
         }
       </Modal>

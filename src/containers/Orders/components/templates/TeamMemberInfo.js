@@ -1,59 +1,38 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { get } from 'lodash';
 import styled from 'styled-components';
 
-import { GetManagement } from 'store/actions/managements';
-
 const Wrapper = styled.div`
-  box-sizing: border-box;
-  height: 44px;
-  background-color: white;
-  font-family: 'Source Sans Pro', sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  padding: 10px 15px;
-  color: #004258;
+  .title {
+    font-family: 'Montserrat',sans-serif !important;
+    font-size: 12px;
+    font-weight: bold;
+    color: #004258;
+    margin-bottom: 5px;
+  }
+  .content {
+    color: #898889;
+    font-size: 14px;
+    line-height: 1.42857;
+    margin-bottom: 30px;
+  }
 `
 
-class TeamMemberInfo extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      managementName: null //`Management #${props.id}`
-    };
-    this._isMounted = false;
-  }
-
-  componentDidMount() {
-    const { id } = this.props;
-    this.props.GetManagement({ managementId: id, success: this.onFetchSucceed })
-    this._isMounted = true;
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  onFetchSucceed = (management) => {
-    if (this._isMounted) {
-      this.setState({ managementName: management.name })
-    }
-  }
-
+export default class TeamMemberInfo extends React.Component {
   render() {
-    const { managementName } = this.state;
+    const { providerLocationInfo, teamMemberInfo } = this.props;
+    console.log(providerLocationInfo);
+    const locationName = get(providerLocationInfo, 'name', '-');
+    const teamMemberName = get(teamMemberInfo, 'fullName', '-');
     return (
       <div>
-        {managementName && <Wrapper>
-          {managementName}
-        </Wrapper>}
+        <Wrapper>
+          <div className="title">Provider Location</div>
+          <div className="content">{locationName}</div>
+          <div className="title">Team Member</div>
+          <div className="content">{teamMemberName}</div>
+        </Wrapper>
       </div>
     )
   }
 }
-
-const mapDispatchToProps = {
-  GetManagement
-}
-
-export default connect(null, mapDispatchToProps)(TeamMemberInfo);
