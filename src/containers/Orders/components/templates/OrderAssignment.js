@@ -1,14 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
+import { get, find } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 import { Section } from 'components/basic/InfoSection';
 
-import { DispatchOrder, SetDispatchedFlag } from 'store/actions/orders';
+import { UpdateOrder } from 'store/actions/orders';
+import { simpleProviderLocationSelector } from 'store/selectors/providerLocation';
 import ProviderInfo from './ProviderInfo';
 import TeamMemberInfo from './TeamMemberInfo';
 import ProviderSelector from './ProviderSelector';
-import TeamMemberSelector from './TeamMemberSelector';
+import AssigneeSelector from './AssigneeSelector';
 
 class OrderAssignment extends React.Component {
   constructor(props) {
@@ -33,45 +34,63 @@ class OrderAssignment extends React.Component {
     }
   }
 
-  updateDispatchIds = (dispatchIds) => {
-    const { privilege, currentOrder } = this.props;
-    const orderId = currentOrder.id;
-    const orderState = get(currentOrder, 'attributes.state');
-    if (privilege === 'admin') {
-      this.props.DispatchOrder({
-        orderId,
-        dispatchIds,
-        orderState,
-        success: () => { this.props.SetDispatchedFlag(true) }
-      });
-    } else {
+  updateOrder = (fieldName, value) => {
+    const { currentOrder: {id: orderId} } = this.props;
+    const data = {};
+    data[fieldName] = value;
+    if (fieldName === 'provider_location_id') {
+      data['assigned_team_member_id'] = null;
     }
+
+    this.props.UpdateOrder({
+      orderId,
+      data,
+      success: () => toastr.success('Success', "Successfully assigned!"),
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
   };
 
   renderDropdownButton = () => {
     const { dispatchIds } = this.state;
-    const { privilege, currentOrder } = this.props;
+    const { privilege, currentOrder, providerLocationId, providerLocations, teamMemberData } = this.props;
     const providerId = get(currentOrder, 'attributes.providerId');
     if (privilege === 'admin') {
       return <ProviderSelector dispatchIds={providerId ? [providerId] : dispatchIds} onChange={this.updateDispatchIds} />
     } else if ( privilege === 'provider') {
-      return <TeamMemberSelector dispatchIds={[]} onChange={this.updateDispatchIds} />
+      let options = providerLocations;
+      let value = get(currentOrder, 'attributes.providerLocationId');
+      let labelField = 'name';
+      if (providerLocationId) {
+        options = teamMemberData;
+        value = get(currentOrder, 'attributes.assignedTeamMemberId');
+        labelField = 'fullName';
+      }
+      return <AssigneeSelector
+        value={value}
+        options={options}
+        labelField={labelField}
+        onChange={
+          value => this.updateOrder(
+            labelField === 'name' ? 'provider_location_id' : 'assigned_team_member_id',
+            value
+          )
+        }
+      />
     }
   };
 
   render() {
-    const { dispatchIds } = this.state;
-    const { privilege } = this.props;
+    // const { dispatchIds } = this.state;
+    const { privilege, teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}} } = this.props;
+    console.log(providerLocations);
+    const providerLocationInfo = find(providerLocations, {id: `${providerLocationId}`});
+    const teamMemberInfo = find(teamMemberData, {id: `${assignedTeamMemberId}`});
     return (
-      <Section title="Assignees" mode="view" editComponent={this.renderDropdownButton()} noPadding>
-        {
-          dispatchIds.map((id) => (
-            <React.Fragment key={`assignee_${id}`}>
-              {privilege === 'admin' && <ProviderInfo id={id} />}
-              {privilege === 'provider' && <TeamMemberInfo id={id} />}
-            </React.Fragment>
-          ))
-        }
+      <Section title="Assignee" mode="view" editComponent={this.renderDropdownButton()}>
+          {privilege === 'admin' && <ProviderInfo/>}
+          {privilege === 'provider' && <TeamMemberInfo providerLocationInfo={providerLocationInfo} teamMemberInfo={teamMemberInfo} />}
       </Section>
     );
   }
@@ -79,9 +98,12 @@ class OrderAssignment extends React.Component {
 
 const mapStateToProps = (state) => ({
   currentOrder: state.order.currentOrder,
-  privilege: state.auth.privilege
+  teamMemberData: state.order.teamMemberData,
+  privilege: state.auth.privilege,
+  providerLocationId: state.auth.providerLocationId,
+  providerLocations: simpleProviderLocationSelector(state),
 })
 
-const mapDispatchToProps = { DispatchOrder, SetDispatchedFlag };
+const mapDispatchToProps = { UpdateOrder };
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignment);
