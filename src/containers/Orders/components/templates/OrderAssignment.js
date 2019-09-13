@@ -6,8 +6,7 @@ import { Section } from 'components/basic/InfoSection';
 
 import { UpdateOrder } from 'store/actions/orders';
 import { simpleProviderLocationSelector } from 'store/selectors/providerLocation';
-import ProviderInfo from './ProviderInfo';
-import TeamMemberInfo from './TeamMemberInfo';
+import AssigneeInfo from './AssigneeInfo';
 import ProviderSelector from './ProviderSelector';
 import AssigneeSelector from './AssigneeSelector';
 
@@ -82,15 +81,17 @@ class OrderAssignment extends React.Component {
   };
 
   render() {
-    // const { dispatchIds } = this.state;
-    const { privilege, teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}} } = this.props;
-    console.log(providerLocations);
+    const { teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}} } = this.props;
     const providerLocationInfo = find(providerLocations, {id: `${providerLocationId}`});
     const teamMemberInfo = find(teamMemberData, {id: `${assignedTeamMemberId}`});
+    const isLocationSelected = !!this.props.providerLocationId;
     return (
-      <Section title="Assignee" mode="view" editComponent={this.renderDropdownButton()}>
-          {privilege === 'admin' && <ProviderInfo/>}
-          {privilege === 'provider' && <TeamMemberInfo providerLocationInfo={providerLocationInfo} teamMemberInfo={teamMemberInfo} />}
+      <Section title="Assignee" mode="view" editComponent={this.renderDropdownButton()} noPadding>
+        <AssigneeInfo
+          teamMemberInfo={teamMemberInfo}
+          providerLocationInfo={providerLocationInfo}
+          isLocationSelected={isLocationSelected}
+        />
       </Section>
     );
   }
