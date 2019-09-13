@@ -48,7 +48,7 @@ class ResetPasswordComponent extends React.Component {
         token,
         password,
         success: () => {
-          toastr.success('Success', 'Updated successfully!')
+          toastr.success('Success', 'Your password has been reset!')
           this.setState({done: true});
         },
         error: (e) => {
