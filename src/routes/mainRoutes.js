@@ -6,6 +6,8 @@ import Login from 'components/template/Login';
 import ForgotPassword from 'components/template/ForgotPassword';
 import ResetPassword from 'components/template/ResetPassword';
 import CreatePassword from 'components/template/CreatePassword';
+import ConfirmAccount from 'components/template/ConfirmAccount';
+
 import Dashboard from 'components/template/Dashboard';
 import Order from 'containers/Orders/OrderList';
 import OrderDetails from 'containers/Orders/OrderDetails';
@@ -65,7 +67,7 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
   });
 
   let user = {};
- 
+
   if (isAuthenticated) {
     user = {
       user_id: profile.id,
@@ -82,6 +84,7 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <Route path="/forgot-password/" component={ForgotPassword} />
         <Route path="/reset-password/" component={ResetPassword} />
         <Route path="/create-password/" component={CreatePassword} />
+        <Route path="/confirm-account/" component={ConfirmAccount} />
 
         <PrivateRoute exact path="/update-profile" component={UpdateProfile} isAuthenticated={isAuthenticated} />
         <PrivateRoute exact path="/dashboard/" component={Dashboard} isAuthenticated={isAuthenticated} />
