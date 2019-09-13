@@ -40,7 +40,7 @@ const SideContent =styled.div`
   }
 `;
 
-const WelcomeWrapper = styled.div`
+export const WelcomeWrapper = styled.div`
   padding: 45px 30px;
   width: 100%;
   display: flex;
@@ -52,7 +52,7 @@ const WelcomeWrapper = styled.div`
   }
 `;
 
-const Logo = styled.img`
+export const Logo = styled.img`
   max-width: 212px;
   width: 100%;
   margin-bottom: 20px;
@@ -60,7 +60,7 @@ const Logo = styled.img`
   object-position: center;
 `;
 
-const WelcomeTitle = styled.div`
+export const WelcomeTitle = styled.div`
   color: #003247;
   font-size: 26px;
   font-family: 'Montserrat', sans-serif;
@@ -69,7 +69,7 @@ const WelcomeTitle = styled.div`
   text-align: center;
 `;
 
-const WelcomeDescription = styled.div`
+export const WelcomeDescription = styled.div`
   color: #333;
   font-size: 18px;
   font-family: 'Montserrat', sans-serif;
