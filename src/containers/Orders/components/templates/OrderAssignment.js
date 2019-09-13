@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { get, find } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import { Section } from 'components/basic/InfoSection';
-
+import { GetProviderLocations } from 'store/actions/providerLocations';
 import { UpdateOrder } from 'store/actions/orders';
 import { simpleProviderLocationSelector } from 'store/selectors/providerLocation';
 import AssigneeInfo from './AssigneeInfo';
@@ -16,6 +16,13 @@ class OrderAssignment extends React.Component {
     this.state = {
       dispatchIds: []
     };
+  }
+
+  componentDidMount() {
+    const { providerId, providerLocations } = this.props;
+    if (providerLocations.length === 0 || find(providerLocations, pl => `${pl.providerId}` !== `${providerId}` )) {
+      this.props.GetProviderLocations({providerId, params:{ page: 1, per_page: 1000}});
+    }
   }
 
   static getDerivedStateFromProps(props) {
@@ -101,10 +108,11 @@ const mapStateToProps = (state) => ({
   currentOrder: state.order.currentOrder,
   teamMemberData: state.order.teamMemberData,
   privilege: state.auth.privilege,
+  providerId: state.auth.providerId,
   providerLocationId: state.auth.providerLocationId,
   providerLocations: simpleProviderLocationSelector(state),
 })
 
-const mapDispatchToProps = { UpdateOrder };
+const mapDispatchToProps = { UpdateOrder, GetProviderLocations };
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignment);

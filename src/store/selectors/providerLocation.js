@@ -64,6 +64,7 @@ export const simpleProviderLocationSelector = createSelector(
     return providerLocations.map(p => {
       return {
         id: p.id,
+        providerId: p.providerId,
         name: get(p, 'relationships.locations.attributes.name')
       };
     })

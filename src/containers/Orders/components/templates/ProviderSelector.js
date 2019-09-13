@@ -7,7 +7,7 @@ import deepEqual from 'deep-equal';
 import { Input } from 'components/basic/Input';
 
 import { GetProviders } from 'store/actions/providers';
-import { GetProviderLocations } from 'store/actions/providerLocations';
+// import { GetProviderLocations } from 'store/actions/providerLocations';
 import GearIcon from 'resources/gear.png';
 import CloseIcon from 'resources/close.png';
 import ProviderCheck from '../basic/ProviderCheck';
@@ -135,7 +135,6 @@ class ProviderSelector extends React.Component {
   }
 
   componentDidMount() {
-    this.props.GetProviderLocations({params:{ page: 1, per_page: 1000}});
     document.addEventListener('mousedown', this.handleClickOutside);
   }
 
@@ -312,7 +311,7 @@ const mapStateToProps = ({ provider: { providers, page, total, perPage } }) => (
 
 const mapDispatchToProps = {
   GetProviders,
-  GetProviderLocations
+  // GetProviderLocations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProviderSelector);
