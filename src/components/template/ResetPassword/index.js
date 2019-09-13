@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import queryString from 'query-string';
 import { isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
-
+import { Logo, WelcomeTitle, WelcomeDescription, WelcomeWrapper } from '../CreatePassword';
+import BoatYardLogoImage from '../../../resources/by_logo_2.png';
 import { ResetPassword } from 'store/actions/auth';
 import PasswordForm from '../Forms/PasswordForm';
 
@@ -34,6 +35,10 @@ const SideContent =styled.div`
 `;
 
 class ResetPasswordComponent extends React.Component {
+  state = {
+    done: false
+  };
+
   handleResetPassword = (password) => {
     const query = queryString.parse(this.props.location.search);
     if (query && !isEmpty(query) && Object.prototype.hasOwnProperty.call(query, 'token')) {
@@ -44,7 +49,7 @@ class ResetPasswordComponent extends React.Component {
         password,
         success: () => {
           toastr.success('Success', 'Updated successfully!')
-          this.props.history.push('/login');
+          this.setState({done: true});
         },
         error: (e) => {
           toastr.error('Error', e.message);
@@ -58,7 +63,15 @@ class ResetPasswordComponent extends React.Component {
     return (
       <Wrapper>
         <SideContent>
-          <PasswordForm onResetPassword={this.handleResetPassword} />
+          { !this.state.done && <PasswordForm onResetPassword={this.handleResetPassword} /> }
+          {
+            this.state.done &&
+            <WelcomeWrapper>
+              <Logo src={BoatYardLogoImage} />
+              <WelcomeTitle>Thank you!</WelcomeTitle>
+              <WelcomeDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeDescription>
+            </WelcomeWrapper>
+          }
         </SideContent>
       </Wrapper>
     );
