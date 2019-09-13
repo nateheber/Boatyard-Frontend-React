@@ -7,7 +7,7 @@ import deepEqual from 'deep-equal';
 import { Input } from 'components/basic/Input';
 
 import { GetProviders } from 'store/actions/providers';
-
+// import { GetProviderLocations } from 'store/actions/providerLocations';
 import GearIcon from 'resources/gear.png';
 import CloseIcon from 'resources/close.png';
 import ProviderCheck from '../basic/ProviderCheck';
@@ -195,6 +195,7 @@ class ProviderSelector extends React.Component {
   };
 
   showMenu = () => {
+
     this.props.GetProviders({params: { page: 1, per_page: 1000 }, success: this.onFetchProviders});
     this.setState({ showMenu: true });
   };
@@ -309,7 +310,8 @@ const mapStateToProps = ({ provider: { providers, page, total, perPage } }) => (
 });
 
 const mapDispatchToProps = {
-  GetProviders
+  GetProviders,
+  // GetProviderLocations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProviderSelector);

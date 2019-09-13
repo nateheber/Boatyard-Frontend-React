@@ -3,11 +3,10 @@ import { connect } from 'react-redux';
 import { get, find } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import { Section } from 'components/basic/InfoSection';
-
+import { GetProviderLocations } from 'store/actions/providerLocations';
 import { UpdateOrder } from 'store/actions/orders';
 import { simpleProviderLocationSelector } from 'store/selectors/providerLocation';
-import ProviderInfo from './ProviderInfo';
-import TeamMemberInfo from './TeamMemberInfo';
+import AssigneeInfo from './AssigneeInfo';
 import ProviderSelector from './ProviderSelector';
 import AssigneeSelector from './AssigneeSelector';
 
@@ -17,6 +16,13 @@ class OrderAssignment extends React.Component {
     this.state = {
       dispatchIds: []
     };
+  }
+
+  componentDidMount() {
+    const { providerId, providerLocations } = this.props;
+    if (providerLocations.length === 0 || find(providerLocations, pl => `${pl.providerId}` !== `${providerId}` )) {
+      this.props.GetProviderLocations({providerId, params:{ page: 1, per_page: 1000}});
+    }
   }
 
   static getDerivedStateFromProps(props) {
@@ -82,15 +88,17 @@ class OrderAssignment extends React.Component {
   };
 
   render() {
-    // const { dispatchIds } = this.state;
-    const { privilege, teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}} } = this.props;
-    console.log(providerLocations);
+    const { teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}} } = this.props;
     const providerLocationInfo = find(providerLocations, {id: `${providerLocationId}`});
     const teamMemberInfo = find(teamMemberData, {id: `${assignedTeamMemberId}`});
+    const isLocationSelected = !!this.props.providerLocationId;
     return (
-      <Section title="Assignee" mode="view" editComponent={this.renderDropdownButton()}>
-          {privilege === 'admin' && <ProviderInfo/>}
-          {privilege === 'provider' && <TeamMemberInfo providerLocationInfo={providerLocationInfo} teamMemberInfo={teamMemberInfo} />}
+      <Section title="Assignee" mode="view" editComponent={this.renderDropdownButton()} noPadding>
+        <AssigneeInfo
+          teamMemberInfo={teamMemberInfo}
+          providerLocationInfo={providerLocationInfo}
+          isLocationSelected={isLocationSelected}
+        />
       </Section>
     );
   }
@@ -100,10 +108,11 @@ const mapStateToProps = (state) => ({
   currentOrder: state.order.currentOrder,
   teamMemberData: state.order.teamMemberData,
   privilege: state.auth.privilege,
+  providerId: state.auth.providerId,
   providerLocationId: state.auth.providerLocationId,
   providerLocations: simpleProviderLocationSelector(state),
 })
 
-const mapDispatchToProps = { UpdateOrder };
+const mapDispatchToProps = { UpdateOrder, GetProviderLocations };
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignment);
