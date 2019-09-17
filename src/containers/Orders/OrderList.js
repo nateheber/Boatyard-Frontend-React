@@ -8,8 +8,8 @@ import { get, filter } from 'lodash';
 import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
-
-import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns } from 'store/actions/orders';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
+import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from 'store/actions/orders';
 import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector } from 'store/selectors/orders';
 import { getCustomerName } from 'utils/order';
 
@@ -178,7 +178,7 @@ class OrderList extends React.Component {
   };
 
   render() {
-    const { orders, page, privilege } = this.props;
+    const { orders, page, privilege, currentStatus } = this.props;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
@@ -201,6 +201,7 @@ class OrderList extends React.Component {
 
     const { tab } = this.state;
     const { columns, selectedColumns } = this.props;
+    const loading = currentStatus === actionTypes.GET_ORDERS;
     return (
       <Wrapper>
         <OrderHeader
@@ -209,18 +210,21 @@ class OrderList extends React.Component {
           selectedColumns={selectedColumns}
           onChangeColumns={this.onChangeColumns} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
-        <Content>
-          <TableWrapper>
-            <Table
-              columns={selectedColumns}
-              records={processedOrders}
-              toDetails={this.toDetails}
-              page={page}
-              pageCount={pageCount}
-              onPageChange={this.changePage}
-            />
-          </TableWrapper>
-        </Content>
+        {
+          loading ? <LoadingSpinner loading={true} /> :
+          <Content>
+            <TableWrapper>
+              <Table
+                columns={selectedColumns}
+                records={processedOrders}
+                toDetails={this.toDetails}
+                page={page}
+                pageCount={pageCount}
+                onPageChange={this.changePage}
+              />
+            </TableWrapper>
+          </Content>
+        }
         <NewOrderModal ref={this.setNewOrderModalRef} onFinishCreation={this.creationFinished} />
       </Wrapper>
     );
@@ -234,7 +238,8 @@ const mapStateToProps = state => ({
   page: get(state, 'order.orders.page', 1),
   perPage: get(state, 'order.orders.perPage', 20),
   total: get(state, 'order.orders.total', 0),
-  privilege: get(state, 'auth.privilege')
+  privilege: get(state, 'auth.privilege'),
+  currentStatus: state.order.currentStatus,
 });
 
 const mapDispatchToProps = {
