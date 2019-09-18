@@ -23,6 +23,8 @@ import AddService from 'containers/Services/screens/AddService';
 import ServiceDetails from 'containers/Services/screens/ServiceDetails';
 import Categories from 'containers/Categories/screens/Categories';
 import CategoryDetails from 'containers/Categories/screens/CategoryDetails';
+import Contractors from 'containers/Contractors/screens/Contractors';
+import ContractorDetails from 'containers/Contractors/screens/ContractorDetails';
 import Inbox from 'containers/Message/Inbox';
 import OpenedInvoices from 'containers/Invoices/OpenedInvoices';
 import { QRBox, TemplateBox } from 'containers/Message';
@@ -106,6 +108,8 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <PrivilegeRoute exact path="/service-details/" component={ServiceDetails} privilege='provider' {...props}  />
         <PrivilegeRoute exact path="/categories/" component={Categories} privilege='admin' {...props} />
         <PrivilegeRoute exact path="/category-details/" component={CategoryDetails} privilege='admin' {...props} />
+        <PrivilegeRoute exact path="/contractors/" component={Contractors } privilege='provider' {...props} />
+        <PrivilegeRoute exact path="/contractor-details/" component={ContractorDetails } privilege='provider' {...props} />
         <PrivilegeRoute exact path="/customers/" component={Customers } privilege='provider' {...props} />
         <PrivilegeRoute exact path="/customer-details/" component={CustomerDetails  } privilege='provider' {...props} />
         <PrivilegeRoute exact path="/users/" component={Users} privilege='admin' {...props} />
