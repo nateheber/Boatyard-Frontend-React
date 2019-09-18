@@ -37,7 +37,7 @@ export default class JobSummarySection extends React.Component {
 
   render() {
     const { workorder: {services, state } } = this.props;
-    const disabled = !(!state || state === 'draft');
+    const disabled = !(!state || state === 'draft' || state === 'declined');
     return (
       <Section>
         <SectionHeader>

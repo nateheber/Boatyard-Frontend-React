@@ -14,7 +14,7 @@ export function validateEmail(email) {
 };
 
 export const validateUUID = (uuid) => {
-  const uuidReg = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidReg = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{4}-[89ab][0-9a-f]{4}-[0-9a-f]{12}$/i;
   return uuidReg.test(uuid);
 }
 
@@ -85,7 +85,7 @@ export const formatTimeFromString = (value) => {
     minutes = timeArray[1];
     if (parseInt(hours) >= 24) {
       hours = '12';
-      noonValue = 'am';  
+      noonValue = 'am';
     } else if (parseInt(hours) > 12) {
       hours = `${parseInt(hours) % 12}`;
       noonValue = 'pm';

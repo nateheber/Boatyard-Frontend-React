@@ -119,7 +119,7 @@ class JobModal extends React.Component {
         file_attachments_attributes: attachments
       }
     } = this.props;
-    const showSendBtn = !state || state === 'draft';
+    const showSendBtn = !state || (state === 'draft' || state === 'declined');
     const showDeleteBtn = !!id;
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const action = [
