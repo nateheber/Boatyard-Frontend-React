@@ -107,7 +107,7 @@ class JobTitleSection extends React.Component {
   render() {
     const { workorder, SetWorkOrder, assignee } = this.props;
     const { state } = workorder;
-    const disabled = !(!state || state === 'draft');
+    const disabled = !(!state || state === 'draft' || state === 'declined');
     const options = this.getOptions();
     return (
       <Section>

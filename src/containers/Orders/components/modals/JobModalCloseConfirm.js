@@ -16,7 +16,7 @@ export default class JobModalCloseConfirm extends React.Component {
   render() {
     const { open, onClose, onConfirm } = this.props;
     const actions = [
-      <HollowButton onClick={onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
+      <HollowButton onClick={onClose} key="modal_btn_cancel">DON'T SAVE</HollowButton>,
       <OrangeButton onClick={onConfirm} key="modal_btn_save">SAVE</OrangeButton>
     ];
     return (
