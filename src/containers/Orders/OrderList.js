@@ -8,7 +8,6 @@ import { get, filter } from 'lodash';
 import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
-import LoadingSpinner from 'components/basic/LoadingSpinner';
 import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from 'store/actions/orders';
 import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector } from 'store/selectors/orders';
 import { getCustomerName } from 'utils/order';
@@ -39,6 +38,16 @@ const Content = styled.div`
 const TableWrapper = styled.div`
   width: auto;
   min-width: 100%;
+  position: relative;
+  .loading {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, .5);
+    z-index: 2;
+  }
 `;
 
 
@@ -210,10 +219,9 @@ class OrderList extends React.Component {
           selectedColumns={selectedColumns}
           onChangeColumns={this.onChangeColumns} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
-        {
-          loading ? <LoadingSpinner loading={true} /> :
           <Content>
             <TableWrapper>
+              { loading && <div class="loading" /> }
               <Table
                 columns={selectedColumns}
                 records={processedOrders}
@@ -224,7 +232,6 @@ class OrderList extends React.Component {
               />
             </TableWrapper>
           </Content>
-        }
         <NewOrderModal ref={this.setNewOrderModalRef} onFinishCreation={this.creationFinished} />
       </Wrapper>
     );
