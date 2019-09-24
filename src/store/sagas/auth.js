@@ -101,14 +101,13 @@ function* userPermissionRequest(action) {
           }
         }
       );
-      console.log(providerLocations);
+
       const temp = find(
         data,
-        d => !d.attributes.providerLocationId && (d.attributes.access === 'admin' || d.attributes.access === 'owner')
-       );
-       console.log(temp);
+        d => !d.attributes.providerLocationId
+      );
+
       const accessRole =  temp ? 'provider' : 'team';
-      console.log(accessRole);
       const profile = yield select(profileSelector);
       let provider_id = parseInt(get(res.data[0], 'relationships.provider.data.id', undefined));
       let provider_location_id = undefined;
