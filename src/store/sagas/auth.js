@@ -138,7 +138,6 @@ function* userPermissionRequest(action) {
         type: actionTypes.SET_ACCESS_ROLE,
         payload: {accessRole}
       });
-      console.log(provider_id);
       yield put({
         type: actionTypes.SET_PRIVILEGE,
         payload: {
