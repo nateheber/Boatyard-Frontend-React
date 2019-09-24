@@ -92,7 +92,7 @@ class TeamDetails extends React.Component {
       lastName: '',
       phoneNumber: '',
       email: '',
-      access: 'admin',
+      access: props.locatonBased ? 'team_member' : 'admin',
       errorMessage: {
         firstName: '',
         lastName: '',
@@ -288,9 +288,6 @@ class TeamDetails extends React.Component {
           }
         });
       } else {
-        if (this.props.privilege === 'admin') {
-          data['provider_id'] = '1';
-        }
         CreateManagement({
           data: {
             management: data
@@ -513,7 +510,7 @@ class TeamDetails extends React.Component {
                 </Section>
               </Col>
               {
-              !locatonBased && 
+              !locatonBased &&
                 <Col xs={12} sm={12} md={4} lg={3}>
                   <Section
                     title='Locations'
