@@ -98,11 +98,14 @@ export default handleActions(
       }),
     [actionTypes.SET_PRIVILEGE]: (state, action) =>
       produce(state, draft => {
-        const { type, payload: {privilege, isLocationAdmin, providerLocationId, locationName} } = action;
+        const { type, payload: {privilege, isLocationAdmin, providerId, providerLocationId, locationName} } = action;
         draft.currentStatus = type;
         draft.privilege = privilege;
         draft.isLocationAdmin = isLocationAdmin;
         draft.locationName = locationName;
+        if (!draft.providerId) {
+          draft.providerId = providerId;
+        }
         draft.providerLocationId = providerLocationId;
         draft.errors = null;
       }),
@@ -142,7 +145,7 @@ export default handleActions(
       return {
         ...initialState
       };
-     
+
     },
     [actionTypes.SET_REFRESH_FLAG_SUCCESS]: (state, action) =>
       produce(state, draft => {
