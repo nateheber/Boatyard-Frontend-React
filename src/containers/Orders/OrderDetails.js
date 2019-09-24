@@ -58,11 +58,9 @@ class OrderDetails extends React.Component {
   };
 
   componentDidMount() {
-    const { services, providerId, GetServices, GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location, match: {params: {id}} } = this.props;
-    // load services if empty
-    if (services.length === 0) {
-      GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
-    }
+    const { providerId, GetServices, GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location, match: {params: {id}} } = this.props;
+
+    GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
     let orderId = id;
     if (!orderId) {
       const query = queryString.parse(location.search);
