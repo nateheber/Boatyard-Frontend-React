@@ -103,6 +103,7 @@ class LoginComponent extends React.Component {
       this.lock = new Auth0Lock(AUTH_CONFIG.clientId, AUTH_CONFIG.domain, {
         closable: false,
         rememberLastLogin: false,
+        configurationBaseUrl: 'https://cdn.auth0.com',
         initialScreen: query.action === 'signup' ? 'signUp' : '',
         prefill: {
           email: query.email ? query.email : ''
