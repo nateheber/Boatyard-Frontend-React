@@ -117,7 +117,6 @@ class ChatContent extends React.Component {
   onSend = (message) => {
     const recipientInfo = this.getRecipientInfo();
     const { conversationId } = this.props;
-    console.log(conversationId);
     this.props.CreateMessage({
       data: {
         ...recipientInfo,
