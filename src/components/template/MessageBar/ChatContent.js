@@ -64,7 +64,9 @@ class ChatContent extends React.Component {
   componentDidMount() {
     const { GetConversation, conversationId } = this.props;
     GetConversation({ conversationId, first: true });
+    console.log('reloadMessages setInterval...');
     const timerId = setInterval(this.reloadMessages, 5000);
+    console.log(`timerId: ${timerId}`);
     this.setState({ timerId });
   }
 
@@ -74,7 +76,9 @@ class ChatContent extends React.Component {
   }
 
   componentWillUnmount() {
+    console.log('reloadMessages unset...');
     const { timerId } = this.state;
+    console.log(`timerId: ${timerId}`);
     clearInterval(timerId);
   }
 
