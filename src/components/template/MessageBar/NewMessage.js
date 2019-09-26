@@ -9,8 +9,8 @@ import { BoatyardSelect } from 'components/basic/Dropdown';
 import MessageCustomerOption from 'components/basic/MessageCustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 import { refinedNetworkSelector, getRecipients } from 'store/selectors/network';
-import { CreateNetwork, GetNetworks } from 'store/actions/networks';
-import { CreateMessage } from 'store/actions/conversations';
+import { GetNetworks } from 'store/actions/networks';
+import { CreateMessage, CreateConversation } from 'store/actions/conversations';
 import {
   FilterUsers,
 } from 'store/actions/users';
@@ -162,32 +162,17 @@ class NewMessage extends React.Component {
 
   onSend = (data) => {
     const { users } = this.state;
-    const senderInfo = this.getSenderInfo();
-    const recipientInfo = this.getRecipientInfo(users);
-    this.props.CreateNetwork({
+    const {recipient_id, recipient_type} = this.getRecipientInfo(users);
+    this.props.CreateConversation({
       data: {
-        network: {
-          ...senderInfo,
-          ...recipientInfo
+        conversation: {
+          intended_recipient_type: recipient_type,
+          intended_recipient_id: recipient_id
         }
       },
-      success: this.sendMessage(data, recipientInfo),
-      error: this.networkCreationFailed(data, recipientInfo)
+      success: (res) => this.sendMessage(data, res, recipient_id, recipient_type),
+      error: this.networkCreationFailed(data)
     });
-
-    // users.forEach((user) => {
-    //   const recipientInfo = this.getRecipientInfo(user);
-    //   this.props.CreateNetwork({
-    //     data: {
-    //       network: {
-    //         ...senderInfo,
-    //         ...recipientInfo
-    //       }
-    //     },
-    //     success: this.sendMessage(data, recipientInfo),
-    //     error: this.networkCreationFailed(data, recipientInfo)
-    //   })
-    // });
   }
 
   onSendingSuccess = (result) => {
@@ -195,11 +180,15 @@ class NewMessage extends React.Component {
     this.props.onCreationSuccess(conversationId)();
   }
 
-  sendMessage = (message, recipientInfo) => () => {
+  sendMessage = (message, {id: conversation_id}, recipient_id, recipient_type) => {
     this.props.CreateMessage({
       data: {
-        ...recipientInfo,
-        message
+        message: {
+          ...message,
+          conversation_id: parseInt(conversation_id)
+        },
+        recipient_id: parseInt(recipient_id),
+        recipient_type,
       },
       success: this.onSendingSuccess
     })
@@ -252,10 +241,10 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-  CreateNetwork,
   CreateMessage,
   FilterUsers,
   GetNetworks,
+  CreateConversation,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewMessage);

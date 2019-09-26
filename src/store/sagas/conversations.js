@@ -103,9 +103,29 @@ function* createMessage(action){
   }
 }
 
+function* createConversation(action) {
+  const conversationClient = yield select(getConversationClient);
+  const { data, success, error } = action.payload;
+  try {
+    const result= yield call(conversationClient.create, data);
+    yield put({
+      type: actionTypes.CREATE_CONVERSATION_SUCCESS
+    });
+    if (success) {
+      yield call(success, get(result, 'data', {}));
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.CREATE_CONVERSATION_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
 export default function* ConversationSaga() {
   yield takeEvery(actionTypes.GET_CONVERSATIONS, getConversations);
   yield takeEvery(actionTypes.GET_CONVERSATION, getConversation);
   yield takeEvery(actionTypes.DELETE_CONVERSATION, deleteConversation);
   yield takeEvery(actionTypes.CREATE_MESSAGE, createMessage);
+  yield takeEvery(actionTypes.CREATE_CONVERSATION, createConversation);
 }
