@@ -116,10 +116,14 @@ class ChatContent extends React.Component {
 
   onSend = (message) => {
     const recipientInfo = this.getRecipientInfo();
+    const { conversationId } = this.props;
     this.props.CreateMessage({
       data: {
         ...recipientInfo,
-        message
+        message: {
+          ...message,
+          conversation_id: conversationId
+        }
       },
       error: (e) => toastr.error('Error', e.message),
       success: this.onSendingSuccess

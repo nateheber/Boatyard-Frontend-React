@@ -18,9 +18,9 @@ export const refinedConversationSelector = createSelector(
       const senderInfo = get(conversation, 'relationships.sender.data');
       const senderProfileInfo = get(included, `[${senderInfo.type}][${senderInfo.id}].relationships.owner.data`);
       const senderProfile = get(included, `[${senderProfileInfo.type}][${senderProfileInfo.id}]`);
-      const recipientInfo = get(conversation, 'relationships.recipient.data');
-      const recipientProfileInfo = get(included, `[${recipientInfo.type}][${recipientInfo.id}].relationships.owner.data`);
-      const recipientProfile = get(included, `[${recipientProfileInfo.type}][${recipientProfileInfo.id}]`);
+      const recipientInfo = get(conversation, 'relationships.recipient.data') || {};
+      const recipientProfileInfo = get(included, `[${recipientInfo.type}][${recipientInfo.id}].relationships.owner.data`, {});
+      const recipientProfile = get(included, `[${recipientProfileInfo.type}][${recipientProfileInfo.id}]`, {});
       const messageInfo = get(conversation, 'relationships.mostRecentMessage.data', {});
       const  mostRecentMessage = get(included, `[${messageInfo.type}][${messageInfo.id}]`);
       return {
