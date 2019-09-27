@@ -33,105 +33,7 @@ import TeamIcon from '../../resources/customer_support.svg';
 import CustomersActiveIcon from '../../resources/conference_call_active.svg';
 import CustomersIcon from '../../resources/conference_call.svg';
 
-const navItems = [
-  {
-    activeImage: DashboardActiveIcon,
-    mainImage: DashboardIcon,
-    title: 'DASHBOARD',
-    link: '/dashboard/',
-    privileges: ['admin', 'provider']
-  },
-  {
-    activeImage: OrdersActiveIcon,
-    mainImage: OrdersIcon,
-    title: 'ORDERS',
-    link: '/orders/',
-    privileges: ['admin', 'provider']
-  },
-  {
-    activeImage: CalendarActiveIcon,
-    mainImage: CalendarIcon,
-    title: 'CALENDAR',
-    link: '/calendar/',
-    privileges: ['admin', 'provider']
-  },
-  {
-    activeImage: ProviderActiveIcon,
-    mainImage: ProviderIcon,
-    title: 'PROVIDERS',
-    link: '/providers/',
-    privileges: ['admin']
-  },
-  {
-    activeImage: MessageActiveIcon,
-    mainImage: MessageIcon,
-    title: 'MESSAGES',
-    subItems: [
-      {
-        title: 'Inbox',
-        link: '/inbox/'
-      },
-      {
-        title: 'Quick Replies',
-        link: '/quick-replies/'
-      },
-      {
-        title: 'Templates',
-        link: '/templates/'
-      }
-    ],
-    privileges: ['admin', 'provider']
-  },
-  {
-    activeImage: AnalyticsActiveIcon,
-    mainImage: AnalyticsIcon,
-    title: 'ANALYTICS',
-    link: '/analytics/',
-    privileges: ['admin', 'provider']
-  },
-  {
-    activeImage: ServicesActiveIcon,
-    mainImage: ServicesIcon,
-    title: 'CATEGORIES',
-    link: '/categories/',
-    privileges: ['admin']
-  },
-  {
-    activeImage: ServicesActiveIcon,
-    mainImage: ServicesIcon,
-    title: 'SERVICES',
-    link: '/services/',
-    privileges: ['provider']
-  },
-  {
-    activeImage: TeamActiveIcon,
-    mainImage: TeamIcon,
-    title: 'TEAM',
-    link: '/team/',
-    privileges: ['admin', 'provider']
-  },
-  {
-    activeImage: CustomersActiveIcon,
-    mainImage: CustomersIcon,
-    title: 'USERS',
-    link: '/users/',
-    privileges: ['admin']
-  },
-  {
-    activeImage: CustomersActiveIcon,
-    mainImage: CustomersIcon,
-    title: 'CONTRACTORS',
-    link: '/contractors/',
-    privileges: ['provider']
-  },
-  {
-    activeImage: CustomersActiveIcon,
-    mainImage: CustomersIcon,
-    title: 'CUSTOMERS',
-    link: '/customers/',
-    privileges: ['provider']
-  }
-];
+
 
 const SideBarContainer = styled.div`
   display: block;
@@ -167,11 +69,110 @@ const SideBarContainer = styled.div`
   transition-delay: 0s;
 `;
 
-const SideBar = ({ privilege, showSidebar, activePage, location }) => {
+const SideBar = ({ privilege, showSidebar, activePage, location, providerLocationId }) => {
+  const navItems = [
+    {
+      activeImage: DashboardActiveIcon,
+      mainImage: DashboardIcon,
+      title: 'DASHBOARD',
+      link: '/dashboard/',
+      privileges: ['admin', 'provider']
+    },
+    {
+      activeImage: OrdersActiveIcon,
+      mainImage: OrdersIcon,
+      title: 'ORDERS',
+      link: '/orders/',
+      privileges: ['admin', 'provider']
+    },
+    {
+      activeImage: CalendarActiveIcon,
+      mainImage: CalendarIcon,
+      title: 'CALENDAR',
+      link: '/calendar/',
+      privileges: ['admin', 'provider']
+    },
+    {
+      activeImage: ProviderActiveIcon,
+      mainImage: ProviderIcon,
+      title: 'PROVIDERS',
+      link: '/providers/',
+      privileges: ['admin']
+    },
+    {
+      activeImage: MessageActiveIcon,
+      mainImage: MessageIcon,
+      title: 'MESSAGES',
+      subItems: [
+        {
+          title: 'Inbox',
+          link: '/inbox/'
+        },
+        {
+          title: 'Quick Replies',
+          link: '/quick-replies/'
+        },
+        {
+          title: 'Templates',
+          link: '/templates/'
+        }
+      ],
+      privileges: ['admin', 'provider']
+    },
+    {
+      activeImage: AnalyticsActiveIcon,
+      mainImage: AnalyticsIcon,
+      title: 'ANALYTICS',
+      link: '/analytics/',
+      privileges: ['admin', 'provider']
+    },
+    {
+      activeImage: ServicesActiveIcon,
+      mainImage: ServicesIcon,
+      title: 'CATEGORIES',
+      link: '/categories/',
+      privileges: ['admin']
+    },
+    {
+      activeImage: ServicesActiveIcon,
+      mainImage: ServicesIcon,
+      title: 'SERVICES',
+      link: '/services/',
+      privileges: ['provider']
+    },
+    {
+      activeImage: TeamActiveIcon,
+      mainImage: TeamIcon,
+      title: 'TEAM & CONTRACTOR',
+      link: '/team/members/list',
+      privileges: ['admin', 'provider']
+    },
+    {
+      activeImage: CustomersActiveIcon,
+      mainImage: CustomersIcon,
+      title: 'USERS',
+      link: '/users/',
+      privileges: ['admin']
+    },
+    {
+      activeImage: CustomersActiveIcon,
+      mainImage: CustomersIcon,
+      title: 'CUSTOMERS',
+      link: '/customers/',
+      privileges: ['provider']
+    }
+  ];
+
+  if (!providerLocationId) {
+    navItems[8]['title'] = 'TEAM';
+  } else {
+    navItems[8]['title'] = 'TEAM & CONTRACTOR';
+  }
+
   const pathname =
     location.pathname === '/' ? '/dashboard/' : location.pathname;
   const navigation = navItems ;
-  const activeParent = reduce(
+  let activeParent = reduce(
     navigation,
     (result, item) => {
       if (item.link === pathname) {
@@ -185,6 +186,10 @@ const SideBar = ({ privilege, showSidebar, activePage, location }) => {
     },
     ''
   );
+
+  if (pathname.indexOf('/team/') > -1) {
+    activeParent = navItems[8]['title'];
+  }
   return (
     <SideBarContainer className={showSidebar ? 'show' : 'hide'}>
       <SideBarWrapper>
@@ -206,8 +211,9 @@ const SideBar = ({ privilege, showSidebar, activePage, location }) => {
   );
 };
 
-const mapStateToProps = ({ auth: { privilege } }) => ({
-  privilege
+const mapStateToProps = ({ auth: { privilege, providerLocationId } }) => ({
+  privilege,
+  providerLocationId
 });
 
 export default withRouter(connect(mapStateToProps)(SideBar));

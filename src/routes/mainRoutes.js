@@ -11,7 +11,7 @@ import ConfirmAccount from 'components/template/ConfirmAccount';
 import Dashboard from 'components/template/Dashboard';
 import Order from 'containers/Orders/OrderList';
 import OrderDetails from 'containers/Orders/OrderDetails';
-import { TeamList, TeamDetails } from 'containers/Teams/screens';
+import { GeneralTeamList, TeamDetails } from 'containers/Teams/screens';
 import Customers from 'containers/Customers/screens/Customers';
 import CustomerDetails from 'containers/Customers/screens/CustomerDetails';
 import Calendar from 'components/template/Calendar';
@@ -23,7 +23,6 @@ import AddService from 'containers/Services/screens/AddService';
 import ServiceDetails from 'containers/Services/screens/ServiceDetails';
 import Categories from 'containers/Categories/screens/Categories';
 import CategoryDetails from 'containers/Categories/screens/CategoryDetails';
-import Contractors from 'containers/Contractors/screens/Contractors';
 import ContractorDetails from 'containers/Contractors/screens/ContractorDetails';
 import Inbox from 'containers/Message/Inbox';
 import OpenedInvoices from 'containers/Invoices/OpenedInvoices';
@@ -96,8 +95,10 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <PrivateRoute exact path="/orders/:id/detail" component={OrderDetails} isAuthenticated={isAuthenticated} />
         <PrivateRoute exact path="/orders/" component={Order} isAuthenticated={isAuthenticated} />
         <PrivateRoute exact path="/order-details/" component={OrderDetails} isAuthenticated={isAuthenticated} />
-        <PrivateRoute exact path="/team/" component={TeamList} isAuthenticated={isAuthenticated} />
-        <PrivateRoute exact path="/team-details/" component={TeamDetails} isAuthenticated={isAuthenticated}  />
+        <PrivateRoute exact path="/team/:type/list" component={GeneralTeamList} isAuthenticated={isAuthenticated} />
+        <PrivateRoute exact path="/team/member-details/" component={TeamDetails} isAuthenticated={isAuthenticated}  />
+        <PrivilegeRoute exact path="/team/contractor-details/" component={ContractorDetails } privilege='provider' {...props} />
+
         <PrivateRoute exact path="/calendar/" component={Calendar} isAuthenticated={isAuthenticated} />
 
         <PrivilegeRoute exact path="/providers/" component={Providers} privilege='admin' {...props} />
@@ -108,8 +109,6 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <PrivilegeRoute exact path="/service-details/" component={ServiceDetails} privilege='provider' {...props}  />
         <PrivilegeRoute exact path="/categories/" component={Categories} privilege='admin' {...props} />
         <PrivilegeRoute exact path="/category-details/" component={CategoryDetails} privilege='admin' {...props} />
-        <PrivilegeRoute exact path="/contractors/" component={Contractors } privilege='provider' {...props} />
-        <PrivilegeRoute exact path="/contractor-details/" component={ContractorDetails } privilege='provider' {...props} />
         <PrivilegeRoute exact path="/customers/" component={Customers } privilege='provider' {...props} />
         <PrivilegeRoute exact path="/customer-details/" component={CustomerDetails  } privilege='provider' {...props} />
         <PrivilegeRoute exact path="/users/" component={Users} privilege='admin' {...props} />

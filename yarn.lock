@@ -6961,11 +6961,12 @@ jsesc@~0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
 
-json-api-normalizer@^0.4.14:
-  version "0.4.14"
-  resolved "https://registry.yarnpkg.com/json-api-normalizer/-/json-api-normalizer-0.4.14.tgz#9d2603f884f6b071c30d0d1f559c2ce1fc33c6f6"
+json-api-normalizer@^0.4.16:
+  version "0.4.16"
+  resolved "https://registry.yarnpkg.com/json-api-normalizer/-/json-api-normalizer-0.4.16.tgz#43fd741e346ec2d934cd00f0a9611e651a20533f"
+  integrity sha512-ZWhN23gmauEjLXdV2Gdm7PhoGy67zCyO7hIhrhrRMEqzfCYm1U4fexNZHXqyRYDeU/ougwhW12ImEz3s907cuA==
   dependencies:
-    lodash "^4.17.11"
+    lodash "^4.17.15"
 
 json-parse-better-errors@^1.0.1, json-parse-better-errors@^1.0.2:
   version "1.0.2"
@@ -7387,6 +7388,11 @@ lodash.uniq@^4.5.0:
 "lodash@>=3.5 <5", lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.0, lodash@^4.3.0:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
+
+lodash@^4.17.15:
+  version "4.17.15"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
+  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
 
 lodash@~1.0.1:
   version "1.0.2"

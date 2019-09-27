@@ -7,10 +7,7 @@ import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 // import deepEqual from 'fast-deep-equal';
 
-import { actionTypes, GetManagement, FilterManagements, CreateManagement, UpdateManagement, DeleteManagement } from 'store/actions/managements';
-import { GetProviderLocations } from 'store/actions/providerLocations';
-import { UpdateProvider } from 'store/actions/providers';
-import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
+import { actionTypes, UpdateUser, CreateUser } from 'store/actions/users';
 import { InputRow, InputWrapper, Input } from 'components/basic/Input';
 import { Section } from 'components/basic/InfoSection';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
@@ -21,7 +18,7 @@ import Modal from 'components/compound/Modal';
 import { TeamDetailsHeader, LocationSelector } from '../../Teams/components';
 import { validateEmail/*, formatPhoneNumber */ } from 'utils/basic';
 import CloseIcon from '../../../resources/job/close.png';
-
+import { getContractorByUserId } from 'store/selectors/contractors';
 const Wrapper = styled.div`
 `;
 
@@ -106,49 +103,22 @@ class TeamDetails extends React.Component {
   }
 
   componentDidMount() {
-    // const query = queryString.parse(this.props.location.search);
-    // const managementId = query.id;
-    // if (managementId) {
-    //   this.getManagement(managementId);
-    // }
+    const {id} = queryString.parse(this.props.location.search);
+    if (id) {
+      this.setContractorDetail();
+    }
   }
 
-  componentDidUpdate(prevProps) {
-    // if(!deepEqual(prevProps.managements, this.props.managements)) {
-    //   this.setSelectedLocations();
-    // }
+  setContractorDetail() {
+    const { contractorDetail: { user: { id, attributes: {firstName, lastName, phoneNumber, email}} } } = this.props;
+    this.setState({
+      userId: id,
+      firstName,
+      lastName,
+      phoneNumber,
+      email
+    });
   }
-
-  // getManagement = (managementId) => {
-  //   this.setState({ managementId }, () => {
-  //     this.props.GetManagement({ managementId,
-  //       success: (management) => {
-  //         const userId = get(management, 'attributes.userId') || '';
-  //         const providerId = get(management, 'attributes.providerId') || '';
-  //         const firstName = get(management, 'relationships.user.attributes.firstName') || '';
-  //         const lastName = get(management, 'relationships.user.attributes.lastName') || '';
-  //         const phoneNumber = get(management, 'relationships.user.attributes.phoneNumber') || '';
-  //         const email = get(management, 'relationships.user.attributes.email') || '';
-  //         const access = get(management, 'attributes.access') || 'admin';
-  //         this.setState({ management, userId, providerId, firstName, lastName, phoneNumber: formatPhoneNumber(phoneNumber), email, access }, () => {
-  //           this.filterManagements();
-  //         });
-  //         const { GetProviderLocations } = this.props;
-  //         GetProviderLocations({
-  //           providerId,
-  //           params: { page: 1, per_page: 100 },
-  //           error: (e) => {
-  //             toastr.error('Error', e.message);
-  //           }
-  //         });
-  //       },
-  //       error: () => {
-  //         toastr.error('Error', 'Member does not exist!');
-  //         this.onBack();
-  //       }
-  //     });
-  //   });
-  // }
 
   filterManagements = () => {
     const { FilterManagements } = this.props;
@@ -174,7 +144,8 @@ class TeamDetails extends React.Component {
       firstName: '',
       lastName: '',
       phoneNumber: '',
-      email: ''
+      email: '',
+      company: ''
     };
     if (firstName.trim().length <= 0) {
       errorMessage = {
@@ -262,12 +233,12 @@ class TeamDetails extends React.Component {
   };
 
   onBack = () => {
-    this.props.history.push(`/contractors`);
+    this.props.history.push(`/team/contractors/list`);
   }
 
   onSave = () => {
-    const { managementId, access } = this.state;
-    const { CreateManagement, UpdateManagement } = this.props;
+    const { userId } = this.state;
+    const { CreateUser, UpdateUser } = this.props;
     if (this.isValidForm()) {
       const { firstName, lastName, email, phoneNumber } = this.state;
       const data = {
@@ -275,14 +246,13 @@ class TeamDetails extends React.Component {
         last_name: lastName.trim(),
         email: email.trim(),
         phone_number: phoneNumber.trim(),
-        access
       };
       this.setState({ saving: true });
-      if (managementId) {
-        UpdateManagement({
-          managementId,
+      if (userId) {
+        UpdateUser({
+          userId,
           data: {
-            management: data
+            user: data
           },
           success: () => {
             this.setState({ saving: false });
@@ -295,12 +265,9 @@ class TeamDetails extends React.Component {
           }
         });
       } else {
-        if (this.props.privilege === 'admin') {
-          data['provider_id'] = '1';
-        }
-        CreateManagement({
+        CreateUser({
           data: {
-            management: data
+            user: data
           },
           success: () => {
             this.setState({ saving: false });
@@ -567,22 +534,16 @@ class TeamDetails extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, props) => ({
   currentStatus: state.management.currentStatus,
   privilege: state.auth.privilege,
   locatonBased: state.auth.providerLocationId ? true : false,
-  ...refinedProviderLocationSelector(state),
-  managements: state.management.filteredManagements
+  contractorDetail: getContractorByUserId(state, queryString.parse(props.location.search).id)
 });
 
 const mapDispatchToProps = {
-  GetManagement,
-  FilterManagements,
-  CreateManagement,
-  UpdateManagement,
-  DeleteManagement,
-  UpdateProvider,
-  GetProviderLocations
+  UpdateUser,
+  CreateUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TeamDetails);

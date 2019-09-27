@@ -7,7 +7,6 @@ import { get } from 'lodash';
 import { GetManagements } from 'store/actions/managements';
 import { refinedManagementsSelector } from 'store/selectors/managements';
 import Table from 'components/basic/Table';
-import { TeamListHeader } from '../../components';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -20,7 +19,7 @@ class TeamList extends React.Component {
   }
 
   toDetails = member => {
-    this.props.history.push(`/team-details/?id=${member.id}`);
+    this.props.history.push(`/team/member-details/?id=${member.id}`);
   };
 
   getPageCount = () => {
@@ -43,7 +42,6 @@ class TeamList extends React.Component {
     ];
     return (
       <Wrapper>
-        <TeamListHeader />
         <Table
           columns={columns}
           records={managements}
