@@ -357,9 +357,9 @@ class OrderDetails extends React.Component {
                   <SectionGroup>
                     <PaymentSection order={currentOrder} onFinished={() => this.loadOrder(orderId)} />
                   </SectionGroup>
-                  <SectionGroup>
+                  {/*<SectionGroup>
                     <Scheduler order={currentOrder} />
-                  </SectionGroup>
+                  </SectionGroup>*/}
                 </Column>
                 <Column md={12} sm={12} xs={12} lg={4} xl={4}>
                   {canAssignOrder && <SectionGroup>
