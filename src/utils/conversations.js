@@ -10,17 +10,6 @@ export const getProfileData = (included, profileId) => {
   return get(included, `[${type}][${id}]`);
 }
 
-export const getOwnership = (profile, senderProfile, auth) => {
-  if (get(senderProfile, 'type') === 'provider_locations' && `${senderProfile.id}` === `${auth.providerLocationId}`) {
-    return true;
-  }
-  const senderProfileId = get(senderProfile, 'id');
-  const senderProfileType = get(senderProfile, 'type');
-  const profileId = get(profile, 'id');
-  const profileType = get(profile, 'type');
-  return senderProfileId === profileId && profileType === senderProfileType;
-}
-
 export const parseIncludedForMessages = (included) => {
   return included.reduce((prev, item) => {
     const { id, type, attributes, relationships } = item;
@@ -34,32 +23,19 @@ export const parseIncludedForMessages = (included) => {
   }, {});
 }
 
-export const getSenderName = (profile) => {
-  const type = get(profile, 'type');
-  if (type === 'users') {
-    return get(profile, 'attributes.firstName') || '';
+export const parseMessageDetails = (profile, message, included) => {
+  if (!message) {
+    return {};
   }
-
-  if (type === 'provider_locations') {
-    return get(profile, 'attributes.contactName') || '';
-  }
-
-  return get(profile, 'attriutes.name') || '';
-}
-
-export const parseMessageDetails = (profile, message, included, auth) => {
-  const profileId = get(message, 'attributes.profileId');
-  // const file = get(message, 'attributes.file.url');
   const attachments = get(message, 'relationships.fileAttachments.data', []).map(attachment => find(get(included, 'file_attachments', []), attachment));
   const content = get(message, 'attributes.content', '');
   const sentAt = get(message, 'attributes.data.sentAt');
-  let senderProfile = getProfileData(included, profileId);
-  if (senderProfile && senderProfile.type === 'providers' && senderProfile.id === auth.providerId) {
-    senderProfile = profile;
-  }
-  // const senderName = hasIn(senderProfile, 'attributes.name') ? get(senderProfile, 'attributes.name') : `${get(senderProfile, 'attributes.firstName') || ''} ${get(senderProfile, 'attributes.lastName') || ''}`;
-  const senderName = getSenderName(senderProfile);
-  const own = getOwnership(profile, senderProfile, auth);
+  const sender = get(message, 'relationships.sender.data') || {};
+  const own = sender.id === profile.id;
+  const {firstName, lastName} = included.users[sender.id].attributes;
+  const senderName = `${firstName} ${lastName}`;
+  const profileId = sender.id;
+
   return { profileId, senderName, content, attachments, own, sentAt };
 };
 

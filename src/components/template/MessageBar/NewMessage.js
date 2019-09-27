@@ -166,11 +166,11 @@ class NewMessage extends React.Component {
     this.props.CreateConversation({
       data: {
         conversation: {
-          intended_recipient_type: recipient_type,
-          intended_recipient_id: recipient_id
+          recipient_type: recipient_type,
+          recipient_id: recipient_id,
         }
       },
-      success: (res) => this.sendMessage(data, res, recipient_id, recipient_type),
+      success: (res) => this.sendMessage(data, res),
       error: this.networkCreationFailed(data)
     });
   }
@@ -180,15 +180,11 @@ class NewMessage extends React.Component {
     this.props.onCreationSuccess(conversationId)();
   }
 
-  sendMessage = (message, {id: conversation_id}, recipient_id, recipient_type) => {
+  sendMessage = (message, {id: conversationId}) => {
     this.props.CreateMessage({
+      conversationId,
       data: {
-        message: {
-          ...message,
-          conversation_id: parseInt(conversation_id)
-        },
-        recipient_id: parseInt(recipient_id),
-        recipient_type,
+        message
       },
       success: this.onSendingSuccess
     })
