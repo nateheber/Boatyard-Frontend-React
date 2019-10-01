@@ -198,7 +198,6 @@ class SelectCustomerModal extends React.Component {
   };
 
   handleBoatChange = (selectRef) => {
-    console.log(selectRef.selectedIndex);
     const { boats } = this.props;
     const { refinedBoats } = this.state;
     if (selectRef.selectedIndex >= 0) {

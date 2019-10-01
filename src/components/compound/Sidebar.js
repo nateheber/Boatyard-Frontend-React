@@ -154,8 +154,8 @@ const SideBarContainer = styled.div`
   }
   @media (max-width: 991px) {
     display: block !important;
-    width: 110px !important;
-    margin-left: -110px;
+    width: 160px !important;
+    margin-left: -160px;
     &.show {
       margin-left: 0px;
     }

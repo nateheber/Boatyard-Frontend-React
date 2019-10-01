@@ -14,7 +14,6 @@ export const loggedInProviderSelector = (state) => get(state, 'provider.loggedIn
 export const refinedConversationSelector = createSelector(
   conversationsSelector, includedSelector,
   (conversations, included) => {
-    console.log(conversations);
     const parsedData = conversations.filter(
         c => get(c, 'relationships.mostRecentMessage.data') && get(c, 'relationships.sender.data') && get(c, 'relationships.recipient.data')
       ).map((conversation) => {

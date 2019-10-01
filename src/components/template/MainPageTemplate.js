@@ -30,6 +30,11 @@ const PageContent = styled.div`
   width: 100vw;
   background-color: #e6e6e6;
   overflow: hidden;
+  @media (max-width: 470px) {
+    &.has-location {
+      padding-top: 120px;
+    }
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -115,7 +120,7 @@ class MainPageTemplate extends React.Component {
     return (
       <Wrapper>
         <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={() => this.toggleMessage()} />
-        <PageContent>
+        <PageContent className={`${accessRole === 'admin' ? '' : 'has-location'}`}>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
             {(accessRole === 'admin' || (providerLocationId && accessRole === 'provider')) && isProvider &&
