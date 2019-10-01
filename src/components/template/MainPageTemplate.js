@@ -52,8 +52,14 @@ const LocationWrapper = styled.div`
   background: white;
   color: #004258;
   font-size: 15px;
-  padding: 10px 0 0 10px;
   font-weight: bold;
+  padding: 7px;
+  // position: fixed;
+  z-index: 100;
+  width: 100%;
+  // box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)!important;
+  display: flex;
+  align-items: center;
   span {
     color: #f7941e;
     cursor: pointer;
