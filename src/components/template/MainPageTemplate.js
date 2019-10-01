@@ -116,7 +116,6 @@ class MainPageTemplate extends React.Component {
     const { showSidebar } = this.state;
     const { privilege, accessRole, providerLocationId, locationName, showMessage } = this.props;
     const isProvider = privilege === 'provider';
-    console.log(showMessage);
     return (
       <Wrapper>
         <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={() => this.toggleMessage()} />
