@@ -221,7 +221,7 @@ class OrderList extends React.Component {
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
           <Content>
             <TableWrapper>
-              { loading && <div class="loading" /> }
+              { loading && <div className="loading" /> }
               <Table
                 columns={selectedColumns}
                 records={processedOrders}
