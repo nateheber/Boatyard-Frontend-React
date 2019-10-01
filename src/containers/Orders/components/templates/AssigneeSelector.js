@@ -94,6 +94,9 @@ const DropdownMenu = styled.div`
     position: absolute;
   }
   margin-top: 8px;
+  @media (max-width: 470px) {
+    width: 260px;
+  }
 `;
 
 const MenuItemLi = styled.div`
