@@ -111,7 +111,6 @@ class LocationSelector extends React.Component {
         locations = filter(locations, l => l.locationName.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
     }
     locations = orderBy(locations, ['name'], ['asc']);
-    console.log(locations);
     return (
         <DropdownMenu ref={this.setWrapperRef}>
           <FitlerWrapper>

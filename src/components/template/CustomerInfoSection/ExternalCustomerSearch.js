@@ -19,12 +19,10 @@ function formatPhoneNumber(phoneNumberString) {
 const ExternalCustomerSearch =  ({FilterExternalConnections, onExternalCustomerSelected}) => {
   const [customer, setCustomer] = useState();
   const onChangeCustomer = (value) => {
-    console.log(value);
     onExternalCustomerSelected(value || {});
     setCustomer(value);
   }
   const loadOptions = val => {
-    console.log(val);
     const params = {};
     if (val.indexOf('@') > 0) {
       params['email'] = val;

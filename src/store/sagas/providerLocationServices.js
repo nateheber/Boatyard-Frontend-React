@@ -1,16 +1,16 @@
-import { takeEvery, call, select } from 'redux-saga/effects';
+// import { takeEvery, call, select } from 'redux-saga/effects';
+import { takeEvery } from 'redux-saga/effects';
 
 import { actions } from '../reducers/providerLocationServices';
-import { getProviderLocationServiceClient } from './sagaSelectors';
+// import { getProviderLocationServiceClient } from './sagaSelectors';
 
 // function* createRequest(action) {
 // }
 
 function* fetchRequest(action) {
-  const filter = action.payload;
-  const apiClient = yield select(getProviderLocationServiceClient)
-  const result = yield call(apiClient.list, filter);
-  console.log(result);
+  // const filter = action.payload;
+  // const apiClient = yield select(getProviderLocationServiceClient)
+  // const result = yield call(apiClient.list, filter);
   // const data = get(result, 'data', []);
   // const included = get(result, 'data', []);
   // yield put({

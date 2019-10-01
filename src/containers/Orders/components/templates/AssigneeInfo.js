@@ -15,7 +15,6 @@ const Wrapper = styled.div`
 export default class AssigneeInfo extends React.Component {
   render() {
     const { providerLocationInfo, teamMemberInfo, isLocationSelected } = this.props;
-    console.log(providerLocationInfo);
     const locationName = get(providerLocationInfo, 'name', '-');
     const teamMemberName = get(teamMemberInfo, 'fullName', '-');
     const assignee = isLocationSelected ? teamMemberName : locationName;
