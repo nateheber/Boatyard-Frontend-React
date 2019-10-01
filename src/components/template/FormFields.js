@@ -259,7 +259,6 @@ export default class FormFields extends React.Component {
 
   validateFields = () => {
     const { value } = this.state;
-    console.log(value);
     const errors = [];
     const { fields } = this.props;
     for (let i = 0; i < fields.length; i += 1) {
