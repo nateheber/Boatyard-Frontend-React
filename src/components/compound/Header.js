@@ -15,8 +15,10 @@ const LeftPart = styled.div`
   display: flex;
   align-items: center;
   @media (max-width: 470px) {
-    width: 100%;
-    justify-content: space-between;
+    &.has-location {
+      width: 100%;
+      justify-content: space-between;
+    }
   }
 `;
 
@@ -50,7 +52,10 @@ const RightPart = styled.div`
   display: flex;
   align-items: center;
   @media (max-width: 470px) {
-    width: 100%;
+    &.has-location {
+      width: 100%;
+      justify-content: flex-end;
+    }
   }
 `;
 class Header extends React.PureComponent {
@@ -78,7 +83,7 @@ class Header extends React.PureComponent {
     const { open } = this.state;
     return (
       <HeaderWrapper>
-        <LeftPart>
+        <LeftPart className={`${accessRole === 'admin' ? '' : 'has-location'}`}>
           <HamburgerButton onClick={onMenuToggle} />
           <Logo />
           <SearchWrapper style={{ display: 'none' }}>
@@ -102,7 +107,7 @@ class Header extends React.PureComponent {
             </>
           }
         </LeftPart>
-        <RightPart>
+        <RightPart className={`${accessRole === 'admin' ? '' : 'has-location'}`}>
           <RightMenu messageToggleRef={messageToggleRef} toggleMessage={onToggleMessage} />
         </RightPart>
       </HeaderWrapper>
