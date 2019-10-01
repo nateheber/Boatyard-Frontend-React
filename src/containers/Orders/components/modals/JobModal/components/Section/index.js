@@ -2,16 +2,17 @@ import styled from 'styled-components';
 import { Col } from 'react-flexbox-grid';
 
 export const Section = styled.div`
-margin-bottom: 30px;
+  margin-bottom: 30px;
 `;
 
 export const SectionHeader = styled.div`
-background: #F5F5F5;
-height: 80px;
-padding: 0 25px;
-display: flex;
-align-items: center;
-justify-content: space-between;
+  background: #F5F5F5;
+  min-height: 60px;
+  padding: 10px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
 `;
 
 export const SectionContent = styled.div`
@@ -35,6 +36,7 @@ export const SectionContent = styled.div`
 export const Column = styled(Col)`
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
 `;
 
 export const HeaderTitle = styled.div`
