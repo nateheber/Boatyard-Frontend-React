@@ -90,11 +90,9 @@ class ChatContent extends React.Component {
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const id = get(recipientInfo, 'id');
-    const recipientData = get(included, `[profiles][${id}]`);
-    const info = get(recipientData, 'relationships.owner.data');
-    const recipientType = get(info, 'type');
-    const recipientId = get(info, 'id');
-    const profileInfo = get(included, `[${recipientType}][${recipientId}].attributes`);
+    const recipientData = get(included, `[users][${id}]`);
+    const recipientType = get(recipientData, 'type');
+    const profileInfo = get(recipientData, `attributes`);
     if (recipientType === 'users') {
       const firstName = get(profileInfo, 'firstName', '') || '';
       const lastName = get(profileInfo, 'lastName', '') || '';
@@ -103,6 +101,19 @@ class ChatContent extends React.Component {
       return get(profileInfo, 'name', '');
     }
     return '';
+
+    // const info = get(recipientData, 'relationships.owner.data');
+    // const recipientType = get(info, 'type');
+    // const recipientId = get(info, 'id');
+    // const profileInfo = get(included, `[${recipientType}][${recipientId}].attributes`);
+    // if (recipientType === 'users') {
+    //   const firstName = get(profileInfo, 'firstName', '') || '';
+    //   const lastName = get(profileInfo, 'lastName', '') || '';
+    //   return `${firstName} ${lastName}`;
+    // } else if (recipientType === 'providers') {
+    //   return get(profileInfo, 'name', '');
+    // }
+    // return '';
   }
 
   onSendingSuccess = () => {
