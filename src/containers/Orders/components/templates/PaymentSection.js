@@ -79,10 +79,9 @@ class PaymentSection extends React.Component {
     this.setState({ visibleOfRefundModal: true });
   };
 
-  getCreditCard = ({relationships: {creditCard: {data: {id}}}}) => {
-    const { creditCards } = this.props;
-    return find(creditCards, {id}) || {attributes: {name: '', last4: ''}};
-
+  getCreditCard = ({relationships: {creditCard: {data}}}) => {
+    const { paymentsIncluded } = this.props;
+    return find(paymentsIncluded, data) || {attributes: {name: '', last4: ''}};
   }
 
   refreshCards = () => {
@@ -109,7 +108,7 @@ class PaymentSection extends React.Component {
       const { amount, updatedAt, createdAt, paymentType, state } = payment.attributes;
       const amountInFloat = parseFloat(amount);
       const cc = this.getCreditCard(payment);
-      const paidText = paymentType === 'credit' ? 
+      const paidText = paymentType === 'credit' ?
         `${cc.attributes.name.toUpperCase()} xxxx${cc.attributes.last4}` : PAYMENT_TYPES[paymentType];
       const subjectText = state === 'refunded' ? 'refunded to' : 'paid by';
       return (
@@ -122,7 +121,7 @@ class PaymentSection extends React.Component {
               ${amountInFloat.toFixed(2)} paid by {paidText} on {moment(createdAt).format('MMM D, YYYY')} at {moment(createdAt).format('hh:mm A')}
             </>
           }
-          
+
         </InfoItem>
       );
     });
@@ -142,7 +141,7 @@ class PaymentSection extends React.Component {
       error: (e) => {
         toastr.error('Error', e.message);
       }
-    });  
+    });
   };
 
   onRefund = (paymentId) => {
@@ -217,9 +216,10 @@ class PaymentSection extends React.Component {
 }
 
 
-const mapStateToProps = ({ payment: { payments, currentStatus }, order, creditCard: {creditCards}, auth: { privilege }}) => ({
+const mapStateToProps = ({ payment: { payments, currentStatus, included }, order, creditCard: {creditCards}, auth: { privilege }}) => ({
   currentStatus,
   payments,
+  paymentsIncluded: included,
   orderStatus: order.currentStatus,
   creditCards,
   privilege,

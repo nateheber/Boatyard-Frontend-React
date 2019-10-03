@@ -120,6 +120,13 @@ const navItems = [
   {
     activeImage: CustomersActiveIcon,
     mainImage: CustomersIcon,
+    title: 'CONTRACTORS',
+    link: '/contractors/',
+    privileges: ['provider']
+  },
+  {
+    activeImage: CustomersActiveIcon,
+    mainImage: CustomersIcon,
     title: 'CUSTOMERS',
     link: '/customers/',
     privileges: ['provider']
@@ -190,7 +197,7 @@ const SideBar = ({ privilege, showSidebar, activePage, location }) => {
                 {...item}
                 key={`nav_item_${idx}`}
               />
-            );  
+            );
           }
           return null;
         })}

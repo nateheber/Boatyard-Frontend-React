@@ -2,7 +2,9 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, hasIn, startCase } from 'lodash';
 
 import { ORDER_ALIASES, AVAILABLE_ALIAS_ORDERS } from 'utils/basic';
+import { getTeamMemberData } from 'utils/order';
 import { actionTypes } from '../actions/orders';
+import { actionTypes as workorderActionTypes } from '../actions/workorders';
 import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag, getPrivilege } from './sagaSelectors';
 
 const addStateAliasOfOrder = (order) => {
@@ -101,7 +103,7 @@ function* getOrders(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
@@ -124,6 +126,25 @@ function* getOrder(action) {
     const result = yield call(orderClient.read, orderId);
     const { data: order, included } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
+    const providerLocationId = get(order, 'attributes.providerLocationId');
+    const providerId = get(order, 'attributes.providerId');
+    let teamMemberData = [];
+    if (providerLocationId && providerId) {
+      const apiClient = yield select(getCustomApiClient);
+      const { data: {relationships: {teamMembers: {data : tmData}} }, included: directoryIncluded }  = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
+      teamMemberData = getTeamMemberData(tmData, directoryIncluded);
+    }
+    yield put({
+      type: workorderActionTypes.RESET
+    });
+    yield put({
+      type: workorderActionTypes.GET_WORKORDERS,
+      payload: {orderId: order.id}
+    });
+    yield put({
+      type: actionTypes.GET_ORDER_PROVIDER_LOCATION_TEAM_MEMBER_SUCCESS,
+      payload: {teamMemberData}
+    });
     yield put({
       type: actionTypes.GET_ORDER_SUCCESS,
       payload: { order: refactoredOrder, included }

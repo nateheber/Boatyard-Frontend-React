@@ -16,8 +16,6 @@ const RefundPaymentModal = ({payments, loading, open, onClose, onRefund}) => {
   };
 
   const onOptionChange = (id) => {
-    console.log(id);
-    console.log(payments);
     const selectedPayment = find(payments, {id});
     setSelectedPaymentId(id);
     setBalance(selectedPayment.attributes.amount);
@@ -34,16 +32,16 @@ const RefundPaymentModal = ({payments, loading, open, onClose, onRefund}) => {
       open={open}
       loading={loading}
       onClose={onClose}
-    >   
+    >
       <Wrapper>
         <Row>
           <Col sm={7}>
             <p className="title">Select Payment</p>
             {
               payments.map((p) =>
-                <CardOption 
-                  payment={p} 
-                  onSelect={id => onOptionChange(id)} 
+                <CardOption
+                  payment={p}
+                  onSelect={id => onOptionChange(id)}
                   isSelected={selectedPaymentId === p.id}
                   key={`cardoption-${p.id}`}
                 />

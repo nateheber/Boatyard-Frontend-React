@@ -8,8 +8,7 @@ import { get, filter } from 'lodash';
 import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
-
-import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns } from 'store/actions/orders';
+import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from 'store/actions/orders';
 import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector } from 'store/selectors/orders';
 import { getCustomerName } from 'utils/order';
 
@@ -39,6 +38,16 @@ const Content = styled.div`
 const TableWrapper = styled.div`
   width: auto;
   min-width: 100%;
+  position: relative;
+  .loading {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, .5);
+    z-index: 2;
+  }
 `;
 
 
@@ -58,9 +67,9 @@ const tabs = {
 class OrderList extends React.Component {
   constructor(props) {
     super(props);
-    
+
     let tab = ALL_TAB;
-    
+
     const { state } = props.location;
     if (state && state.hasOwnProperty('tab')) {
       const tabState = get(state, 'tab');
@@ -178,7 +187,7 @@ class OrderList extends React.Component {
   };
 
   render() {
-    const { orders, page, privilege } = this.props;
+    const { orders, page, privilege, currentStatus } = this.props;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
@@ -190,7 +199,7 @@ class OrderList extends React.Component {
         } else if (order.providerOrderSequence) {
           name = `Order #${order.providerOrderSequence}`;
         }
-      }  
+      }
       return {
       ...order,
       name,
@@ -201,6 +210,7 @@ class OrderList extends React.Component {
 
     const { tab } = this.state;
     const { columns, selectedColumns } = this.props;
+    const loading = currentStatus === actionTypes.GET_ORDERS;
     return (
       <Wrapper>
         <OrderHeader
@@ -209,18 +219,19 @@ class OrderList extends React.Component {
           selectedColumns={selectedColumns}
           onChangeColumns={this.onChangeColumns} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
-        <Content>
-          <TableWrapper>
-            <Table
-              columns={selectedColumns}
-              records={processedOrders}
-              toDetails={this.toDetails}
-              page={page}
-              pageCount={pageCount}
-              onPageChange={this.changePage}
-            />
-          </TableWrapper>
-        </Content>
+          <Content>
+            <TableWrapper>
+              { loading && <div class="loading" /> }
+              <Table
+                columns={selectedColumns}
+                records={processedOrders}
+                toDetails={this.toDetails}
+                page={page}
+                pageCount={pageCount}
+                onPageChange={this.changePage}
+              />
+            </TableWrapper>
+          </Content>
         <NewOrderModal ref={this.setNewOrderModalRef} onFinishCreation={this.creationFinished} />
       </Wrapper>
     );
@@ -234,7 +245,8 @@ const mapStateToProps = state => ({
   page: get(state, 'order.orders.page', 1),
   perPage: get(state, 'order.orders.perPage', 20),
   total: get(state, 'order.orders.total', 0),
-  privilege: get(state, 'auth.privilege')
+  privilege: get(state, 'auth.privilege'),
+  currentStatus: state.order.currentStatus,
 });
 
 const mapDispatchToProps = {

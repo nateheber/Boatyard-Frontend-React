@@ -1,15 +1,16 @@
 import React from 'react';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import EvilIcon from 'react-evil-icons';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
-
+import { thumbnailify, getFormData, base64toBlob } from 'utils/thumbnail';
+import { apiBaseUrl } from 'api/config';
 import { OrangeButton } from 'components/basic/Buttons';
 import { GetQuickReplies } from 'store/actions/quickReplies';
-
 import Attach from 'resources/attach.svg';
-
+import { getToken } from 'store/selectors/auth';
 import QuickReplySelector from './QuickReplySelector';
 import QuickReplyModal from './QuickReplyModal';
 
@@ -160,10 +161,70 @@ class ChatBox extends React.Component {
   };
 
   onSend = () => {
-    const { onSend } = this.props;
-    const { text, image } = this.state;
-    onSend({text, image});
-    this.setState({ text: '', image: '' });
+    const { onSend, token } = this.props;
+    const { text, origin, thumb, name } = this.state;
+    if (origin && thumb && name) {
+      const attachmentApi = axios.create({
+        baseURL: apiBaseUrl,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Authorization': token
+        }
+      });
+
+      const promises = [];
+      promises.push(
+        attachmentApi.post(
+          '/file_attachments',
+          {
+            "file_attachment": {
+              "file_attachment_name": `thumb-${name}`
+            },
+            "type": "file_attachments"
+          }
+        )
+      );
+      promises.push(
+        attachmentApi.post(
+          '/file_attachments',
+          {
+            "file_attachment": {
+              "file_attachment_name": `origin-${name}`
+            },
+            "type": "file_attachments"
+          }
+        )
+      );
+
+      Promise.all(promises).then(results => {
+        const attachments = results.map(({data: {data}}) => data);
+        const ids = attachments.map(a => a.id);
+        const payload = {content: text, file_attachment_ids: ids.join(', ')};
+        let thumbUrl = attachments[0].attributes.presigned_url;
+        let originUrl = attachments[1].attributes.presigned_url;
+        let formData = getFormData(thumbUrl.url_fields);
+        formData.append('file', thumb);
+        axios.post(thumbUrl.url, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).finally(() => onSend(payload));
+
+        formData = getFormData(originUrl.url_fields);
+        formData.append('file', origin);
+        axios.post(originUrl.url, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        // onSend(payload);
+      })
+    } else {
+      onSend({content: text});
+    }
+    this.setState({ text: '', origin: null, thumb: null, name: null, thumb64: null });
   }
 
   onAddNewReply = () => {
@@ -179,7 +240,7 @@ class ChatBox extends React.Component {
   }
 
   removeImage = () => {
-    this.setState({ image: '' });
+    this.setState({ thumb: null, origin: null, name: null, thumb64: null });
   };
 
   showInput = () => {
@@ -189,25 +250,28 @@ class ChatBox extends React.Component {
   handleChange = event => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      this.setState({
-        image: reader.result
+      thumbnailify(reader.result, 200, (base64) => {
+        const data = base64.split(',');
+        const thumb = base64toBlob(data[1], data[0]);
+        this.setState({thumb64: base64, thumb});
       });
-    }
+    };
+    this.setState({name: event.target.files[0].name, origin: event.target.files[0]})
     reader.readAsDataURL(event.target.files[0]);
   };
 
   render() {
     const { secondary, third, noBorder, quickReplies } = this.props;
-    const { text, image, showQRModal } = this.state;
+    const { text, thumb64, showQRModal } = this.state;
     return (
       <Wrapper className={classNames({ secondary, third, noBorder })}>
         <InputGroup>
           <InputView>
             <TextArea value={text} onChange={this.onChangeText} placeholder="Write reply..." />
-            {!isEmpty(image) && (
+            {!isEmpty(thumb64) && (
               <ImageArea>
                   <ImageContainer>
-                    <Image src={image} />
+                    <Image src={thumb64} />
                     <CloseButton
                       onClick={this.removeImage}
                     >
@@ -231,9 +295,10 @@ class ChatBox extends React.Component {
               this.fileInput = ref;
             }}
             type="file"
+            accept="image/*"
             style={{ display: 'none' }}
             onChange={this.handleChange}
-            key={isEmpty(image)}
+            key={isEmpty(thumb64)}
           />
         </InputGroup>
         <QuickReplyModal
@@ -245,7 +310,11 @@ class ChatBox extends React.Component {
   }
 }
 
-const mapStateToProps = ({ quickReply: { quickReplies } }) => ({ quickReplies });
+const mapStateToProps = state => ({
+  quickReplies: state.quickReply.quickReplies,
+  token: getToken(state),
+});
+
 const mapDispatchToProps = {
   GetQuickReplies,
 };

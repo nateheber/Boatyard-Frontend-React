@@ -94,17 +94,20 @@ function* userPermissionRequest(action) {
           const locationId = get(providerLocation, "attributes.locationId");
           const location = find(included, {type: "locations", id: `${locationId}`});
           const locationName = get(location, "attributes.name");
-          
+
           return {
             providerLocationId: parseInt(providerLocation.id),
             locationName
           }
         }
       );
-      const accessRole = find(
-        data, 
-        d => !d.attributes.provider_location_id && (d.attributes.access === 'admin' || d.attributes.access === 'owner')
-       ) ? 'provider' : 'team';
+
+      const temp = find(
+        data,
+        d => !d.attributes.providerLocationId
+      );
+
+      const accessRole =  temp ? 'provider' : 'team';
       const profile = yield select(profileSelector);
       let provider_id = parseInt(get(res.data[0], 'relationships.provider.data.id', undefined));
       let provider_location_id = undefined;
@@ -112,14 +115,14 @@ function* userPermissionRequest(action) {
         if (providerLocations.length > 1) {
           provider_location_id = window.localStorage.getItem(`BT_USER_${profile.id}_LOCATION`);
           provider_location_id = provider_location_id && parseInt(provider_location_id);
-          provider_location_id = provider_location_id && 
+          provider_location_id = provider_location_id &&
             (find(providerLocations, {providerLocationId: provider_location_id}) || {}).providerLocationId;
         }
         if (!provider_location_id) {
           provider_location_id = providerLocations.length > 0 ? providerLocations[0].providerLocationId : undefined;
         }
       }
-      
+
       result = yield call(escalationClient.post, '/users/escalations', {
         escalation: { provider_id: provider_location_id ? undefined : provider_id, provider_location_id }
       });
@@ -139,6 +142,7 @@ function* userPermissionRequest(action) {
         type: actionTypes.SET_PRIVILEGE,
         payload: {
           privilege: 'provider',
+          providerId: provider_id,
           providerLocationId: provider_location_id,
           isLocationAdmin: !!provider_location_id,
           locationName: provider_location_id && find(providerLocations, {providerLocationId: provider_location_id}).locationName
@@ -148,16 +152,16 @@ function* userPermissionRequest(action) {
       window.localStorage.setItem(`BT_USER_${profile.id}_LOCATION`, provider_location_id);
     } else {
       throw Error("The user is not assigned to any provider.");
-    } 
+    }
     if (success) {
       yield call(success);
     }
-    
+
   } catch (e) {
-    
+
     if (error) {
       yield call(error, e);
-    }  
+    }
   }
 }
 
@@ -279,7 +283,7 @@ function* logoutRequest(action) {
   if (profile.email.indexOf('marinemax.com') > -1) {
     setTimeout(() => window.location.replace('https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0'), 1000);
   }
-  
+
 }
 
 export default function* AuthSaga() {

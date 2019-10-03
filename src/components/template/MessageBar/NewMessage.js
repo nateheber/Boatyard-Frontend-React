@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty, filter } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { OrangeButton } from 'components/basic/Buttons';
 import ChatBox from 'components/template/Message/ChatBox';
@@ -9,7 +9,7 @@ import { BoatyardSelect } from 'components/basic/Dropdown';
 import MessageCustomerOption from 'components/basic/MessageCustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 import { refinedNetworkSelector, getRecipients } from 'store/selectors/network';
-import { CreateNetwork } from 'store/actions/networks';
+import { CreateNetwork, GetNetworks } from 'store/actions/networks';
 import { CreateMessage } from 'store/actions/conversations';
 import {
   FilterUsers,
@@ -120,19 +120,9 @@ class NewMessage extends React.Component {
 
   loadOptions = val => {
     return new Promise((resolve, reject) => {
-      const { recipients } = this.props;
-      if (!val || val.length === 0) {
-        resolve(recipients.slice(0, 15));
-      }
-      const v = val.toLowerCase();
-      
-      resolve(
-        filter(
-          recipients, 
-          r => `${r.firstName.toLowerCase()} ${r.lastName.toLowerCase()}`.indexOf(v) > -1 
-                    || r.email.toLowerCase().indexOf(v) > -1
-        )
-      );
+      this.props.GetNetworks({params: {search: val}, success: () => {
+        window.setTimeout(() => resolve(this.props.recipients), 10);
+      }});
     });
   };
 
@@ -205,16 +195,11 @@ class NewMessage extends React.Component {
     this.props.onCreationSuccess(conversationId)();
   }
 
-  sendMessage = (data, recipientInfo) => () => {
+  sendMessage = (message, recipientInfo) => () => {
     this.props.CreateMessage({
       data: {
         ...recipientInfo,
-        message: isEmpty(data.image) ? {
-          content: data.text,
-        } : {
-          content: data.text,
-          file: get(data, 'image'),
-        }
+        message
       },
       success: this.onSendingSuccess
     })
@@ -270,6 +255,7 @@ const mapDispatchToProps = {
   CreateNetwork,
   CreateMessage,
   FilterUsers,
+  GetNetworks,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewMessage);

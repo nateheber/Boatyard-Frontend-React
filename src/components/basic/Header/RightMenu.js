@@ -324,7 +324,7 @@ class MenuUI extends React.Component {
       return OrderIcon;
     }
   }
-  getNotificationIcon = ({subject, content}) => { 
+  getNotificationIcon = ({subject, content}) => {
     return this._getIcon(subject) || this._getIcon(content) || AlertIcon;
   }
 
@@ -344,30 +344,30 @@ class MenuUI extends React.Component {
       this.props.GetNotifications({params: {per_page: 1000, page: 1, 'notification_delivery[order]': 'id', 'notification_delivery[sort]': 'desc', clear: true}});
     }
     this.setState({notificationOpen: !this.state.notificationOpen});
-    
+
   }
 
   render() {
-    const { providerLocationId, providerLocations, firstName, lastName, history, toggleMessage, messageToggleRef, 
+    const { providerLocationId, providerLocations, firstName, lastName, history, toggleMessage, messageToggleRef,
       locationName, accessRole, notifications, unreadCount } = this.props;
     const showNotificationBadge = parseInt(unreadCount) > 0;
     const { open, notificationOpen } = this.state;
-    
+
 
     return (
       <Wrapper>
         {
-          accessRole !== 'admin' && providerLocations.length > 1 &&
+          accessRole !== 'admin'  &&
           <>
             <LocationsWrapper onClick={e => this.setState({open: true})}>
               <img alt="Map Maker" src={MapMarkerIcon} /> { locationName ? locationName : 'LOCATIONS' }
-              { 
-                open && 
-                <ChooseProviderLocation 
+              {
+                open &&   providerLocations.length > 1 &&
+                <ChooseProviderLocation
                   onClose={ev => this.setState({open: false})}
-                  locations={providerLocations} 
-                  selected={providerLocationId} 
-                  onChangeSelection={this.handleLocationChange} 
+                  locations={providerLocations}
+                  selected={providerLocationId}
+                  onChangeSelection={this.handleLocationChange}
                 />
               }
             </LocationsWrapper>
@@ -393,7 +393,7 @@ class MenuUI extends React.Component {
             </DropdownMenu>
           </DropdownItem>
           <DropdownItem className={`notifications ${notifications.length === 0 && 'disabled'}`}
-              onClick={ev => notifications.length > 0 && this.handleNotificationsClick()} 
+              onClick={ev => notifications.length > 0 && this.handleNotificationsClick()}
               ref={this.setWrapperRef}
           >
             <IconItem className={`${notifications.length === 0 && 'disabled'}`}>

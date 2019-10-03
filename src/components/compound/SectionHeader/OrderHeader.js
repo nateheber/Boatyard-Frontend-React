@@ -7,9 +7,9 @@ import {
 } from 'components/basic/Header';
 import { OrangeButton } from 'components/basic/Buttons';
 import {
-  FilterOptions,
+  // FilterOptions,
   ColumnFilter,
-  ActionDropdown
+  // ActionDropdown
 } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
@@ -17,8 +17,8 @@ export const OrderHeader = ({  columns, selectedColumns, onChangeColumns, onActi
   <SectionHeaderWrapper>
     <LeftPart>
       <PageTitle>Orders</PageTitle>
-      <FilterOptions />
-      <ActionDropdown
+      {/* <FilterOptions /> */}
+      {/* <ActionDropdown
         items={[
           {
             title: 'Export',
@@ -27,7 +27,7 @@ export const OrderHeader = ({  columns, selectedColumns, onChangeColumns, onActi
             }
           }
         ]}
-      />
+      /> */}
     </LeftPart>
     <RightPart>
       <OrangeButton className="desktop" onClick={onNewOrder}>New Order</OrangeButton>

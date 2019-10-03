@@ -59,7 +59,7 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
   const [service, setService] = useState(value);
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [miscCategory, setMiscCategory]  = useState({});
-  
+
   const filterOptions = (inputValue) => {
     let filteredServices = services;
     if (inputValue && inputValue.trim().length > 0) {
@@ -78,14 +78,13 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
   };
 
   const handleCreateService = (values) => {
-    CreateService({ 
+    CreateService({
       data: {
         service: values,
       },
       success: (data) => {
         setShowServiceModal(false);
         const option = {value: data.id, cost: data.cost, label: data.name};
-        console.log(option);
         onChangeService(option);
         setService(option);
       }
@@ -99,7 +98,7 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
       setMiscCategory({...attributes, id, type, name: inputValue});
       setShowServiceModal(true);
     })
-    
+
   }
   const handleChange = (service) => {
     onChangeService(service);

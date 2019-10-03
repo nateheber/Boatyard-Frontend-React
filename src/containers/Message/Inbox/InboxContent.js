@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import { MessageEmptyState } from 'components/basic/Message';
 import {
@@ -53,7 +53,7 @@ class InboxContent extends React.Component {
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const { id } = recipientInfo;
-    const recipientData = get(included, `[profiles][${id}]`); 
+    const recipientData = get(included, `[profiles][${id}]`);
     const info = get(recipientData, 'relationships.owner.data');
     const recipient_type = get(info, 'type') === 'users' ? 'User' : 'Provider';
     return { recipient_type, recipient_id: info.id };
@@ -63,17 +63,12 @@ class InboxContent extends React.Component {
     this.loadConversation();
   }
 
-  onSend = (data) => {
+  onSend = (message) => {
     const recipientInfo = this.getRecipientInfo();
     this.props.CreateMessage({
       data: {
         ...recipientInfo,
-        message: isEmpty(data.image) ? {
-          content: data.text
-        } : {
-          content: data.text,
-          file: get(data, 'image')
-        }
+        message
       },
       error: (e) => toastr.error('Error', e.message),
       success: this.onSendingSuccess
@@ -82,7 +77,7 @@ class InboxContent extends React.Component {
 
 
   render() {
-    
+
     const { empty, onBack, createNew, curConversation: {messages}, loading } = this.props;
     return createNew ? (
       <Wrapper>

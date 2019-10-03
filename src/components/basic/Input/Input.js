@@ -4,7 +4,7 @@ import InputMask from 'react-input-mask';
 import classNames from 'classnames';
 import NumberFormat from 'react-number-format';
 
-const ErrorMessage = styled.div`
+export const ErrorMessage = styled.div`
   color: #f7941e !important;
   display: block;
   font-weight: 400;

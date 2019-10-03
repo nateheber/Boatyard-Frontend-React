@@ -57,3 +57,15 @@ export const refinedProviderLocationSelector = createSelector(
     return {providerLocations: sortBy(parsedData, p => get(p, 'relationships.locations.attributes.name').toUpperCase())};
   }
 );
+
+export const simpleProviderLocationSelector = createSelector(
+  refinedProviderLocationSelector,
+  ({providerLocations}) => {
+    return providerLocations.map(p => {
+      return {
+        id: p.id,
+        providerId: p.providerId,
+        name: get(p, 'relationships.locations.attributes.name')
+      };
+    })
+  });

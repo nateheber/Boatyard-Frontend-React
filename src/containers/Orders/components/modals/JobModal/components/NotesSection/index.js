@@ -20,7 +20,7 @@ export default class NotesSection extends React.Component {
   };
 
   render() {
-    const { contentVisible, notes } = this.props;
+    const { contentVisible, notes, disabled } = this.props;
     return (
         <Section>
           <SectionHeader>
@@ -71,6 +71,7 @@ export default class NotesSection extends React.Component {
           {contentVisible && <SectionContent>
             <InputWrapper className='primary'>
               <TextArea
+                disabled={disabled}
                 style={{ marginBottom: 0, border: '1px solid #A9B5BB' }}
                 value={notes}
                 onChange={this.handleChangeNotes}
