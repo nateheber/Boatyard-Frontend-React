@@ -125,7 +125,7 @@ const hasPreviousMessage = (prevMessage, currMessage) => {
   const end = moment(currMessage.sentAt);
   const duration = moment.duration(end.diff(startTime));
   const mins = duration.asMinutes();
-  if ((prevMessage.own === currMessage.own) && mins <= MERGE_RANGE_MINUTES)  {
+  if ((prevMessage.profileId === currMessage.profileId) && mins <= MERGE_RANGE_MINUTES)  {
     return true;
   }
   return false;
@@ -136,7 +136,7 @@ const hasNextMessage = (currMessage, nextMessage) => {
   const end = moment(nextMessage.sentAt);
   const duration = moment.duration(end.diff(startTime));
   const mins = duration.asMinutes();
-  if ((currMessage.own === nextMessage.own) && mins <= MERGE_RANGE_MINUTES)  {
+  if ((currMessage.profileId === nextMessage.profileId) && mins <= MERGE_RANGE_MINUTES)  {
     return true;
   }
   return false;
