@@ -31,27 +31,34 @@ export const parseMessageDetails = (profile, message, included) => {
   const content = get(message, 'attributes.content', '');
   const sentAt = get(message, 'attributes.data.sentAt');
   const sender = get(message, 'relationships.sender.data') || {};
-  const own = sender.id === profile.id;
+  const conversationId = get(message, 'relationships.conversation.data.id');
+  const conversation = get(included, `[conversations][${conversationId}]`);
+  const recipient = get(conversation, 'relationships.recipient.data');
+  let own = sender.id === profile.id;
+  if (recipient.type === 'users') {
+    own = sender.id !== recipient.id;
+  }
+  const isNotLoggedInUser = sender.id !== profile.id;
   const {firstName, lastName} = included.users[sender.id].attributes;
   const senderName = `${firstName} ${lastName}`;
   const profileId = sender.id;
 
-  return { profileId, senderName, content, attachments, own, sentAt };
+  return { profileId, senderName, content, attachments, own, isNotLoggedInUser, sentAt };
 };
 
-export const refineMessage = (profile, currentConversation, auth) => {
+export const refineMessage = (profile, currentConversation) => {
   if(isEmpty(currentConversation) || isEmpty(currentConversation.included))
       return { messages: [] };
     const { data, included } = currentConversation;
     const parsedIncluded = parseIncludedForMessages(included);
     const reversedData = reverse(data);
     const messages = reversedData.map((message, index) => {
-      const currMessage = parseMessageDetails(profile, message, parsedIncluded, auth);
+      const currMessage = parseMessageDetails(profile, message, parsedIncluded);
       let hasPrev = false;
       let hasNext = false;
       let showDate = false;
-      const prevMessage = parseMessageDetails(profile, reversedData[index - 1], parsedIncluded, auth);
-      const nextMessage = parseMessageDetails(profile, reversedData[index + 1], parsedIncluded, auth);
+      const prevMessage = parseMessageDetails(profile, reversedData[index - 1], parsedIncluded);
+      const nextMessage = parseMessageDetails(profile, reversedData[index + 1], parsedIncluded);
       if (index === 0) {
         showDate = true;
         hasNext = hasNextMessage(currMessage, nextMessage);
@@ -72,6 +79,7 @@ export const refineMessage = (profile, currentConversation, auth) => {
         body: currMessage.content,
         attachments: currMessage.attachments,
         own: currMessage.own,
+        isNotLoggedInUser: currMessage.isNotLoggedInUser,
         showDate,
         hasPrev,
         hasNext,
@@ -85,26 +93,26 @@ export const refineMessages = (profile, data, included) => {
   const parsedIncluded = parseIncludedForMessages(included);
   const reversedData = reverse(data);
   const messages = reversedData.map((message, index) => {
-    const currMessage = parseMessageDetails(profile, message, parsedIncluded);
-    let hasPrev = false;
-    let hasNext = false;
-    let showDate = false;
-    const prevMessage = parseMessageDetails(profile, reversedData[index - 1], parsedIncluded);
-    const nextMessage = parseMessageDetails(profile, reversedData[index + 1], parsedIncluded);
-    if (index === 0) {
+  const currMessage = parseMessageDetails(profile, message, parsedIncluded);
+  let hasPrev = false;
+  let hasNext = false;
+  let showDate = false;
+  const prevMessage = parseMessageDetails(profile, reversedData[index - 1], parsedIncluded);
+  const nextMessage = parseMessageDetails(profile, reversedData[index + 1], parsedIncluded);
+  if (index === 0) {
+    showDate = true;
+    hasNext = hasNextMessage(currMessage, nextMessage);
+  } else {
+    const startDay = moment(prevMessage.sentAt).date();
+    const endDay = moment(currMessage.sentAt).date();
+    if (startDay !== endDay) {
       showDate = true;
-      hasNext = hasNextMessage(currMessage, nextMessage);
-    } else {
-      const startDay = moment(prevMessage.sentAt).date();
-      const endDay = moment(currMessage.sentAt).date();
-      if (startDay !== endDay) {
-        showDate = true;
-      }
-      hasPrev = hasPreviousMessage(prevMessage, currMessage);
-      if (index < reversedData.length - 1) {
-        hasNext = hasNextMessage(currMessage, nextMessage);
-      }
     }
+    hasPrev = hasPreviousMessage(prevMessage, currMessage);
+    if (index < reversedData.length - 1) {
+      hasNext = hasNextMessage(currMessage, nextMessage);
+    }
+  }
 
     return ({
       name: currMessage.senderName,
