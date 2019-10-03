@@ -143,7 +143,7 @@ const SideBar = ({ privilege, showSidebar, activePage, location, providerLocatio
     {
       activeImage: TeamActiveIcon,
       mainImage: TeamIcon,
-      title: 'TEAM & CONTRACTOR',
+      title: 'TEAM',
       link: '/team/members/list',
       privileges: ['admin', 'provider']
     },
@@ -162,12 +162,6 @@ const SideBar = ({ privilege, showSidebar, activePage, location, providerLocatio
       privileges: ['provider']
     }
   ];
-
-  if (!providerLocationId) {
-    navItems[8]['title'] = 'TEAM';
-  } else {
-    navItems[8]['title'] = 'TEAM & CONTRACTOR';
-  }
 
   const pathname =
     location.pathname === '/' ? '/dashboard/' : location.pathname;

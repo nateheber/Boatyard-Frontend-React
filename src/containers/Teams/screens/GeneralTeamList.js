@@ -10,12 +10,12 @@ import TeamMembersList from './TeamList';
 import ContractorsList from '../../Contractors/screens/Contractors';
 
 const TABS = [
-  { title: 'TEAM MEMBERS', value: 'members', counts: 0 },
+  { title: 'TEAM', value: 'members', counts: 0 },
   { title: 'CONTRACTORS', value: 'contractors', counts: 0 },
 ];
 
 const GeneralTeamList = ({providerLocationId, history, match: {params: {type: listType}}}) => {
-  const headerLabel = listType === 'members' ? 'TEAM MEMBER' : 'CONTRACTOR';
+  const headerLabel = listType === 'members' ? 'TEAM' : 'CONTRACTORS';
   const goToAddPage = () => {
     if (listType === 'members') {
       history.push(`/team/member-details/`);
@@ -38,7 +38,7 @@ const GeneralTeamList = ({providerLocationId, history, match: {params: {type: li
     <>
       <SectionHeaderWrapper>
         <LeftPart>
-          <PageTitle>{headerLabel}S</PageTitle>
+          <PageTitle>{headerLabel}</PageTitle>
           {/*<ActionDropdown
             items={[
               {
