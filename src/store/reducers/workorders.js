@@ -95,7 +95,6 @@ export default handleActions(
             relationships[key].data = relationships[key].data.map(item => find(included, item));
           });
         });
-        console.log(data);
         draft.workorders = data;
         draft.included = included;
       }),

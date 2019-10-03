@@ -245,12 +245,15 @@ const  LocationsWrapper = styled.div`
     height: 16px;
     margin-right: 10px;
   }
+  @media (max-width: 470px) {
+    display: none;
+  }
 `;
 class MenuUI extends React.Component {
   state = {
     open: false,
     notificationOpen: false,
-  }
+  };
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);

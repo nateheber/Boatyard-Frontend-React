@@ -142,7 +142,6 @@ function* loginWithProvider(action) {
       }
     }
   } catch (e) {
-    console.log(e)
     yield put({ type: actionTypes.LOGIN_WITH_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error, e);

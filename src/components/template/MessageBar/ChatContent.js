@@ -64,9 +64,7 @@ class ChatContent extends React.Component {
   componentDidMount() {
     const { GetConversation, conversationId } = this.props;
     GetConversation({ conversationId, first: true });
-    console.log('reloadMessages setInterval...');
     const timerId = setInterval(this.reloadMessages, 5000);
-    console.log(`timerId: ${timerId}`);
     this.setState({ timerId });
   }
 
@@ -76,21 +74,15 @@ class ChatContent extends React.Component {
   }
 
   componentWillUnmount() {
-    console.log('reloadMessages unset...');
     const { timerId } = this.state;
-    console.log(`timerId: ${timerId}`);
     clearInterval(timerId);
   }
 
   getRecipientInfo = () => {
     const { conversationId, curConversation: {included} } = this.props;
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
-    const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
-    const { id } = recipientInfo;
-    const recipientData = get(included, `[profiles][${id}]`);
-    const info = get(recipientData, 'relationships.owner.data');
-    const recipient_type = get(info, 'type') === 'users' ? 'User' : 'Provider';
-    return { recipient_type, recipient_id: info.id };
+    const {id: recipient_id, type: recipient_type} = get(conversationInfo, 'relationships.recipient.data');
+    return { recipient_type, recipient_id };
   }
 
   getRecipientName = () => {
@@ -98,11 +90,9 @@ class ChatContent extends React.Component {
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
     const id = get(recipientInfo, 'id');
-    const recipientData = get(included, `[profiles][${id}]`);
-    const info = get(recipientData, 'relationships.owner.data');
-    const recipientType = get(info, 'type');
-    const recipientId = get(info, 'id');
-    const profileInfo = get(included, `[${recipientType}][${recipientId}].attributes`);
+    const recipientData = get(included, `[users][${id}]`);
+    const recipientType = get(recipientData, 'type');
+    const profileInfo = get(recipientData, `attributes`);
     if (recipientType === 'users') {
       const firstName = get(profileInfo, 'firstName', '') || '';
       const lastName = get(profileInfo, 'lastName', '') || '';
@@ -111,6 +101,19 @@ class ChatContent extends React.Component {
       return get(profileInfo, 'name', '');
     }
     return '';
+
+    // const info = get(recipientData, 'relationships.owner.data');
+    // const recipientType = get(info, 'type');
+    // const recipientId = get(info, 'id');
+    // const profileInfo = get(included, `[${recipientType}][${recipientId}].attributes`);
+    // if (recipientType === 'users') {
+    //   const firstName = get(profileInfo, 'firstName', '') || '';
+    //   const lastName = get(profileInfo, 'lastName', '') || '';
+    //   return `${firstName} ${lastName}`;
+    // } else if (recipientType === 'providers') {
+    //   return get(profileInfo, 'name', '');
+    // }
+    // return '';
   }
 
   onSendingSuccess = () => {
@@ -119,15 +122,11 @@ class ChatContent extends React.Component {
   }
 
   onSend = (message) => {
-    const recipientInfo = this.getRecipientInfo();
     const { conversationId } = this.props;
     this.props.CreateMessage({
+      conversationId,
       data: {
-        ...recipientInfo,
-        message: {
-          ...message,
-          conversation_id: conversationId
-        }
+        message
       },
       error: (e) => toastr.error('Error', e.message),
       success: this.onSendingSuccess

@@ -25,14 +25,14 @@ const SectionHeaderWrapper = styled.div`
 `;
 
 const LeftPart = styled.div`
-  min-width: 370px;
+  // min-width: 370px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
 const RightPart = styled.div`
-  width: calc(100% - 370px);
+  // width: calc(100% - 370px);
   justify-content: flex-end;
   display: flex;
   align-items: center;
@@ -231,7 +231,7 @@ class OrderDetailHeader extends React.Component {
 
     return (
       <SectionHeaderWrapper>
-        <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
+        <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center', justifyContent: 'space-between' }}>
           <LeftPart>
             <PageTitle>Order #{orderId}</PageTitle>
             <ActionDropdown

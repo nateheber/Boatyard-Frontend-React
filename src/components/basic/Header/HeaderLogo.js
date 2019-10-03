@@ -13,6 +13,7 @@ const HeaderWrapper = styled(Col)`
   max-width: 195px !important;
   padding: 0px !important;
   text-align: center;
+  margin-left: 80px;
   @media (max-width: 991px) {
     display: none !important;
   }
