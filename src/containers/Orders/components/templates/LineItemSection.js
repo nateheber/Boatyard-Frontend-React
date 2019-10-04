@@ -188,7 +188,7 @@ class LineItemSection extends React.Component {
     return (
       <Section
         contentStyle={{ paddingBottom: 0 }}
-        title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`}
+        title={`Quote - Updated ${moment(updatedAt).format('MM/DD hh:mm A')}`}
         mode={mode}
         onEdit={this.onEdit}
       >
