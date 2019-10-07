@@ -24,6 +24,7 @@
   align-items: center;
   border-left: 1px solid #dfdfdf;
   position: relative;
+  cursor: pointer;
 }
 
 .react-tabs__tab:last-child {
