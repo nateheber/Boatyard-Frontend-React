@@ -12,23 +12,27 @@ export const refinedProviderLocationSelector = createSelector(
     const services = [];
     const parsedData = providerLocations.map((location) => {
       const relationships = get(location, 'relationships');
-      const relationKeys = Object.keys(relationships);
-      const parsedRelationships = relationKeys.map((key) => {
+      const parsedRelationships = [];
+      for (const key in relationships) {
         const data = get(relationships, `[${key}].data`);
         const type = get(data, 'type');
         const id = get(data, 'id');
-        if (!isArray(data)) {
-          return get(included, `[${type}][${id}]`);
-        }
-        return data.map(relation => {
-          const type = get(relation, 'type');
-          const id = get(relation, 'id');
-          if (type === 'services') {
-            services.push(get(included, `[${type}][${id}]`));
+        if (!isEmpty(data) && data !== null) {
+          if (!isArray(data)) {
+            return get(included, `[${type}][${id}]`);
           }
-          return get(included, `[${type}][${id}]`);
-        })
-      });
+          if (!isEmpty(data)) {
+            return data.map(relation => {
+              const type = get(relation, 'type');
+              const id = get(relation, 'id');
+              if (type === 'services') {
+                services.push(get(included, `[${type}][${id}]`));
+              }
+              return get(included, `[${type}][${id}]`);
+            });
+          }
+        }
+      }
       const relations = {};
       for (const index in parsedRelationships) {
         const item = parsedRelationships[index];
@@ -54,7 +58,7 @@ export const refinedProviderLocationSelector = createSelector(
       }
       return { ...location, relationships: relations };
     });
-    return {providerLocations: sortBy(parsedData, p => get(p, 'relationships.locations.attributes.name').toUpperCase())};
+    return {providerLocations: sortBy(parsedData, p => get(p, 'relationships.locations.attributes.name') || ''.toUpperCase())};
   }
 );
 
