@@ -171,10 +171,10 @@ const CreateButton = styled(OrangeButton)`
 `;
 
 export default ({ providerName, location, onEdit, onLogin, onCreate }) => {
-  const headerImage = get(location, 'attributes.homeImage.url');
-  const contactName = get(location, 'attributes.contactName');
-  const contactPhone = get(location, 'attributes.contactPhone');
-  const contactEmail = get(location, 'attributes.contactEmail');
+  const headerImage = get(location, 'homeImage.url');
+  const contactName = get(location, 'contactName');
+  const contactPhone = get(location, 'contactPhone');
+  const contactEmail = get(location, 'contactEmail');
   const { locationName, street, city, state, zip } = getAddressInformation(location);
   return (
     <Wrapper>
