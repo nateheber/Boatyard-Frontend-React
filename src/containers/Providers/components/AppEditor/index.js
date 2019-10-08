@@ -740,131 +740,137 @@ class AppEditor extends React.Component {
   };
 
   updateLocationServices = (categories, originServices, currentServiceIds, services, params = {}) => {
-    const { providerId, services: allServices } = this.props;
-    const { createServiceClient } = require('../../../../api');
-    const serviceClient = createServiceClient('admin');
-    const servicesPayload = [];
-    const serviceNames = allServices.map(service => service.name);
-    for (const index in services) {
-      const service = services[index];
-      const attributes = get(service, 'attributes');
-      const manualPosition = get(attributes, 'manualPosition');
-      const category = categories.find(item => {
-        return parseInt(item.attributes.manualPosition) === Math.floor(manualPosition / 100);
-      });
-      const serviceName = get(attributes, 'name');
-      let serviceId = get(attributes, 'serviceId');
-      if (!serviceId) {
-          const index = serviceNames.indexOf(serviceName);
-        if (index > -1) {
-          serviceId = allServices[index].id;
-        }
-      }
-      const payload = {
-        category_id: get(attributes, 'categoryId'),
-        service_id: serviceId,
-        name: serviceName,
-        subtitle: get(attributes, 'subtitle'),
-        description: get(attributes, 'description'),
-        icon_id: get(attributes, 'iconId'),
-        cost: get(attributes, 'cost') || 0,
-        cost_type: get(service, 'costType'),
-        email_template: get(attributes, 'emailTemplate'),
-        secondary_description: get(attributes, 'secondaryDescription'),
-        additional_details: get(attributes, 'additionalDetails'),
-        manual_position: manualPosition
-      };
-      if (category) {
-        payload['service_category_id'] = get(category, 'id');
-      } else {
-        payload['service_category_id'] = null;
-      }
-      if (service.hasOwnProperty('id')) {
-        payload['id'] = service.id;
-      }
-      servicesPayload.push(payload);
-    }
-    const promises = [];
-    for(const index in servicesPayload) {
-      const service = servicesPayload[index];
-      const data = {
-        service: {
-          provider_id: providerId,
-          name: get(service, 'name'),
-          description: get(service, 'description'),
-          secondary_description: get(service, 'secondary_description'),
-          category_id: get(service, 'category_id'),
-          icon_id: get(service, 'icon_id'),
-          cost: get(service, 'cost'),
-          cost_type: get(service, 'cost_type')
-        }
-      };
-      if (service.service_id) {
-        promises.push(serviceClient.update(service.service_id, data));
-      } else {
-        promises.push(serviceClient.create(data));
-      }
-    }
-    if (promises.length > 0) {
-      this.setState({ saving: true });
-      Promise.all(promises).then(results => {
-        const payloads = results.map(result => {
-          const data = get(result, 'data', {});
-          const name = get(data, 'attributes.name');
-          const cost = get(data, 'attributes.cost');
-          const serviceId = get(data, 'id');
-          const locationService = servicesPayload.find(service => service.name === name);
-          const payload = {
-            name,
-            subtitle: locationService.subtitle,
-            description: locationService.description,
-            secondary_description: locationService.secondary_description,
-            additional_details: locationService.additional_details,
-            provider_id: providerId,
-            service_id: serviceId,
-            service_category_id: locationService.service_category_id,
-            manual_position: locationService.manual_position,
-            email_template: locationService.email_template,
-            cost
-          };
-          if (locationService.hasOwnProperty('id')) {
-            payload['id'] = locationService.id;
-          }
-          return payload;
+    if (services && services.length > 0) {
+      const { providerId, services: allServices } = this.props;
+      const { createServiceClient } = require('../../../../api');
+      const serviceClient = createServiceClient('admin');
+      const servicesPayload = [];
+      const serviceNames = allServices.map(service => service.name);
+      for (const index in services) {
+        const service = services[index];
+        const attributes = get(service, 'attributes');
+        const manualPosition = get(attributes, 'manualPosition');
+        const category = categories.find(item => {
+          return parseInt(item.attributes.manualPosition) === Math.floor(manualPosition / 100);
         });
-        for(const index in originServices) {
-          const id = get(originServices[index], 'id');
-          if (currentServiceIds.indexOf(id) === -1) {
-            payloads.push({
-              id,
-              '_destroy': true
-            });
+        const serviceName = get(attributes, 'name');
+        let serviceId = get(attributes, 'serviceId');
+        if (!serviceId) {
+            const index = serviceNames.indexOf(serviceName);
+          if (index > -1) {
+            serviceId = allServices[index].id;
           }
         }
-        if (payloads.length > 0) {
+        const payload = {
+          category_id: get(attributes, 'categoryId'),
+          service_id: serviceId,
+          name: serviceName,
+          subtitle: get(attributes, 'subtitle'),
+          description: get(attributes, 'description'),
+          icon_id: get(attributes, 'iconId'),
+          cost: get(attributes, 'cost') || 0,
+          cost_type: get(service, 'costType'),
+          email_template: get(attributes, 'emailTemplate'),
+          secondary_description: get(attributes, 'secondaryDescription'),
+          additional_details: get(attributes, 'additionalDetails'),
+          manual_position: manualPosition
+        };
+        if (category) {
+          payload['service_category_id'] = get(category, 'id');
+        } else {
+          payload['service_category_id'] = null;
+        }
+        if (service.hasOwnProperty('id')) {
+          payload['id'] = service.id;
+        }
+        servicesPayload.push(payload);
+      }
+      const promises = [];
+      for(const index in servicesPayload) {
+        const service = servicesPayload[index];
+        const data = {
+          service: {
+            provider_id: providerId,
+            name: get(service, 'name'),
+            description: get(service, 'description'),
+            secondary_description: get(service, 'secondary_description'),
+            category_id: get(service, 'category_id'),
+            icon_id: get(service, 'icon_id'),
+            cost: get(service, 'cost'),
+            cost_type: get(service, 'cost_type')
+          }
+        };
+        if (service.service_id) {
+          promises.push(serviceClient.update(service.service_id, data));
+        } else {
+          promises.push(serviceClient.create(data));
+        }
+      }
+      if (promises.length > 0) {
+        this.setState({ saving: true });
+        Promise.all(promises).then(results => {
+          const payloads = results.map(result => {
+            const data = get(result, 'data', {});
+            const name = get(data, 'attributes.name');
+            const cost = get(data, 'attributes.cost');
+            const serviceId = get(data, 'id');
+            const locationService = servicesPayload.find(service => service.name === name);
+            const payload = {
+              name,
+              subtitle: locationService.subtitle,
+              description: locationService.description,
+              secondary_description: locationService.secondary_description,
+              additional_details: locationService.additional_details,
+              provider_id: providerId,
+              service_id: serviceId,
+              service_category_id: locationService.service_category_id,
+              manual_position: locationService.manual_position,
+              email_template: locationService.email_template,
+              cost
+            };
+            if (locationService.hasOwnProperty('id')) {
+              payload['id'] = locationService.id;
+            }
+            return payload;
+          });
+          for(const index in originServices) {
+            const id = get(originServices[index], 'id');
+            if (currentServiceIds.indexOf(id) === -1) {
+              payloads.push({
+                id,
+                '_destroy': true
+              });
+            }
+          }
+          if (payloads.length > 0) {
+            this.updateLocation({
+              provider_location: {
+                ...params,
+                provider_location_services_attributes: payloads
+              }
+            });
+          } else {
+            if (!isEmpty(params)) {
+              this.updateLocation({ provider_location: { ...params } });
+            } else {
+              this.setState({ saving: false });
+            }
+          }
+        })
+        .catch(error => {
+          this.setState({ saving: false });
+        });
+      } else {
+        if (!isEmpty(params)) {
           this.updateLocation({
             provider_location: {
-              ...params,
-              provider_location_services_attributes: payloads
+              ...params
             }
           });
-        } else {
-          if (!isEmpty(params)) {
-            this.updateLocation({ provider_location: { ...params } });
-          }
         }
-      })
-      .catch(error => {
-        this.setState({ saving: false });
-      });
-    } else {
-      if (!isEmpty(params)) {
-        this.updateLocation({
-          provider_location: {
-            ...params
-          }
-        });
       }
+    } else {
+      this.setState({ saving: false });
     }
   }
 
