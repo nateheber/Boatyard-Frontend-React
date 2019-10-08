@@ -19,10 +19,9 @@ export const refinedProviderLocationSelector = createSelector(
         const id = get(data, 'id');
         if (!isEmpty(data) && data !== null) {
           if (!isArray(data)) {
-            return get(included, `[${type}][${id}]`);
-          }
-          if (!isEmpty(data)) {
-            return data.map(relation => {
+            parsedRelationships.push(get(included, `[${type}][${id}]`));
+          } else {
+            const arrayData = data.map(relation => {
               const type = get(relation, 'type');
               const id = get(relation, 'id');
               if (type === 'services') {
@@ -30,6 +29,7 @@ export const refinedProviderLocationSelector = createSelector(
               }
               return get(included, `[${type}][${id}]`);
             });
+            parsedRelationships.push(arrayData);
           }
         }
       }
@@ -58,7 +58,7 @@ export const refinedProviderLocationSelector = createSelector(
       }
       return { ...location, relationships: relations };
     });
-    return {providerLocations: sortBy(parsedData, p => get(p, 'relationships.locations.attributes.name') || ''.toUpperCase())};
+    return {providerLocations: sortBy(parsedData, p => get(p, 'relationships.locations.attributes.name').toUpperCase())};
   }
 );
 
