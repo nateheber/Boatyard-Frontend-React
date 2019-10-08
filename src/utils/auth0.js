@@ -2,7 +2,7 @@ import Auth0Lock from 'auth0-lock';
 const mode = process.env.REACT_APP_STAGE;
 
 export const AUTH_CONFIG = {
-  domain: 'boatyard.auth0.com',
+  domain: 'login.boatyard.com',
   clientId: mode === 'production' ? 'NBL64luwiwLVcHHwdcsyEhDdve5ZyU55' : 'gfgy9ShWFqBnHpPCOonIuXkPV0YRZ3K3',
 }
 

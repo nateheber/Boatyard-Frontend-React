@@ -40,6 +40,9 @@ import { dueTypes } from './components/modals/JobModal/components/JobSummarySect
 
 const Wrapper = styled.div`
   padding: 30px 25px;
+  @media (max-width: 470px) {
+    padding: 0;
+  }
 `;
 
 const Column = styled(Col)`

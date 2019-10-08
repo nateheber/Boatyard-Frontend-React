@@ -2,15 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { get, isEmpty } from 'lodash';
+import AsyncSelect from 'react-select/lib/Async';
+import debounce from "debounce-promise";
 
 import { OrangeButton } from 'components/basic/Buttons';
 import ChatBox from 'components/template/Message/ChatBox';
-import { BoatyardSelect } from 'components/basic/Dropdown';
 import MessageCustomerOption from 'components/basic/MessageCustomerOption';
 import CustomerOptionValue from 'components/basic/CustomerOptionValue';
 import { refinedNetworkSelector, getRecipients } from 'store/selectors/network';
-import { CreateNetwork, GetNetworks } from 'store/actions/networks';
-import { CreateMessage } from 'store/actions/conversations';
+import { GetNetworks } from 'store/actions/networks';
+import { CreateMessage, CreateConversation } from 'store/actions/conversations';
 import {
   FilterUsers,
 } from 'store/actions/users';
@@ -39,10 +40,6 @@ const InputLabel = styled.div`
   font-size: 14px;
 `;
 
-const Select = styled(BoatyardSelect)`
-  width: 240px;
-`;
-
 const HeaderTitle = styled.div`
   padding: 15px;
   font-size: 18px;
@@ -50,31 +47,63 @@ const HeaderTitle = styled.div`
   color: #e6e6e6;
 `;
 
-// const ValueLabel = styled.div`
-//   display: inline-block;
-//   font-size: 12px;
-//   color: #333;
-// `;
-
-const selectorStyle = {
-  multiValue: (base) => ({
-    ...base,
-    border: '1px solid #ccc',
-    backgroundColor: '#FFF',
-    padding: '1px 5px',
-    transition: 'all 0.5s',
-    ':hover': {
-      backgroundColor: '#e6e6e6',
-      borderColor: '#adadad',
-    }
+export const colourStyles = {
+  option: (provided, state) => ({
+    ...provided,
+    width: '600px',
+    display: 'fixed',
   }),
-  multiValueRemove: (base) => ({
-    ...base,
-    backgroundColor: 'transparent !important',
-    cursor: 'pointer'
-  })
-}
-
+  container: styles => ({
+    ...styles,
+    flex: 1,
+    paddingLeft: 30,
+    maxWidth: 271.31
+  }),
+  control: styles => ({
+    ...styles,
+    backgroundColor: 'white',
+    fontSize: 12,
+    fontFamily: 'Montserrat',
+    paddingLeft: 5,
+    minHeight: 28,
+    border: '1px solid #dfdfdf'
+  }),
+  input: styles => ({
+    ...styles,
+    fontSize: 12,
+    fontFamily: 'Montserrat',
+    color: '#555',
+    paddingTop: 1,
+    paddingBottom: 1
+  }),
+  loadingMessage: styles => ({
+    ...styles,
+    fontSize: 12,
+    fontFamily: 'Montserrat',
+    color: '#555'
+  }),
+  dropdownIndicator: styles => ({
+    ...styles,
+    padding: 5
+  }),
+  indicatorSeparator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  clearIndicator: styles => ({
+    ...styles,
+    display: 'none'
+  }),
+  noOptionsMessage: styles => ({
+    ...styles,
+    fontSize: 12
+  }),
+  menu: styles => ({
+    ...styles,
+    width: 241.31,
+  }),
+  placeholder: styles => ({ ...styles }),
+};
 
 export const colourOptions = [
   { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
@@ -162,32 +191,17 @@ class NewMessage extends React.Component {
 
   onSend = (data) => {
     const { users } = this.state;
-    const senderInfo = this.getSenderInfo();
-    const recipientInfo = this.getRecipientInfo(users);
-    this.props.CreateNetwork({
+    const {recipient_id, recipient_type} = this.getRecipientInfo(users);
+    this.props.CreateConversation({
       data: {
-        network: {
-          ...senderInfo,
-          ...recipientInfo
+        conversation: {
+          recipient_type: recipient_type,
+          recipient_id: recipient_id,
         }
       },
-      success: this.sendMessage(data, recipientInfo),
-      error: this.networkCreationFailed(data, recipientInfo)
+      success: (res) => this.sendMessage(data, res),
+      error: this.networkCreationFailed(data)
     });
-
-    // users.forEach((user) => {
-    //   const recipientInfo = this.getRecipientInfo(user);
-    //   this.props.CreateNetwork({
-    //     data: {
-    //       network: {
-    //         ...senderInfo,
-    //         ...recipientInfo
-    //       }
-    //     },
-    //     success: this.sendMessage(data, recipientInfo),
-    //     error: this.networkCreationFailed(data, recipientInfo)
-    //   })
-    // });
   }
 
   onSendingSuccess = (result) => {
@@ -195,10 +209,10 @@ class NewMessage extends React.Component {
     this.props.onCreationSuccess(conversationId)();
   }
 
-  sendMessage = (message, recipientInfo) => () => {
+  sendMessage = (message, {id: conversationId}) => {
     this.props.CreateMessage({
+      conversationId,
       data: {
-        ...recipientInfo,
         message
       },
       success: this.onSendingSuccess
@@ -221,19 +235,20 @@ class NewMessage extends React.Component {
         </ChatHeader>
         <InputWrapper>
           <InputLabel>To:</InputLabel>
-          <Select
-            // isMulti
-            defaultOptions
+          <AsyncSelect
+            ref={this.setCustomerSelectRef}
             components={{
               Option: MessageCustomerOption,
               SingleValue: CustomerOptionValue
               // MultiValueLabel
             }}
-            loadOptions={this.loadOptions}
-            onInputChange={this.loadOptions}
-            styles={selectorStyle}
+            isClearable
+            defaultOptions
+            loadOptions={debounce(this.loadOptions, 1000, {leading: true})}
             onChange={this.onChangeUser}
             value={users}
+            styles={colourStyles}
+            noOptionsMessage={()=>"No Result"}
           />
         </InputWrapper>
         <ChatBox third noBorder onSend={this.onSend} />
@@ -252,10 +267,10 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-  CreateNetwork,
   CreateMessage,
   FilterUsers,
   GetNetworks,
+  CreateConversation,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewMessage);

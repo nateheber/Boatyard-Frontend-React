@@ -107,7 +107,7 @@ const modalStyles = {
     },
     modal: {
       padding: '0px',
-      width: '50%',
+      width: '100%',
       maxWidth: '700px'
     },
     closeButton: {

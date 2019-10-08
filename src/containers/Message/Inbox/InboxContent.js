@@ -52,11 +52,10 @@ class InboxContent extends React.Component {
     const { conversationId, curConversation: {included} } = this.props;
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
-    const { id } = recipientInfo;
-    const recipientData = get(included, `[profiles][${id}]`);
-    const info = get(recipientData, 'relationships.owner.data');
-    const recipient_type = get(info, 'type') === 'users' ? 'User' : 'Provider';
-    return { recipient_type, recipient_id: info.id };
+    const id = get(recipientInfo, 'id');
+    const recipientData = get(included, `[users][${id}]`);
+    const recipient_type = get(recipientData, 'type') === 'users' ? 'User' : 'Provider';
+    return { recipient_type, recipient_id: recipientData.id };
   };
 
   onSendingSuccess = () => {
@@ -64,8 +63,10 @@ class InboxContent extends React.Component {
   }
 
   onSend = (message) => {
+    const { conversationId } = this.props;
     const recipientInfo = this.getRecipientInfo();
     this.props.CreateMessage({
+      conversationId,
       data: {
         ...recipientInfo,
         message

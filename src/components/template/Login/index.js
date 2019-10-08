@@ -103,6 +103,7 @@ class LoginComponent extends React.Component {
       this.lock = new Auth0Lock(AUTH_CONFIG.clientId, AUTH_CONFIG.domain, {
         closable: false,
         rememberLastLogin: false,
+        configurationBaseUrl: 'https://cdn.auth0.com',
         initialScreen: query.action === 'signup' ? 'signUp' : '',
         prefill: {
           email: query.email ? query.email : ''
@@ -147,14 +148,12 @@ class LoginComponent extends React.Component {
         auth0Token
       },
       success: (profileData) => {
-        console.log(profileData);
         // if (profileData.email.indexOf('@marinemax.com') > -1) {
         //   // window.open('https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0');
         //   document.getElementById('frame').src="https://fs.marinemax.com/adfs/ls/?wa=wsignout1.0";
         // }
         GetUserPermission({
           success: (res) => {
-            console.log(res);
             window.setTimeout(() => history.push('/dashboard'), 50);
               // console.log(res);
               // const index = this.props.location.search.indexOf('redirect_url');

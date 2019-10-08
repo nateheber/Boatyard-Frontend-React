@@ -138,10 +138,10 @@ const SideBarContainer = styled.div`
   background-color: #FFFFFF;
   overflow-y: scroll;
   overflow-x: hidden;
-  width: 195px !important;
-  height: calc(100vh - 68px) !important;
+  width: 195px;
+  height: calc(100vh - 68px);
   &::-webkit-scrollbar {
-    width: 10px !important;
+    width: 10px;
     margin-left: 10px;
   }
   &::-webkit-scrollbar-thumb {
@@ -153,9 +153,9 @@ const SideBarContainer = styled.div`
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   }
   @media (max-width: 991px) {
-    display: block !important;
-    width: 110px !important;
-    margin-left: -110px;
+    display: block;
+    width: 160px;
+    margin-left: -160px;
     &.show {
       margin-left: 0px;
     }

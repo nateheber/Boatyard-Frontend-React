@@ -75,7 +75,7 @@ export const getCustomerName = (order, privilege = 'admin') => {
 export const getCreationInfo = order => {
   const customerName = getCustomerName(order);
   const createdAt = get(order, 'attributes.createdAt');
-  const dateString = moment(createdAt).format('MMM D, YYYY [at] hh:mm A');
+  const dateString = moment(createdAt).format('MMM D, YYYY [at] h:mm A');
   return {
     time: moment(createdAt).valueOf(),
     message: `Order placed by ${customerName} on ${dateString}`
@@ -84,7 +84,7 @@ export const getCreationInfo = order => {
 
 export const getUpdatedStatus = order => {
   const updatedAt = get(order, 'attributes.updatedAt');
-  const dateString = moment(updatedAt).format('MMM D, YYYY [at] hh:mm A');
+  const dateString = moment(updatedAt).format('MMM D, YYYY [at] h:mm A');
   return {
     time: moment(updatedAt).valueOf(),
     message: `Order updated on ${dateString}`
@@ -104,7 +104,7 @@ export const getOrderProcessInfo = order => {
             result.push({
               time: moment(time).valueOf(),
               message: `Order assigned on ${moment(time).format(
-                'MMM D, YYYY [at] hh:mm A'
+                'MMM D, YYYY [at] h:mm A'
               )}`
             });
           }
@@ -114,7 +114,7 @@ export const getOrderProcessInfo = order => {
             result.push({
               time: moment(time).valueOf(),
               message: `Order quoted on ${moment(time).format(
-                'MMM D, YYYY [at] hh:mm A'
+                'MMM D, YYYY [at] h:mm A'
               )}`
             });
           }
@@ -124,7 +124,7 @@ export const getOrderProcessInfo = order => {
             result.push({
               time: moment(time).valueOf(),
               message: `Order in progress on ${moment(time).format(
-                'MMM D, YYYY [at] hh:mm A'
+                'MMM D, YYYY [at] h:mm A'
               )}`
             });
           }
@@ -134,7 +134,7 @@ export const getOrderProcessInfo = order => {
             result.push({
               time: moment(time).valueOf(),
               message: `Order invoiced on ${moment(time).format(
-                'MMM D, YYYY [at] hh:mm A'
+                'MMM D, YYYY [at] h:mm A'
               )}`
             });
           }

@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, sortBy } from 'lodash';
 
 import { actionTypes } from '../actions/conversations';
-import { getConversationClient, getMessageClient, getCustomApiClient } from './sagaSelectors';
+import { getConversationClient, getCustomApiClient } from './sagaSelectors';
 
 const refineConversations = (conversations) => {
   return conversations.map(conversation => {
@@ -22,6 +22,7 @@ function* getConversations(action) {
     const conversations = sortBy(get(result, 'data', []), 'id');
     const included = get(result, 'included', []);
     const { perPage, total } = result;
+
     yield put({
       type: actionTypes.GET_CONVERSATIONS_SUCCESS,
       payload: {
@@ -85,10 +86,10 @@ function* deleteConversation(action) {
 }
 
 function* createMessage(action){
-  const apiClient = yield select(getMessageClient);
-  const { data, success, error } = action.payload;
+  const apiClient = yield select(getCustomApiClient);
+  const { conversationId, data, success, error } = action.payload;
   try {
-    const result = yield call(apiClient.create, data);
+    const result = yield call(apiClient.post, `/conversations/${conversationId}/messages`, data);
     yield put({
       type: actionTypes.CREATE_MESSAGE_SUCCESS,
     });
@@ -103,9 +104,29 @@ function* createMessage(action){
   }
 }
 
+function* createConversation(action) {
+  const conversationClient = yield select(getConversationClient);
+  const { data, success, error } = action.payload;
+  try {
+    const result= yield call(conversationClient.create, data);
+    yield put({
+      type: actionTypes.CREATE_CONVERSATION_SUCCESS
+    });
+    if (success) {
+      yield call(success, get(result, 'data', {}));
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.CREATE_CONVERSATION_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
 export default function* ConversationSaga() {
   yield takeEvery(actionTypes.GET_CONVERSATIONS, getConversations);
   yield takeEvery(actionTypes.GET_CONVERSATION, getConversation);
   yield takeEvery(actionTypes.DELETE_CONVERSATION, deleteConversation);
   yield takeEvery(actionTypes.CREATE_MESSAGE, createMessage);
+  yield takeEvery(actionTypes.CREATE_CONVERSATION, createConversation);
 }
