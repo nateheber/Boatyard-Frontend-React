@@ -192,3 +192,62 @@ export class MultiLayerCRUDClient {
     return this.client.delete(url);
   };
 }
+
+export class MultiLayersCRUDClient {
+  layers = [];
+  client = undefined;
+  apiUrl = '';
+  constructor(layers, authType = 'basic', params) {
+    this.layers = layers;
+    this.client = createMainClient(authType);
+    this.apiUrl = this.generateUrl(params);
+  }
+  generateUrl = params => {
+    let url = this.layers.includes('providers') ? locationApiBaseUrl : apiBaseUrl;
+    for (let i = 0; i < params.length; i += 1) {
+      url = `${url}/${this.layers[i]}/${params[i]}`;
+    }
+    if (params.length + 1 === this.layers.length) {
+      url = `${url}/${this.layers[this.layers.length - 1]}/`;
+      return url;
+    } else if (params.length === this.layers.length) {
+      return url;
+    }
+    throw new Error('Invalid params configuration');
+  };
+  list = (params) => {
+    let paramsString = '';
+
+    if (params) {
+      params = {
+        page: 1,
+        ...params
+      };
+    } else {
+      params = {
+        page: 1
+      };
+    }
+
+    const array = [];
+    for  (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        array.push(`${key}=${params[key]}`);
+      }
+    }
+    paramsString = array.join('&');
+    return this.client.get(`${this.apiUrl}?${paramsString}`);
+  };
+  create = data => {
+    return this.client.post(this.apiUrl, data);
+  };
+  read = id => {
+    return this.client.get(`${this.apiUrl}${id}`);
+  };
+  update = (id, data) => {
+    return this.client.patch(`${this.apiUrl}${id}`, data);
+  };
+  delete = id => {
+    return this.client.delete(`${this.apiUrl}${id}`);
+  };
+}
