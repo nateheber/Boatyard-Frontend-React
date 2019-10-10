@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { apiBaseUrl, spreedlyApiToken, spreedlyApiUrl } from '../config';
+import { apiBaseUrl, locationApiBaseUrl, spreedlyApiToken, spreedlyApiUrl } from '../config';
 import { authInterceptor } from './auth';
 import { responseInterceptor, spreedlyResponseInterceptor } from './response';
 
@@ -88,7 +88,7 @@ export class CRUDClient {
   query = ''
   constructor(query, authType = 'basic') {
     this.query = query;
-    this.apiUrl = `${apiBaseUrl}/${query}/`;
+    this.apiUrl = `${query.indexOf('provider') > -1 ? locationApiBaseUrl : apiBaseUrl}/${query}/`;
     this.client = createMainClient(authType);
   }
   list = (params = null) => {
@@ -139,7 +139,7 @@ export class MultiLayerCRUDClient {
     this.client = createMainClient(authType);
   }
   generateUrl = params => {
-    let url = apiBaseUrl;
+    let url = this.layers.includes('providers') ? locationApiBaseUrl : apiBaseUrl;
     for (let i = 0; i < params.length; i += 1) {
       url = `${url}/${this.layers[i]}/${params[i]}`;
     }
@@ -190,5 +190,64 @@ export class MultiLayerCRUDClient {
   delete = params => {
     const url = this.generateUrl(params);
     return this.client.delete(url);
+  };
+}
+
+export class MultiLayersCRUDClient {
+  layers = [];
+  client = undefined;
+  apiUrl = '';
+  constructor(layers, authType = 'basic', params) {
+    this.layers = layers;
+    this.client = createMainClient(authType);
+    this.apiUrl = this.generateUrl(params);
+  }
+  generateUrl = params => {
+    let url = this.layers.includes('providers') ? locationApiBaseUrl : apiBaseUrl;
+    for (let i = 0; i < params.length; i += 1) {
+      url = `${url}/${this.layers[i]}/${params[i]}`;
+    }
+    if (params.length + 1 === this.layers.length) {
+      url = `${url}/${this.layers[this.layers.length - 1]}/`;
+      return url;
+    } else if (params.length === this.layers.length) {
+      return url;
+    }
+    throw new Error('Invalid params configuration');
+  };
+  list = (params) => {
+    let paramsString = '';
+
+    if (params) {
+      params = {
+        page: 1,
+        ...params
+      };
+    } else {
+      params = {
+        page: 1
+      };
+    }
+
+    const array = [];
+    for  (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        array.push(`${key}=${params[key]}`);
+      }
+    }
+    paramsString = array.join('&');
+    return this.client.get(`${this.apiUrl}?${paramsString}`);
+  };
+  create = data => {
+    return this.client.post(this.apiUrl, data);
+  };
+  read = id => {
+    return this.client.get(`${this.apiUrl}${id}`);
+  };
+  update = (id, data) => {
+    return this.client.patch(`${this.apiUrl}${id}`, data);
+  };
+  delete = id => {
+    return this.client.delete(`${this.apiUrl}${id}`);
   };
 }

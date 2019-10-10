@@ -3,17 +3,20 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { Col, Row } from 'react-flexbox-grid';
-import { isEmpty } from 'lodash';
+import { filter } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { actionTypes as categoryActions, GetCategories } from 'store/actions/categories';
-import { actionTypes as serviceActions, CreateService } from 'store/actions/services';
+import { actionTypes as serviceActions, CreateService, GetAllServices } from 'store/actions/services';
 import { refinedCategoriesSelector } from 'store/selectors/categories';
+import { refinedAllServicesSelector } from 'store/selectors/services';
 import Table from 'components/basic/Table';
 import { PageTitle } from 'components/basic/Typho';
 import { SectionHeaderWrapper, LeftPart, RightPart } from 'components/basic/Header';
 import { OrangeButton } from 'components/basic/Buttons';
 import { SearchBox } from 'components/basic/Input';
 import AddServiceModal from '../components/AddServiceModal';
+import AddLocationServiceModal from '../components/AddLocationServiceModal';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -35,8 +38,9 @@ class AddService extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      visibleOfServiceModal: false,
       keyword: '',
-      visibleOfServiceModal: false
+      filtered: []
     };
   }
 
@@ -45,21 +49,36 @@ class AddService extends React.Component {
   }
 
   loadPage = (page) => {
-    const { keyword } = this.state;
-    const { GetCategories } = this.props;
-    const params = isEmpty(keyword) ? {
+    const { providerLocationId, GetCategories, GetAllServices } = this.props;
+    const params = {
       page: page,
-      per_page: 24,
-    } : {
-      page: page,
-      per_page: 24,
-      search_by_name: keyword
+      per_page: 1000,
     };
-    GetCategories({ params });
+    if (providerLocationId) {
+      GetAllServices({
+        params,
+        success: () => {
+          this.handleInputChange('');
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
+        }
+      });
+    } else {
+      GetCategories({
+        params,
+        success: () => {
+          this.handleInputChange('');
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
+        }
+      });
+    }
   };
 
-  toDetails = category => {
-    this.setState({ selectedCategory: category }, () => {
+  toDetails = selectedItem => {
+    this.setState({ selectedItem }, () => {
       this.showAddServiceModal();
     });
   };
@@ -77,17 +96,28 @@ class AddService extends React.Component {
   }
 
   handleInputChange = (keyword) => {
-    this.setState({ keyword }, () => {
-      this.loadPage(1);
+    const { providerLocationId, services, categories } = this.props;
+    const trimmedKeyword = (keyword || '').trim();
+    this.setState({ keyword: trimmedKeyword }, () => {
+      if (trimmedKeyword.trim().length === 0) {
+        this.setState({ filtered: providerLocationId ? services : categories });
+      } else {
+        if (providerLocationId) {
+          const filtered = filter(services, service => service.name.toLowerCase().indexOf(trimmedKeyword.toLowerCase()) > -1);
+          this.setState({ filtered });
+        } else {
+          const filtered = filter(categories, category => category.name.toLowerCase().indexOf(trimmedKeyword.toLowerCase()) > -1);
+          this.setState({ filtered });
+        }
+      }
     });
   }
 
   createService = (values) => {
-    const { CreateService } = this.props;
+    const { CreateService, providerLocationId } = this.props;
+    const data = providerLocationId ? { provider_location_service: values } : { service: values };
     CreateService({ 
-      data: {
-        service: values,
-      },
+      data,
       success: () => {
         this.hideAddServiceModal();
       }
@@ -98,9 +128,8 @@ class AddService extends React.Component {
     const columns = [
       { label: 'serivce name', value: 'name' },
     ];
-    const { visibleOfServiceModal, selectedCategory } = this.state;
-    const { categories, categoryStatus, serviceStatus, page, perPage, total } = this.props;
-    const pageCount = Math.ceil(total/perPage);
+    const { visibleOfServiceModal, selectedItem, filtered } = this.state;
+    const { categoryStatus, serviceStatus, providerLocationId } = this.props;
     return (
       <Wrapper>
         <SectionHeaderWrapper>
@@ -122,19 +151,30 @@ class AddService extends React.Component {
           loading={categoryStatus === categoryActions.GET_CATEGORIES}
           type={'tile'}
           columns={columns}
-          records={categories}
-          page={page}
-          pageCount={pageCount}
-          onPageChange={this.loadPage}
+          records={filtered}
           toDetails={this.toDetails}
         />
-        {visibleOfServiceModal && <AddServiceModal
-          loading={serviceStatus === serviceActions.CREATE_SERVICE}
-          open={visibleOfServiceModal}
-          category={selectedCategory}
-          onClose={this.hideAddServiceModal}
-          onSave={this.createService}
-        />}
+        {visibleOfServiceModal &&
+          <React.Fragment>
+            {providerLocationId ?
+              <AddLocationServiceModal
+                loading={serviceStatus === serviceActions.CREATE_SERVICE}
+                open={visibleOfServiceModal}
+                service={selectedItem}
+                onClose={this.hideAddServiceModal}
+                onSave={this.createService}
+              />
+            :
+              <AddServiceModal
+                loading={serviceStatus === serviceActions.CREATE_SERVICE}
+                open={visibleOfServiceModal}
+                category={selectedItem}
+                onClose={this.hideAddServiceModal}
+                onSave={this.createService}
+              />
+            }
+          </React.Fragment>
+        }
       </Wrapper>
     );
   }
@@ -142,6 +182,8 @@ class AddService extends React.Component {
 
 const mapStateToProps = (state) => ({
   categories: refinedCategoriesSelector(state, ''),
+  providerLocationId: state.auth.providerLocationId,
+  services: refinedAllServicesSelector(state),
   categoryStatus: state.category.currentStatus,
   serviceStatus: state.service.currentStatus,
   page: state.category.page,
@@ -151,6 +193,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   GetCategories,
+  GetAllServices,
   CreateService
 };
 

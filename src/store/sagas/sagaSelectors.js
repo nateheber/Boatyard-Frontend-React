@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import * as APIGenerator from '../../api';
 
 export const getAuthToken = state => state.auth.authToken;
@@ -50,13 +51,35 @@ export const getChildAccountClient = state => {
 };
 
 export const getServiceClient = state => {
+  const providerLocationId = `${get(state.auth, 'providerLocationId') || ''}`;
+  switch (state.auth.privilege) {
+    case 'basic':
+      return providerLocationId.length > 0 ?
+        APIGenerator.createLocationServiceClient('basic', [state.auth.providerId, providerLocationId]) :
+        APIGenerator.createServiceClient('basic');
+    case 'admin':
+      return providerLocationId.length > 0 ?
+        APIGenerator.createLocationServiceClient('admin', [state.auth.providerId, providerLocationId]) :
+        APIGenerator.createServiceClient('admin');
+    case 'provider':
+        return providerLocationId.length > 0 ?
+        APIGenerator.createLocationServiceClient('provider', [state.auth.providerId, providerLocationId]) :
+        APIGenerator.createServiceClient('provider');
+    default:
+      return providerLocationId.length > 0 ?
+        APIGenerator.createLocationServiceClient('basic', [state.auth.providerId, providerLocationId]) :
+        APIGenerator.createServiceClient('basic');
+  }
+};
+
+export const getNormalServiceClient = state => {
   switch (state.auth.privilege) {
     case 'basic':
       return APIGenerator.createServiceClient('basic');
     case 'admin':
       return APIGenerator.createServiceClient('admin');
     case 'provider':
-      return APIGenerator.createServiceClient('provider');
+        return APIGenerator.createServiceClient('provider');
     default:
       return APIGenerator.createServiceClient('basic');
   }
