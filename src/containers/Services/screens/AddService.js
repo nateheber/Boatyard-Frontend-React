@@ -173,7 +173,8 @@ class AddService extends React.Component {
                 onSave={this.createService}
               />
             }
-          </React.Fragment>}
+          </React.Fragment>
+        }
       </Wrapper>
     );
   }
