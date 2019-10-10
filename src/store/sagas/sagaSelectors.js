@@ -59,11 +59,11 @@ export const getServiceClient = state => {
         APIGenerator.createServiceClient('basic');
     case 'admin':
       return providerLocationId.length > 0 ?
-        APIGenerator.createLocationServiceClient('basic', [state.auth.providerId, providerLocationId]) :
+        APIGenerator.createLocationServiceClient('admin', [state.auth.providerId, providerLocationId]) :
         APIGenerator.createServiceClient('admin');
     case 'provider':
         return providerLocationId.length > 0 ?
-        APIGenerator.createLocationServiceClient('basic', [state.auth.providerId, providerLocationId]) :
+        APIGenerator.createLocationServiceClient('provider', [state.auth.providerId, providerLocationId]) :
         APIGenerator.createServiceClient('provider');
     default:
       return providerLocationId.length > 0 ?

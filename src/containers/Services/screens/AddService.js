@@ -16,6 +16,7 @@ import { SectionHeaderWrapper, LeftPart, RightPart } from 'components/basic/Head
 import { OrangeButton } from 'components/basic/Buttons';
 import { SearchBox } from 'components/basic/Input';
 import AddServiceModal from '../components/AddServiceModal';
+import AddLocationServiceModal from '../components/AddLocationServiceModal';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -76,8 +77,8 @@ class AddService extends React.Component {
     }
   };
 
-  toDetails = category => {
-    this.setState({ selectedCategory: category }, () => {
+  toDetails = selectedItem => {
+    this.setState({ selectedItem }, () => {
       this.showAddServiceModal();
     });
   };
@@ -113,11 +114,10 @@ class AddService extends React.Component {
   }
 
   createService = (values) => {
-    const { CreateService } = this.props;
+    const { CreateService, providerLocationId } = this.props;
+    const data = providerLocationId ? { provider_location_service: values } : { service: values };
     CreateService({ 
-      data: {
-        service: values,
-      },
+      data,
       success: () => {
         this.hideAddServiceModal();
       }
@@ -128,8 +128,8 @@ class AddService extends React.Component {
     const columns = [
       { label: 'serivce name', value: 'name' },
     ];
-    const { visibleOfServiceModal, selectedCategory, filtered } = this.state;
-    const { categoryStatus, serviceStatus } = this.props;
+    const { visibleOfServiceModal, selectedItem, filtered } = this.state;
+    const { categoryStatus, serviceStatus, providerLocationId } = this.props;
     return (
       <Wrapper>
         <SectionHeaderWrapper>
@@ -154,13 +154,26 @@ class AddService extends React.Component {
           records={filtered}
           toDetails={this.toDetails}
         />
-        {visibleOfServiceModal && <AddServiceModal
-          loading={serviceStatus === serviceActions.CREATE_SERVICE}
-          open={visibleOfServiceModal}
-          category={selectedCategory}
-          onClose={this.hideAddServiceModal}
-          onSave={this.createService}
-        />}
+        {visibleOfServiceModal &&
+          <React.Fragment>
+            {providerLocationId ?
+              <AddLocationServiceModal
+                loading={serviceStatus === serviceActions.CREATE_SERVICE}
+                open={visibleOfServiceModal}
+                service={selectedItem}
+                onClose={this.hideAddServiceModal}
+                onSave={this.createService}
+              />
+            :
+              <AddServiceModal
+                loading={serviceStatus === serviceActions.CREATE_SERVICE}
+                open={visibleOfServiceModal}
+                category={selectedItem}
+                onClose={this.hideAddServiceModal}
+                onSave={this.createService}
+              />
+            }
+          </React.Fragment>}
       </Wrapper>
     );
   }
