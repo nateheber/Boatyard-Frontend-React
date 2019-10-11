@@ -6,7 +6,7 @@ import { get, set, isEmpty, sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 
-import { FilterServices } from 'store/actions/services';
+import { GetServices } from 'store/actions/services';
 import {
   updateLineItems,
   deleteLineItem,
@@ -45,15 +45,16 @@ class LineItemSection extends React.Component {
   }
 
   componentDidMount() {
-    const { privilege, FilterServices } = this.props;
+    const { privilege, GetServices } = this.props;
     let params = {
+      all: true,
       'service[discarded_at]': null,
       'per_page': 1000
     };
     if (privilege === 'admin') {
       params['service[provider_id]'] = 1;
     }
-    FilterServices({ params });
+    GetServices({ params });
   }
 
   componentDidUpdate(prevProps) {
@@ -123,9 +124,12 @@ class LineItemSection extends React.Component {
 
   updateLineItems = () => {
     const { lineItems } = this.state;
-    const { orderId, updateLineItems, GetOrder } = this.props;
+    const { orderId, updateLineItems, GetOrder, providerLocationId } = this.props;
     const updateInfo = lineItems.map(
-      ({ id, attributes: { serviceId, quantity, cost, comment } }) => ({
+      ({ id, attributes: { serviceId, quantity, cost, comment } }) => ( providerLocationId ? {
+        id,
+        lineItem: { provider_location_service_id: serviceId, quantity, cost, comment }
+      } : {
         id,
         lineItem: { service_id: serviceId, quantity, cost, comment }
       })
@@ -171,10 +175,19 @@ class LineItemSection extends React.Component {
 
   saveNewItems = () => {
     const { newItems } = this.state;
-    const { orderId, GetOrder } = this.props;
+    const { orderId, GetOrder, providerLocationId } = this.props;
+    const updateInfo = newItems.map(
+      ({ id, attributes: { serviceId, quantity, cost, comment } }) => ( providerLocationId ? {
+        id,
+        lineItem: { provider_location_service_id: serviceId, quantity, cost, comment }
+      } : {
+        id,
+        lineItem: { service_id: serviceId, quantity, cost, comment }
+      })
+    );
     this.props.createLineItems({
       orderId,
-      data: newItems,
+      data: updateInfo,
       callback: () => {
         this.setState({ newItems: [] });
         GetOrder({ orderId });
@@ -234,11 +247,12 @@ class LineItemSection extends React.Component {
 
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
-  ...orderSelector(state)
+  ...orderSelector(state),
+  providerLocationId: state.auth.providerLocationId
 });
 
 const mapDispatchToProps = {
-  FilterServices,
+  GetServices,
   updateLineItems,
   deleteLineItem,
   createLineItems,

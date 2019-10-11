@@ -48,6 +48,7 @@ class LineItem extends React.Component {
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
+      service: props.providerLocationId ? props.providerLocationService : props.service
     };
   }
 
@@ -58,6 +59,7 @@ class LineItem extends React.Component {
         quantity: this.props.attributes.quantity,
         cost: this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
+        service: this.props.providerLocationId ? this.props.providerLocationService : this.props.service
       });
     }
   }
@@ -106,7 +108,7 @@ class LineItem extends React.Component {
   };
 
   getCurrentOption = () => {
-    const { service } = this.props
+    const { service } = this.state;
     return {
       value:  get(service, 'attributes.id'),
       cost: get(service, 'attributes.cost'),
@@ -115,8 +117,8 @@ class LineItem extends React.Component {
   };
 
   render() {
-    const { mode, onRemove, service } = this.props;
-    const { quantity, cost, comment } = this.state;
+    const { mode, onRemove } = this.props;
+    const { quantity, cost, comment, service } = this.state;
     const currentOption = this.getCurrentOption();
     return (
       <Record>
@@ -187,7 +189,8 @@ class LineItem extends React.Component {
 
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
-  services: state.service.services
+  services: state.service.services,
+  providerLocationId: state.auth.providerLocationId
 });
 
 
