@@ -148,7 +148,11 @@ const lineItemsSelector = state => {
   const data = [];
   forEach(lineItems, (lineItem) => {
     const attributes= get(lineItemsDetail, `${lineItem.id}.attributes`);
-    const serviceInfo = get(lineItemsDetail, `${lineItem.id}.relationships.service`);
+    const relationShips = get(lineItemsDetail, `${lineItem.id}.relationships`);
+    let serviceInfo = get(relationShips, 'service');
+    if (get(relationShips, 'providerLocationService').hasOwnProperty('id')) {
+      serviceInfo = get(relationShips, 'providerLocationService');
+    }
     const serviceAttributes = get(serviceInfo, 'attributes');
     return data.push({
       ...lineItem,

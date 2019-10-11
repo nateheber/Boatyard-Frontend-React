@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import CreatableSelect from 'react-select/lib/AsyncCreatable';
 import { connect } from 'react-redux';
 import AddServiceModal from '../../../Services/components/AddServiceModal';
+import AddLocationServiceModal from '../../../Services/components/AddLocationServiceModal';
 import { actionTypes as serviceActions, CreateService } from 'store/actions/services';
 import { getToken } from 'store/selectors/auth';
 import { apiBaseUrl } from 'api/config';
@@ -47,7 +48,7 @@ export const BYCreateSelect = styled(CreatableSelect)`
   }
 }
 `;
-const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token, CreateService}) => {
+const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token, CreateService, providerLocationId}) => {
   const categoryApi = axios.create({
     baseURL: apiBaseUrl,
     headers: {
@@ -78,10 +79,9 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
   };
 
   const handleCreateService = (values) => {
+    const data = providerLocationId ? { provider_location_service: values } : { service: values };
     CreateService({
-      data: {
-        service: values,
-      },
+      data,
       success: (data) => {
         setShowServiceModal(false);
         const option = {value: data.id, cost: data.cost, label: data.name};
@@ -108,14 +108,28 @@ const ServiceDropDown = ({value, onChangeService, services, serviceStatus, token
 
   return (
     <>
-      {showServiceModal && <AddServiceModal
-          loading={serviceStatus === serviceActions.CREATE_SERVICE}
-          open={showServiceModal}
-          category={miscCategory}
-          showCat
-          onClose={() => setShowServiceModal(false)}
-          onSave={handleCreateService}
-        />}
+      {showServiceModal &&
+        <React.Fragment>
+        {providerLocationId ?
+          <AddLocationServiceModal
+            loading={serviceStatus === serviceActions.CREATE_SERVICE}
+            open={showServiceModal}
+            service={miscCategory}
+            showCat
+            onClose={() => setShowServiceModal(false)}
+            onSave={handleCreateService}
+          />
+        :
+          <AddServiceModal
+            loading={serviceStatus === serviceActions.CREATE_SERVICE}
+            open={showServiceModal}
+            category={miscCategory}
+            showCat
+            onClose={() => setShowServiceModal(false)}
+            onSave={handleCreateService}
+          />
+        }
+      </React.Fragment>}
       <BYCreateSelect
         className="basic-single"
         classNamePrefix="select"
@@ -135,6 +149,7 @@ const mapStateToProps = state => ({
   services: state.service.services,
   serviceStatus: state.service.currentStatus,
   token: getToken(state),
+  providerLocationId: state.auth.providerLocationId
 });
 
 const mapDispatchToProps = {

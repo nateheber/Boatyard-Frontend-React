@@ -160,7 +160,7 @@ class AddLocationServiceModal extends React.Component {
         },
         {
           field: 'service_id',
-          label: 'Category',
+          label: 'Service',
           className: 'primary',
           type: 'select_box',
           errorMessage: 'Select service',
