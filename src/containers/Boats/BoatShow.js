@@ -50,7 +50,7 @@ const Img = styled.img`
 `;
 
 const TitleLabel = styled.div`
-  font-family: Roboto-Regular;
+  font-family: 'Roboto', sans-serif;
   font-size: 42px;
   color: #3D485C;
   letter-spacing: -1.75px;
@@ -59,7 +59,7 @@ const TitleLabel = styled.div`
 `;
 
 const DescLabel = styled.div`
-  font-family: Roboto-Regular;
+  font-family: 'Roboto', sans-serif;
   font-size: 21px;
   color: #3D485C;
   text-align: center;
@@ -78,7 +78,8 @@ const SectionContainer = styled.div`
 `;
 
 const SectionTitle = styled.div`
-  font-family: Roboto-Medium;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
   font-size: 20px;
   color: #3D4A5E;
   text-align: left;
@@ -103,7 +104,7 @@ const InputField = styled(Field)`
   outline: none;
   box-sizing: border-box;
   margin-bottom: 5px;
-  font-family: Roboto;
+  font-family: 'Roboto', sans-serif;
   font-size: 16px;
   line-height: 19px;
   &:disabled {
@@ -144,7 +145,8 @@ const FooterInnerWrapper = styled.div`
 `;
 
 const FooterTitle = styled.div`
-  font-family: Roboto-Bold;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
   font-size: 21px;
   color: #3D4A5E;
   text-align: left;
@@ -152,7 +154,8 @@ const FooterTitle = styled.div`
 `;
 
 const FooterValue = styled.div`
-  font-family: Roboto-Black;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 900;
   font-size: 36px;
   color: #3D4A5E;
   text-align: right;
@@ -165,7 +168,8 @@ const FooterActionWrapper = styled.div`
 const ActionButton = styled.button`
   background: #DA3128;
   border-radius: 38.5px;
-  font-family: Roboto-Black;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 900;
   font-size: 24px;
   color: #FFFFFF;
   text-align: center;
