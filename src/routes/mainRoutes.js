@@ -18,6 +18,8 @@ import Calendar from 'components/template/Calendar';
 import Providers from 'containers/Providers/screens/Providers';
 import ProviderEditor from 'containers/Providers/screens/ProviderEditor';
 import UpdateProfile from 'containers/Profiles/screens/UpdateProfile';
+import BoatShow from 'containers/Boats/BoatShow';
+import BoatReservationDone from 'containers/Boats/BoatReservationDone';
 import Services from 'containers/Services/screens/Services';
 import AddService from 'containers/Services/screens/AddService';
 import ServiceDetails from 'containers/Services/screens/ServiceDetails';
@@ -51,11 +53,35 @@ const Wrapper = styled.div`
   height: 100vh;
 `;
 
+const BoatShowWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+`;
 
 const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
   const [key, setKey] = useState('Wrapper');
   const { profile, isAuthenticated } = props;
-  const WrapperComp = isAuthenticated ? MainPageTemplate : Wrapper;
+  let WrapperComp = MainPageTemplate;
+  if (isAuthenticated) {
+    if (window.location.href.indexOf('login') > -1 ||
+    window.location.href.indexOf('forgot-password') > -1 ||
+    window.location.href.indexOf('reset-password') > -1 ||
+    window.location.href.indexOf('create-password') > -1 ||
+    window.location.href.indexOf('confirm-account') > -1) {
+      WrapperComp = Wrapper;
+    } else if (window.location.href.indexOf('onlineboat') > -1) {
+      WrapperComp = BoatShowWrapper;
+    }
+  } else {
+    if (window.location.href.indexOf('onlineboat') > -1) {
+      WrapperComp = BoatShowWrapper;
+    } else {
+      WrapperComp = Wrapper;
+    }
+  }
 
   useEffect(() => {
     if (refreshPage) {
@@ -87,6 +113,8 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <Route path="/reset-password/" component={ResetPassword} />
         <Route path="/create-password/" component={CreatePassword} />
         <Route path="/confirm-account/" component={ConfirmAccount} />
+        <Route path="/onlineboatshow" component={BoatShow} />
+        <Route path="/onlineboat/done" component={BoatReservationDone} />
 
         <PrivateRoute exact path="/update-profile" component={UpdateProfile} isAuthenticated={isAuthenticated} />
         <PrivateRoute exact path="/dashboard/" component={Dashboard} isAuthenticated={isAuthenticated} />
