@@ -98,7 +98,7 @@ const InputField = styled(Field)`
   height: 36px;
   width: 100%;
   background-color: #fff !important;
-  padding: 0 15px;
+  padding: 0 10px;
   border: 1px solid #979797;
   border-radius: 8px;
   border-radius: 6px !important;
@@ -114,6 +114,36 @@ const InputField = styled(Field)`
   &:-internal-autofill-selected,
   &:-webkit-autofill,
   &:-webkit-autofill:hover, 
+  &:-webkit-autofill:focus {
+    border: none;
+    background-color: #fff !important;
+  }
+  &::placeholder {
+    color: #C7C7C7;
+  }
+`;
+
+const MaskInput = styled(InputMask)`
+  position: relative;
+  height: 36px;
+  width: 100%;
+  background-color: #fff !important;
+  padding: 0 10px;
+  border: 1px solid #979797;
+  border-radius: 8px;
+  border-radius: 6px !important;
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 5px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  line-height: 19px;
+  &:disabled {
+    background: #f1f1f1;
+  }
+  &:-internal-autofill-selected,
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
   &:-webkit-autofill:focus {
     border: none;
     background-color: #fff !important;
@@ -234,55 +264,70 @@ class BoatShow extends React.PureComponent {
               <FormContainer onSubmit={handleSubmit}>
                 <Img src={MMLogo} />
                 <TitleLabel>{'Almost There!'}</TitleLabel>
-                <DescLabel>{'Enter your information below to reserve years of memorable experiences on the water.'}</DescLabel>
+                <DescLabel>{'Enter your information below to reserve years of memorable experiences on the water with a $1,000 deposit. A MarineMax sales professional will assist you and you’ll have five days to complete your purchase of your new boat.'}</DescLabel>
                 <SectionWrapper>
                   <SectionContainer>
                     <SectionTitle>{'Contact'}</SectionTitle>
-                    <InputRow>
-                      <InputField
-                        name="first_name"
-                        component="input"
-                        placeholder="First Name"
-                        validate={required}
-                      />
-                      <Error name="first_name" />
-                    </InputRow>
-                    <InputRow>
-                      <InputField
-                        name="last_name"
-                        component="input"
-                        placeholder="Last Name"
-                        validate={required}
-                      />
-                      <Error name="last_name" />
-                    </InputRow>
-                    <InputRow>
-                      <InputField
-                        name="phone"
-                        type="phone"
-                        component="input"
-                        placeholder="Phone"
-                        validate={required}
-                      />
-                      <Error name="phone" />
-                    </InputRow>
-                    <InputRow>
-                      <InputField
-                        name="email"
-                        type="email"
-                        component="input"
-                        placeholder="Email"
-                        validate={emailValidation}
-                      />
-                      <Error name="email" />
-                    </InputRow>
+                    <Row>
+                      <Col xs={12} sm={6} md={6}>
+                        <InputRow>
+                          <InputField
+                            name="first_name"
+                            component="input"
+                            placeholder="First Name"
+                            validate={required}
+                          />
+                          <Error name="first_name" />
+                        </InputRow>
+                      </Col>
+                      <Col xs={12} sm={6} md={6}>
+                        <InputRow>
+                          <InputField
+                            name="last_name"
+                            component="input"
+                            placeholder="Last Name"
+                            validate={required}
+                          />
+                          <Error name="last_name" />
+                        </InputRow>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xs={12} sm={6} md={6}>
+                        <InputRow>
+                          <Field
+                            name="phone"
+                            validate={required}
+                          >
+                            {props => (
+                            <div>
+                                <MaskInput {...props.input} placeholder="Phone" mask={'(999) 999-9999'} />
+                              </div>
+                            )}
+                          </Field>
+                          <Error name="phone" />
+                        </InputRow>
+                      </Col>
+                      <Col xs={12} sm={6} md={6}>
+                        <InputRow>
+                          <InputField
+                            name="email"
+                            type="email"
+                            component="input"
+                            placeholder="Email"
+                            validate={emailValidation}
+                          />
+                          <Error name="email" />
+                        </InputRow>
+                      </Col>
+                    </Row>
                   </SectionContainer>
                 </SectionWrapper>
                 <SectionWrapper>
                   <SectionContainer>
                     <SectionTitle>{'Payment Info'}</SectionTitle>
                     <Row>
-                      <Col xs={12} sm={12} md={6}>
+                      <Col xs={12} sm={12} md={7}>
                         <InputRow>
                           <InputField
                             name="card_number"
@@ -293,22 +338,26 @@ class BoatShow extends React.PureComponent {
                           <Error name="card_number" />
                         </InputRow>
                       </Col>
-                      <Col xs={12} sm={6} md={3}>
+                      <Col xs={6} sm={6} md={3}>
                         <InputRow>
-                          <InputField
+                          <Field
                             name="expiration_date"
-                            component={InputMask}
-                            placeholder="Exp Date"
                             validate={required}
-                          />
+                          >
+                            {props => (
+                            <div>
+                                <MaskInput {...props.input} placeholder="Exp Date" mask={'99/99'} />
+                              </div>
+                            )}
+                          </Field>
                           <Error name="expiration_date" />
                         </InputRow>
                       </Col>
-                      <Col xs={12} sm={6} md={3}>
+                      <Col xs={6} sm={6} md={2}>
                         <InputRow>
                           <InputField
                             name="cvv2"
-                            component={InputMask}
+                            component="input"
                             placeholder="CCV"
                             validate={required}
                           />
@@ -317,7 +366,7 @@ class BoatShow extends React.PureComponent {
                       </Col>
                     </Row>
                     <Row>
-                      <Col xs={12} sm={12} md={6}>
+                      <Col xs={12} sm={12} md={12}>
                         <InputRow>
                           <InputField
                             name="street"
@@ -328,7 +377,9 @@ class BoatShow extends React.PureComponent {
                           <Error name="street" />
                         </InputRow>
                       </Col>
-                      <Col xs={12} sm={6} md={3}>
+                    </Row>
+                    <Row>
+                      <Col xs={12} sm={5} md={5}>
                         <InputRow>
                           <InputField
                             name="city"
@@ -339,7 +390,7 @@ class BoatShow extends React.PureComponent {
                           <Error name="city" />
                         </InputRow>
                       </Col>
-                      <Col xs={12} sm={6} md={3}>
+                      <Col xs={6} sm={5} md={5}>
                         <InputRow>
                           <InputField
                             name="state"
@@ -350,9 +401,7 @@ class BoatShow extends React.PureComponent {
                           <Error name="state" />
                         </InputRow>
                       </Col>
-                    </Row>
-                    <Row>
-                      <Col xs={12} sm={12} md={6}>
+                      <Col xs={6} sm={2} md={2}>
                         <InputRow>
                           <InputField
                             name="zip"
