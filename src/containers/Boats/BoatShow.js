@@ -75,7 +75,7 @@ const SectionWrapper = styled.div`
 `;
 
 const SectionContainer = styled.div`
-  padding: 25px 50px 25px 80px;
+  padding: 25px 50px;
 `;
 
 const SectionTitle = styled.div`
@@ -286,7 +286,7 @@ class BoatShow extends React.PureComponent {
                         <InputRow>
                           <InputField
                             name="card_number"
-                            component={InputMask}
+                            component="input"
                             placeholder="Card Number"
                             validate={required}
                           />
