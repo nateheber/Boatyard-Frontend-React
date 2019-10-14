@@ -85,8 +85,8 @@ const ActionButton = styled.button`
 `;
 
 class BoatReservationDone extends React.PureComponent {
-  handleSubmit = (values) => {
-    console.log('---------------values------------', values);
+  handleSubmit = () => {
+    document.location.href='http://marinemax.com/flibs';
   };
 
   render() {

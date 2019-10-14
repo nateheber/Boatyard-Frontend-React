@@ -210,8 +210,7 @@ class BoatShow extends React.PureComponent {
       this.setState({ loading: true });
       axios.post(`${apiBaseUrl}/deposits`, { deposit: {
         ...queryParams,
-        ...values,
-        location: 'pompano'
+        ...values
       }}).then(() => {
         this.setState({ loading: false });
         this.props.history.push('/onlineboat/done');
