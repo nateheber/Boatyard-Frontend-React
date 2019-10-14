@@ -142,7 +142,7 @@ class LoginComponent extends React.Component {
 
   handleLogin = (auth0Token) => {
     // const that = this;
-    const { Login, GetUserPermission, history } = this.props;
+    const { Login, GetUserPermission } = this.props;
     Login({
       params: {
         auth0Token
