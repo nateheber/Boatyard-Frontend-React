@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { Form, Field } from 'react-final-form';
 import { Row, Col } from 'react-flexbox-grid';
-import { isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { apiBaseUrl } from 'api/config';
@@ -212,8 +212,7 @@ class BoatShow extends React.PureComponent {
         this.props.history.push('/onlineboat/done');
       }).catch(e =>  {
         this.setState({ loading: false });
-        console.log('----------------Error-----------------', e);
-        // toastr.error('Error', 'Missing token to confirm account');
+        toastr.error('Error', get(e.response, 'data.message'));
       })
     } else {
       toastr.error('Error', 'Missing parameters');
