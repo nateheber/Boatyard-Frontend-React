@@ -154,7 +154,7 @@ class LoginComponent extends React.Component {
         // }
         GetUserPermission({
           success: (res) => {
-            window.setTimeout(() => history.push('/dashboard'), 50);
+            window.setTimeout(() => window.location.href = '/dashboard'); //history.push('/dashboard'), 50);
               // console.log(res);
               // const index = this.props.location.search.indexOf('redirect_url');
               // if (index > -1) {

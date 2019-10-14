@@ -64,7 +64,7 @@ const BoatShowWrapper = styled.div`
 const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
   const [key, setKey] = useState('Wrapper');
   const { profile, isAuthenticated } = props;
-  let WrapperComp = isAuthenticated ? MainPageTemplate : Wrapper;
+  let WrapperComp = MainPageTemplate;
   if (isAuthenticated) {
     if (window.location.href.indexOf('login') > -1 ||
     window.location.href.indexOf('forgot-password') > -1 ||
@@ -72,7 +72,6 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
     window.location.href.indexOf('create-password') > -1 ||
     window.location.href.indexOf('confirm-account') > -1) {
       WrapperComp = Wrapper;
-      window.location.href = '/';
     } else if (window.location.href.indexOf('onlineboat') > -1) {
       WrapperComp = BoatShowWrapper;
     }
