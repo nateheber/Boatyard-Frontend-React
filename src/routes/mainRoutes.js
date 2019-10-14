@@ -36,7 +36,7 @@ import { SetRefreshFlag } from 'store/actions/auth';
 import PrivateRoute from './privateRoute';
 import PrivilegeRoute from './privilegeRoute';
 import Intercom from 'components/basic/Intercom';
-import { intercomAppId } from '../api/config';
+import { intercomAppId, mmIntercomAppId } from '../api/config';
 import MainPageTemplate from 'components/template/MainPageTemplate';
 import BackgroundImage from '../resources/auth/login-bg.png';
 import IntercomProvider from './IntercomProvider';
@@ -64,6 +64,7 @@ const BoatShowWrapper = styled.div`
 const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
   const [key, setKey] = useState('Wrapper');
   const { profile, isAuthenticated } = props;
+  let isBoatShow = false;
   let WrapperComp = MainPageTemplate;
   if (isAuthenticated) {
     if (window.location.href.indexOf('login') > -1 ||
@@ -74,10 +75,12 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
       WrapperComp = Wrapper;
     } else if (window.location.href.indexOf('onlineboat') > -1) {
       WrapperComp = BoatShowWrapper;
+      isBoatShow = true;
     }
   } else {
     if (window.location.href.indexOf('onlineboat') > -1) {
       WrapperComp = BoatShowWrapper;
+      isBoatShow = true;
     } else {
       WrapperComp = Wrapper;
     }
@@ -146,7 +149,7 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
       </WrapperComp>
     </IntercomProvider>
   </Router>
-  <Intercom appID={intercomAppId}  { ...user } />
+  <Intercom appID={isBoatShow ? mmIntercomAppId : intercomAppId}  { ...user } />
   </>
 )}
 const mapStateToProps = (state) => ({
