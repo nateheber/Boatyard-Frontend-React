@@ -230,7 +230,7 @@ class BoatShow extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false
+      loading: true
     };
   }
 
@@ -247,7 +247,7 @@ class BoatShow extends React.PureComponent {
       }).catch(e =>  {
         this.setState({ loading: false });
         toastr.error('Error', get(e.response, 'data.message'));
-      })
+      });
     } else {
       toastr.error('Error', 'Missing parameters');
     }
@@ -440,7 +440,7 @@ class BoatShow extends React.PureComponent {
             </Form>
           </ContainerWrapper>
         </ContentWrapper>
-        {loading && <LoadingSpinner loading={loading} />}
+        {loading && <LoadingSpinner style={{ position: 'fixed' }} loading={loading} />}
       </Wrapper>
     );
   }
