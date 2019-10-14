@@ -7,6 +7,7 @@ import { Form, Field } from 'react-final-form';
 import { Row, Col } from 'react-flexbox-grid';
 import { get, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
+import InputMask from 'react-input-mask';
 
 import { apiBaseUrl } from 'api/config';
 import { validateEmail } from 'utils/basic';
@@ -286,8 +287,9 @@ class BoatShow extends React.PureComponent {
                         <InputRow>
                           <InputField
                             name="card_number"
-                            component="input"
+                            component={InputMask}
                             placeholder="Card Number"
+                            mask={'9999 9999 9999 9999'}
                             validate={required}
                           />
                           <Error name="card_number" />
@@ -297,7 +299,8 @@ class BoatShow extends React.PureComponent {
                         <InputRow>
                           <InputField
                             name="expiration_date"
-                            component="input"
+                            component={InputMask}
+                            mask={'99/99'}
                             placeholder="Exp Date"
                             validate={required}
                           />
@@ -308,7 +311,8 @@ class BoatShow extends React.PureComponent {
                         <InputRow>
                           <InputField
                             name="cvv2"
-                            component="input"
+                            component={InputMask}
+                            mask={'999'}
                             placeholder="CCV"
                             validate={required}
                           />
