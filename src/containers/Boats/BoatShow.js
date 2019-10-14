@@ -288,7 +288,6 @@ class BoatShow extends React.PureComponent {
                             name="card_number"
                             component={InputMask}
                             placeholder="Card Number"
-                            mask={'9999 9999 9999 9999'}
                             validate={required}
                           />
                           <Error name="card_number" />
@@ -299,7 +298,6 @@ class BoatShow extends React.PureComponent {
                           <InputField
                             name="expiration_date"
                             component={InputMask}
-                            mask={'99/99'}
                             placeholder="Exp Date"
                             validate={required}
                           />
@@ -311,7 +309,6 @@ class BoatShow extends React.PureComponent {
                           <InputField
                             name="cvv2"
                             component={InputMask}
-                            mask={'999'}
                             placeholder="CCV"
                             validate={required}
                           />
