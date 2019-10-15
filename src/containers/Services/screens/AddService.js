@@ -50,13 +50,14 @@ class AddService extends React.Component {
 
   loadPage = (page) => {
     const { providerLocationId, GetCategories, GetAllServices } = this.props;
-    const params = {
-      page: page,
-      per_page: 1000,
-    };
     if (providerLocationId) {
       GetAllServices({
-        params,
+        params: {
+          page: 1,
+          per_page: 1000,
+          'service[order]': 'name',
+          'service[sort]': 'asc'  
+        },
         success: () => {
           this.handleInputChange('');
         },
@@ -66,7 +67,12 @@ class AddService extends React.Component {
       });
     } else {
       GetCategories({
-        params,
+        params: {
+          page: page,
+          per_page: 1000,    
+          'category[order]': 'name',
+          'category[sort]': 'asc'  
+        },
         success: () => {
           this.handleInputChange('');
         },
