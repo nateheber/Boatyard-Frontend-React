@@ -40,9 +40,13 @@ class EditLocationServiceModal extends React.Component {
 
   loadAllServices = () => {
     const { GetAllServices } = this.props;
-    const params = { page: 1, per_page: 1000 };
     GetAllServices({
-      params,
+      params: {
+        page: 1,
+        per_page: 1000,
+        'service[order]': 'name',
+        'service[sort]': 'asc'
+      },
       success: () => {
         const mainFields = this.getMainFields();
         this.setState({ mainFields });
@@ -95,7 +99,7 @@ class EditLocationServiceModal extends React.Component {
     return [
       {
         field: 'name',
-        label: 'Name',
+        label: 'Service Name',
         className: 'primary',
         type: 'text_field',
         errorMessage: 'Enter the service name',
@@ -109,7 +113,7 @@ class EditLocationServiceModal extends React.Component {
       },
       {
         field: 'service_id',
-        label: 'Service',
+        label: 'Service Type',
         className: 'primary',
         type: 'select_box',
         errorMessage: 'Select service',
