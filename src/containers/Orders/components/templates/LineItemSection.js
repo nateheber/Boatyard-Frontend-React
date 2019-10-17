@@ -6,7 +6,6 @@ import { get, set, isEmpty, sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 
-import { GetServices } from 'store/actions/services';
 import {
   updateLineItems,
   deleteLineItem,
@@ -44,19 +43,6 @@ class LineItemSection extends React.Component {
     }
   }
 
-  componentDidMount() {
-    const { privilege, GetServices } = this.props;
-    let params = {
-      all: true,
-      'service[discarded_at]': null,
-      'per_page': 1000
-    };
-    if (privilege === 'admin') {
-      params['service[provider_id]'] = 1;
-    }
-    GetServices({ params });
-  }
-
   componentDidUpdate(prevProps) {
     if (
       get(this.props, 'currentOrder.lineItems.length', 0) === 0 &&
@@ -88,8 +74,14 @@ class LineItemSection extends React.Component {
   onChange = (item, idx) => {
     const newItems = [...this.state.newItems];
     const { serviceId, quantity, cost, comment } = item;
-    const { providerId } = this.props;
-    newItems[idx] = {
+    const { providerId, providerLocationId } = this.props;
+    newItems[idx] = providerLocationId ? {
+      provider_location_service_id: parseInt(serviceId),
+      provider_id: providerId,
+      quantity: parseInt(quantity),
+      cost: parseFloat(cost),
+      comment
+    } : {
       service_id: parseInt(serviceId),
       provider_id: providerId,
       quantity: parseInt(quantity),
@@ -175,19 +167,10 @@ class LineItemSection extends React.Component {
 
   saveNewItems = () => {
     const { newItems } = this.state;
-    const { orderId, GetOrder, providerLocationId } = this.props;
-    const updateInfo = newItems.map(
-      ({ id, attributes: { serviceId, quantity, cost, comment } }) => ( providerLocationId ? {
-        id,
-        lineItem: { provider_location_service_id: serviceId, quantity, cost, comment }
-      } : {
-        id,
-        lineItem: { service_id: serviceId, quantity, cost, comment }
-      })
-    );
+    const { orderId, GetOrder } = this.props;
     this.props.createLineItems({
       orderId,
-      data: updateInfo,
+      data: newItems,
       callback: () => {
         this.setState({ newItems: [] });
         GetOrder({ orderId });
@@ -252,7 +235,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  GetServices,
   updateLineItems,
   deleteLineItem,
   createLineItems,
