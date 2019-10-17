@@ -8,6 +8,7 @@ import { Row, Col } from 'react-flexbox-grid';
 import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
 import ServiceDropdown from '../basic/ServiceDropdown';
+import { orderSelector } from 'store/selectors/orders';
 
 const Record = styled.div`
   padding: 15px 0px;
@@ -43,48 +44,28 @@ const Comment = styled.div`
 class LineItem extends React.Component {
   constructor(props) {
     super(props)
+    const providerLocationId = get(props.currentOrder, 'attributes.providerId');
     this.state = {
       serviceId: props.service.id,
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
-      service: props.providerLocationId ? props.providerLocationService : props.service
+      service: providerLocationId ? props.providerLocationService : props.service
     };
   }
 
   componentDidUpdate(prevProps) {
     if (!deepEqual(prevProps, this.props)) {
+      const providerLocationId = get(this.props.currentOrder, 'attributes.providerId');
       this.setState({
         serviceId: this.props.service.id,
         quantity: this.props.attributes.quantity,
         cost: this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
-        service: this.props.providerLocationId ? this.props.providerLocationService : this.props.service
+        service: providerLocationId ? this.props.providerLocationService : this.props.service
       });
     }
   }
-
-  onChangeFilter = (inputValue, callback) => {
-    setTimeout(() => {
-      callback(this.filterOptions(inputValue));
-    }, 100);
-  };
-
-  filterOptions = (inputValue) => {
-    const { services } = this.props;
-    let filteredServices = services;
-    if (inputValue && inputValue.trim().length > 0) {
-      filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
-    }
-    const options = filteredServices.map(option => ({
-      value: option.id,
-      cost: option.cost,
-      label: option.name
-    }));
-    const currentOption = this.getCurrentOption();
-    const result = options.filter(option => option.value !== currentOption.value);
-    return [currentOption, ...result];
-  };
 
   onChange = (value, field) => {
     const changeVal = {};
@@ -190,7 +171,7 @@ class LineItem extends React.Component {
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
   services: state.service.services,
-  providerLocationId: state.auth.providerLocationId
+  ...orderSelector(state)
 });
 
 

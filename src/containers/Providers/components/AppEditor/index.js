@@ -80,7 +80,16 @@ class AppEditor extends React.Component {
   componentDidMount() {
     const { providerId, GetSiteBanners, providerLocations, GetServices } = this.props;
     GetSiteBanners({ params: { per_page: 1000 } });
-    GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
+    GetServices({
+      params: {
+        per_page: 1000,
+        all: true,
+        'service[provider_id]': providerId,
+        'service[discarded_at]': null,
+        'service[order]': 'name',
+        'service[sort]': 'asc'
+      }
+    });
     const { selectedLocation } = this.state;
     let location = selectedLocation;
     if(isEmpty(location)) {
@@ -118,7 +127,7 @@ class AppEditor extends React.Component {
       providerLocationId: `${get(location, 'id')}`,
       success: (services) => {
         let items = categories.map((category) => {
-          let filtered = services.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
+          let filtered = services.filter(service => (get(service, 'serviceCategoryId') || '').toString() === get(category, 'id'));
           filtered = orderBy(filtered, [function(o){ return o.attributes.manualPosition; }], ['asc']);
           const subItems = filtered.map(item => {
             const newItem = {
@@ -147,7 +156,7 @@ class AppEditor extends React.Component {
           };
           return item;
         });
-        const rootServices = services.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => {
+        const rootServices = services.filter(service => !get(service, 'serviceCategoryId')).map(service => {
           const item = {
             id: service.attributes.manualPosition,
             type: 'service',
