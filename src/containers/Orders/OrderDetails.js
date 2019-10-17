@@ -15,8 +15,7 @@ import { orderSelector } from 'store/selectors/orders';
 import { withAssignmentSelector } from 'store/selectors/workorders';
 import {
   getUserFromOrder,
-  getBoatFromOrder,
-  getProviderFromOrder
+  getBoatFromOrder
 } from 'utils/order';
 import { actionTypes as boatActions, UpdateBoat } from 'store/actions/boats';
 
@@ -61,9 +60,7 @@ class OrderDetails extends React.Component {
   };
 
   componentDidMount() {
-    const { providerId, GetServices, GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location, match: {params: {id}} } = this.props;
-
-    GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
+    const { GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location, match: {params: {id}} } = this.props;
     let orderId = id;
     if (!orderId) {
       const query = queryString.parse(location.search);
@@ -73,9 +70,8 @@ class OrderDetails extends React.Component {
     if (state && state.hasOwnProperty('dispatched')) {
       SetDispatchedFlag(state.dispatched);
     }
-    // this.setState({ orderId }, () => {
     this.loadOrder(orderId);
-    // });
+
     if (privilege === 'admin') {
       GetGlobalTemplates({ params: { 'per_page': 200 } });
     } else {
@@ -105,11 +101,12 @@ class OrderDetails extends React.Component {
   }
 
   loadOrder = (orderId) => {
-    const { GetOrder } = this.props;
+    const { GetOrder, GetServices } = this.props;
     this.state.orderId !== orderId && this.setState({orderId});
     GetOrder({
       orderId,
       success: () => {
+        GetServices({ params: { per_page: 1000, 'service[provider_id]': this.getProviderId() } });
         this.setState({ isFirstLoad: false });
       },
       error: (e) => {
@@ -128,7 +125,7 @@ class OrderDetails extends React.Component {
 
   getProviderId = () => {
     const { currentOrder } = this.props;
-    return get(getProviderFromOrder(currentOrder), 'id', '');
+    return get(currentOrder, 'attributes.providerId');
   };
 
   getProviderLocationId = () => {
