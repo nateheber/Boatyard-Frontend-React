@@ -133,13 +133,15 @@ export class CRUDClient {
 
 export class MultiLayerCRUDClient {
   layers = [];
+  version = 'v2';
   client = undefined;
-  constructor(layers, authType = 'basic') {
+  constructor(layers, authType = 'basic', version='v2') {
     this.layers = layers;
+    this.version = version;
     this.client = createMainClient(authType);
   }
   generateUrl = params => {
-    let url = this.layers.includes('providers') ? locationApiBaseUrl : apiBaseUrl;
+    let url = this.version === 'v2' ? apiBaseUrl : locationApiBaseUrl;
     for (let i = 0; i < params.length; i += 1) {
       url = `${url}/${this.layers[i]}/${params[i]}`;
     }

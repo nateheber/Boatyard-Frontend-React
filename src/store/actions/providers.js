@@ -21,6 +21,10 @@ export const actionTypes = {
   GET_PROVIDER_SUCCESS: '[PROVIDERS] - Get provider Success',
   GET_PROVIDER_FAILURE: '[PROVIDERS] - Get provider Failure',
 
+  GET_PROVIDER_SERVICES: '[PROVIDERS] - Get provider services',
+  GET_PROVIDER_SERVICES_SUCCESS: '[PROVIDERS] - Get provider services Success',
+  GET_PROVIDER_SERVICES_FAILURE: '[PROVIDERS] - Get provider services Failure',
+
   CREATE_PROVIDER: '[PROVIDERS] - Create new provider',
   CREATE_PROVIDER_SUCCESS: '[PROVIDERS] - Create new provider Success',
   CREATE_PROVIDER_FAILURE: '[PROVIDERS] - Create new provider Failure',
@@ -65,6 +69,10 @@ export const LoginWithProviderFailure = createAction(actionTypes.LOGIN_WITH_PROV
 export const GetProvider = createAction(actionTypes.GET_PROVIDER, payload => payload);
 export const GetProviderSuccess = createAction(actionTypes.GET_PROVIDER_SUCCESS);
 export const GetProviderFailure = createAction(actionTypes.GET_PROVIDER_FAILURE);
+
+export const GetProviderServices = createAction(actionTypes.GET_PROVIDER_SERVICES, payload => payload);
+export const GetProviderServicesSuccess = createAction(actionTypes.GET_PROVIDER_SERVICES_SUCCESS);
+export const GetProviderServicesFailure = createAction(actionTypes.GET_PROVIDER_SERVICES_FAILURE);
 
 export const CreateProvider = createAction(actionTypes.CREATE_PROVIDER, payload => payload);
 export const CreateProviderSuccess = createAction(actionTypes.CREATE_PROVIDER_SUCCESS);
