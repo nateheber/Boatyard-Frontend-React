@@ -10,6 +10,7 @@ import { toastr } from 'react-redux-toastr';
 import { SetWorkOrder, UpserWorkOrder, ServicesValidation, ResetWorkOrder, DeleteWorkOrder } from 'store/actions/workorders';
 import { actionTypes, GetOrder, UpdateOrder, SetDispatchedFlag } from 'store/actions/orders';
 import { GetServices } from 'store/actions/services';
+import { GetProviderLocationServices } from 'store/actions/providerLocations';
 import { GetGlobalTemplates, GetLocalTemplates } from 'store/actions/messageTemplates';
 import { orderSelector } from 'store/selectors/orders';
 import { withAssignmentSelector } from 'store/selectors/workorders';
@@ -101,12 +102,38 @@ class OrderDetails extends React.Component {
   }
 
   loadOrder = (orderId) => {
-    const { GetOrder, GetServices } = this.props;
+    const { GetOrder, GetServices, GetProviderLocationServices } = this.props;
     this.state.orderId !== orderId && this.setState({orderId});
     GetOrder({
       orderId,
       success: () => {
-        GetServices({ params: { per_page: 1000, 'service[provider_id]': this.getProviderId() } });
+        const { currentOrder } = this.props;
+        const providerId = get(currentOrder, 'attributes.providerId');
+        const providerLocationId = get(currentOrder, 'attributes.providerLocationId');
+        if (providerLocationId) {
+          GetProviderLocationServices({
+            providerId,
+            providerLocationId,
+            params: {
+              per_page: 1000,
+              all: true,
+              'provider_location_service[discarded_at]': null,
+              'provider_location_service[order]': 'name',
+              'provider_location_service[sort]': 'asc'
+            }
+          });
+        } else {
+          GetServices({
+            params: {
+              per_page: 1000,
+              all: true,
+              'service[provider_id]': providerId,
+              'service[discarded_at]': null,
+              'service[order]': 'name',
+              'service[sort]': 'asc'
+            }
+          });
+        }
         this.setState({ isFirstLoad: false });
       },
       error: (e) => {
@@ -345,6 +372,7 @@ class OrderDetails extends React.Component {
                       order={currentOrder}
                     />
                     <LineItemSection
+                      order={currentOrder}
                       updatedAt={updatedDate}
                       orderId={orderId}
                       providerId={providerId}
@@ -437,9 +465,8 @@ const mapStateToProps = state => ({
   globalTemplates: state.messageTemplate.globalTemplates,
   localTemplates: state.messageTemplate.localTemplates,
   providerId: state.auth.providerId,
-  services: state.service.services,
   workorders: withAssignmentSelector(state),
-  workorder: state.workorders.workorder,
+  workorder: state.workorders.workorder
 });
 
 const mapDispatchToProps = {
@@ -455,6 +482,7 @@ const mapDispatchToProps = {
   UpserWorkOrder,
   ResetWorkOrder,
   DeleteWorkOrder,
+  GetProviderLocationServices
 };
 
 export default withRouter(connect(

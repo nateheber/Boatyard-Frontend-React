@@ -74,7 +74,8 @@ class LineItemSection extends React.Component {
   onChange = (item, idx) => {
     const newItems = [...this.state.newItems];
     const { serviceId, quantity, cost, comment } = item;
-    const { providerId, providerLocationId } = this.props;
+    const { providerId, currentOrder } = this.props;
+    const providerLocationId = get(currentOrder, 'attributes.providerId');
     newItems[idx] = providerLocationId ? {
       provider_location_service_id: parseInt(serviceId),
       provider_id: providerId,
@@ -116,7 +117,8 @@ class LineItemSection extends React.Component {
 
   updateLineItems = () => {
     const { lineItems } = this.state;
-    const { orderId, updateLineItems, GetOrder, providerLocationId } = this.props;
+    const { orderId, updateLineItems, GetOrder, currentOrder } = this.props;
+    const providerLocationId = get(currentOrder, 'attributes.providerId');
     const updateInfo = lineItems.map(
       ({ id, attributes: { serviceId, quantity, cost, comment } }) => ( providerLocationId ? {
         id,
@@ -230,8 +232,7 @@ class LineItemSection extends React.Component {
 
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
-  ...orderSelector(state),
-  providerLocationId: state.auth.providerLocationId
+  ...orderSelector(state)
 });
 
 const mapDispatchToProps = {

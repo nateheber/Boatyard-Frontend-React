@@ -75,7 +75,12 @@ const refineProviderLocationServices = (locationServices, included) => {
     const item = locationServices[index];
     const service = find(services, s => `${s.id}` === `${get(item, 'attributes.serviceId', '')}`);
     item.attributes['iconId'] = get(service, 'attributes.iconId');
-    refactoredServices.push(item);
+    refactoredServices.push({
+      id: item.id,
+      type: item.type,
+      ...item.attributes,
+      relationships: item.relationships
+    });
   }
   return refactoredServices;
 };

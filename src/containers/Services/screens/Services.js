@@ -57,9 +57,9 @@ class Services extends React.Component {
     } : {
       page: page,
       all: true,
+      'service[discarded_at]': null,
       'service[sort]': sort.direction,
       'service[order]': sort.col,
-      'service[discarded_at]': null,
       search_by_name: keyword
     };
     GetServices({ params });
