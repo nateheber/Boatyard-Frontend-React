@@ -80,7 +80,16 @@ class AppEditor extends React.Component {
   componentDidMount() {
     const { providerId, GetSiteBanners, providerLocations, GetServices } = this.props;
     GetSiteBanners({ params: { per_page: 1000 } });
-    GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
+    GetServices({
+      params: {
+        'service[provider_id]': providerId,
+        per_page: 1000,
+        all: true,
+        'service[discarded_at]': null,
+        'service[order]': 'name',
+        'service[sort]': 'asc'
+      }
+    });
     const { selectedLocation } = this.state;
     let location = selectedLocation;
     if(isEmpty(location)) {

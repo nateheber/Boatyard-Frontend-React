@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, filter } from 'lodash';
 
 import { refinedServicesSelector } from 'store/selectors/services';
 import { SearchBox } from 'components/basic/Input';
@@ -71,18 +71,23 @@ class ServiceSelector extends React.Component {
     const { selected } = props;
     return { selected };
   }
-
-  state = {
-    keyword: '',
-    selected: [],
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: [],
+      filteredServices: props.services
+    };
   }
 
   onChangeKeyword = (keyword) => {
-    this.setState({
-      keyword,
-    }, () => {
-      this.loadCategories();
-    })
+    const { services } = this.props;
+    const refinedKeyword = (keyword || '').trim().toLowerCase();
+    if (refinedKeyword.length > 0) {
+      const filteredServices = filter(services, service => service.name.toLowerCase().includes(refinedKeyword));
+      this.setState({ filteredServices });
+    } else {
+      this.setState({ filteredServices: services });
+    }
   }
 
   onSelect = service => () => {
@@ -104,7 +109,7 @@ class ServiceSelector extends React.Component {
   }
 
   render() {
-    const { services } = this.props;
+    const { filteredServices } = this.state;
     return (
       <HeaderWrapper>
         <SearchWrapper>
@@ -112,7 +117,7 @@ class ServiceSelector extends React.Component {
         </SearchWrapper>
         <ListWrapper>
           {
-            services.map((item) => {
+            filteredServices.map((item) => {
               const { id, name } = item;
               const defaultIcon = get(item, 'relationships.icon.attributes.icon.url');
               const customIcon = get(item, 'customIcon.url');
