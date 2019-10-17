@@ -15,7 +15,6 @@ import boat from './boats';
 import payment from './payments';
 import creditCard from './credit-cards';
 import providerLocation from './providerLocations';
-import providerLocationService from './providerLocationServices';
 import childAccount from './child-accounts';
 import paymentGateway from './paymentGateway';
 import icon from './icons';
@@ -43,7 +42,6 @@ const rootReducer = combineReducers({
   creditCard,
   toastr: toastrReducer,
   providerLocation,
-  providerLocationService,
   childAccount,
   paymentGateway,
   icon,

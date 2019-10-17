@@ -18,6 +18,10 @@ export const createServiceClient = authType => {
   return new CRUDClient('services', authType);
 };
 
+export const createProviderServiceClient = authType => {
+  return new MultiLayersCRUDClient(['providers', 'services'], authType, 'v2');
+};
+
 export const createLocationServiceClient = (authType, params) => {
   return new MultiLayersCRUDClient(['providers', 'locations', 'services'], authType, params);
 };
@@ -59,7 +63,7 @@ export const createQuoteClient = authType => {
 };
 
 export const createItemClient = authType => {
-  return new MultiLayerCRUDClient(['orders', 'items'], authType);
+  return new MultiLayerCRUDClient(['orders', 'items'], authType, 'v2');
 };
 
 export const createOrderClient = authType => {
@@ -79,11 +83,11 @@ export const createChildAccountClient = authType => {
 };
 
 export const createProviderLocationServiceClient = authType => {
-  return new CRUDClient('provider_location_services', authType);
+  return new MultiLayerCRUDClient(['providers', 'locations', 'services'], authType, 'v3');
 };
 
 export const createProviderLocationClient = authType => {
-  return new MultiLayerCRUDClient(['providers', 'locations'], authType);
+  return new MultiLayerCRUDClient(['providers', 'locations'], authType, 'v3');
 };
 
 export const createPaymentGatewayClient = authType => {

@@ -8,6 +8,7 @@ const initialState = {
   currentStatus: '',
   providerLocations: [],
   currentProviderLocation: {},
+  locationServices: [],
   included: {},
   page: 1,
   perPage: 20,
@@ -115,6 +116,25 @@ export default handleActions(
         draft.currentProviderLocation = payload;
       }),
     [actionTypes.GET_PROVIDER_LOCATION_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.GET_PROVIDER_LOCATION_SERVICES]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.GET_PROVIDER_LOCATION_SERVICES_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.locationServices = payload;
+      }),
+    [actionTypes.GET_PROVIDER_LOCATION_SERVICES_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;

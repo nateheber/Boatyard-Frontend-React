@@ -1,13 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { get, isEmpty } from 'lodash';
+import { get } from 'lodash';
 
+import { refinedServicesSelector } from 'store/selectors/services';
 import { SearchBox } from 'components/basic/Input';
-
-import { GetServices, CreateService, UpdateService } from 'store/actions/services';
-import { GetCategories } from 'store/actions/categories';
-import { refinedCategoriesSelector } from 'store/selectors/categories';
+import LogoImage from '../../../../../../../../resources/boat_flag.png';
 
 const HeaderWrapper = styled.div`
   dispaly: flex;
@@ -79,27 +77,6 @@ class ServiceSelector extends React.Component {
     selected: [],
   }
 
-  componentDidMount() {
-    // const { provider, GetCategories } = this.props;
-    // const providerId = get(provider, 'id');
-    this.loadCategories();
-  }
-
-  loadCategories() {
-    const { GetCategories } = this.props;
-    const { keyword } = this.state;
-    const params = isEmpty(keyword) ? {
-      per_page: 1000,
-      'category[discarded_at]': null
-    } : {
-      per_page: 1000,
-      'category[discarded_at]': null,
-      search_by_name: keyword
-    };
-    GetCategories({ params });
-
-  }
-
   onChangeKeyword = (keyword) => {
     this.setState({
       keyword,
@@ -108,11 +85,12 @@ class ServiceSelector extends React.Component {
     })
   }
 
-  onSelect = category => () => {
-    const { id, name, description, secondaryDescription, cost, costType, subtitle, iconId, customIcon } = category;
-    const defaultIcon = get(category, 'relationships.icon.attributes.icon.url');
+  onSelect = service => () => {
+    const { id, name, categoryId, description, secondaryDescription, cost, costType, subtitle, iconId, customIcon } = service;
+    const defaultIcon = get(service, 'relationships.icon.attributes.icon.url');
     this.props.onAdd({
-      categoryId: id,
+      serviceId: id,
+      categoryId,
       name,
       subtitle,
       description,
@@ -125,25 +103,8 @@ class ServiceSelector extends React.Component {
     });
   }
 
-  loadPage = (page) => {
-    const { keyword } = this.state;
-    const { provider, GetServices } = this.props;
-    const providerId = get(provider, 'id');
-    const params = isEmpty(keyword) ? {
-      page: page,
-      per_page: 24,
-      'service[provider_id]': providerId
-    } : {
-      page: page,
-      per_page: 24,
-      'service[provider_id]': providerId,
-      search_by_name: keyword
-    };
-    GetServices({ params });
-  };
-
   render() {
-    const { categories } = this.props;
+    const { services } = this.props;
     return (
       <HeaderWrapper>
         <SearchWrapper>
@@ -151,14 +112,14 @@ class ServiceSelector extends React.Component {
         </SearchWrapper>
         <ListWrapper>
           {
-            categories.map((item) => {
+            services.map((item) => {
               const { id, name } = item;
               const defaultIcon = get(item, 'relationships.icon.attributes.icon.url');
               const customIcon = get(item, 'customIcon.url');
               return (
                 <Tile key={`service_${id}`} onClick={this.onSelect(item)}>
                   <div className="tile-content" onClick={this.onGoToDetails}>
-                    <img className="tile-image" src={defaultIcon || customIcon} alt={name} />
+                    <img className="tile-image" src={defaultIcon || customIcon || LogoImage} alt={name} />
                     <p className="tile-name">{name}</p>
                   </div>
                 </Tile>
@@ -172,19 +133,10 @@ class ServiceSelector extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  categories: refinedCategoriesSelector(state, ''),
-  provider: state.provider.currentProvider,
-  currentStatus: state.service.currentStatus,
-  page: state.service.page,
-  perPage: state.service.perPage,
-  total: state.service.total,
+  services: refinedServicesSelector(state)
 });
 
 const mapDispatchToProps = {
-  GetServices,
-  CreateService,
-  UpdateService,
-  GetCategories
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ServiceSelector);
