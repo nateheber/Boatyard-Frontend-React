@@ -756,6 +756,10 @@ class AppEditor extends React.Component {
           toastr.error('Error', e.message);
         }
       });
+    } else {
+      if (currentServices.length > 0) {
+        this.updateLocationServices([], currentServiceIds, currentServices);
+      }
     }
   };
 
