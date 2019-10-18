@@ -46,7 +46,7 @@ class LineItem extends React.Component {
     super(props)
     const providerLocationId = get(props.currentOrder, 'attributes.providerLocationId');
     let service = providerLocationId ? props.providerLocationService : props.service;
-    if (!service || isEmpty(isEmpty) || !get(service, 'data')) {
+    if (!service || isEmpty(service) || (service.hasOwnProperty('data') && !get(service, 'data'))) {
       service = props.service;
     }
     this.state = {
@@ -62,7 +62,7 @@ class LineItem extends React.Component {
     if (!deepEqual(prevProps, this.props)) {
       const providerLocationId = get(this.props.currentOrder, 'attributes.providerLocationId');
       let service = providerLocationId ? this.props.providerLocationService : this.props.service;
-      if (!service || isEmpty(isEmpty) || !get(service, 'data')) {
+      if (!service || isEmpty(service) || (service.hasOwnProperty('data') && !get(service, 'data'))) {
         service = this.props.service;
       }  
       this.setState({
