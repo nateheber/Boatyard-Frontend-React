@@ -174,6 +174,7 @@ const getUnselectedColumns = state => get(state, 'order.unselectedColumns', []);
 export const columnsSelector = createSelector(
   getPrevilage,
   getProviderLocationId,
+  currentOrderSelector,
   (previlage, providerLocationId) => {
     const columns = ORDER_COLUMNS.slice(0)
     if (previlage === 'provider') {

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import deepEqual from 'deep-equal';
 import styled from 'styled-components';
-import { set, get } from 'lodash';
+import { set, get, isEmpty } from 'lodash';
 import { Row, Col } from 'react-flexbox-grid';
 
 import { CurrencyInput, TextArea } from 'components/basic/Input';
@@ -44,25 +44,33 @@ const Comment = styled.div`
 class LineItem extends React.Component {
   constructor(props) {
     super(props)
-    const providerLocationId = get(props.currentOrder, 'attributes.providerId');
+    const providerLocationId = get(props.currentOrder, 'attributes.providerLocationId');
+    let service = providerLocationId ? props.providerLocationService : props.service;
+    if (!service || isEmpty(service) || (service.hasOwnProperty('data') && !get(service, 'data'))) {
+      service = props.service;
+    }
     this.state = {
       serviceId: props.service.id,
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
-      service: providerLocationId ? props.providerLocationService : props.service
+      service
     };
   }
 
   componentDidUpdate(prevProps) {
     if (!deepEqual(prevProps, this.props)) {
-      const providerLocationId = get(this.props.currentOrder, 'attributes.providerId');
+      const providerLocationId = get(this.props.currentOrder, 'attributes.providerLocationId');
+      let service = providerLocationId ? this.props.providerLocationService : this.props.service;
+      if (!service || isEmpty(service) || (service.hasOwnProperty('data') && !get(service, 'data'))) {
+        service = this.props.service;
+      }  
       this.setState({
         serviceId: this.props.service.id,
         quantity: this.props.attributes.quantity,
         cost: this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
-        service: providerLocationId ? this.props.providerLocationService : this.props.service
+        service
       });
     }
   }

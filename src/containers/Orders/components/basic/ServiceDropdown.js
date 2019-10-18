@@ -65,7 +65,7 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
   const [miscCategory, setMiscCategory]  = useState({});
 
   const filterOptions = (inputValue) => {
-    const providerLocationId = get(currentOrder, 'attributes.providerId');
+    const providerLocationId = get(currentOrder, 'attributes.providerLocationId');
     let filteredServices = providerLocationId ? locationServices : services;
     if (inputValue && inputValue.trim().length > 0) {
       filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
