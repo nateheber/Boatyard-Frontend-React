@@ -125,9 +125,13 @@ class AppEditor extends React.Component {
     GetProviderLocationServices({
       providerId: `${get(location, 'providerId')}`,
       providerLocationId: `${get(location, 'id')}`,
+      params: {
+        all: true
+      },
       success: (services) => {
+        const filtedServices = services.filter(service => get(service, 'attributes.platformService'));
         let items = categories.map((category) => {
-          let filtered = services.filter(service => (get(service, 'serviceCategoryId') || '').toString() === get(category, 'id'));
+          let filtered = filtedServices.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
           filtered = orderBy(filtered, [function(o){ return o.attributes.manualPosition; }], ['asc']);
           const subItems = filtered.map(item => {
             const newItem = {
@@ -156,7 +160,7 @@ class AppEditor extends React.Component {
           };
           return item;
         });
-        const rootServices = services.filter(service => !get(service, 'serviceCategoryId')).map(service => {
+        const rootServices = filtedServices.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => {
           const item = {
             id: service.attributes.manualPosition,
             type: 'service',
@@ -798,13 +802,21 @@ class AppEditor extends React.Component {
             provider_location_service: payload
           }));
         } else {
-          promises.push(serviceClient.create({
-            provider_location_service: payload
-          }));
+          const noPlatformService = locationServices.find(service => get(service, 'name') === get(attributes, 'name'));
+          if (noPlatformService) {
+            promises.push(serviceClient.update(noPlatformService.id, {
+              provider_location_service: payload
+            }));
+          } else {
+            promises.push(serviceClient.create({
+              provider_location_service: payload
+            }));
+          }  
         }
       }
-      for(const index in locationServices) {
-        const id = `${get(locationServices[index], 'id')}`;
+      const filtedServices = locationServices.filter(service => get(service, 'platformService'));
+      for(const index in filtedServices) {
+        const id = `${get(filtedServices[index], 'id')}`;
         if (currentServiceIds.indexOf(id) < 0) {
           promises.push(serviceClient.delete(id));
         }

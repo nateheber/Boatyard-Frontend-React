@@ -75,12 +75,7 @@ const refineProviderLocationServices = (locationServices, included) => {
     const item = locationServices[index];
     const service = find(services, s => `${s.id}` === `${get(item, 'attributes.serviceId', '')}`);
     item.attributes['iconId'] = get(service, 'attributes.iconId');
-    refactoredServices.push({
-      id: item.id,
-      type: item.type,
-      ...item.attributes,
-      relationships: item.relationships
-    });
+    refactoredServices.push(item);
   }
   return refactoredServices;
 };
@@ -167,7 +162,7 @@ function* getProviderLocationServices(action) {
     const locationServices = refineProviderLocationServices(data, included);
     yield put({
       type: actionTypes.GET_PROVIDER_LOCATION_SERVICES_SUCCESS,
-      payload: locationServices
+      payload: refineProviderLocations(locationServices)
     });
     if (success) {
       yield call(success, locationServices);
