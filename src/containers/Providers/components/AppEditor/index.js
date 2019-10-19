@@ -756,6 +756,10 @@ class AppEditor extends React.Component {
           toastr.error('Error', e.message);
         }
       });
+    } else {
+      if (currentServices.length > 0) {
+        this.updateLocationServices([], currentServiceIds, currentServices);
+      }
     }
   };
 
@@ -776,6 +780,7 @@ class AppEditor extends React.Component {
         });
         const serviceId = `${get(attributes, 'serviceId')}`;
         const originService = allServices.find(item => `${item.id}` === serviceId);
+        const cost = get(attributes, 'cost');
         const payload = {
           category_id: get(originService, 'categoryId'),
           service_id: serviceId,
@@ -783,7 +788,7 @@ class AppEditor extends React.Component {
           subtitle: get(attributes, 'subtitle'),
           description: get(attributes, 'description'),
           icon_id: get(attributes, 'iconId'),
-          cost: get(attributes, 'cost') || 0,
+          cost: cost ? parseFloat(cost)  : 0,
           // cost_type: get(originService, 'costType'),
           email_template: get(attributes, 'emailTemplate'),
           secondary_description: get(attributes, 'secondaryDescription'),
