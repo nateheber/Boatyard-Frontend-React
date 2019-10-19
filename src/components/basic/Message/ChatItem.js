@@ -113,14 +113,14 @@ export class ChatItem extends React.Component {
   }
 
   render() {
-    const { name, time, body, own, secondary, attachments, showDate, hasPrev, hasNext } = this.props;
+    const { name, time, body, own, isNotLoggedInUser, secondary, attachments, showDate, hasPrev, hasNext } = this.props;
     return (
       <Wrapper className={`${own ? 'own' : 'op'} ${hasPrev ? 'has-prev': ''} ${hasNext ? 'has-next' : ''}`}>
         {showDate && <DateContainer>
           <DateText>{moment(time).format('MMM D, YYYY')}</DateText>
         </DateContainer>}
         {!hasPrev && <UserDetailsCotainer>
-          {!own && <DisplayName className={secondary ? 'secondary' : 'primary'}>{`${name}`}&nbsp;</DisplayName>}
+          {(!own || isNotLoggedInUser) && <DisplayName className={secondary ? 'secondary' : 'primary'}>{`${name}`}&nbsp;</DisplayName>}
           <TimeText>{moment(time).format('h:mm A')}</TimeText>
         </UserDetailsCotainer>}
         <MessageBody className={`${own ? 'own' : 'op'} ${hasPrev ? 'has-prev': ''} ${hasNext ? 'has-next' : ''}`}>

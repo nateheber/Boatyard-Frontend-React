@@ -23,9 +23,9 @@ const SpinnerOverlay = styled.div`
 
 export default class LoadingSpinner extends React.Component {
   render() {
-    const { backgroundColor, opacity, color, size, loading } = this.props;
+    const { style, backgroundColor, opacity, color, size, loading } = this.props;
     return (
-      <SpinnerWrapper>
+      <SpinnerWrapper style={style}>
         <SpinnerOverlay 
           style={{
             backgroundColor: backgroundColor || '#000',

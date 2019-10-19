@@ -6,7 +6,7 @@ import { toastr } from 'react-redux-toastr';
 
 import { GetSiteBanners } from 'store/actions/site-banners';
 import { GetServices } from 'store/actions/services';
-import { actionTypes as locationActions, GetProviderLocations, UpdateProviderLocation } from 'store/actions/providerLocations';
+import { actionTypes as locationActions, GetProviderLocations, UpdateProviderLocation, GetProviderLocationServices } from 'store/actions/providerLocations';
 import { actionTypes as iconActions, CreateIcon, GetIcons } from 'store/actions/icons';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
@@ -80,7 +80,16 @@ class AppEditor extends React.Component {
   componentDidMount() {
     const { providerId, GetSiteBanners, providerLocations, GetServices } = this.props;
     GetSiteBanners({ params: { per_page: 1000 } });
-    GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
+    GetServices({
+      params: {
+        per_page: 1000,
+        all: true,
+        'service[provider_id]': providerId,
+        'service[discarded_at]': null,
+        'service[order]': 'name',
+        'service[sort]': 'asc'
+      }
+    });
     const { selectedLocation } = this.state;
     let location = selectedLocation;
     if(isEmpty(location)) {
@@ -94,8 +103,7 @@ class AppEditor extends React.Component {
   }
 
   refreshData = () => {
-    const { providerId, GetProviderLocations, GetServices } = this.props;
-    GetServices({ params: { per_page: 1000, 'service[provider_id]': providerId } });
+    const { providerId, GetProviderLocations } = this.props;
     GetProviderLocations({
       providerId,
       success: () => {
@@ -108,67 +116,80 @@ class AppEditor extends React.Component {
   };
 
   resetData = (location) => {
+    const { GetProviderLocationServices } = this.props;
     const banner = this.getBanner(location);
     const categories = orderBy(this.getCategories(location), [function(o){ return o.attributes.manualPosition; }], ['asc']);
     const { data, currentItem } = this.state;
     let updatedItem = {};
     const newData = JSON.parse(JSON.stringify(data));
-    const services = this.getServices(location);
-    let items = categories.map((category) => {
-      let filtered = services.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
-      filtered = orderBy(filtered, [function(o){ return o.attributes.manualPosition; }], ['asc']);
-      const subItems = filtered.map(item => {
-        const newItem = {
-          id: item.attributes.manualPosition,
-          type: 'service',
-          info: item,
-          template: setServiceTemplateData(item, this.getTemplateByType(get(item, 'attributes.emailTemplate')))
-        };
-        if (currentItem.type === 'service') {
-          if (get(currentItem, 'info.attributes.name') === get(newItem, 'info.attributes.name')) {
-            updatedItem = { ...newItem };
+    GetProviderLocationServices({
+      providerId: `${get(location, 'providerId')}`,
+      providerLocationId: `${get(location, 'id')}`,
+      params: {
+        all: true
+      },
+      success: (services) => {
+        const filtedServices = services.filter(service => get(service, 'attributes.platformService'));
+        let items = categories.map((category) => {
+          let filtered = filtedServices.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
+          filtered = orderBy(filtered, [function(o){ return o.attributes.manualPosition; }], ['asc']);
+          const subItems = filtered.map(item => {
+            const newItem = {
+              id: item.attributes.manualPosition,
+              type: 'service',
+              info: item,
+              template: setServiceTemplateData(item, this.getTemplateByType(get(item, 'attributes.emailTemplate')))
+            };
+            if (currentItem.type === 'service') {
+              if (get(currentItem, 'info.attributes.name') === get(newItem, 'info.attributes.name')) {
+                updatedItem = { ...newItem };
+              }
+            }
+            return newItem;
+          });
+          if (currentItem.type === 'category') {
+            if (get(currentItem, 'info.attributes.name') === get(category, 'info.attributes.name')) {
+              updatedItem = { ...category };
+            }
           }
-        }
-        return newItem;
-      });
-      if (currentItem.type === 'category') {
-        if (get(currentItem, 'info.attributes.name') === get(category, 'info.attributes.name')) {
-          updatedItem = { ...category };
-        }
+          const item = {
+            id: category.attributes.manualPosition,
+            type: 'category',
+            info: category,
+            items: subItems
+          };
+          return item;
+        });
+        const rootServices = filtedServices.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => {
+          const item = {
+            id: service.attributes.manualPosition,
+            type: 'service',
+            info: service,
+            template: setServiceTemplateData(service, this.getTemplateByType(get(service, 'attributes.emailTemplate')))
+          };
+          if (currentItem.type === 'service') {
+            if (get(currentItem, 'info.attributes.name') === get(item, 'info.attributes.name')) {
+              updatedItem = { ...item };
+            }
+          }
+          return item;
+        });
+        items = orderBy(items.concat(rootServices), ['id'], ['asc']);
+        items = items.map((item, index) => {
+          item.id = index + 1;
+          return item;
+        })
+        set(newData, 'items', items);
+        this.setState({
+          data: newData,
+          selectedLocation: location,
+          banner,
+          currentItem: updatedItem
+        });
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
-      const item = {
-        id: category.attributes.manualPosition,
-        type: 'category',
-        info: category,
-        items: subItems
-      };
-      return item;
-    });
-    const rootServices = services.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => {
-      const item = {
-        id: service.attributes.manualPosition,
-        type: 'service',
-        info: service,
-        template: setServiceTemplateData(service, this.getTemplateByType(get(service, 'attributes.emailTemplate')))
-      };
-      if (currentItem.type === 'service') {
-        if (get(currentItem, 'info.attributes.name') === get(item, 'info.attributes.name')) {
-          updatedItem = { ...item };
-        }
-      }
-      return item;
-    });
-    items = orderBy(items.concat(rootServices), ['id'], ['asc']);
-    items = items.map((item, index) => {
-      item.id = index + 1;
-      return item;
-    })
-    set(newData, 'items', items);
-    this.setState({
-      data: newData,
-      selectedLocation: location,
-      banner,
-      currentItem: updatedItem
     });
   };
 
@@ -639,7 +660,6 @@ class AppEditor extends React.Component {
   handleSaveButtonClick = () => {
     const { banner, selectedLocation, data } = this.state;
     const originCategries = get(selectedLocation, 'relationships.service_categories', []);
-    const originServices = get(selectedLocation, 'relationships.provider_location_services', []);
     const currentCategories = [];
     const currentCategoryIds = [];
     const currentServices = [];
@@ -666,7 +686,7 @@ class AppEditor extends React.Component {
             subInfo.attributes['manualPosition'] = manualPosition;
             currentServices.push(subInfo);
             if(subInfo.hasOwnProperty('id')) {
-              currentServiceIds.push(get(subInfo, 'id'));
+              currentServiceIds.push(`${get(subInfo, 'id')}`);
             }
           }
         }
@@ -675,7 +695,7 @@ class AppEditor extends React.Component {
         info.attributes = setTemplateDataToServiceAttributes(info, get(item, 'template'));
         currentServices.push(info);
         if(info.hasOwnProperty('id')) {
-          currentServiceIds.push(get(info, 'id'));
+          currentServiceIds.push(`${get(info, 'id')}`);
         }
       }
     }
@@ -718,6 +738,8 @@ class AppEditor extends React.Component {
         ...params,
         service_categories_attributes: categoriesPayload
       };
+    }
+    if (!isEmpty(params)) {
       this.setState({ saving: true });
       UpdateProviderLocation({
         providerId: selectedLocation.providerId,
@@ -727,144 +749,92 @@ class AppEditor extends React.Component {
         },
         success: (location) => {
           const categories = get(location, 'relationships.service_categories', []);
-          this.updateLocationServices(categories, originServices, currentServiceIds, currentServices);
+          this.updateLocationServices(categories, currentServiceIds, currentServices);
         },
         error: (e) => {
           this.setState({ saving: false });
           toastr.error('Error', e.message);
         }
       });
-    } else {
-      this.updateLocationServices(originCategries, originServices, currentServiceIds, currentServices, params);
     }
   };
 
-  updateLocationServices = (categories, originServices, currentServiceIds, services, params = {}) => {
-    const { providerId, services: allServices } = this.props;
-    const { createServiceClient } = require('../../../../api');
-    const serviceClient = createServiceClient('admin');
-    const servicesPayload = [];
-    const serviceNames = allServices.map(service => service.name);
-    for (const index in services) {
-      const service = services[index];
-      const attributes = get(service, 'attributes');
-      const manualPosition = get(attributes, 'manualPosition');
-      const category = categories.find(item => {
-        return parseInt(item.attributes.manualPosition) === Math.floor(manualPosition / 100);
-      });
-      const serviceName = get(attributes, 'name');
-      let serviceId = get(attributes, 'serviceId');
-      if (!serviceId) {
-          const index = serviceNames.indexOf(serviceName);
-        if (index > -1) {
-          serviceId = allServices[index].id;
-        }
-      }
-      const payload = {
-        category_id: get(attributes, 'categoryId'),
-        service_id: serviceId,
-        name: serviceName,
-        subtitle: get(attributes, 'subtitle'),
-        description: get(attributes, 'description'),
-        icon_id: get(attributes, 'iconId'),
-        cost: get(attributes, 'cost') || 0,
-        cost_type: get(service, 'costType'),
-        email_template: get(attributes, 'emailTemplate'),
-        secondary_description: get(attributes, 'secondaryDescription'),
-        additional_details: get(attributes, 'additionalDetails'),
-        manual_position: manualPosition
-      };
-      if (category) {
-        payload['service_category_id'] = get(category, 'id');
-      } else {
-        payload['service_category_id'] = null;
-      }
-      if (service.hasOwnProperty('id')) {
-        payload['id'] = service.id;
-      }
-      servicesPayload.push(payload);
-    }
-    const promises = [];
-    for(const index in servicesPayload) {
-      const service = servicesPayload[index];
-      const data = {
-        service: {
-          provider_id: providerId,
-          name: get(service, 'name'),
-          description: get(service, 'description'),
-          secondary_description: get(service, 'secondary_description'),
-          category_id: get(service, 'category_id'),
-          icon_id: get(service, 'icon_id'),
-          cost: get(service, 'cost'),
-          cost_type: get(service, 'cost_type')
-        }
-      };
-      if (service.service_id) {
-        promises.push(serviceClient.update(service.service_id, data));
-      } else {
-        promises.push(serviceClient.create(data));
-      }
-    }
-    if (promises.length > 0) {
-      this.setState({ saving: true });
-      Promise.all(promises).then(results => {
-        const payloads = results.map(result => {
-          const data = get(result, 'data', {});
-          const name = get(data, 'attributes.name');
-          const cost = get(data, 'attributes.cost');
-          const serviceId = get(data, 'id');
-          const locationService = servicesPayload.find(service => service.name === name);
-          const payload = {
-            name,
-            subtitle: locationService.subtitle,
-            description: locationService.description,
-            secondary_description: locationService.secondary_description,
-            additional_details: locationService.additional_details,
-            provider_id: providerId,
-            service_id: serviceId,
-            service_category_id: locationService.service_category_id,
-            manual_position: locationService.manual_position,
-            email_template: locationService.email_template,
-            cost
-          };
-          if (locationService.hasOwnProperty('id')) {
-            payload['id'] = locationService.id;
-          }
-          return payload;
+  updateLocationServices = (categories, currentServiceIds, services) => {
+    const { locationServices } = this.props;
+    if (services && services.length > 0) {
+      const { privilege, providerId, services: allServices } = this.props;
+      const { selectedLocation } = this.state;
+      const { createLocationServiceClient } = require('../../../../api');
+      const serviceClient = createLocationServiceClient(privilege, [providerId, selectedLocation.id]);
+      const promises = [];
+      for (const index in services) {
+        const service = services[index];
+        const attributes = get(service, 'attributes');
+        const manualPosition = get(attributes, 'manualPosition');
+        const category = categories.find(item => {
+          return parseInt(item.attributes.manualPosition) === Math.floor(manualPosition / 100);
         });
-        for(const index in originServices) {
-          const id = get(originServices[index], 'id');
-          if (currentServiceIds.indexOf(id) === -1) {
-            payloads.push({
-              id,
-              '_destroy': true
-            });
-          }
-        }
-        if (payloads.length > 0) {
-          this.updateLocation({
-            provider_location: {
-              ...params,
-              provider_location_services_attributes: payloads
-            }
-          });
+        const serviceId = `${get(attributes, 'serviceId')}`;
+        const originService = allServices.find(item => `${item.id}` === serviceId);
+        const payload = {
+          category_id: get(originService, 'categoryId'),
+          service_id: serviceId,
+          name: get(attributes, 'name'),
+          subtitle: get(attributes, 'subtitle'),
+          description: get(attributes, 'description'),
+          icon_id: get(attributes, 'iconId'),
+          cost: get(attributes, 'cost') || 0,
+          // cost_type: get(originService, 'costType'),
+          email_template: get(attributes, 'emailTemplate'),
+          secondary_description: get(attributes, 'secondaryDescription'),
+          additional_details: get(attributes, 'additionalDetails'),
+          manual_position: manualPosition,
+          provider_id: get(originService, 'providerId'),
+          platform_service: true
+        };
+        if (category) {
+          payload['service_category_id'] = get(category, 'id');
         } else {
-          if (!isEmpty(params)) {
-            this.updateLocation({ provider_location: { ...params } });
-          }
+          payload['service_category_id'] = null;
         }
-      })
-      .catch(error => {
-        this.setState({ saving: false });
-      });
-    } else {
-      if (!isEmpty(params)) {
-        this.updateLocation({
-          provider_location: {
-            ...params
-          }
-        });
+        if (service.hasOwnProperty('id')) {
+          promises.push(serviceClient.update(service.id, {
+            provider_location_service: payload
+          }));
+        } else {
+          const noPlatformService = locationServices.find(service => get(service, 'name') === get(attributes, 'name'));
+          if (noPlatformService) {
+            promises.push(serviceClient.update(noPlatformService.id, {
+              provider_location_service: payload
+            }));
+          } else {
+            promises.push(serviceClient.create({
+              provider_location_service: payload
+            }));
+          }  
+        }
       }
+      const filtedServices = locationServices.filter(service => get(service, 'platformService'));
+      for(const index in filtedServices) {
+        const id = `${get(filtedServices[index], 'id')}`;
+        if (currentServiceIds.indexOf(id) < 0) {
+          promises.push(serviceClient.delete(id));
+        }
+      }
+      if (promises.length > 0) {
+        this.setState({ saving: true });
+        Promise.all(promises).then(results => {
+          this.setState({ saving: false });
+          this.refreshData();
+        })
+        .catch(error => {
+          this.setState({ saving: false });
+        });
+      } else {
+        this.setState({ saving: false });
+      }
+    } else {
+      this.setState({ saving: false });
     }
   }
 
@@ -949,10 +919,12 @@ class AppEditor extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  privilege: state.auth.privilege,
   provider: state.provider.currentProvider,
   ...refinedProviderLocationSelector(state),
   iconStatus: state.icon.currentStatus,
   locationStatus: state.providerLocation.currentStatus,
+  locationServices: state.providerLocation.locationServices,
   services: state.service.services
 
 });
@@ -963,7 +935,8 @@ const mapDispatchToProps = {
   UpdateProviderLocation,
   CreateIcon,
   GetIcons,
-  GetServices
+  GetServices,
+  GetProviderLocationServices
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppEditor);

@@ -2,12 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import deepEqual from 'deep-equal';
 import styled from 'styled-components';
-import { set, get } from 'lodash';
+import { set, get, isEmpty } from 'lodash';
 import { Row, Col } from 'react-flexbox-grid';
 
 import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
 import ServiceDropdown from '../basic/ServiceDropdown';
+import { orderSelector } from 'store/selectors/orders';
 
 const Record = styled.div`
   padding: 15px 0px;
@@ -43,46 +44,36 @@ const Comment = styled.div`
 class LineItem extends React.Component {
   constructor(props) {
     super(props)
+    const providerLocationId = get(props.currentOrder, 'attributes.providerLocationId');
+    let service = providerLocationId ? props.providerLocationService : props.service;
+    if (!service || isEmpty(service) || (service.hasOwnProperty('data') && !get(service, 'data'))) {
+      service = props.service;
+    }
     this.state = {
       serviceId: props.service.id,
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
+      service
     };
   }
 
   componentDidUpdate(prevProps) {
     if (!deepEqual(prevProps, this.props)) {
+      const providerLocationId = get(this.props.currentOrder, 'attributes.providerLocationId');
+      let service = providerLocationId ? this.props.providerLocationService : this.props.service;
+      if (!service || isEmpty(service) || (service.hasOwnProperty('data') && !get(service, 'data'))) {
+        service = this.props.service;
+      }  
       this.setState({
         serviceId: this.props.service.id,
         quantity: this.props.attributes.quantity,
         cost: this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
+        service
       });
     }
   }
-
-  onChangeFilter = (inputValue, callback) => {
-    setTimeout(() => {
-      callback(this.filterOptions(inputValue));
-    }, 100);
-  };
-
-  filterOptions = (inputValue) => {
-    const { services } = this.props;
-    let filteredServices = services;
-    if (inputValue && inputValue.trim().length > 0) {
-      filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
-    }
-    const options = filteredServices.map(option => ({
-      value: option.id,
-      cost: option.cost,
-      label: option.name
-    }));
-    const currentOption = this.getCurrentOption();
-    const result = options.filter(option => option.value !== currentOption.value);
-    return [currentOption, ...result];
-  };
 
   onChange = (value, field) => {
     const changeVal = {};
@@ -106,7 +97,7 @@ class LineItem extends React.Component {
   };
 
   getCurrentOption = () => {
-    const { service } = this.props
+    const { service } = this.state;
     return {
       value:  get(service, 'attributes.id'),
       cost: get(service, 'attributes.cost'),
@@ -115,8 +106,8 @@ class LineItem extends React.Component {
   };
 
   render() {
-    const { mode, onRemove, service } = this.props;
-    const { quantity, cost, comment } = this.state;
+    const { mode, onRemove } = this.props;
+    const { quantity, cost, comment, service } = this.state;
     const currentOption = this.getCurrentOption();
     return (
       <Record>
@@ -187,7 +178,8 @@ class LineItem extends React.Component {
 
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
-  services: state.service.services
+  services: state.service.services,
+  ...orderSelector(state)
 });
 
 

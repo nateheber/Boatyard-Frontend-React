@@ -5,9 +5,17 @@ export const actionTypes = {
   GET_SERVICES_SUCCESS: '[SERVICES] - Get services Success',
   GET_SERVICES_FAILURE: '[SERVICES] - Get services Failure',
 
+  GET_ALL_SERVICES: '[SERVICES] - Get all services',
+  GET_ALL_SERVICES_SUCCESS: '[SERVICES] - Get all services Success',
+  GET_ALL_SERVICES_FAILURE: '[SERVICES] - Get all services Failure',
+
   FILTER_SERVICES: '[SERVICES] - Filter services',
   FILTER_SERVICES_SUCCESS: '[SERVICES] - Filter services Success',
   FILTER_SERVICES_FAILURE: '[SERVICES] - Filter services Failure',
+
+  FILTER_ALL_SERVICES: '[SERVICES] - Filter all services',
+  FILTER_ALL_SERVICES_SUCCESS: '[SERVICES] - Filter all services Success',
+  FILTER_ALL_SERVICES_FAILURE: '[SERVICES] - Filter all services Failure',
 
   GET_SERVICE: '[SERVICES] - Get service',
   GET_SERVICE_SUCCESS: '[SERVICES] - Get service Success',
@@ -29,6 +37,10 @@ export const actionTypes = {
 export const GetServices = createAction(actionTypes.GET_SERVICES, payload => payload);
 export const GetServicesSuccess = createAction(actionTypes.GET_SERVICES_SUCCESS);
 export const GetServicesFailure = createAction(actionTypes.GET_SERVICES_FAILURE);
+
+export const GetAllServices = createAction(actionTypes.GET_ALL_SERVICES, payload => payload);
+export const GetAllServicesSuccess = createAction(actionTypes.GET_ALL_SERVICES_SUCCESS);
+export const GetAllServicesFailure = createAction(actionTypes.GET_ALL_SERVICES_FAILURE);
 
 export const FilterServices = createAction(actionTypes.FILTER_SERVICES, payload => payload);
 export const FilterServicesSuccess = createAction(actionTypes.FILTER_SERVICES_SUCCESS);

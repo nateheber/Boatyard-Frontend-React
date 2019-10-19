@@ -4,7 +4,8 @@ import { toastr } from 'react-redux-toastr';
 import styled from 'styled-components';
 import { get, isEmpty, camelCase, startCase, filter, hasIn } from 'lodash';
 
-import { actionTypes, GetCategories, GetCategory } from 'store/actions/categories';
+// import { actionTypes, GetCategories, GetCategory } from 'store/actions/categories';
+import { actionTypes, GetService, GetAllServices } from 'store/actions/services';
 import Modal from 'components/compound/Modal';
 import FormFields from 'components/template/FormFields';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
@@ -14,7 +15,7 @@ const Divider = styled.div`
   width: 100%;
 `;
 
-class AddServiceModal extends React.Component {
+class EditLocationServiceModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,30 +26,27 @@ class AddServiceModal extends React.Component {
   }
 
   componentDidMount() {
-    this.loadCategories();
+    this.loadAllServices();
   }
 
-  loadCategory = (categoryId) => {
-    const { GetCategory } = this.props;
-    GetCategory({
-      categoryId,
-      success: (category, included) => {
-        const mainFields = this.getMainFields(category);
-        const serviceValues = this.getServiceValuesFromCategory(included);
-        const descriptionField = this.getDescriptionField(category);
-        this.setState({ mainFields, serviceValues, descriptionField });  
-      }
-    })
+  loadService = (serviceId) => {
+    const { services } = this.props;
+    const service = services.find(item => `${item.id}` === `${serviceId}`)
+    const mainFields = this.getMainFields(service);
+    const serviceValues = {}; //this.getServiceValuesFromCategory(included);
+    const descriptionField = this.getDescriptionField(service);
+    this.setState({ mainFields, serviceValues, descriptionField });  
   };
 
-  loadCategories = () => {
-    const { GetCategories } = this.props;
-    const params = {
-      page: 1,
-      per_page: 200
-    };
-    GetCategories({
-      params,
+  loadAllServices = () => {
+    const { GetAllServices } = this.props;
+    GetAllServices({
+      params: {
+        page: 1,
+        per_page: 1000,
+        'service[order]': 'name',
+        'service[sort]': 'asc'
+      },
       success: () => {
         const mainFields = this.getMainFields();
         this.setState({ mainFields });
@@ -61,19 +59,19 @@ class AddServiceModal extends React.Component {
     return get(service, 'name');
   }
 
-  getMainFields = (category) => {
-    let { service: { name, categoryId, cost, costType, isTaxable } } = this.props;
-    const categories = get(this.props, 'categories', []);
-    const categoryOptions = categories.map(val => ({
+  getMainFields = (item) => {
+    let { service: { name, serviceId, cost, costType, isTaxable } } = this.props;
+    const services = get(this.props, 'services', []);
+    const serviceOptions = services.map(val => ({
       value: val.id,
       label: startCase(val.name)
     }));
-    if (!isEmpty(category)) {
-      // name = get(category, 'name');
-      categoryId = get(category, 'id');
-      cost = get(category, 'cost');
-      costType = get(category, 'costType');
-      isTaxable = get(category, 'isTaxable');
+    if (!isEmpty(item)) {
+      // name = get(item, 'name');
+      serviceId = get(item, 'id');
+      cost = get(item, 'cost');
+      costType = get(item, 'costType');
+      isTaxable = get(item, 'isTaxable');
     }
     const priceTypes = [
       {
@@ -101,7 +99,7 @@ class AddServiceModal extends React.Component {
     return [
       {
         field: 'name',
-        label: 'Name',
+        label: 'Service Name',
         className: 'primary',
         type: 'text_field',
         errorMessage: 'Enter the service name',
@@ -114,14 +112,14 @@ class AddServiceModal extends React.Component {
         xl: 5
       },
       {
-        field: 'category_id',
-        label: 'Category',
+        field: 'service_id',
+        label: 'Service Type',
         className: 'primary',
         type: 'select_box',
-        errorMessage: 'Select category',
-        options: categoryOptions,
+        errorMessage: 'Select service',
+        options: serviceOptions,
         required: true,
-        defaultValue: `${categoryId}`,
+        defaultValue: `${serviceId}`,
         xs: 12,
         sm: 12,
         md: 6,
@@ -191,13 +189,13 @@ class AddServiceModal extends React.Component {
 
   getServiceValues = () => {
     const { service, included } = this.props;
-    const categoryId = get(service, 'categoryId');
+    const serviceId = get(service, 'serviceId');
     let serviceValues = {};
     const orgProperties = get(service, `properties`, {});;
-    const categories = get(included, 'categories', []);
-    if (!isEmpty(categories)) {
-      const category = get(categories, categoryId, {});
-      const fields = get(category, 'relationships.fields.data', []);
+    const services = get(included, 'services', []);
+    if (!isEmpty(services)) {
+      const item = get(services, serviceId, {});
+      const fields = get(item, 'relationships.fields.data', []);
       const includedFields = get(included, 'service_fields', []);
       const refinedFields = [];
       for (const index in fields) {
@@ -240,10 +238,10 @@ class AddServiceModal extends React.Component {
   };
 
 
-  getDescriptionField = (category) =>{
+  getDescriptionField = (item) =>{
     let { service: { description } } = this.props;
-    if (!isEmpty(category)) {
-      description = get(category, 'description');  
+    if (!isEmpty(item)) {
+      description = get(item, 'description');  
     }
     return [
       {
@@ -264,24 +262,24 @@ class AddServiceModal extends React.Component {
 
   handleChange = (value, field) => {
     const { service } = this.props;
-    if (field === 'category_id') {
-      if (value['category_id'] === service.categoryId) {
+    if (field === 'service_id') {
+      if (value['service_id'] === service.serviceId) {
         const serviceValues = this.getServiceValues();
         this.setState({ serviceValues });
       } else {
-        this.loadCategory(value['category_id']);
+        this.loadService(value['service_id']);
       }
     }
   };
 
   onSave = () => {
     const { onSave } = this.props;
-    const { serviceValues } = this.state;
+    // const { serviceValues } = this.state;
     if (this.mainFields.validateFields() && this.descriptionField.validateFields()) {
       let mainValues = {
         ...this.mainFields.getFieldValues(),
         ...this.descriptionField.getFieldValues(),
-        properties: serviceValues
+        // properties: serviceValues
       };
       mainValues = {
         ...mainValues,
@@ -333,17 +331,18 @@ class AddServiceModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  categories: state.category.categories,
-  currentStatus: state.category.currentStatus,
-  included: state.service.included
+  services: state.service.allServices,
+  currentStatus: state.service.currentStatus,
+  included: state.service.included,
+  providerLocationId: state.auth.providerLocationId
 });
 
 const mapDispatchToProps = {
-  GetCategories,
-  GetCategory
+  GetService,
+  GetAllServices
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AddServiceModal);
+)(EditLocationServiceModal);

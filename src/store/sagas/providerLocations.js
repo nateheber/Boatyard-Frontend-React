@@ -1,8 +1,8 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, hasIn, keys, isArray, isEmpty } from 'lodash';
+import { get, hasIn, isArray, isEmpty, find } from 'lodash';
 
 import { actionTypes } from '../actions/providerLocations';
-import { getProviderLocationClient } from './sagaSelectors';
+import { getProviderLocationClient, getProviderLocationServiceClient } from './sagaSelectors';
 import { refactorIncluded } from 'utils/basic';
 
 const refineProviderLocations = (providerLocations) => {
@@ -20,23 +20,27 @@ const refineProviderLocation = (location, included) => {
   const refactoredIncluded = refactorIncluded(included);
   const services = [];
   const relationships = get(location, 'relationships');
-  const relationKeys = keys(relationships);
-  const parsedRelationships = relationKeys.map((key) => {
+  const parsedRelationships = [];
+  for (const key in relationships) {
     const data = get(relationships, `[${key}].data`);
     const type = get(data, 'type');
     const id = get(data, 'id');
-    if (!isArray(data)) {
-      return get(refactoredIncluded, `[${type}][${id}]`);
-    }
-    return data.map(relation => {
-      const type = get(relation, 'type');
-      const id = get(relation, 'id');
-      if (type === 'services') {
-        services.push(get(refactoredIncluded, `[${type}][${id}]`));
+    if (!isEmpty(data) && data !== null) {
+      if (!isArray(data)) {
+        parsedRelationships.push(get(refactoredIncluded, `[${type}][${id}]`));
+      } else {
+        const arrayData = data.map(relation => {
+          const type = get(relation, 'type');
+          const id = get(relation, 'id');
+          if (type === 'services') {
+            services.push(get(refactoredIncluded, `[${type}][${id}]`));
+          }
+          return get(refactoredIncluded, `[${type}][${id}]`);
+        });
+        parsedRelationships.push(arrayData);
       }
-      return get(refactoredIncluded, `[${type}][${id}]`);
-    })
-  });
+    }
+  }
   const relations = {};
   for (const index in parsedRelationships) {
     const item = parsedRelationships[index];
@@ -61,6 +65,19 @@ const refineProviderLocation = (location, included) => {
     }
   }
   return { ...location, relationships: relations };
+};
+
+const refineProviderLocationServices = (locationServices, included) => {
+  const refactoredIncluded = refactorIncluded(included);
+  const refactoredServices = [];
+  const services = get(refactoredIncluded, 'services');
+  for (const index in locationServices) {
+    const item = locationServices[index];
+    const service = find(services, s => `${s.id}` === `${get(item, 'attributes.serviceId', '')}`);
+    item.attributes['iconId'] = get(service, 'attributes.iconId');
+    refactoredServices.push(item);
+  }
+  return refactoredServices;
 };
 
 function* getProviderLocations(action) {
@@ -136,6 +153,28 @@ function* getProviderLocation(action) {
   }
 }
 
+function* getProviderLocationServices(action) {
+  const apiClient = yield select(getProviderLocationServiceClient);
+  const { providerId, providerLocationId, params, success, error } = action.payload;
+  try {
+    const result = yield call(apiClient.list, [providerId, providerLocationId], params);
+    const { data, included } = result;
+    const locationServices = refineProviderLocationServices(data, included);
+    yield put({
+      type: actionTypes.GET_PROVIDER_LOCATION_SERVICES_SUCCESS,
+      payload: refineProviderLocations(locationServices)
+    });
+    if (success) {
+      yield call(success, locationServices);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.GET_PROVIDER_LOCATION_SERVICES_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
 function* createProviderLocation(action) {
   const apiClient = yield select(getProviderLocationClient);
   const { providerId, data, success, error } = action.payload;
@@ -201,6 +240,7 @@ export default function* ProviderLocationSaga() {
   yield takeEvery(actionTypes.GET_PROVIDER_LOCATIONS, getProviderLocations);
   yield takeEvery(actionTypes.FILTER_PROVIDER_LOCATIONS, getProviderLocations);
   yield takeEvery(actionTypes.GET_PROVIDER_LOCATION, getProviderLocation);
+  yield takeEvery(actionTypes.GET_PROVIDER_LOCATION_SERVICES, getProviderLocationServices);
   yield takeEvery(actionTypes.CREATE_PROVIDER_LOCATION, createProviderLocation);
   yield takeEvery(actionTypes.DELETE_PROVIDER_LOCATION, deleteProviderLocation);
   yield takeEvery(actionTypes.UPDATE_PROVIDER_LOCATION, updateProviderLocation);

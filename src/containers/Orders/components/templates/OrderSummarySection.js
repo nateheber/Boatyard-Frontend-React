@@ -21,6 +21,7 @@ const Label = styled.td`
   padding-bottom: 15px;
   padding-right: 10px;
   line-height: 20px;
+  vertical-align: top;
 `;
 
 const FieldValue = styled.td`
@@ -133,7 +134,7 @@ export default class OrderSummarySection extends React.Component {
                 Special Instructions
               </Label>
               <FieldValue sm={3} md={3} lg={3}>
-                {specialInstructions}
+                <div dangerouslySetInnerHTML={{ __html: specialInstructions}} />
               </FieldValue>
             </TR>}
           </tbody>
