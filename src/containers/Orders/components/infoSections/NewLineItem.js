@@ -20,26 +20,6 @@ class NewLineItem extends React.Component {
     comment: '',
   };
 
-  onChangeFilter = (inputValue, callback) => {
-    setTimeout(() => {
-      callback(this.filterOptions(inputValue));
-    }, 100);
-  };
-
-  filterOptions = (inputValue) => {
-    const { services } = this.props;
-    let filteredServices = services;
-    if (inputValue && inputValue.trim().length > 0) {
-      filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
-    }
-    const options = filteredServices.map(option => ({
-      value: option.id,
-      cost: option.cost,
-      label: option.name
-    }));
-    return options;
-  };
-
   onChangeQuantity = (evt) => {
     this.setState({ quantity: evt.target.value }, () => { this.props.onChange(this.state) });
   };

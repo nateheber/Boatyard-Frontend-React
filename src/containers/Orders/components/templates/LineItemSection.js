@@ -6,7 +6,6 @@ import { get, set, isEmpty, sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 
-import { FilterServices } from 'store/actions/services';
 import {
   updateLineItems,
   deleteLineItem,
@@ -44,18 +43,6 @@ class LineItemSection extends React.Component {
     }
   }
 
-  componentDidMount() {
-    const { privilege, FilterServices } = this.props;
-    let params = {
-      'service[discarded_at]': null,
-      'per_page': 1000
-    };
-    if (privilege === 'admin') {
-      params['service[provider_id]'] = 1;
-    }
-    FilterServices({ params });
-  }
-
   componentDidUpdate(prevProps) {
     if (
       get(this.props, 'currentOrder.lineItems.length', 0) === 0 &&
@@ -87,8 +74,15 @@ class LineItemSection extends React.Component {
   onChange = (item, idx) => {
     const newItems = [...this.state.newItems];
     const { serviceId, quantity, cost, comment } = item;
-    const { providerId } = this.props;
-    newItems[idx] = {
+    const { providerId, currentOrder } = this.props;
+    const providerLocationId = get(currentOrder, 'attributes.providerId');
+    newItems[idx] = providerLocationId ? {
+      provider_location_service_id: parseInt(serviceId),
+      provider_id: providerId,
+      quantity: parseInt(quantity),
+      cost: parseFloat(cost),
+      comment
+    } : {
       service_id: parseInt(serviceId),
       provider_id: providerId,
       quantity: parseInt(quantity),
@@ -123,9 +117,13 @@ class LineItemSection extends React.Component {
 
   updateLineItems = () => {
     const { lineItems } = this.state;
-    const { orderId, updateLineItems, GetOrder } = this.props;
+    const { orderId, updateLineItems, GetOrder, currentOrder } = this.props;
+    const providerLocationId = get(currentOrder, 'attributes.providerId');
     const updateInfo = lineItems.map(
-      ({ id, attributes: { serviceId, quantity, cost, comment } }) => ({
+      ({ id, attributes: { serviceId, quantity, cost, comment } }) => ( providerLocationId ? {
+        id,
+        lineItem: { provider_location_service_id: serviceId, quantity, cost, comment }
+      } : {
         id,
         lineItem: { service_id: serviceId, quantity, cost, comment }
       })
@@ -238,7 +236,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  FilterServices,
   updateLineItems,
   deleteLineItem,
   createLineItems,

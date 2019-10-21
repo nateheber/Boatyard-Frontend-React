@@ -10,6 +10,7 @@ import { actionTypes, GetServices, UpdateService, DeleteService } from 'store/ac
 import Table from 'components/basic/Table';
 import { ServiceHeader } from 'components/compound/SectionHeader';
 import EditServiceModal from '../components/EditServiceModal';
+import EditLocationServiceModal from '../components/EditLocationServiceModal';
 import { SearchBox } from 'components/basic/Input';
 
 const Wrapper = styled.div`
@@ -49,14 +50,16 @@ class Services extends React.Component {
     const { sort } = this.state;
     const params = isEmpty(keyword) ? {
       page: page,
+      all: true,
       'service[discarded_at]': null,
       'service[sort]': sort.direction,
       'service[order]': sort.col
     } : {
       page: page,
+      all: true,
+      'service[discarded_at]': null,
       'service[sort]': sort.direction,
       'service[order]': sort.col,
-      'service[discarded_at]': null,
       search_by_name: keyword
     };
     GetServices({ params });
@@ -108,9 +111,10 @@ class Services extends React.Component {
     });
   }
 
-  updateService = (data) => {
+  updateService = (values) => {
     const { selectedService } = this.state;
-    const { page, UpdateService } = this.props;
+    const { page, UpdateService, providerLocationId } = this.props;
+    const data = providerLocationId ? { provider_location_service: values } : values;
     UpdateService({
       serviceId: get(selectedService, 'id'),
       data,
@@ -131,7 +135,7 @@ class Services extends React.Component {
       { label: 'price type', value: 'costType', sort: 'cost_type' }
     ];
 
-    const { services, currentStatus, page, perPage, total } = this.props;
+    const { services, currentStatus, page, perPage, total, providerLocationId } = this.props;
     const { sort, visibleOfEditServiceModal, selectedService } = this.state;
     const pageCount = Math.ceil(total/perPage);
     return (
@@ -152,25 +156,41 @@ class Services extends React.Component {
           onPageChange={this.loadPage}
           toDetails={this.toDetails}
         />
-        {visibleOfEditServiceModal && <EditServiceModal
-          loading={currentStatus === actionTypes.UPDATE_SERVICE}
-          open={visibleOfEditServiceModal}
-          service={selectedService}
-          onClose={this.hideEditModal}
-          onDelete={this.deleteService}
-          onSave={this.updateService}
-        />}
+        {visibleOfEditServiceModal &&
+          <React.Fragment>
+          {providerLocationId ?
+            <EditLocationServiceModal
+              loading={currentStatus === actionTypes.UPDATE_SERVICE}
+              open={visibleOfEditServiceModal}
+              service={selectedService}
+              onClose={this.hideEditModal}
+              onDelete={this.deleteService}
+              onSave={this.updateService}
+            />
+          :
+            <EditServiceModal
+              loading={currentStatus === actionTypes.UPDATE_SERVICE}
+              open={visibleOfEditServiceModal}
+              service={selectedService}
+              onClose={this.hideEditModal}
+              onDelete={this.deleteService}
+              onSave={this.updateService}
+            />
+          }
+        </React.Fragment>
+        }
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ service: { services, currentStatus, page, perPage, total } }) => ({
+const mapStateToProps = ({ service: { services, currentStatus, page, perPage, total }, auth: { providerLocationId } }) => ({
   services,
   currentStatus,
   page,
   perPage,
-  total
+  total,
+  providerLocationId
 });
 
 const mapDispatchToProps = {

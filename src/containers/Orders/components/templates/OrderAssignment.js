@@ -4,9 +4,10 @@ import { get, find } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import { Section } from 'components/basic/InfoSection';
 import { GetProviderLocations } from 'store/actions/providerLocations';
-import { UpdateOrder } from 'store/actions/orders';
+import { UpdateOrder, DispatchOrder } from 'store/actions/orders';
 import { simpleProviderLocationSelector } from 'store/selectors/providerLocation';
 import AssigneeInfo from './AssigneeInfo';
+import ProviderInfo from './ProviderInfo';
 import ProviderSelector from './ProviderSelector';
 import AssigneeSelector from './AssigneeSelector';
 
@@ -41,20 +42,32 @@ class OrderAssignment extends React.Component {
   }
 
   updateOrder = (fieldName, value) => {
-    const { currentOrder: {id: orderId} } = this.props;
+    const { currentOrder: {id: orderId}, UpdateOrder } = this.props;
     const data = {};
     data[fieldName] = value;
     if (fieldName === 'provider_location_id') {
       data['assigned_team_member_id'] = null;
     }
 
-    this.props.UpdateOrder({
+    UpdateOrder({
       orderId,
       data,
       success: () => toastr.success('Success', "Successfully assigned!"),
       error: (e) => {
         toastr.error('Error', e.message);
       }
+    });
+  };
+
+  updateDispatchIds = (dispatchIds) => {
+    const { currentOrder, DispatchOrder } = this.props;
+    const orderId = currentOrder.id;
+    const orderState = get(currentOrder, 'attributes.state');
+    DispatchOrder({
+      orderId,
+      dispatchIds,
+      orderState,
+      success: () => { this.props.SetDispatchedFlag(true) }
     });
   };
 
@@ -88,17 +101,28 @@ class OrderAssignment extends React.Component {
   };
 
   render() {
-    const { teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}} } = this.props;
+    const { dispatchIds } = this.state;
+    const { teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}}, privilege } = this.props;
     const providerLocationInfo = find(providerLocations, {id: `${providerLocationId}`});
     const teamMemberInfo = find(teamMemberData, {id: `${assignedTeamMemberId}`});
     const isLocationSelected = !!this.props.providerLocationId;
     return (
       <Section title="Assignee" mode="view" editComponent={this.renderDropdownButton()} noPadding>
-        <AssigneeInfo
+        {privilege === 'admin' ?
+          <React.Fragment>
+          {
+            dispatchIds.map((id) => (
+              <React.Fragment key={`assignee_${id}`}>
+                <ProviderInfo id={id} />
+              </React.Fragment>
+            ))
+          }
+          </React.Fragment>
+        : <AssigneeInfo
           teamMemberInfo={teamMemberInfo}
           providerLocationInfo={providerLocationInfo}
           isLocationSelected={isLocationSelected}
-        />
+        />}
       </Section>
     );
   }
@@ -113,6 +137,6 @@ const mapStateToProps = (state) => ({
   providerLocations: simpleProviderLocationSelector(state),
 })
 
-const mapDispatchToProps = { UpdateOrder, GetProviderLocations };
+const mapDispatchToProps = { UpdateOrder, DispatchOrder, GetProviderLocations };
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignment);

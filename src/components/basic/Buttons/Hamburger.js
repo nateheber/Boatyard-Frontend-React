@@ -25,6 +25,7 @@ const Button = styled.button`
 const Icon = styled.img`
   width: 25px;
   height: 19px;
+  cursor: pointer;
 `;
 
 export const HamburgerButton = props => (

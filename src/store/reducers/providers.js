@@ -9,6 +9,7 @@ const initialState = {
   providers: [],
   filteredProviders: [],
   currentProvider: {},
+  providerServices: [],
   loggedInProvider: {},
   loggedInProviderLocation: {},
   page: 0,
@@ -143,6 +144,25 @@ export default handleActions(
         draft.currentProvider = payload;
       }),
     [actionTypes.GET_PROVIDER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.GET_PROVIDER_SERVICES]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.GET_PROVIDER_SERVICES_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.providerServices = payload;
+      }),
+    [actionTypes.GET_PROVIDER_SERVICES_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
