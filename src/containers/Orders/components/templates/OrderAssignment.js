@@ -27,12 +27,12 @@ class OrderAssignment extends React.Component {
   }
 
   static getDerivedStateFromProps(props) {
-    const providerId = get(props, 'currentOrder.attributes.providerId');
+    const providerLocationId = get(props, 'currentOrder.attributes.providerId');
     const orderState = get(props, 'currentOrder.attributes.state');
     const { privilege } = props;
     if (privilege === 'admin') {
-      if (orderState !== 'dispatched' && providerId) {
-        return { dispatchIds: [providerId] };
+      if (orderState !== 'dispatched' && providerLocationId) {
+        return { dispatchIds: [providerLocationId] };
       }
       const dispatchIds = get(props, 'currentOrder.dispatchIds', []);
       return { dispatchIds };
@@ -74,9 +74,9 @@ class OrderAssignment extends React.Component {
   renderDropdownButton = () => {
     const { dispatchIds } = this.state;
     const { privilege, currentOrder, providerLocationId, providerLocations, teamMemberData } = this.props;
-    const providerId = get(currentOrder, 'attributes.providerId');
+    const plID = get(currentOrder, 'attributes.providerLocationId');
     if (privilege === 'admin') {
-      return <ProviderSelector dispatchIds={providerId ? [providerId] : dispatchIds} onChange={this.updateDispatchIds} />
+      return <ProviderSelector dispatchIds={plID ? [plID] : dispatchIds} onChange={this.updateDispatchIds} />
     } else if ( privilege === 'provider') {
       let options = providerLocations;
       let value = get(currentOrder, 'attributes.providerLocationId');
