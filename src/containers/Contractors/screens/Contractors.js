@@ -15,8 +15,8 @@ class TeamList extends React.Component {
     this.props.GetContractors({});
   }
 
-  toDetails = member => {
-    this.props.history.push(`/team/contractor-details/?id=${member.user.id}`);
+  toDetails = contractor => {
+    this.props.history.push(`/team/contractor-details/?id=${contractor.id}`);
   };
 
   render() {
@@ -45,7 +45,7 @@ class TeamList extends React.Component {
   }
 }
 
-const mapStateToProps = ({ contractors: {contractors, currentStatus}}) => ({
+const mapStateToProps = ({ contractor: {contractors, currentStatus}}) => ({
   contractors,
   currentStatus
 });

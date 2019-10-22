@@ -25,7 +25,7 @@ import quickReply from './quickReplies';
 import messageTemplate from './messageTemplates';
 import notifications from './notifications';
 import workorders from './workorders';
-import contractors from './contractors';
+import contractor from './contractors';
 
 const rootReducer = combineReducers({
   navigation,
@@ -53,7 +53,7 @@ const rootReducer = combineReducers({
   messageTemplate,
   notifications,
   workorders,
-  contractors,
+  contractor,
 });
 
 export default rootReducer;

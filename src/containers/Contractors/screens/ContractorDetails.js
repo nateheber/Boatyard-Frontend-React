@@ -3,11 +3,10 @@ import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 import queryString from 'query-string';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 // import deepEqual from 'fast-deep-equal';
 
-import { actionTypes, UpdateUser, CreateUser } from 'store/actions/users';
+import { actionTypes, GetContractor, CreateContractor, UpdateContractor, DeleteContractor } from 'store/actions/contractors';
 import { InputRow, InputWrapper, Input } from 'components/basic/Input';
 import { Section } from 'components/basic/InfoSection';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
@@ -15,10 +14,8 @@ import { NormalText, PageTitle } from 'components/basic/Typho'
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { EditorSection } from 'components/compound/SubSections';
 import Modal from 'components/compound/Modal';
-import { TeamDetailsHeader, LocationSelector } from '../../Teams/components';
+import { TeamDetailsHeader } from '../../Teams/components';
 import { validateEmail/*, formatPhoneNumber */ } from 'utils/basic';
-import CloseIcon from '../../../resources/job/close.png';
-import { getContractorByUserId } from 'store/selectors/contractors';
 const Wrapper = styled.div`
 `;
 
@@ -48,43 +45,12 @@ export const Description = styled(NormalText)`
   padding: 10px 0;
 `;
 
-// const PermissionText = styled.div`
-//   font-family: 'Source Sans Pro', sans-serif;
-//   font-size: 14px;
-//   color: #333;
-//   text-transform: capitalize;
-// `;
-
-const LocationItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 5px 10px 5px 20px;
-  border: 1px solid #A9B5BB;
-  border-radius: 6px;
-  margin-bottom: 12px;
-`;
-
-const LocationTitle = styled.div`
-  font-family: 'Open sans-serif', sans-serif;
-  font-size: 14px;
-  color: #184961;
-  width: calc(100% - 50px);
-  line-height: 16px;
-`;
-
-const DeleteIcon = styled.img`
-  cursor: pointer;
-`;
-
-class TeamDetails extends React.Component {
+class ContractorDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       saving: false,
-      managementId: null,
-      management: {},
-      userId: null,
+      contractorId: null,
       firstName: '',
       lastName: '',
       phoneNumber: '',
@@ -103,36 +69,28 @@ class TeamDetails extends React.Component {
   }
 
   componentDidMount() {
-    const {id} = queryString.parse(this.props.location.search);
-    if (id) {
-      this.setContractorDetail();
+    const { id: contractorId } = queryString.parse(this.props.location.search);
+    if (contractorId) {
+      this.setState({ contractorId }, () => {
+        this.loadContractor();
+      })
     }
   }
 
-  setContractorDetail() {
-    const { contractorDetail: { user: { id, attributes: {firstName, lastName, phoneNumber, email}} } } = this.props;
-    this.setState({
-      userId: id,
-      firstName,
-      lastName,
-      phoneNumber,
-      email
-    });
-  }
-
-  filterManagements = () => {
-    const { FilterManagements } = this.props;
-    const { userId, providerId } = this.state;
-    FilterManagements({
-      params: {
-        'management[user_id]': userId,
-        'management[provider_id]': providerId
-      },
+  loadContractor() {
+    const { GetContractor } = this.props;
+    const { contractorId } = this.state;
+    GetContractor({
+      contractorId,
       success: () => {
-        this.setSelectedLocations();
-      },
-      error: (e) => {
-        toastr.error('Error', e.message);
+        const { contractor: { company, user: { attributes: {firstName, lastName, phoneNumber, email}} } } = this.props;
+        this.setState({
+          firstName,
+          lastName,
+          company,
+          phoneNumber,
+          email
+        });
       }
     });
   }
@@ -185,11 +143,6 @@ class TeamDetails extends React.Component {
     return !hasError;
   }
 
-  handlePermissionChange = (evt) => {
-    const access = evt.target.value;
-    this.setState({ access });
-  };
-
   onChangeFN = evt => {
     this.setState({
       firstName: evt.target.value
@@ -237,22 +190,24 @@ class TeamDetails extends React.Component {
   }
 
   onSave = () => {
-    const { userId } = this.state;
-    const { CreateUser, UpdateUser } = this.props;
+    const { contractorId } = this.state;
+    console.log('----------contractorId-------', contractorId);
+    const { CreateContractor, UpdateContractor } = this.props;
     if (this.isValidForm()) {
-      const { firstName, lastName, email, phoneNumber } = this.state;
+      const { firstName, lastName, company, email, phoneNumber } = this.state;
       const data = {
         first_name: firstName.trim(),
         last_name: lastName.trim(),
+        company: company.trim(),
         email: email.trim(),
         phone_number: phoneNumber.trim(),
       };
       this.setState({ saving: true });
-      if (userId) {
-        UpdateUser({
-          userId,
+      if (contractorId) {
+        UpdateContractor({
+          contractorId,
           data: {
-            user: data
+            provider_location_directory: data
           },
           success: () => {
             this.setState({ saving: false });
@@ -265,9 +220,9 @@ class TeamDetails extends React.Component {
           }
         });
       } else {
-        CreateUser({
+        CreateContractor({
           data: {
-            user: data
+            provider_location_directory: data
           },
           success: () => {
             this.setState({ saving: false });
@@ -283,120 +238,31 @@ class TeamDetails extends React.Component {
     }
   };
 
-  deleteTeamMember = () => {
-    const { DeleteManagement } = this.props;
-    const { managementId } = this.state;
-    DeleteManagement({
-      managementId,
+  deleteContractor = () => {
+    const { DeleteContractor } = this.props;
+    const { contractorId } = this.state;
+    DeleteContractor({
+      contractorId,
       success: () => {
         this.onBack();
       }
     });
   };
 
-  setSelectedLocations = () => {
-    const { providerId } = this.state;
-    const { providerLocations, managements } = this.props;
-    const filteredManagements = managements.filter(management => management.providerId === providerId && management.providerLocationId);
-    const selectedLocations = providerLocations.filter(
-      location => filteredManagements.filter(management => parseInt(location.id) === parseInt(management.providerLocationId)).length > 0
-    );
-    this.setState({ selectedLocations });
-  }
-
-  handleUpdateLocations = (locations) => {
-    const { userId, providerId, access } = this.state;
-    const { managements } = this.props;
-    const filteredManagements = managements.filter(management => management.providerId === providerId && management.providerLocationId);
-    const newLocations = locations.filter(
-      location => filteredManagements.filter(management => parseInt(location.id) === parseInt(management.providerLocationId)).length === 0
-    );
-
-    const deletedManagements = filteredManagements.filter(
-      management => locations.filter(location => parseInt(location.id) === parseInt(management.providerLocationId)).length === 0
-    );
-    const newManagementAttributes = newLocations.map(location => {
-      return {
-        user_id: userId,
-        provider_location_id: location.id,
-        access
-      };
-    });
-
-    const deletedManagementAttributes = deletedManagements.map(management => {
-      return {
-        id: management.id,
-        "_destroy": true
-      };
-    });
-
-    const { UpdateProvider } = this.props;
-    UpdateProvider({
-      authType: 'provider',
-      providerId,
-      data: {
-        provider: {
-          managements_attributes: deletedManagementAttributes.concat(newManagementAttributes)
-        }
-      },
-      success: () => {
-        toastr.success('Success', 'Updated successfully!');
-        this.filterManagements();
-      },
-      error: (e) => {
-        toastr.error('Error', e.message);
-      }
-    });
-  };
-
-  deleteLocation = (location) => {
-    const { providerId } = this.state;
-    const { managements } = this.props;
-    const filteredManagements = managements.filter(management => management.providerId === providerId && management.providerLocationId);
-    const deletedManagement = filteredManagements.find(management => parseInt(location.id) === parseInt(management.providerLocationId));
-    if (deletedManagement) {
-      const { UpdateProvider } = this.props;
-      UpdateProvider({
-        authType: 'provider',
-        providerId,
-        data: {
-          provider: {
-            managements_attributes: [
-              {
-                id: deletedManagement.id,
-                "_destroy": true
-              }
-            ]
-          }
-        },
-        success: () => {
-          toastr.success('Success', 'Deleted successfully!');
-          this.filterManagements();
-        },
-        error: (e) => {
-          toastr.error('Error', e.message);
-        }
-      });
-    }
-  };
-
   render() {
     const {
       saving,
-      managementId,
+      contractorId,
       firstName,
       lastName,
       phoneNumber,
       email,
       company,
       errorMessage,
-      selectedLocations,
       visibleOfConfirmationModal
     } = this.state;
-    const query = queryString.parse(this.props.location.search);
-    const contractorId = query.id;
-    const { privilege, currentStatus, providerLocations, locatonBased } = this.props;
-    const loading = currentStatus === actionTypes.GET_MANAGEMENT;
+    const { currentStatus } = this.props;
+    const loading = currentStatus === actionTypes.GET_CONTRACTOR;
     const actions = (
       <React.Fragment>
         <HollowButton onClick={this.onBack} style={{ marginRight: 30 }}>Cancel</HollowButton>
@@ -405,7 +271,7 @@ class TeamDetails extends React.Component {
     );
     const modalActions = [
       <HollowButton onClick={this.hideConfirmationModal} key="modal_btn_cancel">Cancel</HollowButton>,
-      <OrangeButton onClick={this.deleteTeamMember} key="modal_btn_save">Confirm</OrangeButton>
+      <OrangeButton onClick={this.deleteContractor} key="modal_btn_save">Confirm</OrangeButton>
     ];
 
     const editSection = (
@@ -478,43 +344,13 @@ class TeamDetails extends React.Component {
             {!contractorId && <PageTitle style={{ padding: '25px 30px' }}>Add New Contractor</PageTitle>}
           </HeaderWrapper>
           <ContentWrapper>
-            {(privilege === 'provider' || privilege === 'admin') && <Row>
-              <Col xs={12} sm={12} md={locatonBased ? 12 : 8} lg={locatonBased ? 12 : 9}>
+            <Row>
+              <Col xs={12} sm={12} md={12} lg={12}>
                 <Section title='Contact' headerStyle={{ padding: 25 }}>
                   <EditorSection containerStype={{ padding: '30px 15px' }} actions={actions} content={editSection} />
                 </Section>
               </Col>
-              {
-              !locatonBased &&
-                <Col xs={12} sm={12} md={4} lg={3}>
-                  <Section
-                    title='Locations'
-                    mode='view'
-                    headerStyle={{ padding: '20px 25px' }}
-                    contentStyle={{ minHeight: 439 }}
-                    editComponent={<LocationSelector
-                      locations={providerLocations}
-                      selected={selectedLocations}
-                      onChange={this.handleUpdateLocations}/>
-                    }
-                  >
-                    {selectedLocations.map(location => (
-                      <LocationItem key={`location_${location.id}`}>
-                        <LocationTitle>{get(location, 'relationships.locations.attributes.name')}</LocationTitle>
-                        <DeleteIcon src={CloseIcon} onClick={() => this.deleteLocation(location)}/>
-                      </LocationItem>
-                    ))}
-                  </Section>
-                </Col>
-              }
-            </Row>}
-            {!(privilege === 'provider' || privilege === 'admin') && <Row>
-              <Col xs={12} sm={12} md={8} lg={9}>
-                <Section title='Contact' headerStyle={{ padding: 25 }}>
-                  <EditorSection containerStype={{ padding: '30px 15px' }} actions={actions} content={editSection} />
-                </Section>
-              </Col>
-            </Row>}
+            </Row>
           </ContentWrapper>
         </React.Fragment>}
         <Modal
@@ -526,7 +362,7 @@ class TeamDetails extends React.Component {
         >
           <Description>Deleting {`${firstName} ${lastName}`}&#39;s account is permanent and cannot be undone.</Description>
         </Modal>
-        {((managementId && loading) || saving) && <LoadingSpinner
+        {((contractorId && loading) || saving) && <LoadingSpinner
           loading={loading || saving}
         />}
       </Wrapper>
@@ -535,15 +371,15 @@ class TeamDetails extends React.Component {
 }
 
 const mapStateToProps = (state, props) => ({
-  currentStatus: state.management.currentStatus,
-  privilege: state.auth.privilege,
-  locatonBased: state.auth.providerLocationId ? true : false,
-  contractorDetail: getContractorByUserId(state, queryString.parse(props.location.search).id)
+  currentStatus: state.contractor.currentStatus,
+  contractor: state.contractor.currentContractor
 });
 
 const mapDispatchToProps = {
-  UpdateUser,
-  CreateUser
+  GetContractor,
+  CreateContractor,
+  UpdateContractor,
+  DeleteContractor
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TeamDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(ContractorDetails);
