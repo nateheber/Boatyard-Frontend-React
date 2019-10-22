@@ -191,7 +191,6 @@ class ContractorDetails extends React.Component {
 
   onSave = () => {
     const { contractorId } = this.state;
-    console.log('----------contractorId-------', contractorId);
     const { CreateContractor, UpdateContractor } = this.props;
     if (this.isValidForm()) {
       const { firstName, lastName, company, email, phoneNumber } = this.state;

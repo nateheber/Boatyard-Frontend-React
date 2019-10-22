@@ -124,7 +124,7 @@ function* deleteContractor(action) {
   const customClient = yield select(getCustomApiClient);
   const { providerId, providerLocationId } = yield select(state => state.auth);
   try {
-    const result = yield call(customClient.post, `/providers/${providerId}/locations/${providerLocationId}/directories/${contractorId}`, 'v3');
+    const result = yield call(customClient.delete, `/providers/${providerId}/locations/${providerLocationId}/directories/${contractorId}`, 'v3');
     yield put({
       type: actionTypes.DELETE_CONTRACTOR_SUCCESS
     });
