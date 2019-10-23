@@ -117,9 +117,9 @@ class OrderDetails extends React.Component {
             params: {
               per_page: 1000,
               all: true,
-              'provider_location_service[discarded_at]': null,
-              'provider_location_service[order]': 'name',
-              'provider_location_service[sort]': 'asc'
+              'service[discarded_at]': null,
+              'service[order]': 'name',
+              'service[sort]': 'asc'
             }
           });
         } else {

@@ -3,7 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import CreatableSelect from 'react-select/lib/AsyncCreatable';
 import { connect } from 'react-redux';
-import { get, sortBy } from 'lodash';
+import { get } from 'lodash';
 
 import AddServiceModal from '../../../Services/components/AddServiceModal';
 import AddLocationServiceModal from '../../../Services/components/AddLocationServiceModal';
@@ -67,7 +67,6 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
   const filterOptions = (inputValue) => {
     const providerLocationId = get(currentOrder, 'attributes.providerLocationId');
     let filteredServices = providerLocationId ? locationServices : services;
-    filteredServices = sortBy(filteredServices, 'name');
     if (inputValue && inputValue.trim().length > 0) {
       filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
     }
