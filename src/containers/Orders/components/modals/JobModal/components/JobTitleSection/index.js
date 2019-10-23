@@ -2,10 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Select from 'react-select';
-import { get, sortBy } from 'lodash';
 
-import { GetManagements } from 'store/actions/managements';
-import { GetContractors } from 'store/actions/contractors';
 import { SetWorkOrder } from 'store/actions/workorders';
 import { Input } from 'components/basic/Input';
 import { Section, SectionHeader, Column } from '../Section';
@@ -73,12 +70,6 @@ const colourStyles = {
 };
 
 class JobTitleSection extends React.Component {
-  componentDidMount() {
-    const { GetManagements, GetContractors } = this.props;
-    GetManagements({ params: { page: 1, per_page: 1000 } });
-    GetContractors({});
-  }
-
   handleChange = member => {
     const { onChange } = this.props;
     if (onChange) {
@@ -94,24 +85,17 @@ class JobTitleSection extends React.Component {
   };
 
   getOptions = () => {
-    const { managements, contractors, assignee } = this.props;
-    let options = [];
-    if (managements || contractors) {
-      const tmOptions = managements.map(management => (
+    const { managements, assignee } = this.props;
+    if (managements) {
+      const options = managements.map(management => (
         {
-          value: `tm-${management.id}`,
+          value: management.id,
           label: `${management.fullName}`
         }
       ));
-      const cOptions = contractors.map(contractor => (
-        {
-          value: `co-${contractor.id}`,
-          label: `${get(contractor, 'user.attributes.firstName') || ''} ${get(contractor, 'user.attributes.lastName') || ''}`.trim()
-        }
-      ));
-      options = sortBy(tmOptions.concat(cOptions), 'label');
+      return options.filter(o1 => !assignee || assignee.value !== o1.value);
     }
-    return options.filter(o1 => !assignee || assignee.value !== o1.value);
+    return [];
   };
 
   render() {
@@ -145,14 +129,11 @@ class JobTitleSection extends React.Component {
 
 const mapStateToProps = (state) => ({
   managements: state.order.teamMemberData,
-  contractors: state.contractor.contractors,
   workorder: state.workorders.workorder,
 });
 
 const mapDispatchToProps = {
-  GetManagements,
-  SetWorkOrder,
-  GetContractors
+  SetWorkOrder
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(JobTitleSection);
