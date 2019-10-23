@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
 
 import { GetManagements } from 'store/actions/managements';
 import { refinedManagementsSelector } from 'store/selectors/managements';
@@ -15,7 +15,9 @@ const Wrapper = styled.div`
 
 class TeamList extends React.Component {
   componentDidMount() {
-    this.props.GetManagements({});
+    this.props.GetManagements({
+      params: { per_page: 1000 }
+    });
   }
 
   toDetails = member => {
@@ -28,11 +30,12 @@ class TeamList extends React.Component {
   };
 
   changePage = (page) => {
-    this.props.GetManagements({ params: { page } });
+    this.props.GetManagements({ params: { page, per_page: 1000 } });
   }
 
   render() {
     const { managements, page } = this.props;
+    const sortedManagements = sortBy(managements, 'relationships.user.attributes.firstName', 'relationships.user.attributes.lastName');
     const pageCount = this.getPageCount();
     const columns = [
       { label: 'name', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName', },
@@ -44,7 +47,7 @@ class TeamList extends React.Component {
       <Wrapper>
         <Table
           columns={columns}
-          records={managements}
+          records={sortedManagements}
           toDetails={this.toDetails}
           page={page}
           pageCount={pageCount}
