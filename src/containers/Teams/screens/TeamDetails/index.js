@@ -255,7 +255,7 @@ class TeamDetails extends React.Component {
   };
 
   onBack = () => {
-    this.props.history.push(`/team`);
+    this.props.history.push(`/team/members/list`);
   }
 
   onSave = () => {

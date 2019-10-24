@@ -28,7 +28,7 @@ import LineItemSection from './components/templates/LineItemSection';
 import OrderSummarySection from './components/templates/OrderSummarySection';
 import OrderReviewSection from './components/templates/OrderReviewSection';
 import OrderDetailHeader from './components/templates/OrderDetailHeader';
-import Scheduler from './components/templates/Scheduler';
+// import Scheduler from './components/templates/Scheduler';
 import PaymentSection from './components/templates/PaymentSection';
 import TimeLineSection from './components/templates/TimeLineSection';
 import OrderAssignment from './components/templates/OrderAssignment';
@@ -117,9 +117,9 @@ class OrderDetails extends React.Component {
             params: {
               per_page: 1000,
               all: true,
-              'provider_location_service[discarded_at]': null,
-              'provider_location_service[order]': 'name',
-              'provider_location_service[sort]': 'asc'
+              'service[discarded_at]': null,
+              'service[order]': 'name',
+              'service[sort]': 'asc'
             }
           });
         } else {
@@ -385,9 +385,9 @@ class OrderDetails extends React.Component {
                   <SectionGroup>
                     <PaymentSection order={currentOrder} onFinished={() => this.loadOrder(orderId)} />
                   </SectionGroup>
-                  <SectionGroup>
+                  {/*<SectionGroup>
                     <Scheduler order={currentOrder} />
-                  </SectionGroup>
+                  </SectionGroup>*/}
                 </Column>
                 <Column md={12} sm={12} xs={12} lg={4} xl={4}>
                   {canAssignOrder && <SectionGroup>

@@ -63,6 +63,7 @@ class AppEditor extends React.Component {
     super(props);
     this.state = {
       saving: false,
+      isSaved: false,
       step: 0,
       banner: null,
       data: {
@@ -739,6 +740,7 @@ class AppEditor extends React.Component {
         service_categories_attributes: categoriesPayload
       };
     }
+    this.setState({ isSaved: false });
     if (!isEmpty(params)) {
       this.setState({ saving: true });
       UpdateProviderLocation({
@@ -749,7 +751,9 @@ class AppEditor extends React.Component {
         },
         success: (location) => {
           const categories = get(location, 'relationships.service_categories', []);
-          this.updateLocationServices(categories, currentServiceIds, currentServices);
+          this.setState({ isSaved: true }, () => {
+            this.updateLocationServices(categories, currentServiceIds, currentServices);
+          });
         },
         error: (e) => {
           this.setState({ saving: false });
@@ -765,6 +769,7 @@ class AppEditor extends React.Component {
 
   updateLocationServices = (categories, currentServiceIds, services) => {
     const { locationServices } = this.props;
+    const { isSaved } = this.state;
     if (services && services.length > 0) {
       const { privilege, providerId, services: allServices } = this.props;
       const { selectedLocation } = this.state;
@@ -830,15 +835,22 @@ class AppEditor extends React.Component {
         this.setState({ saving: true });
         Promise.all(promises).then(results => {
           this.setState({ saving: false });
+          toastr.success('Success', 'Saved successfully!');
           this.refreshData();
         })
         .catch(error => {
           this.setState({ saving: false });
         });
       } else {
+        if (isSaved) {
+          toastr.success('Success', 'Saved successfully!');
+        }
         this.setState({ saving: false });
       }
     } else {
+      if (isSaved) {
+        toastr.success('Success', 'Saved successfully!');
+      }
       this.setState({ saving: false });
     }
   }

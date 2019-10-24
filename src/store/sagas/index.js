@@ -23,6 +23,7 @@ import QuickReply from './quickReplies';
 import MessageTemplate from './messageTemplates';
 import NotificationsSagas from './notifications';
 import WorkOrdersSagas from './workorders';
+import Contractors from './contractors';
 
 export default function* mainSaga() {
   yield all([
@@ -49,5 +50,6 @@ export default function* mainSaga() {
     fork(MessageTemplate),
     fork(NotificationsSagas),
     fork(WorkOrdersSagas),
+    fork(Contractors),
   ]);
 }

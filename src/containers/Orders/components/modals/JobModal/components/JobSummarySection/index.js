@@ -50,18 +50,17 @@ export default class JobSummarySection extends React.Component {
         <SectionContent>
           {
             services.map((service, index) =>
-            <>
+            <React.Fragment key={`service_${index}`}>
               { index !== 0 && <Divider /> }
               <SummaryEditView
                 services={this.props.services}
-                key={`service-${index}`}
                 service={service}
                 disabled={disabled}
                 servicesValidationCnt={this.props.servicesValidationCnt}
                 handleDelete={() => this.handleDeleteService(index)}
                 onChange={(service) => this.handleServiceChange(service, index)}
               />
-            </>
+            </React.Fragment>
             )
           }
 
