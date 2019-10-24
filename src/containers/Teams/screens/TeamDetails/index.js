@@ -500,7 +500,7 @@ class TeamDetails extends React.Component {
         {!loading && <React.Fragment>
           <HeaderWrapper>
             {managementId && <TeamDetailsHeader title={`${firstName} ${lastName}`} onAction={this.showConfirmationModal} />}
-            {!managementId && <PageTitle style={{ padding: '25px 30px' }}>Add New Member</PageTitle>}
+            {!managementId && <PageTitle style={{ padding: '25px 30px' }}>Add Team Member</PageTitle>}
           </HeaderWrapper>
           <ContentWrapper>
             {(privilege === 'provider' || privilege === 'admin') && <Row>
