@@ -57,7 +57,7 @@ const GeneralTeamList = ({providerLocationId, history, match: {params: {type: li
           />*/}
         </LeftPart>
         <RightPart>
-          <OrangeButton className="desktop" onClick={goToAddPage}>ADD {headerLabel}</OrangeButton>
+          <OrangeButton className="desktop" onClick={goToAddPage}>ADD {listType === 'members' ? 'TEAM MEMBER' : 'CONTRACTOR'}</OrangeButton>
         </RightPart>
       </SectionHeaderWrapper>
       { providerLocationId && <Tab tabs={TABS} selected={listType} onChange={onChangeTab} /> }
