@@ -131,8 +131,9 @@ function* getOrder(action) {
     let teamMemberData = [];
     if (providerLocationId && providerId) {
       const apiClient = yield select(getCustomApiClient);
-      const { data: {relationships: {teamMembers: {data : tmData}} }, included: directoryIncluded }  = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
-      teamMemberData = getTeamMemberData(tmData, directoryIncluded);
+      const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
+      const { data: {relationships: {teamMembers: {data : tmData}, userContractors: {data: coData}} }, included: directoryIncluded } = tmResult;
+      teamMemberData = getTeamMemberData(tmData.concat(coData), directoryIncluded);
     }
     yield put({
       type: workorderActionTypes.RESET

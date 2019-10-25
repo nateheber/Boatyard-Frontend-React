@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Select from 'react-select';
 
-import { GetManagements } from 'store/actions/managements';
 import { SetWorkOrder } from 'store/actions/workorders';
 import { Input } from 'components/basic/Input';
 import { Section, SectionHeader, Column } from '../Section';
@@ -71,11 +70,6 @@ const colourStyles = {
 };
 
 class JobTitleSection extends React.Component {
-  componentDidMount() {
-    const { GetManagements } = this.props;
-    GetManagements({ params: { page: 1, per_page: 1000 } });
-  }
-
   handleChange = member => {
     const { onChange } = this.props;
     if (onChange) {
@@ -139,8 +133,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  GetManagements,
-  SetWorkOrder,
+  SetWorkOrder
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(JobTitleSection);

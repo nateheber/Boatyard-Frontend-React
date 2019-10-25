@@ -123,8 +123,8 @@ class JobModal extends React.Component {
     const showDeleteBtn = !!id;
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const action = [
-      showDeleteBtn ? <HollowButton onClick={this.props.onDelete} key='modal_btn_delete'>Delete</HollowButton> : <div/>,
-      showSendBtn ? <OrangeButton onClick={this.props.onSend} key='modal_btn_save'>Send</OrangeButton> : <div/>
+      showDeleteBtn ? <HollowButton onClick={this.props.onDelete} key='modal_btn_delete'>Delete</HollowButton> : <div key='none'/>,
+      showSendBtn ? <OrangeButton onClick={this.props.onSend} key='modal_btn_save'>Send</OrangeButton> : <div key='none'/>
     ];
     const headers = (
       <ModalHeader>
