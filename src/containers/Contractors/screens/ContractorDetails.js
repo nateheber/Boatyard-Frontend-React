@@ -187,7 +187,7 @@ class ContractorDetails extends React.Component {
 
   onBack = () => {
     this.props.history.push(`/team/contractors/list`);
-  }
+  };
 
   onSave = () => {
     const { contractorId } = this.state;
