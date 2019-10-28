@@ -150,7 +150,8 @@ const lineItemsSelector = state => {
     const attributes= get(lineItemsDetail, `${lineItem.id}.attributes`);
     const relationShips = get(lineItemsDetail, `${lineItem.id}.relationships`);
     let serviceInfo = get(relationShips, 'service');
-    if (get(relationShips, 'providerLocationService').hasOwnProperty('id')) {
+    if (get(relationShips, 'providerLocationService') &&
+      get(relationShips, 'providerLocationService').hasOwnProperty('id')) {
       serviceInfo = get(relationShips, 'providerLocationService');
     }
     const serviceAttributes = get(serviceInfo, 'attributes');
