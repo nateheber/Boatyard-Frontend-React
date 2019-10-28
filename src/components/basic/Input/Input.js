@@ -106,6 +106,7 @@ const Selector = styled.select`
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
   color: #555;
+  text-indent: 7px;
   &:disabled {
     background: #f1f1f1;
   }
