@@ -62,7 +62,9 @@ class OrderAssignment extends React.Component {
 
     UpdateOrder({
       orderId,
-      data,
+      data: {
+        order: data
+      },
       success: () => toastr.success('Success', "Successfully assigned!"),
       error: (e) => {
         toastr.error('Error', e.message);
