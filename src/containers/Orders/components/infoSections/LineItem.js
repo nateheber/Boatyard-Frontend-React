@@ -52,7 +52,7 @@ class LineItem extends React.Component {
     this.state = {
       serviceId: props.service.id,
       quantity: props.attributes.quantity,
-      cost: props.attributes.cost,
+      cost: parseFloat(props.attributes.cost) <= 0 ? service.attributes.cost : props.attributes.cost,
       comment: props.attributes.comment || '',
       service
     };
@@ -68,7 +68,7 @@ class LineItem extends React.Component {
       this.setState({
         serviceId: this.props.service.id,
         quantity: this.props.attributes.quantity,
-        cost: this.props.attributes.cost,
+        cost: parseFloat(this.props.attributes.cost) <= 0 ? service.attributes.cost : this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
         service
       });
