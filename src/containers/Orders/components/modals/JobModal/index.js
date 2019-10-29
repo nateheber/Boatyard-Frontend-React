@@ -40,6 +40,7 @@ class JobModal extends React.Component {
     const { SetWorkOrder, workorder: { services }, order } = props;
     if (services.length > 0 && order.lineItems.length > 0 && !services[0].service) {
       services[0].service = order.lineItems[0].relationships.service.attributes.name;
+      services[0].special_instructions = order.attributes.specialInstructions;
       SetWorkOrder({services: [...services]});
     }
   }
@@ -117,7 +118,8 @@ class JobModal extends React.Component {
           notes, customer_info, boat_info, location
         },
         file_attachments_attributes: attachments
-      }
+      },
+      order
     } = this.props;
     const showSendBtn = !state || (state === 'draft' || state === 'declined');
     const showDeleteBtn = !!id;
@@ -153,6 +155,7 @@ class JobModal extends React.Component {
           onChange={this.handleTeamMemberChange}
         />
         <JobSummarySection
+          order={order}
           services={services}
           workorder={this.props.workorder}
           SetWorkOrder={this.props.SetWorkOrder}

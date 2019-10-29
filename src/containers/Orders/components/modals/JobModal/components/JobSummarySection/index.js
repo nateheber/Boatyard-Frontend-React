@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { get } from 'lodash';
+
 import { GradientButton } from 'components/basic/Buttons';
 import { Section, SectionHeader, SectionContent, HeaderTitle, Image } from '../Section';
 import { SummaryEditView } from './components';
@@ -31,8 +33,9 @@ export default class JobSummarySection extends React.Component {
   }
 
   handleAddSevice = () => {
-    const { workorder: {services}, SetWorkOrder } = this.props;
-    SetWorkOrder({services: [...services, {}]});
+    const { workorder: {services}, SetWorkOrder, order } = this.props;
+    const special_instructions = get(order, 'attributes.specialInstructions');
+    SetWorkOrder({services: [...services, { special_instructions }]});
   }
 
   render() {
