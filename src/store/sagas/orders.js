@@ -346,7 +346,7 @@ function* dispatchOrder(action) {
       yield call(orderClient.update, orderId, { order: { transition: 'undispatch' } });
     }
     if (dispatchIds && dispatchIds.length > 0) {
-      yield call(normalClient.update, orderId, { order: { dispatch_ids: dispatchIds } });
+      yield call(normalClient.update, orderId, { order: { dispatch_provider_location_ids: dispatchIds } });
     }
     yield put({ type: actionTypes.DISPATCH_ORDER_SUCCESS });
     // yield put({ type: actionTypes.SET_DISPATCHED_FLAG, payload: true })

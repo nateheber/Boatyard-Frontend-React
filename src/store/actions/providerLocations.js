@@ -7,6 +7,9 @@ export const actionTypes = {
   GET_PROVIDER_LOCATIONS: '[PROVIDER LOCATIONS] - Get Locations',
   GET_PROVIDER_LOCATIONS_SUCCESS: '[PROVIDER LOCATIONS] - Get Locations Success',
   GET_PROVIDER_LOCATIONS_FAILURE: '[PROVIDER LOCATIONS] - Get Locations Failure',
+  SEARCH_PROVIDER_LOCATIONS: '[PROVIDER LOCATIONS] - Search Locations',
+  SEARCH_PROVIDER_LOCATIONS_SUCCESS: '[PROVIDER LOCATIONS] - Search Locations Success',
+  SEARCH_PROVIDER_LOCATIONS_FAILURE: '[PROVIDER LOCATIONS] - Search Locations Failure',
   GET_PROVIDER_LOCATION: '[PROVIDER LOCATIONS] - Get Location',
   GET_PROVIDER_LOCATION_SUCCESS: '[PROVIDER LOCATIONS] - Get Location Success',
   GET_PROVIDER_LOCATION_FAILURE: '[PROVIDER LOCATIONS] - Get Location Failure',
@@ -31,6 +34,10 @@ export const CreateProviderLocationFailure = createAction(actionTypes.CREATE_PRO
 export const GetProviderLocations = createAction(actionTypes.GET_PROVIDER_LOCATIONS);
 export const GetProviderLocationsSuccess = createAction(actionTypes.GET_PROVIDER_LOCATIONS_SUCCESS);
 export const GetProviderLocationsFailure = createAction(actionTypes.GET_PROVIDER_LOCATIONS_FAILURE);
+
+export const SearchProviderLocations = createAction(actionTypes.SEARCH_PROVIDER_LOCATIONS);
+export const SearchProviderLocationsSuccess = createAction(actionTypes.SEARCH_PROVIDER_LOCATIONS_SUCCESS);
+export const SearchProviderLocationsFailure = createAction(actionTypes.SEARCH_PROVIDER_LOCATIONS_FAILURE);
 
 export const GetProviderLocation = createAction(actionTypes.GET_PROVIDER_LOCATION);
 export const GetProviderLocationSuccess = createAction(actionTypes.GET_PROVIDER_LOCATION_SUCCESS);
