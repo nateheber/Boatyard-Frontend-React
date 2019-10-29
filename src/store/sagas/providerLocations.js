@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, hasIn, isArray, isEmpty, find } from 'lodash';
 
 import { actionTypes } from '../actions/providerLocations';
-import { getProviderLocationClient, getProviderLocationServiceClient } from './sagaSelectors';
+import { getProviderLocationClient, getProviderLocationServiceClient, getCustomApiClient } from './sagaSelectors';
 import { refactorIncluded } from 'utils/basic';
 
 const refineProviderLocations = (providerLocations) => {
@@ -131,6 +131,47 @@ function* getProviderLocations(action) {
   }
 }
 
+function* searchProviderLocations(action) {
+  const apiClient = yield select(getCustomApiClient);
+  let { params, success, error } = action.payload;
+  params = params || {};
+  let submissionParams = {};
+  if (!hasIn(params, 'provider_locations[order]')) {
+    submissionParams = {
+      ...params,
+      'provider_locations[order]': 'name',
+      'provider_locations[sort]': 'asc',
+    };
+  } else {
+    submissionParams = { ...params };
+  }
+  try {
+    const result = yield call(apiClient.list, `/provider_locations`, submissionParams);
+
+    const providerLocations = get(result, 'data', []);
+    const included = get(result, 'included', []);
+    const { perPage, total } = result;
+    const refinedLocations = refineProviderLocations(providerLocations);
+    yield put({
+      type: actionTypes.SEARCH_PROVIDER_LOCATIONS_SUCCESS,
+      payload: {
+        providerLocations: refinedLocations,
+        included,
+        perPage,
+        total,
+      }
+    });
+    if (success) {
+      yield call(success, refinedLocations);
+    }
+  } catch (e) {
+    yield put({ type: actionTypes.SEARCH_PROVIDER_LOCATIONS_FAILURE, payload: e });
+    if (error) {
+      yield call(error, e);
+    }
+  }
+}
+
 function* getProviderLocation(action) {
   const apiClient = yield select(getProviderLocationClient);
   const { providerId, providerLocationId, success, error } = action.payload;
@@ -239,6 +280,7 @@ function* deleteProviderLocation(action) {
 export default function* ProviderLocationSaga() {
   yield takeEvery(actionTypes.GET_PROVIDER_LOCATIONS, getProviderLocations);
   yield takeEvery(actionTypes.FILTER_PROVIDER_LOCATIONS, getProviderLocations);
+  yield takeEvery(actionTypes.SEARCH_PROVIDER_LOCATIONS, searchProviderLocations);
   yield takeEvery(actionTypes.GET_PROVIDER_LOCATION, getProviderLocation);
   yield takeEvery(actionTypes.GET_PROVIDER_LOCATION_SERVICES, getProviderLocationServices);
   yield takeEvery(actionTypes.CREATE_PROVIDER_LOCATION, createProviderLocation);

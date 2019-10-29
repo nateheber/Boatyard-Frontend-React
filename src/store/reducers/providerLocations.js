@@ -66,6 +66,30 @@ export default handleActions(
         draft.errors = payload;
       }),
 
+    [actionTypes.SEARCH_PROVIDER_LOCATIONS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'params.page', 0);
+        draft.errors = null;
+      }),
+    [actionTypes.SEARCH_PROVIDER_LOCATIONS_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { total, perPage, providerLocations, included } = payload;
+        draft.currentStatus = type;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.providerLocations = providerLocations;
+        draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.SEARCH_PROVIDER_LOCATIONS_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
     [actionTypes.CREATE_PROVIDER_LOCATION]: (state, action) =>
       produce(state, draft => {
         const { type } = action;

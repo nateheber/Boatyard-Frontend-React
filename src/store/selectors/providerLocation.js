@@ -19,17 +19,30 @@ export const refinedProviderLocationSelector = createSelector(
         const id = get(data, 'id');
         if (!isEmpty(data) && data !== null) {
           if (!isArray(data)) {
-            parsedRelationships.push(get(included, `[${type}][${id}]`));
+            const item = get(included, `[${type}][${id}]`);
+            if (item) {
+              parsedRelationships.push(item);
+            }
           } else {
-            const arrayData = data.map(relation => {
+            const arrayData = [];
+            for(const index in data) {
+              const relation = data[index];
               const type = get(relation, 'type');
               const id = get(relation, 'id');
               if (type === 'services') {
-                services.push(get(included, `[${type}][${id}]`));
+                const service = get(included, `[${type}][${id}]`);
+                if (service) {
+                  services.push(service);
+                }
               }
-              return get(included, `[${type}][${id}]`);
-            });
-            parsedRelationships.push(arrayData);
+              const item = get(included, `[${type}][${id}]`);
+              if (item) {
+                arrayData.push(item)
+              }
+            }
+            if (arrayData && arrayData.length > 0) {
+              parsedRelationships.push(arrayData);
+            }
           }
         }
       }
