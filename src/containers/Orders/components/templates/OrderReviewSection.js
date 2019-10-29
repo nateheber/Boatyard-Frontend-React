@@ -81,14 +81,15 @@ class OrderReviewSection extends React.Component {
     const { order } = this.props;
     const total = get(order, 'attributes.total');
     const subtotal = get(order, 'attributes.subTotal');
-    let taxRate = (parseFloat(get(order, 'attributes.taxRate') || '0') * 100).toFixed(1);
+    let taxRate = 0.0; //(parseFloat(get(order, 'attributes.taxRate') || '0') * 100).toFixed(1);
+    const isTaxable = get(order, 'attributes.isTaxable');
     const taxAmount = get(order, 'attributes.taxAmount');
     const discount = get(order, 'attributes.discount');
     const deposit = get(order, 'attributes.deposit');
     const comments = get(order, 'attributes.comments');
-    const provider = get(order, 'relationships.provider');
-    if (provider && !provider.hasOwnProperty('data')) {
-      const providerTaxRate = (parseFloat(get(provider, 'attributes.taxRate') || '0') * 100).toFixed(1);
+    const providerLocation = get(order, 'relationships.providerLocation');
+    if (isTaxable && providerLocation && !providerLocation.hasOwnProperty('data')) {
+      const providerTaxRate = (parseFloat(get(providerLocation, 'attributes.taxRate') || '0') * 100).toFixed(1);
       if (parseFloat(taxRate) <= 0) {
         taxRate = providerTaxRate;
       }

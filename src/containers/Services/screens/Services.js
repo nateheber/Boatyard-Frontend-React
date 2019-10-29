@@ -8,6 +8,7 @@ import { toastr } from 'react-redux-toastr';
 import Modal from 'components/compound/Modal';
 
 import { actionTypes, GetServices, UpdateService, DeleteService } from 'store/actions/services';
+import { refinedServicesSelector } from 'store/selectors/services';
 import Table from 'components/basic/Table';
 import { NormalText } from 'components/basic/Typho';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
@@ -220,13 +221,13 @@ class Services extends React.Component {
   }
 }
 
-const mapStateToProps = ({ service: { services, currentStatus, page, perPage, total }, auth: { providerLocationId } }) => ({
-  services,
-  currentStatus,
-  page,
-  perPage,
-  total,
-  providerLocationId
+const mapStateToProps = (state) => ({
+  services: refinedServicesSelector(state),
+  currentStatus: state.service.currentStatus,
+  page: state.service.page,
+  perPage: state.service.perPage,
+  total: state.service.total,
+  providerLocationId: state.auth.providerLocationId
 });
 
 const mapDispatchToProps = {
