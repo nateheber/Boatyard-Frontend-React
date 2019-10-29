@@ -124,7 +124,6 @@ class NewOrderModal extends React.Component {
     } else {
       orderData['child_account_id'] = customer.id;
     }
-    console.log('------------------------orderData-------------------', orderData);
     CreateOrder({
       data: { order: orderData },
       success: (order) => {
