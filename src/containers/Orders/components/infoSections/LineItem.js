@@ -64,7 +64,7 @@ class LineItem extends React.Component {
       let service = providerLocationId ? this.props.providerLocationService : this.props.service;
       if (!service || isEmpty(service) || (service.hasOwnProperty('data') && !get(service, 'data'))) {
         service = this.props.service;
-      }  
+      }
       this.setState({
         serviceId: this.props.service.id,
         quantity: this.props.attributes.quantity,
