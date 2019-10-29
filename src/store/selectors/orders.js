@@ -77,8 +77,10 @@ const currentOrderSelector = state => {
           const dispatchIds = [];
           forEach(dispatchRelation, (info) => {
             const dispatchDetail = get(included, `[${info.type}][${info.id}].attributes`);
-            const dispatchId = get(dispatchDetail, 'providerId');
-            dispatchIds.push(dispatchId);
+            const dispatchId = get(dispatchDetail, 'providerLocationId');
+            if (dispatchId) {
+              dispatchIds.push(dispatchId);
+            }
           })
           set(order, 'dispatchIds', dispatchIds);
         } else {
