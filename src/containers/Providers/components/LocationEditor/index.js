@@ -62,7 +62,6 @@ class LocationEditor extends React.Component {
   handleLogin = (location) => {
     const { LoginWithProvider, history } = this.props;
     const locationName = get(location, 'relationships.locations.attributes.name');
-    
     LoginWithProvider({
       providerId: location.providerId,
       providerLocationId: location.id,
