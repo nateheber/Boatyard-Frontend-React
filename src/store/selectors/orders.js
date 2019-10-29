@@ -62,7 +62,7 @@ const currentOrderSelector = state => {
   if (!isEmpty(order)) {
     for(const key in order.relationships) {
       const value = get(order, `relationships[${key}].data`);
-      if(value) {
+      if(value && ((isArray(value) && value.length >0) || !isArray(value))) {
         if (key === 'lineItems') {
           const lineItemRelation = get(order, `relationships[${key}].data`, []);
           const lineItems = [];
@@ -84,11 +84,12 @@ const currentOrderSelector = state => {
           })
           set(order, 'dispatchIds', dispatchIds);
         } else {
-          order.relationships[key] = get(included, `[${value.type}][${value.id}]`);
+          const item = get(included, `[${value.type}][${value.id}]`);
+          order.relationships[key] = item;
           if (key === 'boat') {
             const location = get(order.relationships[key], 'relationships.location.data');
             const locationInfo = location ? get(included, `[${location.type}][${location.id}]`) : {};
-            set(order, `relationships[${key}].location`, locationInfo )
+            set(order, `relationships[${key}].location`, locationInfo);
           }
         }
       }
