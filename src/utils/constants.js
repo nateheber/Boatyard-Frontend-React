@@ -17,3 +17,5 @@ export const SLOT_OPTIONS = [
   WHEN_SLOT_MORNING,
   WHEN_SLOT_AFTERNOON
 ];
+
+export const BY_PROVIDER_ID = 1;
