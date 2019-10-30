@@ -81,7 +81,7 @@ class OrderReviewSection extends React.Component {
     const { order } = this.props;
     const total = get(order, 'attributes.total');
     const subtotal = get(order, 'attributes.subTotal');
-    let taxRate = (parseFloat(get(order, 'attributes.taxRate') || '0') * 100).toFixed(1);
+    let taxRate = 0; //(parseFloat(get(order, 'attributes.taxRate') || '0') * 100).toFixed(1);
     const isTaxable = get(order, 'attributes.isTaxable');
     const taxAmount = get(order, 'attributes.taxAmount');
     const discount = get(order, 'attributes.discount');
