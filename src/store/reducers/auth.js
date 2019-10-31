@@ -103,9 +103,7 @@ export default handleActions(
         draft.privilege = privilege;
         draft.isLocationAdmin = isLocationAdmin;
         draft.locationName = locationName;
-        if (!draft.providerId) {
-          draft.providerId = providerId;
-        }
+        draft.providerId = providerId;
         draft.providerLocationId = providerLocationId;
         draft.errors = null;
       }),
