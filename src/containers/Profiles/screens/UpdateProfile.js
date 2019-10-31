@@ -7,9 +7,9 @@ import { Row, Col } from 'react-flexbox-grid';
 import { toastr } from 'react-redux-toastr';
 import { get } from 'lodash';
 
-import { actionTypes as managementActions, GetManagement, UpdateManagement } from 'store/actions/managements';
-import { actionTypes as providerActions, UpdateProvider } from 'store/actions/providers';
-import { SetProviderInfo } from 'store/actions/auth';
+import { GetManagement, UpdateManagement } from 'store/actions/managements';
+import { UpdateProviderLocation } from 'store/actions/providerLocations';
+import { UpdateProvider } from 'store/actions/providers';
 import { formatPhoneNumber } from 'utils/basic';
 import { Input } from 'components/basic/Input';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
@@ -65,7 +65,7 @@ class UpdateProfile extends React.Component {
     super(props);
     this.state = {
       managementId: null,
-      providerId: null,
+      isLoading: false,
       firstName: '',
       lastName: '',
       phoneNumber: '',
@@ -77,20 +77,24 @@ class UpdateProfile extends React.Component {
 
   componentWillMount() {
     const { profile: { id: userId }, GetManagement } = this.props;
+    this.setState({ isLoading: true });
     GetManagement({
       params: {
         'management[user_id]': userId
       },
       success: (management) => {
+        this.setState({ isLoading: false });
         this.setManagementToState(management);
       },
       error: (e) => {
+        this.setState({ isLoading: false });
         toastr.error('Error', e.message);
       }
     })
   }
+
   setManagementToState = (management) => {
-    const { privilege, setProfile, SetProviderInfo } = this.props;
+    const { privilege, providerLocationId, setProfile } = this.props;
     const { id: managementId } = management;
     const user = get(management, 'relationships.user');
     setProfile({ id: user.id, ...user.attributes });
@@ -102,17 +106,20 @@ class UpdateProfile extends React.Component {
       phoneNumber: formatPhoneNumber(phoneNumber, true),
       email
     });
+    let tax = 0;
     if (privilege === 'provider') {
-      const provider = get(management, 'relationships.provider');
-      SetProviderInfo(provider);
-      const { id: providerId, attributes: { taxRate } } = provider;
-      const tax = (parseFloat(taxRate) * 100).toFixed(1);
-      this.setState({
-        providerId,
-        taxRate: tax
-      });
+      if (providerLocationId) {
+        const providerLocation = get(management, 'relationships.providerLocation');
+        const { attributes: { taxRate } } = providerLocation;
+        tax = (parseFloat(taxRate) * 100).toFixed(1);
+      } else {
+        const provider = get(management, 'relationships.provider');
+        const { attributes: { taxRate } } = provider;
+        tax = (parseFloat(taxRate) * 100).toFixed(1);
+      }
+      this.setState({ taxRate: tax });
     }
-  }
+  };
 
   renderEditorSection = () => {
     const { privilege } = this.props;
@@ -200,7 +207,7 @@ class UpdateProfile extends React.Component {
         </Row>
       </React.Fragment>
     );
-  }
+  };
 
   renderActions = () => {
     const { history } = this.props;
@@ -210,27 +217,44 @@ class UpdateProfile extends React.Component {
         <OrangeButton onClick={this.onSave}>Save</OrangeButton>
       </React.Fragment>
     );
-  }
+  };
 
   onSave = () => {
-    const { providerId, taxRate } = this.state;
-    const { privilege, UpdateProvider } = this.props;
+    const { taxRate } = this.state;
+    const { privilege, providerId, providerLocationId, UpdateProvider, UpdateProviderLocation } = this.props;
+    this.setState({ isLoading: true });
     if (privilege === 'provider') {
-      UpdateProvider({
-        authType: 'provider',
-        providerId,
-        data: {
-          provider: {
-            tax_rate: `${parseFloat(taxRate) / 100}`
+      if (providerLocationId) {
+        UpdateProviderLocation({
+          providerId,
+          providerLocationId,
+          data: {
+            provider_location: { tax_rate: `${parseFloat(taxRate) / 100}` }
+          },
+          success: () => {
+            this.updateProfile();
+          },
+          error: (e) => {
+            this.setState({ isLoading: false });
+            toastr.error('Error', e.message);
           }
-        },
-        success: (provider) => {
-          this.updateProfile();
-        },
-        error: (e) => {
-          toastr.error('Error', e.message);
-        }
-      })
+        });
+      } else {
+        UpdateProvider({
+          authType: 'provider',
+          providerId,
+          data: {
+            provider: { tax_rate: `${parseFloat(taxRate) / 100}` }
+          },
+          success: () => {
+            this.updateProfile();
+          },
+          error: (e) => {
+            this.setState({ isLoading: false });
+            toastr.error('Error', e.message);
+          }
+        });
+      }
     } else {
       this.updateProfile();
     }
@@ -251,9 +275,11 @@ class UpdateProfile extends React.Component {
       },
       success: (management) => {
         this.setManagementToState(management);
+        this.setState({ isLoading: false });
         toastr.success('Success', 'Saved successfully!');
       },
       error: (e) => {
+        this.setState({ isLoading: false });
         toastr.error('Error', e.message);
       }
     });
@@ -315,15 +341,15 @@ class UpdateProfile extends React.Component {
     });
   };
 
-  isLoading = () => {
-    const { managementStatus, providerStatus } = this.props;
-    return managementStatus === managementActions.GET_MANAGEMENT ||
-    managementStatus === managementActions.UPDATE_MANAGEMENT ||
-    providerStatus === providerActions.UPDATE_PROVIDER;
-  }
+  // isLoading = () => {
+  //   const { managementStatus, providerStatus } = this.props;
+  //   return managementStatus === managementActions.GET_MANAGEMENT ||
+  //   managementStatus === managementActions.UPDATE_MANAGEMENT ||
+  //   providerStatus === providerActions.UPDATE_PROVIDER;
+  // }
 
   render() {
-    const { showModal } = this.state;
+    const { isLoading, showModal } = this.state;
     return (
       <Wrapper>
         <ContentWrapper>
@@ -335,7 +361,7 @@ class UpdateProfile extends React.Component {
             onSave={this.onUpdatePassword}
           />
         </Modal>
-        {this.isLoading() && <LoadingSpinner loading={this.isLoading()} />}
+        {isLoading && <LoadingSpinner loading={isLoading} />}
       </Wrapper>
     );
   }
@@ -343,6 +369,8 @@ class UpdateProfile extends React.Component {
 
 const mapStateToProps = (state) => ({
   privilege: state.auth.privilege,
+  providerId: state.auth.providerId,
+  providerLocationId: state.auth.providerLocationId,
   managementStatus: state.management.currentStatus,
   providerStatus: state.provider.currentStatus,
   profile: state.profile
@@ -351,10 +379,10 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   updateProfile,
   setProfile,
-  SetProviderInfo,
   GetManagement,
   UpdateManagement,
-  UpdateProvider
+  UpdateProvider,
+  UpdateProviderLocation
 };
 
 export default connect(

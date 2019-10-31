@@ -17,9 +17,12 @@ export const refinedServicesSelector = createSelector(
   (allServices, included) => {
     return allServices.map(service => {
       for(const key in service.relationships) {
-        const value = (service ,`relationships[${key}].data`);
+        let value = service.relationships[key].data;
         if(value && !isEmpty(value) && value.hasOwnProperty('type')) {
-          service.relationships[key] = included[value.type][value.id];
+          const item = get(included, `[${value.type}][${value.id}]`);
+          if (item) {
+            service.relationships[key] = item;
+          }
         }
       }
       return service;
@@ -34,8 +37,11 @@ export const refinedAllServicesSelector = createSelector(
     return allServices.map(service => {
       for(const key in service.relationships) {
         let value = service.relationships[key].data;
-        if(!isEmpty(value) && value.hasOwnProperty('type')) {
-          service.relationships[key] = included[value.type][value.id];
+        if(value && !isEmpty(value) && value.hasOwnProperty('type')) {
+          const item = get(included, `[${value.type}][${value.id}]`);
+          if (item) {
+            service.relationships[key] = item;
+          }
         }
       }
       return service;
