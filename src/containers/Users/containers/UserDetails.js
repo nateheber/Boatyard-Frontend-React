@@ -405,61 +405,69 @@ class UserDetails extends React.Component {
           <React.Fragment>
             <UserDetailsHeader user={currentUser} onDelete={this.showDeleteModal} />
             <PageContent>
-              <Col sm={12} md={8} lg={8} xl={8} >
-                {!(loadingOrders && isFirstLoadOrders) && <Table
-                  type="secondary"
-                  columns={columns}
-                  records={orders}
-                  toDetails={this.toDetails}
-                  page={page}
-                  pageCount={pageCount}
-                  onPageChange={this.changePage}
-                />}
-                <Row>
-                  {!(loadingCustomers && isFirstLoadCustomers) && <Col sm={12} md={12} lg={6} xl={6} style={{ marginTop: 15, marginBottom: 15 }}>
-                    <Section title={"Customer Accounts"}>
-                      <CustomersSection customers={customers} />
+              <Row>
+                <Col sm={12} md={8} lg={8} xl={8} style={{ marginBottom: 15 }}>
+                  {!(loadingOrders && isFirstLoadOrders) && <Table
+                    type="secondary"
+                    columns={columns}
+                    records={orders}
+                    toDetails={this.toDetails}
+                    page={page}
+                    pageCount={pageCount}
+                    onPageChange={this.changePage}
+                  />}
+                </Col>
+                <Col sm={12} md={4} lg={4} xl={4}>
+                  <SectionGroup>
+                    <Section title={"User & Boat Info"}>
+                      <CustomerInfoSection type="user" customerInfo={currentUser} refreshInfo={this.refreshInfo} />
+                      {!(loadingBoats && isFirstLoadBoats) && <BoatInfoSection user={currentUser} />}
+                      {!currentUser.isDisabled && <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>}
                     </Section>
-                  </Col>}
-                  {!(loadingPreferredProviders && isFirstLoadPreferredProviders) && <Col sm={12} md={12} lg={6} xl={6}  style={{ marginTop: 15, marginBottom: 15 }}>
-                    <Section title={"Preferred Providers"}>
-                      <PreferredProvidersSection user={currentUser} providers={preferredProviders} onRemove={this.removePreferredProvider} />
-                    </Section>
-                    {!currentUser.isDisabled && <ActionSection>
-                      <Col sm={8} md={8} lg={8}>
-                        <AsyncSelect
-                          ref={this.setProviderSelectRef}
-                          isClearable
-                          components={{
-                            Option: ProviderOption,
-                            SingleValue: ProviderOptionValue
-                          }}
-                          defaultOptions
-                          loadOptions={this.loadOptions}
-                          onChange={this.onChangeProvider}
-                          value={selectedProvider}
-                          styles={colourStyles}
-                        />
-                      </Col>
-                      <HollowButton onClick={this.addPreferredProvider} style={{minWidth: 'inherit'}}>Add</HollowButton>
-                    </ActionSection>}
-                  </Col>}
-                </Row>
-              </Col>
-              <Col sm={12} md={4} lg={4} xl={4}>
-                <SectionGroup>
-                  <Section title={"User & Boat Info"}>
-                    <CustomerInfoSection type="user" customerInfo={currentUser} refreshInfo={this.refreshInfo} />
-                    {!(loadingBoats && isFirstLoadBoats) && <BoatInfoSection user={currentUser} />}
-                    {!currentUser.isDisabled && <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>}
-                  </Section>
-                </SectionGroup>
-                <SectionGroup>
-                {!(loadingPayments && isFirstLoadPayments) && <CreditCardSection
-                  user={currentUser} onRefresh={this.refreshCards} 
-                />}
-                </SectionGroup>
-              </Col>
+                  </SectionGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={12} md={8} lg={8} xl={8}>
+                  <Row>
+                    {!(loadingCustomers && isFirstLoadCustomers) && <Col sm={12} md={12} lg={6} xl={6} style={{ marginBottom: 15 }}>
+                      <Section title={"Customer Accounts"}>
+                        <CustomersSection customers={customers} />
+                      </Section>
+                    </Col>}
+                    {!(loadingPreferredProviders && isFirstLoadPreferredProviders) && <Col sm={12} md={12} lg={6} xl={6}  style={{ marginBottom: 15 }}>
+                      <Section title={"Preferred Providers"}>
+                        <PreferredProvidersSection user={currentUser} providers={preferredProviders} onRemove={this.removePreferredProvider} />
+                      </Section>
+                      {!currentUser.isDisabled && <ActionSection>
+                        <Col sm={8} md={8} lg={8}>
+                          <AsyncSelect
+                            ref={this.setProviderSelectRef}
+                            isClearable
+                            components={{
+                              Option: ProviderOption,
+                              SingleValue: ProviderOptionValue
+                            }}
+                            defaultOptions
+                            loadOptions={this.loadOptions}
+                            onChange={this.onChangeProvider}
+                            value={selectedProvider}
+                            styles={colourStyles}
+                          />
+                        </Col>
+                        <HollowButton onClick={this.addPreferredProvider} style={{minWidth: 'inherit'}}>Add</HollowButton>
+                      </ActionSection>}
+                    </Col>}
+                  </Row>
+                </Col>
+                <Col sm={12} md={4} lg={4} xl={4}>
+                  <SectionGroup>
+                  {!(loadingPayments && isFirstLoadPayments) && <CreditCardSection
+                    user={currentUser} onRefresh={this.refreshCards} 
+                  />}
+                  </SectionGroup>
+                </Col>
+              </Row>
             </PageContent>
             <BoatModal
               open={visibleOfBoatModal}
