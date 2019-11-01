@@ -2,12 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
 
 import { GetManagements } from 'store/actions/managements';
 import { refinedManagementsSelector } from 'store/selectors/managements';
 import Table from 'components/basic/Table';
-import { TeamListHeader } from '../../components';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -16,11 +15,13 @@ const Wrapper = styled.div`
 
 class TeamList extends React.Component {
   componentDidMount() {
-    this.props.GetManagements({});
+    this.props.GetManagements({
+      params: { per_page: 1000 }
+    });
   }
 
   toDetails = member => {
-    this.props.history.push(`/team-details/?id=${member.id}`);
+    this.props.history.push(`/team/member-details/?id=${member.id}`);
   };
 
   getPageCount = () => {
@@ -29,11 +30,12 @@ class TeamList extends React.Component {
   };
 
   changePage = (page) => {
-    this.props.GetManagements({ params: { page } });
+    this.props.GetManagements({ params: { page, per_page: 1000 } });
   }
 
   render() {
     const { managements, page } = this.props;
+    const sortedManagements = sortBy(managements, 'relationships.user.attributes.firstName', 'relationships.user.attributes.lastName');
     const pageCount = this.getPageCount();
     const columns = [
       { label: 'name', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName', },
@@ -43,10 +45,9 @@ class TeamList extends React.Component {
     ];
     return (
       <Wrapper>
-        <TeamListHeader />
         <Table
           columns={columns}
-          records={managements}
+          records={sortedManagements}
           toDetails={this.toDetails}
           page={page}
           pageCount={pageCount}

@@ -293,11 +293,12 @@ class MenuUI extends React.Component {
   }
 
   handleLocationChange = location => {
-    this.props.LoginWithProvider({
+    const { providerId, LoginWithProvider, SetRefreshFlag } = this.props;
+    LoginWithProvider({
       ...location,
-      providerId: this.props.providerId,
+      providerId,
       success: () => {
-        this.props.SetRefreshFlag({flag: true});
+        SetRefreshFlag({flag: true});
       },
       error: (e) => {
         toastr.error('Error', e.message);

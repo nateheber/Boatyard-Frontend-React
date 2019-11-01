@@ -124,7 +124,8 @@ function* loginWithProvider(action) {
         type: authActions.SET_PRIVILEGE,
         payload: {
           privilege: 'provider',
-          providerLocationId: providerLocationId,
+          providerId,
+          providerLocationId,
           locationName
         }
       });

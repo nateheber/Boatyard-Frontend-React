@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import { get, find } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import { Section } from 'components/basic/InfoSection';
-import { GetProviderLocations } from 'store/actions/providerLocations';
+import { GetProviderLocations, SearchProviderLocations } from 'store/actions/providerLocations';
 import { UpdateOrder, DispatchOrder } from 'store/actions/orders';
 import { simpleProviderLocationSelector } from 'store/selectors/providerLocation';
 import AssigneeInfo from './AssigneeInfo';
-import ProviderInfo from './ProviderInfo';
-import ProviderSelector from './ProviderSelector';
+import ProviderLocationInfo from './ProviderLocationInfo';
+import ProviderLocationSelector from './ProviderLocationSelector';
 import AssigneeSelector from './AssigneeSelector';
 
 class OrderAssignment extends React.Component {
@@ -20,19 +20,30 @@ class OrderAssignment extends React.Component {
   }
 
   componentDidMount() {
-    const { providerId, providerLocations } = this.props;
-    if (providerLocations.length === 0 || find(providerLocations, pl => `${pl.providerId}` !== `${providerId}` )) {
-      this.props.GetProviderLocations({providerId, params:{ page: 1, per_page: 1000}});
+    const { privilege, providerId, GetProviderLocations, SearchProviderLocations } = this.props;
+    if (privilege === 'admin') {
+      SearchProviderLocations({
+        params: {
+          search: '',
+          page: 1,
+          per_page: 1000
+        }
+      });
+    } else {
+      GetProviderLocations({
+        providerId,
+        params: { page: 1, per_page: 1000 }
+      });
     }
   }
 
   static getDerivedStateFromProps(props) {
-    const providerId = get(props, 'currentOrder.attributes.providerId');
+    const providerLocationId = get(props, 'currentOrder.attributes.providerLocationId');
     const orderState = get(props, 'currentOrder.attributes.state');
     const { privilege } = props;
     if (privilege === 'admin') {
-      if (orderState !== 'dispatched' && providerId) {
-        return { dispatchIds: [providerId] };
+      if (orderState !== 'dispatched' && providerLocationId) {
+        return { dispatchIds: [providerLocationId] };
       }
       const dispatchIds = get(props, 'currentOrder.dispatchIds', []);
       return { dispatchIds };
@@ -51,7 +62,9 @@ class OrderAssignment extends React.Component {
 
     UpdateOrder({
       orderId,
-      data,
+      data: {
+        order: data
+      },
       success: () => toastr.success('Success', "Successfully assigned!"),
       error: (e) => {
         toastr.error('Error', e.message);
@@ -74,9 +87,11 @@ class OrderAssignment extends React.Component {
   renderDropdownButton = () => {
     const { dispatchIds } = this.state;
     const { privilege, currentOrder, providerLocationId, providerLocations, teamMemberData } = this.props;
-    const providerId = get(currentOrder, 'attributes.providerId');
+    const plID = get(currentOrder, 'attributes.providerLocationId');
+    const orderState = get(currentOrder, 'state');
+    const isDispatched = orderState === 'dispatched';// || orderState === 'assigned';
     if (privilege === 'admin') {
-      return <ProviderSelector dispatchIds={providerId ? [providerId] : dispatchIds} onChange={this.updateDispatchIds} />
+      return <ProviderLocationSelector dispatchIds={isDispatched ? [plID] : dispatchIds} onChange={this.updateDispatchIds} />
     } else if ( privilege === 'provider') {
       let options = providerLocations;
       let value = get(currentOrder, 'attributes.providerLocationId');
@@ -113,7 +128,7 @@ class OrderAssignment extends React.Component {
           {
             dispatchIds.map((id) => (
               <React.Fragment key={`assignee_${id}`}>
-                <ProviderInfo id={id} />
+                <ProviderLocationInfo id={id} />
               </React.Fragment>
             ))
           }
@@ -134,9 +149,14 @@ const mapStateToProps = (state) => ({
   privilege: state.auth.privilege,
   providerId: state.auth.providerId,
   providerLocationId: state.auth.providerLocationId,
-  providerLocations: simpleProviderLocationSelector(state),
+  providerLocations: simpleProviderLocationSelector(state)
 })
 
-const mapDispatchToProps = { UpdateOrder, DispatchOrder, GetProviderLocations };
+const mapDispatchToProps = {
+  UpdateOrder,
+  DispatchOrder,
+  GetProviderLocations,
+  SearchProviderLocations
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignment);

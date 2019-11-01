@@ -131,8 +131,9 @@ function* getOrder(action) {
     let teamMemberData = [];
     if (providerLocationId && providerId) {
       const apiClient = yield select(getCustomApiClient);
-      const { data: {relationships: {teamMembers: {data : tmData}} }, included: directoryIncluded }  = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
-      teamMemberData = getTeamMemberData(tmData, directoryIncluded);
+      const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
+      const { data: {relationships: {teamMembers: {data : tmData}, userContractors: {data: coData}} }, included: directoryIncluded } = tmResult;
+      teamMemberData = getTeamMemberData(tmData.concat(coData), directoryIncluded);
     }
     yield put({
       type: workorderActionTypes.RESET
@@ -345,7 +346,7 @@ function* dispatchOrder(action) {
       yield call(orderClient.update, orderId, { order: { transition: 'undispatch' } });
     }
     if (dispatchIds && dispatchIds.length > 0) {
-      yield call(normalClient.update, orderId, { order: { dispatch_ids: dispatchIds } });
+      yield call(normalClient.update, orderId, { order: { dispatch_provider_location_ids: dispatchIds } });
     }
     yield put({ type: actionTypes.DISPATCH_ORDER_SUCCESS });
     // yield put({ type: actionTypes.SET_DISPATCHED_FLAG, payload: true })

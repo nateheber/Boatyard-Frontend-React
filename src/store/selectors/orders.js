@@ -62,7 +62,7 @@ const currentOrderSelector = state => {
   if (!isEmpty(order)) {
     for(const key in order.relationships) {
       const value = get(order, `relationships[${key}].data`);
-      if(value) {
+      if(value && ((isArray(value) && value.length >0) || !isArray(value))) {
         if (key === 'lineItems') {
           const lineItemRelation = get(order, `relationships[${key}].data`, []);
           const lineItems = [];
@@ -77,16 +77,19 @@ const currentOrderSelector = state => {
           const dispatchIds = [];
           forEach(dispatchRelation, (info) => {
             const dispatchDetail = get(included, `[${info.type}][${info.id}].attributes`);
-            const dispatchId = get(dispatchDetail, 'providerId');
-            dispatchIds.push(dispatchId);
+            const dispatchId = get(dispatchDetail, 'providerLocationId');
+            if (dispatchId) {
+              dispatchIds.push(dispatchId);
+            }
           })
           set(order, 'dispatchIds', dispatchIds);
         } else {
-          order.relationships[key] = get(included, `[${value.type}][${value.id}]`);
+          const item = get(included, `[${value.type}][${value.id}]`);
+          order.relationships[key] = item;
           if (key === 'boat') {
             const location = get(order.relationships[key], 'relationships.location.data');
             const locationInfo = location ? get(included, `[${location.type}][${location.id}]`) : {};
-            set(order, `relationships[${key}].location`, locationInfo )
+            set(order, `relationships[${key}].location`, locationInfo);
           }
         }
       }
@@ -150,7 +153,8 @@ const lineItemsSelector = state => {
     const attributes= get(lineItemsDetail, `${lineItem.id}.attributes`);
     const relationShips = get(lineItemsDetail, `${lineItem.id}.relationships`);
     let serviceInfo = get(relationShips, 'service');
-    if (get(relationShips, 'providerLocationService').hasOwnProperty('id')) {
+    if (get(relationShips, 'providerLocationService') &&
+      get(relationShips, 'providerLocationService').hasOwnProperty('id')) {
       serviceInfo = get(relationShips, 'providerLocationService');
     }
     const serviceAttributes = get(serviceInfo, 'attributes');

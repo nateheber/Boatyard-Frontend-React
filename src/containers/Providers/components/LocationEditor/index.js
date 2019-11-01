@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { get } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
+import { SetRefreshFlag } from 'store/actions/auth';
 import { LoginWithProvider } from 'store/actions/providers';
 import { GetProviderLocations } from 'store/actions/providerLocations';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
@@ -60,15 +61,14 @@ class LocationEditor extends React.Component {
   }
 
   handleLogin = (location) => {
-    const { LoginWithProvider, history } = this.props;
+    const { LoginWithProvider, SetRefreshFlag } = this.props;
     const locationName = get(location, 'relationships.locations.attributes.name');
-    
     LoginWithProvider({
       providerId: location.providerId,
       providerLocationId: location.id,
       locationName,
       success: () => {
-        history.push('/dashboard');
+        SetRefreshFlag({flag: true});
       },
       error: (e) => {
         toastr.error('Error', e.message);
@@ -131,7 +131,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   GetProviderLocations,
-  LoginWithProvider
+  LoginWithProvider,
+  SetRefreshFlag
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LocationEditor));

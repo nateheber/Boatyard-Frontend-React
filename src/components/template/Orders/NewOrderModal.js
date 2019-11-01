@@ -52,23 +52,35 @@ class NewOrderModal extends React.Component {
   };
 
   createNewOrder = (service, whenValues = {}, serviceValues = {}, orderValues = {}) => {
-    const { CreateOrder, UpdateOrder, AcceptOrder, onFinishCreation, privilege } = this.props;
+    const { CreateOrder, UpdateOrder, AcceptOrder, onFinishCreation, privilege, providerId, providerLocationId } = this.props;
     const { customer, boat } = this.state;
+    const line_item = {
+      quantity: 1,
+      cost: service.cost
+    };
+    if (service.type === 'provider_location_services') {
+      line_item['provider_location_service_id'] = service.id;
+    } else {
+      line_item['service_id'] = service.id;
+    }
     const orderData = {
       transition: "accept",
       quietly_transition: true,
       boat_id: boat.id,
       ...orderValues,
-      line_items_attributes: [
-        {
-          service_id: service.id,
-          quantity: 1
-        }
-      ],
+      line_items_attributes: [line_item],
       // properties: {
       //   ...serviceValues
       // }
     };
+    if (providerId) {
+      orderData['provider_id'] = providerId;
+    } else {
+      orderData['provider_id'] = constants.BY_PROVIDER_ID;
+    }
+    if (providerLocationId) {
+      orderData['provider_location_id'] = providerLocationId;
+    }
     this.setState({ loading: true });
     if (whenValues.hasOwnProperty('when')) {
       const scheduleAttributes = {
@@ -192,7 +204,9 @@ class NewOrderModal extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  privilege: state.auth.privilege
+  privilege: state.auth.privilege,
+  providerId: state.auth.providerId,
+  providerLocationId: state.auth.providerLocationId
 });
 
 const mapDispatchToProps = {

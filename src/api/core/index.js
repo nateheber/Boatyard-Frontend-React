@@ -68,17 +68,40 @@ export class NormalClient {
   constructor(authType = 'basic') {
     this.client = createMainClient(authType);
   }
-  get = url => {
-    return this.client.get(`${apiBaseUrl}${url}`);
+  list = (url, params = null, version='v2') => {
+    let paramsString = '';
+
+    if (params) {
+      params = {
+        page: 1,
+        ...params
+      };
+    } else {
+      params = {
+        page: 1
+      };
+    }
+
+    const array = [];
+    for  (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        array.push(`${key}=${params[key]}`);
+      }
+    }
+    paramsString = array.join('&');
+    return this.client.get(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}?${paramsString}`);
   };
-  post = (url, data) => {
-    return this.client.post(`${apiBaseUrl}${url}`, data);
+  get = (url, version='v2') => {
+    return this.client.get(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}`);
   };
-  patch = (url, data) => {
-    return this.client.patch(`${apiBaseUrl}${url}`, data);
+  post = (url, data, version='v2') => {
+    return this.client.post(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}`, data);
   };
-  delete = (url, data) => {
-    return this.client.delete(`${apiBaseUrl}${url}`, data);
+  patch = (url, data, version='v2') => {
+    return this.client.patch(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}`, data);
+  };
+  delete = (url, data, version='v2') => {
+    return this.client.delete(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}`, data);
   };
 }
 

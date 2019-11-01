@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { get } from 'lodash';
+
 import { GradientButton } from 'components/basic/Buttons';
 import { Section, SectionHeader, SectionContent, HeaderTitle, Image } from '../Section';
 import { SummaryEditView } from './components';
@@ -31,8 +33,9 @@ export default class JobSummarySection extends React.Component {
   }
 
   handleAddSevice = () => {
-    const { workorder: {services}, SetWorkOrder } = this.props;
-    SetWorkOrder({services: [...services, {}]});
+    const { workorder: {services}, SetWorkOrder, order } = this.props;
+    const special_instructions = get(order, 'attributes.specialInstructions');
+    SetWorkOrder({services: [...services, { special_instructions }]});
   }
 
   render() {
@@ -50,18 +53,17 @@ export default class JobSummarySection extends React.Component {
         <SectionContent>
           {
             services.map((service, index) =>
-            <>
+            <React.Fragment key={`service_${index}`}>
               { index !== 0 && <Divider /> }
               <SummaryEditView
                 services={this.props.services}
-                key={`service-${index}`}
                 service={service}
                 disabled={disabled}
                 servicesValidationCnt={this.props.servicesValidationCnt}
                 handleDelete={() => this.handleDeleteService(index)}
                 onChange={(service) => this.handleServiceChange(service, index)}
               />
-            </>
+            </React.Fragment>
             )
           }
 

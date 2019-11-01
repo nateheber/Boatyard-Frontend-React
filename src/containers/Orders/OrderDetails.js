@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { get, findIndex, filter, find } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import { SetWorkOrder, UpserWorkOrder, ServicesValidation, ResetWorkOrder, DeleteWorkOrder } from 'store/actions/workorders';
-import { actionTypes, GetOrder, UpdateOrder, SetDispatchedFlag } from 'store/actions/orders';
+import { actionTypes, GetOrder, UpdateOrder } from 'store/actions/orders';
 import { GetServices } from 'store/actions/services';
 import { GetProviderLocationServices } from 'store/actions/providerLocations';
 import { GetGlobalTemplates, GetLocalTemplates } from 'store/actions/messageTemplates';
@@ -28,7 +28,7 @@ import LineItemSection from './components/templates/LineItemSection';
 import OrderSummarySection from './components/templates/OrderSummarySection';
 import OrderReviewSection from './components/templates/OrderReviewSection';
 import OrderDetailHeader from './components/templates/OrderDetailHeader';
-import Scheduler from './components/templates/Scheduler';
+// import Scheduler from './components/templates/Scheduler';
 import PaymentSection from './components/templates/PaymentSection';
 import TimeLineSection from './components/templates/TimeLineSection';
 import OrderAssignment from './components/templates/OrderAssignment';
@@ -61,15 +61,11 @@ class OrderDetails extends React.Component {
   };
 
   componentDidMount() {
-    const { GetGlobalTemplates, GetLocalTemplates, privilege, SetDispatchedFlag, location, match: {params: {id}} } = this.props;
+    const { GetGlobalTemplates, GetLocalTemplates, privilege, location, match: {params: {id}} } = this.props;
     let orderId = id;
     if (!orderId) {
       const query = queryString.parse(location.search);
       orderId = query.order;
-    }
-    const state = location.state;
-    if (state && state.hasOwnProperty('dispatched')) {
-      SetDispatchedFlag(state.dispatched);
     }
     this.loadOrder(orderId);
 
@@ -97,10 +93,6 @@ class OrderDetails extends React.Component {
     return true;
   }
 
-  componentWillUnmount() {
-    this.props.SetDispatchedFlag(false);
-  }
-
   loadOrder = (orderId) => {
     const { GetOrder, GetServices, GetProviderLocationServices } = this.props;
     this.state.orderId !== orderId && this.setState({orderId});
@@ -117,9 +109,9 @@ class OrderDetails extends React.Component {
             params: {
               per_page: 1000,
               all: true,
-              'provider_location_service[discarded_at]': null,
-              'provider_location_service[order]': 'name',
-              'provider_location_service[sort]': 'asc'
+              'service[discarded_at]': null,
+              'service[order]': 'name',
+              'service[sort]': 'asc'
             }
           });
         } else {
@@ -385,9 +377,9 @@ class OrderDetails extends React.Component {
                   <SectionGroup>
                     <PaymentSection order={currentOrder} onFinished={() => this.loadOrder(orderId)} />
                   </SectionGroup>
-                  <SectionGroup>
+                  {/*<SectionGroup>
                     <Scheduler order={currentOrder} />
-                  </SectionGroup>
+                  </SectionGroup>*/}
                 </Column>
                 <Column md={12} sm={12} xs={12} lg={4} xl={4}>
                   {canAssignOrder && <SectionGroup>
@@ -474,7 +466,6 @@ const mapDispatchToProps = {
   GetServices,
   UpdateOrder,
   UpdateBoat,
-  SetDispatchedFlag,
   GetGlobalTemplates,
   GetLocalTemplates,
   SetWorkOrder,

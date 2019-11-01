@@ -51,7 +51,7 @@ export const colourStyles = {
   option: (provided, state) => ({
     ...provided,
     width: '600px',
-    display: 'fixed',
+    display: 'fixed'
   }),
   container: styles => ({
     ...styles,

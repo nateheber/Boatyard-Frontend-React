@@ -40,6 +40,7 @@ class JobModal extends React.Component {
     const { SetWorkOrder, workorder: { services }, order } = props;
     if (services.length > 0 && order.lineItems.length > 0 && !services[0].service) {
       services[0].service = order.lineItems[0].relationships.service.attributes.name;
+      services[0].special_instructions = order.attributes.specialInstructions;
       SetWorkOrder({services: [...services]});
     }
   }
@@ -117,14 +118,15 @@ class JobModal extends React.Component {
           notes, customer_info, boat_info, location
         },
         file_attachments_attributes: attachments
-      }
+      },
+      order
     } = this.props;
     const showSendBtn = !state || (state === 'draft' || state === 'declined');
     const showDeleteBtn = !!id;
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const action = [
-      showDeleteBtn ? <HollowButton onClick={this.props.onDelete} key='modal_btn_delete'>Delete</HollowButton> : <div/>,
-      showSendBtn ? <OrangeButton onClick={this.props.onSend} key='modal_btn_save'>Send</OrangeButton> : <div/>
+      showDeleteBtn ? <HollowButton onClick={this.props.onDelete} key='modal_btn_delete'>Delete</HollowButton> : <div key='none'/>,
+      showSendBtn ? <OrangeButton onClick={this.props.onSend} key='modal_btn_save'>Send</OrangeButton> : <div key='none'/>
     ];
     const headers = (
       <ModalHeader>
@@ -153,6 +155,7 @@ class JobModal extends React.Component {
           onChange={this.handleTeamMemberChange}
         />
         <JobSummarySection
+          order={order}
           services={services}
           workorder={this.props.workorder}
           SetWorkOrder={this.props.SetWorkOrder}
