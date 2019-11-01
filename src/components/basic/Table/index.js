@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import classNames from 'classnames'
 
 import LoadingSpinner from 'components/basic/LoadingSpinner';
+import { NormalText } from 'components/basic/Typho';
 
 import { TableHeader } from './Header';
 import { Record } from './Record';
@@ -36,6 +37,17 @@ const PaginatorWrapper = styled.div`
   align-items: center;
   justify-content: flex-end;
 `
+
+const NoRecords = styled(NormalText)`
+  padding: 20px;
+  width: 100%;
+  padding: 0 20px;
+  height: 100%;
+  min-height: 100px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+`;
 
 export default class Table extends React.Component {
   constructor(props) {
@@ -135,7 +147,7 @@ export default class Table extends React.Component {
   };
 
   render() {
-    const { columns, page, pageCount, onPageChange, type, loading } = this.props;
+    const { columns, page, pageCount, onPageChange, type, records, loading, noData } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
       <ContentWrapper>
@@ -150,7 +162,7 @@ export default class Table extends React.Component {
               onSort={this.sort}
               onChangeSize={this.onChangeSize}
             />}
-            {this.renderContent()}
+            {(records && records.length > 0) ? this.renderContent() : <NoRecords>{noData}</NoRecords>}
           </TableWrapper>
         </Wrapper>
         {

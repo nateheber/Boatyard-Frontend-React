@@ -85,7 +85,7 @@ export const Label = styled(NormalText)`
   padding: 10px 0;
 `;
 
-const PageContent = styled(Row)`
+const PageContent = styled.div`
   padding: 30px 25px;
 `;
 
@@ -405,17 +405,22 @@ class UserDetails extends React.Component {
           <React.Fragment>
             <UserDetailsHeader user={currentUser} onDelete={this.showDeleteModal} />
             <PageContent>
-              <Row>
+              <Row style={{ flex: '1 1 auto' }}>
                 <Col sm={12} md={8} lg={8} xl={8} style={{ marginBottom: 15 }}>
-                  {!(loadingOrders && isFirstLoadOrders) && <Table
-                    type="secondary"
-                    columns={columns}
-                    records={orders}
-                    toDetails={this.toDetails}
-                    page={page}
-                    pageCount={pageCount}
-                    onPageChange={this.changePage}
-                  />}
+                  <div style={{ width: '100%', height: '100%', backgroundColor: '#FFF' }}>
+                    {!(loadingOrders && isFirstLoadOrders) && 
+                      <Table
+                        type="secondary"
+                        columns={columns}
+                        records={orders}
+                        toDetails={this.toDetails}
+                        page={page}
+                        pageCount={pageCount}
+                        onPageChange={this.changePage}
+                        noData={'There are no orders.'}
+                      />
+                    }
+                  </div>
                 </Col>
                 <Col sm={12} md={4} lg={4} xl={4}>
                   <SectionGroup>
@@ -427,20 +432,22 @@ class UserDetails extends React.Component {
                   </SectionGroup>
                 </Col>
               </Row>
-              <Row>
+              <Row style={{ flex: '1 1 auto' }}>
                 <Col sm={12} md={8} lg={8} xl={8}>
                   <Row>
-                    {!(loadingCustomers && isFirstLoadCustomers) && <Col sm={12} md={12} lg={6} xl={6} style={{ marginBottom: 15 }}>
+                    <Col sm={12} md={12} lg={6} xl={6} style={{ marginBottom: 15 }}>
                       <Section title={"Customer Accounts"}>
-                        <CustomersSection customers={customers} />
+                      {!(loadingCustomers && isFirstLoadCustomers) && <CustomersSection customers={customers} />}
                       </Section>
-                    </Col>}
-                    {!(loadingPreferredProviders && isFirstLoadPreferredProviders) && <Col sm={12} md={12} lg={6} xl={6}  style={{ marginBottom: 15 }}>
+                    </Col>
+                    <Col sm={12} md={12} lg={6} xl={6}  style={{ marginBottom: 15 }}>
                       <Section title={"Preferred Providers"}>
-                        <PreferredProvidersSection user={currentUser} providers={preferredProviders} onRemove={this.removePreferredProvider} />
+                      {!(loadingPreferredProviders && isFirstLoadPreferredProviders) &&
+                        <PreferredProvidersSection user={currentUser} providers={preferredProviders} onRemove={this.removePreferredProvider}
+                      />}
                       </Section>
                       {!currentUser.isDisabled && <ActionSection>
-                        <Col sm={8} md={8} lg={8}>
+                        <Col style={{ width: 'calc(100% - 100px)'}}>
                           <AsyncSelect
                             ref={this.setProviderSelectRef}
                             isClearable
@@ -457,7 +464,7 @@ class UserDetails extends React.Component {
                         </Col>
                         <HollowButton onClick={this.addPreferredProvider} style={{minWidth: 'inherit'}}>Add</HollowButton>
                       </ActionSection>}
-                    </Col>}
+                    </Col>
                   </Row>
                 </Col>
                 <Col sm={12} md={4} lg={4} xl={4}>
