@@ -15,7 +15,8 @@ const Wrapper = styled.div`
   border-bottom: 1px solid #eaeaea;
   border-right: 1px solid #eaeaea;
   font-family: 'Source Sans Pro', sans-serif;
-  width: calc(${props => props.width} + 1px);
+  // width: calc(${props => props.width} + 1px);
+  width: ${props => props.width};
   cursor: pointer;
   &:before {
     content: "";
@@ -331,7 +332,7 @@ export class Record extends React.PureComponent {
             {hidingCols.map((column, idx) => (
               <Field
                 className={classNames(show ? 'show' : 'hide', type)}
-                style={isEmpty(sizes) ? {} : { width: `${sizes[idx + 1]}px` }}
+                style={isEmpty(sizes) ? {} : { width: `${sizes[idx + 1] - 1}px` }}
                 key={`col_${idx}`}
               >
                 <FieldLabel>{changeCase.upperCaseFirst(column.label)}</FieldLabel>

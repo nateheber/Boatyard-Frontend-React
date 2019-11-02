@@ -1,11 +1,12 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, orderBy } from 'lodash';
+import { get, set, orderBy, isEmpty, isArray } from 'lodash';
 
 import { actionTypes } from '../actions/providers';
 import { actionTypes as authActions } from '../actions/auth';
 import { getAccessRole } from '../selectors/auth';
 import { profileSelector } from '../selectors/profile';
 import { customApiClient, createProviderClient, createPreferredProviderClient } from '../../api';
+import { refactorIncluded } from 'utils/basic';
 
 import { getProviderClient, getCustomApiClient } from './sagaSelectors';
 
@@ -63,6 +64,38 @@ function* getProviders(action) {
   }
 }
 
+const refatcorPreferredProvder = (provider, included) => {
+  const preferredProvider = {
+    ...provider
+  };
+  for(const key in preferredProvider.relationships) {
+    let value = get(preferredProvider, `relationships[${key}].data`);
+    if(value && !isEmpty(value)) {
+      if (isArray(value) && value.length > 0) {
+        set(preferredProvider.relationships, `[${key}]`, value.map(obj => {
+          return get(included, `[${obj.type}][${obj.id}]`);
+        }))
+        for(const subKey in get(preferredProvider, `relationships[${key}][0].relationships`)) {
+          const subValue = get(preferredProvider, `relationships[${key}][0].relationships[${subKey}].data`);
+          if (subValue) {
+            preferredProvider.relationships[subKey] = get(included, `[${subValue.type}][${subValue.id}]`);
+          }
+        }
+      } else {
+        preferredProvider.relationships[key] = get(included, `[${value.type}][${value.id}]`);
+        if (key === 'boat') {
+          const boatLocationInfo = get(preferredProvider.relationships[key], 'relationships.location.data');
+          if (boatLocationInfo) {
+            const locationInfo = get(included, `[${boatLocationInfo.type}][${boatLocationInfo.id}]`);
+            set(preferredProvider.relationships[key], 'relationships.location', { attributes: locationInfo.attributes, address: get(locationInfo, 'relationships.address.data') });
+          }
+        }
+      }
+    }
+  }
+  return preferredProvider;
+}
+
 function* getPreferredProviders(action) {
   const { params, success, error } = action.payload;
   try {
@@ -70,12 +103,11 @@ function* getPreferredProviders(action) {
     const providers = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
-    const refinedProviders = refineProviders(providers);
     const page = get(params, 'page', 1);
     yield put({
       type: actionTypes.GET_PREFERRED_PROVIDERS_SUCCESS,
       payload: {
-        providers: refinedProviders,
+        providers,
         included,
         perPage,
         page,
@@ -83,7 +115,7 @@ function* getPreferredProviders(action) {
       }
     });
     if (success) {
-      yield call(success, refinedProviders, page);
+      yield call(success, providers, page);
     }
   } catch (e) {
     yield put({ type: actionTypes.GET_PREFERRED_PROVIDERS_FAILURE, payload: e });
@@ -199,15 +231,17 @@ function* createProvider(action) {
 function* addPreferredProvider(action) {
   const { data, success, error } = action.payload;
   try {
-    yield call(adminPreferredApiClient.create, data);
+    const result = yield call(adminPreferredApiClient.create, data);
+    const preferredProvider = refatcorPreferredProvder(get(result, 'data', {}), refactorIncluded(get(result, 'included', [])));
     yield put({
-      type: actionTypes.CREATE_PROVIDER_SUCCESS,
+      type: actionTypes.ADD_PREFERRED_PROVIDER_SUCCESS,
+      payload: preferredProvider
     });
     if (success) {
-      yield call(success);
+      yield call(success, preferredProvider);
     }
   } catch (e) {
-    yield put({ type: actionTypes.CREATE_PROVIDER_FAILURE, payload: e });
+    yield put({ type: actionTypes.ADD_PREFERRED_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error, e);
     }
@@ -240,7 +274,7 @@ function* deleteProvider(action) {
   try {
     yield call(adminApiClient.delete, providerId);
     yield put({
-      type: actionTypes.DELETE_PROVIDER_SUCCESS,
+      type: actionTypes.DELETE_PROVIDER_SUCCESS
     });
     if (success) {
       yield call(success);
@@ -258,13 +292,14 @@ function* deletePreferredProvider(action) {
   try {
     yield call(adminPreferredApiClient.delete, providerId);
     yield put({
-      type: actionTypes.DELETE_PROVIDER_SUCCESS,
+      type: actionTypes.DELETE_PREFERRED_PROVIDER_SUCCESS,
+      payload: providerId
     });
     if (success) {
       yield call(success);
     }
   } catch (e) {
-    yield put({ type: actionTypes.DELETE_PROVIDER_FAILURE, payload: e });
+    yield put({ type: actionTypes.DELETE_PREFERRED_PROVIDER_FAILURE, payload: e });
     if (error) {
       yield call(error, e);
     }

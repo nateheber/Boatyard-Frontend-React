@@ -88,7 +88,7 @@ const NormalHeader = styled.div`
 `;
 
 const ColumnHeaderContent = styled.div`
-  min-width: 130px;
+  // min-width: 130px;
 `
 
 const ArrBlue = styled.span`
@@ -167,7 +167,7 @@ export class TableHeader extends React.Component {
                     onSort(col.sort);
                   }
                 }}
-                style={{ width: `${widths[idx]}px` }}
+                style={{ width: `${widths[idx] - 30}px` }}
               >
                 {col.label}
                 {col.sort === sortColumn && type === 'primary' && (
