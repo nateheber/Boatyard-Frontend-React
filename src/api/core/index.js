@@ -106,15 +106,13 @@ export class NormalClient {
 }
 
 export class CRUDClient {
-  apiUrl = '';
   client = undefined;
   query = ''
   constructor(query, authType = 'basic') {
     this.query = query;
-    this.apiUrl = `${query.indexOf('provider') > -1 ? locationApiBaseUrl : apiBaseUrl}/${query}/`;
     this.client = createMainClient(authType);
   }
-  list = (params = null) => {
+  list = (params = null, version='v2') => {
     let paramsString = '';
 
     if (params) {
@@ -135,22 +133,27 @@ export class CRUDClient {
       }
     }
     paramsString = array.join('&');
-    return this.client.get(`${this.apiUrl}?${paramsString}`);
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.get(`${apiUrl}?${paramsString}`);
   };
-  create = data => {
+  create = (data, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
     if (this.query === 'users') {
-      return this.client.post(`${this.apiUrl}registrations/`, data);
+      return this.client.post(`${apiUrl}registrations/`, data);
     }
-    return this.client.post(this.apiUrl, data);
+    return this.client.post(apiUrl, data);
   };
-  read = id => {
-    return this.client.get(`${this.apiUrl}${id}`);
+  read = (id, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.get(`${apiUrl}${id}`);
   };
-  update = (id, data) => {
-    return this.client.patch(`${this.apiUrl}${id}`, data);
+  update = (id, data, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.patch(`${apiUrl}${id}`, data);
   };
-  delete = id => {
-    return this.client.delete(`${this.apiUrl}${id}`);
+  delete = (id, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.delete(`${apiUrl}${id}`);
   };
 }
 

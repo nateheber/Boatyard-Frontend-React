@@ -98,7 +98,7 @@ function* getProviderLocations(action) {
     submissionParams = { ...params };
   }
   try {
-    const result = yield call(apiClient.list, [providerId],submissionParams);
+    const result = yield call(apiClient.list, [providerId], submissionParams);
     const providerLocations = get(result, 'data', []);
     const included = get(result, 'included', []);
     const { perPage, total } = result;
