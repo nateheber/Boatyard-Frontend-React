@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, hasIn, isArray, isEmpty, find } from 'lodash';
+import { get, hasIn, isArray, isEmpty } from 'lodash';
 
 import { actionTypes } from '../actions/providerLocations';
 import { getProviderLocationClient, getProviderLocationServiceClient, getCustomApiClient } from './sagaSelectors';
@@ -68,13 +68,13 @@ const refineProviderLocation = (location, included) => {
 };
 
 const refineProviderLocationServices = (locationServices, included) => {
-  const refactoredIncluded = refactorIncluded(included);
+  // const refactoredIncluded = refactorIncluded(included);
   const refactoredServices = [];
-  const services = get(refactoredIncluded, 'services');
+  // const services = get(refactoredIncluded, 'services');
   for (const index in locationServices) {
     const item = locationServices[index];
-    const service = find(services, s => `${s.id}` === `${get(item, 'attributes.serviceId', '')}`);
-    item.attributes['iconId'] = get(service, 'attributes.iconId');
+    // const service = find(services, s => `${s.id}` === `${get(item, 'attributes.serviceId', '')}`);
+    // item.attributes['iconId'] = get(service, 'attributes.iconId');
     refactoredServices.push(item);
   }
   return refactoredServices;
