@@ -660,109 +660,111 @@ class AppEditor extends React.Component {
 
   handleSaveButtonClick = () => {
     const { banner, selectedLocation, data } = this.state;
-    const originCategries = get(selectedLocation, 'relationships.service_categories', []);
-    const currentCategories = [];
-    const currentCategoryIds = [];
-    const currentServices = [];
-    const currentServiceIds = [];
-    const { items } = data;
-    const categoriesPayload = [];
-    for(const index in items) {
-      const item = items[index];
-      const info = get(item, 'info');
-      info.attributes.manualPosition = parseInt(index) + 1;
-      if (item.type === 'category') {
-        currentCategories.push(info);
-        if(info.hasOwnProperty('id')) {
-          currentCategoryIds.push(get(info, 'id'));
-        }
-        if (item.hasOwnProperty('items')) {
-          const subItems = get(item, 'items');
-          for(const subIdx in subItems) {
-            const subItem = subItems[subIdx];
-            const manualPosition = parseInt(info.attributes.manualPosition) * 100 + parseInt(subIdx) + 1;
-            let subInfo = get(subItem, 'info');
-            subInfo.attributes.emailTemplate = get(subItem, 'template.templateType');
-            subInfo.attributes = setTemplateDataToServiceAttributes(subInfo, get(subItem, 'template'));
-            subInfo.attributes['manualPosition'] = manualPosition;
-            currentServices.push(subInfo);
-            if(subInfo.hasOwnProperty('id')) {
-              currentServiceIds.push(`${get(subInfo, 'id')}`);
+    if (selectedLocation && !isEmpty(selectedLocation)) {
+      const originCategries = get(selectedLocation, 'relationships.service_categories', []);
+      const currentCategories = [];
+      const currentCategoryIds = [];
+      const currentServices = [];
+      const currentServiceIds = [];
+      const { items } = data;
+      const categoriesPayload = [];
+      for(const index in items) {
+        const item = items[index];
+        const info = get(item, 'info');
+        info.attributes.manualPosition = parseInt(index) + 1;
+        if (item.type === 'category') {
+          currentCategories.push(info);
+          if(info.hasOwnProperty('id')) {
+            currentCategoryIds.push(get(info, 'id'));
+          }
+          if (item.hasOwnProperty('items')) {
+            const subItems = get(item, 'items');
+            for(const subIdx in subItems) {
+              const subItem = subItems[subIdx];
+              const manualPosition = parseInt(info.attributes.manualPosition) * 100 + parseInt(subIdx) + 1;
+              let subInfo = get(subItem, 'info');
+              subInfo.attributes.emailTemplate = get(subItem, 'template.templateType');
+              subInfo.attributes = setTemplateDataToServiceAttributes(subInfo, get(subItem, 'template'));
+              subInfo.attributes['manualPosition'] = manualPosition;
+              currentServices.push(subInfo);
+              if(subInfo.hasOwnProperty('id')) {
+                currentServiceIds.push(`${get(subInfo, 'id')}`);
+              }
             }
           }
+        } else {
+          info.attributes.emailTemplate = get(item, 'template.templateType');
+          info.attributes = setTemplateDataToServiceAttributes(info, get(item, 'template'));
+          currentServices.push(info);
+          if(info.hasOwnProperty('id')) {
+            currentServiceIds.push(`${get(info, 'id')}`);
+          }
         }
-      } else {
-        info.attributes.emailTemplate = get(item, 'template.templateType');
-        info.attributes = setTemplateDataToServiceAttributes(info, get(item, 'template'));
-        currentServices.push(info);
-        if(info.hasOwnProperty('id')) {
-          currentServiceIds.push(`${get(info, 'id')}`);
+      }
+      for (const index in currentCategories) {
+        const category = currentCategories[index];
+        const attributes = get(category, 'attributes');
+        const payload = {
+          name: get(attributes, 'name'),
+          subtitle: get(attributes, 'subtitle'),
+          icon_id: get(attributes, 'iconId'),
+          manual_position: get(attributes, 'manualPosition')
+        };
+        if (category.hasOwnProperty('id')) {
+          payload['id'] = category.id;
+        }
+        categoriesPayload.push(payload);
+      }
+  
+      for(const index in originCategries) {
+        const id = get(originCategries[index], 'id');
+        if (currentCategoryIds.indexOf(id) === -1) {
+          categoriesPayload.push({
+            id,
+            '_destroy': true
+          });
         }
       }
-    }
-    for (const index in currentCategories) {
-      const category = currentCategories[index];
-      const attributes = get(category, 'attributes');
-      const payload = {
-        name: get(attributes, 'name'),
-        subtitle: get(attributes, 'subtitle'),
-        icon_id: get(attributes, 'iconId'),
-        manual_position: get(attributes, 'manualPosition')
-      };
-      if (category.hasOwnProperty('id')) {
-        payload['id'] = category.id;
+  
+      const { UpdateProviderLocation } = this.props;
+      let params = {};
+      if (banner && banner.hasOwnProperty('id')) {
+        if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
+          params = {
+            site_banner_id: banner.id
+          };
+        }
       }
-      categoriesPayload.push(payload);
-    }
-
-    for(const index in originCategries) {
-      const id = get(originCategries[index], 'id');
-      if (currentCategoryIds.indexOf(id) === -1) {
-        categoriesPayload.push({
-          id,
-          '_destroy': true
-        });
-      }
-    }
-
-    const { UpdateProviderLocation } = this.props;
-    let params = {};
-    if (banner && banner.hasOwnProperty('id')) {
-      if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
+      if (categoriesPayload.length > 0) {
         params = {
-          site_banner_id: banner.id
+          ...params,
+          service_categories_attributes: categoriesPayload
         };
       }
-    }
-    if (categoriesPayload.length > 0) {
-      params = {
-        ...params,
-        service_categories_attributes: categoriesPayload
-      };
-    }
-    this.setState({ isSaved: false });
-    if (!isEmpty(params)) {
-      this.setState({ saving: true });
-      UpdateProviderLocation({
-        providerId: selectedLocation.providerId,
-        providerLocationId: selectedLocation.id,
-        data: {
-          provider_location: { ...params }
-        },
-        success: (location) => {
-          const categories = get(location, 'relationships.service_categories', []);
-          this.setState({ isSaved: true }, () => {
-            this.updateLocationServices(categories, currentServiceIds, currentServices);
-          });
-        },
-        error: (e) => {
-          this.setState({ saving: false });
-          toastr.error('Error', e.message);
+      this.setState({ isSaved: false });
+      if (!isEmpty(params)) {
+        this.setState({ saving: true });
+        UpdateProviderLocation({
+          providerId: selectedLocation.providerId,
+          providerLocationId: selectedLocation.id,
+          data: {
+            provider_location: { ...params }
+          },
+          success: (location) => {
+            const categories = get(location, 'relationships.service_categories', []);
+            this.setState({ isSaved: true }, () => {
+              this.updateLocationServices(categories, currentServiceIds, currentServices);
+            });
+          },
+          error: (e) => {
+            this.setState({ saving: false });
+            toastr.error('Error', e.message);
+          }
+        });
+      } else {
+        if (currentServices.length > 0) {
+          this.updateLocationServices([], currentServiceIds, currentServices);
         }
-      });
-    } else {
-      if (currentServices.length > 0) {
-        this.updateLocationServices([], currentServiceIds, currentServices);
       }
     }
   };
@@ -876,7 +878,10 @@ class AppEditor extends React.Component {
   };
 
   handlePublishStatus = (published) => {
-    this.updateLocation({ provider_location: { published } });
+    const { selectedLocation } = this.state;
+    if (selectedLocation && !isEmpty(selectedLocation)) {
+      this.updateLocation({ provider_location: { published } });
+    }
   }
 
   render() {
