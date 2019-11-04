@@ -727,7 +727,7 @@ class AppEditor extends React.Component {
 
     const { UpdateProviderLocation } = this.props;
     let params = {};
-    if (banner.hasOwnProperty('id')) {
+    if (banner && banner.hasOwnProperty('id')) {
       if (banner.id !== get(selectedLocation, 'relationships.site_banners.id')) {
         params = {
           site_banner_id: banner.id
