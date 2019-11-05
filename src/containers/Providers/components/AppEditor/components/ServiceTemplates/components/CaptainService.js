@@ -44,7 +44,9 @@ export default class CaptainService extends React.Component {
   onChangePrice = (field, value) => {
     const updateObject = {};
     set(updateObject, field, value);
-    this.setState(updateObject);
+    this.setState(updateObject, () => {
+      this.props.onChange(this.state)
+    });
   }
 
   onChange = field => (e) => {
@@ -80,7 +82,7 @@ export default class CaptainService extends React.Component {
         <DescriptionInput
           disabled={disabled}
           value={description}
-          style={{ marginBottom: '20px' }}
+          style={{ marginBottom: '5px' }}
           onChange={this.onChange('description')}
         />
         <DescriptionInput
