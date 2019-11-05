@@ -168,7 +168,7 @@ class SendApp extends React.PureComponent {
                   <SectionContainer>
                     <Row>
                       <Col xs={12}>
-                        <TitleLabel>{'Welcome To MarineMax'}</TitleLabel>
+                        <TitleLabel>{'Welcome To MarineMax!'}</TitleLabel>
                         <DescLabel>{'Enter your phone number below, and we’ll text you a link to download our app.'}</DescLabel>
                       </Col>
                     </Row>
@@ -194,7 +194,7 @@ class SendApp extends React.PureComponent {
                         <ActionButton
                           type="submit"
                           disabled={submitting}
-                        >{'Send Me the app'}</ActionButton>
+                        >{'Text Me the app'}</ActionButton>
                       </Col>
                     </Row>
                   </SectionContainer>
