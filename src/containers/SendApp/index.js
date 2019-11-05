@@ -112,7 +112,7 @@ const MaskInput = styled(InputMask)`
 `;
 
 const ErrorMessage = styled.div`
-  color: #f7941e;
+  color: red;
   height: 15px;
   margin-bottom: 20px;
   font-size: 12px;
