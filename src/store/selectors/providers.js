@@ -9,8 +9,8 @@ export const getCurrentProviderSelector = state => state.provider.currentProvide
 export const refinedPreferredProvidersSelector = createSelector(
   getPreferredProvidersSelector,
   includedSelector,
-  (allOrders, included) => {
-    return allOrders.map(preferredProvider => {
+  (allProviders, included) => {
+    return allProviders.map(preferredProvider => {
       for(const key in preferredProvider.relationships) {
         let value = get(preferredProvider, `relationships[${key}].data`);
         if(value) {

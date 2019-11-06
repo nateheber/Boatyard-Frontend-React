@@ -5,21 +5,23 @@ import queryString from 'query-string';
 import { Row, Col } from 'react-flexbox-grid';
 import { get, isEmpty } from 'lodash';
 import styled from 'styled-components';
+import { toastr } from 'react-redux-toastr';
 
 import { actionTypes as userActions, GetUser, UpdateUser } from 'store/actions/users';
 import { actionTypes as customerActions, GetChildAccounts } from 'store/actions/child-accounts';
 import { actionTypes as orderActions, GetOrders } from 'store/actions/orders';
 import {
   actionTypes as providerActions,
-  GetProviders,
   GetPreferredProviders,
   AddPreferredProvider,
   DeletePreferredProvider
 } from 'store/actions/providers';
 import { actionTypes as boatActions, GetBoats, CreateBoat } from 'store/actions/boats';
 import { actionTypes as paymentActions, GetCreditCards } from 'store/actions/credit-cards';
+import { SearchProviderLocations } from 'store/actions/providerLocations';
 import { refinedOrdersSelector } from 'store/selectors/orders';
 import { refinedPreferredProvidersSelector } from 'store/selectors/providers';
+import { simpleProviderLocationSelector } from 'store/selectors/providerLocation';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import { Section, SectionGroup } from 'components/basic/InfoSection';
@@ -85,7 +87,7 @@ export const Label = styled(NormalText)`
   padding: 10px 0;
 `;
 
-const PageContent = styled(Row)`
+const PageContent = styled.div`
   padding: 30px 25px;
 `;
 
@@ -114,8 +116,9 @@ class UserDetails extends React.Component {
       visibleOfBoatModal: false,
       visibleofDeleteModal: false,
       selectedProvider: {},
+      keyword: ''
     };
-    const { GetUser, GetChildAccounts, GetOrders, GetBoats, GetCreditCards, GetPreferredProviders } = this.props;
+    const { GetUser, GetOrders, GetBoats, GetCreditCards, GetPreferredProviders } = this.props;
     GetUser({
       userId: userId,
       success: (currentUser) => {
@@ -128,14 +131,14 @@ class UserDetails extends React.Component {
         this.setState({ isFirstLoadOrders: false });
       }
     });
-    GetChildAccounts({
-      params: { 'child_account[user_id]': userId, per_page: 1000 },
-      success: () => {
-        this.setState({ isFirstLoadCustomers: false });
-      }
-    });
+    // GetChildAccounts({
+    //   params: { 'child_account[user_id]': userId, per_page: 1000 },
+    //   success: () => {
+    //     this.setState({ isFirstLoadCustomers: false });
+    //   }
+    // });
     GetPreferredProviders({
-      params: { 'preferred_provider[user_id]': userId, per_page: 1000 },
+      params: { 'preferred_provider[user_id]': userId, per_page: 1000, provider_location: true, 'preferred_provider[order]': 'id', 'order[sort]': 'asc' },
       success: () => {
         this.setState({ isFirstLoadPreferredProviders: false });
       }
@@ -150,6 +153,13 @@ class UserDetails extends React.Component {
       params: { 'credit_card[user_id]': userId },
       success: () => {
         this.setState({ isFirstLoadPayments: false });
+      }
+    });
+    SearchProviderLocations({
+      params: {
+        search: '',
+        page: 1,
+        per_page: 1000
       }
     });
   };
@@ -245,50 +255,36 @@ class UserDetails extends React.Component {
 
   addPreferredProvider = () => {
     const { userId, selectedProvider } = this.state;
-    const { AddPreferredProvider, GetPreferredProviders } = this.props;
+    const { AddPreferredProvider } = this.props;
     if (!isEmpty(selectedProvider)) {
       AddPreferredProvider({
         data: {
           preferred_provider: {
             user_id: userId,
-            provider_id: selectedProvider.id
+            provider_id: selectedProvider.providerId,
+            provider_location_id: selectedProvider.id
           }
         },
         success: () => {
-          this.setState({
-            selectedProvider: {}
-          });
-          GetPreferredProviders({
-            params: { 'preferred_provider[user_id]': userId, per_page: 1000 },
-            success: () => {
-              const { providers, preferredProviders } = this.props;
-              const options = providers.filter(o1 => preferredProviders.filter(o2 => o2.providerId.toString() === o1.id.toString()).length === 0);
-              this.providerSelect.setState({
-                defaultOptions: options
-              });      
-            }
-          });      
+          toastr.success('Success', 'Added successfully!');
+          this.setState({ selectedProvider: {} });
+        },
+        error: (e) => {
+          toastr.error('Error', e.message);
         }
       });
     }
   };
 
   removePreferredProvider = (provider) => {
-    const { userId } = this.state;
-    const { DeletePreferredProvider, GetPreferredProviders } = this.props;
+    const { DeletePreferredProvider } = this.props;
     DeletePreferredProvider({
       providerId: provider.id,
       success: () => {
-        GetPreferredProviders({
-          params: { 'preferred_provider[user_id]': userId, per_page: 1000 },
-          success: () => {
-            const { providers, preferredProviders } = this.props;
-            const options = providers.filter(o1 => preferredProviders.filter(o2 => o2.providerId.toString() === o1.id.toString()).length === 0);
-            this.providerSelect.setState({
-              defaultOptions: options
-            });      
-          }
-        });      
+        toastr.success('Success', 'Deleted successfully!');
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -310,40 +306,27 @@ class UserDetails extends React.Component {
     });
   };
 
-  loadOptions = val => {
-    return this.onChangeUserFilter(val)
-      .then((filtered) => {
-        const { isFirstLoadPreferredProviders } = this.state;
-        if (isFirstLoadPreferredProviders) {
-          return filtered;
-        } else {
-          const { preferredProviders } = this.props;
-          return filtered.filter(o1 => preferredProviders.filter(o2 => o2.providerId.toString() === o1.id.toString()).length === 0);  
-        }
-      }, () => {
-        return [];
-      });
+  loadOptions = val =>
+  new Promise(resolve => {
+    setTimeout(() => {
+      resolve(this.filterProviderLocation(val));
+    }, 10);
+  });
+
+  filterProviderLocation = val => {
+    const { providerLocations, preferredProviders } = this.props;
+    const filtered = providerLocations.filter(location => preferredProviders.filter(preferred => `${preferred.relationships.providerLocation.id}` === `${location.id}`).length === 0);
+    if (val && val.length > 0) {
+      return filtered.filter(location => location.name.toLowerCase().includes(val.toLowerCase()));
+    } else {
+      return filtered;
+    }
   };
 
-  onChangeUserFilter = val => {
-    const { GetProviders } = this.props;
-    return new Promise((resolve, reject) => {
-      const params = isEmpty(val) ? {
-        'user[sort]': 'asc',
-        'user[order]': 'last_name'
-      } : {
-        'search_by_full_name': val,
-        'user[sort]': 'asc',
-        'user[order]': 'last_name'
-      };
-      GetProviders({
-        params,
-        success: resolve,
-        error: reject
-      });
-    });
+  defaultOptions = () => {
+    const { providerLocations, preferredProviders } = this.props;
+    return providerLocations.filter(location => preferredProviders.filter(preferred => `${preferred.relationships.providerLocation.id}` === `${location.id}`).length === 0);
   };
-
 
   onChangeProvider = user => {
     this.setState({
@@ -353,7 +336,7 @@ class UserDetails extends React.Component {
 
   render() {
     const {
-      customers,
+      // customers,
       page,
       orders,
       preferredProviders,
@@ -379,7 +362,7 @@ class UserDetails extends React.Component {
     const userName = `${get(currentUser, 'firstName')} ${get(currentUser, 'lastName')}`;
     const columns = [
       { label: 'orders', value: 'id', width: 1 },
-      { label: 'order placed', value: 'createdAt', isDate: true, width: 2 },
+      { label: 'order placed', value: 'createdAt', isDate: true, width: 1 },
       { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
       { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1 },
       { label: 'boat make', value: 'relationships.boat.attributes.make', width: 1 },
@@ -396,7 +379,6 @@ class UserDetails extends React.Component {
     const loadingPreferredProviders = providerStatus === providerActions.GET_PREFERRED_PROVIDERS;
     const loadingBoats = boatStatus === boatActions.GET_BOATS;
     const loadingPayments = paymentStatus === paymentActions.GET_PAYMENTS;
-
     return (
       <React.Fragment>
         {((loadingUser && isFirstLoadUser) || isEmpty(currentUser)) ? (
@@ -405,61 +387,78 @@ class UserDetails extends React.Component {
           <React.Fragment>
             <UserDetailsHeader user={currentUser} onDelete={this.showDeleteModal} />
             <PageContent>
-              <Col sm={12} md={8} lg={8} xl={8} >
-                {!(loadingOrders && isFirstLoadOrders) && <Table
-                  type="secondary"
-                  columns={columns}
-                  records={orders}
-                  toDetails={this.toDetails}
-                  page={page}
-                  pageCount={pageCount}
-                  onPageChange={this.changePage}
-                />}
-                <Row>
-                  {!(loadingCustomers && isFirstLoadCustomers) && <Col sm={12} md={12} lg={6} xl={6} style={{ marginTop: 15, marginBottom: 15 }}>
-                    <Section title={"Customer Accounts"}>
-                      <CustomersSection customers={customers} />
-                    </Section>
-                  </Col>}
-                  {!(loadingPreferredProviders && isFirstLoadPreferredProviders) && <Col sm={12} md={12} lg={6} xl={6}  style={{ marginTop: 15, marginBottom: 15 }}>
-                    <Section title={"Preferred Providers"}>
-                      <PreferredProvidersSection user={currentUser} providers={preferredProviders} onRemove={this.removePreferredProvider} />
-                    </Section>
-                    {!currentUser.isDisabled && <ActionSection>
-                      <Col sm={8} md={8} lg={8}>
-                        <AsyncSelect
-                          ref={this.setProviderSelectRef}
-                          isClearable
-                          components={{
-                            Option: ProviderOption,
-                            SingleValue: ProviderOptionValue
-                          }}
-                          defaultOptions
-                          loadOptions={this.loadOptions}
-                          onChange={this.onChangeProvider}
-                          value={selectedProvider}
-                          styles={colourStyles}
-                        />
-                      </Col>
-                      <HollowButton onClick={this.addPreferredProvider} style={{minWidth: 'inherit'}}>Add</HollowButton>
-                    </ActionSection>}
-                  </Col>}
-                </Row>
-              </Col>
-              <Col sm={12} md={4} lg={4} xl={4}>
-                <SectionGroup>
-                  <Section title={"User & Boat Info"}>
-                    <CustomerInfoSection type="user" customerInfo={currentUser} refreshInfo={this.refreshInfo} />
-                    {!(loadingBoats && isFirstLoadBoats) && <BoatInfoSection user={currentUser} />}
-                    {!currentUser.isDisabled && <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>}
-                  </Section>
-                </SectionGroup>
-                <SectionGroup>
-                {!(loadingPayments && isFirstLoadPayments) && <CreditCardSection
-                  user={currentUser} onRefresh={this.refreshCards} 
-                />}
-                </SectionGroup>
-              </Col>
+              <Row>
+                <Col sm={12} md={8} lg={8} xl={8}>
+                  <Row>
+                    <Col sm={12} style={{ marginBottom: 16 }}>
+                      {!(loadingOrders && isFirstLoadOrders) && <Table
+                        type="secondary"
+                        columns={columns}
+                        records={orders}
+                        toDetails={this.toDetails}
+                        page={page}
+                        pageCount={pageCount}
+                        onPageChange={this.changePage}
+                        noData={'There are no orders.'}
+                      />}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col sm={12} md={12} lg={6} xl={6} style={{ marginBottom: 16 }}>
+                      <Section title={"Customer Accounts"}>
+                      {!(loadingCustomers && isFirstLoadCustomers) && <CustomersSection customers={[]} />}
+                      </Section>
+                    </Col>
+                    <Col sm={12} md={12} lg={6} xl={6}  style={{ marginBottom: 16 }}>
+                      <Section title={"Preferred Providers"}>
+                      {!(loadingPreferredProviders && isFirstLoadPreferredProviders) &&
+                        <PreferredProvidersSection user={currentUser} providers={preferredProviders} onRemove={this.removePreferredProvider}
+                      />}
+                      </Section>
+                      {!currentUser.isDisabled && <ActionSection>
+                        <Col style={{ width: 'calc(100% - 100px)'}}>
+                          <AsyncSelect
+                            ref={this.setProviderSelectRef}
+                            isClearable
+                            components={{
+                              Option: ProviderOption,
+                              SingleValue: ProviderOptionValue
+                            }}
+                            defaultOptions={this.defaultOptions()}
+                            loadOptions={this.loadOptions}
+                            onChange={this.onChangeProvider}
+                            value={selectedProvider}
+                            styles={colourStyles}
+                          />
+                        </Col>
+                        <HollowButton onClick={this.addPreferredProvider} style={{minWidth: 'inherit'}}>Add</HollowButton>
+                      </ActionSection>}
+                    </Col>
+                  </Row>
+                </Col>
+                <Col sm={12} md={4} lg={4} xl={4}>
+                  <Row>
+                    <Col sm={12}>
+                      <SectionGroup>
+                        <Section title={"User & Boat Info"}>
+                          <CustomerInfoSection type="user" customerInfo={currentUser} refreshInfo={this.refreshInfo} />
+                          {!(loadingBoats && isFirstLoadBoats) && <BoatInfoSection user={currentUser} />}
+                          {!currentUser.isDisabled && <OrangeButton className="secondary" onClick={this.showBoatModal}>ADD BOAT</OrangeButton>}
+                        </Section>
+                      </SectionGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col sm={12}>
+                      <SectionGroup>
+                      {!(loadingPayments && isFirstLoadPayments) && <CreditCardSection
+                        user={currentUser} onRefresh={this.refreshCards}
+                      />}
+                      </SectionGroup>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
             </PageContent>
             <BoatModal
               open={visibleOfBoatModal}
@@ -500,7 +499,7 @@ const mapStateToProps = state => ({
   customerStatus: state.childAccount.currentStatus,
   customers: state.childAccount.childAccounts,
   preferredProviders: refinedPreferredProvidersSelector(state),
-  providers: state.provider.providers
+  providerLocations: simpleProviderLocationSelector(state)
 });
 
 const mapDispatchToProps = {
@@ -514,7 +513,7 @@ const mapDispatchToProps = {
   GetPreferredProviders,
   AddPreferredProvider,
   DeletePreferredProvider,
-  GetProviders
+  SearchProviderLocations
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserDetails));

@@ -39,6 +39,7 @@ import { intercomAppId, mmIntercomAppId } from '../api/config';
 import MainPageTemplate from 'components/template/MainPageTemplate';
 import BackgroundImage from '../resources/auth/login-bg.png';
 import IntercomProvider from './IntercomProvider';
+import SendApp from 'containers/SendApp';
 const Wrapper = styled.div`
   background-image: url(${BackgroundImage});
   background-repeat: no-repeat;
@@ -72,12 +73,12 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
     window.location.href.indexOf('create-password') > -1 ||
     window.location.href.indexOf('confirm-account') > -1) {
       WrapperComp = Wrapper;
-    } else if (window.location.href.indexOf('onlineboat') > -1) {
+    } else if (window.location.href.indexOf('onlineboat') > -1 || window.location.href.indexOf('textmetheapp') > -1) {
       WrapperComp = BoatShowWrapper;
       isBoatShow = true;
     }
   } else {
-    if (window.location.href.indexOf('onlineboat') > -1) {
+    if (window.location.href.indexOf('onlineboat') > -1 || window.location.href.indexOf('textmetheapp') > -1) {
       WrapperComp = BoatShowWrapper;
       isBoatShow = true;
     } else {
@@ -117,6 +118,7 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <Route path="/confirm-account/" component={ConfirmAccount} />
         <Route path="/onlineboatshow" component={BoatShow} />
         <Route path="/onlineboat/done" component={BoatReservationDone} />
+        <Route path="/textmetheapp" component={SendApp} />
 
         <PrivateRoute exact path="/update-profile" component={UpdateProfile} isAuthenticated={isAuthenticated} />
         <PrivateRoute exact path="/dashboard/" component={Dashboard} isAuthenticated={isAuthenticated} />

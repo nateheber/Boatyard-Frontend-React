@@ -84,7 +84,7 @@ class MessageBar extends React.Component {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
       let flag = false;
       let elem = event.target;
-      while(!flag && elem && elem.tagName.toLowerCase() !== 'body') {
+      while(!flag && elem && elem.tagName && elem.tagName.toLowerCase() !== 'body') {
         if (elem.getAttribute('id') === 'msgIcon') {
           flag = true;
         }
