@@ -152,7 +152,17 @@ const required = value => (value ? undefined : 'Phone number cannot be blank.');
 
 class SendApp extends React.PureComponent {
   handleSubmit = (values) => {
-    document.location.href='http://marinemax.com/flibs';
+    window.branch.init('key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
+
+    let phone = values.phone;
+    var callback = function(err, result) {
+                    if (err) {
+                      alert("Sorry, something went wrong.");
+                    } else {
+                      alert("SMS sent!");
+                    }
+                  };
+    window.branch.sendSMS(phone, {}, {}, callback);
   };
 
   render() {
