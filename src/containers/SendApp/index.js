@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'react-flexbox-grid';
 import { Form, Field } from 'react-final-form';
 import InputMask from 'react-input-mask';
+import { toastr } from 'react-redux-toastr';
 
 import BackgroundImage from '../../resources/sendapp/app_bg.png';
 import MMLogo from '../../resources/sendapp/mm_logo_white.png';
@@ -157,9 +158,9 @@ class SendApp extends React.PureComponent {
     let phone = values.phone;
     var callback = function(err, result) {
                     if (err) {
-                      alert("Sorry, something went wrong.");
+                      toastr.error('Something went wrong. Validate phone number.');
                     } else {
-                      alert("SMS sent!");
+                      toastr.success('Success', 'SMS Sent Successfully!');
                     }
                   };
     window.branch.sendSMS(phone, {}, {}, callback);
