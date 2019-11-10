@@ -35,7 +35,7 @@ class TeamList extends React.Component {
 
   render() {
     const { managements, page } = this.props;
-    const sortedManagements = sortBy(managements, 'relationships.user.attributes.firstName', 'relationships.user.attributes.lastName');
+    const sortedManagements = sortBy(managements, 'relationships.user.attributes.lastName', 'relationships.user.attributes.firstName');
     const pageCount = this.getPageCount();
     const columns = [
       { label: 'name', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName', },
