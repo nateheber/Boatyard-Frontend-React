@@ -118,7 +118,7 @@ class OrderAssignment extends React.Component {
   render() {
     const { dispatchIds } = this.state;
     const { teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}}, privilege } = this.props;
-    const providerLocationInfo = find(providerLocations, {id: `${providerLocationId}`});
+    const providerLocationInfo = find(providerLocations, {id: `${providerLocationId}`}) || providerLocations[0];
     const teamMemberInfo = find(teamMemberData, {id: `${assignedTeamMemberId}`});
     const isLocationSelected = !!this.props.providerLocationId;
     return (
