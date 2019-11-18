@@ -96,7 +96,7 @@ class OrderDetailHeader extends React.Component {
         }
       },
       success: () => {
-        toastr.success('Success', 'Declined successfully!');
+        toastr.success('Success', 'Order Declined successfully!');
         this.props.history.push('/orders/');
       },
       error: (e) => {
@@ -240,7 +240,7 @@ class OrderDetailHeader extends React.Component {
           </LeftPart>
           {canAcceptOrder && <RightPart>
             <OrangeButton onClick={this.acceptOrder}>Accept Order</OrangeButton>
-            <HollowButton onClick={this.declineOrder}>Decline</HollowButton>
+            <HollowButton onClick={this.declineOrder}>Decline Order</HollowButton>
           </RightPart>}
         </Row>
         {
