@@ -87,6 +87,7 @@ function* getProviderLocations(action) {
   let { providerId, params, success, error } = action.payload;
   params = params || {};
   params.per_page = 1000;
+  params.all = true;
   let submissionParams = {};
   if (!hasIn(params, 'provider_locations[order]')) {
     submissionParams = {
