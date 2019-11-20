@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, hasIn } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/managements';
@@ -19,10 +19,23 @@ const refineManagement = (management, included) => {
 function* getManagements(action) {
   const managementClient = yield select(getManagementClient);
   const { params, success, error } = action.payload;
+  let submissionParams = {};
+  console.log(params);
+  // if (!hasIn(params, 'management[order]')) {
+  //   submissionParams = {
+  //     ...params,
+  //     'management[order]': 'name',
+  //     'management[sort]': 'asc',
+  //   };
+  // } else {
+  //   submissionParams = { ...params };
+  // }
+  //console.log(submissionParams);
   try {
     const result = yield call(managementClient.list, params);
     const managements = get(result, 'data', []);
     const included = get(result, 'included', []);
+    console.log(managements);
     const { perPage, total } = result;
     const refactored = managements.map(management => ({
       id: management.id,
