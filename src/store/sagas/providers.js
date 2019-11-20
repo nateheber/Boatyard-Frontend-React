@@ -1,5 +1,5 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, set, orderBy, isEmpty, isArray } from 'lodash';
+import { get, set, orderBy, isEmpty, isArray, hasIn } from 'lodash';
 
 import { actionTypes } from '../actions/providers';
 import { actionTypes as authActions } from '../actions/auth';
@@ -30,9 +30,22 @@ function* getProviders(action) {
   let successType = actionTypes.GET_PROVIDERS_SUCCESS;
   let failureType = actionTypes.GET_PROVIDERS_FAILURE;
   const { params, success, error } = action.payload;
+  let submissionParams = {};
+  if (!hasIn(params, 'provider[order]')) {
+    submissionParams = {
+      ...params,
+      'provider[order]': 'name',
+      'provider[sort]': 'asc',
+    };
+  } else {
+    submissionParams = { ...params };
+  }
   try {
-    const result = yield call(adminApiClient.list, params);
+    const result = yield call(adminApiClient.list, submissionParams);
     const providers = get(result, 'data', []);
+    const included = get(result, 'included', []);
+    // console.log(providers);
+    // console.log(included);
     const { perPage, total } = result;
     switch (action.type) {
       case actionTypes.FILTER_PROVIDERS: {

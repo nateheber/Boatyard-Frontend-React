@@ -57,6 +57,7 @@ class Providers extends React.Component {
   }
 
   loadPage = (page) => {
+    console.log('fetching providers');
     const { GetProviders } = this.props;
     const { sort, keyword } = this.state;
     const params = {
