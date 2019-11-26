@@ -72,7 +72,8 @@ class TeamList extends React.Component {
 
   render() {
     const { members } = this.state;
-    const { managements, page } = this.props;
+    const { page } = this.props;
+    // const { managements, page } = this.props;
     // const sortedManagements = sortBy(managements, 'relationships.user.attributes.lastName', 'relationships.user.attributes.firstName');
     const sortedManagements = sortBy(members, 'relationships.user.attributes.lastName', 'relationships.user.attributes.firstName');
     const pageCount = this.getPageCount();

@@ -23,13 +23,10 @@ const formatCard = (name) => {
   {
     case 'Visa':
       return 'Visa';
-      break;
     case 'Mastercard':
       return 'MasterCard';
-      break;
     case 'Amex':
       return 'AmEx';
-      break;
     default:
       return '';
   }
