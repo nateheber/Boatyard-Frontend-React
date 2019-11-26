@@ -30,8 +30,10 @@ const formatCard = (name) => {
     case 'Amex':
       return 'AmEx';
       break;
+    default:
+      return '';
   }
-}
+};
 
 export default ({ creditCard: { name, last4, isDefault } }) => (
   <Row style={{ marginBottom: 10 }}>
