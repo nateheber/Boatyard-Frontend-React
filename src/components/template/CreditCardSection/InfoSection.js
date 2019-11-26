@@ -18,9 +18,24 @@ const MarkerImg = styled.img`
   height: 20px;
 `;
 
+const formatCard = (name) => {
+  switch(name)
+  {
+    case 'Visa':
+      return 'Visa';
+      break;
+    case 'Mastercard':
+      return 'MasterCard';
+      break;
+    case 'Amex':
+      return 'AmEx';
+      break;
+  }
+}
+
 export default ({ creditCard: { name, last4, isDefault } }) => (
   <Row style={{ marginBottom: 10 }}>
-    <Col sm={7}><CardInfo>{capitalize(name)} xxxxxx{last4}</CardInfo></Col>
+    <Col sm={7}><CardInfo>{formatCard(capitalize(name))} xxxx{last4}</CardInfo></Col>
     {isDefault && <Col sm={2}><MarkerImg src={CheckedMarker}/></Col>}
   </Row>
 )
