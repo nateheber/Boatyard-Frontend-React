@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { isEmpty, capitalize } from 'lodash';
 
 import Table from 'components/basic/Table';
 import { ProviderHeader } from 'components/compound/SectionHeader';
@@ -33,7 +34,8 @@ class Providers extends React.Component {
   }
 
   componentDidMount() {
-    this.props.GetProviders({ params: {} });
+    this.loadPage(1);
+    // this.props.GetProviders({ params: {} });
   }
 
   onChangeColumns = (columns) => {
@@ -43,6 +45,7 @@ class Providers extends React.Component {
   }
 
   onSortChange = (sort) => {
+    console.log('sorting');
     this.setState({ sort: sort }, () => {
       this.loadPage(1);
     });
@@ -59,9 +62,11 @@ class Providers extends React.Component {
   loadPage = (page) => {
     const { GetProviders } = this.props;
     const { sort, keyword } = this.state;
-    const params = {
+    const params = isEmpty(keyword) ? 
+    {} : 
+    {
       page: page,
-      'provider[name]': keyword,
+      'provider[name]': capitalize(keyword),
       'provider[sort]': sort.direction,
       'provider[order]': sort.col
     };

@@ -6,6 +6,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  min-height: 90px;
   max-height: 250px;
   overflow: auto;
 `;

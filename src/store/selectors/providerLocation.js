@@ -71,7 +71,7 @@ export const refinedProviderLocationSelector = createSelector(
       }
       return { ...location, relationships: relations };
     });
-    return {providerLocations: sortBy(parsedData, p => get(p, 'relationships.locations.attributes.name').toUpperCase())};
+    return {providerLocations: sortBy(parsedData, p => get(p, 'relationships.locations.attributes.name') || ''.toUpperCase())};
   }
 );
 

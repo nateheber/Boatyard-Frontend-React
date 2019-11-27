@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'react-flexbox-grid';
 import { Form, Field } from 'react-final-form';
 import InputMask from 'react-input-mask';
+import { toastr } from 'react-redux-toastr';
 
 import BackgroundImage from '../../resources/sendapp/app_bg.png';
 import MMLogo from '../../resources/sendapp/mm_logo_white.png';
@@ -152,7 +153,17 @@ const required = value => (value ? undefined : 'Phone number cannot be blank.');
 
 class SendApp extends React.PureComponent {
   handleSubmit = (values) => {
-    document.location.href='http://marinemax.com/flibs';
+    window.branch.init('key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
+
+    let phone = values.phone;
+    var callback = function(err, result) {
+                    if (err) {
+                      toastr.error('Something went wrong. Validate phone number.');
+                    } else {
+                      toastr.success('Success', 'SMS Sent Successfully!');
+                    }
+                  };
+    window.branch.sendSMS(phone, {}, {}, callback);
   };
 
   render() {
