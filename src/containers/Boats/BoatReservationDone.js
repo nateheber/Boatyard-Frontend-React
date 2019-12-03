@@ -86,7 +86,7 @@ const ActionButton = styled.button`
 
 class BoatReservationDone extends React.PureComponent {
   handleSubmit = () => {
-    document.location.href='http://marinemax.com/flibs';
+    document.location.href='https://www.marinemax.com/yachts/yacht-events/online-yacht-expo';
   };
 
   render() {
