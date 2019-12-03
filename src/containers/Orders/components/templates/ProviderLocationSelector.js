@@ -130,12 +130,14 @@ class ProviderLocationSelector extends React.Component {
       showMenu: false,
       showModal: false,
       locations: props.providerLocations,
-      dispatchedLocations: this.getDispatchedLocations()
+      // dispatchedLocations: this.getDispatchedLocations()
+      dispatchedLocations: []
     }
   }
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
+    this.setState({dispatchedLocations: this.getDispatchedLocations()});
   }
 
   componentDidUpdate(prevProps) {
@@ -258,6 +260,7 @@ class ProviderLocationSelector extends React.Component {
 
   getDispatchedLocations = () => {
     const { dispatchIds, providerLocations } = this.props;
+    console.log(providerLocations);
     return dispatchIds.map(id => {
       return providerLocations.find(item => `${item.id}` === `${id}`);
     });
@@ -265,6 +268,7 @@ class ProviderLocationSelector extends React.Component {
 
   render() {
     const { showMenu, showModal, keyword, dispatchedLocations } = this.state;
+    console.log(dispatchedLocations);
     const locations = this.filterShowingProviders();
     return (
       <Wrapper ref={this.setWrapperRef}>
