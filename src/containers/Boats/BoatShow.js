@@ -12,7 +12,7 @@ import InputMask from 'react-input-mask';
 import { apiBaseUrl } from 'api/config';
 import { validateEmail } from 'utils/basic';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
-import BackgroundImage from '../../resources/boatshow/boat_show_bg.jpg';
+import BackgroundImage from '../../resources/boatshow/boat_show_new_bg.png';
 import MMLogo from '../../resources/boatshow/mm_color_logo.png';
 
 const Wrapper = styled.div`
@@ -264,7 +264,7 @@ class BoatShow extends React.PureComponent {
               <FormContainer onSubmit={handleSubmit}>
                 <Img src={MMLogo} />
                 <TitleLabel>{'Almost There!'}</TitleLabel>
-                <DescLabel>{'Enter your information below to reserve years of memorable experiences on the water with a $1,000 deposit. A MarineMax sales professional will assist you, and you’ll have five days to complete your purchase of your new boat.'}</DescLabel>
+                <DescLabel>{'Enter your information below to reserve years of memorable experiences on the water with a $5,000 deposit. A MarineMax sales professional will assist you, and you’ll have five days to complete your purchase of your new boat.'}</DescLabel>
                 <SectionWrapper>
                   <SectionContainer>
                     <SectionTitle>{'Contact'}</SectionTitle>
@@ -420,7 +420,7 @@ class BoatShow extends React.PureComponent {
                     <SectionContainer>
                       <FooterInnerWrapper>
                         <FooterTitle>{'Deposit'}</FooterTitle>
-                        <FooterValue>{'$1,000.00'}</FooterValue>
+                        <FooterValue>{'$5,000.00'}</FooterValue>
                       </FooterInnerWrapper>
                     </SectionContainer>
                   </SectionWrapper>
