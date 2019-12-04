@@ -28,7 +28,7 @@ class ProviderCheck extends React.Component {
 
   getProviderName = () => {
     const { provider } = this.props;
-    return get(provider, 'name', this.state.providerName);
+    return `${get(provider, 'provider_name', this.state.providerName)} ${get(provider, 'name', this.state.providerName)}`;
   };
 
   onFetchSucceed = (provider) => {

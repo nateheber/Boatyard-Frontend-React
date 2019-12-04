@@ -82,7 +82,8 @@ export const simpleProviderLocationSelector = createSelector(
       return {
         id: p.id,
         providerId: p.providerId,
-        name: get(p, 'relationships.locations.attributes.name')
+        name: get(p, 'relationships.locations.attributes.name'),
+        provider_name: get(p, 'relationships.providers.attributes.name')
       };
     })
   });

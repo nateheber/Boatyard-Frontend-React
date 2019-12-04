@@ -260,7 +260,7 @@ class ProviderLocationSelector extends React.Component {
 
   getDispatchedLocations = () => {
     const { dispatchIds, providerLocations } = this.props;
-    console.log(providerLocations);
+    // console.log(providerLocations);
     return dispatchIds.map(id => {
       return providerLocations.find(item => `${item.id}` === `${id}`);
     });
@@ -268,8 +268,9 @@ class ProviderLocationSelector extends React.Component {
 
   render() {
     const { showMenu, showModal, keyword, dispatchedLocations } = this.state;
-    console.log(dispatchedLocations);
+    // console.log(dispatchedLocations);
     const locations = this.filterShowingProviders();
+    // console.log(locations);
     return (
       <Wrapper ref={this.setWrapperRef}>
         <Button onClick={this.showMenu}>
