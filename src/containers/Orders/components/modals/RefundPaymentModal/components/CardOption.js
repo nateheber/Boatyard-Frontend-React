@@ -9,7 +9,7 @@ const CCOption = ({payment: {id, attributes: {amount, updatedAt}, cc: {attribute
     <Wrapper onClick={() => onSelect(id)} >
       <RadioButton onClick={() => onSelect(id)} className={classNames({ active: isSelected })}/>
       <CardInfo className={classNames({ selected: isSelected })}>
-        {moment(updatedAt).format('MMM D, YYYY')} - ${amount}<br/>
+        {moment(updatedAt).format('MMM D, YYYY')} - ${amount.toFixed(2)}<br/>
         {capitalize(name)} xxxxxx{last4}
       </CardInfo>
     </Wrapper>
