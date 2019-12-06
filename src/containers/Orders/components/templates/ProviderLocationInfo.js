@@ -23,7 +23,7 @@ class ProviderLocationInfo extends React.Component {
     return (
       <div>
         {location && <Wrapper>
-          {location.name}
+          {`${location.provider_name} ${location.name}`}
         </Wrapper>}
       </div>
     )
