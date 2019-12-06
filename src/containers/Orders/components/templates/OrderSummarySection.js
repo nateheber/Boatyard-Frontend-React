@@ -87,7 +87,7 @@ export default class OrderSummarySection extends React.Component {
     const fields = [];
     for (const key in properties) {
       const value = get(properties, key);
-      const answer = typeof value == 'boolean' ? value == true ? 'Yes' : 'No' : value
+      const answer = typeof value === 'boolean' ? value === true ? 'Yes' : 'No' : value
       fields.push(
         <TR key={`${key} - ${value}`}>
           <Label>
