@@ -139,6 +139,26 @@ export const getOrderProcessInfo = order => {
             });
           }
           break;
+        case 'acceptedAt':
+          if (!isEmpty(time)) {
+            result.push({
+              time: moment(time).valueOf(),
+              message: `Order accepted on ${moment(time).format(
+                'MMM D, YYYY [at] h:mm A'
+              )}`
+            });
+          }
+          break;
+        case 'dispatchedAt':
+          if (!isEmpty(time)) {
+            result.push({
+              time: moment(time).valueOf(),
+              message: `Order dispatched on ${moment(time).format(
+                'MMM D, YYYY [at] h:mm A'
+              )}`
+            });
+          }
+          break;
         default:
           break;
       }
