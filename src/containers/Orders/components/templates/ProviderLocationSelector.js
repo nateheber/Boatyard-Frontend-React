@@ -194,7 +194,9 @@ class ProviderLocationSelector extends React.Component {
   };
 
   clearAssignees = () => {
-    this.setState({ dispatchedLocations: [] });
+    this.setState({ dispatchedLocations: [] }, () => {
+      this.showModal();
+    });
   };
 
   setWrapperRef(node) {
@@ -284,13 +286,13 @@ class ProviderLocationSelector extends React.Component {
             <ClearButton onClick={this.clearAssignees}>Clear Assignees</ClearButton>
           </ClearAssigneeWrapper>
           <Scroller onScroll={this.onScroll}>
-            {/* {
+            {
               dispatchedLocations.map(location => (
                 <MenuItemLi key={`location_${location.id}`} >
                   <ProviderCheck checked={this.isChecked(location)} provider={location} onClick={() => this.onChangeSelection(location)} />
                 </MenuItemLi>
               ))
-            } */}
+            }
             {
               locations.map(location => (
                 <MenuItemLi key={`location_${location.id}`} >

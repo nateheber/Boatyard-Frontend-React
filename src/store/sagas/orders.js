@@ -333,6 +333,8 @@ function* acceptOrder(action) {
 }
 
 function* dispatchOrder(action) {
+  console.log('Dispatching order...');
+  console.log(action.payload);
   const normalClient = yield select(getOrderClient);
   const { orderId, dispatchIds, orderState, success, error } = action.payload;
   let orderClient;
@@ -342,21 +344,26 @@ function* dispatchOrder(action) {
     orderClient = yield select(getOrderClient);
   }
   try {
+    console.log(orderState);
     if (orderState !== 'draft') {
+      console.log('Using order client...', orderClient);
       yield call(orderClient.update, orderId, { order: { transition: 'undispatch' } });
     }
     if (dispatchIds && dispatchIds.length > 0) {
+      console.log('Using normal client...');
       yield call(normalClient.update, orderId, { order: { dispatch_provider_location_ids: dispatchIds } });
     }
     yield put({ type: actionTypes.DISPATCH_ORDER_SUCCESS });
     // yield put({ type: actionTypes.SET_DISPATCHED_FLAG, payload: true })
     yield put({ type: actionTypes.GET_ORDER, payload: { orderId } })
     if (success) {
+      console.log('successful call');
       yield call(success);
     }
   } catch (e) {
     yield put({ type: actionTypes.DISPATCH_ORDER_FAILURE, payload: e });
     if (error) {
+      console.log('error');
       yield call(error, e);
     }
   }
