@@ -119,7 +119,7 @@ export default class OrderSummarySection extends React.Component {
                 SERVICE
               </Label>
               <FieldValue sm={3} md={3} lg={3}>
-                {providerLocationServiceName}
+                {providerLocationServiceName || serviceName}
               </FieldValue>
             </TR>}
             {this.renderWhenValues()}
