@@ -168,7 +168,8 @@ const mapStateToProps = (state) => ({
   page: state.childAccount.page,
   perPage: state.childAccount.perPage,
   total: state.childAccount.total,
-  showAdditionalFields: state.auth.providerName === 'MarineMax',
+  //showAdditionalFields: state.auth.providerName === 'MarineMax',
+  showAdditionalFields: state.auth.providerId === 2
 });
 
 const mapDispatchToProps = {
