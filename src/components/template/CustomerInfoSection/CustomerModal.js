@@ -228,7 +228,8 @@ export default class CustomerModal extends React.Component {
   render() {
     const fields = this.getFormFieldInfo();
     const { title, open, onClose, loading } = this.props;
-    // const {showAdditionalFields } = this.props;
+    const {showAdditionalFields } = this.props;
+    console.log(showAdditionalFields);
     const action = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>
@@ -236,14 +237,11 @@ export default class CustomerModal extends React.Component {
     const headers = (
       <ModalHeader>
         <Title>{title || 'Add Customer'}</Title>
-        <SearchContainer>
-            <ExternalCustomerSearch onExternalCustomerSelected={this.onExternalCustomerSelected} />
-          </SearchContainer>
-        {/* { showAdditionalFields && 
+        { showAdditionalFields && 
           <SearchContainer>
             <ExternalCustomerSearch onExternalCustomerSelected={this.onExternalCustomerSelected} />
           </SearchContainer>
-        } */}
+        }
       </ModalHeader>
     );
     return (
