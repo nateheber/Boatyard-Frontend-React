@@ -39,9 +39,12 @@ function refineServceData(data) {
 
 function* getServices(action) {
   const serviceClient = yield select(getServiceClient);
+  console.log(serviceClient);
   let successType = actionTypes.GET_SERVICES_SUCCESS;
   let failureType = actionTypes.GET_SERVICES_FAILURE;
   const { params, success, error } = action.payload;
+  params.all = true;
+  console.log(params);
   try {
     const result = yield call(serviceClient.list, params);
     const services = get(result, 'data', []);
