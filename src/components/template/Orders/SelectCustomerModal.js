@@ -459,7 +459,8 @@ const mapStateToProps = (state) => ({
   currentBoatStatus: state.boat.currentStatus,
   boats: refinedBoatsSelector(state),
   privilege: state.auth.privilege,
-  showAdditionalFields: state.auth.providerName === 'MarineMax',
+  // showAdditionalFields: state.auth.providerName === 'MarineMax',
+  showAdditionalFields: state.auth.providerId === 2
 });
 
 const mapDispatchToProps = {
