@@ -235,11 +235,14 @@ export default class CustomerModal extends React.Component {
     const headers = (
       <ModalHeader>
         <Title>{title || 'Add Customer'}</Title>
-        { showAdditionalFields && 
+        <SearchContainer>
+            <ExternalCustomerSearch onExternalCustomerSelected={this.onExternalCustomerSelected} />
+          </SearchContainer>
+        {/* { showAdditionalFields && 
           <SearchContainer>
             <ExternalCustomerSearch onExternalCustomerSelected={this.onExternalCustomerSelected} />
           </SearchContainer>
-        }
+        } */}
       </ModalHeader>
     );
     return (
