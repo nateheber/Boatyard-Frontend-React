@@ -108,6 +108,8 @@ export default class OrderSummarySection extends React.Component {
     const slipNumber = get(order, 'attributes.slipNumber');
 
     const serviceName = get(lineItem, 'relationships.service.attributes.name');
+    const providerLocationServiceName = get(lineItem, 'relationships.providerLocationService.attributes.name');
+    // console.log(lineItem);
     return (isEmpty(lineItem) && isEmpty(slipNumber) && isEmpty(specialInstructions)) ? false : (
       <Section title="Order Summary">
         <table>
@@ -117,7 +119,7 @@ export default class OrderSummarySection extends React.Component {
                 SERVICE
               </Label>
               <FieldValue sm={3} md={3} lg={3}>
-                {serviceName}
+                {providerLocationServiceName}
               </FieldValue>
             </TR>}
             {this.renderWhenValues()}
