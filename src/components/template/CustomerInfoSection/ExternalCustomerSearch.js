@@ -22,6 +22,7 @@ const ExternalCustomerSearch =  ({FilterExternalConnections, onExternalCustomerS
     onExternalCustomerSelected(value || {});
     setCustomer(value);
   }
+  // 2226728
   const loadOptions = val => {
     const params = {};
     if (val.indexOf('@') > 0) {
@@ -34,7 +35,7 @@ const ExternalCustomerSearch =  ({FilterExternalConnections, onExternalCustomerS
     const phoneNumber = formatPhoneNumber(val);
     if (phoneNumber) {
       params['phone'] = phoneNumber;
-    } else if (/[0-9]{4,6}/.test(val) && val.length <=6) {
+    } else if (/[0-9]{4,6}/.test(val) && val.length <=7) {
       params['customer_id'] = val;
     }
     if (Object.keys(params).length === 0) {
