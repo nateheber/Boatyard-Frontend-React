@@ -22,7 +22,7 @@ const ExternalCustomerSearch =  ({FilterExternalConnections, onExternalCustomerS
     onExternalCustomerSelected(value || {});
     setCustomer(value);
   }
-  // 2226728
+
   const loadOptions = val => {
     const params = {};
     if (val.indexOf('@') > 0) {
