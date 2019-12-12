@@ -252,7 +252,7 @@ class ProviderLocationSelector extends React.Component {
   filterShowingProviders = () => {
     const { locations, dispatchedLocations } = this.state;
     const result = locations.filter((location) => {
-      const idx = dispatchedLocations.findIndex(item => `${item.id}` === `${location.id}`);
+      const idx = dispatchedLocations.filter(Boolean).findIndex(item => `${item.id}` === `${location.id}`);
       return idx === -1;
     });
     return result;
