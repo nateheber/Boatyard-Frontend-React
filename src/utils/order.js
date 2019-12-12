@@ -95,6 +95,8 @@ export const getOrderProcessInfo = order => {
   const result = [];
   if (!isEmpty(order)) {
     const timeStamps = get(order, 'attributes.historicTimestamps', {});
+    const acceptance = get(order, 'attributes.acceptanceHistory', {});
+    const acceptanceLocation = acceptance[Object.keys(acceptance)[0]];
     const keys = Object.keys(timeStamps);
     for (let i = 0; i < keys.length; i += 1) {
       const time = get(timeStamps, keys[i]);
@@ -143,7 +145,7 @@ export const getOrderProcessInfo = order => {
           if (!isEmpty(time)) {
             result.push({
               time: moment(time).valueOf(),
-              message: `Order accepted on ${moment(time).format(
+              message: `Order accepted by ${acceptanceLocation} on ${moment(time).format(
                 'MMM D, YYYY [at] h:mm A'
               )}`
             });
