@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, findIndex, sortBy } from 'lodash';
+import { get, findIndex, sortBy, compact } from 'lodash';
 import deepEqual from 'deep-equal';
 
 import { Input } from 'components/basic/Input';
@@ -261,9 +261,11 @@ class ProviderLocationSelector extends React.Component {
   getDispatchedLocations = () => {
     const { dispatchIds, providerLocations } = this.props;
     // console.log(providerLocations);
-    return dispatchIds.map(id => {
-      return providerLocations.find(item => `${item.id}` === `${id}`);
-    });
+    return compact(
+      dispatchIds.map(id => {
+        return providerLocations.find(item => `${item.id}` === `${id}`);
+      })
+    );
   };
 
   render() {
