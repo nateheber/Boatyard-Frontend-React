@@ -202,6 +202,7 @@ class LineItemSection extends React.Component {
                 mode={mode}
                 onChange={updateInfo => this.onChangeLineItems(updateInfo, idx)}
                 key={`lineItem_${idx}`}
+                count={lineItems.length}
               />
             ))}
           </React.Fragment>
