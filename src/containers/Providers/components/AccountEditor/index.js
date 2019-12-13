@@ -147,6 +147,7 @@ class AccountEditor extends React.Component {
       success: (provider) => {
         const { id } = provider;
         onCreation(id);
+        this.setState({ saving: false });
       },
       error: (e) => {
         this.setState({ saving: false });
