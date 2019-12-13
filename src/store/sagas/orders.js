@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, hasIn, startCase } from 'lodash';
 
 import { ORDER_ALIASES, AVAILABLE_ALIAS_ORDERS } from 'utils/basic';
-import { getTeamMemberData } from 'utils/order';
+// import { getTeamMemberData } from 'utils/order';
 import { actionTypes } from '../actions/orders';
 import { actionTypes as workorderActionTypes } from '../actions/workorders';
 import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag, getPrivilege } from './sagaSelectors';
@@ -133,7 +133,7 @@ function* getOrder(action) {
       const apiClient = yield select(getCustomApiClient);
       const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`, 'v3')
       // const { data: {relationships: {teamMembers: {data : tmData}, userContractors: {data: coData}} }, included: directoryIncluded } = tmResult;
-      const { data } = tmResult
+      //const { data } = tmResult
       // teamMemberData = getTeamMemberData(tmData.concat(coData), directoryIncluded);
     }
     yield put({
