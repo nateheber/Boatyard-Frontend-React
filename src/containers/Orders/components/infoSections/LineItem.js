@@ -106,7 +106,7 @@ class LineItem extends React.Component {
   };
 
   render() {
-    const { mode, onRemove } = this.props;
+    const { mode, onRemove, count } = this.props;
     const { quantity, cost, comment, service } = this.state;
     const currentOption = this.getCurrentOption();
     return (
@@ -152,7 +152,7 @@ class LineItem extends React.Component {
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
             <Value>${(parseFloat(parseFloat(quantity) * parseFloat(parseFloat(cost)).toFixed(2))).toFixed(2)}</Value>
           </Col>
-          { mode === 'edit' && (
+          { (mode === 'edit' && count > 1) && (
             <RemoveButton style={{
               position: 'absolute',
               top: 2,
