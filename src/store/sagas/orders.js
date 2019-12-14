@@ -2,7 +2,7 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, hasIn, startCase } from 'lodash';
 
 import { ORDER_ALIASES, AVAILABLE_ALIAS_ORDERS } from 'utils/basic';
-// import { getTeamMemberData } from 'utils/order';
+import { getTeamMemberData } from 'utils/order';
 import { actionTypes } from '../actions/orders';
 import { actionTypes as workorderActionTypes } from '../actions/workorders';
 import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag, getPrivilege } from './sagaSelectors';
@@ -132,9 +132,13 @@ function* getOrder(action) {
     if (providerLocationId && providerId) {
       const apiClient = yield select(getCustomApiClient);
       const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`, 'v3')
-      // const { data: {relationships: {teamMembers: {data : tmData}, userContractors: {data: coData}} }, included: directoryIncluded } = tmResult;
-      //const { data } = tmResult
+      //console.log(tmResult);
+      let teamData = tmResult.included[0].relationships.teamMembers.data;
+      let contractData = tmResult.included[0].relationships.userContractors.data;
+      const { included: directoryIncluded } = tmResult;
+      //const { included: {relationships: {teamMembers: {data : tmData}, userContractors: {data: coData}} }, included: directoryIncluded } = tmResult;
       // teamMemberData = getTeamMemberData(tmData.concat(coData), directoryIncluded);
+      teamMemberData = getTeamMemberData(teamData.concat(contractData), directoryIncluded);
     }
     yield put({
       type: workorderActionTypes.RESET
