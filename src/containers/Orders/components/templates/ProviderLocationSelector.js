@@ -286,7 +286,7 @@ class ProviderLocationSelector extends React.Component {
           </ClearAssigneeWrapper>
           <Scroller onScroll={this.onScroll}>
             {
-              dispatchedLocations.filter(Boolean).map(location => (
+              dispatchedLocations.map(location => (
                 <MenuItemLi key={`location_${location.id}`} >
                   <ProviderCheck checked={this.isChecked(location)} provider={location} onClick={() => this.onChangeSelection(location)} />
                 </MenuItemLi>
