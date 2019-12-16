@@ -124,17 +124,19 @@ function* getOrder(action) {
   }
   try {
     const result = yield call(orderClient.read, orderId);
+    //console.log(result);
     const { data: order, included } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
     const providerLocationId = get(order, 'attributes.providerLocationId');
     const providerId = get(order, 'attributes.providerId');
     let teamMemberData = [];
     if (providerLocationId && providerId) {
+      //console.log('Has provider data...');
       const apiClient = yield select(getCustomApiClient);
       const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`, 'v3')
       //console.log(tmResult);
-      let teamData = tmResult.included[0].relationships.teamMembers.data;
-      let contractData = tmResult.included[0].relationships.userContractors.data;
+      let teamData = tmResult.included ? tmResult.included[0].relationships.teamMembers.data : [];
+      let contractData = tmResult.included ? tmResult.included[0].relationships.userContractors.data : [];
       const { included: directoryIncluded } = tmResult;
       //const { included: {relationships: {teamMembers: {data : tmData}, userContractors: {data: coData}} }, included: directoryIncluded } = tmResult;
       // teamMemberData = getTeamMemberData(tmData.concat(coData), directoryIncluded);
