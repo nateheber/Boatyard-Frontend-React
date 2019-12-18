@@ -34,7 +34,9 @@ function* getProviders(action) {
   try {
     const result = yield call(adminApiClient.list, params);
     const providers = get(result, 'data', []);
-    const { perPage, total } = result;
+    //const { perPage, total } = result;
+    const { total } = result;
+    const perPage = 50;
     switch (action.type) {
       case actionTypes.FILTER_PROVIDERS: {
         successType = actionTypes.FILTER_PROVIDERS_SUCCESS;
