@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, findIndex, sortBy } from 'lodash';
+import { get, findIndex, sortBy, compact } from 'lodash';
 import deepEqual from 'deep-equal';
 
 import { Input } from 'components/basic/Input';
@@ -206,7 +206,8 @@ class ProviderLocationSelector extends React.Component {
     const { providerLocations } = this.props;
     let locations = providerLocations.slice(0);
     if (keyword && keyword.trim().length > 0) {
-      locations = locations.filter(location => get(location, 'name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
+      locations = locations.filter(location => get(location, 'name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1) &&
+          locations.filter(location => get(location, 'provider_name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
     }
     this.setState({ locations });
   };
@@ -252,7 +253,7 @@ class ProviderLocationSelector extends React.Component {
   filterShowingProviders = () => {
     const { locations, dispatchedLocations } = this.state;
     const result = locations.filter((location) => {
-      const idx = dispatchedLocations.findIndex(item => `${item.id}` === `${location.id}`);
+      const idx = dispatchedLocations.filter(Boolean).findIndex(item => `${item.id}` === `${location.id}`);
       return idx === -1;
     });
     return result;
@@ -261,9 +262,11 @@ class ProviderLocationSelector extends React.Component {
   getDispatchedLocations = () => {
     const { dispatchIds, providerLocations } = this.props;
     // console.log(providerLocations);
-    return dispatchIds.map(id => {
-      return providerLocations.find(item => `${item.id}` === `${id}`);
-    });
+    return compact(
+      dispatchIds.map(id => {
+        return providerLocations.find(item => `${item.id}` === `${id}`);
+      })
+    );
   };
 
   render() {
@@ -284,7 +287,7 @@ class ProviderLocationSelector extends React.Component {
           </ClearAssigneeWrapper>
           <Scroller onScroll={this.onScroll}>
             {
-              dispatchedLocations.filter(Boolean).map(location => (
+              dispatchedLocations.map(location => (
                 <MenuItemLi key={`location_${location.id}`} >
                   <ProviderCheck checked={this.isChecked(location)} provider={location} onClick={() => this.onChangeSelection(location)} />
                 </MenuItemLi>
