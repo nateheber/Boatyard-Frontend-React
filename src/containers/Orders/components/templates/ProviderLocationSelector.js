@@ -206,7 +206,8 @@ class ProviderLocationSelector extends React.Component {
     const { providerLocations } = this.props;
     let locations = providerLocations.slice(0);
     if (keyword && keyword.trim().length > 0) {
-      locations = locations.filter(location => get(location, 'name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
+      locations = locations.filter(location => get(location, 'name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1) &&
+          locations.filter(location => get(location, 'provider_name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
     }
     this.setState({ locations });
   };
