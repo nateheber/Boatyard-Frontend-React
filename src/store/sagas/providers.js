@@ -30,13 +30,14 @@ function* getProviders(action) {
   let successType = actionTypes.GET_PROVIDERS_SUCCESS;
   let failureType = actionTypes.GET_PROVIDERS_FAILURE;
   const { params, success, error } = action.payload;
+  console.log(params);
 
   try {
-    const result = yield call(adminApiClient.list, params);
+    const result = yield call(adminApiClient.list, params, 'v3');
+    console.log(adminApiClient);
+    console.log(result);
     const providers = get(result, 'data', []);
-    //const { perPage, total } = result;
-    const { total } = result;
-    const perPage = 50;
+    const { perPage, total } = result;
     switch (action.type) {
       case actionTypes.FILTER_PROVIDERS: {
         successType = actionTypes.FILTER_PROVIDERS_SUCCESS;
@@ -46,19 +47,19 @@ function* getProviders(action) {
       default:
     }
     const refinedProviders = refineProviders(providers);
-    // const page = get(params, 'page', 1);
+    const page = get(params, 'page', 1);
     yield put({
       type: successType,
       payload: {
         providers: refinedProviders,
         perPage,
-        // page,
+        page,
         total
       }
     });
     if (success) {
-      yield call(success, refinedProviders);
-      // yield call(success, refinedProviders, page);
+      //yield call(success, refinedProviders);
+      yield call(success, refinedProviders, page);
     }
   } catch (e) {
     yield put({ type: failureType, payload: e });
