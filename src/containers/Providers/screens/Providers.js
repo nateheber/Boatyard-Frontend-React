@@ -35,9 +35,9 @@ class Providers extends React.Component {
   }
 
   componentDidMount() {
-    // this.loadPage(1);
-    this.props.GetProviders({ params: {} });
-    this.setState({ providers: this.props.providers });
+    this.loadPage(1);
+    // this.props.GetProviders({ params: {} });
+    // this.setState({ providers: this.props.providers });
   }
 
   onChangeColumns = (columns) => {
@@ -55,30 +55,30 @@ class Providers extends React.Component {
 
   onChangeFilter = (val) => {
     // Search NEEDS to be refactored on the Backend!!!
-    const { providers } = this.state;
-    let search = val.target.value.toLowerCase();
-    let currentList = [];
-    let newList = [];
-    if (search !== "") {
-      currentList = providers;
-      newList = currentList.filter(item => {
-        const lc = item.name.toLowerCase();
-        const filter = search;
-        return lc.includes(filter);
-    });
-    } else {
-      this.props.GetProviders({ params: {} });
-      newList = this.props.providers;
-    }
-    this.setState({
-      providers: newList
-    });
-
-    // this.setState({
-    //   keyword: val.target.value
-    // }, () => {
-    //   this.loadPage(1);
+    // const { providers } = this.state;
+    // let search = val.target.value.toLowerCase();
+    // let currentList = [];
+    // let newList = [];
+    // if (search !== "") {
+    //   currentList = providers;
+    //   newList = currentList.filter(item => {
+    //     const lc = item.name.toLowerCase();
+    //     const filter = search;
+    //     return lc.includes(filter);
     // });
+    // } else {
+    //   this.props.GetProviders({ params: {} });
+    //   newList = this.props.providers;
+    // }
+    // this.setState({
+    //   providers: newList
+    // });
+
+    this.setState({
+      keyword: val.target.value
+    }, () => {
+      this.loadPage(1);
+    });
   }
 
   loadPage = (page) => {
@@ -87,11 +87,11 @@ class Providers extends React.Component {
     const params = isEmpty(keyword) ? 
     {} : 
     {
-      page: page,
+       page: page,
       'search': keyword,
-      'provider[name]': capitalize(keyword),
-      'provider[sort]': sort.direction,
-      'provider[order]': sort.col
+      // 'provider[name]': capitalize(keyword),
+      // 'provider[sort]': sort.direction,
+      // 'provider[order]': sort.col
     };
     GetProviders({ params });
   };
@@ -105,8 +105,9 @@ class Providers extends React.Component {
   };
 
   render() {
-    const { sort, selectedColumns, providers } = this.state;
-    const { page, perPage, total } = this.props;
+    const { sort, selectedColumns } = this.state;
+    const { providers, page, perPage, total } = this.props;
+    console.log(providers);
     const pageCount = Math.ceil(total/perPage);
 
     return (
