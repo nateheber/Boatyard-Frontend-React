@@ -108,6 +108,7 @@ class Providers extends React.Component {
     const { sort, selectedColumns } = this.state;
     const { providers, page, perPage, total } = this.props;
     console.log(providers);
+    console.log(perPage);
     const pageCount = Math.ceil(total/perPage);
 
     return (
