@@ -30,7 +30,7 @@ import OrderReviewSection from './components/templates/OrderReviewSection';
 import OrderDetailHeader from './components/templates/OrderDetailHeader';
 // import Scheduler from './components/templates/Scheduler';
 import PaymentSection from './components/templates/PaymentSection';
-import OrderAcceptedSection from './components/templates/OrderAcceptedSection';
+// import OrderAcceptedSection from './components/templates/OrderAcceptedSection';
 import TimeLineSection from './components/templates/TimeLineSection';
 import OrderAssignment from './components/templates/OrderAssignment';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
