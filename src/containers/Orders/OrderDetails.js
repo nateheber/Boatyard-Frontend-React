@@ -30,6 +30,7 @@ import OrderReviewSection from './components/templates/OrderReviewSection';
 import OrderDetailHeader from './components/templates/OrderDetailHeader';
 // import Scheduler from './components/templates/Scheduler';
 import PaymentSection from './components/templates/PaymentSection';
+// import OrderAcceptedSection from './components/templates/OrderAcceptedSection';
 import TimeLineSection from './components/templates/TimeLineSection';
 import OrderAssignment from './components/templates/OrderAssignment';
 import BoatModal from 'components/template/BoatInfoSection/BoatModal';
@@ -342,6 +343,8 @@ class OrderDetails extends React.Component {
     const providerLocationId = this.getProviderLocationId();
 
     const { currentOrder, currentStatus, boatStatus, privilege, workorders, workorder } = this.props;
+    console.log(currentOrder);
+    const memorialization = Object.values(currentOrder.attributes.memorialization)[0];
     const lineItems = get(currentOrder, 'lineItems', []);
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
@@ -361,6 +364,7 @@ class OrderDetails extends React.Component {
                     <OrderSummarySection
                       lineItem={get(lineItems, '0', {})}
                       order={currentOrder}
+                      memorialization={memorialization}
                     />
                     <LineItemSection
                       order={currentOrder}
@@ -400,7 +404,9 @@ class OrderDetails extends React.Component {
                   </SectionGroup>
                 </Column>
               </Row>
-            </Wrapper>
+            </Wrapper> 
+
+
             {visibleOfBoatModal && (
               <BoatModal
                 open={visibleOfBoatModal}

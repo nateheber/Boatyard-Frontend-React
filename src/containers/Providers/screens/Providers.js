@@ -91,7 +91,7 @@ class Providers extends React.Component {
       'search': keyword,
       'provider[name]': capitalize(keyword),
       'provider[sort]': sort.direction,
-      // 'provider[order]': sort.col
+      'provider[order]': sort.col
     };
     GetProviders({ params });
   };
@@ -108,6 +108,7 @@ class Providers extends React.Component {
     const { sort, selectedColumns } = this.state;
     const { providers, page, perPage, total } = this.props;
     console.log(providers);
+    console.log(perPage);
     const pageCount = Math.ceil(total/perPage);
 
     return (
