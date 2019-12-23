@@ -122,8 +122,14 @@ class LocationSelector extends React.Component {
 
   setLocations = () => {
     const { locations: providerLocations } = this.props;
-    console.log(providerLocations);
-    const locations = orderBy(compact(providerLocations), [function(o){ return o.relationships.locations.attributes.name.toLowerCase() || ''; }], ['asc']);
+    // console.log(providerLocations);
+    const locations = orderBy(compact(providerLocations), [function(o){ 
+      if (o.relationships.locations.attributes.name === null ) {
+       return '';
+      } else {
+        return o.relationships.locations.attributes.name.toLowerCase(); 
+      }
+    }], ['asc']);
     this.setState({ locations }, () => {
       this.filterLocations();
     });
