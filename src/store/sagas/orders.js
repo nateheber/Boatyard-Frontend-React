@@ -124,7 +124,7 @@ function* getOrder(action) {
   }
   try {
     const result = yield call(orderClient.read, orderId);
-    //console.log(result);
+    console.log(result);
     const { data: order, included } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
     const providerLocationId = get(order, 'attributes.providerLocationId');
