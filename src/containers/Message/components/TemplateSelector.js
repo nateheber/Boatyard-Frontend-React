@@ -13,7 +13,8 @@ class TemplateSelector extends React.Component {
   };
 
   getTemplates = () => {
-    const { privilege, globalTemplates, localTemplates } = this.props;
+    // const { privilege, globalTemplates, localTemplates } = this.props;
+    const { privilege, globalTemplates } = this.props;
     if (privilege === 'admin') {
       return globalTemplates;
     }

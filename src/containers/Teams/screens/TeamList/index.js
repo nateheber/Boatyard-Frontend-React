@@ -73,7 +73,7 @@ class TeamList extends React.Component {
   }
 
   render() {
-    const { members } = this.state;
+    //const { members } = this.state;
     //const { page } = this.props;
     const { managements, page } = this.props;
     const sortedManagements = sortBy(managements, 'relationships.user.attributes.lastName', 'relationships.user.attributes.firstName');
