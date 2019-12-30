@@ -103,14 +103,15 @@ export default class OrderSummarySection extends React.Component {
   };
 
   render () {
-    const { lineItem, order, memorialization } = this.props;
+    //const { lineItem, order, memorialization } = this.props;
+    const { lineItem, order } = this.props;
     const specialInstructions = get(order, 'attributes.specialInstructions');
     const slipNumber = get(order, 'attributes.slipNumber');
 
-    const serviceName = get(memorialization, 'service.name');
-    const providerLocationServiceName = get(memorialization, 'providerLocationService.name');
-    //const serviceName = get(lineItem, 'relationships.service.attributes.name');
-    //const providerLocationServiceName = get(lineItem, 'relationships.providerLocationService.attributes.name');
+    //const serviceName = get(memorialization, 'service.name');
+    //const providerLocationServiceName = get(memorialization, 'providerLocationService.name');
+    const serviceName = get(lineItem, 'relationships.service.attributes.name');
+    const providerLocationServiceName = get(lineItem, 'relationships.providerLocationService.attributes.name');
     // console.log(lineItem);
     return (isEmpty(lineItem) && isEmpty(slipNumber) && isEmpty(specialInstructions)) ? false : (
       <Section title="Order Summary">
