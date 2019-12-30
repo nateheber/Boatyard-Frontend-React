@@ -126,13 +126,13 @@ class LineItem extends React.Component {
             {mode === 'edit' ?
               <CurrencyInput
                 fixedDecimalScale
-                decimalScale={0}
+                // decimalScale={0.5}
                 value={quantity}
                 onChange={evt => this.onChange(evt.target.value, 'quantity')}
                 hideError
               />
             :
-              <Value>{parseInt(quantity)}</Value>
+              <Value>{Number(quantity)}</Value>
             }
           </Col>
           <Col md={2} sm={2} lg={2} xl={2} xs={2}>
