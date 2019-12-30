@@ -101,9 +101,7 @@ class OrderDetails extends React.Component {
     GetOrder({
       orderId,
       success: () => {
-        console.log('successful order query');
         const { currentOrder } = this.props;
-        console.log(`currentOrder: ${currentOrder}`);
         const providerId = get(currentOrder, 'attributes.providerId');
         const providerLocationId = get(currentOrder, 'attributes.providerLocationId');
         if (providerLocationId) {
@@ -346,11 +344,11 @@ class OrderDetails extends React.Component {
     const providerLocationId = this.getProviderLocationId();
 
     const { currentOrder, currentStatus, boatStatus, privilege, workorders, workorder } = this.props;
-    console.log(currentOrder);
+    // console.log(currentOrder);
     const lineItems = get(currentOrder, 'lineItems', []);
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
-    // const memorialization = Object.values(currentOrder.attributes.memorialization)[0];
+    const memorialization = Object.values(get(currentOrder, 'attributes.memorialization'))[0];
     const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
     const canShowCustomerInfo = this.getCustomerInfoCondition();
     return (
@@ -367,7 +365,7 @@ class OrderDetails extends React.Component {
                     <OrderSummarySection
                       lineItem={get(lineItems, '0', {})}
                       order={currentOrder}
-                      // memorialization={memorialization}
+                      memorialization={memorialization}
                     />
                     <LineItemSection
                       order={currentOrder}
