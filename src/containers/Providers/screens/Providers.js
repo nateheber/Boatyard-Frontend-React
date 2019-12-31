@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { isEmpty, capitalize } from 'lodash';
+import { isEmpty } from 'lodash';
 
 import Table from 'components/basic/Table';
 import { ProviderHeader } from 'components/compound/SectionHeader';
@@ -83,15 +83,16 @@ class Providers extends React.Component {
 
   loadPage = (page) => {
     const { GetProviders } = this.props;
-    const { sort, keyword } = this.state;
+    const { keyword } = this.state;
     const params = isEmpty(keyword) ? 
     {} : 
     {
-       page: page,
+       'page': page,
       'search': keyword,
-      'provider[name]': capitalize(keyword),
-      'provider[sort]': sort.direction,
-      'provider[order]': sort.col
+      'per_page': 50
+      // 'provider[name]': capitalize(keyword),
+      // 'provider[sort]': sort.direction,
+      // 'provider[order]': sort.col
     };
     GetProviders({ params });
   };
@@ -107,8 +108,8 @@ class Providers extends React.Component {
   render() {
     const { sort, selectedColumns } = this.state;
     const { providers, page, perPage, total } = this.props;
-    console.log(providers);
-    console.log(perPage);
+    //console.log(providers);
+    //console.log(perPage);
     const pageCount = Math.ceil(total/perPage);
 
     return (
