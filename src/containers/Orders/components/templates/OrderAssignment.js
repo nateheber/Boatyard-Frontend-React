@@ -45,7 +45,9 @@ class OrderAssignment extends React.Component {
       if (orderState !== 'dispatched' && providerLocationId) {
         return { dispatchIds: [providerLocationId] };
       }
-      const dispatchIds = get(props, 'currentOrder.dispatchIds', []);
+      const dispatchIds = get(props, 'currentOrder.dispatchIds', []).map(el => props.providerLocations.find(item => `${item.id}` === `${el}`) )
+        .sort((a, b) => (a.provider_name > b.provider_name) ? 1 : (a.provider_name === b.provider_name) ? ((a.name > b.name) ? 1 : -1) : -1 )
+        .map(el => el.id);
       return { dispatchIds };
     } else {
       return { dispatchIds: [] };
@@ -116,8 +118,8 @@ class OrderAssignment extends React.Component {
   };
 
   render() {
-    const { dispatchIds } = this.state;
     const { teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}}, privilege } = this.props;
+    const { dispatchIds } = this.state;
     const providerLocationInfo = find(providerLocations, {id: `${providerLocationId}`}) || providerLocations[0];
     const teamMemberInfo = find(teamMemberData, {id: `${assignedTeamMemberId}`});
     const isLocationSelected = !!this.props.providerLocationId;

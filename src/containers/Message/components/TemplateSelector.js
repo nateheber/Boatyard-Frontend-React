@@ -13,17 +13,20 @@ class TemplateSelector extends React.Component {
   };
 
   getTemplates = () => {
-    const { privilege, globalTemplates, localTemplates } = this.props;
+    // const { privilege, globalTemplates, localTemplates } = this.props;
+    const { privilege, globalTemplates } = this.props;
     if (privilege === 'admin') {
       return globalTemplates;
     }
-    return localTemplates;
+    //return localTemplates;
+    return globalTemplates.filter((e) => e.triggerKey === 'invoice_for_customer' || e.triggerKey === 'new_quote_available' )
   };
 
   renderTemplates = () => {
     const { onSelect } = this.props;
     const { selected } = this.state;
     const templates = this.getTemplates();
+    //console.log(templates);
     return templates.map(template => {
       const { triggerKey, subject } = template;
       return (<MessageItem

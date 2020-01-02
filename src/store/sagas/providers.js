@@ -34,8 +34,8 @@ function* getProviders(action) {
 
   try {
     const result = yield call(adminApiClient.list, params, 'v3');
-    console.log(adminApiClient);
-    console.log(result);
+    // console.log(adminApiClient);
+    // console.log(result);
     const providers = get(result, 'data', []);
     const { perPage, total } = result;
     switch (action.type) {

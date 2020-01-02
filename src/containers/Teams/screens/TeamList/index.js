@@ -31,14 +31,16 @@ class TeamList extends React.Component {
     super(props);
     this.state = {
       keyword: '',
-      members: props.managements,
+      members: [],
     }
   }
 
   componentDidMount() {
     this.props.GetManagements({
-      params: { per_page: 1000 }
-    });
+      params: { per_page: 100 }
+    })
+    this.setState({members: this.props.managements});
+    console.log(this.state);
   }
 
   handleInputChange = (keyword) => {
@@ -71,11 +73,11 @@ class TeamList extends React.Component {
   }
 
   render() {
-    const { members } = this.state;
-    const { page } = this.props;
-    // const { managements, page } = this.props;
-    // const sortedManagements = sortBy(managements, 'relationships.user.attributes.lastName', 'relationships.user.attributes.firstName');
-    const sortedManagements = sortBy(members, 'relationships.user.attributes.lastName', 'relationships.user.attributes.firstName');
+    //const { members } = this.state;
+    //const { page } = this.props;
+    const { managements, page } = this.props;
+    const sortedManagements = sortBy(managements, 'relationships.user.attributes.lastName', 'relationships.user.attributes.firstName');
+    //const sortedManagements = sortBy(members, 'relationships.user.attributes.lastName', 'relationships.user.attributes.firstName');
     const pageCount = this.getPageCount();
     const columns = [
       { label: 'name', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName', },
