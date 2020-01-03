@@ -60,7 +60,8 @@ export const ORDER_ALIASES = {
   assigned: 'Awaiting Acceptance',
   provisioned: 'Quote Sent',
   scheduled: 'Quote Accepted',
-  accepted: 'In Progress'
+  accepted: 'In Progress',
+  draft: 'Needs Assignment'
 };
 
 export const formatTimeFromString = (value) => {

@@ -185,7 +185,7 @@ class AssigneeSelector extends React.Component {
     const selectedName = get(find(options, {id: selected}), labelField);
     let filteredOptions = options;
     if (keyword && keyword.length > 0) {
-      filteredOptions = filteredOptions.filter(op => op[labelField].toLowerCase().indexOf(keyword.toLowerCase()) > -1);
+      filteredOptions = filteredOptions.filter(op => op['name'].toLowerCase().indexOf(keyword.toLowerCase()) > -1);
     }
     return (
       <Wrapper ref={this.setWrapperRef}>
