@@ -30,7 +30,6 @@ function* getProviders(action) {
   let successType = actionTypes.GET_PROVIDERS_SUCCESS;
   let failureType = actionTypes.GET_PROVIDERS_FAILURE;
   const { params, success, error } = action.payload;
-  console.log(params);
 
   try {
     const result = yield call(adminApiClient.list, params, 'v3');
