@@ -200,6 +200,9 @@ class OrderList extends React.Component {
           name = `Order #${order.providerOrderSequence}`;
         }
       }
+      if (order.state === 'draft') {
+        order.stateAlias = 'Need Assignment';
+      }
       return {
       ...order,
       name,
