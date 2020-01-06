@@ -83,16 +83,21 @@ class Providers extends React.Component {
 
   loadPage = (page) => {
     const { GetProviders } = this.props;
-    const { keyword } = this.state;
+    const { keyword, sort } = this.state;
     const params = isEmpty(keyword) ? 
-    {} : 
     {
-       'page': page,
-      'search': keyword,
-      'per_page': 50
+      page: page,
+      per_page: 25,
+      'provider[sort]': sort.direction,
+      'provider[order]': sort.col
+    } : 
+    {
+       page: page,
+      search: keyword,
+      per_page: 1,
       // 'provider[name]': capitalize(keyword),
-      // 'provider[sort]': sort.direction,
-      // 'provider[order]': sort.col
+      'provider[sort]': sort.direction,
+      'provider[order]': sort.col
     };
     GetProviders({ params });
   };
@@ -108,8 +113,6 @@ class Providers extends React.Component {
   render() {
     const { sort, selectedColumns } = this.state;
     const { providers, page, perPage, total } = this.props;
-    //console.log(providers);
-    //console.log(perPage);
     const pageCount = Math.ceil(total/perPage);
 
     return (
