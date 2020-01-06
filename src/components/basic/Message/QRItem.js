@@ -33,7 +33,7 @@ export const QRItem = ({ attributes: { name, body }, selected, onCheck, onSelect
     <Content>
       <Title>{name}</Title>
       <TextBody>
-        {body.slice(0, 3)}
+        {body.slice(0, 120)}
         ...
       </TextBody>
     </Content>
