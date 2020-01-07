@@ -56,10 +56,11 @@ export default class OrderSummarySection extends React.Component {
               </TR>
             );
           } else if (get(scheduleItem, 'attributes.complicated')) {
+            const complicated = get(scheduleItem, 'attributes.complicated');
             return (
               <TR>
                 <Label>WHEN</Label>
-                <FieldValue sm={3} md={3} lg={3}>{constants.WHEN_COMPLICATED_OPTION}</FieldValue>
+                <FieldValue sm={3} md={3} lg={3}>{`${constants.WHEN_COMPLICATED_OPTION} - ${complicated}`}</FieldValue>
               </TR>
             );
           } else {
