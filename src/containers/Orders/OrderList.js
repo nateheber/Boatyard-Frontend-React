@@ -201,7 +201,7 @@ class OrderList extends React.Component {
         }
       }
       if (order.state === 'draft') {
-        order.stateAlias = 'Need Assignment';
+        order.stateAlias = 'Needs Assignment';
       }
       return {
       ...order,

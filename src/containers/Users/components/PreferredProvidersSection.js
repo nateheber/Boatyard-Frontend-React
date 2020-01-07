@@ -36,7 +36,6 @@ const NoProviders = styled(NormalText)`
 
 export default ({ user, providers, onRemove }) => (
   <Wrapper>
-    {console.log(providers)}
     {isEmpty(providers) && <NoProviders>There are no preferred providers.</NoProviders>}
     {providers.map((provider, index) => {
       return (

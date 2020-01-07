@@ -93,11 +93,13 @@ class LineItemSection extends React.Component {
   };
 
   onChangeLineItems = (updateInfo, idx) => {
-    const lineItems = this.state.lineItems.map(val => ({ ...val }));
+    //console.log("Update Info:", updateInfo);
+    let lineItems = this.state.lineItems.map(val => ({ ...val }));
     set(lineItems, `[${idx}].attributes.serviceId`, updateInfo.serviceId);
     set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
     set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
     set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
+    // console.log(lineItems);
     this.setState({ lineItems });
   };
 
@@ -119,15 +121,14 @@ class LineItemSection extends React.Component {
     const { lineItems } = this.state;
     const { orderId, updateLineItems, GetOrder, currentOrder } = this.props;
     const providerLocationId = get(currentOrder, 'attributes.providerId');
-    console.log(providerLocationId);
-    console.log(lineItems);
+    //console.log(lineItems);
     const updateInfo = lineItems.map(
       ({ id, attributes: { serviceId, quantity, cost, comment } }) => ( providerLocationId ? {
         id,
-        lineItem: { quantity, cost, comment }
+        lineItem: { service_id: serviceId, provider_location_service_id: serviceId, quantity, cost, comment }
       } : {
         id,
-        lineItem: { service_id: serviceId, quantity, cost, comment }
+        lineItem: { service_id: serviceId, provider_location_service_id: serviceId, quantity, cost, comment }
       })
     );
     if (lineItems.length > 0) {
