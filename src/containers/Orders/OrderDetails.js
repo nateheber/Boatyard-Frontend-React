@@ -344,7 +344,7 @@ class OrderDetails extends React.Component {
     const providerLocationId = this.getProviderLocationId();
 
     const { currentOrder, currentStatus, boatStatus, privilege, workorders, workorder } = this.props;
-    // console.log(currentOrder);
+    //console.log(currentOrder);
     const lineItems = get(currentOrder, 'lineItems', []);
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );

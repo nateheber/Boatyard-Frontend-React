@@ -93,6 +93,7 @@ export const getUpdatedStatus = order => {
 
 export const getOrderProcessInfo = order => {
   const result = [];
+  // console.log(order);
   if (!isEmpty(order)) {
     const timeStamps = get(order, 'attributes.historicTimestamps', {});
     const acceptance = get(order, 'attributes.acceptanceHistory', {});
