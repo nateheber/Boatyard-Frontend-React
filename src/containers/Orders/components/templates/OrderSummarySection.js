@@ -95,7 +95,7 @@ export default class OrderSummarySection extends React.Component {
             {startCase(key)}
           </Label>
           <FieldValue sm={3} md={3} lg={3}>
-            {answer}
+            {answer.includes('https') ? <a rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</a> : answer }
           </FieldValue>
         </TR>
       );
