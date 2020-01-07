@@ -54,6 +54,7 @@ class LineItem extends React.Component {
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
+      name: '',
       service
     };
   }
@@ -90,7 +91,8 @@ class LineItem extends React.Component {
     this.setState({
       serviceId: service.value,
       cost: service.cost,
-      quantity: 1
+      quantity: 1,
+      name: service.label
     }, () => {
       this.props.onChange(this.state);
     });
