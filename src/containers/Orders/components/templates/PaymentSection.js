@@ -113,6 +113,10 @@ class PaymentSection extends React.Component {
       const subjectText = state === 'refunded' ? 'refunded to' : 'paid by';
       return (
         <InfoItem key={`payment_${payment.id}`}>
+          {
+            state === 'failed' ?
+            '': <>${amountInFloat.toFixed(2)} {subjectText} {paidText} on {moment(updatedAt).format('MMM D, YYYY')} at {moment(updatedAt).format('h:mm A')}</>
+          }
           ${amountInFloat.toFixed(2)} {subjectText} {paidText} on {moment(updatedAt).format('MMM D, YYYY')} at {moment(updatedAt).format('h:mm A')}
           {
             state === 'refunded' &&
