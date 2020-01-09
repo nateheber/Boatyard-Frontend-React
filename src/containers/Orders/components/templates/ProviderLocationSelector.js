@@ -194,7 +194,9 @@ class ProviderLocationSelector extends React.Component {
   };
 
   clearAssignees = () => {
-    this.setState({ dispatchedLocations: [] });
+    this.setState({ dispatchedLocations: [] }, () => {
+      this.showModal();
+    });
   };
 
   setWrapperRef(node) {
