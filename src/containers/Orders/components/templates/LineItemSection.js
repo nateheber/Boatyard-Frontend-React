@@ -38,9 +38,13 @@ class LineItemSection extends React.Component {
     super(props);
     this.state = {
       newItems: [],
-      lineItems: this.refactorLineItems(get(props, 'currentOrder.lineItems', [])),
+      lineItems: [],
       mode: 'view'
     }
+  }
+
+  componentDidMount() {
+    this.setState({lineItems: this.refactorLineItems(get(this.props, 'currentOrder.lineItems', []))})
   }
 
   componentDidUpdate(prevProps) {
@@ -93,13 +97,13 @@ class LineItemSection extends React.Component {
   };
 
   onChangeLineItems = (updateInfo, idx) => {
-    //console.log("Update Info:", updateInfo);
+    //console.log("Update Info:", idx, updateInfo);
     let lineItems = this.state.lineItems.map(val => ({ ...val }));
     set(lineItems, `[${idx}].attributes.serviceId`, updateInfo.serviceId);
     set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
     set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
     set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
-    // console.log(lineItems);
+    //console.log(lineItems[idx]);
     this.setState({ lineItems });
   };
 
@@ -119,13 +123,13 @@ class LineItemSection extends React.Component {
 
   updateLineItems = () => {
     const { lineItems } = this.state;
+    //console.log(lineItems);
     const { orderId, updateLineItems, GetOrder, currentOrder } = this.props;
     const providerLocationId = get(currentOrder, 'attributes.providerId');
-    //console.log(lineItems);
     const updateInfo = lineItems.map(
-      ({ id, attributes: { serviceId, quantity, cost, comment } }) => ( providerLocationId ? {
+      ({ id, attributes: { serviceId, quantity, cost, comment }, providerLocationService }) => ( providerLocationId ? {
         id,
-        lineItem: { service_id: serviceId, provider_location_service_id: serviceId, quantity, cost, comment }
+        lineItem: { provider_location_service_id: serviceId, quantity, cost, comment }
       } : {
         id,
         lineItem: { service_id: serviceId, provider_location_service_id: serviceId, quantity, cost, comment }

@@ -4,7 +4,7 @@ const PrivateRoute = ({ isAuthenticated, loggedInPrivilege, privilege, component
   <Route {...rest} render={(props) => (
     isAuthenticated ?   
       (
-        loggedInPrivilege === privilege ? <Component {...props} /> : <Redirect to="/dashboard" />
+        (loggedInPrivilege === privilege || privilege.includes(loggedInPrivilege)) ? <Component {...props} /> : <Redirect to="/dashboard" />
       ) :
       <Redirect to="/login/" />
   )} />
