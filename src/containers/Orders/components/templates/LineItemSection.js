@@ -98,20 +98,11 @@ class LineItemSection extends React.Component {
 
   onChangeLineItems = (updateInfo, idx) => {
     //console.log("Update Info:", idx, updateInfo);
-    const { currentOrder } = this.props;
-    const providerLocationId = get(currentOrder, 'attributes.providerId');
     let lineItems = this.state.lineItems.map(val => ({ ...val }));
-    if (providerLocationId) {
-      set(lineItems, `[${idx}].providerLocationService.id`, updateInfo.serviceId);
-      set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
-      set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
-      set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
-    } else {
-      set(lineItems, `[${idx}].attributes.serviceId`, updateInfo.serviceId);
-      set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
-      set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
-      set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
-    }
+    set(lineItems, `[${idx}].attributes.serviceId`, updateInfo.serviceId);
+    set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
+    set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
+    set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
     //console.log(lineItems[idx]);
     this.setState({ lineItems });
   };
@@ -138,7 +129,7 @@ class LineItemSection extends React.Component {
     const updateInfo = lineItems.map(
       ({ id, attributes: { serviceId, quantity, cost, comment }, providerLocationService }) => ( providerLocationId ? {
         id,
-        lineItem: { service_id: providerLocationService.attributes.serviceId, provider_location_service_id: providerLocationService.id, quantity, cost, comment }
+        lineItem: { provider_location_service_id: serviceId, quantity, cost, comment }
       } : {
         id,
         lineItem: { service_id: serviceId, provider_location_service_id: serviceId, quantity, cost, comment }
