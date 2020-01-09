@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, findIndex, sortBy, compact } from 'lodash';
+import { findIndex, sortBy, compact } from 'lodash';
 import deepEqual from 'deep-equal';
 
 import { Input } from 'components/basic/Input';
@@ -194,7 +194,9 @@ class ProviderLocationSelector extends React.Component {
   };
 
   clearAssignees = () => {
-    this.setState({ dispatchedLocations: [] });
+    this.setState({ dispatchedLocations: [] }, () => {
+      this.showModal();
+    });
   };
 
   setWrapperRef(node) {
@@ -205,10 +207,22 @@ class ProviderLocationSelector extends React.Component {
     const { keyword } = this.state;
     const { providerLocations } = this.props;
     let locations = providerLocations.slice(0);
+    // if (keyword && keyword.trim().length > 0) {
+    //   locations = locations.filter(location => get(location, 'name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1) &&
+    //       locations.filter(location => get(location, 'provider_name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
+    // }
+    //There are cases where location name is null
     if (keyword && keyword.trim().length > 0) {
-      locations = locations.filter(location => get(location, 'name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1) &&
-          locations.filter(location => get(location, 'provider_name', '').toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
+      locations = locations.filter(location => {
+        if(location.name !== null) {
+          return (location.name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1) &&
+            locations.filter(location => location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1)
+        } else {
+          return (locations.filter(location => location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1))
+        }
+      })
     }
+
     this.setState({ locations });
   };
 

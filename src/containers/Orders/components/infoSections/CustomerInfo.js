@@ -34,8 +34,7 @@ const FieldValue = styled.div`
 export default ({ id, type, firstName, lastName, email, phoneNumber }) => (
   <Wrapper>
     <Label>Customer Info</Label>
-    {/* <Name to={type === 'users' ? `/user-details/?user=${id}` : `/customer-details/?customer=${id}`}>{firstName} {lastName}</Name> */}
-    <Name to={`/user-details/?user=${id}`}>{firstName} {lastName}</Name>
+    <Name to={type === 'users' ? `/user-details/?user=${id}` : `/customer-details/?customer=${id}`}>{firstName} {lastName}</Name>
     <FieldValue><a href={`tel:${formatPhoneNumber(phoneNumber)}`}>{formatPhoneNumber(phoneNumber)}</a></FieldValue>
     <FieldValue><a href={`mailto: ${email}`}>{email}</a></FieldValue>
   </Wrapper>
