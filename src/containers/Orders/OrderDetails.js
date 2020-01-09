@@ -95,7 +95,6 @@ class OrderDetails extends React.Component {
   }
 
   loadOrder = (orderId) => {
-    console.log(`Loading order for ${orderId}`);
     const { GetOrder, GetServices, GetProviderLocationServices } = this.props;
     this.state.orderId !== orderId && this.setState({orderId});
     GetOrder({
