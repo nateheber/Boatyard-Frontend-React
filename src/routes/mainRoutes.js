@@ -143,7 +143,7 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <PrivilegeRoute exact path="/categories/" component={Categories} privilege='admin' {...props} />
         <PrivilegeRoute exact path="/category-details/" component={CategoryDetails} privilege='admin' {...props} />
         <PrivilegeRoute exact path="/customers/" component={Customers } privilege='provider' {...props} />
-        <PrivilegeRoute exact path="/customer-details/" component={CustomerDetails  } privilege='admin' {...props} />
+        <PrivilegeRoute exact path="/customer-details/" component={CustomerDetails} privilege={['provider', 'admin']} {...props} />
         <PrivilegeRoute exact path="/users/" component={Users} privilege='admin' {...props} />
         <PrivilegeRoute exact path="/user-details/" component={UserDetails} privilege='admin' {...props} />
         <PrivateRoute exact path="/" component={Dashboard} {...props}  />
