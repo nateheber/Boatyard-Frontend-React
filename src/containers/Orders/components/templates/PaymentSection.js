@@ -122,7 +122,7 @@ class PaymentSection extends React.Component {
             state === 'refunded' &&
             <>
               <br/>
-              ${amountInFloat.toFixed(2)} paid by {paidText} on {moment(createdAt).format('MMM D, YYYY')} at {moment(createdAt).format('h:mm A')}
+             { state === 'failed' ? '' : <>${amountInFloat.toFixed(2)} paid by {paidText} on {moment(createdAt).format('MMM D, YYYY')} at {moment(createdAt).format('h:mm A')}</> }
             </>
           }
 
