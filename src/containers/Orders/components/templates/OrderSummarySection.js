@@ -32,6 +32,14 @@ const FieldValue = styled.td`
   padding: 0 0 15px 0;
 `;
 
+const FieldValueLink = styled.a`
+  color: rgb(247,148,30);
+  line-height: 20px;
+  font-size: 16px;
+  font-family: "Source Sans Pro";
+  font-weight: 600;
+`;
+
 export default class OrderSummarySection extends React.Component {
   renderWhenValues = () => {
     const { order } = this.props;
@@ -95,7 +103,7 @@ export default class OrderSummarySection extends React.Component {
             {startCase(key)}
           </Label>
           <FieldValue sm={3} md={3} lg={3}>
-            {answer.includes('https') ? <a rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</a> : answer }
+            {answer.includes('https') ? <FieldValueLink rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</FieldValueLink> : answer }
           </FieldValue>
         </TR>
       );

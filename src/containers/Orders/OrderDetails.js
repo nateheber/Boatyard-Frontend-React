@@ -349,7 +349,8 @@ class OrderDetails extends React.Component {
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );
     //const memorialization = Object.values(get(currentOrder, 'attributes.memorialization'))[0];
-    const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
+    //const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
+    const canAssignOrder = orderStatus !== 'canceled';
     const canShowCustomerInfo = this.getCustomerInfoCondition();
     return (
       <React.Fragment>

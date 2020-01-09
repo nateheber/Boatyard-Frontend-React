@@ -23,45 +23,45 @@ const SubSectionTitle = styled.h5`
   margin-bottom: 5px;
 `;
 
-const colourStyles = {
-  control: styles => ({
-    ...styles,
-    backgroundColor: 'white',
-    fontSize: 14,
-    fontFamily: 'Source Sans Pro, sans-serif',
-    fontWeight: 400,
-    letterSpacing: -0.3,
-    minHeight: 28,
-    border: '1px solid #dfdfdf'
-  }),
-  input: styles => ({
-    ...styles,
-    fontFamily: 'Source Sans Pro, sans-serif',
-    fontSize: 14,
-    color: '#555',
-    paddingTop: 1,
-    paddingBottom: 1
-  }),
-  loadingMessage: styles => ({
-    ...styles,
-    fontFamily: 'Source Sans Pro, sans-serif',
-    fontSize: 14,
-    color: '#555'
-  }),
-  dropdownIndicator: styles => ({
-    ...styles,
-    display: 'none'
-  }),
-  indicatorSeparator: styles => ({
-    ...styles,
-    display: 'none'
-  }),
-  clearIndicator: styles => ({
-    ...styles,
-    display: 'none'
-  }),
-  placeholder: styles => ({ ...styles }),
-};
+// const colourStyles = {
+//   control: styles => ({
+//     ...styles,
+//     backgroundColor: 'white',
+//     fontSize: 14,
+//     fontFamily: 'Source Sans Pro, sans-serif',
+//     fontWeight: 400,
+//     letterSpacing: -0.3,
+//     minHeight: 28,
+//     border: '1px solid #dfdfdf'
+//   }),
+//   input: styles => ({
+//     ...styles,
+//     fontFamily: 'Source Sans Pro, sans-serif',
+//     fontSize: 14,
+//     color: '#555',
+//     paddingTop: 1,
+//     paddingBottom: 1
+//   }),
+//   loadingMessage: styles => ({
+//     ...styles,
+//     fontFamily: 'Source Sans Pro, sans-serif',
+//     fontSize: 14,
+//     color: '#555'
+//   }),
+//   dropdownIndicator: styles => ({
+//     ...styles,
+//     display: 'none'
+//   }),
+//   indicatorSeparator: styles => ({
+//     ...styles,
+//     display: 'none'
+//   }),
+//   clearIndicator: styles => ({
+//     ...styles,
+//     display: 'none'
+//   }),
+//   placeholder: styles => ({ ...styles }),
+// };
 
 const orderFields = [
   {
@@ -477,7 +477,7 @@ class SelectServiceModal extends React.Component {
                   }}
                   loadOptions={this.loadOptions}
                   onChange={this.onChangeService}
-                  styles={colourStyles}
+                  // styles={colourStyles}
                 />
               </Col>
             </Row>
