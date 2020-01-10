@@ -25,6 +25,8 @@ const formatCard = (name) => {
       return 'Visa';
     case 'Mastercard':
       return 'MasterCard';
+    case 'Master':
+      return 'MasterCard';
     case 'Amex':
       return 'AmEx';
     default:
