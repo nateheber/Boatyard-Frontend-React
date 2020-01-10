@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
-import { get, uniqBy } from 'lodash';
+import { get } from 'lodash';
 
 import { CreatePayment } from 'store/actions/payments';
 import ChargeSelector from '../basic/ChargeSelector';
