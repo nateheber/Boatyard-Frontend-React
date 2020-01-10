@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-flexbox-grid';
-import { get, uniqBy } from 'lodash';
+import { get } from 'lodash';
 
 import { CreatePayment } from 'store/actions/payments';
 import ChargeSelector from '../basic/ChargeSelector';
@@ -84,7 +84,7 @@ class OrderPaymentModal extends React.Component {
   render() {
     const { open, loading, onClose, creditCards, privilege, order } = this.props;
     const { balance, fee, tab, paymentMethod } = this.state;
-    const filteredCards = uniqBy(creditCards, 'attributes.last4');
+    // const filteredCards = uniqBy(creditCards, 'attributes.last4');
     const charging = parseFloat(parseFloat(parseFloat(balance || '0').toFixed(2)) + parseFloat(parseFloat(fee || '0').toFixed(2))).toFixed(2);
     let user = getUserFromOrder(order);
     if (privilege === 'provider') {
@@ -111,7 +111,7 @@ class OrderPaymentModal extends React.Component {
               tab === 'Credit Card' ? (
                 <CreditCardSelector
                   user={user}
-                  creditCards={filteredCards}
+                  creditCards={creditCards}
                   onChange={this.onSelectCard}
                   refreshCards={this.props.refreshCards}
                 />
