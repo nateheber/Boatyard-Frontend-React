@@ -125,14 +125,16 @@ class LineItemSection extends React.Component {
     const { lineItems } = this.state;
     //console.log(lineItems);
     const { orderId, updateLineItems, GetOrder, currentOrder } = this.props;
+    console.log(currentOrder);
+    console.log(lineItems);
     const providerLocationId = get(currentOrder, 'attributes.providerId');
     const updateInfo = lineItems.map(
       ({ id, attributes: { serviceId, quantity, cost, comment }, providerLocationService }) => ( providerLocationId ? {
         id,
-        lineItem: { provider_location_service_id: serviceId, quantity, cost, comment }
+        lineItem: { serviceId: serviceId, provider_location_service_id: serviceId, quantity, cost, comment }
       } : {
         id,
-        lineItem: { service_id: serviceId, provider_location_service_id: serviceId, quantity, cost, comment }
+        lineItem: { service_id: serviceId, quantity, cost, comment }
       })
     );
     if (lineItems.length > 0) {
