@@ -131,16 +131,18 @@ function* getOrder(action) {
     const providerId = get(order, 'attributes.providerId');
     let teamMemberData = [];
     if (providerLocationId && providerId) {
-      //console.log('Has provider data...');
+      // const apiClient = yield select(getCustomApiClient);
+      // const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`, 'v3')
+      // let teamData = tmResult.included ? tmResult.included[0].relationships.teamMembers.data : [];
+      // let contractData = tmResult.included ? tmResult.included[0].relationships.userContractors.data : [];
+      // const { included: directoryIncluded } = tmResult;
+      // teamMemberData = getTeamMemberData(teamData.concat(contractData), directoryIncluded);
+      
+      //Original Implementation
       const apiClient = yield select(getCustomApiClient);
-      const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`, 'v3')
-      //console.log(tmResult);
-      let teamData = tmResult.included ? tmResult.included[0].relationships.teamMembers.data : [];
-      let contractData = tmResult.included ? tmResult.included[0].relationships.userContractors.data : [];
-      const { included: directoryIncluded } = tmResult;
-      //const { included: {relationships: {teamMembers: {data : tmData}, userContractors: {data: coData}} }, included: directoryIncluded } = tmResult;
-      // teamMemberData = getTeamMemberData(tmData.concat(coData), directoryIncluded);
-      teamMemberData = getTeamMemberData(teamData.concat(contractData), directoryIncluded);
+      const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
+      const { data: {relationships: {teamMembers: {data : tmData}, userContractors: {data: coData}} }, included: directoryIncluded } = tmResult;
+      teamMemberData = getTeamMemberData(tmData.concat(coData), directoryIncluded);
     }
     yield put({
       type: workorderActionTypes.RESET
