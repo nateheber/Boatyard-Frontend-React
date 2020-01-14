@@ -197,7 +197,7 @@ function* getProviderLocation(action) {
 
 function* getProviderLocationServices(action) {
   const apiClient = yield select(getProviderLocationServiceClient);
-  console.log(apiClient);
+  //console.log(apiClient);
   const { providerId, providerLocationId, params, success, error } = action.payload;
   params.all = true;
   try {
