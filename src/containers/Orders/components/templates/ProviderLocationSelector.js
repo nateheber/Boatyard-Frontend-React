@@ -215,8 +215,7 @@ class ProviderLocationSelector extends React.Component {
     if (keyword && keyword.trim().length > 0) {
       locations = locations.filter(location => {
         if(location.name !== null) {
-          return (location.name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1) &&
-            locations.filter(location => location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1)
+          return (location.name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1 || location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
         } else {
           return (locations.filter(location => location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1))
         }
