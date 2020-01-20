@@ -23,10 +23,10 @@ const Name = styled.span`
   letter-spacing: 0.1px;
 `;
 
-export default ({ data: { name }, innerProps: { id, ...rest } }) => (
+export default ({ data: { name, provider_name }, innerProps: { id, ...rest } }) => (
   <Wrapper {...rest} key={id}>
     <Name>
-      {name}
+      {`${provider_name} - ${name}`}
     </Name>
   </Wrapper>
 );

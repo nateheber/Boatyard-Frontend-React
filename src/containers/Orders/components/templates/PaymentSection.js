@@ -132,7 +132,7 @@ class PaymentSection extends React.Component {
   };
 
   onSave = (data) => {
-    const { CreatePayment, onFinished } = this.props;
+    const { CreatePayment, onFinished, payments } = this.props;
     CreatePayment({
       data,
       success: () => {
@@ -140,6 +140,10 @@ class PaymentSection extends React.Component {
         this.loadPayments();
         if (onFinished) {
           onFinished();
+        };
+        const payment = payments[payments.length - 1];
+        if (payment.attributes.state === 'failed') {
+          toastr.error('Error', payment.attributes.spreedlyMessage);
         }
       },
       error: (e) => {
@@ -205,6 +209,7 @@ class PaymentSection extends React.Component {
           onClose={this.hideCreateModal}
           refreshCards={this.refreshCards}
           order={order}
+          processPayment={this.processPayment}
         />}
         {(!isEmpty(order) && refundablePayments.length > 0 && visibleOfRefundModal) && <RefundPaymentModal
           open={visibleOfRefundModal}
