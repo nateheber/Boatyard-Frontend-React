@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
-import { get, filter } from 'lodash';
+import { get, filter, isEmpty } from 'lodash';
 
 import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
@@ -79,20 +79,44 @@ class OrderList extends React.Component {
     }
     this.state = {
       tab,
+      page: 1,
+      pageCount: 0,
+      orders: [],
+      filteredOrders: [],
+      keyword: ''
     };
   }
 
   componentDidMount() {
-    const { tab } = this.state;
-    this.onChangeTab(tab);
+    // const { orders } = this.props;
+    // const { tab } = this.state;
+    // this.onChangeTab(tab);
+    this.loadOrders();
   }
 
   componentWillUnmount() {
     this.props.SetDispatchedFlag(false);
   }
 
+  loadOrders = () => {
+    const { GetOrders, page, perPage } = this.props;
+    const { keyword } = this.state;
+    const params = isEmpty(keyword) ? 
+    {
+      page: page,
+      per_page: perPage
+    } : 
+    {
+       page: page,
+      search: keyword,
+      per_page: 25
+    };
+    GetOrders({ params });
+  }
+
   onChangeTab = (tab, page = 1) => {
     const { privilege } = this.props;
+    const { keyword } = this.state;
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
@@ -129,12 +153,14 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
+            search: keyword,
             'order[order]': 'provider_order_sequence',
             'order[sort]': 'desc'
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 15 } });
+        console.log("Getting all orders....")
+        this.props.GetOrders({ params: { page, per_page: 25, search: keyword } });
       }
     }
   };
@@ -186,6 +212,12 @@ class OrderList extends React.Component {
     this.props.history.push(`/orders/${orderId}/detail`);
   };
 
+  handleSearch = (keyword) => {
+    this.setState({ keyword }, () => {
+      this.loadOrders();
+    });
+  }
+
   render() {
     const { orders, page, privilege, currentStatus } = this.props;
     const pageCount = this.getPageCount();
@@ -218,6 +250,7 @@ class OrderList extends React.Component {
       <Wrapper>
         <OrderHeader
           onNewOrder={this.newOrder}
+          onSearch={this.handleSearch}
           columns={columns}
           selectedColumns={selectedColumns}
           onChangeColumns={this.onChangeColumns} />
