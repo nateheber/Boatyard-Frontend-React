@@ -9,7 +9,7 @@ import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from 'store/actions/orders';
-import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector } from 'store/selectors/orders';
+import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector, statusSelector } from 'store/selectors/orders';
 import { getCustomerName } from 'utils/order';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
@@ -219,7 +219,7 @@ class OrderList extends React.Component {
   }
 
   render() {
-    const { orders, page, privilege, currentStatus } = this.props;
+    const { orders, page, privilege, currentStatus, statuses } = this.props;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
@@ -245,6 +245,7 @@ class OrderList extends React.Component {
 
     const { tab } = this.state;
     const { columns, selectedColumns } = this.props;
+    // console.log(statuses);
     const loading = currentStatus === actionTypes.GET_ORDERS;
     return (
       <Wrapper>
@@ -252,6 +253,7 @@ class OrderList extends React.Component {
           onNewOrder={this.newOrder}
           onSearch={this.handleSearch}
           columns={columns}
+          statuses={statuses}
           selectedColumns={selectedColumns}
           onChangeColumns={this.onChangeColumns} />
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
@@ -277,6 +279,7 @@ class OrderList extends React.Component {
 const mapStateToProps = state => ({
   orders: refinedOrdersSelector(state),
   columns: columnsSelector(state),
+  statuses: statusSelector(),
   selectedColumns: selectedColumnsSelector(state),
   page: get(state, 'order.orders.page', 1),
   perPage: get(state, 'order.orders.perPage', 20),
