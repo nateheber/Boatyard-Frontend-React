@@ -36,6 +36,20 @@ const ORDER_COLUMNS = [
   { label: 'order status', value: 'stateAlias', width: 1.2 },
 ];
 
+const ORDER_STATUSES = [
+  { label: 'Draft', value: 'draft'},
+  { label: 'Dispatched', value: 'dispatched'},
+  { label: 'Accepted', value: 'accepted'},
+  { label: 'Invoiced', value: 'invoiced'},
+  { label: 'Completed', value: 'completed'}
+];
+
+export const statusSelector = createSelector(
+  () => {
+    return ORDER_STATUSES;
+  }
+);
+
 const setLineItemRelationships = (lineItem, included) => {
   const resultData = {...lineItem};
   const { relationships } = lineItem;

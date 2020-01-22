@@ -14,7 +14,7 @@ import {
 } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
-export const OrderHeader = ({  columns, selectedColumns, onChangeColumns, onAction, onNewOrder, onSearch }) => (
+export const OrderHeader = ({  columns, statuses, selectedColumns, onChangeColumns, onAction, onNewOrder, onSearch }) => (
   <SectionHeaderWrapper>
     <LeftPart>
       <PageTitle>Orders</PageTitle>
@@ -35,11 +35,20 @@ export const OrderHeader = ({  columns, selectedColumns, onChangeColumns, onActi
     <RightPart>
       <OrangeButton className="desktop" onClick={onNewOrder}>New Order</OrangeButton>
       <ColumnFilter
+        title='SHOW COLUMNS'
         items={columns}
         selected={selectedColumns}
         onChangeSelection={columns => {
           if (onChangeColumns) onChangeColumns(columns);
         }}
+      />
+      <ColumnFilter
+        items={statuses}
+        title='FILTER'
+        // selected={selectedColumns}
+        // onChangeSelection={columns => {
+        //   if (onChangeColumns) onChangeColumns(columns);
+        // }}
       />
     </RightPart>
   </SectionHeaderWrapper>
