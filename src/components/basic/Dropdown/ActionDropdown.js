@@ -95,7 +95,7 @@ export class ActionDropdown extends React.Component {
     return (
       <Wrapper ref={this.setWrapperRef}>
         <ToggleButton
-          title={title !== null ? title : "ACTION"}
+          title={title !== null && title !== undefined ? title : "ACTION"}
           onClick={() => {
             this.setState({ showMenu: !showMenu });
           }}
