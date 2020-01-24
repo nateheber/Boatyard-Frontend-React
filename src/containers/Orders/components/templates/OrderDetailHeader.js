@@ -236,6 +236,7 @@ class OrderDetailHeader extends React.Component {
             <PageTitle>Order #{orderId}</PageTitle>
             <ActionDropdown
               items={items}
+              title='ACTION'
             />
           </LeftPart>
           {canAcceptOrder && <RightPart>

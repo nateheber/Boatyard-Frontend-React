@@ -126,11 +126,11 @@ export class ColumnFilter extends React.Component {
   };
   render() {
     const { showMenu } = this.state;
-    const { items } = this.props;
+    const { items, title } = this.props;
     return (
       <Wrapper ref={this.setWrapperRef}>
         <ToggleButton
-          title="SHOW COLUMNS"
+          title={title !== null ? title : "SHOW COLUMNS"}
           onClick={() => {
             this.setState({ showMenu: !showMenu });
           }}

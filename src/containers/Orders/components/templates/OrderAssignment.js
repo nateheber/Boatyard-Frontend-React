@@ -38,19 +38,23 @@ class OrderAssignment extends React.Component {
   }
 
   static getDerivedStateFromProps(props) {
-    const providerLocationId = get(props, 'currentOrder.attributes.providerLocationId');
-    const orderState = get(props, 'currentOrder.attributes.state');
-    const { privilege } = props;
-    if (privilege === 'admin') {
-      if (orderState !== 'dispatched' && providerLocationId) {
-        return { dispatchIds: [providerLocationId] };
+    // console.log(props);
+    if (props !== undefined || props !== null) {
+      const providerLocationId = get(props, 'currentOrder.attributes.providerLocationId');
+      const orderState = get(props, 'currentOrder.attributes.state');
+      const { privilege } = props;
+      if (privilege === 'admin') {
+        if (orderState !== 'dispatched' && providerLocationId) {
+          return { dispatchIds: [providerLocationId] };
+        }
+        const dispatchIds = get(props, 'currentOrder.dispatchIds', []).map(el => props.providerLocations.find(item => `${item.id}` === `${el}`) )
+          .sort((a, b) => (a.provider_name > b.provider_name) ? 1 : (a.provider_name === b.provider_name) ? ((a.name > b.name) ? 1 : -1) : -1 )
+          .map(el => el.id);
+          // console.log(dispatchIds);
+        return { dispatchIds };
+      } else {
+        return { dispatchIds: [] };
       }
-      const dispatchIds = get(props, 'currentOrder.dispatchIds', []).map(el => props.providerLocations.find(item => `${item.id}` === `${el}`) )
-        .sort((a, b) => (a.provider_name > b.provider_name) ? 1 : (a.provider_name === b.provider_name) ? ((a.name > b.name) ? 1 : -1) : -1 )
-        .map(el => el.id);
-      return { dispatchIds };
-    } else {
-      return { dispatchIds: [] };
     }
   }
 

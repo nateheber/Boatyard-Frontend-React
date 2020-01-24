@@ -91,11 +91,11 @@ export class ActionDropdown extends React.Component {
   };
   render() {
     const { showMenu } = this.state;
-    const { items } = this.props;
+    const { items, title } = this.props;
     return (
       <Wrapper ref={this.setWrapperRef}>
         <ToggleButton
-          title="ACTION"
+          title={title !== null && title !== undefined ? title : "ACTION"}
           onClick={() => {
             this.setState({ showMenu: !showMenu });
           }}
@@ -111,7 +111,7 @@ export class ActionDropdown extends React.Component {
                   val.action();
                 }}
               >
-                {val.title}
+                {val.title || val.label}
               </MenuItem>
             </MenuItemLi>
           ))}
