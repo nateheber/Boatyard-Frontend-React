@@ -269,7 +269,8 @@ class ProviderLocationSelector extends React.Component {
       const idx = dispatchedLocations.filter(Boolean).findIndex(item => `${item.id}` === `${location.id}`);
       return idx === -1;
     });
-    return result;
+    const sortedResult = sortBy(result, ['provider_name', 'name'])
+    return sortedResult;
   };
 
   getDispatchedLocations = () => {

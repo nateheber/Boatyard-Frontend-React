@@ -264,7 +264,8 @@ class ProviderSelector extends React.Component {
       const idx = dispatchedProviders.findIndex(item => `${item.id}` === `${provider.id}`);
       return idx === -1;
     });
-    return result;
+    const sortedResult = sortBy(result, ['provider_name', 'name'])
+    return sortedResult;
   };
 
   render() {
