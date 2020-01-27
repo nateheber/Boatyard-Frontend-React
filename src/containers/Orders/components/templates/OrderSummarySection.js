@@ -149,7 +149,7 @@ export default class OrderSummarySection extends React.Component {
                 Special Instructions
               </Label>
               <FieldValue sm={3} md={3} lg={3}>
-                <div dangerouslySetInnerHTML={{ __html: specialInstructions}} />
+                <div dangerouslySetInnerHTML={{ __html: specialInstructions.replace(/\r?\n/g, '<br />')}} />
               </FieldValue>
             </TR>}
           </tbody>
