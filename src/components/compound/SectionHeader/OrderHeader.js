@@ -14,7 +14,7 @@ import {
 } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
-export const OrderHeader = ({  columns, statuses, selectedColumns, onChangeColumns, onAction, onNewOrder, onSearch }) => (
+export const OrderHeader = ({  columns, statuses, selectedColumns, onChangeColumns, onAction, onNewOrder, onSearch, onExport }) => (
   <SectionHeaderWrapper>
     <LeftPart>
       <PageTitle>Orders</PageTitle>
@@ -30,7 +30,7 @@ export const OrderHeader = ({  columns, statuses, selectedColumns, onChangeColum
         ]}
       /> */}
       <SearchBox style={{ width: 260 }} placeholder="Search by Order #, Customer or Boat" onChange={onSearch} />
-      <HollowButton className="desktop" onClick={onNewOrder}>Export</HollowButton>
+      <HollowButton className="desktop" onClick={onExport}>Export</HollowButton>
     </LeftPart>
     <RightPart>
       <OrangeButton className="desktop" onClick={onNewOrder}>New Order</OrangeButton>

@@ -317,7 +317,7 @@ class UserDetails extends React.Component {
     const { providerLocations, preferredProviders } = this.props;
     const filtered = providerLocations.filter(location => preferredProviders.filter(preferred => `${preferred.relationships.providerLocation.id}` === `${location.id}`).length === 0);
     if (val && val.length > 0) {
-      return filtered.filter(location => location.name.toLowerCase().includes(val.toLowerCase()));
+      return filtered.filter(location => location.name.toLowerCase().includes(val.toLowerCase()) || location.provider_name.toLowerCase().includes(val.toLowerCase()) );
     } else {
       return filtered;
     }
