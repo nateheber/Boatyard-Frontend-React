@@ -218,6 +218,10 @@ class OrderList extends React.Component {
     });
   }
 
+  handleExport = () => {
+    
+  }
+
   render() {
     const { orders, page, privilege, currentStatus, statuses } = this.props;
     const pageCount = this.getPageCount();
@@ -252,6 +256,7 @@ class OrderList extends React.Component {
         <OrderHeader
           onNewOrder={this.newOrder}
           onSearch={this.handleSearch}
+          onExport={this.handleExport}
           columns={columns}
           statuses={statuses}
           selectedColumns={selectedColumns}
