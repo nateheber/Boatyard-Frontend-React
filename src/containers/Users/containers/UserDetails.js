@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { Row, Col } from 'react-flexbox-grid';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, sortBy } from 'lodash';
 import styled from 'styled-components';
 import { toastr } from 'react-redux-toastr';
 
@@ -316,16 +316,19 @@ class UserDetails extends React.Component {
   filterProviderLocation = val => {
     const { providerLocations, preferredProviders } = this.props;
     const filtered = providerLocations.filter(location => preferredProviders.filter(preferred => `${preferred.relationships.providerLocation.id}` === `${location.id}`).length === 0);
+    const sorted = sortBy(filtered, ['provider_name', 'name']);
     if (val && val.length > 0) {
-      return filtered.filter(location => location.name.toLowerCase().includes(val.toLowerCase()) || location.provider_name.toLowerCase().includes(val.toLowerCase()) );
+      let results = sorted.filter(location => location.name.toLowerCase().includes(val.toLowerCase()) || location.provider_name.toLowerCase().includes(val.toLowerCase()) );
+      return sortBy(results, ['provider_name', 'name']);
     } else {
-      return filtered;
+      let results = sorted;
+      return sortBy(results, ['provider_name', 'name']);
     }
   };
 
   defaultOptions = () => {
     const { providerLocations, preferredProviders } = this.props;
-    return providerLocations.filter(location => preferredProviders.filter(preferred => `${preferred.relationships.providerLocation.id}` === `${location.id}`).length === 0);
+    return sortBy(providerLocations.filter(location => preferredProviders.filter(preferred => `${preferred.relationships.providerLocation.id}` === `${location.id}`).length === 0), ['provider_name', 'name']);
   };
 
   onChangeProvider = user => {
