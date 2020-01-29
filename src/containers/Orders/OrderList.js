@@ -11,6 +11,7 @@ import { OrderHeader } from 'components/compound/SectionHeader';
 import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from 'store/actions/orders';
 import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector, statusSelector } from 'store/selectors/orders';
 import { getCustomerName } from 'utils/order';
+import { getToken } from 'store/selectors/auth';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
 
@@ -88,14 +89,30 @@ class OrderList extends React.Component {
   }
 
   componentDidMount() {
-    // const { orders } = this.props;
+    this.loadOrders();
+    //const { orders } = this.props;
     // const { tab } = this.state;
     // this.onChangeTab(tab);
-    this.loadOrders();
+   // this.setState({ orders })
   }
 
   componentWillUnmount() {
     this.props.SetDispatchedFlag(false);
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    // Any time the current user changes,
+    // Reset any parts of state that are tied to that user.
+    // In this simple example, that's just the email.
+    // console.log(props);
+   // console.log(state);
+    // if (props.userID !== state.prevPropsUserID) {
+    //   return {
+    //     prevPropsUserID: props.userID,
+    //     email: props.defaultEmail
+    //   };
+    // }
+    // return null;
   }
 
   loadOrders = () => {
@@ -108,9 +125,10 @@ class OrderList extends React.Component {
     } : 
     {
        page: page,
-      search: keyword,
-      per_page: 25
+      search: keyword
+      // per_page: 25
     };
+    // console.log(params);
     GetOrders({ params });
   }
 
@@ -120,7 +138,7 @@ class OrderList extends React.Component {
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
-      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft' } });
+      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft', search: keyword } });
     } else if (tab === INVOICED_TAB) {
       this.props.GetOrders({
         params: {
@@ -145,7 +163,7 @@ class OrderList extends React.Component {
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'dispatched' } });
+        this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'dispatched', search: keyword } });
       }
     } else {
       if (privilege === 'provider') {
@@ -159,7 +177,6 @@ class OrderList extends React.Component {
           }
         });
       } else {
-        console.log("Getting all orders....")
         this.props.GetOrders({ params: { page, per_page: 25, search: keyword } });
       }
     }
@@ -214,27 +231,35 @@ class OrderList extends React.Component {
 
   handleSearch = (keyword) => {
     this.setState({ keyword }, () => {
-      this.loadOrders();
+      this.loadOrders(keyword);
     });
   }
 
   handleExport = () => {
-    // fetch('https://staging-api.boatyard.com/api/v2/reports/transactions?provider_id=2&provider_location_id=15,16&xls=true')
-    // .then((resp) => resp.blob()) // Transform the data into json
-    // .then(function(blob) {
-    //   const url = window.URL.createObjectURL(new Blob([blob]));
-    //   const link = document.createElement('a');
-    //   link.href = url;
+    const { token } = this.props;
+    const now = new Date();
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', `${token}`);
+    myHeaders.append('Content-Type', 'application/json');
+    fetch('https://staging-api.boatyard.com/api/v2/reports/transactions?provider_id=2&provider_location_id=15,16&xls=true', {
+      headers: myHeaders
+    })
+    .then((resp) => resp.blob()) // Transform the data into json
+    .then(function(blob) {
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
 
-    //   link.setAttribute('download', `sample`);
-    //   document.body.appendChild(link);
-    //   link.click();
-    //   link.parentNode.removeChild(link);
-    // })
+      link.setAttribute('download', `Trasnactions-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    })
   }
 
   render() {
     const { orders, page, privilege, currentStatus, statuses } = this.props;
+    //console.log(orders);
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
@@ -302,6 +327,7 @@ const mapStateToProps = state => ({
   total: get(state, 'order.orders.total', 0),
   privilege: get(state, 'auth.privilege'),
   currentStatus: state.order.currentStatus,
+  token: getToken(state)
 });
 
 const mapDispatchToProps = {
