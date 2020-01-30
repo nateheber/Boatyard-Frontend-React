@@ -100,20 +100,20 @@ class OrderList extends React.Component {
     this.props.SetDispatchedFlag(false);
   }
 
-  static getDerivedStateFromProps(props, state) {
-    // Any time the current user changes,
-    // Reset any parts of state that are tied to that user.
-    // In this simple example, that's just the email.
-    // console.log(props);
-   // console.log(state);
-    // if (props.userID !== state.prevPropsUserID) {
-    //   return {
-    //     prevPropsUserID: props.userID,
-    //     email: props.defaultEmail
-    //   };
-    // }
-    // return null;
-  }
+  // static getDerivedStateFromProps(props, state) {
+  //   // Any time the current user changes,
+  //   // Reset any parts of state that are tied to that user.
+  //   // In this simple example, that's just the email.
+  //   // console.log(props);
+  //  // console.log(state);
+  //   if (props.userID !== state.prevPropsUserID) {
+  //     return {
+  //       prevPropsUserID: props.userID,
+  //       email: props.defaultEmail
+  //     };
+  //   }
+  //   return null;
+  // }
 
   loadOrders = () => {
     const { GetOrders, page, perPage } = this.props;

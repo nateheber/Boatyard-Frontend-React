@@ -4,6 +4,7 @@ import className from 'classnames';
 import { isBrowser } from 'react-device-detect';
 import { ResizableBox } from 'react-resizable';
 import { get } from 'lodash';
+import FilterIcon from '../../../resources/filter_icon.png';
 
 import 'react-resizable/css/styles.css';
 import './style.css';
@@ -173,6 +174,7 @@ export class TableHeader extends React.Component {
                 {col.sort === sortColumn && type === 'primary' && (
                   <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
                 )}
+                {col.label === 'order status' ? <img src={FilterIcon} alt='' /> : ''}
               </ColumnHeaderContent>
             </NormalHeader>
           ) : (
