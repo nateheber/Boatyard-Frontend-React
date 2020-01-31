@@ -268,7 +268,7 @@ class OrderList extends React.Component {
       const link = document.createElement('a');
       link.href = url;
 
-      link.setAttribute('download', `Trasnactions-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.xlsx`);
+      link.setAttribute('download', `Transactions-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
