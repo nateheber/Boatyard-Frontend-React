@@ -14,6 +14,7 @@ import { getCustomerName } from 'utils/order';
 import { getToken } from 'store/selectors/auth';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
+// import { string } from 'prop-types';
 
 const ALL_TAB = 'all';
 const NEED_ASSIGNMENT_TAB = 'needAssignment';
@@ -84,7 +85,8 @@ class OrderList extends React.Component {
       pageCount: 0,
       orders: [],
       filteredOrders: [],
-      keyword: ''
+      keyword: '',
+      selectedFilters: []
     };
   }
 
@@ -94,6 +96,7 @@ class OrderList extends React.Component {
     // const { tab } = this.state;
     // this.onChangeTab(tab);
    // this.setState({ orders })
+   console.log(this.props.privilege);
   }
 
   componentWillUnmount() {
@@ -117,18 +120,22 @@ class OrderList extends React.Component {
 
   loadOrders = () => {
     const { GetOrders, page, perPage } = this.props;
-    const { keyword } = this.state;
+    const { keyword, selectedFilters } = this.state;
+    let stringFilters = selectedFilters.map(filter => filter.value).join(',')
     const params = isEmpty(keyword) ? 
     {
       page: page,
-      per_page: perPage
+      per_page: perPage,
+      search: keyword,
+      states: stringFilters
     } : 
     {
-       page: page,
-      search: keyword
+      page: page,
+      search: keyword,
+      states: stringFilters
       // per_page: 25
     };
-    // console.log(params);
+    console.log(params);
     GetOrders({ params });
   }
 
@@ -146,9 +153,9 @@ class OrderList extends React.Component {
           per_page: 15,
           'invoices': true,
           // 'states': 'accepted,provisioned,scheduled,started,invoiced',
-          'without_states': 'completed',
-          'order[order]': 'provider_order_sequence',
-          'order[sort]': 'desc'
+          // 'without_states': 'completed',
+          // 'order[order]': 'provider_order_sequence',
+          // 'order[sort]': 'desc'
         }
       });
     } else if (tab === DISPATCHED_TAB) {
@@ -163,7 +170,7 @@ class OrderList extends React.Component {
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'dispatched', search: keyword } });
+        this.props.GetOrders({ params: { page, per_page: 15, states: 'dispatched', search: keyword } });
       }
     } else {
       if (privilege === 'provider') {
@@ -172,8 +179,8 @@ class OrderList extends React.Component {
             page,
             per_page: 15,
             search: keyword,
-            'order[order]': 'provider_order_sequence',
-            'order[sort]': 'desc'
+            // 'order[order]': 'provider_order_sequence',
+            // 'order[sort]': 'desc'
           }
         });
       } else {
@@ -235,13 +242,24 @@ class OrderList extends React.Component {
     });
   }
 
+  handleFilter = (filters) => {
+    //console.log(filters);
+    this.setState({ selectedFilters: filters }, () => {
+      this.loadOrders();
+    })
+  }
+
   handleExport = () => {
     const { token } = this.props;
+    const { selectedFilters } = this.state;
+    let stringFilters = selectedFilters.map(filter => filter.value).join(',')
     const now = new Date();
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
     myHeaders.append('Content-Type', 'application/json');
-    fetch('https://staging-api.boatyard.com/api/v2/reports/transactions?provider_id=2&provider_location_id=15,16&xls=true', {
+    const url = `https://staging-api.boatyard.com/api/v2/reports/transactions?order_states=${stringFilters}&start=2020-01-15&xls=true`
+    console.log(url);
+    fetch(url, {
       headers: myHeaders
     })
     .then((resp) => resp.blob()) // Transform the data into json
@@ -259,7 +277,7 @@ class OrderList extends React.Component {
 
   render() {
     const { orders, page, privilege, currentStatus, statuses } = this.props;
-    //console.log(orders);
+    // console.log(statuses);
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
@@ -283,7 +301,7 @@ class OrderList extends React.Component {
       };
     });
 
-    const { tab } = this.state;
+    const { tab, selectedFilters } = this.state;
     const { columns, selectedColumns } = this.props;
     // console.log(statuses);
     const loading = currentStatus === actionTypes.GET_ORDERS;
@@ -304,6 +322,9 @@ class OrderList extends React.Component {
               <Table
                 columns={selectedColumns}
                 records={processedOrders}
+                statuses={statuses}
+                onChangeFilter={this.handleFilter}
+                selectedFilters={selectedFilters}
                 toDetails={this.toDetails}
                 page={page}
                 pageCount={pageCount}

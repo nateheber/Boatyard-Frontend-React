@@ -42,14 +42,6 @@ export const OrderHeader = ({  columns, statuses, selectedColumns, onChangeColum
           if (onChangeColumns) onChangeColumns(columns);
         }}
       />
-      <ColumnFilter
-        items={statuses}
-        title='FILTER'
-        // selected={selectedColumns}
-        // onChangeSelection={columns => {
-        //   if (onChangeColumns) onChangeColumns(columns);
-        // }}
-      />
     </RightPart>
   </SectionHeaderWrapper>
 );
