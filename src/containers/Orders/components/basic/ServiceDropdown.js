@@ -84,6 +84,7 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
 
   const handleCreateService = (values) => {
     const data = providerLocationId ? { provider_location_service: values } : { service: values };
+    console.log(data);
     CreateService({
       data,
       success: (data) => {
