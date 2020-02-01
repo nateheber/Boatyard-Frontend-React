@@ -97,7 +97,7 @@ class LineItemSection extends React.Component {
   };
 
   onChangeLineItems = (updateInfo, idx) => {
-    //console.log("Update Info:", idx, updateInfo);
+    console.log("Update Info:", idx, updateInfo);
     let lineItems = this.state.lineItems.map(val => ({ ...val }));
     set(lineItems, `[${idx}].attributes.serviceId`, updateInfo.serviceId);
     set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);

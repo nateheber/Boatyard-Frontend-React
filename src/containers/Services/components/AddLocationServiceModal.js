@@ -271,6 +271,7 @@ class AddLocationServiceModal extends React.Component {
   }
 
   onSave = () => {
+    console.log('location modal');
     const { service, onSave } = this.props;
     const { serviceValues } = this.state;
     if (this.mainFields.validateFields() && this.descriptionField.validateFields()) {

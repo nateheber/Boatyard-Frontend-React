@@ -179,8 +179,8 @@ class OrderList extends React.Component {
             page,
             per_page: 15,
             search: keyword,
-            // 'order[order]': 'provider_order_sequence',
-            // 'order[sort]': 'desc'
+            'order[order]': 'provider_order_sequence',
+            'order[sort]': 'desc'
           }
         });
       } else {
