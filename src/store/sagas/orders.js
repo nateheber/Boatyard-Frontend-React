@@ -35,8 +35,8 @@ function* getOrders(action) {
   if (!hasIn(params, 'order[order]')) {
     submissionParams = {
       ...params,
-      // 'order[order]': 'created_at',
-      //  'order[sort]': 'desc',
+      'order[order]': 'created_at',
+       'order[sort]': 'desc',
     };
   } else {
     submissionParams = { ...params };
