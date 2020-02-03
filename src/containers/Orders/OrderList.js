@@ -96,7 +96,6 @@ class OrderList extends React.Component {
     // const { tab } = this.state;
     // this.onChangeTab(tab);
    // this.setState({ orders })
-   console.log(this.props.privilege);
   }
 
   componentWillUnmount() {
@@ -130,7 +129,7 @@ class OrderList extends React.Component {
       states: stringFilters
     } : 
     {
-      // page: page,
+      page: page,
       search: keyword,
       states: stringFilters
       // per_page: 25
@@ -152,10 +151,10 @@ class OrderList extends React.Component {
           page,
           per_page: 15,
           'invoices': true,
-          // 'states': 'accepted,provisioned,scheduled,started,invoiced',
-          // 'without_states': 'completed',
-          // 'order[order]': 'provider_order_sequence',
-          // 'order[sort]': 'desc'
+          'states': 'accepted,provisioned,scheduled,started,invoiced',
+          'without_states': 'completed',
+          'order[order]': 'provider_order_sequence',
+          'order[sort]': 'desc'
         }
       });
     } else if (tab === DISPATCHED_TAB) {
@@ -257,7 +256,7 @@ class OrderList extends React.Component {
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
     myHeaders.append('Content-Type', 'application/json');
-    const url = `https://staging-api.boatyard.com/api/v2/reports/transactions?order_states=${stringFilters}&start=2020-01-15&xls=true`
+    const url = `https://staging-api.boatyard.com/api/v2/reports/transactions?order_states=${stringFilters}&start=2020-02-01&xls=true`
     console.log(url);
     fetch(url, {
       headers: myHeaders
