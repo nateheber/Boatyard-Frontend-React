@@ -257,7 +257,7 @@ class OrderList extends React.Component {
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
     myHeaders.append('Content-Type', 'application/json');
-    const url = `https://staging-api.boatyard.com/api/v2/reports/transactions?order_states=${stringFilters}&start=2020-01-15&xls=true`
+    const url = `https://staging-api.boatyard.com/api/v2/reports/transactions?order_states=${stringFilters}&start=2020-02-01&xls=true`
     console.log(url);
     fetch(url, {
       headers: myHeaders
