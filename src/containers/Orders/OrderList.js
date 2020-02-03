@@ -130,7 +130,7 @@ class OrderList extends React.Component {
       states: stringFilters
     } : 
     {
-      page: page,
+      // page: page,
       search: keyword,
       states: stringFilters
       // per_page: 25
