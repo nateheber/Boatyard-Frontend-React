@@ -125,14 +125,14 @@ class OrderList extends React.Component {
     {
       page: page,
       per_page: perPage,
-      search: keyword,
-      states: stringFilters
+      //search: keyword,
+      //states: stringFilters
     } : 
     {
-      // page: page,
+      page: page,
       search: keyword,
-      states: stringFilters
-      // per_page: 25
+      states: stringFilters,
+      per_page: 25
     };
     console.log(params);
     GetOrders({ params });
