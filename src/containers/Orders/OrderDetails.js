@@ -130,7 +130,7 @@ class OrderDetails extends React.Component {
         this.setState({ isFirstLoad: false });
       },
       error: (e) => {
-        toastr.error('Error', e.message);
+        // toastr.error('Error', e.message);
         this.props.history.push('/');
       }
     });
