@@ -132,6 +132,7 @@ class PaymentSection extends React.Component {
   };
 
   onSave = (data) => {
+    console.log(`Payment Data: ${data}`)
     const { CreatePayment, onFinished, payments } = this.props;
     CreatePayment({
       data,
