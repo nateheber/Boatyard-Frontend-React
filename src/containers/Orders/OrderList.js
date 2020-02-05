@@ -9,7 +9,7 @@ import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from 'store/actions/orders';
-import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector, statusSelector } from 'store/selectors/orders';
+import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector, statusSelector, providerStatusSelector } from 'store/selectors/orders';
 import { getCustomerName } from 'utils/order';
 import { getToken } from 'store/selectors/auth';
 
@@ -126,7 +126,7 @@ class OrderList extends React.Component {
       page: page,
       per_page: perPage,
       //search: keyword,
-      //states: stringFilters
+      states: stringFilters
     } : 
     {
       page: page,
@@ -275,8 +275,9 @@ class OrderList extends React.Component {
   }
 
   render() {
-    const { orders, page, privilege, currentStatus, statuses } = this.props;
+    const { orders, page, privilege, currentStatus, statuses, providerStatuses } = this.props;
     // console.log(statuses);
+    const selectedStatuses = privilege === 'admin' ? statuses : providerStatuses;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
@@ -302,7 +303,7 @@ class OrderList extends React.Component {
 
     const { tab, selectedFilters } = this.state;
     const { columns, selectedColumns } = this.props;
-    // console.log(statuses);
+    console.log(statuses);
     const loading = currentStatus === actionTypes.GET_ORDERS;
     return (
       <Wrapper>
@@ -321,7 +322,7 @@ class OrderList extends React.Component {
               <Table
                 columns={selectedColumns}
                 records={processedOrders}
-                statuses={statuses}
+                statuses={selectedStatuses}
                 onChangeFilter={this.handleFilter}
                 selectedFilters={selectedFilters}
                 toDetails={this.toDetails}
@@ -341,6 +342,7 @@ const mapStateToProps = state => ({
   orders: refinedOrdersSelector(state),
   columns: columnsSelector(state),
   statuses: statusSelector(),
+  providerStatuses: providerStatusSelector(),
   selectedColumns: selectedColumnsSelector(state),
   page: get(state, 'order.orders.page', 1),
   perPage: get(state, 'order.orders.perPage', 20),
