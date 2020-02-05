@@ -118,16 +118,25 @@ class OrderList extends React.Component {
   // }
 
   loadOrders = () => {
-    const { GetOrders, page, perPage } = this.props;
+    const { GetOrders, page, perPage, privilege } = this.props;
     const { keyword, selectedFilters } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',')
     const params = isEmpty(keyword) ? 
+    privilege === 'admin' ?
     {
       page: page,
       per_page: perPage,
       //search: keyword,
       states: stringFilters
     } : 
+    {
+      page: page,
+      per_page: perPage,
+      //search: keyword,
+      states: stringFilters,
+      'order[order]': 'provider_order_sequence',
+      'order[sort]': 'desc'
+    } :
     {
       page: page,
       search: keyword,
@@ -164,8 +173,8 @@ class OrderList extends React.Component {
           params: {
             page,
             per_page: 15,
-            // 'order[order]': 'provider_order_sequence',
-            // 'order[sort]': 'desc'
+            'order[order]': 'provider_order_sequence',
+            'order[sort]': 'desc'
           }
         });
       } else {
@@ -303,7 +312,6 @@ class OrderList extends React.Component {
 
     const { tab, selectedFilters } = this.state;
     const { columns, selectedColumns } = this.props;
-    console.log(statuses);
     const loading = currentStatus === actionTypes.GET_ORDERS;
     return (
       <Wrapper>
