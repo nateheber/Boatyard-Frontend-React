@@ -143,11 +143,13 @@ class PaymentSection extends React.Component {
         };
         const payment = payments[payments.length - 1];
         if (payment.attributes.state === 'failed') {
+          console.log("failed payment in onSave");
           toastr.error('Error', payment.attributes.spreedlyMessage);
         }
       },
       error: (e) => {
-        toastr.error('Error', e.message);
+        console.log("onSave in PaymentSection");
+        // toastr.error('Error', e.message);
       }
     });
   };
