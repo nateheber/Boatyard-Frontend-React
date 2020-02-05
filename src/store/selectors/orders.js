@@ -44,9 +44,23 @@ const ORDER_STATUSES = [
   { label: 'Completed', value: 'completed'}
 ];
 
+const PROVIDER_STATUSES = [
+  { label: 'Awaiting Acceptance', value: 'awaiting_acceptance'},
+  { label: 'Quote Sent', value: 'quote_sent'},
+  { label: 'In Progress', value: 'in_progress'},
+  { label: 'Invoiced', value: 'invoiced'},
+  { label: 'Completed', value: 'completed'}
+];
+
 export const statusSelector = createSelector(
   () => {
     return ORDER_STATUSES;
+  }
+);
+
+export const providerStatusSelector = createSelector(
+  () => {
+    return PROVIDER_STATUSES;
   }
 );
 

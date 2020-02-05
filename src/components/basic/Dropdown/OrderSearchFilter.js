@@ -103,13 +103,12 @@ export class OrderSearchFilter extends React.Component {
   };
 
   select = val => {
-      console.log(val);
     const { onChangeSelection, selected } = this.props;
     const idx = findIndex(selected, sel => sel.value === val.value);
     let newSelection = selected;
     if (idx >= 0) {
       const selections = filter(selected, sel => sel.value !== val.value);
-      if (selections.length > 0) newSelection = selections;
+      if (selections.length >= 0) newSelection = selections;
     } else {
       const { items } = this.props;
       const selections = [...selected, val];
