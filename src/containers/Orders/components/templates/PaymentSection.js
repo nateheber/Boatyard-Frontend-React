@@ -147,7 +147,7 @@ class PaymentSection extends React.Component {
         }
       },
       error: (e) => {
-        // toastr.error('Error', e.message);
+        toastr.error('Error', e.message);
       }
     });
   };

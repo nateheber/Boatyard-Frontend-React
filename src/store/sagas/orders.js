@@ -33,11 +33,15 @@ function* getOrders(action) {
   const { params, success, error } = action.payload;
   let submissionParams = {};
   if (!hasIn(params, 'search')) {
-    submissionParams = {
-      ...params,
-      'order[order]': 'created_at',
-       'order[sort]': 'desc',
-    };
+    if (!hasIn(params, 'order[order]')) {
+      submissionParams = {
+        ...params,
+        'order[order]': 'created_at',
+        'order[sort]': 'desc',
+      };
+    } else {
+      submissionParams = { ...params };
+    }
   } else {
     submissionParams = { ...params };
   }
