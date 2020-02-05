@@ -134,7 +134,6 @@ class PaymentSection extends React.Component {
 
   onSave = (data) => {
     const { CreatePayment, onFinished, payments } = this.props;
-    console.log(this.props.payments);
     CreatePayment({
       data,
       success: () => {
@@ -144,8 +143,8 @@ class PaymentSection extends React.Component {
           onFinished();
         };
         const allPayments = orderBy(payments, ['id', 'asc']);
-        // console.log(allPayments);
-        const payment = allPayments[payments.length - 1];
+        //console.log(allPayments);
+        const payment = allPayments[allPayments.length - 1];
         if (payment.attributes.state === 'failed') {
           console.log("failed payment in onSave");
           // console.log(payments);
