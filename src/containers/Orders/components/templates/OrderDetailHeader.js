@@ -80,6 +80,7 @@ class OrderDetailHeader extends React.Component {
         toastr.success('Success', 'Accepted successfully!');
       },
       error: (e) => {
+        console.log("acceptOrder");
         toastr.error('Error', e.message);
       }
     });
@@ -100,6 +101,7 @@ class OrderDetailHeader extends React.Component {
         this.props.history.push('/orders/');
       },
       error: (e) => {
+        console.log("declineOrder");
         toastr.error('Error', e.message);
       }
     });
@@ -119,6 +121,7 @@ class OrderDetailHeader extends React.Component {
         toastr.success('Success', 'Canceled successfully!');
       },
       error: (e) => {
+        console.log("cancelOrder");
         toastr.error('Error', e.message);
       }
     });
@@ -134,6 +137,7 @@ class OrderDetailHeader extends React.Component {
         this.props.history.push('/orders/');
       },
       error: (e) => {
+        console.log("deleteOrder");
         toastr.error('Error', e.message);
       }
     });
@@ -163,6 +167,7 @@ class OrderDetailHeader extends React.Component {
         toastr.success('Success', 'Completed successfully!');
       },
       error: (e) => {
+        console.log(this.completeOrder);
         toastr.error('Error', e.message);
       }
     });
