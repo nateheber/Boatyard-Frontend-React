@@ -103,7 +103,7 @@ class PaymentSection extends React.Component {
 
   renderPayments = () => {
     let { payments } = this.props;
-    console.log(this.props.payments);
+    // console.log(this.props.payments);
     payments = orderBy(payments, ['attributes.updatedAt', 'asc']);
     return payments.map(payment => {
       const { amount, updatedAt, createdAt, paymentType, state } = payment.attributes;
@@ -133,7 +133,6 @@ class PaymentSection extends React.Component {
   };
 
   onSave = (data) => {
-    console.log(`Payment Data: ${data}`)
     const { CreatePayment, onFinished, payments } = this.props;
     console.log(this.props.payments);
     CreatePayment({
@@ -144,11 +143,12 @@ class PaymentSection extends React.Component {
         if (onFinished) {
           onFinished();
         };
-        const payment = payments[payments.length - 1];
-        console.log(`Former Payment: ${payments[payments.length - 2]}`)
-        console.log(`Current Payment: ${payment}`);
+        const allPayments = orderBy(payments, ['id', 'asc']);
+        // console.log(allPayments);
+        const payment = allPayments[payments.length - 1];
         if (payment.attributes.state === 'failed') {
           console.log("failed payment in onSave");
+          // console.log(payments);
           toastr.error('Error', payment.attributes.spreedlyMessage);
         }
       },
