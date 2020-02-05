@@ -103,6 +103,7 @@ class PaymentSection extends React.Component {
 
   renderPayments = () => {
     let { payments } = this.props;
+    console.log(this.props.payments);
     payments = orderBy(payments, ['attributes.updatedAt', 'asc']);
     return payments.map(payment => {
       const { amount, updatedAt, createdAt, paymentType, state } = payment.attributes;
@@ -134,6 +135,7 @@ class PaymentSection extends React.Component {
   onSave = (data) => {
     console.log(`Payment Data: ${data}`)
     const { CreatePayment, onFinished, payments } = this.props;
+    console.log(this.props.payments);
     CreatePayment({
       data,
       success: () => {
