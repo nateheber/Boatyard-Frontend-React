@@ -142,11 +142,11 @@ class PaymentSection extends React.Component {
           onFinished();
         };
         const allPayments = orderBy(payments, ['id', 'asc']);
-        //console.log(allPayments);
+        console.log(allPayments);
         const payment = allPayments[allPayments.length - 1];
         if (payment.attributes.state === 'failed') {
           console.log("failed payment in onSave");
-          // console.log(payments);
+          console.log(payment.attributes.state);
           toastr.error('Error', payment.attributes.spreedlyMessage);
         }
       },
