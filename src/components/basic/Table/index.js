@@ -147,7 +147,7 @@ export default class Table extends React.Component {
   };
 
   render() {
-    const { columns, page, pageCount, onPageChange, type, records, loading, noData } = this.props;
+    const { columns, page, pageCount, onPageChange, onChangeFilter, selectedFilters, type, records, loading, noData, statuses } = this.props;
     const { sortColumn, isAsc } = this.state;
     return (
       <ContentWrapper>
@@ -157,6 +157,9 @@ export default class Table extends React.Component {
               ref={this.setHeaderRef}
               type={type}
               columns={columns}
+              statuses={statuses}
+              onChangeFilter={onChangeFilter}
+              selectedFilters={selectedFilters}
               sortColumn={sortColumn}
               isAsc={isAsc}
               onSort={this.sort}

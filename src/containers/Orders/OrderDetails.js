@@ -130,7 +130,7 @@ class OrderDetails extends React.Component {
         this.setState({ isFirstLoad: false });
       },
       error: (e) => {
-        toastr.error('Error', e.message);
+        // toastr.error('Error', e.message);
         this.props.history.push('/');
       }
     });
@@ -247,7 +247,8 @@ class OrderDetails extends React.Component {
           this.props.SetWorkOrder({modalShow: false, reset: !!workorder.id});
         },
         error: (e) => {
-          toastr.error('Error', e.message);
+          console.log("onSaveJob");
+          // toastr.error('Error', e.message);
         }
       });
 
@@ -307,6 +308,7 @@ class OrderDetails extends React.Component {
             this.props.SetWorkOrder({modalShow: false, reset: true});
           },
           error: (e) => {
+            console.log("onJobSend");
             toastr.error('Error', e.message);
           }
         });
@@ -330,6 +332,7 @@ class OrderDetails extends React.Component {
         this.props.SetWorkOrder({modalShow: false, reset: true});
       },
       error: (e) => {
+        console.log("handleJobDelete");
         toastr.error('Error', e.message);
       }
     });

@@ -32,12 +32,16 @@ function* getOrders(action) {
   let failureType = actionTypes.GET_ORDERS_FAILURE;
   const { params, success, error } = action.payload;
   let submissionParams = {};
-  if (!hasIn(params, 'order[order]')) {
-    submissionParams = {
-      ...params,
-      'order[order]': 'created_at',
-      'order[sort]': 'desc',
-    };
+  if (!hasIn(params, 'search')) {
+    if (!hasIn(params, 'order[order]')) {
+      submissionParams = {
+        ...params,
+        'order[order]': 'created_at',
+        'order[sort]': 'desc',
+      };
+    } else {
+      submissionParams = { ...params };
+    }
   } else {
     submissionParams = { ...params };
   }

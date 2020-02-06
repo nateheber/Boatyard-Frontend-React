@@ -122,6 +122,7 @@ class AddService extends React.Component {
   createService = (values) => {
     const { CreateService, providerLocationId } = this.props;
     const data = providerLocationId ? { provider_location_service: values } : { service: values };
+    console.log(data);
     CreateService({ 
       data,
       success: () => {

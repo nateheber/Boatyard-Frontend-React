@@ -141,13 +141,18 @@ class PaymentSection extends React.Component {
         if (onFinished) {
           onFinished();
         };
-        const payment = payments[payments.length - 1];
+        const allPayments = orderBy(payments, ['id', 'asc']);
+        console.log(allPayments);
+        const payment = allPayments[allPayments.length - 1];
         if (payment.attributes.state === 'failed') {
+          console.log("failed payment in onSave");
+          console.log(payment.attributes.state);
           toastr.error('Error', payment.attributes.spreedlyMessage);
         }
       },
       error: (e) => {
-        toastr.error('Error', e.message);
+        console.log("onSave in PaymentSection - The payment failed to create somewhere in the DB");
+        // toastr.error('Error', e.message);
       }
     });
   };
