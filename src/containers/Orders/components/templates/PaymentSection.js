@@ -103,7 +103,6 @@ class PaymentSection extends React.Component {
 
   renderPayments = () => {
     let { payments } = this.props;
-    // console.log(this.props.payments);
     payments = orderBy(payments, ['attributes.updatedAt', 'asc']);
     return payments.map(payment => {
       const { amount, updatedAt, createdAt, paymentType, state } = payment.attributes;
@@ -186,8 +185,8 @@ class PaymentSection extends React.Component {
     const { order, currentStatus, payments } = this.props;
     const { visibleOfCreateModal, visibleOfRefundModal } = this.state;
     const refundablePayments = map(
-      filter(payments, {attributes: {refundable: true}})
-      // payment => { return {...payment, cc: this.getCreditCard(payment)}}
+      filter(payments, {attributes: {refundable: true}}),
+      payment => { return {...payment, cc: this.getCreditCard(payment)}}
     );
     const balance = parseFloat(get(order, 'attributes.balance'));
     return (
