@@ -37,7 +37,7 @@ class TeamList extends React.Component {
 
   componentDidMount() {
     this.props.GetManagements({
-      params: { per_page: 100 }
+      params: { per_page: 10 }
     })
     this.setState({members: this.props.managements});
     console.log(this.state);
@@ -69,7 +69,7 @@ class TeamList extends React.Component {
   };
 
   changePage = (page) => {
-    this.props.GetManagements({ params: { page, per_page: 1000 } });
+    this.props.GetManagements({ params: { page, per_page: 10 } });
   }
 
   render() {
