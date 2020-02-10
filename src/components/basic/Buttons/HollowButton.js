@@ -10,6 +10,9 @@ export const HollowButton = styled.button`
   cursor: pointer;
   color: #003247;
   font-size: 12px;
+  @media (max-width: 1200px) {
+    font-size: 10px;
+  }
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   text-align: center;

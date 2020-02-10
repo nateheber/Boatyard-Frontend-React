@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty, find, filter, map, orderBy, deepEqual } from 'lodash';
+import { get, isEmpty, find, filter, map, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import moment from 'moment';
 import { GetCreditCards } from 'store/actions/credit-cards';
@@ -11,7 +11,6 @@ import { HollowButton } from 'components/basic/Buttons';
 import OrderPaymentModal from '../modals/OrderPaymentModal';
 import RefundPaymentModal from '../modals/RefundPaymentModal';
 import { getUserFromOrder, getChildAccountFromOrder } from 'utils/order'
-import { GetOpenOrdersSuccess } from '../../../../store/actions/orders';
 
 const PAYMENT_TYPES = {
   cash: 'Cash',
@@ -150,7 +149,7 @@ class PaymentSection extends React.Component {
   };
 
   onSave = (data) => {
-    const { CreatePayment, onFinished, payments } = this.props;
+    const { CreatePayment, onFinished } = this.props;
     CreatePayment({
       data,
       success: () => {
