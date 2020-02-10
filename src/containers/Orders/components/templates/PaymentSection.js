@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty, find, filter, map, orderBy } from 'lodash';
+import { get, isEmpty, find, filter, map, orderBy, deepEqual } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import moment from 'moment';
 import { GetCreditCards } from 'store/actions/credit-cards';
@@ -11,6 +11,7 @@ import { HollowButton } from 'components/basic/Buttons';
 import OrderPaymentModal from '../modals/OrderPaymentModal';
 import RefundPaymentModal from '../modals/RefundPaymentModal';
 import { getUserFromOrder, getChildAccountFromOrder } from 'utils/order'
+import { GetOpenOrdersSuccess } from '../../../../store/actions/orders';
 
 const PAYMENT_TYPES = {
   cash: 'Cash',
@@ -55,12 +56,29 @@ const Buttons  = styled.div`
 class PaymentSection extends React.Component {
   state = {
     visibleOfCreateModal: false,
-    visibleOfRefundModal: false
+    visibleOfRefundModal: false,
+    newPayments: []
   };
 
   componentDidMount() {
     this.loadPayments();
     this.refreshCards();
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.payments.length > state.newPayments.length) {
+      const orderedPayments = orderBy(props.payments, ['id', 'desc']);
+      console.log(orderedPayments);
+      const payment = orderedPayments[orderedPayments.length - 1];
+        if (payment.attributes.state === 'failed') {
+          //console.log("failed payment in onSave");
+          //console.log(payment.attributes.state);
+          toastr.error('Error', payment.attributes.spreedlyMessage);
+        } else {
+          // toastr.success('Success', "Successfully added!")
+        }
+    }
+    return null;
   }
 
   hideCreateModal = () => {
@@ -141,14 +159,14 @@ class PaymentSection extends React.Component {
         if (onFinished) {
           onFinished();
         };
-        const allPayments = orderBy(payments, ['id', 'asc']);
-        console.log(allPayments);
-        const payment = allPayments[allPayments.length - 1];
-        if (payment.attributes.state === 'failed') {
-          console.log("failed payment in onSave");
-          console.log(payment.attributes.state);
-          toastr.error('Error', payment.attributes.spreedlyMessage);
-        }
+        // const allPayments = orderBy(payments, ['id', 'asc']);
+        // console.log(allPayments);
+        // const payment = allPayments[allPayments.length - 1];
+        // if (payment.attributes.state === 'failed') {
+        //   console.log("failed payment in onSave");
+        //   console.log(payment.attributes.state);
+        //   toastr.error('Error', payment.attributes.spreedlyMessage);
+        // }
       },
       error: (e) => {
         console.log("onSave in PaymentSection - The payment failed to create somewhere in the DB");
@@ -178,7 +196,10 @@ class PaymentSection extends React.Component {
 
   loadPayments = () => {
     const { order, GetPayments } = this.props;
-    GetPayments({ params: { 'payment[order_id]': order.id } });
+    //console.log(this.state.newPayments);
+    GetPayments({ params: { 'payment[order_id]': order.id }});
+   //console.log(this.props.payments);
+    this.setState({newPayments: this.props.payments});
   };
 
   render() {
@@ -236,7 +257,7 @@ const mapStateToProps = ({ payment: { payments, currentStatus, included }, order
   paymentsIncluded: included,
   orderStatus: order.currentStatus,
   creditCards,
-  privilege,
+  privilege
 })
 
 const mapDispatchToProps = {
