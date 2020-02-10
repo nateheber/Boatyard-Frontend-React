@@ -327,9 +327,9 @@ class UserDetails extends React.Component {
   };
 
   defaultOptions = () => {
-    console.log('default optioning....');
+    // console.log('default optioning....');
     const { providerLocations, preferredProviders } = this.props;
-    console.log(this.props.providerLocations);
+    // console.log(this.props.providerLocations);
     return sortBy(providerLocations.filter(location => preferredProviders.filter(preferred => `${preferred.relationships.providerLocation.id}` === `${location.id}`).length === 0), ['provider_name', 'name']);
   };
 
