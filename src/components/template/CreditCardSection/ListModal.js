@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { get, capitalize } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
+import { orderBy } from 'lodash';
 
 import { actionTypes, UpdateCreditCard, DeleteCreditCard } from 'store/actions/credit-cards';
 
@@ -47,6 +48,7 @@ class ListModal extends React.Component {
 
   render() {
     const { open, onClose, creditCards, onNew, currentStatus } = this.props;
+    const orderCards = orderBy(creditCards, ['attributes.isDefault'], ['desc']);
     return (
       <Modal
         title="Payment Methods"
@@ -67,7 +69,7 @@ class ListModal extends React.Component {
         </Wrapper>
         <CreditList>
           {
-            creditCards.map(creditCard => (
+            orderCards.map(creditCard => (
               <CreditCard
                 creditCard={creditCard}
                 onSetDefault={this.setDefault}
