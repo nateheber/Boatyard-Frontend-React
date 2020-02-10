@@ -12,6 +12,7 @@ import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from
 import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector, statusSelector, providerStatusSelector } from 'store/selectors/orders';
 import { getCustomerName } from 'utils/order';
 import { getToken } from 'store/selectors/auth';
+import { apiBaseUrl } from '../../api/config';
 
 import NewOrderModal from 'components/template/Orders/NewOrderModal';
 // import { string } from 'prop-types';
@@ -91,7 +92,8 @@ class OrderList extends React.Component {
   }
 
   componentDidMount() {
-    this.loadOrders();
+    const { keyword } = this.state;
+    isEmpty(keyword) ? this.loadOrders() : this.loadOrders(keyword);
     //const { orders } = this.props;
     // const { tab } = this.state;
     // this.onChangeTab(tab);
@@ -103,23 +105,16 @@ class OrderList extends React.Component {
   }
 
   // static getDerivedStateFromProps(props, state) {
-  //   // Any time the current user changes,
-  //   // Reset any parts of state that are tied to that user.
-  //   // In this simple example, that's just the email.
-  //   // console.log(props);
-  //  // console.log(state);
-  //   if (props.userID !== state.prevPropsUserID) {
-  //     return {
-  //       prevPropsUserID: props.userID,
-  //       email: props.defaultEmail
-  //     };
-  //   }
+
+  //   console.log(props);
+
   //   return null;
   // }
 
-  loadOrders = () => {
+  loadOrders = (keyword) => {
+    // console.log(`Running loadOrder with keyword ${keyword}`);
     const { GetOrders, page, perPage, privilege } = this.props;
-    const { keyword, selectedFilters } = this.state;
+    const { selectedFilters } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',')
     const params = isEmpty(keyword) ? 
     privilege === 'admin' ?
@@ -138,12 +133,12 @@ class OrderList extends React.Component {
       'order[sort]': 'desc'
     } :
     {
-      page: page,
+      // page: page,
       search: keyword,
       states: stringFilters,
-      per_page: 25
+      // per_page: 25
     };
-    console.log(params);
+    // console.log(params);
     GetOrders({ params });
   }
 
@@ -265,7 +260,7 @@ class OrderList extends React.Component {
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
     myHeaders.append('Content-Type', 'application/json');
-    const url = `https://staging-api.boatyard.com/api/v2/reports/transactions?order_states=${stringFilters}&start=2020-02-01&xls=true`
+    const url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-02-01&xls=true`
     console.log(url);
     fetch(url, {
       headers: myHeaders
