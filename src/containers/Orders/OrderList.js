@@ -255,12 +255,17 @@ class OrderList extends React.Component {
   handleExport = () => {
     const { token } = this.props;
     const { selectedFilters } = this.state;
-    let stringFilters = selectedFilters.map(filter => filter.value).join(',')
+    let stringFilters = selectedFilters.map(filter => filter.value).join(',');
     const now = new Date();
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
     myHeaders.append('Content-Type', 'application/json');
-    const url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-02-01&xls=true`
+    let url;
+    if (stringFilters.length === 0) {
+      url = `${apiBaseUrl}/reports/transactions?start=2020-02-01&xls=true`;
+    } else {
+      url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-02-01&xls=true`;
+    }
     console.log(url);
     fetch(url, {
       headers: myHeaders
