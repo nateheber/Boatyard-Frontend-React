@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty, find, filter, map, orderBy } from 'lodash';
+import { get, isEmpty, find, map, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import moment from 'moment';
 import { GetCreditCards } from 'store/actions/credit-cards';
@@ -195,16 +195,13 @@ class PaymentSection extends React.Component {
 
   loadPayments = () => {
     const { order, GetPayments } = this.props;
-    //console.log(this.state.newPayments);
     GetPayments({ params: { 'payment[order_id]': order.id }});
-   //console.log(this.props.payments);
     this.setState({newPayments: this.props.payments});
   };
 
   render() {
     const { order, currentStatus, payments } = this.props;
     const { visibleOfCreateModal, visibleOfRefundModal } = this.state;
-    console.log(payments);
     const refundablePayments = map(
       // filter(payments, {attributes: {refundable: true}}),
       payments,
