@@ -169,7 +169,7 @@ class PaymentSection extends React.Component {
       },
       error: (e) => {
         console.log("onSave in PaymentSection - The payment failed to create somewhere in the DB");
-        // toastr.error('Error', e.message);
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -204,8 +204,10 @@ class PaymentSection extends React.Component {
   render() {
     const { order, currentStatus, payments } = this.props;
     const { visibleOfCreateModal, visibleOfRefundModal } = this.state;
+    console.log(payments);
     const refundablePayments = map(
-      filter(payments, {attributes: {refundable: true}}),
+      // filter(payments, {attributes: {refundable: true}}),
+      payments,
       payment => { return {...payment, cc: this.getCreditCard(payment)}}
     );
     const balance = parseFloat(get(order, 'attributes.balance'));
