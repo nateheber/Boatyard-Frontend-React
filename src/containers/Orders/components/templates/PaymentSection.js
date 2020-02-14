@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty, find, filter, map, orderBy } from 'lodash';
+import { get, isEmpty, find, map, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import moment from 'moment';
 import { GetCreditCards } from 'store/actions/credit-cards';
@@ -169,7 +169,7 @@ class PaymentSection extends React.Component {
       },
       error: (e) => {
         console.log("onSave in PaymentSection - The payment failed to create somewhere in the DB");
-        // toastr.error('Error', e.message);
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -195,9 +195,7 @@ class PaymentSection extends React.Component {
 
   loadPayments = () => {
     const { order, GetPayments } = this.props;
-    //console.log(this.state.newPayments);
     GetPayments({ params: { 'payment[order_id]': order.id }});
-   //console.log(this.props.payments);
     this.setState({newPayments: this.props.payments});
   };
 
@@ -205,7 +203,8 @@ class PaymentSection extends React.Component {
     const { order, currentStatus, payments } = this.props;
     const { visibleOfCreateModal, visibleOfRefundModal } = this.state;
     const refundablePayments = map(
-      filter(payments, {attributes: {refundable: true}}),
+      // filter(payments, {attributes: {refundable: true}}),
+      payments,
       payment => { return {...payment, cc: this.getCreditCard(payment)}}
     );
     const balance = parseFloat(get(order, 'attributes.balance'));
