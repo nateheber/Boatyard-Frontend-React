@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   // max-width: 195px;
   padding: 15px;
   display: none;
-  @media (max-width: 991px) {
+  @media (max-width: 1100px) {
     z-index: 99999;
     display: block !important;
   }
