@@ -7,8 +7,8 @@ import { CheckBox } from '../Input';
 
 const Wrapper = styled.div`
   position: relative;
-  display: inline-block;
   margin-left: 5px;
+  margin-top: -3px;
 `;
 
 const DropdownMenu = styled.ul`
