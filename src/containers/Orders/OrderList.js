@@ -227,7 +227,6 @@ class OrderList extends React.Component {
   };
 
   changePage = (page) => {
-    console.log("Changing page");
     const { tab } = this.state;
     this.setState({ page });
     this.onChangeTab(tab, page);
