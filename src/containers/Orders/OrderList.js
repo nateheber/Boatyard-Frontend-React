@@ -112,7 +112,7 @@ class OrderList extends React.Component {
   // }
 
   loadOrders = (keyword) => {
-    // console.log(`Running loadOrder with keyword ${keyword}`);
+    console.log(`Running loadOrder`);
     const { GetOrders, page, perPage, privilege } = this.props;
     const { selectedFilters } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',')
@@ -218,7 +218,7 @@ class OrderList extends React.Component {
     if (state === 'dispatched' && privilege === 'provider') {
       dispatched = true;
     }
-    this.props.history.push({pathname: `/orders/${order.id}/detail`, state: { dispatched }});
+    this.props.history.push({pathname: `/orders/${order.id}/detail`, state: { dispatched, lastPage: this.state.page }});
   };
 
   getPageCount = () => {
@@ -227,7 +227,9 @@ class OrderList extends React.Component {
   };
 
   changePage = (page) => {
+    console.log("Changing page");
     const { tab } = this.state;
+    this.setState({ page });
     this.onChangeTab(tab, page);
   };
 
@@ -301,6 +303,9 @@ class OrderList extends React.Component {
       }
       if (order.state === 'draft') {
         order.stateAlias = 'Needs Assignment';
+      }
+      if (order.state === 'declined') {
+        order.stateAlias = 'Quote Declined';
       }
       return {
       ...order,
