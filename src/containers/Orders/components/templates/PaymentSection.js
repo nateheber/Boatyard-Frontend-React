@@ -157,7 +157,9 @@ class PaymentSection extends React.Component {
   };
 
   onSave = (data) => {
-    const { CreatePayment, onFinished, payments } = this.props;
+    const { CreatePayment, onFinished } = this.props;
+    console.log("processing payment");
+    console.log(this.payments);
     CreatePayment({
       data,
       success: () => {
@@ -166,6 +168,8 @@ class PaymentSection extends React.Component {
         if (onFinished) {
           onFinished();
         };
+        console.log("From inside success");
+        console.log(this.payments);
         // const allPayments = orderBy(payments, ['id', 'asc']);
         // console.log(allPayments);
         // const payment = allPayments[allPayments.length - 1];
