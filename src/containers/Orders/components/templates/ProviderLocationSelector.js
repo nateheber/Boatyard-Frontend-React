@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { findIndex, sortBy, compact } from 'lodash';
+import { findIndex, sortBy, compact, replace } from 'lodash';
 import deepEqual from 'deep-equal';
 
 import { Input } from 'components/basic/Input';
@@ -215,13 +215,14 @@ class ProviderLocationSelector extends React.Component {
     if (keyword && keyword.trim().length > 0) {
       locations = providerLocations.filter(location => {
         if(location.name !== null) {
-          return (location.name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1 || location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
+          const nakedLcation = replace(location.name, '.', '');
+          return (nakedLcation.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1 || location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
         } else {
           return (locations.filter(location => location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1))
         }
       })
     }
-
+   
     this.setState({ locations });
   };
 

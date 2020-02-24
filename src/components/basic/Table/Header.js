@@ -90,6 +90,8 @@ const NormalHeader = styled.div`
 
 const ColumnHeaderContent = styled.div`
   // min-width: 130px;
+  display: flex;
+  align-items: end;
 `
 
 const ArrBlue = styled.span`
