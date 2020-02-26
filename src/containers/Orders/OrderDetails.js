@@ -58,7 +58,7 @@ class OrderDetails extends React.Component {
     visibleOfBoatModal: false,
     visibleOfJobModal: false,
     visibleOfConfirm: false,
-    visibleOfJobDeleteConfirm: false,
+    visibleOfJobDeleteConfirm: false
   };
 
   componentDidMount() {
@@ -130,7 +130,7 @@ class OrderDetails extends React.Component {
         this.setState({ isFirstLoad: false });
       },
       error: (e) => {
-        // toastr.error('Error', e.message);
+        toastr.error('Error', e.message);
         this.props.history.push('/');
       }
     });
@@ -344,9 +344,7 @@ class OrderDetails extends React.Component {
     const { orderId, isFirstLoad, visibleOfBoatModal, visibleOfConfirm, visibleOfJobDeleteConfirm } = this.state;
     const providerId = this.getProviderId();
     const providerLocationId = this.getProviderLocationId();
-
     const { currentOrder, currentStatus, boatStatus, privilege, workorders, workorder } = this.props;
-    //console.log(currentOrder);
     const lineItems = get(currentOrder, 'lineItems', []);
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state' );

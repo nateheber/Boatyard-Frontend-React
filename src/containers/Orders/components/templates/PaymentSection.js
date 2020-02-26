@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty, find, filter, map, orderBy } from 'lodash';
+import { get, isEmpty, find, map, orderBy } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import moment from 'moment';
 import { GetCreditCards } from 'store/actions/credit-cards';
@@ -64,21 +64,21 @@ class PaymentSection extends React.Component {
     this.refreshCards();
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.payments.length > state.newPayments.length) {
-      const orderedPayments = orderBy(props.payments, ['id', 'desc']);
-      console.log(orderedPayments);
-      const payment = orderedPayments[orderedPayments.length - 1];
-        if (payment.attributes.state === 'failed') {
-          //console.log("failed payment in onSave");
-          //console.log(payment.attributes.state);
-          toastr.error('Error', payment.attributes.spreedlyMessage);
-        } else {
-          // toastr.success('Success', "Successfully added!")
-        }
-    }
-    return null;
-  }
+  // static getDerivedStateFromProps(props, state) {
+  //   if (props.payments.length > state.newPayments.length) {
+  //     const orderedPayments = orderBy(props.payments, ['id', 'desc']);
+  //     //console.log(orderedPayments);
+  //     const payment = orderedPayments[orderedPayments.length - 1];
+  //       if (payment.attributes.state === 'failed') {
+  //         //console.log("failed payment in onSave");
+  //         //console.log(payment.attributes.state);
+  //         toastr.error('Error', payment.attributes.spreedlyMessage);
+  //       } else {
+  //         // toastr.success('Success', "Successfully added!")
+  //       }
+  //   }
+  //   return null;
+  // }
 
   hideCreateModal = () => {
     this.setState({ visibleOfCreateModal: false });
@@ -150,6 +150,9 @@ class PaymentSection extends React.Component {
 
   onSave = (data) => {
     const { CreatePayment, onFinished } = this.props;
+    let payments = this.props.payments;
+    console.log("processing payment");
+    console.log(this.payments);
     CreatePayment({
       data,
       success: () => {
@@ -158,18 +161,20 @@ class PaymentSection extends React.Component {
         if (onFinished) {
           onFinished();
         };
-        // const allPayments = orderBy(payments, ['id', 'asc']);
-        // console.log(allPayments);
-        // const payment = allPayments[allPayments.length - 1];
-        // if (payment.attributes.state === 'failed') {
-        //   console.log("failed payment in onSave");
-        //   console.log(payment.attributes.state);
-        //   toastr.error('Error', payment.attributes.spreedlyMessage);
-        // }
+        console.log("From inside success");
+        console.log(this.payments);
+        const allPayments = orderBy(payments, ['id', 'asc']);
+        console.log(allPayments);
+        const payment = allPayments[allPayments.length - 1];
+        if (payment.attributes.state === 'failed') {
+          console.log("failed payment in onSave");
+          console.log(payment.attributes.state);
+          toastr.error('Error', payment.attributes.spreedlyMessage);
+        }
       },
       error: (e) => {
         console.log("onSave in PaymentSection - The payment failed to create somewhere in the DB");
-        // toastr.error('Error', e.message);
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -195,9 +200,7 @@ class PaymentSection extends React.Component {
 
   loadPayments = () => {
     const { order, GetPayments } = this.props;
-    //console.log(this.state.newPayments);
     GetPayments({ params: { 'payment[order_id]': order.id }});
-   //console.log(this.props.payments);
     this.setState({newPayments: this.props.payments});
   };
 
@@ -205,7 +208,8 @@ class PaymentSection extends React.Component {
     const { order, currentStatus, payments } = this.props;
     const { visibleOfCreateModal, visibleOfRefundModal } = this.state;
     const refundablePayments = map(
-      filter(payments, {attributes: {refundable: true}}),
+      // filter(payments, {attributes: {refundable: true}}),
+      payments,
       payment => { return {...payment, cc: this.getCreditCard(payment)}}
     );
     const balance = parseFloat(get(order, 'attributes.balance'));

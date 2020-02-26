@@ -148,7 +148,7 @@ function* loginWithProvider(action) {
       result = yield call(escalationApiClient.post, '/users/escalations', {
         escalation: {
           user_id: parseInt(profile.id),
-          provider_id: parseInt(providerId),
+          provider_id: providerLocationId ? undefined : parseInt(providerId),
           provider_location_id: providerLocationId ? parseInt(providerLocationId) : undefined
         }
       });  
