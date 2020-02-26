@@ -205,6 +205,7 @@ class ProviderLocationSelector extends React.Component {
 
   filterLocations = () => {
     const { keyword } = this.state;
+    console.log(keyword);
     const { providerLocations } = this.props;
     let locations = providerLocations.slice(0);
     // if (keyword && keyword.trim().length > 0) {
@@ -215,8 +216,8 @@ class ProviderLocationSelector extends React.Component {
     if (keyword && keyword.trim().length > 0) {
       locations = providerLocations.filter(location => {
         if(location.name !== null) {
-          const nakedLcation = replace(location.name, '.', '');
-          return (nakedLcation.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1 || location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
+          // const nakedLcation = replace(location.name, '.', '');
+          return (location.name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1 || location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
         } else {
           return (locations.filter(location => location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1))
         }
