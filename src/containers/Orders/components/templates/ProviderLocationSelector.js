@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { findIndex, sortBy, compact, replace } from 'lodash';
+import { findIndex, sortBy, compact } from 'lodash';
 import deepEqual from 'deep-equal';
 
 import { Input } from 'components/basic/Input';
