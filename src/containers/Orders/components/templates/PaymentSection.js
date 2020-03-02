@@ -56,29 +56,13 @@ class PaymentSection extends React.Component {
   state = {
     visibleOfCreateModal: false,
     visibleOfRefundModal: false,
-    newPayments: []
+    newPayments: [],
   };
 
   componentDidMount() {
     this.loadPayments();
     this.refreshCards();
   }
-
-  // static getDerivedStateFromProps(props, state) {
-  //   if (props.payments.length > state.newPayments.length) {
-  //     const orderedPayments = orderBy(props.payments, ['id', 'desc']);
-  //     //console.log(orderedPayments);
-  //     const payment = orderedPayments[orderedPayments.length - 1];
-  //       if (payment.attributes.state === 'failed') {
-  //         //console.log("failed payment in onSave");
-  //         //console.log(payment.attributes.state);
-  //         toastr.error('Error', payment.attributes.spreedlyMessage);
-  //       } else {
-  //         // toastr.success('Success', "Successfully added!")
-  //       }
-  //   }
-  //   return null;
-  // }
 
   hideCreateModal = () => {
     this.setState({ visibleOfCreateModal: false });
@@ -150,9 +134,6 @@ class PaymentSection extends React.Component {
 
   onSave = (data) => {
     const { CreatePayment, onFinished } = this.props;
-    let payments = this.props.payments;
-    console.log("processing payment");
-    console.log(this.payments);
     CreatePayment({
       data,
       success: () => {
@@ -161,16 +142,11 @@ class PaymentSection extends React.Component {
         if (onFinished) {
           onFinished();
         };
-        console.log("From inside success");
-        console.log(this.payments);
-        const allPayments = orderBy(payments, ['id', 'asc']);
-        console.log(allPayments);
-        const payment = allPayments[allPayments.length - 1];
-        if (payment.attributes.state === 'failed') {
-          console.log("failed payment in onSave");
-          console.log(payment.attributes.state);
-          toastr.error('Error', payment.attributes.spreedlyMessage);
-        }
+        // const allPayments = orderBy(this.props.payments, ['id', 'asc']);
+        // const payment = allPayments[allPayments.length - 1];
+        // if (payment.attributes.state === 'failed') {
+        //   toastr.error('Error', payment.attributes.spreedlyMessage);
+        // }
       },
       error: (e) => {
         console.log("onSave in PaymentSection - The payment failed to create somewhere in the DB");

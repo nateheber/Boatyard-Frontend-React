@@ -1,5 +1,6 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
 import { actionTypes } from '../actions/payments';
 import { getPaymentClient } from './sagaSelectors';
@@ -61,6 +62,11 @@ function* createPayment(action) {
       payload: result
     });
     if (success) {
+      if (result.data.attributes.state === 'failed') {
+        toastr.error('Error', result.data.attributes.spreedlyMessage);
+      } else {
+        toastr.success('Success', "Payment Successful");
+      }
       yield call(success);
     }
   } catch (e) {
