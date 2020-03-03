@@ -150,7 +150,7 @@ class PaymentSection extends React.Component {
       },
       error: (e) => {
         console.log("onSave in PaymentSection - The payment failed to create somewhere in the DB");
-        toastr.error('Error', e.message);
+        toastr.error('Error', 'Payment Failed - Invalid Card');
       }
     });
   };
