@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   border-right: 1px solid #eaeaea;
   font-family: 'Source Sans Pro', sans-serif;
   // width: calc(${props => props.width} + 1px);
-  width: 100%;
+  width: ${props => props.width};
   cursor: pointer;
   &:before {
     content: "";
