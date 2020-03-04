@@ -281,13 +281,11 @@ export class Record extends React.PureComponent {
 
   getWidth = () => {
     const { sizes } = this.props;
-    console.log(`Sizes: ${sizes}`);
     if (sizes) {
       const totalWidth = sizes.reduce((prev, size) => prev + size, 0);
       if (totalWidth === 0) return `1420px`;
       return `${totalWidth}px`;
     } else {
-      console.log('no sizes');
       return '100%';
     }
   }
