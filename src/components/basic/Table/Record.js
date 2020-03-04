@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   border-bottom: 1px solid #eaeaea;
   border-right: 1px solid #eaeaea;
   font-family: 'Source Sans Pro', sans-serif;
-  // width: calc(${props => props.width} + 1px);
+  //width: calc(${props => props.width} + 1px);
   width: ${props => props.width};
   cursor: pointer;
   &:before {
@@ -283,6 +283,7 @@ export class Record extends React.PureComponent {
     const { sizes } = this.props;
     if (sizes) {
       const totalWidth = sizes.reduce((prev, size) => prev + size, 0);
+      if (totalWidth === 0) return `1420px`;
       return `${totalWidth}px`;
     } else {
       return '100%';

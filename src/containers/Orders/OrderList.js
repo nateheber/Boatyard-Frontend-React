@@ -104,13 +104,6 @@ class OrderList extends React.Component {
     this.props.SetDispatchedFlag(false);
   }
 
-  // static getDerivedStateFromProps(props, state) {
-
-  //   console.log(props);
-
-  //   return null;
-  // }
-
   loadOrders = (keyword) => {
     console.log(`Running loadOrder`);
     const { GetOrders, page, perPage, privilege } = this.props;
@@ -129,14 +122,14 @@ class OrderList extends React.Component {
       per_page: perPage,
       //search: keyword,
       states: stringFilters,
-      'order[order]': 'provider_order_sequence',
+      //'order[order]': 'provider_order_sequence',
       'order[sort]': 'desc'
     } :
     {
-      // page: page,
+      page: page,
       search: keyword,
       states: stringFilters,
-      // per_page: 25
+      per_page: 15
     };
     // console.log(params);
     GetOrders({ params });
@@ -144,7 +137,8 @@ class OrderList extends React.Component {
 
   onChangeTab = (tab, page = 1) => {
     const { privilege } = this.props;
-    const { keyword } = this.state;
+    const { keyword, selectedFilters } = this.state;
+    let stringFilters = selectedFilters.map(filter => filter.value).join(',');
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
@@ -157,7 +151,7 @@ class OrderList extends React.Component {
           'invoices': true,
           'states': 'accepted,provisioned,scheduled,started,invoiced',
           'without_states': 'completed',
-          'order[order]': 'provider_order_sequence',
+          //'order[order]': 'provider_order_sequence',
           'order[sort]': 'desc'
         }
       });
@@ -182,12 +176,13 @@ class OrderList extends React.Component {
             page,
             per_page: 15,
             search: keyword,
+            states: stringFilters,
             'order[order]': 'provider_order_sequence',
             'order[sort]': 'desc'
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 25, search: keyword } });
+        this.props.GetOrders({ params: { page, per_page: 25, search: keyword, states: stringFilters } });
       }
     }
   };
