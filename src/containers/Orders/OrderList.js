@@ -115,21 +115,23 @@ class OrderList extends React.Component {
       page: page,
       per_page: perPage,
       //search: keyword,
-      states: stringFilters
+      states: stringFilters,
+      'order[sort]': 'desc'
     } : 
     {
       page: page,
       per_page: perPage,
       //search: keyword,
       states: stringFilters,
-      //'order[order]': 'provider_order_sequence',
+      'order[order]': 'provider_order_sequence',
       'order[sort]': 'desc'
     } :
     {
       page: page,
       search: keyword,
       states: stringFilters,
-      per_page: 15
+      per_page: 15,
+      'order[sort]': 'desc'
     };
     // console.log(params);
     GetOrders({ params });
@@ -151,7 +153,7 @@ class OrderList extends React.Component {
           'invoices': true,
           'states': 'accepted,provisioned,scheduled,started,invoiced',
           'without_states': 'completed',
-          //'order[order]': 'provider_order_sequence',
+          'order[order]': 'provider_order_sequence',
           'order[sort]': 'desc'
         }
       });
@@ -242,7 +244,6 @@ class OrderList extends React.Component {
   }
 
   handleFilter = (filters) => {
-    //console.log(filters);
     this.setState({ selectedFilters: filters }, () => {
       this.loadOrders();
     })
