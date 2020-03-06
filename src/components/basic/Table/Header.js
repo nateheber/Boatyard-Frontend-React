@@ -137,7 +137,7 @@ export class TableHeader extends React.Component {
     this.setState({ widths, entireWidth: width });
     this.props.onChangeSize(widths);
   }
-
+  
   onResize = (idx) => (evt, obj) => {
     const { size: { width } } = obj;
     const { entireWidth } = this.state;
