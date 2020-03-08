@@ -123,7 +123,7 @@ class OrderList extends React.Component {
       per_page: perPage,
       //search: keyword,
       states: stringFilters,
-      'order[order]': 'provider_order_sequence',
+      //'order[order]': 'provider_order_sequence',
       'order[sort]': 'desc'
     } :
     {
