@@ -185,7 +185,19 @@ class AssigneeSelector extends React.Component {
     const selectedName = get(find(options, {id: selected}), labelField);
     let filteredOptions = options;
     if (keyword && keyword.length > 0) {
-      filteredOptions = filteredOptions.filter(op => op['name'].toLowerCase().indexOf(keyword.toLowerCase()) > -1);
+      if (filteredOptions[0].hasOwnProperty('name')) {
+        filteredOptions = filteredOptions.filter(location => {
+          if(location.name !== null) {
+            // const nakedLcation = replace(location.name, '.', '');
+            return (location.name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1 || location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1);
+          } else {
+            console.log("location name is null");
+            return (location.provider_name.toLowerCase().indexOf(keyword.trim().toLowerCase()) > -1)
+          }
+        })
+      } else {
+        filteredOptions = filteredOptions.filter(op => op['fullName'].toLowerCase().indexOf(keyword.toLowerCase()) > -1);
+      }
     }
     return (
       <Wrapper ref={this.setWrapperRef}>
