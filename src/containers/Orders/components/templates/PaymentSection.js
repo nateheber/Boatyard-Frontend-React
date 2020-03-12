@@ -188,6 +188,8 @@ class PaymentSection extends React.Component {
       // payments,
       payment => { return {...payment, cc: this.getCreditCard(payment)}}
     );
+    const cashRefundablePayments = filter(payments, {attributes: {paymentType: 'cash'}} ||  {attributes: {paymentType: 'check'}} );
+    // console.log(cashRefundablePayments);
     const balance = parseFloat(get(order, 'attributes.balance'));
     // console.log(payments);
     // console.log(refundablePayments);
@@ -202,7 +204,7 @@ class PaymentSection extends React.Component {
           </InfoList>
           <Buttons>
             {
-              refundablePayments.length > 0 && <HollowButton onClick={this.showRefundModal}>Refund</HollowButton>
+              refundablePayments.length > 0 || cashRefundablePayments.length > 0 && <HollowButton onClick={this.showRefundModal}>Refund</HollowButton>
             }
             {
               balance > 0 && <HollowButton onClick={this.showCreateModal}>Enter Payment</HollowButton>
