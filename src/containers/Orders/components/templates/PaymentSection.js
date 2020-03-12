@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { get, isEmpty, find, map, orderBy } from 'lodash';
+import { get, isEmpty, find, map, orderBy, filter } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import moment from 'moment';
 import { GetCreditCards } from 'store/actions/credit-cards';
@@ -184,11 +184,15 @@ class PaymentSection extends React.Component {
     const { order, currentStatus, payments } = this.props;
     const { visibleOfCreateModal, visibleOfRefundModal } = this.state;
     const refundablePayments = map(
-      // filter(payments, {attributes: {refundable: true}}),
-      payments,
+      filter(payments, {attributes: {refundable: true}}),
+      // payments,
       payment => { return {...payment, cc: this.getCreditCard(payment)}}
     );
+    const cashRefundablePayments = filter(payments, {attributes: {paymentType: 'cash'}} ||  {attributes: {paymentType: 'check'}} );
+    // console.log(cashRefundablePayments);
     const balance = parseFloat(get(order, 'attributes.balance'));
+    // console.log(payments);
+    // console.log(refundablePayments);
     return (
       <Section title="Payment">
         <Wrapper>
@@ -200,7 +204,7 @@ class PaymentSection extends React.Component {
           </InfoList>
           <Buttons>
             {
-              refundablePayments.length > 0 && <HollowButton onClick={this.showRefundModal}>Refund</HollowButton>
+              (refundablePayments.length > 0 || cashRefundablePayments.length > 0) && <HollowButton onClick={this.showRefundModal}>Refund</HollowButton>
             }
             {
               balance > 0 && <HollowButton onClick={this.showCreateModal}>Enter Payment</HollowButton>
