@@ -204,7 +204,7 @@ class PaymentSection extends React.Component {
           </InfoList>
           <Buttons>
             {
-              refundablePayments.length > 0 || cashRefundablePayments.length > 0 && <HollowButton onClick={this.showRefundModal}>Refund</HollowButton>
+              (refundablePayments.length > 0 || cashRefundablePayments.length > 0) && <HollowButton onClick={this.showRefundModal}>Refund</HollowButton>
             }
             {
               balance > 0 && <HollowButton onClick={this.showCreateModal}>Enter Payment</HollowButton>
