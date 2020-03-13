@@ -83,6 +83,7 @@ class OrderPaymentModal extends React.Component {
 
   render() {
     const { open, loading, onClose, creditCards, privilege, order } = this.props;
+    console.log(creditCards);
     const { balance, fee, tab, paymentMethod } = this.state;
     // const filteredCards = uniqBy(creditCards, 'attributes.last4');
     const charging = parseFloat(parseFloat(parseFloat(balance || '0').toFixed(2)) + parseFloat(parseFloat(fee || '0').toFixed(2))).toFixed(2);
@@ -90,6 +91,7 @@ class OrderPaymentModal extends React.Component {
     if (privilege === 'provider') {
       user = getChildAccountFromOrder(order);
     }
+    console.log(user);
     const action = [
       <HollowButton onClick={onClose} key="Cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.handleSave} key="Next">{tab === 'Credit Card' ? `Charge $${charging}` : 'Confirm Payment'}</OrangeButton>

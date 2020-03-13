@@ -50,10 +50,11 @@ class OrderAssignment extends React.Component {
         if (props.providerLocations.length > 0) {
           const dispatchIds = get(props, 'currentOrder.dispatchIds', []).map(el => props.providerLocations.find(item => `${item.id}` === `${el}`) )
             .sort((a, b) => (a.provider_name > b.provider_name) ? 1 : (a.provider_name === b.provider_name) ? ((a.name > b.name) ? 1 : -1) : -1 )
-            if (dispatchIds) {
-              let ids = dispatchIds.map(el => el.id);
-              return { ids }
-            }
+            .map(el => el.id)
+            // if (dispatchIds) {
+            //   let ids = dispatchIds.map(el => el.id);
+            //   return { ids }
+            // }
            // .map(el => el.id);
             return { dispatchIds };
         } else {
