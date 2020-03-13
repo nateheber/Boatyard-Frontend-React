@@ -81,7 +81,7 @@ const FirstField = styled.div`
   font-weight: bold;
   color: #004258;
   padding: 8px;
-  min-width: 200px;
+  min-width: 140px;
   padding-left: 30px;
   align-items: center;
   > a {
@@ -124,12 +124,13 @@ const Field = styled.div`
   align-items: center;
   padding: 8px;
   padding-left: 30px;
-  min-width: 200px;
+  min-width: 140px;
   @media (max-width: 843px) {
     display: none;
     &.show {
       display: flex;
       flex-direction: column;
+      min-width: 200px;
       padding: 8px 28px !important;
       align-items: flex-start;
     }
