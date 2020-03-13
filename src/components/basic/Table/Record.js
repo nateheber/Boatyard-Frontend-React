@@ -81,6 +81,7 @@ const FirstField = styled.div`
   font-weight: bold;
   color: #004258;
   padding: 8px;
+  min-width: 200px;
   padding-left: 30px;
   align-items: center;
   > a {
@@ -123,7 +124,7 @@ const Field = styled.div`
   align-items: center;
   padding: 8px;
   padding-left: 30px;
-  min-width: 140px;
+  min-width: 200px;
   @media (max-width: 843px) {
     display: none;
     &.show {
