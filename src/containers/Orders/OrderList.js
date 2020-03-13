@@ -184,7 +184,7 @@ class OrderList extends React.Component {
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 25, search: keyword, states: stringFilters } });
+        this.props.GetOrders({ params: { page, per_page: 25, search: keyword, states: stringFilters, 'order[sort]': 'desc' } });
       }
     }
   };
