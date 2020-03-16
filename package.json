@@ -83,8 +83,8 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
-    "postbuild": "npm run generate-build-meta",
-    "generate-build-meta": "./node_modules/react-clear-cache/bin/cli.js"
+    "prebuild": "npm run generate-build-version",
+    "generate-build-version": "node generate-build-version"
   },
   "eslintConfig": {
     "extends": "react-app"
