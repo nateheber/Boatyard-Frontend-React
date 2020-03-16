@@ -5,7 +5,7 @@ import WebFont from 'webfontloader';
 import ReduxToastr from 'react-redux-toastr';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPlus, faTimes, faUserCircle, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-
+import { useClearCache } from "react-clear-cache";
 import AppRoutes from './routes';
 import store, { persistor } from './store';
 
@@ -29,10 +29,12 @@ class App extends Component {
       <Provider store={store}>
         <PersistGate persistor={persistor}>
           <div>
+            <>
             <AppRoutes />
             <ReduxToastr
               timeOut={3000}
             />
+            </>
           </div>
         </PersistGate>
       </Provider>

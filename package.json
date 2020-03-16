@@ -28,6 +28,7 @@
     "react-autosize-textarea": "^6.0.0",
     "react-autosuggest": "^9.4.3",
     "react-calendar": "^2.17.5",
+    "react-clear-cache": "^1.1.0",
     "react-date-range": "^1.0.0-beta",
     "react-datepicker": "^2.0.0",
     "react-device-detect": "^1.6.2",
@@ -81,7 +82,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "postbuild": "npm run generate-build-meta",
+    "generate-build-meta": "./node_modules/react-clear-cache/bin/cli.js"
   },
   "eslintConfig": {
     "extends": "react-app"
