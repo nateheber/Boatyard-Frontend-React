@@ -81,7 +81,7 @@ const FirstField = styled.div`
   font-weight: bold;
   color: #004258;
   padding: 8px;
-  min-width: 140px;
+  min-width: 180px;
   padding-left: 30px;
   align-items: center;
   > a {
@@ -124,7 +124,7 @@ const Field = styled.div`
   align-items: center;
   padding: 8px;
   padding-left: 30px;
-  min-width: 140px;
+  min-width: 180px;
   @media (max-width: 843px) {
     display: none;
     &.show {
@@ -286,7 +286,7 @@ export class Record extends React.PureComponent {
     const { sizes } = this.props;
     if (sizes) {
       const totalWidth = sizes.reduce((prev, size) => prev + size, 0);
-      if (totalWidth === 0) return `1550px`;
+      if (totalWidth === 0) return `2800px`;
       return `${totalWidth}px`;
     } else {
       return '100%';
