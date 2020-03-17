@@ -312,7 +312,6 @@ export class Record extends React.PureComponent {
     } else {
       icon = get(record, 'relationships.icon.attributes.icon.url') || 'https://dev.boatyard.com/img/logo.svg';
     }
-    console.log(hidingCols);
     return (
       <React.Fragment>
         { type === 'tile' ?
