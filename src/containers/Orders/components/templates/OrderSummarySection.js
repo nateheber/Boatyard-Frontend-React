@@ -103,7 +103,7 @@ export default class OrderSummarySection extends React.Component {
             {startCase(key)}
           </Label>
           <FieldValue sm={3} md={3} lg={3}>
-            {answer.includes('https') ? <FieldValueLink rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</FieldValueLink> : answer }
+            {answer.includes('https') ? <FieldValueLink rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</FieldValueLink> : <FieldValue dangerouslySetInnerHTML={{ __html: answer.replace(/\r?\n/g, '<br />')}} /> }
           </FieldValue>
         </TR>
       );

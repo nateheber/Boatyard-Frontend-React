@@ -26,6 +26,9 @@ const Wrapper = styled.div`
   &:last-child {
     border-bottom: none;
   }
+  @media (max-width: 1024px) {
+    width: 1600px;
+  }
   @media (max-width: 843px) {
     width: 100%;
     flex-direction: column;
@@ -93,6 +96,9 @@ const FirstField = styled.div`
   &.is-desktop {
     display: inline-block;
   }
+  @media (max-width: 1024px) {
+    width: 150px;
+  }
   @media (max-width: 843px) {
     display: flex;
     height: 57px;
@@ -123,12 +129,15 @@ const Field = styled.div`
   align-items: center;
   padding: 8px;
   padding-left: 30px;
-  min-width: 140px;
+  @media (max-width: 1024px) {
+    width: 150px;
+  }
   @media (max-width: 843px) {
     display: none;
     &.show {
       display: flex;
       flex-direction: column;
+      min-width: 200px;
       padding: 8px 28px !important;
       align-items: flex-start;
     }
@@ -284,7 +293,7 @@ export class Record extends React.PureComponent {
     const { sizes } = this.props;
     if (sizes) {
       const totalWidth = sizes.reduce((prev, size) => prev + size, 0);
-      if (totalWidth === 0) return `1550px`;
+      // if (totalWidth === 0) return `100%`;
       return `${totalWidth}px`;
     } else {
       return '100%';
@@ -334,7 +343,7 @@ export class Record extends React.PureComponent {
             {hidingCols.map((column, idx) => (
               <Field
                 className={classNames(show ? 'show' : 'hide', type)}
-                style={isEmpty(sizes) ? {} : { width: `${sizes[idx + 1] - 1}px` }}
+                style={isEmpty(sizes) ? column.label === 'email' ? {minWidth: '250px'} : {} : { width: `${sizes[idx + 1] - 1}px` }}
                 key={`col_${idx}`}
               >
                 <FieldLabel>{changeCase.upperCaseFirst(column.label)}</FieldLabel>
