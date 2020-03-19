@@ -271,7 +271,7 @@ class AddServiceModal extends React.Component {
 
   onSave = () => {
     console.log('service modal');
-    const { category, onSave } = this.props;
+    const { category, onSave, providerId } = this.props;
     const { serviceValues } = this.state;
     if (this.mainFields.validateFields() && this.descriptionField.validateFields()) {
       let mainValues = {
@@ -282,7 +282,8 @@ class AddServiceModal extends React.Component {
       };
       mainValues = {
         ...mainValues,
-        cost: mainValues.cost || '0'
+        cost: mainValues.cost || '0',
+        provider_id: providerId
       };
       onSave(mainValues);
     } else {
