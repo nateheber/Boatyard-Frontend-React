@@ -84,7 +84,6 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
 
   const handleCreateService = (values) => {
     const data = providerLocationId ? { provider_location_service: values } : { service: values };
-    console.log(data);
     CreateService({
       data,
       success: (data) => {
@@ -110,6 +109,7 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
     setService(service);
   }
   const formatCreateLabel = inputValue => `Create new service "${inputValue}"...`;
+  const providerId = get(currentOrder, 'attributes.providerId');
 
   return (
     <>
@@ -130,6 +130,7 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
             open={showServiceModal}
             category={miscCategory}
             showCat
+            providerId={providerId}
             onClose={() => setShowServiceModal(false)}
             onSave={handleCreateService}
           />
