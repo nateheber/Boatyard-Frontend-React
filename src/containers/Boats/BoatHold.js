@@ -167,31 +167,6 @@ const Footer = styled.div`
   width: 100%;
 `;
 
-const FooterInnerWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const FooterTitle = styled.div`
-  font-family: 'Roboto', sans-serif;
-  font-weight: 700;
-  font-size: 21px;
-  color: #3D4A5E;
-  text-align: left;
-  text-transform: uppercase;
-`;
-
-const FooterValue = styled.div`
-  font-family: 'Roboto', sans-serif;
-  font-weight: 900;
-  font-size: 36px;
-  color: #3D4A5E;
-  text-align: right;
-`;
-
 const FooterActionWrapper = styled.div`
   text-align: center;
   padding: 25px 0;
