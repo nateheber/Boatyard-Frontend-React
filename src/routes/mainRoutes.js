@@ -74,12 +74,12 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
     window.location.href.indexOf('create-password') > -1 ||
     window.location.href.indexOf('confirm-account') > -1) {
       WrapperComp = Wrapper;
-    } else if (window.location.href.indexOf('onlineboat') > -1 || window.location.href.indexOf('textmetheapp') > -1) {
+    } else if (window.location.href.indexOf('onlineboat') > -1 || window.location.href.indexOf('textmetheapp') > -1 || window.location.href.indexOf('hold-my-boat') > -1) {
       WrapperComp = BoatShowWrapper;
       isBoatShow = true;
     }
   } else {
-    if (window.location.href.indexOf('onlineboat') > -1 || window.location.href.indexOf('textmetheapp') > -1) {
+    if (window.location.href.indexOf('onlineboat') > -1 || window.location.href.indexOf('textmetheapp') > -1 || window.location.href.indexOf('hold-my-boat') > -1) {
       WrapperComp = BoatShowWrapper;
       isBoatShow = true;
     } else {
