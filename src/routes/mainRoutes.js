@@ -19,6 +19,7 @@ import Providers from 'containers/Providers/screens/Providers';
 import ProviderEditor from 'containers/Providers/screens/ProviderEditor';
 import UpdateProfile from 'containers/Profiles/screens/UpdateProfile';
 import BoatShow from 'containers/Boats/BoatShow';
+import BoatHold from 'containers/Boats/BoatHold';
 import BoatReservationDone from 'containers/Boats/BoatReservationDone';
 import Services from 'containers/Services/screens/Services';
 import AddService from 'containers/Services/screens/AddService';
@@ -119,6 +120,7 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <Route path="/onlineboatshow" component={BoatShow} />
         <Route path="/onlineboat/done" component={BoatReservationDone} />
         <Route path="/textmetheapp" component={SendApp} />
+        <Route path="/hold-my-boat" component={BoatHold} />
 
         <PrivateRoute exact path="/update-profile" component={UpdateProfile} isAuthenticated={isAuthenticated} />
         <PrivateRoute exact path="/dashboard/" component={Dashboard} isAuthenticated={isAuthenticated} />
