@@ -212,14 +212,17 @@ class BoatHold extends React.PureComponent {
 
   handleSubmit = (values) => {
     const queryParams = queryString.parse(this.props.location.search);
+    console.log(queryParams);
+    console.log(values);
     if (queryParams && !isEmpty(queryParams)) {
       this.setState({ loading: true });
-      axios.post(`${apiBaseUrl}/deposits`, { deposit: {
+      axios.post(`${apiBaseUrl}/reservations`, { reservation: {
         ...queryParams,
         ...values
       }}).then(() => {
         this.setState({ loading: false });
-        this.props.history.push('/onlineboat/done');
+        toastr.success('Success', 'Boat Reservation Sent Successfully!');
+        // this.props.history.push('/onlineboat/done');
       }).catch(e =>  {
         this.setState({ loading: false });
         toastr.error('Error', get(e.response, 'data.message'));
