@@ -221,8 +221,8 @@ class BoatHold extends React.PureComponent {
         ...values
       }}).then(() => {
         this.setState({ loading: false });
-        toastr.success('Success', 'Boat Reservation Sent Successfully!');
-        // this.props.history.push('/onlineboat/done');
+        // toastr.success('Success', 'Boat Reservation Sent Successfully!');
+        this.props.history.push('/onlineboat/done');
       }).catch(e =>  {
         this.setState({ loading: false });
         toastr.error('Error', get(e.response, 'data.message'));
