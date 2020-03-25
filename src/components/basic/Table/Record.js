@@ -128,7 +128,7 @@ const Field = styled.div`
   font-size: 14px;
   align-items: center;
   padding: 8px;
-  padding-left: 30px;
+  padding-left: 10px;
   @media (max-width: 1024px) {
     width: 150px;
   }
