@@ -226,7 +226,7 @@ class PaymentSection extends React.Component {
           onRefund={this.onRefund}
           onClose={this.hideRefundModal}
           order={order}
-          payments={cashRefundablePayments}
+          payments={refundablePayments.concat(cashRefundablePayments)}
         />}
       </Section>
     )
