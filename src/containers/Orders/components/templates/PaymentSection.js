@@ -220,13 +220,13 @@ class PaymentSection extends React.Component {
           order={order}
           processPayment={this.processPayment}
         />}
-        {(!isEmpty(order) && refundablePayments.length > 0 && visibleOfRefundModal) && <RefundPaymentModal
+        {(!isEmpty(order) && (refundablePayments.length > 0 || cashRefundablePayments.length > 0) && visibleOfRefundModal) && <RefundPaymentModal
           open={visibleOfRefundModal}
           loading={currentStatus === actionTypes.UPDATE_PAYMENT}
           onRefund={this.onRefund}
           onClose={this.hideRefundModal}
           order={order}
-          payments={refundablePayments}
+          payments={cashRefundablePayments}
         />}
       </Section>
     )
