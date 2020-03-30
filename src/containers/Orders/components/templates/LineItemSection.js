@@ -81,7 +81,8 @@ class LineItemSection extends React.Component {
     const { providerId, currentOrder } = this.props;
     const providerLocationId = get(currentOrder, 'attributes.providerId');
     newItems[idx] = providerLocationId ? {
-      provider_location_service_id: parseInt(serviceId),
+      // provider_location_service_id: parseInt(serviceId),
+      service_id: parseInt(serviceId),
       provider_id: providerId,
       quantity: parseInt(quantity),
       cost: parseFloat(cost),
@@ -97,13 +98,12 @@ class LineItemSection extends React.Component {
   };
 
   onChangeLineItems = (updateInfo, idx) => {
-    console.log("Update Info:", idx, updateInfo);
+    // console.log("Update Info:", idx, updateInfo);
     let lineItems = this.state.lineItems.map(val => ({ ...val }));
     set(lineItems, `[${idx}].attributes.serviceId`, updateInfo.serviceId);
     set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
     set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
     set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
-    //console.log(lineItems[idx]);
     this.setState({ lineItems });
   };
 
@@ -123,10 +123,9 @@ class LineItemSection extends React.Component {
 
   updateLineItems = () => {
     const { lineItems } = this.state;
-    //console.log(lineItems);
     const { orderId, updateLineItems, GetOrder, currentOrder } = this.props;
-    console.log(currentOrder);
-    console.log(lineItems);
+    // console.log(currentOrder);
+    // console.log(lineItems);
     const providerLocationId = get(currentOrder, 'attributes.providerId');
     const updateInfo = lineItems.map(
       ({ id, attributes: { serviceId, quantity, cost, comment }, providerLocationService }) => ( providerLocationId ? {
@@ -192,6 +191,8 @@ class LineItemSection extends React.Component {
   render() {
     const { newItems, mode, lineItems } = this.state;
     const { updatedAt } = this.props;
+   // console.log(`Line Items: ${this.state.lineItems}`);
+    // console.log(`New Items: ${this.state.newItems}`);
     return (
       <Section
         contentStyle={{ paddingBottom: 0 }}

@@ -191,7 +191,7 @@ class PaymentSection extends React.Component {
     const cashRefundablePayments = filter(payments, {attributes: {paymentType: 'cash'}} ||  {attributes: {paymentType: 'check'}} );
     // console.log(cashRefundablePayments);
     const balance = parseFloat(get(order, 'attributes.balance'));
-    // console.log(payments);
+    //console.log(payments);
     // console.log(refundablePayments);
     return (
       <Section title="Payment">
