@@ -48,7 +48,8 @@ class ListModal extends React.Component {
 
   render() {
     const { open, onClose, creditCards, onNew, currentStatus } = this.props;
-    const orderCards = orderBy(creditCards, ['attributes.isDefault'], ['desc']);
+    const orderCards = orderBy(creditCards, ['attributes.createdAt'], ['desc']);
+    console.log(orderCards);
     return (
       <Modal
         title="Payment Methods"
