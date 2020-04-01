@@ -32,7 +32,7 @@ class TemplateContent extends React.Component {
   };
 
   render() {
-    const { selected, onCancel, onBack } = this.props;
+    const { selected, onCancel, onBack, privilege } = this.props;
     if (isEmpty(selected)) {
       return false;
     }
@@ -49,6 +49,7 @@ class TemplateContent extends React.Component {
           onCancel={onCancel}
           onSave={this.handleSaveTemplate}
           key={selected}
+          privilege={privilege}
         />
       </Wrapper>
     );
