@@ -120,6 +120,7 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
             loading={serviceStatus === serviceActions.CREATE_SERVICE}
             open={showServiceModal}
             service={miscCategory}
+            providerId={providerId}
             showCat
             onClose={() => setShowServiceModal(false)}
             onSave={handleCreateService}

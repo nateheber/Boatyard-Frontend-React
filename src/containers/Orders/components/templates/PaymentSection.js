@@ -133,26 +133,31 @@ class PaymentSection extends React.Component {
   };
 
   onSave = (data) => {
-    const { CreatePayment, onFinished } = this.props;
-    CreatePayment({
-      data,
-      success: () => {
-        this.hideCreateModal();
-        this.loadPayments();
-        if (onFinished) {
-          onFinished();
-        };
-        // const allPayments = orderBy(this.props.payments, ['id', 'asc']);
-        // const payment = allPayments[allPayments.length - 1];
-        // if (payment.attributes.state === 'failed') {
-        //   toastr.error('Error', payment.attributes.spreedlyMessage);
-        // }
-      },
-      error: (e) => {
-        console.log("onSave in PaymentSection - The payment failed to create somewhere in the DB");
-        toastr.error('Error', 'Payment Failed - Invalid Card');
-      }
-    });
+    const { CreatePayment, onFinished, order: {attributes: { stateAlias  } } } = this.props;
+    if (stateAlias === 'Awaiting Acceptance' || stateAlias === 'Draft') {
+      toastr.error('Error', 'Payments can only be processed on orders that are in-progress.');
+      this.hideCreateModal();
+    } else {
+      CreatePayment({
+        data,
+        success: () => {
+          this.hideCreateModal();
+          this.loadPayments();
+          if (onFinished) {
+            onFinished();
+          };
+          // const allPayments = orderBy(this.props.payments, ['id', 'asc']);
+          // const payment = allPayments[allPayments.length - 1];
+          // if (payment.attributes.state === 'failed') {
+          //   toastr.error('Error', payment.attributes.spreedlyMessage);
+          // }
+        },
+        error: (e) => {
+          console.log("onSave in PaymentSection - The payment failed to create somewhere in the DB");
+          toastr.error('Error', 'Payment Failed - Invalid Card');
+        }
+      });
+    }
   };
 
   onRefund = (paymentId) => {
@@ -191,7 +196,6 @@ class PaymentSection extends React.Component {
     const cashRefundablePayments = filter(payments, {attributes: {paymentType: 'cash'}} ||  {attributes: {paymentType: 'check'}} );
     // console.log(cashRefundablePayments);
     const balance = parseFloat(get(order, 'attributes.balance'));
-    // console.log(payments);
     // console.log(refundablePayments);
     return (
       <Section title="Payment">
@@ -220,13 +224,13 @@ class PaymentSection extends React.Component {
           order={order}
           processPayment={this.processPayment}
         />}
-        {(!isEmpty(order) && refundablePayments.length > 0 && visibleOfRefundModal) && <RefundPaymentModal
+        {(!isEmpty(order) && (refundablePayments.length > 0 || cashRefundablePayments.length > 0) && visibleOfRefundModal) && <RefundPaymentModal
           open={visibleOfRefundModal}
           loading={currentStatus === actionTypes.UPDATE_PAYMENT}
           onRefund={this.onRefund}
           onClose={this.hideRefundModal}
           order={order}
-          payments={refundablePayments}
+          payments={refundablePayments.concat(cashRefundablePayments)}
         />}
       </Section>
     )
