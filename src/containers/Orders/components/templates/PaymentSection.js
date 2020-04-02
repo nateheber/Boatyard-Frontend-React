@@ -5,7 +5,7 @@ import { get, isEmpty, find, map, orderBy, filter } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import moment from 'moment';
 import { GetCreditCards } from 'store/actions/credit-cards';
-import { actionTypes, GetPayments, CreatePayment, UpdatePayment } from 'store/actions/payments';
+import { actionTypes, GetPayments, CreatePayment, UpdatePayment, DeletePayment } from 'store/actions/payments';
 import { Section } from 'components/basic/InfoSection';
 import { HollowButton } from 'components/basic/Buttons';
 import OrderPaymentModal from '../modals/OrderPaymentModal';
@@ -161,7 +161,24 @@ class PaymentSection extends React.Component {
   };
 
   onRefund = (paymentId) => {
-    const { UpdatePayment, onFinished } = this.props;
+    const payment = this.props.payments[this.props.payments.length - 1];
+    const { UpdatePayment, onFinished, DeletePayment } = this.props;
+    if (payment.attributes.paymentType === 'cash' || payment.attributes.paymentType === 'check') {
+      DeletePayment({
+        paymentId,
+        success: () => {
+          this.hideRefundModal();
+          this.loadPayments();
+          if (onFinished) {
+            onFinished();
+          }
+        },
+        error: (e) => {
+          console.log(`API Error: ${e.message}`);
+          toastr.error('Error', e.message);
+        }
+    })
+   } else {
     UpdatePayment({
       paymentId,
       data: {
@@ -177,9 +194,9 @@ class PaymentSection extends React.Component {
         }
       }
     });
+  }
   };
 
-  
   loadPayments = () => {
     const { order, GetPayments } = this.props;
     GetPayments({ params: { 'payment[order_id]': order.id }});
@@ -194,10 +211,11 @@ class PaymentSection extends React.Component {
       // payments,
       payment => { return {...payment, cc: this.getCreditCard(payment)}}
     );
-    const cashRefundablePayments = filter(payments, {attributes: {paymentType: 'cash'}} ||  {attributes: {paymentType: 'check'}} );
-    // console.log(cashRefundablePayments);
+    const cashRefundablePayments = filter(payments, function(o) { return o.attributes.paymentType ==='cash' || o.attributes.paymentType ==='check' } );
+    //console.log(cashRefundablePayments);
     const balance = parseFloat(get(order, 'attributes.balance'));
     // console.log(refundablePayments);
+    //console.log(payments);
     return (
       <Section title="Payment">
         <Wrapper>
@@ -252,6 +270,7 @@ const mapDispatchToProps = {
   GetPayments,
   CreatePayment,
   UpdatePayment,
+  DeletePayment,
   GetCreditCards
 }
 
