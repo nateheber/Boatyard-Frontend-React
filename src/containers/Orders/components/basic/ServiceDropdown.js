@@ -83,7 +83,28 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
   };
 
   const handleCreateService = (values) => {
-    const data = providerLocationId ? { provider_location_service: values } : { service: values };
+    console.log(values);
+    //const providerLocationId = get(currentOrder, 'attributes.providerLocationId');
+    //const data = providerLocationId ? { provider_location_service: values } : { service: values };
+    const data = { service: values };
+    console.log(data);
+    CreateService({
+      data,
+      success: (data) => {
+        setShowServiceModal(false);
+        const option = {value: data.id, cost: data.cost, label: data.name};
+        onChangeService(option);
+        setService(option);
+      }
+    });
+  };
+
+  const handleCreateLocationService = (values) => {
+    console.log(values);
+    //const providerLocationId = get(currentOrder, 'attributes.providerLocationId');
+    //const data = providerLocationId ? { provider_location_service: values } : { service: values };
+    const data = { provider_location_service: values };
+    console.log(data);
     CreateService({
       data,
       success: (data) => {
@@ -123,7 +144,7 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
             providerId={providerId}
             showCat
             onClose={() => setShowServiceModal(false)}
-            onSave={handleCreateService}
+            onSave={handleCreateLocationService}
           />
         :
           <AddServiceModal

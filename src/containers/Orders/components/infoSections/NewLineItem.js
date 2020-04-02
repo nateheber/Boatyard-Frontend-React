@@ -45,12 +45,15 @@ class NewLineItem extends React.Component {
 
   render() {
     const { quantity, cost, comment } = this.state;
+    const { /* providerLocationId, */ locationId } = this.props;
+    //console.log(this.props);
     return (
       <React.Fragment>
         <Line>
           <Col lg={6} sm={6} xs={6} md={6} xl={6}>
             <ServiceDropdown
               onChangeService={this.onChangeService}
+              providerLocationId={locationId}
             />
           </Col>
           <Col lg={2} sm={2} xs={2} md={2} xl={2}>
@@ -93,6 +96,7 @@ class NewLineItem extends React.Component {
 
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
+  locationId: state.auth.providerLocationId,
   services: state.service.services
 });
 
