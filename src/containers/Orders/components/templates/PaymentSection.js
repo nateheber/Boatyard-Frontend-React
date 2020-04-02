@@ -179,6 +179,7 @@ class PaymentSection extends React.Component {
     });
   };
 
+  
   loadPayments = () => {
     const { order, GetPayments } = this.props;
     GetPayments({ params: { 'payment[order_id]': order.id }});
