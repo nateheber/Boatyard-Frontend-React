@@ -160,7 +160,7 @@ class OrderDetails extends React.Component {
 
   getCustomerInfoCondition = () => {
     // const { currentOrder, privilege, provider } = this.props;
-    const { currentOrder, privilege } = this.props;
+    const { /*currentOrder,*/ privilege } = this.props;
     if (privilege === 'admin') {
       return true;
     }
@@ -169,10 +169,11 @@ class OrderDetails extends React.Component {
     // if (providerId === parseInt(myProviderId)) {
     //   return true;
     // }
-    const orderStatus = get(currentOrder, 'attributes.state' );
-    if (orderStatus === 'assigned' || orderStatus === 'dispatched') {
-      return false;
-    }
+
+    // const orderStatus = get(currentOrder, 'attributes.state' );
+    // if (orderStatus === 'assigned' || orderStatus === 'dispatched') {
+    //   return false;
+    // }
     return true;
   }
 
