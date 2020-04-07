@@ -31,6 +31,7 @@ function* getOrders(action) {
   let successType = actionTypes.GET_ORDERS_SUCCESS;
   let failureType = actionTypes.GET_ORDERS_FAILURE;
   const { params, success, error } = action.payload;
+  //console.log(params);
   let submissionParams = {};
   if (!hasIn(params, 'search')) {
     if (!hasIn(params, 'order[order]')) {
