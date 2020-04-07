@@ -127,6 +127,26 @@ class OrderDetailHeader extends React.Component {
     });
   }
 
+  reopenOrder = () => {
+    const { order } = this.props;
+    const orderId = get(order, 'id');
+    this.props.UpdateOrder({
+      orderId,
+      data: {
+        order: {
+          transition: 'reopen'
+        }
+      },
+      success: () => {
+        toastr.success('Success', 'Order reopened successfully!');
+      },
+      error: (e) => {
+        console.log(this.reopenOrder);
+        toastr.error('Error', e.message);
+      }
+    });
+  }
+
   deleteOrder = () => {
     const { order } = this.props;
     const orderId = get(order, 'id');
@@ -226,6 +246,12 @@ class OrderDetailHeader extends React.Component {
       items.push({
         title: 'Mark as Complete',
         action: this.completeOrder
+      });
+    }
+    if (orderStatus === 'completed') {
+      items.push({
+        title: 'Reopen Order',
+        action: this.reopenOrder
       });
     }
 

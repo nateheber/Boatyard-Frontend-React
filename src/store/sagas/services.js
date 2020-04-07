@@ -150,7 +150,7 @@ function* createService(action) {
   const serviceClient = yield select(getServiceClient);
   const { data, success, error } = action.payload;
   try {
-    console.log('trying..');
+    console.log('Creating Services..');
     const result = yield call(serviceClient.create, refineServceData(data));
     const service = refineService(get(result, 'data', {}));
     yield put({
