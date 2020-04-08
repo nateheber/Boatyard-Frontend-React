@@ -9,7 +9,7 @@ import AttachImg from 'resources/attach.svg';
 
 const Wrapper = styled.div`
   display: flex;
-  flex: 1;
+  width: 100%;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -26,6 +26,8 @@ const ActionButtons = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const AttachButton = styled.button`
@@ -147,7 +149,7 @@ export default class ActionFooter extends React.Component {
           <HiddenFileInput ref={this.setFileRef} type="file" onChange={this.fileChanged} key={files.length > 0 ? 'full' : 'empty'} multiple/>
         </LeftWrapper>
         <ActionButtons>
-          <HollowButton onClick={onCancel} key="modal_btn_cancel">Cancel</HollowButton>
+          <HollowButton onClick={onCancel} key="modal_btn_cancel" style={{ width: 130 }}>Cancel</HollowButton>
           <OrangeButton onClick={this.onSend} key="modal_btn_save">{`Send ${startCase(type)}`}</OrangeButton>
         </ActionButtons>
       </Wrapper>

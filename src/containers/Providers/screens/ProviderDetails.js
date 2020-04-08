@@ -2,13 +2,21 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { findIndex } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 
-import { actionTypes, LoginWithProvider, DeleteProvider } from 'store/actions/providers';
+import { SetRefreshFlag } from 'store/actions/auth';
+import { LoginWithProvider, DeleteProvider } from 'store/actions/providers';
 import { ProviderInfo, ProviderDetailHeader } from '../components';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 
 
 class ProviderDetails extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false
+    };
+  }
   onCancel = () => {
     this.props.history.goBack();
   };
@@ -29,11 +37,18 @@ class ProviderDetails extends React.Component {
   selectProvider = () => {
     const provider = this.getProvider();
     const { id } = provider;
-    const { LoginWithProvider } = this.props;
+    const { LoginWithProvider, SetRefreshFlag } = this.props;
+    this.setState({ isLoading: true });
     LoginWithProvider({
       providerId: id,
       success: () => {
-        this.props.history.push('/dashboard');
+        // this.props.history.push('/dashboard');
+        this.setState({ isLoading: false });
+        SetRefreshFlag({flag: true});
+      },
+      error: (e) => {
+        this.setState({ isLoading: false });
+        toastr.error('Error', e.message);
       }
     });
   };
@@ -44,9 +59,9 @@ class ProviderDetails extends React.Component {
     DeleteProvider({ providerId: id });
   };
   render() {
+    const { isLoading } = this.state;
     const provider = this.getProvider();
     const { name } = provider;
-    const { currentStatus } = this.props;
     return (
       <div>
         <ProviderDetailHeader
@@ -59,20 +74,20 @@ class ProviderDetails extends React.Component {
           onCancel={this.onCancel}
           onEdit={this.onEdit}
         />
-        {currentStatus === actionTypes.LOGIN_WITH_PROVIDER && <LoadingSpinner loading={true} />}
+        {isLoading && <LoadingSpinner loading={isLoading} />}
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ provider: { providers, currentStatus } }) => ({
-  providers,
-  currentStatus
+const mapStateToProps = ({ provider: { providers } }) => ({
+  providers
 });
 
 const mapDispatchToProps = {
   LoginWithProvider,
-  DeleteProvider
+  DeleteProvider,
+  SetRefreshFlag
 };
 
 export default withRouter(

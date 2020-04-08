@@ -6,7 +6,6 @@ import { get, set, isEmpty, sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 
-import { FilterServices } from 'store/actions/services';
 import {
   updateLineItems,
   deleteLineItem,
@@ -39,21 +38,13 @@ class LineItemSection extends React.Component {
     super(props);
     this.state = {
       newItems: [],
-      lineItems: this.refactorLineItems(get(props, 'currentOrder.lineItems', [])),
+      lineItems: [],
       mode: 'view'
     }
   }
 
   componentDidMount() {
-    const { privilege, FilterServices } = this.props;
-    let params = {
-      'service[discarded_at]': null,
-      'per_page': 1000
-    };
-    if (privilege === 'admin') {
-      params['service[provider_id]'] = 1;
-    }
-    FilterServices({ params });
+    this.setState({lineItems: this.refactorLineItems(get(this.props, 'currentOrder.lineItems', []))})
   }
 
   componentDidUpdate(prevProps) {
@@ -85,10 +76,19 @@ class LineItemSection extends React.Component {
   }
 
   onChange = (item, idx) => {
+    //console.log(item);
     const newItems = [...this.state.newItems];
     const { serviceId, quantity, cost, comment } = item;
-    const { providerId } = this.props;
-    newItems[idx] = {
+    const { providerId, currentOrder } = this.props;
+    const providerLocationId = get(currentOrder, 'attributes.providerId');
+    newItems[idx] = providerLocationId ? {
+      provider_location_service_id: parseInt(serviceId),
+      //service_id: parseInt(serviceId),
+      provider_id: providerId,
+      quantity: parseInt(quantity),
+      cost: parseFloat(cost),
+      comment
+    } : {
       service_id: parseInt(serviceId),
       provider_id: providerId,
       quantity: parseInt(quantity),
@@ -99,7 +99,8 @@ class LineItemSection extends React.Component {
   };
 
   onChangeLineItems = (updateInfo, idx) => {
-    const lineItems = this.state.lineItems.map(val => ({ ...val }));
+    // console.log("Update Info:", idx, updateInfo);
+    let lineItems = this.state.lineItems.map(val => ({ ...val }));
     set(lineItems, `[${idx}].attributes.serviceId`, updateInfo.serviceId);
     set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
     set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
@@ -123,9 +124,16 @@ class LineItemSection extends React.Component {
 
   updateLineItems = () => {
     const { lineItems } = this.state;
-    const { orderId, updateLineItems, GetOrder } = this.props;
+    const { orderId, updateLineItems, GetOrder, currentOrder } = this.props;
+    console.log("Updating line items...");
+    // console.log(currentOrder);
+    console.log(lineItems);
+    const providerLocationId = get(currentOrder, 'attributes.providerId');
     const updateInfo = lineItems.map(
-      ({ id, attributes: { serviceId, quantity, cost, comment } }) => ({
+      ({ id, attributes: { serviceId, quantity, cost, comment }, providerLocationService }) => ( providerLocationId ? {
+        id,
+        lineItem: { provider_location_service_id: providerLocationService.id, quantity, cost, comment }
+      } : {
         id,
         lineItem: { service_id: serviceId, quantity, cost, comment }
       })
@@ -170,6 +178,7 @@ class LineItemSection extends React.Component {
   };
 
   saveNewItems = () => {
+    console.log("Saving new line items...");
     const { newItems } = this.state;
     const { orderId, GetOrder } = this.props;
     this.props.createLineItems({
@@ -184,11 +193,12 @@ class LineItemSection extends React.Component {
 
   render() {
     const { newItems, mode, lineItems } = this.state;
-    const { updatedAt } = this.props;
+    const { updatedAt, currentOrder: {attributes: {providerLocationId}} } = this.props;
+    //console.log(this.props.currentOrder);
     return (
       <Section
         contentStyle={{ paddingBottom: 0 }}
-        title={`Quote - Updated ${moment(updatedAt).format('M/D H:m A')}`}
+        title={`Quote - Updated ${moment(updatedAt).format('MM/DD h:mm A')}`}
         mode={mode}
         onEdit={this.onEdit}
       >
@@ -202,6 +212,7 @@ class LineItemSection extends React.Component {
                 mode={mode}
                 onChange={updateInfo => this.onChangeLineItems(updateInfo, idx)}
                 key={`lineItem_${idx}`}
+                count={lineItems.length}
               />
             ))}
           </React.Fragment>
@@ -211,6 +222,7 @@ class LineItemSection extends React.Component {
             onChange={item => this.onChange(item, idx)}
             key={`new_item_${idx}`}
             remove={() => this.removeNewItem(idx)}
+            providerLocationId={providerLocationId}
           />
         ))}
         <ButtonGroup>
@@ -238,7 +250,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  FilterServices,
   updateLineItems,
   deleteLineItem,
   createLineItems,

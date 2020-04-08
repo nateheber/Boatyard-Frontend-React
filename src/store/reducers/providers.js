@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get } from 'lodash';
+import { get, findIndex, isEmpty } from 'lodash';
 import { actionTypes } from '../actions/providers';
 import { refactorIncluded } from 'utils/basic';
 
@@ -9,6 +9,7 @@ const initialState = {
   providers: [],
   filteredProviders: [],
   currentProvider: {},
+  providerServices: [],
   loggedInProvider: {},
   loggedInProviderLocation: {},
   page: 0,
@@ -149,6 +150,25 @@ export default handleActions(
         draft.errors = payload;
       }),
 
+    [actionTypes.GET_PROVIDER_SERVICES]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.GET_PROVIDER_SERVICES_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.providerServices = payload;
+      }),
+    [actionTypes.GET_PROVIDER_SERVICES_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
     [actionTypes.CREATE_PROVIDER]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
@@ -176,10 +196,39 @@ export default handleActions(
       }),
     [actionTypes.ADD_PREFERRED_PROVIDER_SUCCESS]: (state, action) =>
       produce(state, draft => {
-        const { type } = action;
+        const { type, payload } = action;
         draft.currentStatus = type;
+        const providers = draft.preferredProviders.slice(0);
+        if (payload && !isEmpty(payload)) {
+          providers.push(payload);
+          draft.preferredProviders = providers;
+        }
       }),
     [actionTypes.ADD_PREFERRED_PROVIDER_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.DELETE_PREFERRED_PROVIDER]: (state, action) =>
+      produce(state, draft => {
+        const { type } = action;
+        draft.currentStatus = type;
+        draft.errors = null;
+      }),
+    [actionTypes.DELETE_PREFERRED_PROVIDER_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const providers = draft.preferredProviders.slice(0);
+        const index = findIndex(providers, provider => `${provider.id}` === `${payload}`);
+        if (index > -1) {
+          providers.splice(index, 1);
+          draft.preferredProviders = providers
+        }
+        draft.currentStatus = type;
+      }),
+    [actionTypes.DELETE_PREFERRED_PROVIDER_FAILURE]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;

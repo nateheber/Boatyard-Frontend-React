@@ -29,6 +29,8 @@ export const actionTypes = {
   GET_ORDER_SUCCESS: '[ORDERS] - Get order Success',
   GET_ORDER_FAILURE: '[ORDERS] - Get order Failure',
 
+  GET_ORDER_PROVIDER_LOCATION_TEAM_MEMBER_SUCCESS: '[ORDERS] - Get order team member success',
+
   CREATE_ORDER: '[ORDERS] - Create new order',
   CREATE_ORDER_SUCCESS: '[ORDERS] - Create new order Success',
   CREATE_ORDER_FAILURE: '[ORDERS] - Create new order Failure',

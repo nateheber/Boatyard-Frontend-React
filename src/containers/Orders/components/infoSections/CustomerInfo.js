@@ -31,11 +31,18 @@ const FieldValue = styled.div`
   margin-top: 1px;
 `;
 
+const InfoLink = styled.a`
+  font-family: 'Source Sans Pro';
+  color: rgb(247,148,30);
+  font-size: 14px;
+  margin-top: 1px;
+`;
+
 export default ({ id, type, firstName, lastName, email, phoneNumber }) => (
   <Wrapper>
     <Label>Customer Info</Label>
     <Name to={type === 'users' ? `/user-details/?user=${id}` : `/customer-details/?customer=${id}`}>{firstName} {lastName}</Name>
-    <FieldValue>{formatPhoneNumber(phoneNumber)}</FieldValue>
-    <FieldValue>{email}</FieldValue>
+    <FieldValue><InfoLink href={`tel:${formatPhoneNumber(phoneNumber)}`}>{formatPhoneNumber(phoneNumber)}</InfoLink></FieldValue>
+    <FieldValue><InfoLink href={`mailto: ${email}`}>{email}</InfoLink></FieldValue>
   </Wrapper>
 );

@@ -1,4 +1,4 @@
-import { findIndex, get, isEmpty, sortBy } from 'lodash';
+import { findIndex, get, isEmpty, sortBy, /*filter,*/find } from 'lodash';
 import moment from 'moment';
 
 export const getUserFromOrder = (order, privilege = 'admin') => {
@@ -75,7 +75,7 @@ export const getCustomerName = (order, privilege = 'admin') => {
 export const getCreationInfo = order => {
   const customerName = getCustomerName(order);
   const createdAt = get(order, 'attributes.createdAt');
-  const dateString = moment(createdAt).format('MMM D, YYYY [at] hh:mm A');
+  const dateString = moment(createdAt).format('MMM D, YYYY [at] h:mm A');
   return {
     time: moment(createdAt).valueOf(),
     message: `Order placed by ${customerName} on ${dateString}`
@@ -84,7 +84,7 @@ export const getCreationInfo = order => {
 
 export const getUpdatedStatus = order => {
   const updatedAt = get(order, 'attributes.updatedAt');
-  const dateString = moment(updatedAt).format('MMM D, YYYY [at] hh:mm A');
+  const dateString = moment(updatedAt).format('MMM D, YYYY [at] h:mm A');
   return {
     time: moment(updatedAt).valueOf(),
     message: `Order updated on ${dateString}`
@@ -93,8 +93,11 @@ export const getUpdatedStatus = order => {
 
 export const getOrderProcessInfo = order => {
   const result = [];
+  // console.log(order);
   if (!isEmpty(order)) {
     const timeStamps = get(order, 'attributes.historicTimestamps', {});
+    const acceptance = get(order, 'attributes.acceptanceHistory', {});
+    const acceptanceLocation = acceptance[Object.keys(acceptance)[0]];
     const keys = Object.keys(timeStamps);
     for (let i = 0; i < keys.length; i += 1) {
       const time = get(timeStamps, keys[i]);
@@ -104,7 +107,7 @@ export const getOrderProcessInfo = order => {
             result.push({
               time: moment(time).valueOf(),
               message: `Order assigned on ${moment(time).format(
-                'MMM D, YYYY [at] hh:mm A'
+                'MMM D, YYYY [at] h:mm A'
               )}`
             });
           }
@@ -114,7 +117,7 @@ export const getOrderProcessInfo = order => {
             result.push({
               time: moment(time).valueOf(),
               message: `Order quoted on ${moment(time).format(
-                'MMM D, YYYY [at] hh:mm A'
+                'MMM D, YYYY [at] h:mm A'
               )}`
             });
           }
@@ -124,7 +127,7 @@ export const getOrderProcessInfo = order => {
             result.push({
               time: moment(time).valueOf(),
               message: `Order in progress on ${moment(time).format(
-                'MMM D, YYYY [at] hh:mm A'
+                'MMM D, YYYY [at] h:mm A'
               )}`
             });
           }
@@ -134,7 +137,27 @@ export const getOrderProcessInfo = order => {
             result.push({
               time: moment(time).valueOf(),
               message: `Order invoiced on ${moment(time).format(
-                'MMM D, YYYY [at] hh:mm A'
+                'MMM D, YYYY [at] h:mm A'
+              )}`
+            });
+          }
+          break;
+        case 'acceptedAt':
+          if (!isEmpty(time)) {
+            result.push({
+              time: moment(time).valueOf(),
+              message: `Order accepted by ${acceptanceLocation} on ${moment(time).format(
+                'MMM D, YYYY [at] h:mm A'
+              )}`
+            });
+          }
+          break;
+        case 'dispatchedAt':
+          if (!isEmpty(time)) {
+            result.push({
+              time: moment(time).valueOf(),
+              message: `Order dispatched on ${moment(time).format(
+                'MMM D, YYYY [at] h:mm A'
               )}`
             });
           }
@@ -160,3 +183,14 @@ export const getLocationAddressFromOrder = order => {
   const idx = findIndex(included, item => item.type === 'locations');
   return get(included, `[${idx}].relationships.address`);
 };
+
+export const getTeamMemberData = (data, included) => {
+  // filter(data, ({attributes: {access }}) => access !== 'admin')
+  return sortBy(
+    data.map(row => {
+      const {id, attributes: {firstName, lastName }} = find(included, row);
+      return {id, fullName: `${firstName} ${lastName}` };
+    }),
+    ['fullName']
+  )
+}

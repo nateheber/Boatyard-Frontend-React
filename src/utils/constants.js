@@ -17,3 +17,19 @@ export const SLOT_OPTIONS = [
   WHEN_SLOT_MORNING,
   WHEN_SLOT_AFTERNOON
 ];
+
+export const BY_PROVIDER_ID = 1;
+
+export const PROVIDER_MESSAGE_TEMPLATES = [
+  'quote_accepted',
+  'quote_rejected',
+  'order_completed',
+  'notify_customer_for_order_with_preferred_provider',
+  'invoice_paid',
+  'order_rejected',
+  'customer_places_order_with_preferred_provider',
+  'order_accepted',
+  'customer_places_order_without_preferred_provider',
+  'admin_assigns_order_to_provider',
+  'receipt_for_customer'
+];

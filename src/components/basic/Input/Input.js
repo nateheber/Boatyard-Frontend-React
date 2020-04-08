@@ -4,7 +4,7 @@ import InputMask from 'react-input-mask';
 import classNames from 'classnames';
 import NumberFormat from 'react-number-format';
 
-const ErrorMessage = styled.div`
+export const ErrorMessage = styled.div`
   color: #f7941e !important;
   display: block;
   font-weight: 400;
@@ -106,6 +106,7 @@ const Selector = styled.select`
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 14px;
   color: #555;
+  text-indent: 7px;
   &:disabled {
     background: #f1f1f1;
   }

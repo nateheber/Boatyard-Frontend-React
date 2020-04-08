@@ -1,6 +1,6 @@
 {
   "name": "web_dashboard",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.14",
@@ -8,25 +8,27 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@ridi/object-case-converter": "^2.0.4",
     "auth0-lock": "^11.16.3",
-    "awesome-debounce-promise": "^2.1.0",
     "axios": "^0.18.0",
     "axios-case-converter": "^0.3.0",
     "change-case": "^3.0.2",
     "classnames": "^2.2.6",
+    "debounce-promise": "^3.1.2",
     "deep-equal": "^1.0.1",
     "env-cmd": "^8.0.2",
     "evil-icons": "^1.10.1",
     "final-form": "^4.11.1",
     "immer": "^1.8.0",
     "immutability-helper": "^3.0.0",
-    "json-api-normalizer": "^0.4.14",
+    "json-api-normalizer": "^0.4.16",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "prop-types": "^15.6.2",
     "query-string": "^6.2.0",
     "react": "^16.8.0",
     "react-autosize-textarea": "^6.0.0",
+    "react-autosuggest": "^9.4.3",
     "react-calendar": "^2.17.5",
+    "react-clear-cache": "^1.1.0",
     "react-date-range": "^1.0.0-beta",
     "react-datepicker": "^2.0.0",
     "react-device-detect": "^1.6.2",
@@ -80,7 +82,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "prebuild": "npm run generate-build-version",
+    "generate-build-version": "node generate-build-version"
   },
   "eslintConfig": {
     "extends": "react-app"

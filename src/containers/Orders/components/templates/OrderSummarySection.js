@@ -21,6 +21,7 @@ const Label = styled.td`
   padding-bottom: 15px;
   padding-right: 10px;
   line-height: 20px;
+  vertical-align: top;
 `;
 
 const FieldValue = styled.td`
@@ -29,6 +30,14 @@ const FieldValue = styled.td`
   font-size: 16px;
   font-weight: 400;
   padding: 0 0 15px 0;
+`;
+
+const FieldValueLink = styled.a`
+  color: rgb(247,148,30);
+  line-height: 20px;
+  font-size: 16px;
+  font-family: "Source Sans Pro";
+  font-weight: 600;
 `;
 
 export default class OrderSummarySection extends React.Component {
@@ -55,10 +64,11 @@ export default class OrderSummarySection extends React.Component {
               </TR>
             );
           } else if (get(scheduleItem, 'attributes.complicated')) {
+            const complicated = get(scheduleItem, 'attributes.complicated');
             return (
               <TR>
                 <Label>WHEN</Label>
-                <FieldValue sm={3} md={3} lg={3}>{constants.WHEN_COMPLICATED_OPTION}</FieldValue>
+                <FieldValue sm={3} md={3} lg={3}>{`${constants.WHEN_COMPLICATED_OPTION} - ${complicated}`}</FieldValue>
               </TR>
             );
           } else {
@@ -86,13 +96,14 @@ export default class OrderSummarySection extends React.Component {
     const fields = [];
     for (const key in properties) {
       const value = get(properties, key);
+      const answer = typeof value === 'boolean' ? value === true ? 'Yes' : 'No' : value
       fields.push(
         <TR key={`${key} - ${value}`}>
           <Label>
             {startCase(key)}
           </Label>
           <FieldValue sm={3} md={3} lg={3}>
-            {value}
+            {answer.includes('https') ? <FieldValueLink rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</FieldValueLink> : <FieldValue dangerouslySetInnerHTML={{ __html: answer.replace(/\r?\n/g, '<br />')}} /> }
           </FieldValue>
         </TR>
       );
@@ -101,11 +112,16 @@ export default class OrderSummarySection extends React.Component {
   };
 
   render () {
+    //const { lineItem, order, memorialization } = this.props;
     const { lineItem, order } = this.props;
     const specialInstructions = get(order, 'attributes.specialInstructions');
     const slipNumber = get(order, 'attributes.slipNumber');
 
+    //const serviceName = get(memorialization, 'service.name');
+    //const providerLocationServiceName = get(memorialization, 'providerLocationService.name');
     const serviceName = get(lineItem, 'relationships.service.attributes.name');
+    const providerLocationServiceName = get(lineItem, 'relationships.providerLocationService.attributes.name');
+    // console.log(lineItem);
     return (isEmpty(lineItem) && isEmpty(slipNumber) && isEmpty(specialInstructions)) ? false : (
       <Section title="Order Summary">
         <table>
@@ -115,7 +131,7 @@ export default class OrderSummarySection extends React.Component {
                 SERVICE
               </Label>
               <FieldValue sm={3} md={3} lg={3}>
-                {serviceName}
+                {providerLocationServiceName || serviceName}
               </FieldValue>
             </TR>}
             {this.renderWhenValues()}
@@ -133,7 +149,7 @@ export default class OrderSummarySection extends React.Component {
                 Special Instructions
               </Label>
               <FieldValue sm={3} md={3} lg={3}>
-                {specialInstructions}
+                <div dangerouslySetInnerHTML={{ __html: specialInstructions.replace(/\r?\n/g, '<br />')}} />
               </FieldValue>
             </TR>}
           </tbody>

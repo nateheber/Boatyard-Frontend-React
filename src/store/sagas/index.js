@@ -13,7 +13,6 @@ import BoatSaga from './boats';
 import PaymentSaga from './payments';
 import CreditCardSaga from './credit-cards';
 import ProviderLocationSaga from './providerLocations';
-import ProviderLocationServiceSaga from './providerLocationServices';
 import ChildAccounts from './child-accounts';
 import PaymentGateway from './paymentGateway';
 import Icons from './icons';
@@ -23,6 +22,9 @@ import SiteBanners from './site-banners';
 import QuickReply from './quickReplies';
 import MessageTemplate from './messageTemplates';
 import NotificationsSagas from './notifications';
+import WorkOrdersSagas from './workorders';
+import Contractors from './contractors';
+
 export default function* mainSaga() {
   yield all([
     fork(AuthSaga),
@@ -38,7 +40,6 @@ export default function* mainSaga() {
     fork(PaymentSaga),
     fork(CreditCardSaga),
     fork(ProviderLocationSaga),
-    fork(ProviderLocationServiceSaga),
     fork(ChildAccounts),
     fork(PaymentGateway),
     fork(Icons),
@@ -48,5 +49,7 @@ export default function* mainSaga() {
     fork(QuickReply),
     fork(MessageTemplate),
     fork(NotificationsSagas),
+    fork(WorkOrdersSagas),
+    fork(Contractors),
   ]);
 }

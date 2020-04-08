@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.div`
-  width: 394px;
+  width: 500px;
   height: 39px;
   font-family: 'Montserrat', sans-serif;
   font-size: 32px;

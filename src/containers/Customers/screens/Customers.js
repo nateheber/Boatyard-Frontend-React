@@ -120,7 +120,7 @@ class Customers extends React.Component {
   };
 
   render() {
-    const { currentStatus, page, childAccounts } = this.props;
+    const { currentStatus, page, childAccounts, showAdditionalFields } = this.props;
     const { showNewModal, sort } = this.state;
     const pageCount = this.getPageCount();
     const columns = [
@@ -155,6 +155,7 @@ class Customers extends React.Component {
           loading={currentStatus === actionTypes.CREATE_CHILD_ACCOUNT}
           onClose={this.closeNewModal}
           onSave={this.createCustomer}
+          showAdditionalFields={showAdditionalFields}
         />
       </Wrapper>
     );
@@ -166,7 +167,9 @@ const mapStateToProps = (state) => ({
   childAccounts: state.childAccount.childAccounts,
   page: state.childAccount.page,
   perPage: state.childAccount.perPage,
-  total: state.childAccount.total
+  total: state.childAccount.total,
+  //showAdditionalFields: state.auth.providerName === 'MarineMax',
+  showAdditionalFields: state.auth.providerId === 2
 });
 
 const mapDispatchToProps = {

@@ -5,20 +5,21 @@ import {
   LeftPart,
   RightPart
 } from 'components/basic/Header';
-import { OrangeButton } from 'components/basic/Buttons';
+import { SearchBox } from 'components/basic/Input';
+import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import {
-  FilterOptions,
+  // FilterOptions,
   ColumnFilter,
-  ActionDropdown
+  // ActionDropdown
 } from 'components/basic/Dropdown';
 import { PageTitle } from 'components/basic/Typho';
 
-export const OrderHeader = ({  columns, selectedColumns, onChangeColumns, onAction, onNewOrder }) => (
+export const OrderHeader = ({  columns, statuses, selectedColumns, onChangeColumns, onAction, onNewOrder, onSearch, onExport }) => (
   <SectionHeaderWrapper>
     <LeftPart>
       <PageTitle>Orders</PageTitle>
-      <FilterOptions />
-      <ActionDropdown
+      {/* <FilterOptions /> */}
+      {/* <ActionDropdown
         items={[
           {
             title: 'Export',
@@ -27,11 +28,14 @@ export const OrderHeader = ({  columns, selectedColumns, onChangeColumns, onActi
             }
           }
         ]}
-      />
+      /> */}
+      <SearchBox style={{ width: 260 }} placeholder="Search by Order #, Customer or Boat" onChange={onSearch} />
+      <HollowButton className="desktop" onClick={onExport}>Export</HollowButton>
     </LeftPart>
     <RightPart>
       <OrangeButton className="desktop" onClick={onNewOrder}>New Order</OrangeButton>
       <ColumnFilter
+        title='SHOW COLUMNS'
         items={columns}
         selected={selectedColumns}
         onChangeSelection={columns => {

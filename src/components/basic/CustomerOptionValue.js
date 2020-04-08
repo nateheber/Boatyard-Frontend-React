@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Value = styled.div`
-  font-size: 14px;
+  font-size: 12px;
   color: #555;
 `;
 

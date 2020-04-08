@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { isEmpty } from 'lodash';
 
 import Table from 'components/basic/Table';
 import { ProviderHeader } from 'components/compound/SectionHeader';
@@ -28,12 +29,15 @@ class Providers extends React.Component {
     this.state = {
       keyword: '',
       sort: { col: 'name', direction: 'asc' },
-      selectedColumns: PROVIDER_COLUMNS
+      selectedColumns: PROVIDER_COLUMNS,
+      providers: []
     };
   }
 
   componentDidMount() {
-    this.props.GetProviders({ params: {} });
+    this.loadPage(1);
+    // this.props.GetProviders({ params: {} });
+    // this.setState({ providers: this.props.providers });
   }
 
   onChangeColumns = (columns) => {
@@ -43,12 +47,33 @@ class Providers extends React.Component {
   }
 
   onSortChange = (sort) => {
+    console.log('sorting');
     this.setState({ sort: sort }, () => {
       this.loadPage(1);
     });
   }
 
   onChangeFilter = (val) => {
+    // Search NEEDS to be refactored on the Backend!!!
+    // const { providers } = this.state;
+    // let search = val.target.value.toLowerCase();
+    // let currentList = [];
+    // let newList = [];
+    // if (search !== "") {
+    //   currentList = providers;
+    //   newList = currentList.filter(item => {
+    //     const lc = item.name.toLowerCase();
+    //     const filter = search;
+    //     return lc.includes(filter);
+    // });
+    // } else {
+    //   this.props.GetProviders({ params: {} });
+    //   newList = this.props.providers;
+    // }
+    // this.setState({
+    //   providers: newList
+    // });
+
     this.setState({
       keyword: val.target.value
     }, () => {
@@ -58,10 +83,19 @@ class Providers extends React.Component {
 
   loadPage = (page) => {
     const { GetProviders } = this.props;
-    const { sort, keyword } = this.state;
-    const params = {
+    const { keyword, sort } = this.state;
+    const params = isEmpty(keyword) ? 
+    {
       page: page,
-      'provider[name]': keyword,
+      per_page: 25,
+      'provider[sort]': sort.direction,
+      'provider[order]': sort.col
+    } : 
+    {
+       page: page,
+      search: keyword,
+      per_page: 1,
+      // 'provider[name]': capitalize(keyword),
       'provider[sort]': sort.direction,
       'provider[order]': sort.col
     };

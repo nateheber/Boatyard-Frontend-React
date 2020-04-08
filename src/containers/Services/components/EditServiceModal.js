@@ -69,7 +69,7 @@ class AddServiceModal extends React.Component {
       label: startCase(val.name)
     }));
     if (!isEmpty(category)) {
-      name = get(category, 'name');
+      // name = get(category, 'name');
       categoryId = get(category, 'id');
       cost = get(category, 'cost');
       costType = get(category, 'costType');

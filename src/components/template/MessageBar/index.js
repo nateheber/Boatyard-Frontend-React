@@ -82,7 +82,16 @@ class MessageBar extends React.Component {
 
   handleClickOutside = (event) => {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      this.props.SetMessageBarUIStatus({opened: false});
+      let flag = false;
+      let elem = event.target;
+      while(!flag && elem && elem.tagName && elem.tagName.toLowerCase() !== 'body') {
+        if (elem.getAttribute('id') === 'msgIcon') {
+          flag = true;
+        }
+        elem = elem.parentNode;
+      }
+
+      !flag && this.props.SetMessageBarUIStatus({opened: false});
     }
   }
 
@@ -96,7 +105,7 @@ class MessageBar extends React.Component {
             onCreationSuccess={this.onSelect}
           />
         }
-        {selected === -1 && !newMessage && 
+        {selected === -1 && !newMessage &&
           <ChatHistory
             onNew={this.onNew}
             onSelect={this.onSelect}

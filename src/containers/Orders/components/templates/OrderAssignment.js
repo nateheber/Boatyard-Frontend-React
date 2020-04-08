@@ -1,14 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
+import { get, find } from 'lodash';
+import { toastr } from 'react-redux-toastr';
 import { Section } from 'components/basic/InfoSection';
-
-import { DispatchOrder, SetDispatchedFlag } from 'store/actions/orders';
-import ProviderInfo from './ProviderInfo';
-import TeamMemberInfo from './TeamMemberInfo';
-import ProviderSelector from './ProviderSelector';
-import TeamMemberSelector from './TeamMemberSelector';
+import { GetProviderLocations, SearchProviderLocations } from 'store/actions/providerLocations';
+import { UpdateOrder, DispatchOrder } from 'store/actions/orders';
+import { simpleProviderLocationSelector } from 'store/selectors/providerLocation';
+import AssigneeInfo from './AssigneeInfo';
+import ProviderLocationInfo from './ProviderLocationInfo';
+import ProviderLocationSelector from './ProviderLocationSelector';
+import AssigneeSelector from './AssigneeSelector';
 
 class OrderAssignment extends React.Component {
   constructor(props) {
@@ -18,60 +19,140 @@ class OrderAssignment extends React.Component {
     };
   }
 
-  static getDerivedStateFromProps(props) {
-    const providerId = get(props, 'currentOrder.attributes.providerId');
-    const orderState = get(props, 'currentOrder.attributes.state');
-    const { privilege } = props;
+  componentDidMount() {
+    const { privilege, providerId, GetProviderLocations, SearchProviderLocations } = this.props;
     if (privilege === 'admin') {
-      if (orderState !== 'dispatched' && providerId) {
-        return { dispatchIds: [providerId] };
-      }
-      const dispatchIds = get(props, 'currentOrder.dispatchIds', []);
-      return { dispatchIds };
+      SearchProviderLocations({
+        params: {
+          search: '',
+          page: 1,
+          per_page: 1000
+        }
+      });
     } else {
-      return { dispatchIds: [] };
+      GetProviderLocations({
+        providerId,
+        params: { page: 1, per_page: 1000 }
+      });
     }
   }
 
+  static getDerivedStateFromProps(props) {
+    // console.log(props);
+    if (props !== undefined || props !== null) {
+      const providerLocationId = get(props, 'currentOrder.attributes.providerLocationId');
+      const orderState = get(props, 'currentOrder.attributes.state');
+      const { privilege } = props;
+      if (privilege === 'admin') {
+        if (orderState !== 'dispatched' && providerLocationId) {
+          return { dispatchIds: [providerLocationId] };
+        }
+        if (props.providerLocations.length > 0) {
+          const dispatchIds = get(props, 'currentOrder.dispatchIds', []).map(el => props.providerLocations.find(item => `${item.id}` === `${el}`) )
+            .sort((a, b) => (a.provider_name > b.provider_name) ? 1 : (a.provider_name === b.provider_name) ? ((a.name > b.name) ? 1 : -1) : -1 )
+            .map(el => el.id)
+            // if (dispatchIds) {
+            //   let ids = dispatchIds.map(el => el.id);
+            //   return { ids }
+            // }
+           // .map(el => el.id);
+            return { dispatchIds };
+        } else {
+          return { dispatchIds: [] };
+        }
+          // console.log(dispatchIds);
+      } else {
+        return { dispatchIds: [] };
+      }
+    }
+  }
+
+  updateOrder = (fieldName, value) => {
+    const { currentOrder: {id: orderId}, UpdateOrder } = this.props;
+    const data = {};
+    data[fieldName] = value;
+    if (fieldName === 'provider_location_id') {
+      data['assigned_team_member_id'] = null;
+    }
+
+    UpdateOrder({
+      orderId,
+      data: {
+        order: data
+      },
+      success: () => toastr.success('Success', "Successfully assigned!"),
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+  };
+
   updateDispatchIds = (dispatchIds) => {
-    const { privilege, currentOrder } = this.props;
+    const { currentOrder, DispatchOrder } = this.props;
     const orderId = currentOrder.id;
     const orderState = get(currentOrder, 'attributes.state');
-    if (privilege === 'admin') {
-      this.props.DispatchOrder({
-        orderId,
-        dispatchIds,
-        orderState,
-        success: () => { this.props.SetDispatchedFlag(true) }
-      });
-    } else {
-    }
+    DispatchOrder({
+      orderId,
+      dispatchIds,
+      orderState,
+      success: () => { this.props.SetDispatchedFlag(true) }
+    });
   };
 
   renderDropdownButton = () => {
     const { dispatchIds } = this.state;
-    const { privilege, currentOrder } = this.props;
-    const providerId = get(currentOrder, 'attributes.providerId');
+    const { privilege, currentOrder, providerLocationId, providerLocations, teamMemberData } = this.props;
+    const plID = get(currentOrder, 'attributes.providerLocationId');
+    const orderState = get(currentOrder, 'state');
+    const isDispatched = orderState === 'dispatched';// || orderState === 'assigned';
     if (privilege === 'admin') {
-      return <ProviderSelector dispatchIds={providerId ? [providerId] : dispatchIds} onChange={this.updateDispatchIds} />
+      return <ProviderLocationSelector dispatchIds={isDispatched ? [plID] : dispatchIds} onChange={this.updateDispatchIds} />
     } else if ( privilege === 'provider') {
-      return <TeamMemberSelector dispatchIds={[]} onChange={this.updateDispatchIds} />
+      let options = providerLocations;
+      let value = get(currentOrder, 'attributes.providerLocationId');
+      let labelField = 'name';
+      if (providerLocationId) {
+        options = teamMemberData;
+        value = get(currentOrder, 'attributes.assignedTeamMemberId');
+        labelField = 'fullName';
+      }
+      return <AssigneeSelector
+        value={value}
+        options={options}
+        labelField={labelField}
+        onChange={
+          value => this.updateOrder(
+            labelField === 'name' ? 'provider_location_id' : 'assigned_team_member_id',
+            value
+          )
+        }
+      />
     }
   };
 
   render() {
+    const { teamMemberData, providerLocations, currentOrder: {attributes: {providerLocationId, assignedTeamMemberId}}, privilege } = this.props;
     const { dispatchIds } = this.state;
-    const { privilege } = this.props;
+    const providerLocationInfo = find(providerLocations, {id: `${providerLocationId}`}) || providerLocations[0];
+    const teamMemberInfo = find(teamMemberData, {id: `${assignedTeamMemberId}`});
+    const isLocationSelected = !!this.props.providerLocationId;
     return (
-      <Section title="Assignees" mode="view" editComponent={this.renderDropdownButton()} noPadding>
-        {
-          dispatchIds.map((id) => (
-            <React.Fragment key={`assignee_${id}`}>
-              {privilege === 'admin' && <ProviderInfo id={id} />}
-              {privilege === 'provider' && <TeamMemberInfo id={id} />}
-            </React.Fragment>
-          ))
-        }
+      <Section title="Assignee" mode="view" editComponent={this.renderDropdownButton()} noPadding>
+        {privilege === 'admin' ?
+          <React.Fragment>
+          {
+            dispatchIds.map((id) => (
+              <React.Fragment key={`assignee_${id}`}>
+                <ProviderLocationInfo id={id} />
+              </React.Fragment>
+            ))
+          }
+          </React.Fragment>
+        : <AssigneeInfo
+          teamMemberInfo={teamMemberInfo}
+          providerLocationInfo={providerLocationInfo}
+          isLocationSelected={isLocationSelected}
+        />}
       </Section>
     );
   }
@@ -79,9 +160,18 @@ class OrderAssignment extends React.Component {
 
 const mapStateToProps = (state) => ({
   currentOrder: state.order.currentOrder,
-  privilege: state.auth.privilege
+  teamMemberData: state.order.teamMemberData,
+  privilege: state.auth.privilege,
+  providerId: state.auth.providerId,
+  providerLocationId: state.auth.providerLocationId,
+  providerLocations: simpleProviderLocationSelector(state)
 })
 
-const mapDispatchToProps = { DispatchOrder, SetDispatchedFlag };
+const mapDispatchToProps = {
+  UpdateOrder,
+  DispatchOrder,
+  GetProviderLocations,
+  SearchProviderLocations
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderAssignment);

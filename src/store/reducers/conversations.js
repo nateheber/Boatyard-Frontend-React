@@ -1,24 +1,20 @@
 import { handleActions } from 'redux-actions';
 import { produce } from 'immer';
-import { get, reverse, merge } from 'lodash';
+import { get } from 'lodash';
 import { actionTypes } from '../actions/conversations';
 import { refactorIncluded } from 'utils/basic';
-import { parseIncludedForMessages } from 'utils/conversations';
 
 const initialState = {
   currentStatus: '',
   conversations: [],
   included: [],
-  currentConversation: {},
   page: 1,
   perPage: 20,
   total: 0,
   message: {
-    messages: [],
+    loading: false,
+    data: [],
     included: {},
-    page: 1,
-    perPage: 20,
-    total: 0
   },
   errors: null,
   ui: {
@@ -58,16 +54,12 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         const first = get(payload, 'first', false);
-        const page = get(payload, 'params.page', 1);
-        const perPage = get(payload, 'params.per_page', 20);
         draft.currentStatus = type;
         if (first) {
           draft.message = {
             messages: [],
-            included: {},
-            page,
-            perPage,
-            total: 0        
+            data: [],
+            loading: true, 
           };
         }
         draft.errors = null;
@@ -75,17 +67,12 @@ export default handleActions(
     [actionTypes.GET_CONVERSATION_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
-        const { total, perPage, data, included } = payload;
+        const { data, included } = payload;
         draft.currentStatus = type;
-        const messages = get(state, 'message.messages');
-        const mergedMessages = merge(reverse(data), messages);
-        const parsed = parseIncludedForMessages(included);
-        const origin = get(state, 'message.included');
         draft.message = {
-          total,
-          perPage,
-          messages: mergedMessages,
-          included: merge(origin, parsed)
+          data,
+          included,
+          loading: false
         };
       }),
     [actionTypes.GET_CONVERSATION_FAILURE]: (state, action) =>
@@ -93,6 +80,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.errors = payload;
+        draft.message.loading = false;
       }),
 
     [actionTypes.CREATE_CONVERSATION]: (state, action) =>

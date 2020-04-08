@@ -2,12 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Select from 'react-select';
-import EvilIcon from 'react-evil-icons';
 
-import { GetManagements } from 'store/actions/managements';
-import { refinedManagementsSelector } from 'store/selectors/managements';
+import { SetWorkOrder } from 'store/actions/workorders';
 import { Input } from 'components/basic/Input';
-import { Section, SectionHeader, SectionContent, Column, DeleteButton } from '../Section';
+import { Section, SectionHeader, Column } from '../Section';
 
 const HeaderInputLabel = styled.label`
   font-family: 'Montserrat', sans-serif;
@@ -18,21 +16,6 @@ const HeaderInputLabel = styled.label`
   margin-right: 5px;
   width: 80px;
   font-weight: bold;
-`;
-
-const TeamMemberChip = styled.div`
-  display: flex;
-  padding: 4px 8px 4px 12px;
-  margin: 5px;
-  align-items: center;
-  border: 1px solid #A9B5BB;
-  border-radius: 6px;
-`;
-
-const TeamMemberName = styled.label`
-  font-family: Helvetica;
-  font-size: 15px;
-  color: #003247;
 `;
 
 const colourStyles = {
@@ -87,11 +70,6 @@ const colourStyles = {
 };
 
 class JobTitleSection extends React.Component {
-  componentDidMount() {
-    const { GetManagements } = this.props;
-    GetManagements({ params: { page: 1, per_page: 1000 } });
-  }
-
   handleChange = member => {
     const { onChange } = this.props;
     if (onChange) {
@@ -107,63 +85,55 @@ class JobTitleSection extends React.Component {
   };
 
   getOptions = () => {
-    const { managements, selected } = this.props;
+    const { managements, assignee } = this.props;
     if (managements) {
       const options = managements.map(management => (
         {
           value: management.id,
-          label: `${management.relationships.user.attributes.firstName} ${management.relationships.user.attributes.lastName}`
+          label: `${management.fullName}`
         }
       ));
-      return options.filter(o1 => selected.filter(o2 => o2.value === o1.value).length === 0);
+      return options.filter(o1 => !assignee || assignee.value !== o1.value);
     }
     return [];
   };
 
   render() {
-    const { selected } = this.props;
+    const { workorder, SetWorkOrder, assignee } = this.props;
+    const { state } = workorder;
+    const disabled = !(!state || state === 'draft' || state === 'declined');
     const options = this.getOptions();
     return (
       <Section>
         <SectionHeader>
           <Column>
-            <Input style={{ width: 205 }} placeholder='Job Title' />
+          <HeaderInputLabel>Job Title:</HeaderInputLabel><Input disabled={disabled} style={{ width: 205 }} placeholder='Job Title' value={workorder.title} onChange={e => SetWorkOrder({title: e.target.value}) } />
           </Column>
           <Column>
             <HeaderInputLabel>Assign To:</HeaderInputLabel>
             {/* <Input style={{ width: 205 }} placeholder='Team Member' /> */}
             <Select
-              value={null}
+              value={assignee}
               onChange={this.handleChange}
               options={options}
               styles={colourStyles}
+              isDisabled ={disabled}
             />
 
           </Column>
         </SectionHeader>
-        <SectionContent>
-          <Column style={{ flexWrap: 'wrap' }}>
-            {selected.map(member => (
-              <TeamMemberChip key={`member_${member.value}`}>
-                <TeamMemberName>{member.label}</TeamMemberName>
-                <DeleteButton onClick={() => this.handleDelete(member)}>
-                  <EvilIcon name="ei-close" size="s" className="close-icon" />
-                </DeleteButton>
-              </TeamMemberChip>
-            ))}
-          </Column>
-        </SectionContent>
       </Section>
     );
   }
 }
 
 const mapStateToProps = (state) => ({
-  managements: refinedManagementsSelector(state)
+  managements: state.order.teamMemberData,
+  workorder: state.workorders.workorder,
 });
 
 const mapDispatchToProps = {
-  GetManagements
+  SetWorkOrder
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(JobTitleSection);

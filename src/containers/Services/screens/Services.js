@@ -5,11 +5,16 @@ import { Col, Row } from 'react-flexbox-grid';
 import { withRouter } from 'react-router-dom';
 import { get, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
+import Modal from 'components/compound/Modal';
 
 import { actionTypes, GetServices, UpdateService, DeleteService } from 'store/actions/services';
+import { refinedServicesSelector } from 'store/selectors/services';
 import Table from 'components/basic/Table';
+import { NormalText } from 'components/basic/Typho';
+import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { ServiceHeader } from 'components/compound/SectionHeader';
 import EditServiceModal from '../components/EditServiceModal';
+import EditLocationServiceModal from '../components/EditLocationServiceModal';
 import { SearchBox } from 'components/basic/Input';
 
 const Wrapper = styled.div`
@@ -28,6 +33,11 @@ const SearchCotainer = styled(Col)`
   width: 305px;
 `;
 
+export const Description = styled(NormalText)`
+  font-family: 'Open sans-serif', sans-serif;
+  padding: 10px 0;
+`;
+
 class Services extends React.Component {
   constructor(props) {
     super(props);
@@ -35,6 +45,7 @@ class Services extends React.Component {
       keyword: '',
       sort: { col: 'name', direction: 'asc' },
       visibleOfEditServiceModal: false,
+      visibleOfConfirmationModal: false,
       selectedService: {}
     };
   }
@@ -49,14 +60,16 @@ class Services extends React.Component {
     const { sort } = this.state;
     const params = isEmpty(keyword) ? {
       page: page,
+      all: true,
       'service[discarded_at]': null,
       'service[sort]': sort.direction,
       'service[order]': sort.col
     } : {
       page: page,
+      all: true,
+      'service[discarded_at]': null,
       'service[sort]': sort.direction,
       'service[order]': sort.col,
-      'service[discarded_at]': null,
       search_by_name: keyword
     };
     GetServices({ params });
@@ -96,6 +109,7 @@ class Services extends React.Component {
   deleteService = () => {
     const { selectedService } = this.state;
     const { page, DeleteService } = this.props;
+    this.hideConfirmationModal();
     DeleteService({
       serviceId: get(selectedService, 'id'),
       success: () => {
@@ -108,9 +122,10 @@ class Services extends React.Component {
     });
   }
 
-  updateService = (data) => {
+  updateService = (values) => {
     const { selectedService } = this.state;
-    const { page, UpdateService } = this.props;
+    const { page, UpdateService, providerLocationId } = this.props;
+    const data = providerLocationId ? { provider_location_service: values } : values;
     UpdateService({
       serviceId: get(selectedService, 'id'),
       data,
@@ -122,7 +137,19 @@ class Services extends React.Component {
         toastr.error('Error', e.message);
       }
     });
-  }
+  };
+
+  showConfirmationModal = () => {
+    this.setState({
+      visibleOfConfirmationModal: true
+    });
+  };
+
+  hideConfirmationModal = () => {
+    this.setState({
+      visibleOfConfirmationModal: false
+    });
+  };
 
   render() {
     const columns = [
@@ -131,9 +158,14 @@ class Services extends React.Component {
       { label: 'price type', value: 'costType', sort: 'cost_type' }
     ];
 
-    const { services, currentStatus, page, perPage, total } = this.props;
-    const { sort, visibleOfEditServiceModal, selectedService } = this.state;
+    const { services, currentStatus, page, perPage, total, providerLocationId } = this.props;
+    const { sort, visibleOfEditServiceModal, visibleOfConfirmationModal, selectedService } = this.state;
     const pageCount = Math.ceil(total/perPage);
+    const modalActions = [
+      <HollowButton onClick={this.hideConfirmationModal} key="modal_btn_cancel">Cancel</HollowButton>,
+      <OrangeButton onClick={this.deleteService} key="modal_btn_save">Confirm</OrangeButton>
+    ];
+
     return (
       <Wrapper>
         <ServiceHeader onAdd={this.createService} />
@@ -152,25 +184,50 @@ class Services extends React.Component {
           onPageChange={this.loadPage}
           toDetails={this.toDetails}
         />
-        {visibleOfEditServiceModal && <EditServiceModal
-          loading={currentStatus === actionTypes.UPDATE_SERVICE}
-          open={visibleOfEditServiceModal}
-          service={selectedService}
-          onClose={this.hideEditModal}
-          onDelete={this.deleteService}
-          onSave={this.updateService}
-        />}
+        {visibleOfEditServiceModal &&
+          <React.Fragment>
+          {providerLocationId ?
+            <EditLocationServiceModal
+              loading={currentStatus === actionTypes.UPDATE_SERVICE || currentStatus === actionTypes.DELETE_SERVICE}
+              open={visibleOfEditServiceModal}
+              service={selectedService}
+              onClose={this.hideEditModal}
+              onDelete={this.showConfirmationModal}
+              onSave={this.updateService}
+            />
+          :
+            <EditServiceModal
+              loading={currentStatus === actionTypes.UPDATE_SERVICE || currentStatus === actionTypes.DELETE_SERVICE}
+              open={visibleOfEditServiceModal}
+              service={selectedService}
+              onClose={this.hideEditModal}
+              onDelete={this.showConfirmationModal}
+              onSave={this.updateService}
+            />
+          }
+        </React.Fragment>
+        }
+        <Modal
+          title={'Are You Sure?'}
+          actions={modalActions}
+          normal={true}
+          open={visibleOfConfirmationModal}
+          onClose={this.hideConfirmationModal}
+        >
+          <Description>Deleting this service cannot be undone.</Description>
+        </Modal>
       </Wrapper>
     );
   }
 }
 
-const mapStateToProps = ({ service: { services, currentStatus, page, perPage, total } }) => ({
-  services,
-  currentStatus,
-  page,
-  perPage,
-  total
+const mapStateToProps = (state) => ({
+  services: refinedServicesSelector(state),
+  currentStatus: state.service.currentStatus,
+  page: state.service.page,
+  perPage: state.service.perPage,
+  total: state.service.total,
+  providerLocationId: state.auth.providerLocationId
 });
 
 const mapDispatchToProps = {

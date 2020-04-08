@@ -7,6 +7,7 @@ import { refactorIncluded } from 'utils/basic';
 const initialState = {
   currentStatus: '',
   services: [],
+  allServices: [],
   filteredServices: [],
   currentService: {},
   included: {},
@@ -67,6 +68,54 @@ export default handleActions(
         draft.errors = payload;
       }),
 
+    [actionTypes.GET_ALL_SERVICES]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'params.page', 0);
+        draft.errors = null;
+      }),
+    [actionTypes.GET_ALL_SERVICES_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { total, perPage, services, included } = payload;
+        draft.currentStatus = type;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.allServices = services;
+        draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.GET_ALL_SERVICES_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
+    [actionTypes.FILTER_ALL_SERVICES]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.page = get(payload, 'params.page', 1);
+        draft.errors = null;
+      }),
+    [actionTypes.FILTER_ALL_SERVICES_SUCCESS]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        const { total, perPage, services, included } = payload;
+        draft.currentStatus = type;
+        draft.total = total;
+        draft.perPage = perPage;
+        draft.filteredServices = services;
+        draft.included = refactorIncluded(included);
+      }),
+    [actionTypes.FILTER_ALL_SERVICES_FAILURE]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        draft.errors = payload;
+      }),
+
     [actionTypes.GET_SERVICE]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
@@ -97,6 +146,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         draft.currentService = payload;
+        draft.services = [...draft.services, payload];
       }),
     [actionTypes.CREATE_SERVICE_FAILURE]: (state, action) =>
       produce(state, draft => {

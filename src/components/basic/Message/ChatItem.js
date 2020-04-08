@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
-import { isEmpty } from 'lodash';
+import { find } from 'lodash';
 
 const Wrapper = styled.div`
   display: flex;
@@ -90,23 +90,42 @@ const Image = styled.img`
   width: 100%;
   height: auto;
   margin-top: 10px;
+  cursor: pointer;
 `
 
+const Attachments = ({items}) => {
+  if (!items || items.length === 0) {
+    return null;
+  }
+  const urls = items.map(item => item.attributes.fileAttachment.url);
+  const concatedUrls = urls.join(',');
+  if (urls.length === 2 && concatedUrls.indexOf('thumb-') > -1 && concatedUrls.indexOf('origin-') > -1) {
+    const thumbUrl = find(urls, l => l.indexOf('thumb-') > -1);
+    const originUrl = find(urls, l => l.indexOf('origin-') > -1);
+    return <Image src={thumbUrl} onClick={ev => window.open(originUrl, '_blank')} />
+  }
+  return <></>
+}
+
 export class ChatItem extends React.Component {
+  handleDownload(file) {
+    window.open(file, '_blank');
+  }
+
   render() {
-    const { name, time, body, own, secondary, file, showDate, hasPrev, hasNext } = this.props;
+    const { name, time, body, own, isNotLoggedInUser, secondary, attachments, showDate, hasPrev, hasNext } = this.props;
     return (
       <Wrapper className={`${own ? 'own' : 'op'} ${hasPrev ? 'has-prev': ''} ${hasNext ? 'has-next' : ''}`}>
         {showDate && <DateContainer>
           <DateText>{moment(time).format('MMM D, YYYY')}</DateText>
         </DateContainer>}
         {!hasPrev && <UserDetailsCotainer>
-          {!own && <DisplayName className={secondary ? 'secondary' : 'primary'}>{`${name}`}&nbsp;</DisplayName>}
+          {(!own || isNotLoggedInUser) && <DisplayName className={secondary ? 'secondary' : 'primary'}>{`${name}`}&nbsp;</DisplayName>}
           <TimeText>{moment(time).format('h:mm A')}</TimeText>
         </UserDetailsCotainer>}
         <MessageBody className={`${own ? 'own' : 'op'} ${hasPrev ? 'has-prev': ''} ${hasNext ? 'has-next' : ''}`}>
           {body}
-          { !isEmpty(file) && <Image src={file} /> }
+          <Attachments items={attachments} />
         </MessageBody>
       </Wrapper>
     );

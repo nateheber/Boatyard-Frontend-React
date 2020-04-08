@@ -32,63 +32,12 @@ export default class JobSection extends React.Component {
   };
 
   render () {
-    const jobs = [
-      {
-      id: '23544',
-      name: 'Job Title',
-      status: 'accepted'
-      },
-      {
-      id: '23545',
-      name: 'Medium Job Title',
-      status: 'in-progress'
-      },
-      {
-      id: '23554',
-      name: 'Third Job Title',
-      status: 'pending'
-      },
-      {
-      id: '22344',
-      name: 'Short Job Title',
-      status: 'completed'
-      },
-      {
-      id: '29874',
-      name: 'Really Long Job Title',
-      status: 'declined'
-      },
-      {
-      id: '23544',
-      name: 'Job Title',
-      status: 'accepted'
-      },
-      {
-      id: '23545',
-      name: 'Medium Job Title',
-      status: 'in-progress'
-      },
-      {
-      id: '23554',
-      name: 'Third Job Title',
-      status: 'pending'
-      },
-      {
-      id: '22344',
-      name: 'Short Job Title',
-      status: 'completed'
-      },
-      {
-      id: '29874',
-      name: 'Really Long Job Title',
-      status: 'declined'
-      }
-    ];
+    const {workorders} = this.props;
     return (
       <Section title='Jobs' mode='view' editComponent={this.renderAddButton()}>
         <Wrapper>
-          {jobs.map((item, idx) => (
-            <JobItem key={`timeline_${idx}`} job={item} />
+          {workorders.map((item, idx) => (
+            <JobItem key={`timeline_${idx}`} job={item} SetWorkOrder={this.props.SetWorkOrder} />
           ))}
         </Wrapper>
       </Section>

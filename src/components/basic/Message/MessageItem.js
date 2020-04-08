@@ -12,5 +12,4 @@ export const MessageItem = styled.div`
     background-color: rgb(245, 245, 245);
   }
   min-height: 56px;
-  display: flex;
 `;

@@ -28,6 +28,7 @@ export const UsersHeader = ({ onAction, onAdd }) => (
             }
           }
         ]}
+        title='ACTION'
       />
     </LeftPart>
     <RightPart>

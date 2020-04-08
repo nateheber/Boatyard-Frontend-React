@@ -227,7 +227,9 @@ export default class CustomerModal extends React.Component {
 
   render() {
     const fields = this.getFormFieldInfo();
-    const { title, open, onClose, loading, showAdditionalFields } = this.props;
+    const { title, open, onClose, loading } = this.props;
+    const {showAdditionalFields } = this.props;
+    console.log(showAdditionalFields);
     const action = [
       <HollowButton onClick={onClose} key="modal_btn_cancel">Cancel</HollowButton>,
       <OrangeButton onClick={this.onSave} key="modal_btn_save">Save</OrangeButton>

@@ -25,14 +25,14 @@ const SectionHeaderWrapper = styled.div`
 `;
 
 const LeftPart = styled.div`
-  min-width: 370px;
+  // min-width: 370px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
 const RightPart = styled.div`
-  width: calc(100% - 370px);
+  // width: calc(100% - 370px);
   justify-content: flex-end;
   display: flex;
   align-items: center;
@@ -80,6 +80,7 @@ class OrderDetailHeader extends React.Component {
         toastr.success('Success', 'Accepted successfully!');
       },
       error: (e) => {
+        console.log("acceptOrder");
         toastr.error('Error', e.message);
       }
     });
@@ -96,10 +97,11 @@ class OrderDetailHeader extends React.Component {
         }
       },
       success: () => {
-        toastr.success('Success', 'Declined successfully!');
+        toastr.success('Success', 'Order Declined successfully!');
         this.props.history.push('/orders/');
       },
       error: (e) => {
+        console.log("declineOrder");
         toastr.error('Error', e.message);
       }
     });
@@ -119,6 +121,27 @@ class OrderDetailHeader extends React.Component {
         toastr.success('Success', 'Canceled successfully!');
       },
       error: (e) => {
+        console.log("cancelOrder");
+        toastr.error('Error', e.message);
+      }
+    });
+  }
+
+  reopenOrder = () => {
+    const { order } = this.props;
+    const orderId = get(order, 'id');
+    this.props.UpdateOrder({
+      orderId,
+      data: {
+        order: {
+          transition: 'reopen'
+        }
+      },
+      success: () => {
+        toastr.success('Success', 'Order reopened successfully!');
+      },
+      error: (e) => {
+        console.log(this.reopenOrder);
         toastr.error('Error', e.message);
       }
     });
@@ -134,6 +157,7 @@ class OrderDetailHeader extends React.Component {
         this.props.history.push('/orders/');
       },
       error: (e) => {
+        console.log("deleteOrder");
         toastr.error('Error', e.message);
       }
     });
@@ -163,6 +187,7 @@ class OrderDetailHeader extends React.Component {
         toastr.success('Success', 'Completed successfully!');
       },
       error: (e) => {
+        console.log(this.completeOrder);
         toastr.error('Error', e.message);
       }
     });
@@ -223,6 +248,12 @@ class OrderDetailHeader extends React.Component {
         action: this.completeOrder
       });
     }
+    if (orderStatus === 'completed') {
+      items.push({
+        title: 'Reopen Order',
+        action: this.reopenOrder
+      });
+    }
 
     const actions = [
       <HollowButton onClick={() => this.setState({visibleofDeleteModal: false})} key="modal_btn_cancel">Cancel</HollowButton>,
@@ -231,16 +262,17 @@ class OrderDetailHeader extends React.Component {
 
     return (
       <SectionHeaderWrapper>
-        <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center' }}>
+        <Row style={{ width: '100%', padding: '0px 30px', alignItems: 'center', justifyContent: 'space-between' }}>
           <LeftPart>
             <PageTitle>Order #{orderId}</PageTitle>
             <ActionDropdown
               items={items}
+              title='ACTION'
             />
           </LeftPart>
           {canAcceptOrder && <RightPart>
             <OrangeButton onClick={this.acceptOrder}>Accept Order</OrangeButton>
-            <HollowButton onClick={this.declineOrder}>Decline</HollowButton>
+            <HollowButton onClick={this.declineOrder}>Decline Order</HollowButton>
           </RightPart>}
         </Row>
         {

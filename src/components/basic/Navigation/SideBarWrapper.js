@@ -9,11 +9,7 @@ export const SideBarWrapper = styled.div`
   display: block;
   padding-bottom: 68px;
   box-sizing: border-box;
-  width: 195px !important;
-  @media (max-width: 991px) {
-    display: block !important;
-    width: 100px !important;
-  }
+  width: 100%;
   transition: all 0.3s ease;
   transition-property: all;
   transition-duration: 0.3s;

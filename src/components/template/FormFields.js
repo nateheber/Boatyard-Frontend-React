@@ -1,5 +1,6 @@
 import React from 'react';
 import { Row, Col } from 'react-flexbox-grid';
+import Autosuggest from 'react-autosuggest';
 import { isEmpty, set, get, findIndex } from 'lodash';
 import deepEqual from 'deep-equal';
 import classNames from 'classnames';
@@ -17,8 +18,9 @@ import {
   CurrencyInput,
   FileInput,
   InputableSelector,
-  CreatableSelector
+  CreatableSelector,
 } from 'components/basic/Input';
+import { ErrorMessage } from 'components/basic/Input/Input';
 import { formatTimeFromString } from 'utils/basic';
 
 const Image = styled.img`
@@ -42,6 +44,74 @@ const DateTimeWrapper = styled.div`
   }
 `;
 
+const AutotSuggestWrapper = styled.div`
+  .react-autosuggest__container {
+    position: relative;
+  }
+
+  .react-autosuggest__input {
+    position: relative;
+    background: #fff;
+    padding: 0 15px;
+    margin-bottom: 5px;
+    border: 1px solid #dfdfdf;
+    height: 30px;
+    width: 100%;
+    border-radius: 6px !important;
+    outline: none;
+    box-sizing: border-box;
+    font-family: 'Source Sans Pro',sans-serif;
+    font-size: 14px;
+    color: #555;
+  }
+
+  .react-autosuggest__input--focused {
+    outline: none;
+  }
+
+  .react-autosuggest__input::-ms-clear {
+    display: none;
+  }
+
+  .react-autosuggest__input--open {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .react-autosuggest__suggestions-container {
+    display: none;
+  }
+
+  .react-autosuggest__suggestions-container--open {
+    display: block;
+    position: absolute;
+    top: 30px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    font-family: 'Source Sans Pro',sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .react-autosuggest__suggestions-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .react-autosuggest__suggestion {
+    cursor: pointer;
+    padding: 10px 20px;
+  }
+
+  .react-autosuggest__suggestion--highlighted {
+    background-color: #ddd;
+  }
+`;
 export default class FormFields extends React.Component {
   constructor(props) {
     super(props);
@@ -57,7 +127,7 @@ export default class FormFields extends React.Component {
       value = `${index % 12 === 0 ? 12 : index % 12}:30${index < 12 ? 'am' : 'pm'}`;
       startTimeOptions.push({
         value: value,
-        label: value
+        label: value,
       });
     }
     const endTimeOptions = startTimeOptions.slice(0);
@@ -65,7 +135,8 @@ export default class FormFields extends React.Component {
       value,
       errors: [],
       startTimeOptions,
-      endTimeOptions
+      endTimeOptions,
+      suggestions: []
     };
   }
 
@@ -185,7 +256,7 @@ export default class FormFields extends React.Component {
       this.props.onChange(value, field);
     }
   };
-  
+
   validateFields = () => {
     const { value } = this.state;
     const errors = [];
@@ -200,12 +271,12 @@ export default class FormFields extends React.Component {
         if (fields[i].required && !fieldValue) {
           errors.push(fields[i].field);
         }
-      } else if (fields[i].type === 'inputable_time') {
-        if (fields[i].required && !(fieldValue.hours_start || fieldValue.minutes_start)) {
-          errors.push(fields[i].field);
-        }
+      // } else if (fields[i].type === 'inputable_time') {
+      //   if (fields[i].required && !(fieldValue.hours_start || fieldValue.minutes_start)) {
+      //     errors.push(fields[i].field);
+      //   }
       } else if (fields[i].type === 'inputable_time_range') {
-        if (fields[i].required && !(fieldValue.hours_start || fieldValue.minutes_start)) {
+        if (fields[i].required && !(fieldValue.from_time || fieldValue.to_time)) {
           errors.push(fields[i].field);
         }
       } else if (fields[i].type === 'time_range') {
@@ -479,9 +550,47 @@ export default class FormFields extends React.Component {
               value={fieldValue}
               onChange={values => this.onChangeValue(field, values, type)} />
           );
+      case 'auto_suggest':
+        return (
+          <AutotSuggestWrapper>
+            <Autosuggest
+              suggestions={this.state.suggestions}
+              onSuggestionsFetchRequested={({ value }) => this.onSuggestionsFetchRequested(value, options)}
+              onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+              getSuggestionValue={suggestion => suggestion.label}
+              renderSuggestion={suggestion => <div>{suggestion.label}</div>}
+              inputProps={{disabled, placeholder, value: fieldValue, onChange: (ev, {newValue}) => this.onChangeValue(field, newValue, type)}}
+            />
+            {
+              errorIdx >= 0 &&
+                <ErrorMessage className="show">
+                  {errorMessage}
+                </ErrorMessage>
+            }
+          </AutotSuggestWrapper>
+        )
       default:
         return null;
     }
+  };
+
+  onSuggestionsFetchRequested = (value, options) => {
+    const inputValue = value.trim().toLowerCase();
+    const inputLength = inputValue.length;
+
+    const suggestions = inputLength === 0 ? [] : options.filter(option =>
+      option.label.toLowerCase().indexOf(inputValue) > -1
+  );
+    this.setState({
+      suggestions
+    });
+  };
+
+  // Autosuggest will call this function every time you need to clear suggestions.
+  onSuggestionsClearRequested = () => {
+    this.setState({
+      suggestions: []
+    });
   };
 
   render() {

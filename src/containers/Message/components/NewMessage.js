@@ -7,10 +7,10 @@ import { Row, Col } from 'react-flexbox-grid';
 import { BoatyardSelect } from 'components/basic/Dropdown';
 import CustomerOption from 'components/basic/CustomerOption';
 import ChatBox from 'components/template/Message/ChatBox';
-
-import { refinedNetworkSelector } from 'store/selectors/network';
-import { CreateNetwork } from 'store/actions/networks';
-import { CreateMessage } from 'store/actions/conversations';
+import CustomerOptionValue from 'components/basic/CustomerOptionValue';
+import { refinedNetworkSelector, getRecipients } from 'store/selectors/network';
+import { GetNetworks } from 'store/actions/networks';
+import { CreateMessage, CreateConversation } from 'store/actions/conversations';
 import {
   FilterUsers,
 } from 'store/actions/users';
@@ -42,12 +42,6 @@ const Select = styled(BoatyardSelect)`
   width: 100%;
 `;
 
-const ValueLabel = styled.div`
-  display: inline-block;
-  font-size: 12px;
-  color: #333;
-`;
-
 const selectorStyle = {
   multiValue: (base) => ({
     ...base,
@@ -69,15 +63,6 @@ const selectorStyle = {
   })
 }
 
-const MultiValueLabel = (props) => {
-  const { data: { firstName, lastName } } = props;
-  return (
-    <ValueLabel {...props}>
-      {firstName} {lastName}
-    </ValueLabel>
-  );
-};
-
 const parseUserType = (type) => {
   switch(type) {
     case 'users':
@@ -91,7 +76,7 @@ const parseUserType = (type) => {
 
 class NewMessage extends React.Component {
   state = {
-    users: [],
+    users: -1,
     isMount: false,
   };
 
@@ -104,12 +89,11 @@ class NewMessage extends React.Component {
   }
 
   loadOptions = val => {
-    return this.onChangeUserFilter(val)
-      .then((filtered) => {
-        return filtered;
-      }, () => {
-        return [];
-      });
+    return new Promise((resolve, reject) => {
+      this.props.GetNetworks({params: {search: val}, success: () => {
+        window.setTimeout(() => resolve(this.props.recipients), 10);
+      }});
+    });
   };
 
   getSenderInfo = () => {
@@ -148,20 +132,17 @@ class NewMessage extends React.Component {
 
   onSend = (data) => {
     const { users } = this.state;
-    const senderInfo = this.getSenderInfo();
-    users.forEach((user) => {
-      const recipientInfo = this.getRecipientInfo(user);
-      this.props.CreateNetwork({
-        data: {
-          network: {
-            ...senderInfo,
-            ...recipientInfo
-          }
-        },
-        success: this.sendMessage(data, recipientInfo),
-        error: this.networkCreationFailed(data, recipientInfo)
-      })
-    })
+    const {recipient_id, recipient_type} = this.getRecipientInfo(users);
+    this.props.CreateConversation({
+      data: {
+        conversation: {
+          intended_recipient_type: recipient_type,
+          intended_recipient_id: recipient_id
+        }
+      },
+      success: (res) => this.sendMessage(data, res, recipient_id, recipient_type),
+      error: this.networkCreationFailed(data)
+    });
   }
 
   onSendingSuccess = (result) => {
@@ -173,30 +154,29 @@ class NewMessage extends React.Component {
     }
   }
 
-  sendMessage = (data, recipientInfo) => () => {
+  sendMessage = (message, {id: conversation_id}, recipient_id, recipient_type) => {
     this.props.CreateMessage({
       data: {
-        message: isEmpty(data.image) ? {
-          content: data.text,
-          ...recipientInfo,
-        } : {
-          content: data.text,
-          file: get(data, 'image'),
-          ...recipientInfo,
-        }
+        message: {
+          ...message,
+          conversation_id: parseInt(conversation_id)
+        },
+        recipient_id: parseInt(recipient_id),
+        recipient_type,
       },
       success: this.onSendingSuccess
     })
   }
 
-  networkCreationFailed = (data, recipientInfo) => (result) => {
-    if (get(result, 'message[0]') === 'already exists.') {
+  networkCreationFailed = (data, recipientInfo) => (error) => {
+    if (error.message.indexOf('already exists.') > -1) {
       this.sendMessage(data, recipientInfo)();
     }
   }
 
   render() {
     const { users } = this.state;
+
     return (
       <React.Fragment>
         <InputWrapper>
@@ -206,12 +186,11 @@ class NewMessage extends React.Component {
               placeholder="Choose a recipient"
               components={{
                 Option: CustomerOption,
-                MultiValueLabel,
+                SingleValue: CustomerOptionValue,
               }}
-              cacheOptions
-              isMulti
               defaultOptions
               loadOptions={this.loadOptions}
+              onInputChange={this.loadOptions}
               onChange={this.onChangeUser}
               styles={selectorStyle}
               value={users}
@@ -226,6 +205,7 @@ class NewMessage extends React.Component {
 
 const mapStateToProps = (state) => ({
   ...refinedNetworkSelector(state),
+  recipients: getRecipients(state),
   currentCustomerStatus: state.childAccount.currentStatus,
   profile: state.profile,
   provider: state.provider.loggedInProvider,
@@ -233,9 +213,10 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-  CreateNetwork,
+  CreateConversation,
   CreateMessage,
   FilterUsers,
+  GetNetworks,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewMessage);
