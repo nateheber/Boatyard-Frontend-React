@@ -117,9 +117,9 @@ export class InboxSelector extends React.Component {
             >
               <InboxItem
                 selected={this.isSelected(item.conversation.id)}
-                onSelect={() => {
-                  onSelect(item.conversation.id);
-                }}
+                // onSelect={() => {
+                //   onSelect(item.conversation.id);
+                // }}
                 onCheck={() => {
                   this.onCheck(item.conversation.id);
                 }}

@@ -36,6 +36,34 @@ const ORDER_COLUMNS = [
   { label: 'order status', value: 'stateAlias', width: 1.2 },
 ];
 
+const ORDER_STATUSES = [
+  { label: 'Draft', value: 'draft'},
+  { label: 'Dispatched', value: 'dispatched'},
+  { label: 'Accepted', value: 'accepted'},
+  { label: 'Invoiced', value: 'invoiced'},
+  { label: 'Completed', value: 'completed'}
+];
+
+const PROVIDER_STATUSES = [
+  { label: 'Awaiting Acceptance', value: 'awaiting_acceptance'},
+  { label: 'Quote Sent', value: 'quote_sent'},
+  { label: 'In Progress', value: 'in_progress'},
+  { label: 'Invoiced', value: 'invoiced'},
+  { label: 'Completed', value: 'completed'}
+];
+
+export const statusSelector = createSelector(
+  () => {
+    return ORDER_STATUSES;
+  }
+);
+
+export const providerStatusSelector = createSelector(
+  () => {
+    return PROVIDER_STATUSES;
+  }
+);
+
 const setLineItemRelationships = (lineItem, included) => {
   const resultData = {...lineItem};
   const { relationships } = lineItem;
@@ -62,7 +90,7 @@ const currentOrderSelector = state => {
   if (!isEmpty(order)) {
     for(const key in order.relationships) {
       const value = get(order, `relationships[${key}].data`);
-      if(value) {
+      if(value && ((isArray(value) && value.length >0) || !isArray(value))) {
         if (key === 'lineItems') {
           const lineItemRelation = get(order, `relationships[${key}].data`, []);
           const lineItems = [];
@@ -77,16 +105,19 @@ const currentOrderSelector = state => {
           const dispatchIds = [];
           forEach(dispatchRelation, (info) => {
             const dispatchDetail = get(included, `[${info.type}][${info.id}].attributes`);
-            const dispatchId = get(dispatchDetail, 'providerId');
-            dispatchIds.push(dispatchId);
+            const dispatchId = get(dispatchDetail, 'providerLocationId');
+            if (dispatchId) {
+              dispatchIds.push(dispatchId);
+            }
           })
           set(order, 'dispatchIds', dispatchIds);
         } else {
-          order.relationships[key] = get(included, `[${value.type}][${value.id}]`);
+          const item = get(included, `[${value.type}][${value.id}]`);
+          order.relationships[key] = item;
           if (key === 'boat') {
             const location = get(order.relationships[key], 'relationships.location.data');
-            const locationInfo = get(included, `[${location.type}][${location.id}]`);
-            set(order, `relationships[${key}].location`, locationInfo )
+            const locationInfo = location ? get(included, `[${location.type}][${location.id}]`) : {};
+            set(order, `relationships[${key}].location`, locationInfo);
           }
         }
       }
@@ -148,7 +179,12 @@ const lineItemsSelector = state => {
   const data = [];
   forEach(lineItems, (lineItem) => {
     const attributes= get(lineItemsDetail, `${lineItem.id}.attributes`);
-    const serviceInfo = get(lineItemsDetail, `${lineItem.id}.relationships.service`);
+    const relationShips = get(lineItemsDetail, `${lineItem.id}.relationships`);
+    let serviceInfo = get(relationShips, 'service');
+    if (get(relationShips, 'providerLocationService') &&
+      get(relationShips, 'providerLocationService').hasOwnProperty('id')) {
+      serviceInfo = get(relationShips, 'providerLocationService');
+    }
     const serviceAttributes = get(serviceInfo, 'attributes');
     return data.push({
       ...lineItem,
@@ -170,6 +206,7 @@ const getUnselectedColumns = state => get(state, 'order.unselectedColumns', []);
 export const columnsSelector = createSelector(
   getPrevilage,
   getProviderLocationId,
+  currentOrderSelector,
   (previlage, providerLocationId) => {
     const columns = ORDER_COLUMNS.slice(0)
     if (previlage === 'provider') {

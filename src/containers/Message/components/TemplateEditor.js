@@ -70,13 +70,15 @@ const ViewTemplateButtonWrapper = styled.div`
 const DELIVERY_OPTIONS = [
   'email',
   'push',
-  'sms'
+  'sms',
+  'app'
 ];
 
 const DELIVERY_LABELS = {
   email: 'Email',
   push: 'Push Notification',
-  sms: 'SMS'
+  sms: 'SMS',
+  app: 'In-App Notification'
 };
 
 export class TemplateEditor extends React.Component {
@@ -88,7 +90,7 @@ export class TemplateEditor extends React.Component {
 
   updateState = () => {
     const { defaultTemplateInfo } = this.props;
-    const { id: templateId, subject, smsText, deliveryDestinations, emailOptions } = defaultTemplateInfo;
+    const { id: templateId, subject, smsText, deliveryDestinations, emailOptions, emailBuilder } = defaultTemplateInfo;
     const emailGreeting = get(emailOptions, 'emailGreeting');
     const buttonText = get(emailOptions, 'buttonText');
     const emailBody = get(emailOptions, 'emailBody');
@@ -109,6 +111,7 @@ export class TemplateEditor extends React.Component {
       subject,
       smsText,
       deliveryDestinations: deliveryDestinations || [],
+      emailBuilder,
       emailOptions: {
         emailGreeting,
         buttonText,
@@ -133,6 +136,11 @@ export class TemplateEditor extends React.Component {
   onChangeSubject = (evt) => {
     const subject = evt.target.value;
     this.setState({ subject });
+  };
+
+  onChangeEmailBuilder = (evt) => {
+    const emailBuilder = evt.target.value;
+    this.setState({ emailBuilder });
   };
 
   onChangeBodyText = (evt) => {
@@ -180,7 +188,7 @@ export class TemplateEditor extends React.Component {
 
   handleSaveTemplate = () => {
     const { onSave } = this.props;
-    const { templateId, subject, smsText, deliveryDestinations, emailOptions } = this.state;
+    const { templateId, subject, smsText, deliveryDestinations, emailOptions, emailBuilder } = this.state;
     if (onSave) {
       const email_options = {};
       if (emailOptions.emailBody) {
@@ -203,6 +211,7 @@ export class TemplateEditor extends React.Component {
       const messageTemplate = {
         templateId,
         subject,
+        email_builder: emailBuilder,
         sms_text: smsText,
         delivery_destinations: deliveryDestinations,
         email_options
@@ -212,8 +221,8 @@ export class TemplateEditor extends React.Component {
   }
 
   render() {
-    const { onCancel } = this.props;
-    const { subject, smsText, emailOptions, hasSecondSection, hasFooter } = this.state;
+    const { onCancel, privilege } = this.props;
+    const { subject, smsText, emailOptions, hasSecondSection, hasFooter, emailBuilder } = this.state;
     return (
       <Wrapper>
         <InputFieldWrapper className="primary">
@@ -254,6 +263,13 @@ export class TemplateEditor extends React.Component {
         {hasFooter && <InputFieldWrapper className="primary">
           <TextArea placeholder={`${emailOptions.emailSenderName}\n${emailOptions.emailSenderCompany}`} disabled />
         </InputFieldWrapper>}
+        {privilege === 'admin' && <InputFieldWrapper className="primary">
+          <InputLabel>Email Builder</InputLabel>
+          <TextArea type="text" value={emailBuilder} onChange={this.onChangeEmailBuilder} />
+        </InputFieldWrapper>}
+        {privilege === 'admin' && <div dangerouslySetInnerHTML={{
+          __html: emailBuilder
+        }}></div>}
         <Divider />
         <InputFieldWrapper className="primary">
           <InputLabel>Push Notification</InputLabel>

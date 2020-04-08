@@ -1,8 +1,9 @@
 import React from 'react';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+
 import { GetNetworks } from 'store/actions/networks';
 import { GetConversations, SetMessageBarUIStatus } from 'store/actions/conversations';
 import { LoginWithProvider } from 'store/actions/providers';
@@ -30,6 +31,11 @@ const PageContent = styled.div`
   width: 100vw;
   background-color: #e6e6e6;
   overflow: hidden;
+  @media (max-width: 470px) {
+    &.has-location {
+      padding-top: 120px;
+    }
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -59,9 +65,8 @@ const LocationWrapper = styled.div`
 class MainPageTemplate extends React.Component {
   state = {
     showSidebar: false,
-    // showMessage: false,
   };
-  
+
   toggleMenu = () => {
     const { showSidebar } = this.state;
     this.setState({
@@ -69,7 +74,7 @@ class MainPageTemplate extends React.Component {
     });
   };
 
-  toggleMessage = () => {
+  toggleMessage() {
     const { GetNetworks, GetConversations, showMessage, SetMessageBarUIStatus } = this.props;
     if (!showMessage) {
       GetNetworks({ params: { page: 1, per_page: 1000 } });
@@ -89,39 +94,33 @@ class MainPageTemplate extends React.Component {
   }
 
   switchBack = () => {
-    const { providerId, accessRole } = this.props;
+    const { providerId, accessRole, LoginWithProvider } = this.props;
     if (accessRole === 'admin') {
       this.props.SetPrivilege({privilege: 'admin', isLocationAdmin: false});
       window.setTimeout(() => this.props.SetRefreshFlag({flag: true}));
     }
     if (accessRole === 'provider') {
-      this.props.LoginWithProvider({providerId, success: () => this.props.SetRefreshFlag({flag: true}), error: (err) => {}});
+      LoginWithProvider({
+        providerId,
+        success: () => this.props.SetRefreshFlag({flag: true})
+      });
     }
   }
 
-  getProviderName = () => {
-    const { providers, providerId } = this.props;
-    if (providerId) {
-      const provider = find(providers, p => `${p.id}` === `${providerId}`);
-      return provider.name;
-    }
-  
-    return '';
-  }
   render() {
     const { showSidebar } = this.state;
-    const { privilege, accessRole, providerLocationId, locationName, showMessage } = this.props;
+    const { privilege, accessRole, providerLocationId, locationName, provider, showMessage } = this.props;
     const isProvider = privilege === 'provider';
-
+    const providerName = get(provider, 'name') || '';
     return (
       <Wrapper>
-        <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={this.toggleMessage} />
-        <PageContent>
+        <Header messageToggleRef={this.messageToggleRef} onMenuToggle={this.toggleMenu} onToggleMessage={() => this.toggleMessage()} />
+        <PageContent className={`${accessRole === 'admin' ? '' : 'has-location'}`}>
           <SideBar showSidebar={showSidebar} />
           <ContentWrapper>
             {(accessRole === 'admin' || (providerLocationId && accessRole === 'provider')) && isProvider &&
               <LocationWrapper>
-                <FontAwesomeIcon icon="user-circle" />  You are logged in to {providerLocationId ? locationName : this.getProviderName()}. <span onClick={this.switchBack}>Switch Back</span>
+                <FontAwesomeIcon icon="user-circle" />  You are logged in to {providerLocationId ? locationName : providerName}. <span onClick={this.switchBack}>Switch Back</span>
               </LocationWrapper>
             }
             {this.props.children}
@@ -139,8 +138,8 @@ const mapStateToProps = (state) => ({
   locationName: state.auth.locationName,
   providerLocationId: state.auth.providerLocationId,
   providerId: state.auth.providerId,
-  providers: state.provider.providers,
-  showMessage: get(state, 'conversation.ui.opened', false),
+  provider: state.provider.currentProvider,
+  showMessage: state.conversation.ui.opened,
 });
 
 const mapDispatchToProps = {

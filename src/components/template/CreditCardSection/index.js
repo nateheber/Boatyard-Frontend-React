@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { orderBy } from 'lodash';
 
 import { Section } from 'components/basic/InfoSection';
 import { NormalText } from 'components/basic/Typho';
@@ -41,6 +42,7 @@ class CreditCardSection extends React.Component {
 
   render() {
     const { creditCards } = this.props;
+    const orderCards = orderBy(creditCards, ['attributes.isDefault'], ['desc']);
     const { showPaymentModal, showNewPaymentModal } = this.state;
     const { user } = this.props;
     return (
@@ -48,7 +50,7 @@ class CreditCardSection extends React.Component {
         <Section title="Payment Methods" mode="view" disabled={user.isDisabled} onEdit={this.showListModal} >
           {(creditCards && creditCards.length > 0) ?
             <React.Fragment>
-              {creditCards.map(card => (
+              {orderCards.map(card => (
                 <InfoSection key={`card_${card.id}`} creditCard={card.attributes} />
               ))}
             </React.Fragment>

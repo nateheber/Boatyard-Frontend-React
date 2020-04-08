@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { CurrencyInput, TextArea } from 'components/basic/Input';
 import RemoveButton from '../basic/RemoveButton';
-import { BoatyardSelect } from 'components/basic/Dropdown';
+import ServiceDropdown from '../basic/ServiceDropdown';
 
 const Line = styled(Row)`
   padding: 5px 0px;
@@ -18,26 +18,6 @@ class NewLineItem extends React.Component {
     cost: '0',
     serviceId: -1,
     comment: '',
-  };
-
-  onChangeFilter = (inputValue, callback) => {
-    setTimeout(() => {
-      callback(this.filterOptions(inputValue));
-    }, 100);
-  };
-
-  filterOptions = (inputValue) => {
-    const { services } = this.props;
-    let filteredServices = services;
-    if (inputValue && inputValue.trim().length > 0) {
-      filteredServices = services.filter(service => service.name.toLowerCase().includes(inputValue.trim().toLowerCase()));
-    }
-    const options = filteredServices.map(option => ({
-      value: option.id,
-      cost: option.cost,
-      label: option.name
-    }));
-    return options;
   };
 
   onChangeQuantity = (evt) => {
@@ -65,17 +45,15 @@ class NewLineItem extends React.Component {
 
   render() {
     const { quantity, cost, comment } = this.state;
+    const { /* providerLocationId, */ locationId } = this.props;
+    //console.log(this.props);
     return (
       <React.Fragment>
         <Line>
           <Col lg={6} sm={6} xs={6} md={6} xl={6}>
-            <BoatyardSelect
-              className="basic-single"
-              classNamePrefix="select"
-              cacheOptions
-              defaultOptions
-              loadOptions={this.onChangeFilter}
-              onChange={this.onChangeService}
+            <ServiceDropdown
+              onChangeService={this.onChangeService}
+              providerLocationId={locationId}
             />
           </Col>
           <Col lg={2} sm={2} xs={2} md={2} xl={2}>
@@ -118,6 +96,7 @@ class NewLineItem extends React.Component {
 
 const mapStateToProps = state => ({
   privilege: state.auth.privilege,
+  locationId: state.auth.providerLocationId,
   services: state.service.services
 });
 

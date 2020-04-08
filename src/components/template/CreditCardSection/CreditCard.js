@@ -84,7 +84,7 @@ const ButtonsWrapper = styled.div`
 export default ({ creditCard: { id, attributes: { name, last4, isDefault } }, onSetDefault, onRemove }) => (
   <Wrapper>
     <Col sm={6}>
-      {capitalize(name)} xxxxxxxx{last4}
+      {capitalize(name)} xxxx-{last4}
     </Col>
     <Col sm={4}>
       <RadioButton onClick={() => onSetDefault(id)} className={classNames({ active: isDefault })}/>

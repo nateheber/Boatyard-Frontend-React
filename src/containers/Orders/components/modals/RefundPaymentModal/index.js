@@ -6,6 +6,7 @@ import { CurrencyInput } from 'components/basic/Input'
 import Modal from 'components/compound/Modal';
 import { Wrapper } from './style';
 import CardOption  from './components/CardOption';
+import OtherOption  from './components/OtherOption';
 
 const RefundPaymentModal = ({payments, loading, open, onClose, onRefund}) => {
   const [selectedPaymentId, setSelectedPaymentId] = useState(payments[0].id);
@@ -16,8 +17,6 @@ const RefundPaymentModal = ({payments, loading, open, onClose, onRefund}) => {
   };
 
   const onOptionChange = (id) => {
-    console.log(id);
-    console.log(payments);
     const selectedPayment = find(payments, {id});
     setSelectedPaymentId(id);
     setBalance(selectedPayment.attributes.amount);
@@ -34,16 +33,23 @@ const RefundPaymentModal = ({payments, loading, open, onClose, onRefund}) => {
       open={open}
       loading={loading}
       onClose={onClose}
-    >   
+    >
       <Wrapper>
         <Row>
           <Col sm={7}>
             <p className="title">Select Payment</p>
             {
-              payments.map((p) =>
-                <CardOption 
-                  payment={p} 
-                  onSelect={id => onOptionChange(id)} 
+              payments.map((p) => 
+                p.attributes.paymentType === 'cash' || p.attributes.paymentType === 'check' ?
+                <OtherOption
+                  payment={p}
+                  onSelect={id => onOptionChange(id)}
+                  isSelected={selectedPaymentId === p.id}
+                  key={`otheroption-${p.id}`}
+                /> :
+                <CardOption
+                  payment={p}
+                  onSelect={id => onOptionChange(id)}
                   isSelected={selectedPaymentId === p.id}
                   key={`cardoption-${p.id}`}
                 />

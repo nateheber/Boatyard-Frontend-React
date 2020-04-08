@@ -3,16 +3,7 @@ import { get } from 'lodash';
 
 import { actionTypes } from '../actions/users';
 import { getUserClient, getExternalConnectionsClient } from './sagaSelectors';
-
-const refineUsers = (users) => {
-  return users.map(user => {
-    return {
-      id: user.id,
-      type: user.type,
-      ...user.attributes
-    };
-  });
-};
+import { refineUsers } from 'utils/users';
 
 function* getExternalConnections(action) {
   const externalClient = yield select(getExternalConnectionsClient);

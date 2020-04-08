@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { apiBaseUrl, spreedlyApiToken, spreedlyApiUrl } from '../config';
+import { apiBaseUrl, locationApiBaseUrl, spreedlyApiToken, spreedlyApiUrl } from '../config';
 import { authInterceptor } from './auth';
 import { responseInterceptor, spreedlyResponseInterceptor } from './response';
 
@@ -68,30 +68,7 @@ export class NormalClient {
   constructor(authType = 'basic') {
     this.client = createMainClient(authType);
   }
-  get = url => {
-    return this.client.get(`${apiBaseUrl}${url}`);
-  };
-  post = (url, data) => {
-    return this.client.post(`${apiBaseUrl}${url}`, data);
-  };
-  patch = (url, data) => {
-    return this.client.patch(`${apiBaseUrl}${url}`, data);
-  };
-  delete = (url, data) => {
-    return this.client.delete(`${apiBaseUrl}${url}`, data);
-  };
-}
-
-export class CRUDClient {
-  apiUrl = '';
-  client = undefined;
-  query = ''
-  constructor(query, authType = 'basic') {
-    this.query = query;
-    this.apiUrl = `${apiBaseUrl}/${query}/`;
-    this.client = createMainClient(authType);
-  }
-  list = (params = null) => {
+  list = (url, params = null, version='v2') => {
     let paramsString = '';
 
     if (params) {
@@ -112,34 +89,85 @@ export class CRUDClient {
       }
     }
     paramsString = array.join('&');
-    return this.client.get(`${this.apiUrl}?${paramsString}`);
+    return this.client.get(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}?${paramsString}`);
   };
-  create = data => {
-    if (this.query === 'users') {
-      return this.client.post(`${this.apiUrl}registrations/`, data);
+  get = (url, version='v2') => {
+    return this.client.get(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}`);
+  };
+  post = (url, data, version='v2') => {
+    return this.client.post(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}`, data);
+  };
+  patch = (url, data, version='v2') => {
+    return this.client.patch(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}`, data);
+  };
+  delete = (url, data, version='v2') => {
+    return this.client.delete(`${version === 'v3' ? locationApiBaseUrl :apiBaseUrl}${url}`, data);
+  };
+}
+
+export class CRUDClient {
+  client = undefined;
+  query = ''
+  constructor(query, authType = 'basic') {
+    this.query = query;
+    this.client = createMainClient(authType);
+  }
+  list = (params = null, version='v2') => {
+    let paramsString = '';
+
+    if (params) {
+      params = {
+        page: 1,
+        ...params
+      };
+    } else {
+      params = {
+        page: 1
+      };
     }
-    return this.client.post(this.apiUrl, data);
+
+    const array = [];
+    for  (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        array.push(`${key}=${params[key]}`);
+      }
+    }
+    paramsString = array.join('&');
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.get(`${apiUrl}?${paramsString}`);
   };
-  read = id => {
-    return this.client.get(`${this.apiUrl}${id}`);
+  create = (data, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    if (this.query === 'users') {
+      return this.client.post(`${apiUrl}registrations/`, data);
+    }
+    return this.client.post(apiUrl, data);
   };
-  update = (id, data) => {
-    return this.client.patch(`${this.apiUrl}${id}`, data);
+  read = (id, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.get(`${apiUrl}${id}`);
   };
-  delete = id => {
-    return this.client.delete(`${this.apiUrl}${id}`);
+  update = (id, data, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.patch(`${apiUrl}${id}`, data);
+  };
+  delete = (id, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.delete(`${apiUrl}${id}`);
   };
 }
 
 export class MultiLayerCRUDClient {
   layers = [];
+  version = 'v2';
   client = undefined;
-  constructor(layers, authType = 'basic') {
+  constructor(layers, authType = 'basic', version='v2') {
     this.layers = layers;
+    this.version = version;
     this.client = createMainClient(authType);
   }
   generateUrl = params => {
-    let url = apiBaseUrl;
+    let url = this.version === 'v2' ? apiBaseUrl : locationApiBaseUrl;
     for (let i = 0; i < params.length; i += 1) {
       url = `${url}/${this.layers[i]}/${params[i]}`;
     }
@@ -190,5 +218,64 @@ export class MultiLayerCRUDClient {
   delete = params => {
     const url = this.generateUrl(params);
     return this.client.delete(url);
+  };
+}
+
+export class MultiLayersCRUDClient {
+  layers = [];
+  client = undefined;
+  apiUrl = '';
+  constructor(layers, authType = 'basic', params) {
+    this.layers = layers;
+    this.client = createMainClient(authType);
+    this.apiUrl = this.generateUrl(params);
+  }
+  generateUrl = params => {
+    let url = this.layers.includes('providers') ? locationApiBaseUrl : apiBaseUrl;
+    for (let i = 0; i < params.length; i += 1) {
+      url = `${url}/${this.layers[i]}/${params[i]}`;
+    }
+    if (params.length + 1 === this.layers.length) {
+      url = `${url}/${this.layers[this.layers.length - 1]}/`;
+      return url;
+    } else if (params.length === this.layers.length) {
+      return url;
+    }
+    throw new Error('Invalid params configuration');
+  };
+  list = (params) => {
+    let paramsString = '';
+
+    if (params) {
+      params = {
+        page: 1,
+        ...params
+      };
+    } else {
+      params = {
+        page: 1
+      };
+    }
+
+    const array = [];
+    for  (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        array.push(`${key}=${params[key]}`);
+      }
+    }
+    paramsString = array.join('&');
+    return this.client.get(`${this.apiUrl}?${paramsString}`);
+  };
+  create = data => {
+    return this.client.post(this.apiUrl, data);
+  };
+  read = id => {
+    return this.client.get(`${this.apiUrl}${id}`);
+  };
+  update = (id, data) => {
+    return this.client.patch(`${this.apiUrl}${id}`, data);
+  };
+  delete = id => {
+    return this.client.delete(`${this.apiUrl}${id}`);
   };
 }

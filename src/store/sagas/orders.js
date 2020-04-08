@@ -2,7 +2,9 @@ import { put, takeEvery, call, select } from 'redux-saga/effects';
 import { get, hasIn, startCase } from 'lodash';
 
 import { ORDER_ALIASES, AVAILABLE_ALIAS_ORDERS } from 'utils/basic';
+import { getTeamMemberData } from 'utils/order';
 import { actionTypes } from '../actions/orders';
+import { actionTypes as workorderActionTypes } from '../actions/workorders';
 import { getOrderClient, getDispatchedOrderClient, getCustomApiClient, getOrderDispatchedFlag, getPrivilege } from './sagaSelectors';
 
 const addStateAliasOfOrder = (order) => {
@@ -29,13 +31,18 @@ function* getOrders(action) {
   let successType = actionTypes.GET_ORDERS_SUCCESS;
   let failureType = actionTypes.GET_ORDERS_FAILURE;
   const { params, success, error } = action.payload;
+  //console.log(params);
   let submissionParams = {};
-  if (!hasIn(params, 'order[order]')) {
-    submissionParams = {
-      ...params,
-      'order[order]': 'created_at',
-      'order[sort]': 'desc',
-    };
+  if (!hasIn(params, 'search')) {
+    if (!hasIn(params, 'order[order]')) {
+      submissionParams = {
+        ...params,
+        'order[order]': 'created_at',
+        'order[sort]': 'desc',
+      };
+    } else {
+      submissionParams = { ...params };
+    }
   } else {
     submissionParams = { ...params };
   }
@@ -101,7 +108,7 @@ function* getOrders(action) {
     });
     if (success) {
       yield call(success);
-    }  
+    }
   } catch (e) {
     yield put({ type: failureType, payload: e });
     if (error) {
@@ -122,8 +129,37 @@ function* getOrder(action) {
   }
   try {
     const result = yield call(orderClient.read, orderId);
+    //console.log(result);
     const { data: order, included } = result;
     const refactoredOrder = addStateAliasOfOrder(order);
+    const providerLocationId = get(order, 'attributes.providerLocationId');
+    const providerId = get(order, 'attributes.providerId');
+    let teamMemberData = [];
+    if (providerLocationId && providerId) {
+      // const apiClient = yield select(getCustomApiClient);
+      // const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`, 'v3')
+      // let teamData = tmResult.included ? tmResult.included[0].relationships.teamMembers.data : [];
+      // let contractData = tmResult.included ? tmResult.included[0].relationships.userContractors.data : [];
+      // const { included: directoryIncluded } = tmResult;
+      // teamMemberData = getTeamMemberData(teamData.concat(contractData), directoryIncluded);
+      
+      //Original Implementation
+      const apiClient = yield select(getCustomApiClient);
+      const tmResult = yield call(apiClient.get, `/providers/${providerId}/locations/${providerLocationId}/directories`)
+      const { data: {relationships: {teamMembers: {data : tmData}, userContractors: {data: coData}} }, included: directoryIncluded } = tmResult;
+      teamMemberData = getTeamMemberData(tmData.concat(coData), directoryIncluded);
+    }
+    yield put({
+      type: workorderActionTypes.RESET
+    });
+    yield put({
+      type: workorderActionTypes.GET_WORKORDERS,
+      payload: {orderId: order.id}
+    });
+    yield put({
+      type: actionTypes.GET_ORDER_PROVIDER_LOCATION_TEAM_MEMBER_SUCCESS,
+      payload: {teamMemberData}
+    });
     yield put({
       type: actionTypes.GET_ORDER_SUCCESS,
       payload: { order: refactoredOrder, included }
@@ -324,7 +360,7 @@ function* dispatchOrder(action) {
       yield call(orderClient.update, orderId, { order: { transition: 'undispatch' } });
     }
     if (dispatchIds && dispatchIds.length > 0) {
-      yield call(normalClient.update, orderId, { order: { dispatch_ids: dispatchIds } });
+      yield call(normalClient.update, orderId, { order: { dispatch_provider_location_ids: dispatchIds } });
     }
     yield put({ type: actionTypes.DISPATCH_ORDER_SUCCESS });
     // yield put({ type: actionTypes.SET_DISPATCHED_FLAG, payload: true })

@@ -18,12 +18,14 @@ class TemplateSelector extends React.Component {
       return globalTemplates;
     }
     return localTemplates;
+    //return globalTemplates.filter((e) => e.triggerKey === 'invoice_for_customer' || e.triggerKey === 'new_quote_available' )
   };
 
   renderTemplates = () => {
     const { onSelect } = this.props;
     const { selected } = this.state;
     const templates = this.getTemplates();
+    //console.log(templates);
     return templates.map(template => {
       const { triggerKey, subject } = template;
       return (<MessageItem

@@ -245,21 +245,25 @@ const  LocationsWrapper = styled.div`
     height: 16px;
     margin-right: 10px;
   }
+  @media (max-width: 470px) {
+    display: none;
+  }
 `;
 class MenuUI extends React.Component {
   state = {
     open: false,
     notificationOpen: false,
-  }
+  };
 
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
     this.reloadNotifications();
     this.timerId = window.setInterval(this.reloadNotifications, 30*1000);
+    this.props.SetMessageBarUIStatus({opened: false, selected: -1});
   }
 
   reloadNotifications = () => {
-    this.props.GetNotifications({params: {per_page: 1000, page: 1, 'notification_delivery[order]': 'id', 'notification_delivery[sort]': 'desc'}});
+    this.props.GetNotifications({params: {per_page: 1000, page: 1, 'notification_delivery[order]': 'created_at', 'notification_delivery[sort]': 'desc'}});
   }
 
   componentWillUnmount() {
@@ -289,11 +293,12 @@ class MenuUI extends React.Component {
   }
 
   handleLocationChange = location => {
-    this.props.LoginWithProvider({
+    const { providerId, LoginWithProvider, SetRefreshFlag } = this.props;
+    LoginWithProvider({
       ...location,
-      providerId: this.props.providerId,
+      providerId,
       success: () => {
-        this.props.SetRefreshFlag({flag: true});
+        SetRefreshFlag({flag: true});
       },
       error: (e) => {
         toastr.error('Error', e.message);
@@ -323,7 +328,7 @@ class MenuUI extends React.Component {
       return OrderIcon;
     }
   }
-  getNotificationIcon = ({subject, content}) => { 
+  getNotificationIcon = ({subject, content}) => {
     return this._getIcon(subject) || this._getIcon(content) || AlertIcon;
   }
 
@@ -343,30 +348,30 @@ class MenuUI extends React.Component {
       this.props.GetNotifications({params: {per_page: 1000, page: 1, 'notification_delivery[order]': 'id', 'notification_delivery[sort]': 'desc', clear: true}});
     }
     this.setState({notificationOpen: !this.state.notificationOpen});
-    
+
   }
 
   render() {
-    const { providerLocationId, providerLocations, firstName, lastName, history, toggleMessage, messageToggleRef, 
+    const { providerLocationId, providerLocations, firstName, lastName, history, toggleMessage, messageToggleRef,
       locationName, accessRole, notifications, unreadCount } = this.props;
     const showNotificationBadge = parseInt(unreadCount) > 0;
     const { open, notificationOpen } = this.state;
-    
+
 
     return (
       <Wrapper>
         {
-          accessRole !== 'admin' && providerLocations.length > 1 &&
+          accessRole !== 'admin'  &&
           <>
             <LocationsWrapper onClick={e => this.setState({open: true})}>
               <img alt="Map Maker" src={MapMarkerIcon} /> { locationName ? locationName : 'LOCATIONS' }
-              { 
-                open && 
-                <ChooseProviderLocation 
+              {
+                open &&   providerLocations.length > 1 &&
+                <ChooseProviderLocation
                   onClose={ev => this.setState({open: false})}
-                  locations={providerLocations} 
-                  selected={providerLocationId} 
-                  onChangeSelection={this.handleLocationChange} 
+                  locations={providerLocations}
+                  selected={providerLocationId}
+                  onChangeSelection={this.handleLocationChange}
                 />
               }
             </LocationsWrapper>
@@ -392,7 +397,7 @@ class MenuUI extends React.Component {
             </DropdownMenu>
           </DropdownItem>
           <DropdownItem className={`notifications ${notifications.length === 0 && 'disabled'}`}
-              onClick={ev => notifications.length > 0 && this.handleNotificationsClick()} 
+              onClick={ev => notifications.length > 0 && this.handleNotificationsClick()}
               ref={this.setWrapperRef}
           >
             <IconItem className={`${notifications.length === 0 && 'disabled'}`}>
@@ -411,7 +416,7 @@ class MenuUI extends React.Component {
               }
             </DropdownMenu>
           </DropdownItem>
-          <IconItem ref={messageToggleRef} className="hide-on-mobile" onClick={toggleMessage}>
+          <IconItem ref={messageToggleRef} className="hide-on-mobile" onClick={toggleMessage} id="msgIcon">
             <Icon width={32} height={20} src={MessageBox} alt="message" />
           </IconItem>
         </MenuWrapper>

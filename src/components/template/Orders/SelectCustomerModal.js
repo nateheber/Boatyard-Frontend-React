@@ -4,7 +4,7 @@ import { Row, Col } from 'react-flexbox-grid';
 import { toastr } from 'react-redux-toastr';
 import { findIndex, isEmpty, get, filter } from 'lodash';
 import styled from 'styled-components';
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import debounce from "debounce-promise";
 import {
   actionTypes as customerActions,
   FilterChildAccounts,
@@ -198,7 +198,6 @@ class SelectCustomerModal extends React.Component {
   };
 
   handleBoatChange = (selectRef) => {
-    console.log(selectRef.selectedIndex);
     const { boats } = this.props;
     const { refinedBoats } = this.state;
     if (selectRef.selectedIndex >= 0) {
@@ -391,12 +390,12 @@ class SelectCustomerModal extends React.Component {
               }}
               isClearable
               defaultOptions
-              loadOptions={AwesomeDebouncePromise(this.loadOptions, 200)}
+              loadOptions={debounce(this.loadOptions, 1000, {leading: true})}
               onChange={this.onChangeUser}
               value={customer}
               styles={colourStyles}
               showAdditionalFields={showAdditionalFields}
-
+              noOptionsMessage={()=>"No Result"}
             />
           </Col>
           <Col sm={12} md={3} lg={4}>
@@ -460,7 +459,8 @@ const mapStateToProps = (state) => ({
   currentBoatStatus: state.boat.currentStatus,
   boats: refinedBoatsSelector(state),
   privilege: state.auth.privilege,
-  showAdditionalFields: true,
+  // showAdditionalFields: state.auth.providerName === 'MarineMax',
+  showAdditionalFields: state.auth.providerId === 2
 });
 
 const mapDispatchToProps = {

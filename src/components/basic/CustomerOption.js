@@ -70,7 +70,7 @@ export const ExternalCustomerOption = ({ data: {firstName, lastName, emailAddres
         <Name>
           {firstName} {lastName}
         </Name>
-        <Email>{emailAddress}</Email>
+        <Email>{emailAddress && emailAddress.toLowerCase()}</Email>
       </NameEmail>
 
       <CustomerIdDiv><Name>{customerId}</Name></CustomerIdDiv>

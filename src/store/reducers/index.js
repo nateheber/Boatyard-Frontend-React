@@ -15,7 +15,6 @@ import boat from './boats';
 import payment from './payments';
 import creditCard from './credit-cards';
 import providerLocation from './providerLocations';
-import providerLocationService from './providerLocationServices';
 import childAccount from './child-accounts';
 import paymentGateway from './paymentGateway';
 import icon from './icons';
@@ -25,6 +24,9 @@ import siteBanner from './site-banners';
 import quickReply from './quickReplies';
 import messageTemplate from './messageTemplates';
 import notifications from './notifications';
+import workorders from './workorders';
+import contractor from './contractors';
+
 const rootReducer = combineReducers({
   navigation,
   auth,
@@ -41,7 +43,6 @@ const rootReducer = combineReducers({
   creditCard,
   toastr: toastrReducer,
   providerLocation,
-  providerLocationService,
   childAccount,
   paymentGateway,
   icon,
@@ -51,6 +52,8 @@ const rootReducer = combineReducers({
   quickReply,
   messageTemplate,
   notifications,
+  workorders,
+  contractor,
 });
 
 export default rootReducer;

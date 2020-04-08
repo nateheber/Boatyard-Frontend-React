@@ -7,7 +7,7 @@ import deepEqual from 'deep-equal';
 import { Input } from 'components/basic/Input';
 
 import { GetProviders } from 'store/actions/providers';
-
+// import { GetProviderLocations } from 'store/actions/providerLocations';
 import GearIcon from 'resources/gear.png';
 import CloseIcon from 'resources/close.png';
 import ProviderCheck from '../basic/ProviderCheck';
@@ -100,6 +100,9 @@ const DropdownMenu = styled.div`
     position: absolute;
   }
   margin-top: 8px;
+  @media (max-width: 470px) {
+    width: 260px;
+  }
 `;
 
 const MenuItemLi = styled.div`
@@ -195,6 +198,7 @@ class ProviderSelector extends React.Component {
   };
 
   showMenu = () => {
+
     this.props.GetProviders({params: { page: 1, per_page: 1000 }, success: this.onFetchProviders});
     this.setState({ showMenu: true });
   };
@@ -260,7 +264,8 @@ class ProviderSelector extends React.Component {
       const idx = dispatchedProviders.findIndex(item => `${item.id}` === `${provider.id}`);
       return idx === -1;
     });
-    return result;
+    const sortedResult = sortBy(result, ['provider_name', 'name'])
+    return sortedResult;
   };
 
   render() {
@@ -309,7 +314,8 @@ const mapStateToProps = ({ provider: { providers, page, total, perPage } }) => (
 });
 
 const mapDispatchToProps = {
-  GetProviders
+  GetProviders,
+  // GetProviderLocations
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProviderSelector);

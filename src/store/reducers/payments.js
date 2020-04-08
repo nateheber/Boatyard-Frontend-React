@@ -6,6 +6,7 @@ import { actionTypes } from '../actions/payments';
 const initialState = {
   currentStatus: '',
   payments: [],
+  included: [],
   currentPayment: {},
   page: 1,
   perPage: 20,
@@ -25,11 +26,12 @@ export default handleActions(
     [actionTypes.GET_PAYMENTS_SUCCESS]: (state, action) =>
       produce(state, draft => {
         const { type, payload } = action;
-        const { total, perPage, payments } = payload;
+        const { total, perPage, payments, included } = payload;
         draft.currentStatus = type;
         draft.total = total;
         draft.perPage = perPage;
         draft.payments = payments;
+        draft.included = included;
       }),
     [actionTypes.GET_PAYMENTS_FAILURE]: (state, action) =>
       produce(state, draft => {

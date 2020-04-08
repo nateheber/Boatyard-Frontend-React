@@ -1,25 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import styled from 'styled-components';
-
 import { GetManagements } from 'store/actions/managements';
+import { SetWorkOrder, UpserWorkOrder, ResetWorkOrder, ServicesValidation } from 'store/actions/workorders';
 import { refinedManagementsSelector } from 'store/selectors/managements';
 import { getUserFromOrder, getBoatFromOrder } from 'utils/order';
-import { OrangeButton, GradientButton } from 'components/basic/Buttons'
+import { OrangeButton, HollowButton /*, GradientButton*/ } from 'components/basic/Buttons'
 import Modal from 'components/compound/Modal';
 import {
-  Image, JobTitleSection, JobSummarySection, CustomerInfoSection,
+  /*Image, */ JobTitleSection, JobSummarySection, CustomerInfoSection,
   LocationInfoSection, BoatInfoSection, AttachmentSection, NotesSection
 } from './components';
 
-import PrintIcon from '../../../../../resources/job/print.png';
-import TestImage1 from '../../../../../resources/test_images/1.png';
-import TestImage2 from '../../../../../resources/test_images/2.png';
-import TestImage3 from '../../../../../resources/test_images/3.png';
-import TestImage4 from '../../../../../resources/test_images/4.png';
-import TestImage5 from '../../../../../resources/test_images/5.png';
-import TestImage6 from '../../../../../resources/test_images/6.jpeg';
+//import PrintIcon from '../../../../../resources/job/print.png';
 
 // const mainFields = ['first_name', 'last_name', 'phone_number', 'email', 'notes'];
 // const locationFields = ['street', 'city', 'state', 'zip'];
@@ -44,137 +37,52 @@ const Actions = styled.div`
 class JobModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedTeamMembers: [],
-      specialInstructions: get(props.order, 'attributes.specialInstructions') || '',
-      attachments: [
-        {
-          fileUri: TestImage1,
-          fileType: 'image',
-          fileName: ''
-        },
-        {
-          fileType: 'pdf',
-          fileName: 'MM_invoice.pdf'
-        },
-        {
-          fileUri: TestImage2,
-          fileType: 'image',
-          fileName: ''
-        },
-        {
-          fileUri: TestImage3,
-          fileType: 'image',
-          fileName: ''
-        },
-        {
-          fileUri: TestImage4,
-          fileType: 'image',
-          fileName: ''
-        },
-        {
-          fileUri: TestImage5,
-          fileType: 'image',
-          title: ''
-        },
-        {
-          fileUri: TestImage6,
-          fileType: 'image',
-          fileName: ''
-        }
-      ],
-      showNotesInfo: false,
-      showCustomerInfo: false,
-      showBoatInfo: true,
-      showLocationInfo: true
-    };
+    const { SetWorkOrder, workorder: { services }, order } = props;
+    if (services.length > 0 && order.lineItems.length > 0 && !services[0].service) {
+      services[0].service = order.lineItems[0].relationships.service.attributes.name;
+      services[0].special_instructions = order.attributes.specialInstructions;
+      SetWorkOrder({services: [...services]});
+    }
   }
 
   componentDidMount() {
     const { GetManagements } = this.props;
     GetManagements({ params: { page: 1, per_page: 1000 } });
-  }
 
-  onSend = () => {
-    // if (this.mainInfoFields.validateFields()) {
-    //   const values = this.mainInfoFields.getFieldValues();
-    //   let user = {};
-    //   const address_attributes = {}
-    //   for (const key in values) {
-    //     const value = get(values, key, '');
-    //     if(mainFields.indexOf(key) > -1) {
-    //       user[key] = value;
-    //     } else if (locationFields.indexOf(key) > -1) {
-    //       address_attributes[key] = value;
-    //     }
-    //   }
-    //   if (address_attributes.street.trim().length > 0 ||
-    //     address_attributes.city.trim().length > 0 ||
-    //     address_attributes.state.trim().length > 0 ||
-    //     address_attributes.zip.trim().length > 0) {
-    //       user = {
-    //         ...user,
-    //         locations_attributes: [
-    //           {
-    //             name: 'Home Address',
-    //             location_type: 'residential_address',
-    //             address_attributes
-    //           }
-    //         ]
-    //       };
-    //     }
-    //   this.props.onSave({ user });
-    // }
-  };
+  }
 
   handlePrint = () => {
   };
 
-  handleTeamMemberChange = (member, isDeleting = false) => {
-    const { selectedTeamMembers } = this.state;
-    let selected = selectedTeamMembers.slice(0);
-    if (isDeleting) {
-      selected = selected.filter(item => item.value !== member.value);
-    } else {
-      selected.push(member);
-    }
-    this.setState({ selectedTeamMembers: selected });
+  handleTeamMemberChange = (member) => {
+    this.props.SetWorkOrder({ assignee: member });
   };
 
-  handleChangeNotes = specialInstructions => {
-    this.setState({ specialInstructions });
+  handleChangeNotes = notes => {
+    const {SetWorkOrder} = this.props;
+    SetWorkOrder({ notes });
   };
 
-  handleChangeVisibleOfNotesInfo = (showNotesInfo) => {
-    this.setState({ showNotesInfo });
-  };
-
-  handleChangeVisibleOfCustomerInfo = (showCustomerInfo) => {
-    this.setState({ showCustomerInfo });
-  };
-
-  handleChangeVisibleOfBoatInfo = (showBoatInfo) => {
-    this.setState({ showBoatInfo });
-  };
-
-  handleChangeVisibleOfLocationInfo = (showLocationInfo) => {
-    this.setState({ showLocationInfo });
-  };
+  handleVisibleChange = (fieldName, value) => {
+    const { workorder: {settings}} = this.props;
+    const newSettings = {...settings};
+    newSettings[fieldName] = value;
+    this.props.SetWorkOrder({settings: newSettings});
+  }
 
   handleAddAttachment = (attachment, resolve) => {
-    const attachments = this.state.attachments.slice(0);
+    const { workorder: {file_attachments_attributes}} = this.props;
+    const attachments = file_attachments_attributes.slice(0);
     attachments.push(attachment);
-    this.setState({ attachments }, () => {
-      if(resolve) {
-        resolve();
-      }
-    })
+    this.props.SetWorkOrder({file_attachments_attributes: attachments});
+    window.setTimeout(() => resolve(), 10);
   };
 
   handleDeleteAttachment = (index) => {
-    const attachments = this.state.attachments.slice(0);
+    const { workorder: {file_attachments_attributes}} = this.props;
+    const attachments = file_attachments_attributes.slice(0);
     attachments.splice(index, 1);
-    this.setState({ attachments });
+    this.props.SetWorkOrder({file_attachments_attributes: attachments});
   }
 
   getOptions = () => {
@@ -200,62 +108,86 @@ class JobModal extends React.Component {
   };
 
   render() {
-    const { open, onClose, loading } = this.props;
-    const { showNotesInfo, showCustomerInfo, showBoatInfo, showLocationInfo, selectedTeamMembers, specialInstructions, attachments } = this.state;
+    const { open, onClose, loading, services,
+      workorder: {
+        id,
+        jobNumber,
+        assignee,
+        state,
+        settings: {
+          notes, customer_info, boat_info, location
+        },
+        file_attachments_attributes: attachments
+      },
+      order
+    } = this.props;
+    const showSendBtn = !state || (state === 'draft' || state === 'declined');
+    const showDeleteBtn = !!id;
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const action = [
-      <OrangeButton onClick={this.onSend} key='modal_btn_save'>Send</OrangeButton>
+      showDeleteBtn ? <HollowButton onClick={this.props.onDelete} key='modal_btn_delete'>Delete</HollowButton> : <div key='none'/>,
+      showSendBtn ? <OrangeButton onClick={this.props.onSend} key='modal_btn_save'>Send</OrangeButton> : <div key='none'/>
     ];
     const headers = (
       <ModalHeader>
-        <Title>{'Job #1234-1'}</Title>
+        <Title>{id ? `Job #${jobNumber}` : 'New Job'}</Title>
         <Actions>
-          <GradientButton onClick={this.handlePrint}>
+          {/*<GradientButton onClick={this.handlePrint}>
             <Image className='print' src={PrintIcon} />
           </GradientButton>
-          <OrangeButton style={{ marginLeft: 30 }} onClick={this.onSend} key='modal_btn_save'>Send</OrangeButton>
+          */}
+          { showSendBtn && <OrangeButton style={{ marginLeft: 30 }} onClick={this.props.onSend} key='modal_btn_save'>Send</OrangeButton> }
         </Actions>
       </ModalHeader>
     );
     return (
       <Modal
         customHeader={headers}
-        loading={loading}
         actions={action}
         open={open}
         onClose={onClose}
         large
+        classes='space-between'
+        loading={loading}
       >
         <JobTitleSection
-          selected={selectedTeamMembers}
+          assignee={assignee}
           onChange={this.handleTeamMemberChange}
         />
-        <JobSummarySection />
+        <JobSummarySection
+          order={order}
+          services={services}
+          workorder={this.props.workorder}
+          SetWorkOrder={this.props.SetWorkOrder}
+          servicesValidationCnt={this.props.servicesValidationCnt}
+        />
         <NotesSection
-          contentVisible={showNotesInfo}
-          notes={specialInstructions}
-          onChangeVisible={this.handleChangeVisibleOfNotesInfo}
+          contentVisible={notes}
+          notes={this.props.workorder.notes}
+          onChangeVisible={notes => this.handleVisibleChange('notes', notes)}
           onChange={this.handleChangeNotes}
+          disabled={!showSendBtn}
         />
         <CustomerInfoSection
-          contentVisible={showCustomerInfo}
+          contentVisible={customer_info}
           customerInfo={customerInfo}
-          onChangeVisible={this.handleChangeVisibleOfCustomerInfo}
+          onChangeVisible={customer_info => this.handleVisibleChange('customer_info', customer_info)}
         />
         <BoatInfoSection
-          contentVisible={showBoatInfo}
+          contentVisible={boat_info}
           boatInfo={boatInfo}
-          onChangeVisible={this.handleChangeVisibleOfBoatInfo}
+          onChangeVisible={boat_info => this.handleVisibleChange('boat_info', boat_info)}
         />
         <LocationInfoSection
-          contentVisible={showLocationInfo}
+          contentVisible={location}
           boatInfo={boatInfo}
-          onChangeVisible={this.handleChangeVisibleOfLocationInfo}
+          onChangeVisible={location => this.handleVisibleChange('location', location)}
         />
         <AttachmentSection
           attachments={attachments}
           onAdd={this.handleAddAttachment}
           onDelete={this.handleDeleteAttachment}
+          disabled={!showSendBtn}
         />
       </Modal>
     );
@@ -264,11 +196,20 @@ class JobModal extends React.Component {
 
 const mapStateToProps = (state) => ({
   privilege: state.auth.privilege,
-  managements: refinedManagementsSelector(state)
+  order: state.order.currentOrder,
+  managements: refinedManagementsSelector(state),
+  services: state.service.services,
+  workorder: state.workorders.workorder,
+  loading: state.workorders.loading,
+  servicesValidationCnt: state.workorders.servicesValidationCnt,
 });
 
 const mapDispatchToProps = {
-  GetManagements
+  GetManagements,
+  SetWorkOrder,
+  UpserWorkOrder,
+  ResetWorkOrder,
+  ServicesValidation
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(JobModal);

@@ -5,9 +5,9 @@ import WebFont from 'webfontloader';
 import ReduxToastr from 'react-redux-toastr';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPlus, faTimes, faUserCircle, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-
 import AppRoutes from './routes';
 import store, { persistor } from './store';
+import CacheBuster from './CacheBuster';
 
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 
@@ -26,16 +26,27 @@ WebFont.load({
 class App extends Component {
   render() {
     return (
-      <Provider store={store}>
-        <PersistGate persistor={persistor}>
-          <div>
-            <AppRoutes />
-            <ReduxToastr
-              timeOut={3000}
-            />
-          </div>
-        </PersistGate>
-      </Provider>
+      <CacheBuster>
+        {({ loading, isLatestVersion, refreshCacheAndReload }) => {
+            if (!loading && !isLatestVersion) {
+              refreshCacheAndReload();
+            }
+            return (
+              <Provider store={store}>
+                <PersistGate persistor={persistor}>
+                  <div>
+                    <>
+                    <AppRoutes />
+                    <ReduxToastr
+                      timeOut={3000}
+                    />
+                    </>
+                  </div>
+                </PersistGate>
+              </Provider>
+            )
+        }}
+      </CacheBuster>
     );
   }
 }

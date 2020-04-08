@@ -48,12 +48,22 @@ const ButtonWrapper = styled.div`
 `
 
 class AccountEditor extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
       saving: false
     };
   }
+
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   getName = () => {
     const { provider, newFlg } = this.props;
     return newFlg ? 'New Provider' : get(provider, 'name', '');
@@ -147,6 +157,7 @@ class AccountEditor extends React.Component {
       success: (provider) => {
         const { id } = provider;
         onCreation(id);
+        this.setState({ saving: false });
       },
       error: (e) => {
         this.setState({ saving: false });

@@ -40,7 +40,7 @@ export default ({ user, providers, onRemove }) => (
     {providers.map((provider, index) => {
       return (
         <Provider key={`providers-${index}`}>
-          <Name>{get(provider, 'relationships.provider.attributes.name')}</Name>
+          <Name>{get(provider, 'relationships.provider.attributes.name')} - {get(provider, 'relationships.providerLocation.attributes.locationName')}</Name>
           {!user.isDisabled && <RemoveButton onClick={evt => onRemove(provider)} />}
         </Provider>
       )
