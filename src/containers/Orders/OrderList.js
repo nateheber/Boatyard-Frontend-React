@@ -112,7 +112,7 @@ class OrderList extends React.Component {
     const params = isEmpty(keyword) ? 
     privilege === 'admin' ?
     {
-      page: page,
+      page: page ? page : 1,
       per_page: perPage,
       //search: keyword,
       states: stringFilters,
