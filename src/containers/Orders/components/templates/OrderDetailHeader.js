@@ -8,9 +8,11 @@ import { toastr } from 'react-redux-toastr';
 
 import { FilterProviders } from 'store/actions/providers';
 import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders';
+import { /*GetConversations,*/ SetMessageBarUIStatus } from 'store/actions/conversations';
 import { getCustomerName } from 'utils/order';
 
 import Modal from 'components/compound/Modal';
+import MessageBar from '../../../../components/template/MessageBar';
 import { ActionDropdown } from 'components/basic/Dropdown';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { PageTitle } from 'components/basic/Typho';
@@ -193,6 +195,12 @@ class OrderDetailHeader extends React.Component {
     });
   }
 
+  messageCustomer = () => {
+    const { showMessage, SetMessageBarUIStatus, order } = this.props;
+    const customer = get(order, 'relationships.user');
+    SetMessageBarUIStatus({opened: !showMessage, newMessage: true, user: customer});
+  }
+
   getOrderStatus = () => {
     const { privilege, order } = this.props;
     const customerName = getCustomerName(order, privilege);
@@ -224,7 +232,7 @@ class OrderDetailHeader extends React.Component {
   }
 
   render() {
-    const { order, privilege } = this.props;
+    const { order, privilege, showMessage } = this.props;
     const { visibleofDeleteModal } = this.state;
     const orderStatus = get(order, 'attributes.state');
     const canAcceptOrder = privilege === 'provider' && (orderStatus === 'dispatched' || orderStatus === 'assigned');
@@ -252,6 +260,12 @@ class OrderDetailHeader extends React.Component {
       items.push({
         title: 'Reopen Order',
         action: this.reopenOrder
+      });
+    }
+    if (orderStatus === 'accepted') {
+      items.push({
+        title: 'Message Customer',
+        action: this.messageCustomer
       });
     }
 
@@ -292,13 +306,17 @@ class OrderDetailHeader extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({ privilege: state.auth.privilege })
+const mapStateToProps = state => ({ 
+  privilege: state.auth.privilege,
+  showMessage: state.conversation.ui.opened 
+})
 
 const mapDispatchToProps = {
   FilterProviders,
   UpdateOrder,
   DeleteOrder,
-  AcceptOrder
+  AcceptOrder,
+  SetMessageBarUIStatus
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderDetailHeader));

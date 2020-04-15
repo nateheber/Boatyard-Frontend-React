@@ -20,7 +20,8 @@ const initialState = {
   ui: {
     opened: false,
     selected: null,
-    newMessage: false
+    newMessage: false,
+    user: null
   }
 };
 

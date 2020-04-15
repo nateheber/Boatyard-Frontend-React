@@ -145,6 +145,23 @@ class NewMessage extends React.Component {
   };
 
   componentDidMount() {
+    const { user } = this.props;
+    const { users } = this.state;
+    if (user) {
+      let value = {
+        id: user.id,
+        type: "users",
+        firstName: get(user, 'attributes.firstName'),
+        lastName: get(user, 'attributes.lastName'),
+        phoneNumber: get(user, 'attributes.phoneNumber'),
+        email: get(user, 'attributes.email'),
+        isDisabled: get(user, 'attributes.isDisabled'),
+        generated: get(user, 'attributes.generated'),
+        timeZone: get(user, 'attributes.timeZone'),
+        providerId: get(user, 'attributes.providerId')
+      }
+      this.setState({users: value});
+    }
   }
 
   loadOptions = val => {
