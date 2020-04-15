@@ -146,7 +146,6 @@ class NewMessage extends React.Component {
 
   componentDidMount() {
     const { user } = this.props;
-    const { users } = this.state;
     if (user) {
       let value = {
         id: user.id,

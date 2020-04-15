@@ -12,7 +12,6 @@ import { /*GetConversations,*/ SetMessageBarUIStatus } from 'store/actions/conve
 import { getCustomerName } from 'utils/order';
 
 import Modal from 'components/compound/Modal';
-import MessageBar from '../../../../components/template/MessageBar';
 import { ActionDropdown } from 'components/basic/Dropdown';
 import { OrangeButton, HollowButton } from 'components/basic/Buttons';
 import { PageTitle } from 'components/basic/Typho';
@@ -232,7 +231,7 @@ class OrderDetailHeader extends React.Component {
   }
 
   render() {
-    const { order, privilege, showMessage } = this.props;
+    const { order, privilege } = this.props;
     const { visibleofDeleteModal } = this.state;
     const orderStatus = get(order, 'attributes.state');
     const canAcceptOrder = privilege === 'provider' && (orderStatus === 'dispatched' || orderStatus === 'assigned');
