@@ -96,13 +96,14 @@ class MessageBar extends React.Component {
   }
 
   render() {
-    const { show, conversations, selected, newMessage } = this.props;
+    const { show, conversations, selected, newMessage, user } = this.props;
     return (
       <Wrapper ref={this.setWrapperRef} className={show ? 'show' : 'hide'}>
         { newMessage &&
           <NewMessage
             onCancel={this.onCancelNew}
             onCreationSuccess={this.onSelect}
+            user={user}
           />
         }
         {selected === -1 && !newMessage &&
@@ -128,6 +129,7 @@ const mapStateToProps = (state) => ({
   ...refinedConversationSelector(state),
   selected: get(state, 'conversation.ui.selected', -1),
   newMessage: get(state, 'conversation.ui.newMessage', false),
+  user: get(state, 'conversation.ui.user', {}),
 })
 
 const mapDispatchToProps = {

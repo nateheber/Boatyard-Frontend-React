@@ -8,6 +8,7 @@ import { toastr } from 'react-redux-toastr';
 
 import { FilterProviders } from 'store/actions/providers';
 import { UpdateOrder, DeleteOrder, AcceptOrder } from 'store/actions/orders';
+import { /*GetConversations,*/ SetMessageBarUIStatus } from 'store/actions/conversations';
 import { getCustomerName } from 'utils/order';
 
 import Modal from 'components/compound/Modal';
@@ -193,6 +194,12 @@ class OrderDetailHeader extends React.Component {
     });
   }
 
+  messageCustomer = () => {
+    const { showMessage, SetMessageBarUIStatus, order } = this.props;
+    const customer = get(order, 'relationships.user');
+    SetMessageBarUIStatus({opened: !showMessage, newMessage: true, user: customer});
+  }
+
   getOrderStatus = () => {
     const { privilege, order } = this.props;
     const customerName = getCustomerName(order, privilege);
@@ -254,6 +261,12 @@ class OrderDetailHeader extends React.Component {
         action: this.reopenOrder
       });
     }
+    if (orderStatus === 'accepted') {
+      items.push({
+        title: 'Message Customer',
+        action: this.messageCustomer
+      });
+    }
 
     const actions = [
       <HollowButton onClick={() => this.setState({visibleofDeleteModal: false})} key="modal_btn_cancel">Cancel</HollowButton>,
@@ -292,13 +305,17 @@ class OrderDetailHeader extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({ privilege: state.auth.privilege })
+const mapStateToProps = state => ({ 
+  privilege: state.auth.privilege,
+  showMessage: state.conversation.ui.opened 
+})
 
 const mapDispatchToProps = {
   FilterProviders,
   UpdateOrder,
   DeleteOrder,
-  AcceptOrder
+  AcceptOrder,
+  SetMessageBarUIStatus
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrderDetailHeader));
