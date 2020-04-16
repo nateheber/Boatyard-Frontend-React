@@ -235,6 +235,7 @@ class OrderDetailHeader extends React.Component {
     const { visibleofDeleteModal } = this.state;
     const orderStatus = get(order, 'attributes.state');
     const canAcceptOrder = privilege === 'provider' && (orderStatus === 'dispatched' || orderStatus === 'assigned');
+    const orderAccepted = orderStatus === 'accepted';
     let orderId = get(order, 'attributes.providerOrderSequence', null);
     if (!orderId) {
       orderId = get(order, 'id');
@@ -261,12 +262,6 @@ class OrderDetailHeader extends React.Component {
         action: this.reopenOrder
       });
     }
-    if (orderStatus === 'accepted') {
-      items.push({
-        title: 'Message Customer',
-        action: this.messageCustomer
-      });
-    }
 
     const actions = [
       <HollowButton onClick={() => this.setState({visibleofDeleteModal: false})} key="modal_btn_cancel">Cancel</HollowButton>,
@@ -286,6 +281,9 @@ class OrderDetailHeader extends React.Component {
           {canAcceptOrder && <RightPart>
             <OrangeButton onClick={this.acceptOrder}>Accept Order</OrangeButton>
             <HollowButton onClick={this.declineOrder}>Decline Order</HollowButton>
+          </RightPart>}
+          {orderAccepted && <RightPart>
+            <OrangeButton onClick={this.messageCustomer}>Message Customer</OrangeButton>
           </RightPart>}
         </Row>
         {
