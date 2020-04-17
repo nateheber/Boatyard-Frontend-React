@@ -25,6 +25,7 @@ export const actionTypes = {
   DELETE_PROVIDER_LOCATION: '[PROVIDER LOCATIONS] - Delete Provider Location',
   DELETE_PROVIDER_LOCATION_SUCCESS: '[PROVIDER LOCATIONS] - Delete Provider Location Success',
   DELETE_PROVIDER_LOCATION_FAILURE: '[PROVIDER LOCATIONS] - Delete Provider Location Failure',
+  CLONE_PROVIDER_LOCATION_TEMPLATE: '[PROVIDER LOCATIONS] - Clone Provider Location Template',
 };
 
 export const CreateProviderLocation = createAction(actionTypes.CREATE_PROVIDER_LOCATION);
@@ -58,3 +59,5 @@ export const UpdateProviderLocationFailure = createAction(actionTypes.UPDATE_PRO
 export const DeleteProviderLocation = createAction(actionTypes.DELETE_PROVIDER_LOCATION);
 export const DeleteProviderLocationSuccess = createAction(actionTypes.DELETE_PROVIDER_LOCATION_SUCCESS);
 export const DeleteProviderLocationFailure = createAction(actionTypes.DELETE_PROVIDER_LOCATION_FAILURE);
+
+export const CloneProviderLocationTemplate = createAction(actionTypes.CLONE_PROVIDER_LOCATION_TEMPLATE);

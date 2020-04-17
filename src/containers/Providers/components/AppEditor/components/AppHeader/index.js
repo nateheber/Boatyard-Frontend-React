@@ -18,7 +18,7 @@ const Wrapper = styled.div`
 
 const HeaderWrapper = styled.div`
   display: flex;
-  width: 400px;
+  width: 600px;
 
 `;
 
@@ -29,6 +29,7 @@ const Header = styled.div`
   text-align: left;
   line-height: 28px;
   min-width: 190px;
+  padding-top: 10px;
 `;
 
 const ButtonsWrapper = styled.div`
@@ -43,11 +44,13 @@ function getLocationName(location) {
 
 export default class AppHeader extends React.Component {
   render () {
-    const { selected, locations, onSave, onChangePublishStatus, onChangeLocation } = this.props;
+    const { selected, selectedTemplate, locations, onSave, onChangePublishStatus, onChangeLocation, handleChangeTemplate } = this.props;
     return (
       <Wrapper>
         <HeaderWrapper>
           <Header>Create App</Header>
+          <div>
+            <span>Location:</span>
           <Select
             value={selected.id}
             onChange={evt => {if(onChangeLocation) { onChangeLocation(evt.target.value)}}}
@@ -60,6 +63,23 @@ export default class AppHeader extends React.Component {
               ))}
             </React.Fragment>
           </Select>
+          </div>
+
+          <div>
+            <span>Template:</span>
+          <Select
+            value={selectedTemplate.id}
+            onChange={evt => {if(handleChangeTemplate) { handleChangeTemplate(evt.target.value)}}}
+          >
+            <React.Fragment>
+              {locations.map(val => (
+                <option value={val.id} key={`location_${val.id}`}>
+                  {getLocationName(val)}
+                </option>
+              ))}
+            </React.Fragment>
+          </Select>
+          </div>
         </HeaderWrapper>
         <ButtonsWrapper>
           <HollowButton onClick={onSave}>
