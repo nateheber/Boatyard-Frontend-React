@@ -306,7 +306,7 @@ class BoatHold extends React.PureComponent {
                       <InputRow>
                           <InputField
                             name="zip"
-                            type="number"
+                            type="text"
                             component="input"
                             placeholder="Zip Code"
                             validate={required}
