@@ -25,6 +25,8 @@ import { readNotification, GetNotifications } from 'store/actions/notifications'
 import { notificationsSelector, unreadNotifications } from 'store/selectors/notifications';
 import { SetMessageBarUIStatus } from 'store/actions/conversations';
 
+import { deleteAllCookies, deleteCache } from 'utils/cookie';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -285,6 +287,8 @@ class MenuUI extends React.Component {
 
   logout = () => {
     const { Logout } = this.props;
+    deleteAllCookies();
+    deleteCache();
     Logout();
   };
 
