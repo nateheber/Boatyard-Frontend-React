@@ -292,8 +292,6 @@ class MenuUI extends React.Component {
     deleteCache();
     ResetPages();
     Logout();
-    deleteAllCookies();
-    deleteCache();
   };
 
   onCloseLocationModal = () => {
