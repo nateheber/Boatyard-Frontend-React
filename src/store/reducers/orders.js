@@ -342,6 +342,13 @@ export default handleActions(
         const { type, payload: { unselectedColumns} } = action;
         draft.unselectedColumns = unselectedColumns;
         draft.currentStatus = type;
+      }),
+      [actionTypes.RESET_PAGES]: (state, action) =>
+      produce(state, draft => {
+        const { type, payload } = action;
+        draft.currentStatus = type;
+        set(draft, 'orders.page', 1);
+        draft.errors = null;
       })
     },
   initialState
