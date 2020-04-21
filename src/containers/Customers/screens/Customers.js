@@ -5,13 +5,13 @@ import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 import { isEmpty } from 'lodash';
-
 import {
   actionTypes,
   GetChildAccounts,
   FilterChildAccounts,
   CreateChildAccount
 } from 'store/actions/child-accounts';
+import { CreateBoat } from 'store/actions/boats';
 import Table from 'components/basic/Table';
 import CustomerModal from 'components/template/CustomerInfoSection/CustomerModal';
 import { CustomersHeader } from '../components/CustomersHeader';
@@ -84,7 +84,10 @@ class Customers extends React.Component {
     const { CreateChildAccount } = this.props;
     CreateChildAccount({
       data: { child_account: { ...data.user } },
-      success: () => {
+      success: (result) => {
+        //console.log(result);
+        const boats = data.externalBoats;
+        this.createBoats(boats, result.id);
         this.closeNewModal();
         this.loadPage(1);
       },
@@ -93,6 +96,31 @@ class Customers extends React.Component {
       }
     });
   };
+
+  createBoats = (data, id) => {
+    const { CreateBoat } = this.props;
+    data.forEach(boat => {
+      const boat_data = {
+        name: boat.boatName || 'User\'s Boat',
+        year: boat.year || '',
+        model: boat.model || '',
+        length: boat.length || '',
+        make: boat.manufacturer || boat.brand || '',
+        is_default: false,
+        child_account_id: id
+
+      }
+      CreateBoat({
+        data: { boat: boat_data },
+        success: () => {
+          console.log("Boat added...");
+        },
+        error: (e) => {
+          console.log("Error on adding boat...");
+        }
+      });
+    });
+  }
 
   closeNewModal = () => {
     this.setState({
@@ -175,7 +203,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   GetChildAccounts,
   FilterChildAccounts,
-  CreateChildAccount
+  CreateChildAccount, 
+  CreateBoat
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Customers));
