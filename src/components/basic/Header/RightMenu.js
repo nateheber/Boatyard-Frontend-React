@@ -24,6 +24,7 @@ import { LoginWithProvider } from 'store/actions/providers';
 import { readNotification, GetNotifications } from 'store/actions/notifications';
 import { notificationsSelector, unreadNotifications } from 'store/selectors/notifications';
 import { SetMessageBarUIStatus } from 'store/actions/conversations';
+import { ResetPages } from 'store/actions/orders';
 
 import { deleteAllCookies, deleteCache } from 'utils/cookie';
 
@@ -286,12 +287,11 @@ class MenuUI extends React.Component {
   }
 
   logout = () => {
-    const { Logout } = this.props;
+    const { Logout, ResetPages } = this.props;
     deleteAllCookies();
     deleteCache();
+    ResetPages();
     Logout();
-    deleteAllCookies();
-    deleteCache();
   };
 
   onCloseLocationModal = () => {
@@ -453,6 +453,7 @@ const mapDispatchToProps = {
   readNotification,
   SetMessageBarUIStatus,
   GetNotifications,
+  ResetPages
 };
 
 export const RightMenu = withRouter(
