@@ -41,6 +41,17 @@ class PaymentGatewayModal extends React.Component {
     credential: {}
   };
 
+  componentDidUpdate() {
+    if (this.state.step !== 'gateway' && this.state.gateway.value === 'wepay' && isEmpty(this.state.credential)) {
+      let creds = {
+        first_name: this.props.profile.firstName,
+        last_name: this.props.profile.lastName,
+        email: this.props.profile.email
+      };
+      this.setState({credential: creds});
+    }
+  }
+
   onChangeGateway = gateway => {
     this.setState({ gateway });
   };
