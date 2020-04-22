@@ -345,7 +345,7 @@ export default handleActions(
       }),
       [actionTypes.RESET_PAGES]: (state, action) =>
       produce(state, draft => {
-        const { type, payload } = action;
+        const { type } = action;
         draft.currentStatus = type;
         set(draft, 'orders.page', 1);
         draft.errors = null;
