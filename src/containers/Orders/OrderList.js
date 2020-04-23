@@ -175,14 +175,16 @@ class OrderList extends React.Component {
       }
     } else {
       if (privilege === 'provider') {
+        console.log("Privilege");
         this.props.GetOrders({
           params: {
             page,
             per_page: 15,
             search: keyword,
             states: stringFilters,
-            'order[order]': 'provider_order_sequence',
-            'order[sort]': 'desc'
+            // 'order[order]': 'provider_order_sequence',
+            'order[sort]': 'desc',
+            'order[order]': 'created_at'
           }
         });
       } else {
