@@ -98,6 +98,7 @@ export const getActivityInfo = order => {
     if (!isEmpty(activities)) {
       activities.forEach(activity => {
         const full_name = `${activity.actor.firstName} ${activity.actor.lastName}`;
+        const assignee = activity.assigned ? `${activity.assigned.firstName} ${activity.assigned.lastName}` : '';
         switch (activity.type) {
           case 'order_placed':
             result.push({
@@ -112,6 +113,10 @@ export const getActivityInfo = order => {
             });
             break;
           case 'order_assigned':
+            result.push({
+              time: moment(activity.at).valueOf(),
+              message: `${full_name} assigned order to ${assignee} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
+            });
             break;
           case 'order_completed':
             result.push({

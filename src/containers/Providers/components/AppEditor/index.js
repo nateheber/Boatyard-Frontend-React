@@ -128,7 +128,8 @@ class AppEditor extends React.Component {
       providerId: `${get(location, 'providerId')}`,
       providerLocationId: `${get(location, 'id')}`,
       params: {
-        all: true
+        // all: true
+        'provider_location_service[platform_service]': true
       },
       success: (services) => {
         const filtedServices = services.filter(service => get(service, 'attributes.platformService'));
