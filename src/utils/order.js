@@ -97,7 +97,7 @@ export const getActivityInfo = order => {
     const activities = get(order, 'attributes.activityFeed');
     if (!isEmpty(activities)) {
       activities.forEach(activity => {
-        const full_name = `${activity.actor.firstName} ${activity.actor.lastName}`;
+        const full_name = activity.actor ? `${activity.actor.firstName} ${activity.actor.lastName}` : ''; 
         const assignee = activity.assigned ? `${activity.assigned.firstName} ${activity.assigned.lastName}` : '';
         switch (activity.type) {
           case 'order_placed':
