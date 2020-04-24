@@ -228,6 +228,16 @@ export class Record extends React.PureComponent {
           value = '_';
         }
       }
+    } else if (column.isService) {
+      console.log(item.providerLocationId);
+      if (item.providerLocationId !== null) {
+        //if providerLocationId is present, grab that provider location service
+        const val = get(item, column.value[1]);
+        return val;
+      } else {
+        const val = get(item, column.value[0]);
+        return val;
+      }
     } else if(column.isLocation) {
       const street = get(item ,get(column, 'street'));
       const city = get(item ,get(column, 'city'));
