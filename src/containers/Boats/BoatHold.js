@@ -226,7 +226,7 @@ class BoatHold extends React.PureComponent {
       }).catch(e =>  {
         this.setState({ loading: false });
         if (e.response.data.hasOwnProperty('zip')) {
-          toastr.error('Error', 'Invalid Zip Code');
+          toastr.error('Error', 'Please enter a valid zip code');
         } else {
         toastr.error('Error', get(e.response, 'data.message'));
         }
