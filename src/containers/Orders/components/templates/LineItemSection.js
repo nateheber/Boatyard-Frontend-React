@@ -72,7 +72,7 @@ class LineItemSection extends React.Component {
         ...item.relationships
       }
     });
-    return sortBy(lineItems, 'createdAt');
+    return sortBy(lineItems, 'attributes.createdAt');
   }
 
   onChange = (item, idx) => {
@@ -194,7 +194,6 @@ class LineItemSection extends React.Component {
   render() {
     const { newItems, mode, lineItems } = this.state;
     const { updatedAt, currentOrder: {attributes: {providerLocationId}} } = this.props;
-    //console.log(this.props.currentOrder);
     return (
       <Section
         contentStyle={{ paddingBottom: 0 }}
