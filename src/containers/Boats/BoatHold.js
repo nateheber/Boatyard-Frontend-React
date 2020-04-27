@@ -222,11 +222,14 @@ class BoatHold extends React.PureComponent {
         ...values
       }}).then(() => {
         this.setState({ loading: false });
-        // toastr.success('Success', 'Boat Reservation Sent Successfully!');
         this.props.history.push('/onlineboat/done');
       }).catch(e =>  {
         this.setState({ loading: false });
+        if (e.response.data.hasOwnProperty('zip')) {
+          toastr.error('Error', 'Please enter a valid zip code');
+        } else {
         toastr.error('Error', get(e.response, 'data.message'));
+        }
       });
     } else {
       toastr.error('Error', 'Missing parameters');
