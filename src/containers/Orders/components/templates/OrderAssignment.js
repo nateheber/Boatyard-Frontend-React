@@ -143,7 +143,7 @@ class OrderAssignment extends React.Component {
           {
             dispatchIds.map((id) => (
               <React.Fragment key={`assignee_${id}`}>
-                <ProviderLocationInfo id={id} />
+                <ProviderLocationInfo id={providerLocationInfo.id} />
               </React.Fragment>
             ))
           }
