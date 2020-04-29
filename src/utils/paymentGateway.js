@@ -11,10 +11,9 @@ export const gatewayOptions = [
     value: 'wepay',
     label: 'WEPAY',
     fields: [
-      { name: 'clientId', placeholder: 'Your WePay Client ID' },
-      { name: 'accountId', placeholder: 'Your WePay Account ID' },
-      { name: 'accessToken', placeholder: 'Your WePay Access Token' },
-      { name: 'clientSecret', placeholder: 'Your WePay Client Secret' }
+      { name: 'first_name', placeholder: 'First Name' },
+      { name: 'last_name', placeholder: 'Last Name' },
+      { name: 'email', placeholder: 'Email' }
     ]
   }
 ];

@@ -13,7 +13,7 @@ const ORDER_COLUMNS = [
     isCustomer: true,
     width: 1.2
   },
-  { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
+  { label: 'service', value: ['relationships.service.attributes.name', 'relationships.providerLocationService.attributes.name'], width: 1, isService: true },
   // {
   //   label: 'location',
   //   value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',

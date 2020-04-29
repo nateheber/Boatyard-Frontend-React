@@ -112,11 +112,12 @@ class OrderList extends React.Component {
     const params = isEmpty(keyword) ? 
     privilege === 'admin' ?
     {
-      page: page,
+      page: page ? page : 1,
       per_page: perPage,
       //search: keyword,
       states: stringFilters,
-      'order[sort]': 'desc'
+      'order[sort]': 'desc', 
+      'order[order]': 'created_at'
     } : 
     {
       page: page,
@@ -138,6 +139,7 @@ class OrderList extends React.Component {
   }
 
   onChangeTab = (tab, page = 1) => {
+    console.log(page);
     const { privilege } = this.props;
     const { keyword, selectedFilters } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
@@ -173,18 +175,21 @@ class OrderList extends React.Component {
       }
     } else {
       if (privilege === 'provider') {
+        console.log("Privilege");
         this.props.GetOrders({
           params: {
             page,
             per_page: 15,
             search: keyword,
             states: stringFilters,
-            'order[order]': 'provider_order_sequence',
-            'order[sort]': 'desc'
+            // 'order[order]': 'provider_order_sequence',
+            'order[sort]': 'desc',
+            'order[order]': 'created_at'
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 25, search: keyword, states: stringFilters, 'order[sort]': 'desc' } });
+        console.log("changing pages")
+        this.props.GetOrders({ params: { page, per_page: 25, search: keyword, states: stringFilters, 'order[sort]': 'desc', 'order[order]': 'created_at' } });
       }
     }
   };

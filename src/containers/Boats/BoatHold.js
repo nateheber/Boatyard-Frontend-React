@@ -214,18 +214,22 @@ class BoatHold extends React.PureComponent {
     const queryParams = queryString.parse(this.props.location.search);
     console.log(queryParams);
     console.log(values);
-    if (queryParams && !isEmpty(queryParams)) {
+    // if (queryParams && !isEmpty(queryParams)) {
+    if (values && !isEmpty(values)) {
       this.setState({ loading: true });
       axios.post(`${apiBaseUrl}/reservations`, { reservation: {
         ...queryParams,
         ...values
       }}).then(() => {
         this.setState({ loading: false });
-        // toastr.success('Success', 'Boat Reservation Sent Successfully!');
         this.props.history.push('/onlineboat/done');
       }).catch(e =>  {
         this.setState({ loading: false });
+        if (e.response.data.hasOwnProperty('zip')) {
+          toastr.error('Error', 'Please enter a valid zip code');
+        } else {
         toastr.error('Error', get(e.response, 'data.message'));
+        }
       });
     } else {
       toastr.error('Error', 'Missing parameters');
@@ -297,6 +301,20 @@ class BoatHold extends React.PureComponent {
                             validate={emailValidation}
                           />
                           <Error name="email" />
+                        </InputRow>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xs={12} sm={6} md={6}>
+                      <InputRow>
+                          <InputField
+                            name="zip"
+                            type="text"
+                            component="input"
+                            placeholder="Zip Code"
+                            validate={required}
+                          />
+                          <Error name="zip" />
                         </InputRow>
                       </Col>
                     </Row>

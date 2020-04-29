@@ -122,7 +122,7 @@ class UpdateProfile extends React.Component {
   };
 
   renderEditorSection = () => {
-    const { privilege } = this.props;
+    const { privilege, providerId, profile } = this.props;
     const { firstName, lastName, phoneNumber, email, taxRate } = this.state;
     return (
       <React.Fragment>
@@ -181,7 +181,7 @@ class UpdateProfile extends React.Component {
             privilege === 'provider' &&
             <Col xs={12} sm={6} md={4}>
               <InputLabel>Payment Settings</InputLabel>
-              <PaymentSettings />
+              <PaymentSettings privilege={privilege} providerId={providerId} profile={profile} />
             </Col>
           }
           {

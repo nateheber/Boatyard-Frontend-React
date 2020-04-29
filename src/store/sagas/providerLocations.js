@@ -197,9 +197,8 @@ function* getProviderLocation(action) {
 
 function* getProviderLocationServices(action) {
   const apiClient = yield select(getProviderLocationServiceClient);
-  //console.log(apiClient);
   const { providerId, providerLocationId, params, success, error } = action.payload;
-  params.all = true;
+  // params.all = true;
   try {
     const result = yield call(apiClient.list, [providerId, providerLocationId], params);
     const { data, included } = result;
@@ -280,6 +279,27 @@ function* deleteProviderLocation(action) {
   }
 }
 
+function* cloneProviderLocationTemplate(action) {
+  // const apiClient = yield select(getProviderLocationClient);
+  // const { providerId, providerLocationId, data, success, error } = action.payload;
+  // try {
+  //   const result = yield call(apiClient.update, [providerId, providerLocationId], data);
+  //   const { data: location, included } = result;
+  //   const refinedLocation = refineProviderLocation(location, included);
+  //   yield put({
+  //     type: actionTypes.UPDATE_PROVIDER_LOCATION_SUCCESS,
+  //   });
+  //   if (success) {
+  //     yield call(success, refinedLocation);
+  //   }
+  // } catch (e) {
+  //   yield put({ type: actionTypes.UPDATE_PROVIDER_LOCATION_FAILURE, payload: e });
+  //   if (error) {
+  //     yield call(error, e);
+  //   }
+  // }
+}
+
 export default function* ProviderLocationSaga() {
   yield takeEvery(actionTypes.GET_PROVIDER_LOCATIONS, getProviderLocations);
   yield takeEvery(actionTypes.FILTER_PROVIDER_LOCATIONS, getProviderLocations);
@@ -289,4 +309,5 @@ export default function* ProviderLocationSaga() {
   yield takeEvery(actionTypes.CREATE_PROVIDER_LOCATION, createProviderLocation);
   yield takeEvery(actionTypes.DELETE_PROVIDER_LOCATION, deleteProviderLocation);
   yield takeEvery(actionTypes.UPDATE_PROVIDER_LOCATION, updateProviderLocation);
+  yield takeEvery(actionTypes.CLONE_PROVIDER_LOCATION_TEMPLATE, cloneProviderLocationTemplate);
 }

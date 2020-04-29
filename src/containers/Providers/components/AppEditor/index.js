@@ -6,7 +6,7 @@ import { toastr } from 'react-redux-toastr';
 
 import { GetSiteBanners } from 'store/actions/site-banners';
 import { GetServices } from 'store/actions/services';
-import { actionTypes as locationActions, GetProviderLocations, UpdateProviderLocation, GetProviderLocationServices } from 'store/actions/providerLocations';
+import { actionTypes as locationActions, GetProviderLocations, UpdateProviderLocation, GetProviderLocationServices, CloneProviderLocationTemplate } from 'store/actions/providerLocations';
 import { actionTypes as iconActions, CreateIcon, GetIcons } from 'store/actions/icons';
 import { refinedProviderLocationSelector } from 'store/selectors/providerLocation';
 
@@ -74,7 +74,8 @@ class AppEditor extends React.Component {
       currentScreen: '',
       currentItem: {},
       visibleOfModal: false,
-      selectedLocation: props.selectedLocation || {}
+      selectedLocation: props.selectedLocation || {}, 
+      selectedTemplate: {}
     };
   }
 
@@ -127,7 +128,8 @@ class AppEditor extends React.Component {
       providerId: `${get(location, 'providerId')}`,
       providerLocationId: `${get(location, 'id')}`,
       params: {
-        all: true
+        // all: true
+        'provider_location_service[platform_service]': true
       },
       success: (services) => {
         const filtedServices = services.filter(service => get(service, 'attributes.platformService'));
@@ -611,6 +613,13 @@ class AppEditor extends React.Component {
     this.resetData(selectedLocation);
   };
 
+  handleChangeTemplate = (locationId) => {
+    const { providerLocations } = this.props;
+    const selectedLocation = providerLocations.find(locations => locations.id === locationId);
+    this.setState({ selectedTemplate: selectedLocation });
+    // this.resetData(selectedLocation);
+  };
+
   getBanner = (location) => {
     let banner = null;
     if (location.relationships.hasOwnProperty('site_banners')) {
@@ -885,15 +894,17 @@ class AppEditor extends React.Component {
   }
 
   render() {
-    const { saving, step, banner, visibleOfModal, currentItem, currentScreen, selectedLocation } = this.state;
+    const { saving, step, banner, visibleOfModal, currentItem, currentScreen, selectedLocation, selectedTemplate } = this.state;
     const renderingData = this.getRenderingData();
     const { providerLocations, iconStatus, locationStatus } = this.props;
     return (
       <Wrapper>
         <AppHeader
           selected={selectedLocation}
+          selectedTemplate={selectedTemplate}
           locations={providerLocations}
           onChangeLocation={this.handleChangeLocation}
+          handleChangeTemplate={this.handleChangeTemplate}
           onSave={this.handleSaveButtonClick}
           onChangePublishStatus={this.handlePublishStatus}
         />
@@ -958,7 +969,8 @@ const mapDispatchToProps = {
   CreateIcon,
   GetIcons,
   GetServices,
-  GetProviderLocationServices
+  GetProviderLocationServices,
+  CloneProviderLocationTemplate
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppEditor);
