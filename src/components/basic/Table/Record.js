@@ -229,7 +229,6 @@ export class Record extends React.PureComponent {
         }
       }
     } else if (column.isService) {
-      console.log(item.providerLocationId);
       if (item.providerLocationId !== null) {
         //if providerLocationId is present, grab that provider location service
         const val = get(item, column.value[1]);
