@@ -38,7 +38,6 @@ class OrderAssignment extends React.Component {
   }
 
   static getDerivedStateFromProps(props) {
-    // console.log(props);
     if (props !== undefined || props !== null) {
       const providerLocationId = get(props, 'currentOrder.attributes.providerLocationId');
       const orderState = get(props, 'currentOrder.attributes.state');
@@ -48,6 +47,7 @@ class OrderAssignment extends React.Component {
           return { dispatchIds: [providerLocationId] };
         }
         if (props.providerLocations.length > 0) {
+          //const dispatchIds = get(props, 'currentOrder.dispatchIds', []);
           const dispatchIds = get(props, 'currentOrder.dispatchIds', []).map(el => props.providerLocations.find(item => `${item.id}` === `${el}`) )
             .sort((a, b) => (a.provider_name > b.provider_name) ? 1 : (a.provider_name === b.provider_name) ? ((a.name > b.name) ? 1 : -1) : -1 )
             .map(el => el.id)
@@ -143,7 +143,7 @@ class OrderAssignment extends React.Component {
           {
             dispatchIds.map((id) => (
               <React.Fragment key={`assignee_${id}`}>
-                <ProviderLocationInfo id={providerLocationInfo.id} />
+                <ProviderLocationInfo id={id} />
               </React.Fragment>
             ))
           }
