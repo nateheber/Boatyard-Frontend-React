@@ -264,9 +264,9 @@ class OrderList extends React.Component {
     myHeaders.append('Content-Type', 'application/json');
     let url;
     if (stringFilters.length === 0) {
-      url = `${apiBaseUrl}/reports/transactions?start=2020-04-01&stop=2020-04-30&xls=true`;
+      url = `${apiBaseUrl}/reports/transactions?start=2020-05-01&stop=2020-05-30&xls=true`;
     } else {
-      url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-04-01&stop=2020-04-30&xls=true`;
+      url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-05-01&stop=2020-05-30&xls=true`;
     }
     console.log(url);
     fetch(url, {

@@ -108,11 +108,64 @@ export class NormalClient {
 export class CRUDClient {
   client = undefined;
   query = ''
+  constructor(query, authType = 'basic', version = 'v2') {
+    this.query = query;
+    this.client = createMainClient(authType);
+    this.version = version
+  }
+  list = (params = null, version = 'v2') => {
+    let paramsString = '';
+
+    if (params) {
+      params = {
+        page: 1,
+        ...params
+      };
+    } else {
+      params = {
+        page: 1
+      };
+    }
+
+    const array = [];
+    for  (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        array.push(`${key}=${params[key]}`);
+      }
+    }
+    paramsString = array.join('&');
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.get(`${apiUrl}?${paramsString}`);
+  };
+  create = (data, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    if (this.query === 'users') {
+      return this.client.post(`${apiUrl}registrations/`, data);
+    }
+    return this.client.post(apiUrl, data);
+  };
+  read = (id, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.get(`${apiUrl}${id}`);
+  };
+  update = (id, data, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.patch(`${apiUrl}${id}`, data);
+  };
+  delete = (id, version='v2') => {
+    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    return this.client.delete(`${apiUrl}${id}`);
+  };
+}
+
+export class V3CRUDClient {
+  client = undefined;
+  query = ''
   constructor(query, authType = 'basic') {
     this.query = query;
     this.client = createMainClient(authType);
   }
-  list = (params = null, version='v2') => {
+  list = (params = null, version = 'v3') => {
     let paramsString = '';
 
     if (params) {
