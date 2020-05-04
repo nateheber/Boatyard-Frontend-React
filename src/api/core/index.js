@@ -165,7 +165,7 @@ export class V3CRUDClient {
     this.query = query;
     this.client = createMainClient(authType);
   }
-  list = (params = null, version = 'v3') => {
+  list = (params = null, version = 'v4') => {
     let paramsString = '';
 
     if (params) {
