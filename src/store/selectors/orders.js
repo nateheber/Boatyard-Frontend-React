@@ -87,6 +87,8 @@ const setLineItemRelationships = (lineItem, included) => {
 const currentOrderSelector = state => {
   let order = state.order.currentOrder;
   const included = state.order.included;
+  // console.log(order);
+  // console.log(included);
   if (!isEmpty(order)) {
     for(const key in order.relationships) {
       const value = get(order, `relationships[${key}].data`);
