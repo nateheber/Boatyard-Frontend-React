@@ -67,13 +67,13 @@ class NewOrders extends React.Component {
       { label: 'ORDER', value: 'name', isTitle: true, type: 'new', link: true },
       {
         label: 'CUSTOMER',
-        value: ['customerName'],
+        value: ['customerAttributes.name'],
         isCustomer: true,
         // type: 'new-customer'
       },
-      { label: 'SERVICE', value: 'relationships.service.attributes.name' },
-      { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' },
-      { label: 'BOAT MAKE', value: 'relationships.boat.attributes.make' },
+      { label: 'SERVICE', value: 'serviceAttributes.name' },
+      { label: 'BOAT NAME', value: 'boatAttributes.name' },
+      { label: 'BOAT MAKE', value: 'boatAttributes.make' },
       { label: 'ORDER STATUS', value: 'stateAlias' }
     ];
     return (

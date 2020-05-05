@@ -84,6 +84,8 @@ function getValue(column, item) {
         value = '_';
       }
     }
+  } else if (column.isLocation) {
+    return item.boatAttributes.location[1];
   } else {
     if (column.value === 'id') {
       if (item.state === 'draft' && column.type === 'new') {
