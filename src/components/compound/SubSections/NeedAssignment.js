@@ -50,8 +50,9 @@ class NeedAssignment extends React.Component {
       { label: 'BOAT MAKE', value: 'boatAttributes.make' },
       {
         label: 'City / State',
-        value: 'boatAttributes.location[1]',
-        combines: [', ']
+        value: 'boatAttributes.location',
+        isLocation: true
+        // combines: [', ']
       }
     ];
 
