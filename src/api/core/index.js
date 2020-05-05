@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { apiBaseUrl, locationApiBaseUrl, spreedlyApiToken, spreedlyApiUrl } from '../config';
+import { apiBaseUrl, locationApiBaseUrl, revisedApiBaseUrl, spreedlyApiToken, spreedlyApiUrl } from '../config';
 import { authInterceptor } from './auth';
 import { responseInterceptor, spreedlyResponseInterceptor } from './response';
 
@@ -165,7 +165,7 @@ export class V3CRUDClient {
     this.query = query;
     this.client = createMainClient(authType);
   }
-  list = (params = null, version = 'v3') => {
+  list = (params = null, version = 'v4') => {
     let paramsString = '';
 
     if (params) {
@@ -186,7 +186,7 @@ export class V3CRUDClient {
       }
     }
     paramsString = array.join('&');
-    const apiUrl = `${version === 'v2' ? apiBaseUrl : locationApiBaseUrl}/${this.query}/`;
+    const apiUrl = `${revisedApiBaseUrl}/${this.query}/`;
     return this.client.get(`${apiUrl}?${paramsString}`);
   };
   create = (data, version='v2') => {
