@@ -113,7 +113,7 @@ class OrderList extends React.Component {
     privilege === 'admin' ?
     {
       page: page ? page : 1,
-      per_page: perPage,
+      per_page: 15,
       //search: keyword,
       states: stringFilters,
       'order[sort]': 'desc', 
@@ -287,16 +287,16 @@ class OrderList extends React.Component {
 
   render() {
     const { orders, page, privilege, currentStatus, statuses, providerStatuses } = this.props;
-    // console.log(statuses);
     const selectedStatuses = privilege === 'admin' ? statuses : providerStatuses;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
-      let customerName = getCustomerName(order, privilege);
+      //let customerName = getCustomerName(order, privilege);
+      let customerName = order.customerAttributes.name;
       if (privilege === 'provider') {
         if (order.state === 'dispatched' || order.state === 'assigned') {
           name = '_';
-          customerName = '_';
+          //customerName = '_';
         } else if (order.providerOrderSequence) {
           name = `Order #${order.providerOrderSequence}`;
         }
