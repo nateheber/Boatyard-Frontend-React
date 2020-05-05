@@ -10,7 +10,7 @@ import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from 'store/actions/orders';
 import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector, statusSelector, providerStatusSelector } from 'store/selectors/orders';
-import { getCustomerName } from 'utils/order';
+//import { getCustomerName } from 'utils/order';
 import { getToken } from 'store/selectors/auth';
 import { apiBaseUrl } from '../../api/config';
 
