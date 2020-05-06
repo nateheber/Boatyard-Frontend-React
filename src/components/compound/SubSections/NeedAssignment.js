@@ -41,18 +41,18 @@ class NeedAssignment extends React.Component {
       {
         label: 'CUSTOMER',
         value: [
-          'relationships.user.attributes.firstName/relationships.user.attributes.lastName',
-          'relationships.childAccount.attributes.firstName/relationships.childAccount.attributes.lastName'
+          'customerAttributes.name'
         ],
         isCustomer: true
       },
-      { label: 'SERVICE', value: 'relationships.service.attributes.name' },
-      { label: 'BOAT NAME', value: 'relationships.boat.attributes.name' },
-      { label: 'BOAT MAKE', value: 'relationships.boat.attributes.make' },
+      { label: 'SERVICE', value: 'serviceAttributes.name' },
+      { label: 'BOAT NAME', value: 'boatAttributes.name' },
+      { label: 'BOAT MAKE', value: 'boatAttributes.make' },
       {
         label: 'City / State',
-        value: 'relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
-        combines: [', ']
+        value: 'boatAttributes.location',
+        isLocation: true
+        // combines: [', ']
       }
     ];
 
