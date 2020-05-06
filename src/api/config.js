@@ -16,6 +16,7 @@ switch (mode) {
   case 'production':
     apiUrl = 'https://production-api.boatyard.com/api/v2';
     locationApiUrl = 'https://production-api.boatyard.com/api/v3';
+    revisedApiUrl = 'https://production-api.boatyard.com/api/v4';
     break;
   default:
     apiUrl = 'https://staging-api.boatyard.com/api/v2';
