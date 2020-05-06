@@ -292,7 +292,7 @@ class OrderList extends React.Component {
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
       //let customerName = getCustomerName(order, privilege);
-      let customerName = order.customerAttributes.name;
+      let customerName = get(order, 'customerAttributes.name');
       if (privilege === 'provider') {
         if (order.state === 'dispatched' || order.state === 'assigned') {
           name = '_';
