@@ -60,6 +60,7 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
       'Authorization': token
     }
   });
+  //console.log(locationServices);
   const [service, setService] = useState(value);
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [miscCategory, setMiscCategory]  = useState({});
@@ -75,6 +76,7 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
       cost: option.cost,
       label: option.name
     }));
+    console.log(filteredServices);
     return options;
   };
 
