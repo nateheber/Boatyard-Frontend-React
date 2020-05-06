@@ -247,7 +247,7 @@ class BoatHold extends React.PureComponent {
               <FormContainer onSubmit={handleSubmit}>
                 <Img src={MMLogo} />
                 <TitleLabel>{'Almost There!'}</TitleLabel>
-                <DescLabel>{'Enter your information below to hold this boat for up to 24 hours and get ready for an Endless Staycation! A MarineMax sales professional will be in contact to assist you in completing the purchase of your new boat.'}</DescLabel>
+                <DescLabel>{'Enter your information below to hold this boat for up to 24 hours and get ready for an Endless Staycation! A MarineMax Sales Consultant will confirm boat availability and guide you through purchase options upon receiving your hold request.'}</DescLabel>
                 <SectionWrapper>
                   <SectionContainer>
                     <SectionTitle>{'Contact'}</SectionTitle>
