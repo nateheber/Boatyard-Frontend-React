@@ -133,12 +133,14 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
   }
   const formatCreateLabel = inputValue => `Create new service "${inputValue}"...`;
   const providerId = get(currentOrder, 'attributes.providerId');
-
+  const providerLocation = get(currentOrder, 'attributes.providerLocationId');
+  //console.log('~~~~~~~~~~~~~',currentOrder);
+  //console.log('~~~~~~~~~~~~~',providerLocationId);
   return (
     <>
       {showServiceModal &&
         <React.Fragment>
-        {providerLocationId ?
+        {providerLocation ?
           <AddLocationServiceModal
             loading={serviceStatus === serviceActions.CREATE_SERVICE}
             open={showServiceModal}
