@@ -59,6 +59,7 @@ class AddLocationServiceModal extends React.Component {
     const costType = get(service, 'costType');
     const isTaxable = get(service, 'isTaxable');
     const serviceId = get(service, 'id');
+    console.log(this.props.service);
 
     const priceTypes = [
       {
@@ -143,7 +144,7 @@ class AddLocationServiceModal extends React.Component {
         value: val.id,
         label: startCase(val.name)
       }));
-      
+      const defaultService = services.find(service => service.name === 'Miscellaneous');
       return [
         {
           field: 'name',
@@ -167,7 +168,7 @@ class AddLocationServiceModal extends React.Component {
           errorMessage: 'Select service',
           options: serviceOptions,
           required: true,
-          defaultValue: `${serviceId}`,
+          defaultValue: `${defaultService.id || serviceId}`,
           xs: 12,
           sm: 12,
           md: 6,
