@@ -51,7 +51,8 @@ export const getChildAccountClient = state => {
 };
 
 export const getServiceClient = state => {
-  const providerLocationId = `${get(state.auth, 'providerLocationId') || ''}`;
+  //const providerLocationId = `${get(state.auth, 'providerLocationId') || ''}`;
+  const providerLocationId = `${get(state.order, 'currentOrder.attributes.providerLocationId') || ''}`;
   switch (state.auth.privilege) {
     case 'basic':
       return providerLocationId.length > 0 ?
@@ -59,7 +60,7 @@ export const getServiceClient = state => {
         APIGenerator.createServiceClient('basic');
     case 'admin':
       console.log('Admin');
-      console.log(providerLocationId);
+      console.log(`Provider Location Id:` ,providerLocationId);
       return providerLocationId.length > 0 ?
         APIGenerator.createLocationServiceClient('admin', [state.auth.providerId, providerLocationId]) :
         APIGenerator.createServiceClient('admin');

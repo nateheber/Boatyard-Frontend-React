@@ -48,7 +48,6 @@ class NewLineItem extends React.Component {
   render() {
     const { quantity, cost, comment } = this.state;
     const { providerLocationId, locationId } = this.props;
-    //console.log(this.props);
     return (
       <React.Fragment>
         <Line>
