@@ -181,7 +181,7 @@ class CustomerDetails extends React.Component {
     const customerName = `${get(currentChildAccount, 'firstName')} ${get(currentChildAccount, 'lastName')}`;
     const columns = [
       { label: 'orders', value: 'id', width: 1 },
-      { label: 'order placed', value: 'createdAt', isDate: true, width: 2 },
+      { label: 'order placed', value: 'createdAt', isDate: true, width: 1.5 },
       { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
       { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1 },
       { label: 'boat make', value: 'relationships.boat.attributes.make', width: 1 },
