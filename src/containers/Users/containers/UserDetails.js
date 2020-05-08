@@ -368,10 +368,10 @@ class UserDetails extends React.Component {
     const columns = [
       { label: 'orders', value: 'id', width: 1 },
       { label: 'order placed', value: 'createdAt', isDate: true, width: 1 },
-      { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
-      { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1 },
-      { label: 'boat make', value: 'relationships.boat.attributes.make', width: 1 },
-      { label: 'total paid', value: 'totalPayments', isCurrency: true, isValue: true, prefix: '$', width: 1 }
+      { label: 'service', value: 'serviceAttributes.name', width: 1 },
+      { label: 'boat name', value: 'boatAttributes.name', width: 1 },
+      { label: 'boat make', value: 'boatAttributes.make', width: 1 },
+      { label: 'total paid', value: 'total', isCurrency: true, isValue: true, prefix: '$', width: 1 }
     ]
     const pageCount = this.getPageCount();
     const actions = [
