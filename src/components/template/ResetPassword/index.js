@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import { Logo, WelcomeTitle, WelcomeDescription, WelcomeWrapper } from '../CreatePassword';
 import BoatYardLogoImage from '../../../resources/by_logo_2.png';
+import MMLogoImage from '../../../resources/mm-logo.png';
 import { ResetPassword } from 'store/actions/auth';
 import PasswordForm from '../Forms/PasswordForm';
 
@@ -60,14 +61,15 @@ class ResetPasswordComponent extends React.Component {
     }
   };
   render() {
+    const location = window.location.href.includes('marine-max') ? 'marine-max' : 'boatyard';
     return (
       <Wrapper>
         <SideContent>
-          { !this.state.done && <PasswordForm onResetPassword={this.handleResetPassword} /> }
+          { !this.state.done && <PasswordForm onResetPassword={this.handleResetPassword} location={location}/> }
           {
             this.state.done &&
             <WelcomeWrapper>
-              <Logo src={BoatYardLogoImage} />
+              <Logo src={location === 'boatyard' ? BoatYardLogoImage : MMLogoImage} />
               <WelcomeTitle>Thank you!</WelcomeTitle>
               <WelcomeDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeDescription>
             </WelcomeWrapper>

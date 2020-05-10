@@ -19,6 +19,7 @@ const Wrapper = styled.div`
 `;
 class AuthPageTemplate extends React.Component {
   render() {
+    console.log("Auth page temp");
     return (
       <Wrapper>
         {this.props.children}
