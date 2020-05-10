@@ -239,9 +239,9 @@ class EditLocationServiceModal extends React.Component {
 
 
   getDescriptionField = (item) =>{
-    let { service: { description, serviceDescription } } = this.props;
+    let { service: { serviceDescription } } = this.props;
     if (!isEmpty(item)) {
-      description = get(item, 'serviceDescription');  
+      serviceDescription = get(item, 'serviceDescription');  
     }
     return [
       {
