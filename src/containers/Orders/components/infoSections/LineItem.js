@@ -166,10 +166,10 @@ class LineItem extends React.Component {
           <Col sm={10}>
             {
               mode === 'edit' ? (
-                <TextArea value={comment} onChange={(evt) => this.onChange(evt.target.value, 'comment')} />
+                <TextArea value={this.props.providerLocationService.attributes.serviceDescription || comment} onChange={(evt) => this.onChange(evt.target.value, 'service_description')} />
               ) : (
-                <Comment dangerouslySetInnerHTML={{ __html: comment.replace(/\r?\n/g, '<br />')}} />
-                // <Comment>{comment}</Comment>
+                <Comment dangerouslySetInnerHTML={{ __html: this.props.providerLocationService.attributes.serviceDescription || comment.replace(/\r?\n/g, '<br />')}} />
+                //<Comment>{this.props.providerLocationService.attributes.description || comment}</Comment>
               )
             }
           </Col>

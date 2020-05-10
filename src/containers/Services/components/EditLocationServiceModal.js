@@ -239,18 +239,18 @@ class EditLocationServiceModal extends React.Component {
 
 
   getDescriptionField = (item) =>{
-    let { service: { description } } = this.props;
+    let { service: { description, serviceDescription } } = this.props;
     if (!isEmpty(item)) {
-      description = get(item, 'description');  
+      description = get(item, 'serviceDescription');  
     }
     return [
       {
-        field: 'description',
-        label: 'Description',
+        field: 'service_description',
+        label: 'Service Description',
         className: 'primary',
         type: 'text_area',
         required: false,
-        defaultValue: description,
+        defaultValue: serviceDescription,
         xs: 12,
         sm: 12,
         md: 12,
@@ -303,6 +303,7 @@ class EditLocationServiceModal extends React.Component {
   render() {
     const { loading, open, onClose, onDelete, currentStatus, service } = this.props;
     const { mainFields, descriptionField } = this.state;
+    console.log(this.props.service);
     const actions = [
       <HollowButton onClick={onDelete} key="modal_btn_cancel">Delete</HollowButton>,
       <OrangeButton onClick={this.onSave} key="modal_btn_save">Update Service</OrangeButton>
