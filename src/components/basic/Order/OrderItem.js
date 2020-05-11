@@ -85,7 +85,7 @@ function getValue(column, item) {
       }
     }
   } else if (column.isLocation) {
-    if (item.boatAttributes !== null || item.boatAttributes !== undefined) {
+    if (item.boatAttributes !== null && item.boatAttributes !== undefined && item.boatAttributes.location !== null) {
     return item.boatAttributes.location[1];
     } else {
       return '';
