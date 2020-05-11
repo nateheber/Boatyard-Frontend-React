@@ -29,7 +29,7 @@ const FieldValue = styled.td`
   color: #07384b;
   font-size: 16px;
   font-weight: 400;
-  padding: 0 0 15px 0;
+  padding: 0 0 19px 0;
 `;
 
 const FieldValueLink = styled.a`
@@ -103,7 +103,7 @@ export default class OrderSummarySection extends React.Component {
             {startCase(key)}
           </Label>
           <FieldValue sm={3} md={3} lg={3}>
-            {answer.includes('https') ? <FieldValueLink rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</FieldValueLink> : <FieldValue dangerouslySetInnerHTML={{ __html: answer.replace(/\r?\n/g, '<br />')}} /> }
+            {answer.includes('https') ? <FieldValueLink rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</FieldValueLink> : <span dangerouslySetInnerHTML={{ __html: answer.replace(/\r?\n/g, '<br />')}} /> }
           </FieldValue>
         </TR>
       );
