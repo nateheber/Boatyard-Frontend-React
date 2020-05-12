@@ -145,6 +145,8 @@ class AddLocationServiceModal extends React.Component {
         label: startCase(val.name)
       }));
       const defaultService = services.find(service => service.name === 'Miscellaneous');
+      // console.log(defaultService);
+      // console.log(serviceId);
       return [
         {
           field: 'name',
@@ -168,7 +170,7 @@ class AddLocationServiceModal extends React.Component {
           errorMessage: 'Select service',
           options: serviceOptions,
           required: true,
-          defaultValue: `${defaultService.id || serviceId}`,
+          defaultValue: `${defaultService !== undefined ? defaultService.id : serviceId}`,
           xs: 12,
           sm: 12,
           md: 6,
