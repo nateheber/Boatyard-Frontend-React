@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import queryString from 'query-string';
 import { isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
-import { Logo, WelcomeTitle, WelcomeDescription, WelcomeWrapper } from '../CreatePassword';
+import { Logo, WelcomeTitle, WelcomeDescription, WelcomeWrapper, WelcomeMMDescription } from '../CreatePassword';
 import BoatYardLogoImage from '../../../resources/by_logo_2.png';
 import MMLogoImage from '../../../resources/mm-logo.png';
 import { ResetPassword } from 'store/actions/auth';
@@ -92,7 +92,7 @@ class ResetPasswordComponent extends React.Component {
               <WelcomeTitle>Thank you!</WelcomeTitle>
               {location === 'marine-max' ? 
                 <WelcomeDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeDescription> :
-                <WelcomeDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeDescription>
+                <WelcomeMMDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeMMDescription>
               }
               {location === 'marine-max' && <MMButton
                 type="submit"
