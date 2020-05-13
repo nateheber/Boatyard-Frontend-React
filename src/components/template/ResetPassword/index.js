@@ -7,8 +7,10 @@ import { isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import { Logo, WelcomeTitle, WelcomeDescription, WelcomeWrapper } from '../CreatePassword';
 import BoatYardLogoImage from '../../../resources/by_logo_2.png';
+import MMLogoImage from '../../../resources/mm-logo.png';
 import { ResetPassword } from 'store/actions/auth';
 import PasswordForm from '../Forms/PasswordForm';
+import { BlueButton } from '../../basic/Buttons';
 
 
 const Wrapper = styled.div`
@@ -32,6 +34,19 @@ const SideContent =styled.div`
     width: 100%;
     flex-direction: column;
   }
+`;
+
+const MMButton = styled(BlueButton)`
+  width: 100%;
+  margin-bottom: 15px;
+  height: 48px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 12px;
+  color: #000000;
+  text-align: center;
+  background-color: #0767A7;
+  border-radius: 12px;
 `;
 
 class ResetPasswordComponent extends React.Component {
@@ -59,17 +74,32 @@ class ResetPasswordComponent extends React.Component {
       toastr.error('Error', 'Missing token to reset password');
     }
   };
+
+  proceedToLogin = () => {
+    this.props.history.push('/login');
+  }
+
   render() {
+    const location = window.location.href.includes('marine-max') ? 'marine-max' : 'boatyard';
     return (
       <Wrapper>
         <SideContent>
-          { !this.state.done && <PasswordForm onResetPassword={this.handleResetPassword} /> }
+          { !this.state.done && <PasswordForm onResetPassword={this.handleResetPassword} location={location}/> }
           {
             this.state.done &&
             <WelcomeWrapper>
-              <Logo src={BoatYardLogoImage} />
+              <Logo src={location === 'boatyard' ? BoatYardLogoImage : MMLogoImage} />
               <WelcomeTitle>Thank you!</WelcomeTitle>
-              <WelcomeDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeDescription>
+              {location === 'marine-max' ? 
+                <WelcomeDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeDescription> :
+                <WelcomeDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeDescription>
+              }
+              {location === 'marine-max' && <MMButton
+                type="submit"
+                onClick={this.proceedToLogin}
+              >
+                Login
+              </MMButton>}
             </WelcomeWrapper>
           }
         </SideContent>

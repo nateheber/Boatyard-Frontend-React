@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { Form, Field } from 'react-final-form';
 import { toastr } from 'react-redux-toastr';
 
-import { OrangeButton } from 'components/basic/Buttons';
+import { OrangeButton, BlueButton } from 'components/basic/Buttons';
 import LogoImage from '../../../../resources/by_logo_2.png';
+import MMLogoImage from '../../../../resources/mm-logo.png';
 
 const Wrapper = styled.form`
   padding: 45px 54px;
@@ -81,6 +82,20 @@ const Button = styled(OrangeButton)`
   border-radius: 6px;
 `;
 
+
+const MMButton = styled(BlueButton)`
+  width: 100%;
+  margin-bottom: 15px;
+  height: 48px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 12px;
+  color: #000000;
+  text-align: center;
+  background-color: #0767A7;
+  border-radius: 12px;
+`;
+
 const PasswordHint = styled.div`
   text-decoration: none;
   font-family: 'Montserrat', sans-serif;
@@ -124,13 +139,13 @@ class PasswordForm extends React.Component {
   };
 
   render() {
-    const { isCreating, isCustomer } = this.props;
+    const { isCreating, isCustomer, location } = this.props;
     return (
       <Form
         onSubmit={this.handleSubmit}
         render={({ handleSubmit, submitting }) => (
           <Wrapper onSubmit={handleSubmit}>
-            <Logo src={LogoImage} />
+            <Logo src={location === 'marine-max' ? MMLogoImage : LogoImage} />
             <InputRow>
               <InputLabel>{isCreating ? 'Create' : 'New'} Password</InputLabel>
               <InputField
@@ -152,12 +167,21 @@ class PasswordForm extends React.Component {
               <Error name="confirmPassword" />
             </InputRow>
             <ActionWrapper>
-              <Button
+              {location === 'marine-max' ? 
+              (<MMButton
                 type="submit"
                 disabled={submitting}
+                location={location}
               >
                 {isCustomer ? 'Create Password' : isCreating ? 'Login' : 'Reset Password'}
-              </Button>
+              </MMButton>) 
+              : (<Button
+                type="submit"
+                disabled={submitting}
+                location={location}
+              >
+                {isCustomer ? 'Create Password' : isCreating ? 'Login' : 'Reset Password'}
+              </Button>)}
               <PasswordHint>*Passwords must be at least six characters long.</PasswordHint>
             </ActionWrapper>
           </Wrapper>
