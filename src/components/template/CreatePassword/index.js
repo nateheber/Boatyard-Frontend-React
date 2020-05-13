@@ -80,6 +80,18 @@ export const WelcomeDescription = styled.div`
   padding: 0 20px;
 `;
 
+export const WelcomeMMDescription = styled.div`
+  color: #0767A7;
+  font-size: 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  text-align: center;
+  line-height: 26px;
+  margin-bottom: 30px;
+  padding: 0 20px;
+`;
+
+
 class CreatePasswordComponent extends React.Component {
   constructor(props) {
     super(props);
