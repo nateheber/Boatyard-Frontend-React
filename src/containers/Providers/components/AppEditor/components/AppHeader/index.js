@@ -19,6 +19,9 @@ const Wrapper = styled.div`
 const HeaderWrapper = styled.div`
   display: flex;
   width: 600px;
+  .templateDtropdown {
+    margin-left: 20px;
+  }
 
 `;
 
@@ -65,7 +68,7 @@ export default class AppHeader extends React.Component {
           </Select>
           </div>
 
-          <div>
+          <div className="templateDtropdown">
             <span>Template:</span>
           <Select
             value={selectedTemplate.id}
