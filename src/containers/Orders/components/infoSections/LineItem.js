@@ -168,7 +168,7 @@ class LineItem extends React.Component {
               mode === 'edit' ? (
                 <TextArea value={this.props.providerLocationService.attributes.serviceDescription || comment} onChange={(evt) => this.onChange(evt.target.value, 'service_description')} />
               ) : (
-                <Comment dangerouslySetInnerHTML={{ __html: comment.replace(/\r?\n/g, '<br />') || this.props.providerLocationService.attributes.serviceDescription}} />
+                <Comment dangerouslySetInnerHTML={{ __html: this.props.providerLocationService.attributes.serviceDescription || comment.replace(/\r?\n/g, '<br />') }} />
                 //<Comment>{this.props.providerLocationService.attributes.description || comment}</Comment>
               )
             }
