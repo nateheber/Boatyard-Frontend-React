@@ -25,6 +25,7 @@ const initialState = {
   assignedOrders: ordersState,
   openOrders: ordersState,
   paidOrders: ordersState,
+  loading: false,
   errors: null
 };
 
@@ -40,6 +41,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         set(draft, 'orders.page', get(payload, 'params.page', 1));
+        draft.loading = true;
         draft.errors = null;
       }),
     [actionTypes.GET_ORDERS_SUCCESS]: (state, action) =>
@@ -47,6 +49,7 @@ export default handleActions(
         const { type, payload } = action;
         const { total, perPage, orders, included } = payload;
         draft.currentStatus = type;
+        draft.loading = false;
         set(draft, 'orders.total', total);
         set(draft, 'orders.perPage', perPage);
         set(draft, 'orders.orders', orders);
@@ -56,6 +59,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
+        draft.loading = false;
         draft.errors = payload;
       }),
 
@@ -183,6 +187,7 @@ export default handleActions(
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
+        draft.loading = true;
         draft.errors = null;
       }),
     [actionTypes.GET_ORDER_SUCCESS]: (state, action) =>
@@ -190,6 +195,7 @@ export default handleActions(
         const { type, payload: { order, included } } = action;
         draft.currentStatus = type;
         draft.currentOrder = order;
+        draft.loading = false;
         draft.included = refactorIncluded(included);
       }),
     [actionTypes.GET_ORDER_PROVIDER_LOCATION_TEAM_MEMBER_SUCCESS]: (state, action) =>
@@ -202,6 +208,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
+        draft.loading = false;
         draft.errors = payload;
       }),
 
@@ -343,7 +350,7 @@ export default handleActions(
         draft.unselectedColumns = unselectedColumns;
         draft.currentStatus = type;
       }),
-      [actionTypes.RESET_PAGES]: (state, action) =>
+    [actionTypes.RESET_PAGES]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
