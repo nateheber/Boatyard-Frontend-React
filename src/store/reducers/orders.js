@@ -41,6 +41,7 @@ export default handleActions(
         const { type, payload } = action;
         draft.currentStatus = type;
         set(draft, 'orders.page', get(payload, 'params.page', 1));
+        draft.loading = true;
         draft.errors = null;
       }),
     [actionTypes.GET_ORDERS_SUCCESS]: (state, action) =>
@@ -48,6 +49,7 @@ export default handleActions(
         const { type, payload } = action;
         const { total, perPage, orders, included } = payload;
         draft.currentStatus = type;
+        draft.loading = false;
         set(draft, 'orders.total', total);
         set(draft, 'orders.perPage', perPage);
         set(draft, 'orders.orders', orders);
@@ -57,6 +59,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
+        draft.loading = false;
         draft.errors = payload;
       }),
 
