@@ -9,7 +9,7 @@ import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
-import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from 'store/actions/orders';
+import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns } from 'store/actions/orders';
 import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector, statusSelector, providerStatusSelector } from 'store/selectors/orders';
 //import { getCustomerName } from 'utils/order';
 import { getToken } from 'store/selectors/auth';
@@ -286,7 +286,7 @@ class OrderList extends React.Component {
 
   render() {
     console.log(this.props);
-    const { orders, page, privilege, currentStatus, statuses, providerStatuses, loading } = this.props;
+    const { orders, page, privilege, statuses, providerStatuses, loading } = this.props;
     const selectedStatuses = privilege === 'admin' ? statuses : providerStatuses;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
@@ -317,7 +317,6 @@ class OrderList extends React.Component {
 
     const { tab, selectedFilters } = this.state;
     const { columns, selectedColumns } = this.props;
-    // const loading = currentStatus === actionTypes.GET_ORDERS;
 
     if (loading) return <LoadingSpinner loading={true} />;
     return (
