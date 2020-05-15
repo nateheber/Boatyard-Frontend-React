@@ -318,7 +318,6 @@ class OrderList extends React.Component {
     const { tab, selectedFilters } = this.state;
     const { columns, selectedColumns } = this.props;
 
-    if (loading) return <LoadingSpinner loading={true} />;
     return (
       <Wrapper>
         <OrderHeader
@@ -332,7 +331,7 @@ class OrderList extends React.Component {
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
           <Content>
             <TableWrapper>
-              { loading && <div className="loading" /> }
+              { loading && <LoadingSpinner loading={true} /> }
               <Table
                 columns={selectedColumns}
                 records={processedOrders}
