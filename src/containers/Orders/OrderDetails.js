@@ -340,13 +340,13 @@ class OrderDetails extends React.Component {
   }
 
   render() {
+    const { currentOrder, currentStatus, boatStatus, privilege, workorders, workorder } = this.props;
     const { boatInfo, customerInfo } = this.getOrderInfo();
     const updatedDate = this.getUdpatedDate();
     const { orderId, isFirstLoad, visibleOfBoatModal, visibleOfConfirm, visibleOfJobDeleteConfirm } = this.state;
     const providerId = this.getProviderId();
     const providerLocationId = this.getProviderLocationId();
-    const { currentOrder, currentStatus, boatStatus, privilege, workorders, workorder } = this.props;
-    const memorialization = Object.values(get(this.props.currentOrder, 'attributes.memorialization'))[0]
+    const memorialization = !isEmpty(currentOrder) ?  Object.values(get(currentOrder, 'attributes.memorialization'))[0] : {};
     const lineItems = get(currentOrder, 'lineItems', []);
     const loading = currentStatus === actionTypes.GET_ORDER;
     const orderStatus = get(currentOrder, 'attributes.state');
