@@ -106,7 +106,6 @@ class OrderList extends React.Component {
   }
 
   loadOrders = (keyword) => {
-    console.log(`Running loadOrder`);
     const { GetOrders, page, perPage, privilege } = this.props;
     const { selectedFilters } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',')
@@ -135,7 +134,6 @@ class OrderList extends React.Component {
       per_page: 15,
       'order[sort]': 'desc'
     };
-    // console.log(params);
     GetOrders({ params });
   }
 
@@ -287,7 +285,8 @@ class OrderList extends React.Component {
   }
 
   render() {
-    const { orders, page, privilege, currentStatus, statuses, providerStatuses } = this.props;
+    console.log(this.props);
+    const { orders, page, privilege, currentStatus, statuses, providerStatuses, loading } = this.props;
     const selectedStatuses = privilege === 'admin' ? statuses : providerStatuses;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
@@ -318,7 +317,7 @@ class OrderList extends React.Component {
 
     const { tab, selectedFilters } = this.state;
     const { columns, selectedColumns } = this.props;
-    const loading = currentStatus === actionTypes.GET_ORDERS;
+    // const loading = currentStatus === actionTypes.GET_ORDERS;
 
     if (loading) return <LoadingSpinner loading={true} />;
     return (
@@ -365,6 +364,7 @@ const mapStateToProps = state => ({
   total: get(state, 'order.orders.total', 0),
   privilege: get(state, 'auth.privilege'),
   currentStatus: state.order.currentStatus,
+  loading: state.order.loading,
   token: getToken(state)
 });
 
