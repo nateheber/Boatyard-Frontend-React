@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import queryString from 'query-string';
 import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
-import { get, findIndex, filter, find } from 'lodash';
+import { get, findIndex, filter, find, isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
 import { SetWorkOrder, UpserWorkOrder, ServicesValidation, ResetWorkOrder, DeleteWorkOrder } from 'store/actions/workorders';
 import { actionTypes, GetOrder, UpdateOrder } from 'store/actions/orders';
@@ -346,16 +346,16 @@ class OrderDetails extends React.Component {
     const providerId = this.getProviderId();
     const providerLocationId = this.getProviderLocationId();
     const { currentOrder, currentStatus, boatStatus, privilege, workorders, workorder } = this.props;
+    const memorialization = Object.values(get(this.props.currentOrder, 'attributes.memorialization'))[0]
     const lineItems = get(currentOrder, 'lineItems', []);
     const loading = currentStatus === actionTypes.GET_ORDER;
-    const orderStatus = get(currentOrder, 'attributes.state' );
-    const memorialization = Object.values(get(currentOrder, 'attributes.memorialization'))[0]
+    const orderStatus = get(currentOrder, 'attributes.state');
     //const canAssignOrder = orderStatus !== 'invoiced' && orderStatus !== 'canceled';
     const canAssignOrder = orderStatus !== 'canceled';
     const canShowCustomerInfo = this.getCustomerInfoCondition();
     return (
       <React.Fragment>
-        {loading || isFirstLoad || !currentOrder ? (
+        {loading || isFirstLoad || !currentOrder || isEmpty(currentOrder) ? (
           <LoadingSpinner loading={true} />
         ) : (
           <React.Fragment>
