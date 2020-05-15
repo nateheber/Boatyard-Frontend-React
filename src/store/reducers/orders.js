@@ -350,7 +350,7 @@ export default handleActions(
         draft.unselectedColumns = unselectedColumns;
         draft.currentStatus = type;
       }),
-      [actionTypes.RESET_PAGES]: (state, action) =>
+    [actionTypes.RESET_PAGES]: (state, action) =>
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
