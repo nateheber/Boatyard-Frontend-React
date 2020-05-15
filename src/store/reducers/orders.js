@@ -25,6 +25,7 @@ const initialState = {
   assignedOrders: ordersState,
   openOrders: ordersState,
   paidOrders: ordersState,
+  loading: false,
   errors: null
 };
 
@@ -183,6 +184,7 @@ export default handleActions(
       produce(state, draft => {
         const { type } = action;
         draft.currentStatus = type;
+        draft.loading = true;
         draft.errors = null;
       }),
     [actionTypes.GET_ORDER_SUCCESS]: (state, action) =>
@@ -190,6 +192,7 @@ export default handleActions(
         const { type, payload: { order, included } } = action;
         draft.currentStatus = type;
         draft.currentOrder = order;
+        draft.loading = false;
         draft.included = refactorIncluded(included);
       }),
     [actionTypes.GET_ORDER_PROVIDER_LOCATION_TEAM_MEMBER_SUCCESS]: (state, action) =>
@@ -202,6 +205,7 @@ export default handleActions(
       produce(state, draft => {
         const { type, payload } = action;
         draft.currentStatus = type;
+        draft.loading = false;
         draft.errors = payload;
       }),
 
