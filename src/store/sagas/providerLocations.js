@@ -17,7 +17,9 @@ const refineProviderLocations = (providerLocations) => {
 };
 
 const refineProviderLocation = (location, included) => {
+  //console.log(location);
   const refactoredIncluded = refactorIncluded(included);
+  //console.log(refactoredIncluded);
   const services = [];
   const relationships = get(location, 'relationships');
   const parsedRelationships = [];
@@ -54,6 +56,8 @@ const refineProviderLocation = (location, included) => {
           }
           if (item[index].type === 'provider_location_services') {
             const refactoredItem = item[index];
+            // console.log(refactoredItem);
+            // console.log(services);
             const service = services.find(s => s.id === get(refactoredItem, 'attributes.serviceId', '').toString());
             refactoredItem.attributes['iconId'] = get(service, 'attributes.iconId');
             relations[item[index].type].push(refactoredItem);
