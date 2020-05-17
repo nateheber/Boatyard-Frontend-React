@@ -61,7 +61,7 @@ export const refinedProviderLocationSelector = createSelector(
                 const refactoredItem = item[index];
                 if (refactoredItem.attributes.serviceId === null) {
                   console.log("Provider Location Service with a service id: ", item[index]);
-                  const service = services.find(s => s.id === get(refactoredItem, 'attributes.serviceId', '').toString());
+                  const service = '';
                 } else {
                   const service = services.find(s => s.id === get(refactoredItem, 'attributes.serviceId', '').toString());
                 }
