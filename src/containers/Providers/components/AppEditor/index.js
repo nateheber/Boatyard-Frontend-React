@@ -132,10 +132,13 @@ class AppEditor extends React.Component {
         'provider_location_service[platform_service]': true
       },
       success: (services) => {
+        console.log("SUCCESS");
         const filtedServices = services.filter(service => get(service, 'attributes.platformService'));
+        console.log(filtedServices);
         let items = categories.map((category) => {
           let filtered = filtedServices.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
           filtered = orderBy(filtered, [function(o){ return o.attributes.manualPosition; }], ['asc']);
+          console.log(filtered);
           const subItems = filtered.map(item => {
             const newItem = {
               id: item.attributes.manualPosition,
@@ -191,6 +194,7 @@ class AppEditor extends React.Component {
         });
       },
       error: (e) => {
+        console.log("Erroring out");
         toastr.error('Error', e.message);
       }
     });
@@ -669,24 +673,29 @@ class AppEditor extends React.Component {
 
   handleSaveButtonClick = () => {
     const { banner, selectedLocation, data } = this.state;
+    console.log(this.state);
     if (selectedLocation && !isEmpty(selectedLocation)) {
+      console.log("The Selected Location is:", selectedLocation);
       const originCategries = get(selectedLocation, 'relationships.service_categories', []);
       const currentCategories = [];
       const currentCategoryIds = [];
       const currentServices = [];
       const currentServiceIds = [];
       const { items } = data;
+      console.log("Data being worked on", data);
       const categoriesPayload = [];
       for(const index in items) {
         const item = items[index];
         const info = get(item, 'info');
         info.attributes.manualPosition = parseInt(index) + 1;
         if (item.type === 'category') {
+          console.log("Item is of type category: ", item);
           currentCategories.push(info);
           if(info.hasOwnProperty('id')) {
             currentCategoryIds.push(get(info, 'id'));
           }
           if (item.hasOwnProperty('items')) {
+            console.log("Services within the category");
             const subItems = get(item, 'items');
             for(const subIdx in subItems) {
               const subItem = subItems[subIdx];
@@ -715,7 +724,7 @@ class AppEditor extends React.Component {
         const attributes = get(category, 'attributes');
         const payload = {
           name: get(attributes, 'name'),
-          subtitle: get(attributes, 'subtitle'),
+          subtitle: get(attributes, 'subtitle') || '',
           icon_id: get(attributes, 'iconId'),
           manual_position: get(attributes, 'manualPosition')
         };
@@ -744,6 +753,7 @@ class AppEditor extends React.Component {
           };
         }
       }
+      console.log("Categories Payload: ", categoriesPayload);
       if (categoriesPayload.length > 0) {
         params = {
           ...params,
@@ -753,6 +763,8 @@ class AppEditor extends React.Component {
       this.setState({ isSaved: false });
       if (!isEmpty(params)) {
         this.setState({ saving: true });
+        console.log("~~~~~~UPDATING LOCATION IN HANDLE SAVE BUTTOB~~~~~~~~~~~~");
+        console.log(params);
         UpdateProviderLocation({
           providerId: selectedLocation.providerId,
           providerLocationId: selectedLocation.id,
@@ -760,6 +772,7 @@ class AppEditor extends React.Component {
             provider_location: { ...params }
           },
           success: (location) => {
+            console.log("Success on updating provider location");
             const categories = get(location, 'relationships.service_categories', []);
             this.setState({ isSaved: true }, () => {
               this.updateLocationServices(categories, currentServiceIds, currentServices);
@@ -767,6 +780,7 @@ class AppEditor extends React.Component {
           },
           error: (e) => {
             this.setState({ saving: false });
+            console.log("Erroring out in Save button", e.message);
             toastr.error('Error', e.message);
           }
         });
@@ -779,6 +793,8 @@ class AppEditor extends React.Component {
   };
 
   updateLocationServices = (categories, currentServiceIds, services) => {
+    console.log("~~~~~~~~~UPDATING LOCATION SERVICE~~~~~~~~~");
+    console.log(services);
     const { locationServices } = this.props;
     const { isSaved } = this.state;
     if (services && services.length > 0) {
@@ -829,6 +845,7 @@ class AppEditor extends React.Component {
               provider_location_service: payload
             }));
           } else {
+            console.log("Creating missing pls");
             promises.push(serviceClient.create({
               provider_location_service: payload
             }));
@@ -867,6 +884,7 @@ class AppEditor extends React.Component {
   }
 
   updateLocation = (data) => {
+    console.log("~~~~~~~~~UPDATING LOCATION~~~~~~~~~");
     const { selectedLocation } = this.state;
     const { UpdateProviderLocation } = this.props;
     this.setState({ saving: true });
