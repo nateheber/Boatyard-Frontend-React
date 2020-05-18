@@ -43,7 +43,7 @@ import MarineMaxBackgroundImage from '../resources/auth/mm-bg.jpg';
 import IntercomProvider from './IntercomProvider';
 import SendApp from 'containers/SendApp';
 
-const locationBackground = window.location.href.includes("marine-max") ? MarineMaxBackgroundImage : BackgroundImage;
+const locationBackground = window.location.href.includes("marinemax") ? MarineMaxBackgroundImage : BackgroundImage;
 const Wrapper = styled.div`
   background-image: url(${locationBackground});
   background-repeat: no-repeat;
@@ -120,7 +120,7 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <Route path="/login/" component={Login} />
         <Route path="/forgot-password/" component={ForgotPassword} />
         <Route path="/reset-password/" component={ResetPassword} />
-        <Route path="/marine-max/reset-password/" component={ResetPassword} />
+        <Route path="/marinemax/reset-password/" component={ResetPassword} />
         <Route path="/create-password/" component={CreatePassword} />
         <Route path="/confirm-account/" component={ConfirmAccount} />
         <Route path="/onlineboatshow" component={BoatShow} />
