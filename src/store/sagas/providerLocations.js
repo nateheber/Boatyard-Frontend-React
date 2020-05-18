@@ -58,6 +58,9 @@ const refineProviderLocation = (location, included) => {
             const refactoredItem = item[index];
             // console.log(refactoredItem);
             // console.log(services);
+            if (refactoredItem.attributes.serviceId === null) {
+              console.log("Provider Location Service with a service id: ", item[index]);
+            } 
             const service = services.find(s => s.id === get(refactoredItem, 'attributes.serviceId', '').toString());
             refactoredItem.attributes['iconId'] = get(service, 'attributes.iconId');
             relations[item[index].type].push(refactoredItem);
