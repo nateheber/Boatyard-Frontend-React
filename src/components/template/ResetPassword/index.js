@@ -80,7 +80,7 @@ class ResetPasswordComponent extends React.Component {
   }
 
   render() {
-    const location = window.location.href.includes('marine-max') ? 'marine-max' : 'boatyard';
+    const location = window.location.href.includes('marinemax') ? 'marine-max' : 'boatyard';
     return (
       <Wrapper>
         <SideContent>

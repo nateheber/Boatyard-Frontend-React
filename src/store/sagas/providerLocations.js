@@ -226,6 +226,7 @@ function* getProviderLocationServices(action) {
 }
 
 function* createProviderLocation(action) {
+  console.log("~~~~~~~~~~PRovider Loation being created???~~~~~~~~", action);
   const apiClient = yield select(getProviderLocationClient);
   const { providerId, data, success, error } = action.payload;
   try {
