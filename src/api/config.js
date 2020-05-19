@@ -7,6 +7,7 @@ switch (mode) {
   case 'sandbox':
     apiUrl = 'https://sandbox-api.boatyard.com/api/v2';
     locationApiUrl = 'https://sandbox-api.boatyard.com/api/v3';
+    revisedApiUrl = 'https://sandbox-api.boatyard.com/api/v4';
     break;
   case 'staging':
     apiUrl = 'https://staging-api.boatyard.com/api/v2';
