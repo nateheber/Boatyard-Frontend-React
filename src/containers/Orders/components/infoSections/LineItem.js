@@ -67,12 +67,13 @@ class LineItem extends React.Component {
       if (!service || isEmpty(service) || (service.hasOwnProperty('data') && !get(service, 'data'))) {
         service = this.props.service;
       }
+      //console.log(service);
       this.setState({
         serviceId: this.props.service.id,
         quantity: this.props.attributes.quantity,
         cost: this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
-        serviceDescription: this.props.providerLocationService.attributes.serviceDescription || '',
+        serviceDescription: service.attributes.serviceDescription || '',
         service
       });
     }
