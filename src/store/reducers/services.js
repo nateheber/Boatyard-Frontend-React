@@ -57,7 +57,7 @@ export default handleActions(
         const { total, perPage, services, included } = payload;
         draft.currentStatus = type;
         draft.total = total;
-        draft.perPage = perPage;
+        draft.perPage = 25 || perPage;
         draft.filteredServices = services;
         draft.included = refactorIncluded(included);
       }),
