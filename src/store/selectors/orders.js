@@ -8,30 +8,30 @@ const ORDER_COLUMNS = [
   {
     label: 'CUSTOMER',
     value: [
-      'relationships.user.attributes.firstName/relationships.user.attributes.lastName'
+      'customerName'
     ],
     isCustomer: true,
     width: 1.2
   },
-  { label: 'service', value: 'relationships.service.attributes.name', width: 1 },
+  { label: 'service', value: ['serviceAttributes.name', 'serviceAttributes.name'], width: 1, isService: true },
   // {
   //   label: 'location',
   //   value: 'relationships.boat.relationships.location.address.street/relationships.boat.relationships.location.address.city/relationships.boat.relationships.location.address.state',
   //   combines: [', ', ', '],
   //   width: 2.5
   // },
-  { label: 'provider', value: 'relationships.provider.attributes.name', width: 1 },
+  { label: 'provider', value: 'providerAttributes.name', width: 1 },
   { label: 'location', value: 'locationAddress', width: 1.2 },
   {
     label: 'boat location',
-    street: 'relationships.boat.relationships.location.address.street',
-    city: 'relationships.boat.relationships.location.address.city',
-    state: 'relationships.boat.relationships.location.address.state',
+    street: 'boatAttributes.location[0]',
+    city: 'boatAttributes.location[1]',
+    state: '',
     isLocation: true,
     width: 2.3
   },
-  { label: 'boat name', value: 'relationships.boat.attributes.name', width: 1.5, },
-  { label: 'boat', value: 'relationships.boat.attributes.make', width: 1.2, },
+  { label: 'boat name', value: 'boatAttributes.name', width: 1.5, },
+  { label: 'boat', value: 'boatAttributes.make', width: 1.2, },
   { label: 'total', value: 'total', isValue: true, isCurrency: true, prefix: '$', width: 0.8, },
   { label: 'order status', value: 'stateAlias', width: 1.2 },
 ];
@@ -87,6 +87,8 @@ const setLineItemRelationships = (lineItem, included) => {
 const currentOrderSelector = state => {
   let order = state.order.currentOrder;
   const included = state.order.included;
+  // console.log(order);
+  // console.log(included);
   if (!isEmpty(order)) {
     for(const key in order.relationships) {
       const value = get(order, `relationships[${key}].data`);

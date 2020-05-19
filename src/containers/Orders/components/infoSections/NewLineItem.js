@@ -30,11 +30,13 @@ class NewLineItem extends React.Component {
   };
 
   onChangeService = (service) => {
+    console.log(service);
     this.setState({
       serviceId: service.value,
       cost: service.cost,
       quantity: 1
     }, () => {
+      console.log(this.state);
       this.props.onChange(this.state);
     });
   };
@@ -45,8 +47,7 @@ class NewLineItem extends React.Component {
 
   render() {
     const { quantity, cost, comment } = this.state;
-    const { /* providerLocationId, */ locationId } = this.props;
-    //console.log(this.props);
+    const { providerLocationId, locationId } = this.props;
     return (
       <React.Fragment>
         <Line>
@@ -54,6 +55,7 @@ class NewLineItem extends React.Component {
             <ServiceDropdown
               onChangeService={this.onChangeService}
               providerLocationId={locationId}
+              plid={providerLocationId}
             />
           </Col>
           <Col lg={2} sm={2} xs={2} md={2} xl={2}>

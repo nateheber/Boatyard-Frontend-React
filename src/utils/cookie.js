@@ -9,3 +9,12 @@ export function deleteAllCookies() {
       document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }
+
+export function deleteCache() {
+  if (caches) {
+    // Service worker cache should be cleared with caches.delete()
+    caches.keys().then(function(names) {
+      for (let name of names) caches.delete(name);
+    });
+  }
+}

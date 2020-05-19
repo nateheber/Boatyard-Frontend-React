@@ -8,9 +8,10 @@ import { get, filter, isEmpty } from 'lodash';
 import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
-import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, actionTypes } from 'store/actions/orders';
+import LoadingSpinner from 'components/basic/LoadingSpinner';
+import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns } from 'store/actions/orders';
 import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector, statusSelector, providerStatusSelector } from 'store/selectors/orders';
-import { getCustomerName } from 'utils/order';
+//import { getCustomerName } from 'utils/order';
 import { getToken } from 'store/selectors/auth';
 import { apiBaseUrl } from '../../api/config';
 
@@ -105,7 +106,6 @@ class OrderList extends React.Component {
   }
 
   loadOrders = (keyword) => {
-    console.log(`Running loadOrder`);
     const { GetOrders, page, perPage, privilege } = this.props;
     const { selectedFilters } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',')
@@ -113,7 +113,7 @@ class OrderList extends React.Component {
     privilege === 'admin' ?
     {
       page: page ? page : 1,
-      per_page: perPage,
+      per_page: 15,
       //search: keyword,
       states: stringFilters,
       'order[sort]': 'desc', 
@@ -134,7 +134,6 @@ class OrderList extends React.Component {
       per_page: 15,
       'order[sort]': 'desc'
     };
-    // console.log(params);
     GetOrders({ params });
   }
 
@@ -175,14 +174,16 @@ class OrderList extends React.Component {
       }
     } else {
       if (privilege === 'provider') {
+        console.log("Privilege");
         this.props.GetOrders({
           params: {
             page,
             per_page: 15,
             search: keyword,
             states: stringFilters,
-            'order[order]': 'provider_order_sequence',
-            'order[sort]': 'desc'
+            // 'order[order]': 'provider_order_sequence',
+            'order[sort]': 'desc',
+            'order[order]': 'created_at'
           }
         });
       } else {
@@ -262,9 +263,9 @@ class OrderList extends React.Component {
     myHeaders.append('Content-Type', 'application/json');
     let url;
     if (stringFilters.length === 0) {
-      url = `${apiBaseUrl}/reports/transactions?start=2020-04-01&stop=2020-04-30&xls=true`;
+      url = `${apiBaseUrl}/reports/transactions?start=2020-05-01&stop=2020-05-30&xls=true`;
     } else {
-      url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-04-01&stop=2020-04-30&xls=true`;
+      url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-05-01&stop=2020-05-30&xls=true`;
     }
     console.log(url);
     fetch(url, {
@@ -284,17 +285,18 @@ class OrderList extends React.Component {
   }
 
   render() {
-    const { orders, page, privilege, currentStatus, statuses, providerStatuses } = this.props;
-    // console.log(statuses);
+    console.log(this.props);
+    const { orders, page, privilege, statuses, providerStatuses, loading } = this.props;
     const selectedStatuses = privilege === 'admin' ? statuses : providerStatuses;
     const pageCount = this.getPageCount();
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
-      let customerName = getCustomerName(order, privilege);
+      //let customerName = getCustomerName(order, privilege);
+      let customerName = order.customerAttributes !== null ? get(order, 'customerAttributes.name') : '';
       if (privilege === 'provider') {
         if (order.state === 'dispatched' || order.state === 'assigned') {
           name = '_';
-          customerName = '_';
+          //customerName = '_';
         } else if (order.providerOrderSequence) {
           name = `Order #${order.providerOrderSequence}`;
         }
@@ -315,7 +317,7 @@ class OrderList extends React.Component {
 
     const { tab, selectedFilters } = this.state;
     const { columns, selectedColumns } = this.props;
-    const loading = currentStatus === actionTypes.GET_ORDERS;
+
     return (
       <Wrapper>
         <OrderHeader
@@ -329,7 +331,7 @@ class OrderList extends React.Component {
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
           <Content>
             <TableWrapper>
-              { loading && <div className="loading" /> }
+              { loading && <LoadingSpinner loading={true} /> }
               <Table
                 columns={selectedColumns}
                 records={processedOrders}
@@ -360,6 +362,7 @@ const mapStateToProps = state => ({
   total: get(state, 'order.orders.total', 0),
   privilege: get(state, 'auth.privilege'),
   currentStatus: state.order.currentStatus,
+  loading: state.order.loading,
   token: getToken(state)
 });
 

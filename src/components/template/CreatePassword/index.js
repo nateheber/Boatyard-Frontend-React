@@ -61,7 +61,7 @@ export const Logo = styled.img`
 `;
 
 export const WelcomeTitle = styled.div`
-  color: #003247;
+  color: #0D485F;
   font-size: 26px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
@@ -70,7 +70,7 @@ export const WelcomeTitle = styled.div`
 `;
 
 export const WelcomeDescription = styled.div`
-  color: #333;
+  color: #0D485F;
   font-size: 18px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 500;
@@ -79,6 +79,18 @@ export const WelcomeDescription = styled.div`
   margin-bottom: 30px;
   padding: 0 20px;
 `;
+
+export const WelcomeMMDescription = styled.div`
+  color: #0767A7;
+  font-size: 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  text-align: center;
+  line-height: 26px;
+  margin-bottom: 30px;
+  padding: 0 20px;
+`;
+
 
 class CreatePasswordComponent extends React.Component {
   constructor(props) {

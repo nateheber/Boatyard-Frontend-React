@@ -1,7 +1,7 @@
 import React from 'react'
 import { isEmpty } from 'lodash';
 import styled from 'styled-components';
-import { get, startCase } from 'lodash';
+import { get, startCase, orderBy } from 'lodash';
 import moment from 'moment';
 
 import { Section } from 'components/basic/InfoSection';
@@ -29,7 +29,7 @@ const FieldValue = styled.td`
   color: #07384b;
   font-size: 16px;
   font-weight: 400;
-  padding: 0 0 15px 0;
+  padding: 0 0 19px 0;
 `;
 
 const FieldValueLink = styled.a`
@@ -45,7 +45,8 @@ export default class OrderSummarySection extends React.Component {
     const { order } = this.props;
     const lineItems = get(order, 'lineItems', []);
     if (lineItems && lineItems.length > 0) {
-      const scheduleItems = get(lineItems[0], 'relationships.lineItemSchedules', []);
+      const orderedItems = orderBy(lineItems, 'id', 'asc');
+      const scheduleItems = get(orderedItems[0], 'relationships.lineItemSchedules', []);
       if (scheduleItems && scheduleItems.length > 0) {
         const scheduleItem = scheduleItems[0];
         if (scheduleItem) {
@@ -103,7 +104,7 @@ export default class OrderSummarySection extends React.Component {
             {startCase(key)}
           </Label>
           <FieldValue sm={3} md={3} lg={3}>
-            {answer.includes('https') ? <FieldValueLink rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</FieldValueLink> : <FieldValue dangerouslySetInnerHTML={{ __html: answer.replace(/\r?\n/g, '<br />')}} /> }
+            {answer.includes('https') ? <FieldValueLink rel="noopener noreferrer" target='_blank' href={`${answer}`}>{answer}</FieldValueLink> : <span dangerouslySetInnerHTML={{ __html: answer.replace(/\r?\n/g, '<br />')}} /> }
           </FieldValue>
         </TR>
       );
@@ -112,16 +113,13 @@ export default class OrderSummarySection extends React.Component {
   };
 
   render () {
-    //const { lineItem, order, memorialization } = this.props;
-    const { lineItem, order } = this.props;
+    const { lineItem, order, memorialization } = this.props;
     const specialInstructions = get(order, 'attributes.specialInstructions');
     const slipNumber = get(order, 'attributes.slipNumber');
-
     //const serviceName = get(memorialization, 'service.name');
-    //const providerLocationServiceName = get(memorialization, 'providerLocationService.name');
+    const providerLocationServiceName = get(memorialization, 'providerLocationService.name', 'service.name');
     const serviceName = get(lineItem, 'relationships.service.attributes.name');
-    const providerLocationServiceName = get(lineItem, 'relationships.providerLocationService.attributes.name');
-    // console.log(lineItem);
+    //const providerLocationServiceName = get(lineItem, 'relationships.providerLocationService.attributes.name');
     return (isEmpty(lineItem) && isEmpty(slipNumber) && isEmpty(specialInstructions)) ? false : (
       <Section title="Order Summary">
         <table>

@@ -6,14 +6,23 @@ import { getCustomApiClient } from './sagaSelectors';
 
 function* createRequest(action) {
   const lineItemClient = yield select(getCustomApiClient)
-  const { orderId, data, callback } = action.payload
-  yield call(lineItemClient.post, `/orders/${orderId}/items/`, {line_item: data})
-  yield put({
-    type: actions.fetchLineItems,
-    payload: orderId
-  });
-  if (callback) {
-    yield call(callback);
+  const { orderId, data, callback, success, error } = action.payload
+  try {
+    yield call(lineItemClient.post, `/orders/${orderId}/items/`, {line_item: data})
+    yield put({
+      type: actions.fetchLineItems,
+      payload: orderId
+    });
+    if (callback) {
+      yield call(callback);
+    }
+    if (success) {
+      yield call(success);
+    }
+  }  catch (e) {
+    if (error) {
+      yield call(error);
+    }
   }
 }
 

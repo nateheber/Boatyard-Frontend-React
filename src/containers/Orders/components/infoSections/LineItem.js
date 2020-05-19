@@ -54,6 +54,7 @@ class LineItem extends React.Component {
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
+      serviceDescription: props.providerLocationService.attributes.serviceDescription || '',
       name: '',
       service
     };
@@ -71,17 +72,20 @@ class LineItem extends React.Component {
         quantity: this.props.attributes.quantity,
         cost: this.props.attributes.cost,
         comment: this.props.attributes.comment || '',
+        serviceDescription: this.props.providerLocationService.attributes.serviceDescription || '',
         service
       });
     }
   }
 
   onChange = (value, field) => {
+    console.log(value, field);
     const changeVal = {};
     if (field === 'cost') {
       value = value && value.replace('$', '');
     }
     set(changeVal, field, value);
+    console.log(changeVal);
     this.setState(changeVal, () => {
       this.props.onChange(this.state);
     });
@@ -109,7 +113,7 @@ class LineItem extends React.Component {
 
   render() {
     const { mode, onRemove, count } = this.props;
-    const { quantity, cost, comment, service } = this.state;
+    const { quantity, cost, comment, service, serviceDescription } = this.state;
     const currentOption = this.getCurrentOption();
     return (
       <Record>
@@ -168,8 +172,10 @@ class LineItem extends React.Component {
               mode === 'edit' ? (
                 <TextArea value={comment} onChange={(evt) => this.onChange(evt.target.value, 'comment')} />
               ) : (
-                <Comment dangerouslySetInnerHTML={{ __html: comment.replace(/\r?\n/g, '<br />')}} />
-                // <Comment>{comment}</Comment>
+                <>
+                {serviceDescription && <Comment dangerouslySetInnerHTML={{ __html: serviceDescription || comment.replace(/\r?\n/g, '<br />') }} />}
+                {comment && <Comment>Comments: {comment}</Comment>}
+                </>
               )
             }
           </Col>

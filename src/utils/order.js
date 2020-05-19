@@ -91,6 +91,60 @@ export const getUpdatedStatus = order => {
   };
 };
 
+export const getActivityInfo = order => {
+  const result = [];
+  if (!isEmpty(order)) {
+    const activities = get(order, 'attributes.activityFeed');
+    if (!isEmpty(activities)) {
+      activities.forEach(activity => {
+        const full_name = activity.actor ? `${activity.actor.firstName} ${activity.actor.lastName}` : ''; 
+        const assignee = activity.assigned ? `${activity.assigned.firstName} ${activity.assigned.lastName}` : '';
+        switch (activity.type) {
+          case 'order_placed':
+            result.push({
+              time: moment(activity.at).valueOf(),
+              message: `Order placed by ${full_name} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
+            });
+            break;
+          case 'order_accepted':
+            result.push({
+              time: moment(activity.at).valueOf(),
+              message: `Order accepted by ${full_name} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
+            });
+            break;
+          case 'order_assigned':
+            result.push({
+              time: moment(activity.at).valueOf(),
+              message: `${full_name} assigned order to ${assignee} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
+            });
+            break;
+          case 'order_completed':
+            result.push({
+              time: moment(activity.at).valueOf(),
+              message: `Order completed on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
+            });
+            break;
+          case 'invoice_sent':
+            result.push({
+              time: moment(activity.at).valueOf(),
+              message: `Invoice sent by ${full_name} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
+            });
+            break;
+          case 'quote_sent':
+            result.push({
+              time: moment(activity.at).valueOf(),
+              message: `Quote sent by ${full_name} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
+            });
+            break;
+          default:
+            break;
+        }
+      })
+    }
+  }
+  return result;
+}
+
 export const getOrderProcessInfo = order => {
   const result = [];
   // console.log(order);
@@ -171,10 +225,12 @@ export const getOrderProcessInfo = order => {
 };
 
 export const generateOrderTimeline = order => {
-  const creationInfo = getCreationInfo(order);
-  const updateInfo = getUpdatedStatus(order);
-  const timeLine = getOrderProcessInfo(order);
-  const result = [creationInfo, updateInfo, ...timeLine];
+  const activity_feed = get(order, 'attributes.activityFeed');
+  //const creationInfo = getCreationInfo(order);
+  //const updateInfo = getUpdatedStatus(order);
+  const timeLine = isEmpty(activity_feed) ? getOrderProcessInfo(order) : getActivityInfo(order);
+  //const activity = getActivityInfo(order);
+  const result = [/*creationInfo,*/ ...timeLine];
   return sortBy(result, ['time']).reverse();
 };
 

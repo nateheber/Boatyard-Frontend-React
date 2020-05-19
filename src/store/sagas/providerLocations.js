@@ -17,7 +17,9 @@ const refineProviderLocations = (providerLocations) => {
 };
 
 const refineProviderLocation = (location, included) => {
+  //console.log(location);
   const refactoredIncluded = refactorIncluded(included);
+  //console.log(refactoredIncluded);
   const services = [];
   const relationships = get(location, 'relationships');
   const parsedRelationships = [];
@@ -54,7 +56,12 @@ const refineProviderLocation = (location, included) => {
           }
           if (item[index].type === 'provider_location_services') {
             const refactoredItem = item[index];
-            const service = services.find(s => s.id === get(refactoredItem, 'attributes.serviceId', '').toString());
+            // console.log(refactoredItem);
+            // console.log(services);
+            if (refactoredItem.attributes.serviceId === null) {
+              console.log("Provider Location Service with a service id: ", item[index]);
+            } 
+            const service = refactoredItem.attributes.serviceId === null ? '' : services.find(s => s.id === get(refactoredItem, 'attributes.serviceId', '').toString());
             refactoredItem.attributes['iconId'] = get(service, 'attributes.iconId');
             relations[item[index].type].push(refactoredItem);
           } else {
@@ -197,9 +204,8 @@ function* getProviderLocation(action) {
 
 function* getProviderLocationServices(action) {
   const apiClient = yield select(getProviderLocationServiceClient);
-  //console.log(apiClient);
   const { providerId, providerLocationId, params, success, error } = action.payload;
-  params.all = true;
+  // params.all = true;
   try {
     const result = yield call(apiClient.list, [providerId, providerLocationId], params);
     const { data, included } = result;
@@ -220,6 +226,7 @@ function* getProviderLocationServices(action) {
 }
 
 function* createProviderLocation(action) {
+  console.log("~~~~~~~~~~PRovider Loation being created???~~~~~~~~", action);
   const apiClient = yield select(getProviderLocationClient);
   const { providerId, data, success, error } = action.payload;
   try {
@@ -280,6 +287,27 @@ function* deleteProviderLocation(action) {
   }
 }
 
+function* cloneProviderLocationTemplate(action) {
+  // const apiClient = yield select(getProviderLocationClient);
+  // const { providerId, providerLocationId, data, success, error } = action.payload;
+  // try {
+  //   const result = yield call(apiClient.update, [providerId, providerLocationId], data);
+  //   const { data: location, included } = result;
+  //   const refinedLocation = refineProviderLocation(location, included);
+  //   yield put({
+  //     type: actionTypes.UPDATE_PROVIDER_LOCATION_SUCCESS,
+  //   });
+  //   if (success) {
+  //     yield call(success, refinedLocation);
+  //   }
+  // } catch (e) {
+  //   yield put({ type: actionTypes.UPDATE_PROVIDER_LOCATION_FAILURE, payload: e });
+  //   if (error) {
+  //     yield call(error, e);
+  //   }
+  // }
+}
+
 export default function* ProviderLocationSaga() {
   yield takeEvery(actionTypes.GET_PROVIDER_LOCATIONS, getProviderLocations);
   yield takeEvery(actionTypes.FILTER_PROVIDER_LOCATIONS, getProviderLocations);
@@ -289,4 +317,5 @@ export default function* ProviderLocationSaga() {
   yield takeEvery(actionTypes.CREATE_PROVIDER_LOCATION, createProviderLocation);
   yield takeEvery(actionTypes.DELETE_PROVIDER_LOCATION, deleteProviderLocation);
   yield takeEvery(actionTypes.UPDATE_PROVIDER_LOCATION, updateProviderLocation);
+  yield takeEvery(actionTypes.CLONE_PROVIDER_LOCATION_TEMPLATE, cloneProviderLocationTemplate);
 }

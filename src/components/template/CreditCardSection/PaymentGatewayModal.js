@@ -1,8 +1,9 @@
 import React from 'react';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { set, get, isEmpty } from 'lodash';
-
+import { apiBaseUrl } from 'api/config';
 import { OrangeButton } from 'components/basic/Buttons';
 import { Selector, Input } from 'components/basic/Input';
 import Modal from 'components/compound/Modal';
@@ -39,6 +40,17 @@ class PaymentGatewayModal extends React.Component {
     gateway: {},
     credential: {}
   };
+
+  componentDidUpdate() {
+    if (this.state.step !== 'gateway' && this.state.gateway.value === 'wepay' && isEmpty(this.state.credential)) {
+      let creds = {
+        first_name: this.props.profile.firstName,
+        last_name: this.props.profile.lastName,
+        email: this.props.profile.email
+      };
+      this.setState({credential: creds});
+    }
+  }
 
   onChangeGateway = gateway => {
     this.setState({ gateway });
@@ -112,10 +124,33 @@ class PaymentGatewayModal extends React.Component {
     }
   };
 
+  createWePay = () => {
+    if (this.isValid()) {
+      const { credential } = this.state;
+      const { providerId } = this.props;
+      axios.post(`${apiBaseUrl}/merchant_accounts`, { merchant_account: {
+        email: credential.email,
+        first_name: credential.first_name,
+        last_name: credential.last_name,
+        tos_acceptance: true,
+        provider_id: providerId
+      }}).then(() => {
+        this.onSuccess();
+      }).catch(e =>  {
+        this.onError();
+      });
+    } else {
+      console.log('something is invalid');
+    }
+  }
+
   getActions = () => {
-    const { step } = this.state;
+    const { step, gateway } = this.state;
     if (step === 'gateway') {
       return [<OrangeButton key={`btn_next`} onClick={this.next}>Next</OrangeButton>];
+    }
+    if (gateway.value === 'wepay') {
+      return [<OrangeButton key={`btn_connect`} onClick={this.createWePay}>Create Account</OrangeButton>];
     }
     return [<OrangeButton key={`btn_connect`} onClick={this.connect}>Connect</OrangeButton>];
   };
@@ -139,10 +174,13 @@ class PaymentGatewayModal extends React.Component {
   renderInfoSelection = () => {
     const { gateway, credential } = this.state;
     const { fields } = gateway;
+    // console.log(this.props);
+    // console.log(gateway);
+    // console.log(credential);
     return (
       <Wrapper>
         <Title>
-          Please enter the information below to connect your payment gateway:
+          {gateway.value === 'wepay' ? 'Please enter a contact name and email to create your WePay Account.' : 'Please enter the information below to connect your payment gateway:'}
         </Title>
         {fields.map((field, idx) => (
           <InputField
@@ -167,10 +205,12 @@ class PaymentGatewayModal extends React.Component {
 
   render() {
     const { open } = this.props;
+    const { gateway } = this.state;
+    const gatewayVal = gateway.hasOwnProperty('value') ? gateway.value : '';
     const actions = this.getActions();
     return (
       <Modal
-        title="New Payment Method"
+        title={gatewayVal === 'wepay' ? "Create WePay Account" : "New Payment Method"}
         actions={actions}
         open={open}
         onClose={this.onClose}

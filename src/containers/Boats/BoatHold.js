@@ -214,18 +214,22 @@ class BoatHold extends React.PureComponent {
     const queryParams = queryString.parse(this.props.location.search);
     console.log(queryParams);
     console.log(values);
-    if (queryParams && !isEmpty(queryParams)) {
+    // if (queryParams && !isEmpty(queryParams)) {
+    if (values && !isEmpty(values)) {
       this.setState({ loading: true });
       axios.post(`${apiBaseUrl}/reservations`, { reservation: {
         ...queryParams,
         ...values
       }}).then(() => {
         this.setState({ loading: false });
-        // toastr.success('Success', 'Boat Reservation Sent Successfully!');
         this.props.history.push('/onlineboat/done');
       }).catch(e =>  {
         this.setState({ loading: false });
+        if (e.response.data.hasOwnProperty('zip')) {
+          toastr.error('Error', 'Please enter a valid zip code');
+        } else {
         toastr.error('Error', get(e.response, 'data.message'));
+        }
       });
     } else {
       toastr.error('Error', 'Missing parameters');
@@ -243,7 +247,7 @@ class BoatHold extends React.PureComponent {
               <FormContainer onSubmit={handleSubmit}>
                 <Img src={MMLogo} />
                 <TitleLabel>{'Almost There!'}</TitleLabel>
-                <DescLabel>{'Enter your information below to hold this boat for up to 24 hours and get ready for an Endless Staycation! A MarineMax sales professional will be in contact to assist you in completing the purchase of your new boat.'}</DescLabel>
+                <DescLabel>{'Enter your information below to hold this boat for up to 24 hours and get ready for an Endless Staycation! A MarineMax Sales Consultant will confirm boat availability and guide you through purchase options upon receiving your hold request.'}</DescLabel>
                 <SectionWrapper>
                   <SectionContainer>
                     <SectionTitle>{'Contact'}</SectionTitle>
@@ -297,6 +301,20 @@ class BoatHold extends React.PureComponent {
                             validate={emailValidation}
                           />
                           <Error name="email" />
+                        </InputRow>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col xs={12} sm={6} md={6}>
+                      <InputRow>
+                          <InputField
+                            name="zip"
+                            type="text"
+                            component="input"
+                            placeholder="Zip Code"
+                            validate={required}
+                          />
+                          <Error name="zip" />
                         </InputRow>
                       </Col>
                     </Row>
