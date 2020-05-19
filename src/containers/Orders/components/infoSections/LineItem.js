@@ -54,7 +54,7 @@ class LineItem extends React.Component {
       quantity: props.attributes.quantity,
       cost: props.attributes.cost,
       comment: props.attributes.comment || '',
-      serviceDescription: props.providerLocationService.attributes.serviceDescription || '',
+      serviceDescription: '',
       name: '',
       service
     };
