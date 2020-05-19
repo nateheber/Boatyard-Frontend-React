@@ -775,6 +775,7 @@ class AppEditor extends React.Component {
             console.log("Success on updating provider location");
             const categories = get(location, 'relationships.service_categories', []);
             this.setState({ isSaved: true }, () => {
+              console.log("Set local state and run local updateLocationServices");
               this.updateLocationServices(categories, currentServiceIds, currentServices);
             });
           },
@@ -793,7 +794,7 @@ class AppEditor extends React.Component {
   };
 
   updateLocationServices = (categories, currentServiceIds, services) => {
-    console.log("~~~~~~~~~UPDATING LOCATION SERVICE~~~~~~~~~");
+    console.log("~~~~~~~~~UPDATING LOCATION SERVICE in EDITOR~~~~~~~~~");
     console.log(services);
     const { locationServices } = this.props;
     const { isSaved } = this.state;
@@ -810,7 +811,8 @@ class AppEditor extends React.Component {
         const category = categories.find(item => {
           return parseInt(item.attributes.manualPosition) === Math.floor(manualPosition / 100);
         });
-        const serviceId = `${get(attributes, 'serviceId')}`;
+        const serviceId = `${get(attributes, 'serviceId')}` || '171';
+        console.log("Service Id in updateLocationServices", serviceId);
         const originService = allServices.find(item => `${item.id}` === serviceId);
         const cost = get(attributes, 'cost');
         const payload = {
