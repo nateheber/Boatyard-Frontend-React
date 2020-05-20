@@ -85,6 +85,7 @@ class OrderList extends React.Component {
       tab,
       page: 1,
       pageCount: 0,
+      searching: false,
       orders: [],
       filteredOrders: [],
       keyword: '',
@@ -242,15 +243,25 @@ class OrderList extends React.Component {
   };
 
   handleSearch = (keyword) => {
-    this.setState({ keyword }, () => {
-      this.loadOrders(keyword);
-    });
+    if (keyword.length <= 0) {
+      this.setState({ searching: false});
+      this.loadOrders();
+    } else {
+      this.setState({ keyword, searching: true }, () => {
+        this.loadOrders(keyword);
+      });
+    }
   }
 
   handleFilter = (filters) => {
-    this.setState({ selectedFilters: filters }, () => {
+    if (filters.length <= 0) {
+      this.setState({ searching: false});
       this.loadOrders();
-    })
+    } else {
+      this.setState({ selectedFilters: filters, searching: true }, () => {
+        this.loadOrders();
+      })
+    }
   }
 
   handleExport = () => {
@@ -315,9 +326,9 @@ class OrderList extends React.Component {
       };
     });
 
-    const { tab, selectedFilters } = this.state;
+    const { tab, selectedFilters, searching } = this.state;
     const { columns, selectedColumns } = this.props;
-
+    if (loading && !searching) return <LoadingSpinner loading={true} />
     return (
       <Wrapper>
         <OrderHeader
@@ -331,7 +342,7 @@ class OrderList extends React.Component {
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
           <Content>
             <TableWrapper>
-              { loading && <LoadingSpinner loading={true} /> }
+            { loading && <LoadingSpinner loading={true} /> }
               <Table
                 columns={selectedColumns}
                 records={processedOrders}
