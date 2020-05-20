@@ -2,30 +2,30 @@ import { findIndex, get, isEmpty, sortBy, /*filter,*/find } from 'lodash';
 import moment from 'moment';
 
 export const getUserFromOrder = (order, privilege = 'admin') => {
-  // let user = get(order, 'relationships.user');
-  // if (privilege !== 'admin') {
-  //   user = get(order, 'relationships.childAccount');
-  // }
-  // if (!isEmpty(user)) {
-  //   return {
-  //     id: user.id,
-  //     type: user.type,
-  //     ...user.attributes
-  //   };
-  // }
-  let user = get(order, 'relationships.childAccount');
-  if (!isEmpty(user)) {
-    if (user.hasOwnProperty('data')) {
-      user = get(order, 'relationships.user');
-    }
-    if (!isEmpty(user)) {
-      return {
-        id: user.id,
-        type: user.type,
-        ...user.attributes
-      };
-    }
+  let user = get(order, 'relationships.user');
+  if (privilege !== 'admin') {
+    user = get(order, 'relationships.childAccount');
   }
+  if (!isEmpty(user)) {
+    return {
+      id: user.id,
+      type: user.type,
+      ...user.attributes
+    };
+  }
+  // let user = get(order, 'relationships.childAccount');
+  // if (!isEmpty(user)) {
+  //   if (user.hasOwnProperty('data')) {
+  //     user = get(order, 'relationships.user');
+  //   }
+  //   if (!isEmpty(user)) {
+  //     return {
+  //       id: user.id,
+  //       type: user.type,
+  //       ...user.attributes
+  //     };
+  //   }
+  // }
   return user;
 };
 
