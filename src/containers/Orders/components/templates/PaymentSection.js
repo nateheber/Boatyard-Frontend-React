@@ -87,6 +87,7 @@ class PaymentSection extends React.Component {
 
   refreshCards = () => {
     const { order, privilege, GetCreditCards } = this.props;
+    console.log(this.props.order);
     let user = getUserFromOrder(order);
     if (privilege === 'provider') {
       user = getChildAccountFromOrder(order);
