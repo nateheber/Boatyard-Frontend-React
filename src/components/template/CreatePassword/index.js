@@ -69,6 +69,15 @@ export const WelcomeTitle = styled.div`
   text-align: center;
 `;
 
+export const MMWelcomeTitle = styled.div`
+  color: #0767A7;
+  font-size: 26px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+`;
+
 export const WelcomeDescription = styled.div`
   color: #0D485F;
   font-size: 18px;

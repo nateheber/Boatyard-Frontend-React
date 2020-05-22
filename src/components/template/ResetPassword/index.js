@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import queryString from 'query-string';
 import { isEmpty } from 'lodash';
 import { toastr } from 'react-redux-toastr';
-import { Logo, WelcomeTitle, WelcomeDescription, WelcomeWrapper, WelcomeMMDescription } from '../CreatePassword';
+import { Logo, WelcomeTitle, MMWelcomeTitle, WelcomeDescription, WelcomeWrapper, WelcomeMMDescription } from '../CreatePassword';
 import BoatYardLogoImage from '../../../resources/by_logo_2.png';
 import MMLogoImage from '../../../resources/mm-logo.png';
 import { ResetPassword } from 'store/actions/auth';
@@ -51,7 +51,28 @@ const MMButton = styled(BlueButton)`
 
 class ResetPasswordComponent extends React.Component {
   state = {
-    done: false
+    done: false,
+    redirect: ''
+  };
+
+  componentDidMount = () => {
+    let params = this.getParams(window.location.href);
+    if (params.hasOwnProperty('redirect_uri')) {
+      this.setState({redirect: params.redirect_uri});
+    }
+  }
+
+  getParams = (url) => {
+    var params = {};
+    var parser = document.createElement('a');
+    parser.href = url;
+    var query = parser.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split('=');
+      params[pair[0]] = decodeURIComponent(pair[1]);
+    }
+    return params;
   };
 
   handleResetPassword = (password) => {
@@ -76,7 +97,12 @@ class ResetPasswordComponent extends React.Component {
   };
 
   proceedToLogin = () => {
-    this.props.history.push('/login');
+    const { redirect } = this.state;
+    if (redirect !== '') {
+      window.location.href = redirect;
+    } else {
+      this.props.history.push('/login');
+    }
   }
 
   render() {
@@ -89,8 +115,8 @@ class ResetPasswordComponent extends React.Component {
             this.state.done &&
             <WelcomeWrapper>
               <Logo src={location === 'boatyard' ? BoatYardLogoImage : MMLogoImage} />
-              <WelcomeTitle>Thank you!</WelcomeTitle>
-              {location === 'marine-max' ? 
+              {location !== 'marine-max' ?  <WelcomeTitle>Thank you!</WelcomeTitle> : <MMWelcomeTitle>Thank you!</MMWelcomeTitle> }
+              {location !== 'marine-max' ? 
                 <WelcomeDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeDescription> :
                 <WelcomeMMDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeMMDescription>
               }

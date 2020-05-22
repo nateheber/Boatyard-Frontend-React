@@ -261,7 +261,7 @@ class MenuUI extends React.Component {
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClickOutside);
     this.reloadNotifications();
-    this.timerId = window.setInterval(this.reloadNotifications, 30*1000);
+   // this.timerId = window.setInterval(this.reloadNotifications, 30*1000);
     this.props.SetMessageBarUIStatus({opened: false, selected: -1});
   }
 
@@ -271,7 +271,7 @@ class MenuUI extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
-    window.clearInterval(this.timerId);
+   // window.clearInterval(this.timerId);
   }
 
   handleClickOutside = (event) => {
