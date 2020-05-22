@@ -51,7 +51,7 @@ const MMButton = styled(BlueButton)`
 
 class ResetPasswordComponent extends React.Component {
   state = {
-    done: false,
+    done: true,
     redirect: ''
   };
 
@@ -99,7 +99,7 @@ class ResetPasswordComponent extends React.Component {
   proceedToLogin = () => {
     const { redirect } = this.state;
     if (redirect !== '') {
-      window.location.href = redirect;
+      window.location.href = redirect + "=true";
     } else {
       this.props.history.push('/login');
     }
@@ -117,8 +117,8 @@ class ResetPasswordComponent extends React.Component {
               <Logo src={location === 'boatyard' ? BoatYardLogoImage : MMLogoImage} />
               {location !== 'marine-max' ?  <WelcomeTitle>Thank you!</WelcomeTitle> : <MMWelcomeTitle>Thank you!</MMWelcomeTitle> }
               {location !== 'marine-max' ? 
-                <WelcomeDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeDescription> :
-                <WelcomeMMDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeMMDescription>
+                <WelcomeDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeDescription> :
+                <WelcomeMMDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeMMDescription>
               }
               {location === 'marine-max' && <MMButton
                 type="submit"
