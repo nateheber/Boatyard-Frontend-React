@@ -51,7 +51,28 @@ const MMButton = styled(BlueButton)`
 
 class ResetPasswordComponent extends React.Component {
   state = {
-    done: false
+    done: false,
+    redirect: ''
+  };
+
+  componentDidMount = () => {
+    let params = this.getParams(window.location.href);
+    if (params.hasOwnProperty('redirect_uri')) {
+      this.setState({redirect: params.redirect_uri});
+    }
+  }
+
+  getParams = (url) => {
+    var params = {};
+    var parser = document.createElement('a');
+    parser.href = url;
+    var query = parser.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split('=');
+      params[pair[0]] = decodeURIComponent(pair[1]);
+    }
+    return params;
   };
 
   handleResetPassword = (password) => {
@@ -76,7 +97,12 @@ class ResetPasswordComponent extends React.Component {
   };
 
   proceedToLogin = () => {
-    this.props.history.push('/login');
+    const { redirect } = this.state;
+    if (redirect !== '') {
+      window.location.href = redirect;
+    } else {
+      this.props.history.push('/login');
+    }
   }
 
   render() {
