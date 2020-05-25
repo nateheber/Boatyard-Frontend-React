@@ -80,13 +80,13 @@ class LineItem extends React.Component {
   }
 
   onChange = (value, field) => {
-    console.log(value, field);
+    //console.log(value, field);
     const changeVal = {};
     if (field === 'cost') {
       value = value && value.replace('$', '');
     }
     set(changeVal, field, value);
-    console.log(changeVal);
+   // console.log(changeVal);
     this.setState(changeVal, () => {
       this.props.onChange(this.state);
     });
@@ -116,6 +116,7 @@ class LineItem extends React.Component {
     const { mode, onRemove, count } = this.props;
     const { quantity, cost, comment, service, serviceDescription } = this.state;
     const currentOption = this.getCurrentOption();
+    //console.log(this.props);
     return (
       <Record>
         <Line>
@@ -171,7 +172,12 @@ class LineItem extends React.Component {
           <Col sm={10}>
             {
               mode === 'edit' ? (
+                <>
+                <span>Service Description</span>
+                <TextArea value={serviceDescription} onChange={(evt) => this.onChange(evt.target.value, 'serviceDescription')} />
+                <span>Comments</span>
                 <TextArea value={comment} onChange={(evt) => this.onChange(evt.target.value, 'comment')} />
+                </>
               ) : (
                 <>
                 {serviceDescription && <Comment dangerouslySetInnerHTML={{ __html: serviceDescription || comment.replace(/\r?\n/g, '<br />') }} />}
