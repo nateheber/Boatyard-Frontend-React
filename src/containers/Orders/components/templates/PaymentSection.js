@@ -87,13 +87,13 @@ class PaymentSection extends React.Component {
 
   refreshCards = () => {
     const { order, privilege, GetCreditCards } = this.props;
-    console.log(this.props.order);
+
     let user = getUserFromOrder(order);
     if (privilege === 'provider') {
       user = getChildAccountFromOrder(order);
+      //user = getUserFromOrder(order, 'provider');
     }
 
-    console.log(user);
     let params = {};
     if (privilege === 'admin' && user && user.id) {
       params = {'credit_card[user_id]': user.id };
@@ -208,7 +208,7 @@ class PaymentSection extends React.Component {
 
   render() {
     const { order, currentStatus, payments } = this.props;
-    console.log(this.props.creditCards);
+    //console.log(this.props.creditCards);
     const { visibleOfCreateModal, visibleOfRefundModal } = this.state;
     const refundablePayments = map(
       filter(payments, {attributes: {refundable: true}}),

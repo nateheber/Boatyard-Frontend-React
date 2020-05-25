@@ -80,6 +80,7 @@ function* getServices(action) {
 }
 
 function* getAllServices(action) {
+  console.log("Getting all services");
   const serviceClient = yield select(getNormalServiceClient);
   let successType = actionTypes.GET_ALL_SERVICES_SUCCESS;
   let failureType = actionTypes.GET_ALL_SERVICES_FAILURE;
@@ -171,6 +172,8 @@ function* createService(action) {
 function* updateService(action) {
   const serviceClient = yield select(getServiceClient);
   const { serviceId, data, success, error } = action.payload;
+  console.log("Updating service...");
+  console.log(action.payload);
   try {
 
     yield call(serviceClient.update, serviceId, refineServceData(data));
