@@ -52,6 +52,7 @@ const MMButton = styled(BlueButton)`
 class ResetPasswordComponent extends React.Component {
   state = {
     done: false,
+    app: false,
     redirect: ''
   };
 
@@ -59,6 +60,8 @@ class ResetPasswordComponent extends React.Component {
     let params = this.getParams(window.location.href);
     if (params.hasOwnProperty('redirect_uri')) {
       this.setState({redirect: params.redirect_uri});
+    } else if (params.hasOwnProperty('app') && params['app'] === 'true') {
+      this.setState({ app: true });
     }
   }
 
@@ -106,7 +109,9 @@ class ResetPasswordComponent extends React.Component {
   }
 
   render() {
+    const { app } = this.state;
     const location = window.location.href.includes('marinemax') ? 'marine-max' : 'boatyard';
+    const app_user = location === 'marine-max' && app === true;
     return (
       <Wrapper>
         <SideContent>
@@ -117,10 +122,11 @@ class ResetPasswordComponent extends React.Component {
               <Logo src={location === 'boatyard' ? BoatYardLogoImage : MMLogoImage} />
               {location !== 'marine-max' ?  <WelcomeTitle>Thank you!</WelcomeTitle> : <MMWelcomeTitle>Thank you!</MMWelcomeTitle> }
               {location !== 'marine-max' ? 
-                <WelcomeDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeDescription> :
-                <WelcomeMMDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeMMDescription>
+              <WelcomeDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeDescription> :
+                app_user ? <WelcomeMMDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeMMDescription> :
+                <WelcomeMMDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeMMDescription> 
               }
-              {location === 'marine-max' && <MMButton
+              {(location === 'marine-max' && app !== true) && <MMButton
                 type="submit"
                 onClick={this.proceedToLogin}
               >
