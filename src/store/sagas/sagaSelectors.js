@@ -52,7 +52,7 @@ export const getChildAccountClient = state => {
 
 export const getServiceClient = state => {
   console.log("~~~~~~~~~~GETTING SERVICE CLIENT~~~~~~~~~~~~~~");
-  const providerLocationId = `${get(state.auth, 'providerLocationId') || get(state.order, 'currentOrder.attributes.providerLocationId') || ''}`;
+  const providerLocationId = `${get(state.auth, 'providerLocationId') || ''}`;
   console.log(providerLocationId);
   //const providerLocationId = `${get(state.order, 'currentOrder.attributes.providerLocationId') || ''}`;
   switch (state.auth.privilege) {
