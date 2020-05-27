@@ -5,7 +5,6 @@ import moment from 'moment';
 import { get, set, isEmpty, sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
-import { toastr } from 'react-redux-toastr';
 import {
   updateLineItems,
   deleteLineItem,
@@ -105,7 +104,6 @@ class LineItemSection extends React.Component {
     set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
     set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
     set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
-    set(lineItems, `[${idx}].providerLocationService.attributes.serviceDescription`, updateInfo.serviceDescription);
     this.setState({ lineItems }, () => {
       console.log(this.state);
     });
@@ -119,35 +117,10 @@ class LineItemSection extends React.Component {
     const { mode } = this.state;
     if (mode === 'edit') {
       this.updateLineItems();
-      this.updateServiceDescription();
     } else {
       this.saveNewItems();
     }
     this.setState({ mode: 'view' })
-  }
-
-  updateServiceDescription = () => {
-    console.log("updating service description...");
-    const { lineItems } = this.state;
-    const { UpdateService, currentOrder } = this.props;
-    const providerLocationId = get(currentOrder, 'attributes.providerLocationId');
-    //console.log(currentOrder, lineItems);
-    lineItems.forEach(item => {
-      const values = { service_description: item.providerLocationService.attributes.serviceDescription };
-      const data = providerLocationId ? { provider_location_service: values } : { service: values };
-    UpdateService({
-      serviceId: lineItems[0].providerLocationService.id,
-      data,
-      success: () => {
-        console.log("~~~~~~~~~~~~SUCCESSFUL SERVICE DESCRIPTION CALL~~~~~~~~~");
-        toastr.success('Success', 'Line Items Updated!')
-      },
-      error: (e) => {
-        console.log("~~~~~~~~~~~~ERROR SERVICE DESCRIPTION CALL~~~~~~~~~");
-        toastr.error('Error', `Failed to update Service Description for a line item`);
-      }
-    });
-    });
   }
 
   updateLineItems = () => {

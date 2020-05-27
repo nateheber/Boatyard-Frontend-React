@@ -221,7 +221,7 @@ export class TemplateEditor extends React.Component {
   }
 
   render() {
-    const { onCancel, privilege } = this.props;
+    const { onCancel } = this.props;
     const { subject, smsText, emailOptions, hasSecondSection, hasFooter, emailBuilder } = this.state;
     return (
       <Wrapper>
@@ -263,13 +263,13 @@ export class TemplateEditor extends React.Component {
         {hasFooter && <InputFieldWrapper className="primary">
           <TextArea placeholder={`${emailOptions.emailSenderName}\n${emailOptions.emailSenderCompany}`} disabled />
         </InputFieldWrapper>}
-        {privilege === 'admin' && <InputFieldWrapper className="primary">
+        <InputFieldWrapper className="primary">
           <InputLabel>Email Builder</InputLabel>
           <TextArea type="text" value={emailBuilder} onChange={this.onChangeEmailBuilder} />
-        </InputFieldWrapper>}
-        {privilege === 'admin' && <div dangerouslySetInnerHTML={{
+        </InputFieldWrapper>
+        <div dangerouslySetInnerHTML={{
           __html: emailBuilder
-        }}></div>}
+        }}></div>
         <Divider />
         <InputFieldWrapper className="primary">
           <InputLabel>Push Notification</InputLabel>
