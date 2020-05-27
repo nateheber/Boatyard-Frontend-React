@@ -72,15 +72,6 @@ class ResetPasswordComponent extends React.Component {
     } else if (params.hasOwnProperty('app') && params['app'] === 'true') {
       this.setState({ app: true });
     }
-
-
-    //console.log(params);
-    // delete params.redirect_uri;
-    // var queryString = Object.keys(params).map((key) => {
-    //   return (key + '=' + params[key])
-    // }).join('&');
-    // console.log(queryString);
-    //console.log(this.getJsonFromUrl(window.location.href));
   }
 
   getParams = (url) => {
@@ -177,7 +168,7 @@ class ResetPasswordComponent extends React.Component {
                 type="submit"
                 onClick={this.proceedToLogin}
               >
-                Login
+                Sign In
               </MMButton>}
             </WelcomeWrapper>
           }
