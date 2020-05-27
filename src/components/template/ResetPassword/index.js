@@ -42,7 +42,7 @@ const MMButton = styled(BlueButton)`
   height: 48px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 900;
-  font-size: 12px;
+  font-size: 16px;
   color: #000000;
   text-align: center;
   background-color: #0767A7;
@@ -63,10 +63,9 @@ class ResetPasswordComponent extends React.Component {
     if (params.hasOwnProperty('redirect_uri')) {
       this.setState({redirect: params.redirect_uri}, () => {
         delete params.redirect_uri;
-        var queryString = Object.keys(params).map((key) => {
+        let queryString = Object.keys(params).map((key) => {
           return (key + '=' + params[key])
         }).join('&');
-        //console.log(queryString);
         this.setState({ redirect_params: queryString });
       });
     } else if (params.hasOwnProperty('app') && params['app'] === 'true') {
