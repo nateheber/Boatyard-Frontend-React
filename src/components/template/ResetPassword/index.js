@@ -51,7 +51,7 @@ const MMButton = styled(BlueButton)`
 
 class ResetPasswordComponent extends React.Component {
   state = {
-    done: true,
+    done: false,
     app: false,
     redirect: '',
     redirect_params: ''
