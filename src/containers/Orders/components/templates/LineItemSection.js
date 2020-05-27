@@ -5,7 +5,6 @@ import moment from 'moment';
 import { get, set, isEmpty, sortBy } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
-
 import {
   updateLineItems,
   deleteLineItem,
@@ -13,6 +12,7 @@ import {
 } from 'store/reducers/lineItems';
 import { orderSelector } from 'store/selectors/orders';
 import { GetOrder } from 'store/actions/orders';
+import { UpdateService } from 'store/actions/services';
 import { Section } from 'components/basic/InfoSection';
 import NewLineItems from '../infoSections/NewLineItem';
 import LineItem from '../infoSections/LineItem';
@@ -44,7 +44,7 @@ class LineItemSection extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({lineItems: this.refactorLineItems(get(this.props, 'currentOrder.lineItems', []))})
+    this.setState({lineItems: this.refactorLineItems(get(this.props, 'currentOrder.lineItems', []))});
   }
 
   componentDidUpdate(prevProps) {
@@ -76,7 +76,6 @@ class LineItemSection extends React.Component {
   }
 
   onChange = (item, idx) => {
-    //console.log(item);
     const newItems = [...this.state.newItems];
     const { serviceId, quantity, cost, comment } = item;
     const { providerId, currentOrder } = this.props;
@@ -105,8 +104,10 @@ class LineItemSection extends React.Component {
     set(lineItems, `[${idx}].attributes.quantity`, updateInfo.quantity);
     set(lineItems, `[${idx}].attributes.cost`, updateInfo.cost);
     set(lineItems, `[${idx}].attributes.comment`, updateInfo.comment);
-    this.setState({ lineItems });
-  };
+    this.setState({ lineItems }, () => {
+      console.log(this.state);
+    });
+  }; 
 
   onEdit = () => {
     this.setState({ mode: 'edit' });
@@ -127,7 +128,7 @@ class LineItemSection extends React.Component {
     const { orderId, updateLineItems, GetOrder, currentOrder } = this.props;
     console.log("Updating line items...");
     // console.log(currentOrder);
-    console.log(lineItems);
+    //console.log(lineItems);
     const providerLocationId = get(currentOrder, 'attributes.providerId');
     const updateInfo = lineItems.map(
       ({ id, attributes: { serviceId, quantity, cost, comment }, providerLocationService }) => ( providerLocationId ? {
@@ -252,7 +253,8 @@ const mapDispatchToProps = {
   updateLineItems,
   deleteLineItem,
   createLineItems,
-  GetOrder
+  GetOrder, 
+  UpdateService
 };
 
 export default connect(
