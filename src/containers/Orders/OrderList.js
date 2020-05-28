@@ -110,8 +110,10 @@ class OrderList extends React.Component {
 
   loadOrders = (keyword) => {
     const { GetOrders, page, perPage, privilege } = this.props;
-    const { selectedFilters } = this.state;
-    let stringFilters = selectedFilters.map(filter => filter.value).join(',')
+    const { selectedFilters, startDate, endDate } = this.state;
+    let stringFilters = selectedFilters.map(filter => filter.value).join(',');
+    let start = startDate === null ? '' : moment(startDate).format('YYYY-MM-DD');
+    let end = endDate === null ? '' : moment(endDate).format('YYYY-MM-DD');
     const params = isEmpty(keyword) ? 
     privilege === 'admin' ?
     {
@@ -119,6 +121,8 @@ class OrderList extends React.Component {
       per_page: 15,
       //search: keyword,
       states: stringFilters,
+      start: start,
+      stop: end,
       'order[sort]': 'desc', 
       'order[order]': 'created_at'
     } : 
@@ -127,6 +131,8 @@ class OrderList extends React.Component {
       per_page: perPage,
       //search: keyword,
       states: stringFilters,
+      start: start,
+      stop: end,
       //'order[order]': 'provider_order_sequence',
       'order[sort]': 'desc'
     } :
@@ -134,6 +140,8 @@ class OrderList extends React.Component {
       page: page,
       search: keyword,
       states: stringFilters,
+      start: start,
+      stop: end,
       per_page: 15,
       'order[sort]': 'desc'
     };
@@ -261,6 +269,7 @@ class OrderList extends React.Component {
       this.loadOrders();
     } else {
       this.setState({ selectedFilters: filters, searching: true }, () => {
+
         this.loadOrders();
       })
     }
@@ -268,7 +277,9 @@ class OrderList extends React.Component {
 
   onDatesChange = (start, end) => {
     console.log("~~~~~~~~~~~Running OnDatesChange~~~~~~~~~~~~");
-    this.setState({startDate: start, endDate: end});
+    this.setState({startDate: start, endDate: end, searching: true}, () => {
+      this.loadOrders();
+    });
   }
 
   handleExport = () => {
@@ -303,7 +314,6 @@ class OrderList extends React.Component {
   }
 
   render() {
-    console.log(this.props);
     const { orders, page, privilege, statuses, providerStatuses, loading } = this.props;
     const selectedStatuses = privilege === 'admin' ? statuses : providerStatuses;
     const pageCount = this.getPageCount();

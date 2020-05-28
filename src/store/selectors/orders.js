@@ -4,7 +4,7 @@ import { getProviderLocations, getPrevilage, getProviderLocationId } from './aut
 
 const ORDER_COLUMNS = [
   { label: 'order', value: 'name', width: 1 },
-  { label: 'order placed', value: 'createdAt', width: 1.2 },
+  { label: 'order placed', value: 'createdAt', width: 1.4 },
   {
     label: 'CUSTOMER',
     value: [
