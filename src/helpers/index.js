@@ -1,5 +1,3 @@
-import React from 'react';
-
 //Camel Case string to snake case
 export function camelToSnake(string) {
   return string.replace(/[\w]([A-Z])/g, function(m) {
@@ -7,6 +5,7 @@ export function camelToSnake(string) {
   }).toLowerCase();
 }
 
+//Phone number formatting
 export function formatPhoneNumber(phoneNumber) {
   var cleaned = ('' + phoneNumber).replace(/\D/g, '');
   var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
