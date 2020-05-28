@@ -10,6 +10,7 @@ import { toastr } from 'react-redux-toastr';
 import InputMask from 'react-input-mask';
 
 import { apiBaseUrl } from 'api/config';
+import { camelToSnake } from '../../helpers';
 import { validateEmail } from 'utils/basic';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
 import BackgroundImage from '../../resources/boatshow/boat_show_new_bg.png';
@@ -211,14 +212,21 @@ class BoatHold extends React.PureComponent {
   }
 
   handleSubmit = (values) => {
-    const queryParams = queryString.parse(this.props.location.search);
-    console.log(queryParams);
-    console.log(values);
-    // if (queryParams && !isEmpty(queryParams)) {
+    let queryParams = queryString.parse(this.props.location.search);
+    let newParams = {};
+    if ('isYacht' in queryParams) {
+      queryParams['yacht'] = queryParams['isYacht'] === '0' ? false : true;
+    }
+
+    for(let camel in queryParams) {
+      newParams[camelToSnake(camel)] = queryParams[camel];
+    }
+    // console.log(newParams);
+    // console.log(values);
     if (values && !isEmpty(values)) {
       this.setState({ loading: true });
       axios.post(`${apiBaseUrl}/reservations`, { reservation: {
-        ...queryParams,
+        ...newParams,
         ...values
       }}).then(() => {
         this.setState({ loading: false });
