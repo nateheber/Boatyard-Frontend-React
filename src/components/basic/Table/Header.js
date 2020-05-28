@@ -5,6 +5,7 @@ import { isBrowser } from 'react-device-detect';
 import { ResizableBox } from 'react-resizable';
 import { get } from 'lodash';
 import { OrderSearchFilter } from '../../../components/basic/Dropdown';
+import {  DateSelectionFilter } from '../../../components/basic/Dropdown';
 
 import 'react-resizable/css/styles.css';
 import './style.css';
@@ -152,7 +153,7 @@ export class TableHeader extends React.Component {
   }
   
   render () {
-    const { columns, sortColumn, isAsc, onSort, type = 'primary', statuses, onChangeFilter, selectedFilters } = this.props;
+    const { columns, sortColumn, isAsc, onSort, type = 'primary', statuses, onChangeFilter, selectedFilters, onDatesChange, startDate, endDate } = this.props;
     const { widths } = this.state;
     return isBrowser ? (
       <Wrapper className={className(type)} ref={this.setWrapperInfo}>
@@ -176,6 +177,9 @@ export class TableHeader extends React.Component {
                 {col.sort === sortColumn && type === 'primary' && (
                   <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
                 )}
+                {col.label === 'order placed' ? 
+                  <DateSelectionFilter 
+                    handleDatesChange={onDatesChange} />: ''}
                 {col.label === 'order status' ? 
                   <OrderSearchFilter 
                     items={statuses}
@@ -200,6 +204,12 @@ export class TableHeader extends React.Component {
                 {col.sort === sortColumn && type === 'primary' && (
                   <ArrBlue className={isAsc ? 'ascending' : 'descending'} />
                 )}
+                {col.label === 'order placed' ? 
+                  <DateSelectionFilter 
+                    handleDatesChange={onDatesChange}
+                    startDate={startDate}
+                    endDate={endDate}
+                  /> : ''}
               </ColumnHeaderContent>
             </ColumnHeader>
           );
