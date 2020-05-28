@@ -89,7 +89,9 @@ class OrderList extends React.Component {
       orders: [],
       filteredOrders: [],
       keyword: '',
-      selectedFilters: []
+      selectedFilters: [],
+      startDate: null,
+      endDate: null
     };
   }
 
@@ -264,6 +266,11 @@ class OrderList extends React.Component {
     }
   }
 
+  onDatesChange = (start, end) => {
+    console.log("~~~~~~~~~~~Running OnDatesChange~~~~~~~~~~~~");
+    this.setState({startDate: start, endDate: end});
+  }
+
   handleExport = () => {
     const { token } = this.props;
     const { selectedFilters } = this.state;
@@ -326,7 +333,8 @@ class OrderList extends React.Component {
       };
     });
 
-    const { tab, selectedFilters, searching } = this.state;
+    const { tab, selectedFilters, searching, startDate, endDate } = this.state;
+    console.log(this.state);
     const { columns, selectedColumns } = this.props;
     if (loading && !searching) return <LoadingSpinner loading={true} />
     return (
@@ -347,6 +355,9 @@ class OrderList extends React.Component {
                 columns={selectedColumns}
                 records={processedOrders}
                 statuses={selectedStatuses}
+                startDate={startDate}
+                endDate={endDate}
+                onDatesChange={this.onDatesChange}
                 onChangeFilter={this.handleFilter}
                 selectedFilters={selectedFilters}
                 toDetails={this.toDetails}
