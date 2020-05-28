@@ -115,7 +115,6 @@ class LineItem extends React.Component {
     const { mode, onRemove, count } = this.props;
     const { quantity, cost, comment, service, serviceDescription } = this.state;
     const currentOption = this.getCurrentOption();
-    console.log(comment);
     return (
       <Record>
         <Line>
