@@ -151,17 +151,21 @@ class OrderList extends React.Component {
   onChangeTab = (tab, page = 1) => {
     console.log(page);
     const { privilege } = this.props;
-    const { keyword, selectedFilters } = this.state;
+    const { keyword, selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
+    let start = startDate === null ? '' : moment(startDate).format('YYYY-MM-DD');
+    let end = endDate === null ? '' : moment(endDate).format('YYYY-MM-DD');
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
-      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft', search: keyword } });
+      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft', search: keyword, start: start, stop: end } });
     } else if (tab === INVOICED_TAB) {
       this.props.GetOrders({
         params: {
           page,
           per_page: 15,
+          start: start, 
+          stop: end,
           'invoices': true,
           'states': 'accepted,provisioned,scheduled,started,invoiced',
           'without_states': 'completed',
@@ -181,7 +185,7 @@ class OrderList extends React.Component {
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 15, states: 'dispatched', search: keyword } });
+        this.props.GetOrders({ params: { page, per_page: 15, states: 'dispatched', search: keyword, start: start, stop: end } });
       }
     } else {
       if (privilege === 'provider') {
@@ -192,6 +196,8 @@ class OrderList extends React.Component {
             per_page: 15,
             search: keyword,
             states: stringFilters,
+            start: start,
+            stop: end,
             // 'order[order]': 'provider_order_sequence',
             'order[sort]': 'desc',
             'order[order]': 'created_at'
@@ -199,7 +205,7 @@ class OrderList extends React.Component {
         });
       } else {
         console.log("changing pages")
-        this.props.GetOrders({ params: { page, per_page: 25, search: keyword, states: stringFilters, 'order[sort]': 'desc', 'order[order]': 'created_at' } });
+        this.props.GetOrders({ params: { page, per_page: 25, search: keyword, states: stringFilters, start: start, stop: end, 'order[sort]': 'desc', 'order[order]': 'created_at' } });
       }
     }
   };
@@ -284,28 +290,29 @@ class OrderList extends React.Component {
 
   handleExport = () => {
     const { token } = this.props;
-    const { selectedFilters } = this.state;
+    const { selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
+    let start = startDate === null ? '' : moment(startDate).format('YYYY-MM-DD');
+    let end = endDate === null ? '' : moment(endDate).format('YYYY-MM-DD');
     const now = new Date();
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
     myHeaders.append('Content-Type', 'application/json');
     let url;
     if (stringFilters.length === 0) {
-      url = `${apiBaseUrl}/reports/transactions?start=2020-05-01&stop=2020-05-30&xls=true`;
+      url = `${apiBaseUrl}/reports/transactions?start=${start}&stop=${end}&xls=true`;
     } else {
-      url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-05-01&stop=2020-05-30&xls=true`;
+      url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=${start}&stop=${end}&xls=true`;
     }
     console.log(url);
     fetch(url, {
       headers: myHeaders
     })
-    .then((resp) => resp.blob()) // Transform the data into json
+    .then((resp) => resp.blob())
     .then(function(blob) {
       const url = window.URL.createObjectURL(new Blob([blob]));
       const link = document.createElement('a');
       link.href = url;
-
       link.setAttribute('download', `Transactions-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.xlsx`);
       document.body.appendChild(link);
       link.click();
