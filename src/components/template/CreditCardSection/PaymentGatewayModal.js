@@ -10,6 +10,7 @@ import Modal from 'components/compound/Modal';
 import { toastr } from 'react-redux-toastr';
 
 import { CreatePaymentGateway } from 'store/actions/paymentGateway';
+import { getToken } from 'store/selectors/auth';
 
 import { gatewayOptions } from 'utils/paymentGateway';
 
@@ -127,14 +128,21 @@ class PaymentGatewayModal extends React.Component {
   createWePay = () => {
     if (this.isValid()) {
       const { credential } = this.state;
-      const { providerId } = this.props;
+      const { providerId, token } = this.props;
+      let headers = {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Authorization': token
+      }
       axios.post(`${apiBaseUrl}/merchant_accounts`, { merchant_account: {
         email: credential.email,
         first_name: credential.first_name,
         last_name: credential.last_name,
         tos_acceptance: true,
         provider_id: providerId
-      }}).then(() => {
+      }}, {
+        headers: headers
+      }).then(() => {
         this.onSuccess();
       }).catch(e =>  {
         this.onError();
@@ -223,11 +231,15 @@ class PaymentGatewayModal extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  token: getToken(state),
+});
+
 const mapDispatchToProps = {
   CreatePaymentGateway
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(PaymentGatewayModal);
