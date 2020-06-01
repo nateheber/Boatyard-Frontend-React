@@ -128,7 +128,7 @@ class PaymentGatewayModal extends React.Component {
   createWePay = () => {
     if (this.isValid()) {
       const { credential } = this.state;
-      const { providerId, token } = this.props;
+      const { providerId, providerLocationId, token } = this.props;
       let headers = {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
@@ -139,7 +139,8 @@ class PaymentGatewayModal extends React.Component {
         first_name: credential.first_name,
         last_name: credential.last_name,
         tos_acceptance: true,
-        provider_id: providerId
+        provider_id: providerId,
+        provider_location_id: providerLocationId
       }}, {
         headers: headers
       }).then(() => {
