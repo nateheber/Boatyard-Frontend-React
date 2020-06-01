@@ -19,11 +19,11 @@ class PaymentSettings extends React.Component {
 
   render() {
     const { showPaymentModal } = this.state;
-    const { privilege, providerId, profile } = this.props;
+    const { privilege, providerId, providerLocationId, profile } = this.props;
     return (
       <React.Fragment>
         <HollowButton onClick={this.showGatewayModal} style={{ margin: 0 }}>Connect Payment Gateway</HollowButton>
-        <PaymentGatewayModal open={showPaymentModal} onClose={this.closeGatewayModal} privilege={privilege} providerId={providerId} profile={profile} />
+        <PaymentGatewayModal open={showPaymentModal} onClose={this.closeGatewayModal} privilege={privilege} providerId={providerId} providerLocationId={providerLocationId} profile={profile} />
       </React.Fragment>
     );
   }
