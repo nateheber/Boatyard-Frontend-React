@@ -89,7 +89,9 @@ class OrderList extends React.Component {
       orders: [],
       filteredOrders: [],
       keyword: '',
-      selectedFilters: []
+      selectedFilters: [],
+      startDate: null,
+      endDate: null
     };
   }
 
@@ -108,15 +110,18 @@ class OrderList extends React.Component {
 
   loadOrders = (keyword) => {
     const { GetOrders, page, perPage, privilege } = this.props;
-    const { selectedFilters } = this.state;
-    let stringFilters = selectedFilters.map(filter => filter.value).join(',')
+    const { selectedFilters, startDate, endDate } = this.state;
+    let stringFilters = selectedFilters.map(filter => filter.value).join(',');
+    let start = startDate === null ? '' : moment(startDate).format('YYYY-MM-DD');
+    let end = endDate === null ? '' : moment(endDate).format('YYYY-MM-DD');
     const params = isEmpty(keyword) ? 
     privilege === 'admin' ?
     {
       page: page ? page : 1,
       per_page: 15,
-      //search: keyword,
       states: stringFilters,
+      start: start,
+      stop: end,
       'order[sort]': 'desc', 
       'order[order]': 'created_at'
     } : 
@@ -125,6 +130,8 @@ class OrderList extends React.Component {
       per_page: perPage,
       //search: keyword,
       states: stringFilters,
+      start: start,
+      stop: end,
       //'order[order]': 'provider_order_sequence',
       'order[sort]': 'desc'
     } :
@@ -132,6 +139,8 @@ class OrderList extends React.Component {
       page: page,
       search: keyword,
       states: stringFilters,
+      start: start,
+      stop: end,
       per_page: 15,
       'order[sort]': 'desc'
     };
@@ -141,17 +150,21 @@ class OrderList extends React.Component {
   onChangeTab = (tab, page = 1) => {
     console.log(page);
     const { privilege } = this.props;
-    const { keyword, selectedFilters } = this.state;
+    const { keyword, selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
+    let start = startDate === null ? '' : moment(startDate).subtract('days', 1).format('YYYY-MM-DD');
+    let end = endDate === null ? '' : moment(endDate).subtract('days', 1).format('YYYY-MM-DD');
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
-      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft', search: keyword } });
+      this.props.GetOrders({ params: { page, per_page: 15, 'order[state]': 'draft', search: keyword, start: start, stop: end } });
     } else if (tab === INVOICED_TAB) {
       this.props.GetOrders({
         params: {
           page,
           per_page: 15,
+          start: start, 
+          stop: end,
           'invoices': true,
           'states': 'accepted,provisioned,scheduled,started,invoiced',
           'without_states': 'completed',
@@ -171,7 +184,7 @@ class OrderList extends React.Component {
           }
         });
       } else {
-        this.props.GetOrders({ params: { page, per_page: 15, states: 'dispatched', search: keyword } });
+        this.props.GetOrders({ params: { page, per_page: 15, states: 'dispatched', search: keyword, start: start, stop: end } });
       }
     } else {
       if (privilege === 'provider') {
@@ -182,6 +195,8 @@ class OrderList extends React.Component {
             per_page: 15,
             search: keyword,
             states: stringFilters,
+            start: start,
+            stop: end,
             // 'order[order]': 'provider_order_sequence',
             'order[sort]': 'desc',
             'order[order]': 'created_at'
@@ -189,7 +204,19 @@ class OrderList extends React.Component {
         });
       } else {
         console.log("changing pages")
-        this.props.GetOrders({ params: { page, per_page: 25, search: keyword, states: stringFilters, 'order[sort]': 'desc', 'order[order]': 'created_at' } });
+        this.props.GetOrders({ 
+          params: { 
+            page: page, 
+            per_page: 15, 
+            search: keyword, 
+            states: stringFilters, 
+            start: start, 
+            stop: end, 
+            'order[sort]': 
+            'desc', 'order[order]': 'created_at' 
+          } 
+        });
+      
       }
     }
   };
@@ -259,35 +286,66 @@ class OrderList extends React.Component {
       this.loadOrders();
     } else {
       this.setState({ selectedFilters: filters, searching: true }, () => {
+
         this.loadOrders();
       })
     }
   }
 
+  onDatesChange = (start, end) => {
+    console.log("~~~~~~~~~~~Running OnDatesChange~~~~~~~~~~~~");
+    const { keyword, selectedFilters } = this.state;
+    let stringFilters = selectedFilters.map(filter => filter.value).join(',');
+    this.setState({startDate: start, endDate: end, searching: true, page: 1}, () => {
+      this.props.GetOrders({ 
+        params: { 
+          page: 1, 
+          per_page: 25, 
+          search: keyword, 
+          states: stringFilters, 
+          start: this.state.startDate === null ? '' : moment(this.state.startDate).subtract('days', 1).format('YYYY-MM-DD'), 
+          stop: this.state.endDate === null ? '' : moment(this.state.endDate).add('days', 1).format('YYYY-MM-DD'), 
+          'order[sort]': 'desc', 
+          'order[order]': 'created_at' 
+        } 
+      });
+      //this.loadOrders();
+    });
+  }
+
   handleExport = () => {
     const { token } = this.props;
-    const { selectedFilters } = this.state;
+    const { selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
+    let start = startDate === null ? '' : moment(startDate).format('YYYY-MM-DD');
+    let end = endDate === null ? '' : moment(endDate).format('YYYY-MM-DD');
     const now = new Date();
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
     myHeaders.append('Content-Type', 'application/json');
     let url;
     if (stringFilters.length === 0) {
-      url = `${apiBaseUrl}/reports/transactions?start=2020-05-01&stop=2020-05-30&xls=true`;
+      if (start === null) {
+        url = `${apiBaseUrl}/reports/transactions?start=2020-06-01&stop=2020-06-30&xls=true`;
+      } else {
+        url = `${apiBaseUrl}/reports/transactions?start=${start}&stop=${end}&xls=true`;
+      }
     } else {
-      url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-05-01&stop=2020-05-30&xls=true`;
+      if (start === null) {
+        url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-06-01&stop=2020-06-30&xls=true`;
+      } else {
+        url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=${start}&stop=${end}&xls=true`;
+      }
     }
     console.log(url);
     fetch(url, {
       headers: myHeaders
     })
-    .then((resp) => resp.blob()) // Transform the data into json
+    .then((resp) => resp.blob())
     .then(function(blob) {
       const url = window.URL.createObjectURL(new Blob([blob]));
       const link = document.createElement('a');
       link.href = url;
-
       link.setAttribute('download', `Transactions-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.xlsx`);
       document.body.appendChild(link);
       link.click();
@@ -296,7 +354,6 @@ class OrderList extends React.Component {
   }
 
   render() {
-    console.log(this.props);
     const { orders, page, privilege, statuses, providerStatuses, loading } = this.props;
     const selectedStatuses = privilege === 'admin' ? statuses : providerStatuses;
     const pageCount = this.getPageCount();
@@ -326,7 +383,8 @@ class OrderList extends React.Component {
       };
     });
 
-    const { tab, selectedFilters, searching } = this.state;
+    const { tab, selectedFilters, searching, startDate, endDate } = this.state;
+    console.log(this.state);
     const { columns, selectedColumns } = this.props;
     if (loading && !searching) return <LoadingSpinner loading={true} />
     return (
@@ -347,6 +405,9 @@ class OrderList extends React.Component {
                 columns={selectedColumns}
                 records={processedOrders}
                 statuses={selectedStatuses}
+                startDate={startDate}
+                endDate={endDate}
+                onDatesChange={this.onDatesChange}
                 onChangeFilter={this.handleFilter}
                 selectedFilters={selectedFilters}
                 toDetails={this.toDetails}
