@@ -119,7 +119,6 @@ class OrderList extends React.Component {
     {
       page: page ? page : 1,
       per_page: 15,
-      //search: keyword,
       states: stringFilters,
       start: start,
       stop: end,
@@ -153,8 +152,8 @@ class OrderList extends React.Component {
     const { privilege } = this.props;
     const { keyword, selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
-    let start = startDate === null ? '' : moment(startDate).format('YYYY-MM-DD');
-    let end = endDate === null ? '' : moment(endDate).format('YYYY-MM-DD');
+    let start = startDate === null ? '' : moment(startDate).subtract('days', 1).format('YYYY-MM-DD');
+    let end = endDate === null ? '' : moment(endDate).subtract('days', 1).format('YYYY-MM-DD');
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
@@ -205,7 +204,19 @@ class OrderList extends React.Component {
         });
       } else {
         console.log("changing pages")
-        this.props.GetOrders({ params: { page, per_page: 25, search: keyword, states: stringFilters, start: start, stop: end, 'order[sort]': 'desc', 'order[order]': 'created_at' } });
+        this.props.GetOrders({ 
+          params: { 
+            page: page, 
+            per_page: 15, 
+            search: keyword, 
+            states: stringFilters, 
+            start: start, 
+            stop: end, 
+            'order[sort]': 
+            'desc', 'order[order]': 'created_at' 
+          } 
+        });
+      
       }
     }
   };
@@ -283,8 +294,22 @@ class OrderList extends React.Component {
 
   onDatesChange = (start, end) => {
     console.log("~~~~~~~~~~~Running OnDatesChange~~~~~~~~~~~~");
-    this.setState({startDate: start, endDate: end, searching: true}, () => {
-      this.loadOrders();
+    const { keyword, selectedFilters } = this.state;
+    let stringFilters = selectedFilters.map(filter => filter.value).join(',');
+    this.setState({startDate: start, endDate: end, searching: true, page: 1}, () => {
+      this.props.GetOrders({ 
+        params: { 
+          page: 1, 
+          per_page: 25, 
+          search: keyword, 
+          states: stringFilters, 
+          start: this.state.startDate === null ? '' : moment(this.state.startDate).subtract('days', 1).format('YYYY-MM-DD'), 
+          stop: this.state.endDate === null ? '' : moment(this.state.endDate).add('days', 1).format('YYYY-MM-DD'), 
+          'order[sort]': 'desc', 
+          'order[order]': 'created_at' 
+        } 
+      });
+      //this.loadOrders();
     });
   }
 

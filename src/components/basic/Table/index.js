@@ -17,6 +17,7 @@ const Wrapper = styled.div`
   background-color: white;
   width: 100%;
   overflow-x: auto;
+  min-height: 700px;
   padding-bottom: 10px;
 `;
 
