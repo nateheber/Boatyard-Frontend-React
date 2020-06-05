@@ -74,7 +74,8 @@ const ServiceDropDown = ({value, onChangeService, currentOrder, services, locati
     const options = filteredServices.map(option => ({
       value: option.id,
       cost: option.cost,
-      label: option.name
+      label: option.name,
+      costType: option.costType
     }));
     console.log(filteredServices);
     return options;
