@@ -45,6 +45,7 @@ class LineItemSection extends React.Component {
 
   componentDidMount() {
     this.setState({lineItems: this.refactorLineItems(get(this.props, 'currentOrder.lineItems', []))});
+    console.log(this.props.currentOrder.lineItems);
   }
 
   componentDidUpdate(prevProps) {
@@ -194,7 +195,7 @@ class LineItemSection extends React.Component {
 
   render() {
     const { newItems, mode, lineItems } = this.state;
-    const { updatedAt, currentOrder: {attributes: {providerLocationId}} } = this.props;
+    const { updatedAt, currentOrder: {attributes: {providerLocationId}, relationships: {boat}} } = this.props;
     return (
       <Section
         contentStyle={{ paddingBottom: 0 }}
@@ -221,6 +222,7 @@ class LineItemSection extends React.Component {
           <NewLineItems
             onChange={item => this.onChange(item, idx)}
             key={`new_item_${idx}`}
+            boat={boat}
             remove={() => this.removeNewItem(idx)}
             providerLocationId={providerLocationId}
           />
