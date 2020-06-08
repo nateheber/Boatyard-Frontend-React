@@ -107,8 +107,11 @@ class LocationSelector extends React.Component {
   render() {
     const { keyword } = this.state;
     let { locations, selected } = this.props;
+  
     if ( keyword ) {
-        locations = filter(locations, l => l.locationName.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
+      //Remove null values just in case
+      locations = locations.filter(location => location.locationName !== null);
+      locations = filter(locations, l => l.locationName.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
     }
     locations = orderBy(locations, ['locationName'], ['asc']);
     return (
