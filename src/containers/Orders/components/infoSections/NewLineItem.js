@@ -30,13 +30,14 @@ class NewLineItem extends React.Component {
   };
 
   onChangeService = (service) => {
-    console.log(service);
+    const { boat } = this.props;
+    const quantityAvailable = service.costType === 'Length' && boat.attributes.length !== null;
     this.setState({
       serviceId: service.value,
       cost: service.cost,
-      quantity: 1
+      quantity: quantityAvailable ? boat.attributes.length : 1
     }, () => {
-      console.log(this.state);
+      //console.log(this.state);
       this.props.onChange(this.state);
     });
   };
