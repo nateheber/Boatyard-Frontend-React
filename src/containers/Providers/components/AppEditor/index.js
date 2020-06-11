@@ -812,6 +812,28 @@ class AppEditor extends React.Component {
     }
   };
 
+  handleCloneButtonClick = () => {
+    const { selectedLocation, selectedTemplate } = this.state;
+    let location = selectedLocation;
+    console.log("Clicking clone button");
+    let params = {
+      "provider_location_copy": {
+        "source_provider_location_id": selectedTemplate.id,
+        "target_provider_location_id": selectedLocation.id
+      }
+    };
+    this.props.CloneProviderLocationTemplate({
+      params,
+      success: () => {
+        toastr.success('Success', 'Cloned Successfully!');
+        this.resetData(location);
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+  }
+
   updateLocationServices = (categories, currentServiceIds, services) => {
     console.log("~~~~~~~~~UPDATING LOCATION SERVICE in EDITOR~~~~~~~~~");
     console.log(services);
@@ -945,6 +967,7 @@ class AppEditor extends React.Component {
           onChangeLocation={this.handleChangeLocation}
           handleChangeTemplate={this.handleChangeTemplate}
           onSave={this.handleSaveButtonClick}
+          onCloneButtonClick={this.handleCloneButtonClick}
           onChangePublishStatus={this.handlePublishStatus}
         />
         <Content>
