@@ -153,7 +153,7 @@ class OrderList extends React.Component {
     const { keyword, selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
     let start = startDate === null ? '' : moment(startDate).subtract('days', 1).format('YYYY-MM-DD');
-    let end = endDate === null ? '' : moment(endDate).subtract('days', 1).format('YYYY-MM-DD');
+    let end = endDate === null ? '' : moment(endDate).add('days', 1).format('YYYY-MM-DD');
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
@@ -304,7 +304,7 @@ class OrderList extends React.Component {
           per_page: 25, 
           search: keyword, 
           states: stringFilters, 
-          start: this.state.startDate === null ? '' : moment(this.state.startDate).subtract('days', 1).format('YYYY-MM-DD'), 
+          start: this.state.startDate === null ? '' : moment(this.state.startDate).format('YYYY-MM-DD'),//.subtract('days', 1).format('YYYY-MM-DD'), 
           stop: this.state.endDate === null ? '' : moment(this.state.endDate).add('days', 1).format('YYYY-MM-DD'), 
           'order[sort]': 'desc', 
           'order[order]': 'created_at' 
