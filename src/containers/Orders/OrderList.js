@@ -314,6 +314,12 @@ class OrderList extends React.Component {
     });
   }
 
+  resetFilters = () => {
+    this.setState({ selectedFilters: [] }, () => {
+      this.loadOrders();
+    });
+  }
+
   handleExport = () => {
     const { token } = this.props;
     const { selectedFilters, startDate, endDate } = this.state;
@@ -406,6 +412,7 @@ class OrderList extends React.Component {
                 columns={selectedColumns}
                 records={processedOrders}
                 statuses={selectedStatuses}
+                resetFilters={this.resetFilters}
                 startDate={startDate}
                 endDate={endDate}
                 onDatesChange={this.onDatesChange}
