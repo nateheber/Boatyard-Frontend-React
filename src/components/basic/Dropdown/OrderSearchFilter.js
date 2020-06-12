@@ -66,6 +66,11 @@ const MenuItem = styled.button`
   outline: none;
 `;
 
+const ResetDiv = styled.div`
+  text-align: center;
+  margin-top: 10px;
+`;
+
 export class OrderSearchFilter extends React.Component {
   constructor() {
     super();
@@ -102,6 +107,11 @@ export class OrderSearchFilter extends React.Component {
     return idx >= 0;
   };
 
+  reset = () => {
+    const { resetFilters } = this.props;
+    resetFilters();
+  }
+
   select = val => {
     const { onChangeSelection, selected } = this.props;
     const idx = findIndex(selected, sel => sel.value === val.value);
@@ -126,7 +136,7 @@ export class OrderSearchFilter extends React.Component {
 
   render() {
     const { showMenu } = this.state;
-    const { items } = this.props;
+    const { items, selected } = this.props;
     return (
       <Wrapper ref={this.setWrapperRef}>
         {/* <FilterIcon
@@ -164,6 +174,7 @@ export class OrderSearchFilter extends React.Component {
               </MenuItem>
             </MenuItemLi>
           ))}
+          { selected.length >= 1 && <ResetDiv onClick={this.reset}>Reset</ResetDiv> }
         </DropdownMenu>
       </Wrapper>
     );
