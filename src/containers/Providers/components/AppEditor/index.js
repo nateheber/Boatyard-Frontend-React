@@ -108,6 +108,9 @@ class AppEditor extends React.Component {
     const { providerId, GetProviderLocations } = this.props;
     GetProviderLocations({
       providerId,
+      params: {
+        per_page: 1000,
+      },
       success: () => {
         const { providerLocations } = this.props;
         const { selectedLocation } = this.state;
@@ -118,9 +121,12 @@ class AppEditor extends React.Component {
   };
 
   resetData = (location) => {
+    console.log(location);
+    console.log("SERVICES:", this.props);
     const { GetProviderLocationServices } = this.props;
     const banner = this.getBanner(location);
     const categories = orderBy(this.getCategories(location), [function(o){ return o.attributes.manualPosition; }], ['asc']);
+    console.log(categories);
     const { data, currentItem } = this.state;
     let updatedItem = {};
     const newData = JSON.parse(JSON.stringify(data));
@@ -129,12 +135,16 @@ class AppEditor extends React.Component {
       providerLocationId: `${get(location, 'id')}`,
       params: {
         // all: true
-        'provider_location_service[platform_service]': true
+        'provider_location_service[platform_service]': true,
+        per_page: 100,
       },
       success: (services) => {
         console.log("SUCCESS");
+        console.log(services);
         const filtedServices = services.filter(service => get(service, 'attributes.platformService'));
         console.log(filtedServices);
+
+        //Access services UNDER Service Categories
         let items = categories.map((category) => {
           let filtered = filtedServices.filter(service => (get(service, 'attributes.serviceCategoryId') || '').toString() === get(category, 'id'));
           filtered = orderBy(filtered, [function(o){ return o.attributes.manualPosition; }], ['asc']);
@@ -166,6 +176,8 @@ class AppEditor extends React.Component {
           };
           return item;
         });
+
+        //Access root services on the home page
         const rootServices = filtedServices.filter(service => !get(service, 'attributes.serviceCategoryId')).map(service => {
           const item = {
             id: service.attributes.manualPosition,
@@ -180,11 +192,16 @@ class AppEditor extends React.Component {
           }
           return item;
         });
+
+        //Combine both items(service categories) and root services from home page
         items = orderBy(items.concat(rootServices), ['id'], ['asc']);
         items = items.map((item, index) => {
           item.id = index + 1;
           return item;
         })
+        console.log("Updated items for phone view:", items);
+
+        //Setting new/updated data/items
         set(newData, 'items', items);
         this.setState({
           data: newData,
@@ -198,6 +215,7 @@ class AppEditor extends React.Component {
         toastr.error('Error', e.message);
       }
     });
+    console.log(this.state);
   };
 
   onChangeStep = (step) => {
@@ -259,6 +277,7 @@ class AppEditor extends React.Component {
   getRenderingData = () => {
     const path = this.getEditingPath();
     const { data } = this.state;
+    console.log(data);
     if (path === '') {
       return data;
     }
@@ -793,6 +812,28 @@ class AppEditor extends React.Component {
     }
   };
 
+  handleCloneButtonClick = () => {
+    const { selectedLocation, selectedTemplate } = this.state;
+    let location = selectedLocation;
+    console.log("Clicking clone button");
+    let params = {
+      "provider_location_copy": {
+        "source_provider_location_id": selectedTemplate.id,
+        "target_provider_location_id": selectedLocation.id
+      }
+    };
+    this.props.CloneProviderLocationTemplate({
+      params,
+      success: () => {
+        toastr.success('Success', 'Cloned Successfully!');
+        this.resetData(location);
+      },
+      error: (e) => {
+        toastr.error('Error', e.message);
+      }
+    });
+  }
+
   updateLocationServices = (categories, currentServiceIds, services) => {
     console.log("~~~~~~~~~UPDATING LOCATION SERVICE in EDITOR~~~~~~~~~");
     console.log(services);
@@ -926,6 +967,7 @@ class AppEditor extends React.Component {
           onChangeLocation={this.handleChangeLocation}
           handleChangeTemplate={this.handleChangeTemplate}
           onSave={this.handleSaveButtonClick}
+          onCloneButtonClick={this.handleCloneButtonClick}
           onChangePublishStatus={this.handlePublishStatus}
         />
         <Content>

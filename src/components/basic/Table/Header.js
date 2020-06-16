@@ -153,7 +153,7 @@ export class TableHeader extends React.Component {
   }
   
   render () {
-    const { columns, sortColumn, isAsc, onSort, type = 'primary', statuses, onChangeFilter, selectedFilters, onDatesChange, startDate, endDate } = this.props;
+    const { columns, sortColumn, isAsc, onSort, type = 'primary', statuses, onChangeFilter, selectedFilters, onDatesChange, startDate, endDate, resetFilters } = this.props;
     const { widths } = this.state;
     return isBrowser ? (
       <Wrapper className={className(type)} ref={this.setWrapperInfo}>
@@ -183,6 +183,7 @@ export class TableHeader extends React.Component {
                 {col.label === 'order status' ? 
                   <OrderSearchFilter 
                     items={statuses}
+                    resetFilters={resetFilters}
                     onChangeSelection={statuses => {
                       if (onChangeFilter) onChangeFilter(statuses)
                     }}

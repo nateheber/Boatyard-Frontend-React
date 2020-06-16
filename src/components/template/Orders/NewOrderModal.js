@@ -54,8 +54,9 @@ class NewOrderModal extends React.Component {
   createNewOrder = (service, whenValues = {}, serviceValues = {}, orderValues = {}) => {
     const { CreateOrder, UpdateOrder, AcceptOrder, onFinishCreation, privilege, providerId, providerLocationId } = this.props;
     const { customer, boat } = this.state;
+    const quantityAvailable = service.costType === 'Length' && boat.length !== null;
     const line_item = {
-      quantity: 1,
+      quantity: quantityAvailable ? boat.length : 1,
       cost: service.cost
     };
     if (service.type === 'provider_location_services') {

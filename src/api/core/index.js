@@ -272,6 +272,10 @@ export class MultiLayerCRUDClient {
     const url = this.generateUrl(params);
     return this.client.delete(url);
   };
+  clone = params => {
+    let url = `${apiBaseUrl}/provider_location_copies`;
+    return this.client.post(url, params);
+  };
 }
 
 export class MultiLayersCRUDClient {
