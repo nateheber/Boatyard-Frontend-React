@@ -149,6 +149,8 @@ class ResetPasswordComponent extends React.Component {
     console.log(redirect + '&' + redirect_params);
     const location = window.location.href.includes('marinemax') ? 'marine-max' : 'boatyard';
     const app_user = location === 'marine-max' && app === true;
+    const bb_app_user = location !== 'marine-max' && app === true;
+    const non_app_user = location !== 'marine-max' && app !== true;
     return (
       <Wrapper>
         <SideContent>
@@ -158,8 +160,9 @@ class ResetPasswordComponent extends React.Component {
             <WelcomeWrapper>
               <Logo src={location === 'boatyard' ? BoatYardLogoImage : MMLogoImage} />
               {location !== 'marine-max' ?  <WelcomeTitle>Thank you!</WelcomeTitle> : <MMWelcomeTitle>Thank you!</MMWelcomeTitle> }
-              {location !== 'marine-max' ? 
+              {non_app_user  ? 
               <WelcomeDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeDescription> :
+                bb_app_user ? <WelcomeDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeDescription> :
                 app_user ? <WelcomeMMDescription>Your password has been reset.<br />You can now open your app to log in to your account.</WelcomeMMDescription> :
                 <WelcomeMMDescription>Your password has been reset.<br />Please click the button below to log in to your account.</WelcomeMMDescription> 
               }
