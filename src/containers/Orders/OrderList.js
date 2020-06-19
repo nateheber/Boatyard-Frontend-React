@@ -371,7 +371,7 @@ class OrderList extends React.Component {
       if (privilege === 'provider') {
         if (order.state === 'dispatched' || order.state === 'assigned') {
           name = '_';
-          //customerName = '_';
+          customerName = '_';
         } else if (order.providerOrderSequence) {
           name = `Order #${order.providerOrderSequence}`;
         }
