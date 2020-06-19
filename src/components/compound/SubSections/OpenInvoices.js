@@ -37,7 +37,7 @@ class OpenInvoices extends React.Component {
     const { total, orders, history } = this.props;
     const columns = [
       { label: 'ORDER', value: 'name', width: '35%', isTitle: true, link: true },
-      { label: 'CUSTOMER', value: 'relationships.user.attributes.firstName/relationships.user.attributes.lastName', width: '65%' }
+      { label: 'CUSTOMER', value: 'customerAttributes.name', width: '65%' }
     ];
     const processedOrders = (orders || []).map(order => {
       let name = `Order #${order.id}`;
