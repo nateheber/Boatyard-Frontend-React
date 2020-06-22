@@ -407,7 +407,6 @@ class OrderList extends React.Component {
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
           <Content>
             <TableWrapper>
-            { loading && <LoadingSpinner loading={true} /> }
               <Table
                 columns={selectedColumns}
                 records={processedOrders}
