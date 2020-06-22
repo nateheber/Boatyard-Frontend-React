@@ -149,6 +149,7 @@ class OrderList extends React.Component {
 
   onChangeTab = (tab, page = 1) => {
     console.log(page);
+    this.setState({searching: true});
     const { privilege } = this.props;
     const { keyword, selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
@@ -217,7 +218,7 @@ class OrderList extends React.Component {
             'desc', 'order[order]': 'created_at' 
           } 
         });
-        //this.setState({searching: false});
+        this.setState({searching: false});
       }
     }
   };
