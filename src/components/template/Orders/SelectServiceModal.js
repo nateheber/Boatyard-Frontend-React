@@ -4,7 +4,7 @@ import { Row, Col } from 'react-flexbox-grid';
 import styled from 'styled-components';
 import { get, isEmpty, filter, camelCase, startCase, hasIn, sortBy } from 'lodash';
 
-import { FilterServices, GetService } from 'store/actions/services';
+import { FilterServices, GetService, GetServices } from 'store/actions/services';
 import Modal from 'components/compound/Modal';
 import { OrangeButton } from 'components/basic/Buttons';
 import ProviderOption from 'components/basic/ProviderOption';
@@ -104,13 +104,14 @@ class SelectServiceModal extends React.Component {
     const { privilege } = this.props;
     return new Promise((resolve, reject) => {
       let params = {
-        'service[discarded_at]': null
+        'service[discarded_at]': null,
+        all: true
       };
       if (val && val.trim().length > 0) {
-        params['search_by_name'] = val;
+       params['search_by_name'] = val;
       }
       if (privilege === 'admin') {
-        params['service[provider_id]'] = 1;
+       params['service[provider_id]'] = 1;
       }
       this.props.FilterServices({
         params: params,
@@ -515,11 +516,12 @@ class SelectServiceModal extends React.Component {
 
 const mapStateToProps = state => ({
   filteredServices: state.service.filteredServices,
+  services: state.service.services,
   included: state.service.included,
   privilege: state.auth.privilege
 });
 
-const mapDispatchToProps = { FilterServices, GetService };
+const mapDispatchToProps = { FilterServices, GetService, GetServices };
 
 export default connect(
   mapStateToProps,

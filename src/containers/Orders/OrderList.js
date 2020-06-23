@@ -149,11 +149,12 @@ class OrderList extends React.Component {
 
   onChangeTab = (tab, page = 1) => {
     console.log(page);
+    this.setState({searching: true});
     const { privilege } = this.props;
     const { keyword, selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
     let start = startDate === null ? '' : moment(startDate).subtract('days', 1).format('YYYY-MM-DD');
-    let end = endDate === null ? '' : moment(endDate).subtract('days', 1).format('YYYY-MM-DD');
+    let end = endDate === null ? '' : moment(endDate).add('days', 1).format('YYYY-MM-DD');
     this.props.SetDispatchedFlag(false);
     this.setState({ tab });
     if (tab === NEED_ASSIGNMENT_TAB) {
@@ -217,7 +218,7 @@ class OrderList extends React.Component {
             'desc', 'order[order]': 'created_at' 
           } 
         });
-        //this.setState({searching: false});
+        this.setState({searching: false});
       }
     }
   };
@@ -304,13 +305,19 @@ class OrderList extends React.Component {
           per_page: 25, 
           search: keyword, 
           states: stringFilters, 
-          start: this.state.startDate === null ? '' : moment(this.state.startDate).subtract('days', 1).format('YYYY-MM-DD'), 
+          start: this.state.startDate === null ? '' : moment(this.state.startDate).format('YYYY-MM-DD'),//.subtract('days', 1).format('YYYY-MM-DD'), 
           stop: this.state.endDate === null ? '' : moment(this.state.endDate).add('days', 1).format('YYYY-MM-DD'), 
           'order[sort]': 'desc', 
           'order[order]': 'created_at' 
         } 
       });
       //this.loadOrders();
+    });
+  }
+
+  resetFilters = () => {
+    this.setState({ selectedFilters: [] }, () => {
+      this.loadOrders();
     });
   }
 
@@ -365,7 +372,7 @@ class OrderList extends React.Component {
       if (privilege === 'provider') {
         if (order.state === 'dispatched' || order.state === 'assigned') {
           name = '_';
-          //customerName = '_';
+          customerName = '_';
         } else if (order.providerOrderSequence) {
           name = `Order #${order.providerOrderSequence}`;
         }
@@ -401,11 +408,11 @@ class OrderList extends React.Component {
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
           <Content>
             <TableWrapper>
-            { loading && <LoadingSpinner loading={true} /> }
               <Table
                 columns={selectedColumns}
                 records={processedOrders}
                 statuses={selectedStatuses}
+                resetFilters={this.resetFilters}
                 startDate={startDate}
                 endDate={endDate}
                 onDatesChange={this.onDatesChange}

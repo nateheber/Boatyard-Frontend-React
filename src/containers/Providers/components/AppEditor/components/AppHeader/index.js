@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { HollowButton, OrangeButton } from 'components/basic/Buttons';
 import { Select } from 'components/basic/Input';
+import Modal from 'components/compound/Modal';
+import { toastr } from 'react-redux-toastr';
 import { get } from 'lodash';
 
 const Wrapper = styled.div`
@@ -46,8 +48,38 @@ function getLocationName(location) {
 }
 
 export default class AppHeader extends React.Component {
+  state = {
+    open: false
+  }
+
+  onOpenModal = () => {
+    const { selectedTemplate } = this.props;
+    console.log("Selected temp~~~~~~~~~~", selectedTemplate);
+    if (selectedTemplate.locationName === undefined) {
+      toastr.error('Error', 'Select a template to copy');
+    } else {
+      this.setState({open: true});
+    }
+  }
+
+  onClose = () => {
+    this.setState({open: false});
+  }
+
+  clone = () => {
+    this.props.onCloneButtonClick();
+    this.onClose();
+  }
+
+
   render () {
+    const { open } = this.state;
     const { selected, selectedTemplate, locations, onSave, onChangePublishStatus, onChangeLocation, handleChangeTemplate } = this.props;
+    const actions = [
+      <HollowButton onClick={this.onClose} key="modal_btn_cancel">CANCEL</HollowButton>,
+      <OrangeButton onClick={this.clone} key="modal_btn_save">Lets Clone This!</OrangeButton>
+    ];
+    console.log(selected, selectedTemplate);
     return (
       <Wrapper>
         <HeaderWrapper>
@@ -56,9 +88,11 @@ export default class AppHeader extends React.Component {
             <span>Location:</span>
           <Select
             value={selected.id}
+            placeholder="Select a Location"
             onChange={evt => {if(onChangeLocation) { onChangeLocation(evt.target.value)}}}
           >
             <React.Fragment>
+              <option value={null}>Select a location...</option>
               {locations.map(val => (
                 <option value={val.id} key={`location_${val.id}`}>
                   {getLocationName(val)}
@@ -75,6 +109,7 @@ export default class AppHeader extends React.Component {
             onChange={evt => {if(handleChangeTemplate) { handleChangeTemplate(evt.target.value)}}}
           >
             <React.Fragment>
+            <option value={null}>Select a template...</option>
               {locations.map(val => (
                 <option value={val.id} key={`location_${val.id}`}>
                   {getLocationName(val)}
@@ -85,6 +120,13 @@ export default class AppHeader extends React.Component {
           </div>
         </HeaderWrapper>
         <ButtonsWrapper>
+        <OrangeButton
+            style={{margin: 5}}
+            className="thin-font"
+            onClick={this.onOpenModal}
+          >
+            Clone Templates
+          </OrangeButton>
           <HollowButton onClick={onSave}>
             {selected.published ? 'Save' : 'Save Draft'}
           </HollowButton>
@@ -96,6 +138,17 @@ export default class AppHeader extends React.Component {
             {selected.published ? 'UNPUBLISH' : 'PUBLISH'}
           </OrangeButton>
         </ButtonsWrapper>
+        <Modal
+          title="Are You Sure?!?"
+          open={open}
+          onClose={this.onClose}
+          actions={actions}
+        >
+          {`You are cloning ${selectedTemplate.locationName} into ${selected.locationName}. Are you sure this is what you want to do? No turning back!`}
+          <br/>
+          <br />
+          {`Meaning you want ${selected.locationName} to be the exact same as ${selectedTemplate.locationName}. Is this what you want?`}
+      </Modal>
       </Wrapper>
     );
   }
