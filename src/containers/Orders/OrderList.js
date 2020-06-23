@@ -325,8 +325,8 @@ class OrderList extends React.Component {
     const { token } = this.props;
     const { selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
-    let start = startDate === null ? '' : moment(startDate).format('YYYY-MM-DD');
-    let end = endDate === null ? '' : moment(endDate).format('YYYY-MM-DD');
+    let start = startDate === null ?  '2020-06-01' : moment(startDate).format('YYYY-MM-DD');
+    let end = endDate === null ? '2020-06-30' : moment(endDate).format('YYYY-MM-DD');
     const now = new Date();
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
