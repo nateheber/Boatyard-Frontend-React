@@ -153,9 +153,19 @@ const Error = ({ name }) => (
 const required = value => (value ? undefined : 'Phone number cannot be blank.');
 
 class SendApp extends React.PureComponent {
-  handleSubmit = (values) => {
-    window.branch.init('key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
+  state = {
+    app: 'Boatyard'
+  }
 
+  componentDidMount() {
+    const app = window.location.href.includes('proapp') ? 'Boatyard Pro' : 'Boatyard';
+    this.setState({ app });
+  }
+
+  handleSubmit = (values) => {
+    const { app } = this.state;
+    //window.branch.init('key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
+    window.branch.init(app === 'Boatyard Pro' ? 'key_live_mbTrNkh9AAdu9byuxQfHdpplBubn376R' : 'key_live_kjAohWbxsSo9MXXaPVqn7egatApwfrgu')
     let phone = values.phone;
     var callback = function(err, result) {
                     if (err) {
