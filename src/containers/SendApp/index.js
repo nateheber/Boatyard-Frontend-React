@@ -166,7 +166,6 @@ class SendApp extends React.PureComponent {
     const { app } = this.state;
     //window.branch.init('key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
     window.branch.init(app === 'Boatyard Pro' ? 'key_live_mbTrNkh9AAdu9byuxQfHdpplBubn376R' : 'key_live_kjAohWbxsSo9MXXaPVqn7egatApwfrgu')
-
     let phone = values.phone;
     var callback = function(err, result) {
                     if (err) {
