@@ -7,7 +7,8 @@ import InputMask from 'react-input-mask';
 import { toastr } from 'react-redux-toastr';
 
 import BackgroundImage from '../../resources/sendapp/app_bg.png';
-import MMLogo from '../../resources/sendapp/mm_logo_white.png';
+// import MMLogo from '../../resources/sendapp/mm_logo_white.png';
+import BoatyardLogo from '../../resources/by_logo_white.png';
 
 const Wrapper = styled.div`
   background-image: url(${BackgroundImage});
@@ -69,7 +70,7 @@ const SectionWrapper = styled.div`
 `;
 
 const SectionContainer = styled.div`
-  padding: 50px 30px;
+  padding: 30px 30px;
   text-align: center;
 `;
 
@@ -167,6 +168,7 @@ class SendApp extends React.PureComponent {
   };
 
   render() {
+    const name = window.location.href.includes('proapp') ? 'Boatyard Pro' : 'Boatyard';
     return (
       <Wrapper>
         <ContentWrapper>
@@ -174,12 +176,12 @@ class SendApp extends React.PureComponent {
           <Form onSubmit={this.handleSubmit}
             render={({ handleSubmit, submitting }) => (
               <FormContainer onSubmit={handleSubmit}>
-                <Img src={MMLogo} />
+                <Img src={BoatyardLogo} />
                 <SectionWrapper>
                   <SectionContainer>
                     <Row>
                       <Col xs={12}>
-                        <TitleLabel>{'Welcome To MarineMax!'}</TitleLabel>
+                        <TitleLabel>{`Welcome To ${name}!`}</TitleLabel>
                         <DescLabel>{'Enter your phone number below, and we’ll text you a link to download our app.'}</DescLabel>
                       </Col>
                     </Row>

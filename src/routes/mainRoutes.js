@@ -77,12 +77,18 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
     window.location.href.indexOf('create-password') > -1 ||
     window.location.href.indexOf('confirm-account') > -1) {
       WrapperComp = Wrapper;
-    } else if (window.location.href.indexOf('onlineboat') > -1 || window.location.href.indexOf('textmetheapp') > -1 || window.location.href.indexOf('hold-my-boat') > -1) {
+    } else if (window.location.href.indexOf('onlineboat') > -1 || 
+      window.location.href.indexOf('textmetheapp') > -1 || 
+      window.location.href.indexOf('hold-my-boat') > -1 ||
+      window.location.href.indexOf('proapp') > -1) {
       WrapperComp = BoatShowWrapper;
       isBoatShow = true;
     }
   } else {
-    if (window.location.href.indexOf('onlineboat') > -1 || window.location.href.indexOf('textmetheapp') > -1 || window.location.href.indexOf('hold-my-boat') > -1) {
+    if (window.location.href.indexOf('onlineboat') > -1 || 
+    window.location.href.indexOf('textmetheapp') > -1 || 
+    window.location.href.indexOf('hold-my-boat') > -1 ||
+    window.location.href.indexOf('proapp') > -1) {
       WrapperComp = BoatShowWrapper;
       isBoatShow = true;
     } else {
@@ -126,6 +132,7 @@ const MainRoutes = ({refreshPage, SetRefreshFlag, ...props}) => {
         <Route path="/onlineboatshow" component={BoatShow} />
         <Route path="/onlineboat/done" component={BoatReservationDone} />
         <Route path="/textmetheapp" component={SendApp} />
+        <Route path="/proapp" component={SendApp} />
         <Route path="/hold-my-boat" component={BoatHold} />
 
         <PrivateRoute exact path="/update-profile" component={UpdateProfile} isAuthenticated={isAuthenticated} />
