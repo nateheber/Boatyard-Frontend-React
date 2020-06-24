@@ -205,7 +205,6 @@ class OrderList extends React.Component {
         });
       } else {
         console.log("changing pages")
-        this.setState({ searching: true});
         this.props.GetOrders({ 
           params: { 
             page: page, 
@@ -218,7 +217,6 @@ class OrderList extends React.Component {
             'desc', 'order[order]': 'created_at' 
           } 
         });
-        this.setState({searching: false});
       }
     }
   };
