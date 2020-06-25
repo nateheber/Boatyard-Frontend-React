@@ -149,6 +149,7 @@ class OrderList extends React.Component {
 
   onChangeTab = (tab, page = 1) => {
     console.log(page);
+    this.setState({searching: true});
     const { privilege } = this.props;
     const { keyword, selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
@@ -204,7 +205,6 @@ class OrderList extends React.Component {
         });
       } else {
         console.log("changing pages")
-        this.setState({ searching: true});
         this.props.GetOrders({ 
           params: { 
             page: page, 
@@ -217,7 +217,6 @@ class OrderList extends React.Component {
             'desc', 'order[order]': 'created_at' 
           } 
         });
-        //this.setState({searching: false});
       }
     }
   };
@@ -324,8 +323,8 @@ class OrderList extends React.Component {
     const { token } = this.props;
     const { selectedFilters, startDate, endDate } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
-    let start = startDate === null ? '' : moment(startDate).format('YYYY-MM-DD');
-    let end = endDate === null ? '' : moment(endDate).format('YYYY-MM-DD');
+    let start = startDate === null ?  '2020-06-01' : moment(startDate).format('YYYY-MM-DD');
+    let end = endDate === null ? '2020-06-30' : moment(endDate).format('YYYY-MM-DD');
     const now = new Date();
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
@@ -371,7 +370,7 @@ class OrderList extends React.Component {
       if (privilege === 'provider') {
         if (order.state === 'dispatched' || order.state === 'assigned') {
           name = '_';
-          //customerName = '_';
+          customerName = '_';
         } else if (order.providerOrderSequence) {
           name = `Order #${order.providerOrderSequence}`;
         }
@@ -407,7 +406,6 @@ class OrderList extends React.Component {
         <Tab tabs={tabs[privilege]} selected={tab} onChange={this.onChangeTab} />
           <Content>
             <TableWrapper>
-            { loading && <LoadingSpinner loading={true} /> }
               <Table
                 columns={selectedColumns}
                 records={processedOrders}

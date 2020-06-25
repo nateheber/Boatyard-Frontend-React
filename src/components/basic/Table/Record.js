@@ -243,7 +243,7 @@ export class Record extends React.PureComponent {
       const state = get(item ,get(column, 'state'));
       const zip = get(item ,get(column, 'zip'));
       let line1 = `${street}, `;
-      let line2 = `${city}, ${state || ''} ${zip || ''}`;
+      let line2 = `${city} ${state || ''} ${zip || ''}`;
       if (isEmpty(street)) {
         line1 = '';
       }

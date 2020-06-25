@@ -7,7 +7,8 @@ import InputMask from 'react-input-mask';
 import { toastr } from 'react-redux-toastr';
 
 import BackgroundImage from '../../resources/sendapp/app_bg.png';
-import MMLogo from '../../resources/sendapp/mm_logo_white.png';
+// import MMLogo from '../../resources/sendapp/mm_logo_white.png';
+import BoatyardLogo from '../../resources/by_logo_white.png';
 
 const Wrapper = styled.div`
   background-image: url(${BackgroundImage});
@@ -69,7 +70,7 @@ const SectionWrapper = styled.div`
 `;
 
 const SectionContainer = styled.div`
-  padding: 50px 30px;
+  padding: 30px 30px;
   text-align: center;
 `;
 
@@ -152,9 +153,19 @@ const Error = ({ name }) => (
 const required = value => (value ? undefined : 'Phone number cannot be blank.');
 
 class SendApp extends React.PureComponent {
-  handleSubmit = (values) => {
-    window.branch.init('key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
+  state = {
+    app: 'Boatyard'
+  }
 
+  componentDidMount() {
+    const app = window.location.href.includes('proapp') ? 'Boatyard Pro' : 'Boatyard';
+    this.setState({ app });
+  }
+
+  handleSubmit = (values) => {
+    const { app } = this.state;
+    //window.branch.init('key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
+    window.branch.init(app === 'Boatyard Pro' ? 'key_live_mbTrNkh9AAdu9byuxQfHdpplBubn376R' : 'key_live_kjAohWbxsSo9MXXaPVqn7egatApwfrgu')
     let phone = values.phone;
     var callback = function(err, result) {
                     if (err) {
@@ -167,6 +178,7 @@ class SendApp extends React.PureComponent {
   };
 
   render() {
+    const name = window.location.href.includes('proapp') ? 'Boatyard Pro' : 'Boatyard';
     return (
       <Wrapper>
         <ContentWrapper>
@@ -174,12 +186,12 @@ class SendApp extends React.PureComponent {
           <Form onSubmit={this.handleSubmit}
             render={({ handleSubmit, submitting }) => (
               <FormContainer onSubmit={handleSubmit}>
-                <Img src={MMLogo} />
+                <Img src={BoatyardLogo} />
                 <SectionWrapper>
                   <SectionContainer>
                     <Row>
                       <Col xs={12}>
-                        <TitleLabel>{'Welcome To MarineMax!'}</TitleLabel>
+                        <TitleLabel>{`Welcome To ${name}!`}</TitleLabel>
                         <DescLabel>{'Enter your phone number below, and we’ll text you a link to download our app.'}</DescLabel>
                       </Col>
                     </Row>
