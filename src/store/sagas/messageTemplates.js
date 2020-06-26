@@ -1,10 +1,10 @@
 import { put, takeEvery, call, select } from 'redux-saga/effects';
-import { get, sortBy, filter } from 'lodash';
+import { get, sortBy } from 'lodash';
 import snakeCaseKeys from 'snakecase-keys';
 
 import { actionTypes } from '../actions/messageTemplates';
 import { getGlobalMessageTemplatesClient, getLocalMessageTemplatesClient } from './sagaSelectors';
-import { PROVIDER_MESSAGE_TEMPLATES } from 'utils/constants';
+//import { PROVIDER_MESSAGE_TEMPLATES } from 'utils/constants';
 
 const processTemplates = (templates) => {
   // const templateObject = {};
@@ -61,7 +61,8 @@ function* getLocalTemplates(action) {
     yield put({
       type: actionTypes.GET_LOCAL_TEMPLATES_SUCCESS,
       payload: {
-        templates: filter(refactoredTemplates, template => PROVIDER_MESSAGE_TEMPLATES.includes(template.triggerKey)),
+        //templates: filter(refactoredTemplates, template => PROVIDER_MESSAGE_TEMPLATES.includes(template.triggerKey)),
+        templates: refactoredTemplates,
         perPage,
         total,
       }
