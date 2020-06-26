@@ -61,7 +61,8 @@ function* getLocalTemplates(action) {
     yield put({
       type: actionTypes.GET_LOCAL_TEMPLATES_SUCCESS,
       payload: {
-        templates: filter(refactoredTemplates, template => PROVIDER_MESSAGE_TEMPLATES.includes(template.triggerKey)),
+        //templates: filter(refactoredTemplates, template => PROVIDER_MESSAGE_TEMPLATES.includes(template.triggerKey)),
+        templates: refactoredTemplates,
         perPage,
         total,
       }
