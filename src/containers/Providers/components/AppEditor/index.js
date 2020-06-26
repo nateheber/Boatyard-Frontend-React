@@ -832,6 +832,8 @@ class AppEditor extends React.Component {
         toastr.error('Error', e.message);
       }
     });
+
+    window.location.reload();
   }
 
   updateLocationServices = (categories, currentServiceIds, services) => {
