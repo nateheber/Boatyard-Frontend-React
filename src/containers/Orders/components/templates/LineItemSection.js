@@ -73,7 +73,7 @@ class LineItemSection extends React.Component {
         ...item.relationships
       }
     });
-    return sortBy(lineItems, 'attributes.createdAt');
+    return lineItems;
   }
 
   onChange = (item, idx) => {

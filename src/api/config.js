@@ -19,10 +19,15 @@ switch (mode) {
     locationApiUrl = 'https://production-api.boatyard.com/api/v3';
     revisedApiUrl = 'https://production-api.boatyard.com/api/v4';
     break;
-  default:
+  case 'local':
     apiUrl = 'http://localhost:3001/api/v2';
     locationApiUrl = 'http://localhost:3001//api/v3';
     revisedApiUrl = 'http://localhost:3001//api/v4';
+    break;
+  default:
+    apiUrl = 'https://staging-api.boatyard.com/api/v2';
+    locationApiUrl = 'https://staging-api.boatyard.com/api/v3';
+    revisedApiUrl = 'https://staging-api.boatyard.com/api/v4';    
 }
 
 export const apiBaseUrl = apiUrl;

@@ -224,7 +224,7 @@ class PaymentSection extends React.Component {
       <Section title="Payment">
         <Wrapper>
           <InfoList>
-            {this.renderPayments()}
+            {payments && this.renderPayments()}
             <InfoItem style={{ marginTop: 5 }}>
               Balance Remaining: ${balance.toFixed(2)}
             </InfoItem>
