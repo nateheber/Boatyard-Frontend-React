@@ -827,13 +827,14 @@ class AppEditor extends React.Component {
       success: () => {
         toastr.success('Success', 'Cloned Successfully!');
         this.resetData(location);
+        window.location.reload(true);
       },
       error: (e) => {
         toastr.error('Error', e.message);
       }
     });
 
-    window.location.reload();
+    window.location.reload(true);
   }
 
   updateLocationServices = (categories, currentServiceIds, services) => {
