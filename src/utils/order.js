@@ -136,6 +136,12 @@ export const getActivityInfo = order => {
               message: `Quote sent by ${full_name} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
             });
             break;
+          case 'order_rejected':
+            result.push({
+              time: moment(activity.at).valueOf(),
+              message: `Order declined by ${full_name} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
+            });
+            break;
           default:
             break;
         }
