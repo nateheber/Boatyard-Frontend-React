@@ -163,7 +163,6 @@ class SendApp extends React.PureComponent {
   }
 
   handleSubmit = (values) => {
-    const { app } = this.state;
     const name = this.platform();
     //window.branch.init('key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
     window.branch.init(name === 'Boatyard Pro' ? 'key_live_mbTrNkh9AAdu9byuxQfHdpplBubn376R' : name ==='Boatyard' ? 'key_live_kjAohWbxsSo9MXXaPVqn7egatApwfrgu' : 'key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
