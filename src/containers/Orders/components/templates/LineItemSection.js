@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import deepEqual from 'deep-equal';
 import moment from 'moment';
-import { get, set, isEmpty, sortBy } from 'lodash';
+import { get, set, isEmpty } from 'lodash';
 import styled from 'styled-components';
 import { Row, Col } from 'react-flexbox-grid';
 import {
