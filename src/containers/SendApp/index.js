@@ -7,7 +7,7 @@ import InputMask from 'react-input-mask';
 import { toastr } from 'react-redux-toastr';
 
 import BackgroundImage from '../../resources/sendapp/app_bg.png';
-// import MMLogo from '../../resources/sendapp/mm_logo_white.png';
+import MMLogo from '../../resources/sendapp/mm_logo_white.png';
 import BoatyardLogo from '../../resources/by_logo_white.png';
 
 const Wrapper = styled.div`
@@ -164,8 +164,9 @@ class SendApp extends React.PureComponent {
 
   handleSubmit = (values) => {
     const { app } = this.state;
+    const name = this.platform();
     //window.branch.init('key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
-    window.branch.init(app === 'Boatyard Pro' ? 'key_live_mbTrNkh9AAdu9byuxQfHdpplBubn376R' : 'key_live_kjAohWbxsSo9MXXaPVqn7egatApwfrgu')
+    window.branch.init(name === 'Boatyard Pro' ? 'key_live_mbTrNkh9AAdu9byuxQfHdpplBubn376R' : name ==='Boatyard' ? 'key_live_kjAohWbxsSo9MXXaPVqn7egatApwfrgu' : 'key_live_clKCMal7vDaCEW3EiM5xgacnvsbe80dP')
     let phone = values.phone;
     var callback = function(err, result) {
                     if (err) {
@@ -177,8 +178,18 @@ class SendApp extends React.PureComponent {
     window.branch.sendSMS(phone, {}, {}, callback);
   };
 
+  platform = () => {
+    if (window.location.href.includes('proapp')) {
+      return 'Boatyard Pro';
+    } else if (window.location.href.includes('marinemaxapp')) {
+      return 'MarineMax';
+    } else {
+      return "Boatyard";
+    }
+  }
+
   render() {
-    const name = window.location.href.includes('proapp') ? 'Boatyard Pro' : 'Boatyard';
+    const name = this.platform();
     return (
       <Wrapper>
         <ContentWrapper>
@@ -186,7 +197,7 @@ class SendApp extends React.PureComponent {
           <Form onSubmit={this.handleSubmit}
             render={({ handleSubmit, submitting }) => (
               <FormContainer onSubmit={handleSubmit}>
-                <Img src={BoatyardLogo} />
+                <Img src={name.includes('Boatyard') ? BoatyardLogo : MMLogo} />
                 <SectionWrapper>
                   <SectionContainer>
                     <Row>
