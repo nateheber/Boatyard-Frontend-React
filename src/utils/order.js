@@ -91,7 +91,7 @@ export const getUpdatedStatus = order => {
   };
 };
 
-export const getActivityInfo = order => {
+export const getActivityInfo = (order, privilege) => {
   const result = [];
   if (!isEmpty(order)) {
     const activities = get(order, 'attributes.activityFeed');
@@ -137,10 +137,12 @@ export const getActivityInfo = order => {
             });
             break;
           case 'order_rejected':
-            result.push({
-              time: moment(activity.at).valueOf(),
-              message: `Order declined by ${full_name} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
-            });
+            if (privilege === 'admin') {
+              result.push({
+                time: moment(activity.at).valueOf(),
+                message: `Order declined by ${full_name} on ${moment(activity.at).format('MMM D, YYYY [at] h:mm A')}`
+              });
+            }
             break;
           default:
             break;
@@ -230,11 +232,11 @@ export const getOrderProcessInfo = order => {
   return result;
 };
 
-export const generateOrderTimeline = order => {
+export const generateOrderTimeline = (order, privilege = "admin") => {
   const activity_feed = get(order, 'attributes.activityFeed');
   //const creationInfo = getCreationInfo(order);
   //const updateInfo = getUpdatedStatus(order);
-  const timeLine = isEmpty(activity_feed) ? getOrderProcessInfo(order) : getActivityInfo(order);
+  const timeLine = isEmpty(activity_feed) ? getOrderProcessInfo(order) : getActivityInfo(order, privilege);
   //const activity = getActivityInfo(order);
   const result = [/*creationInfo,*/ ...timeLine];
   return sortBy(result, ['time']).reverse();

@@ -403,7 +403,7 @@ class OrderDetails extends React.Component {
                     <JobSection workorders={workorders} addJob={this.showJobModal} SetWorkOrder={this.props.SetWorkOrder} />
                   </SectionGroup>}
                   <SectionGroup>
-                    <TimeLineSection order={currentOrder} />
+                    <TimeLineSection order={currentOrder} privilege={privilege} />
                   </SectionGroup>
                 </Column>
               </Row>
