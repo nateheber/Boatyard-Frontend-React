@@ -39,8 +39,8 @@ const TimelineItem = styled.div`
 export default class TimeLineSection extends React.Component {
 
   render () {
-    const { order } = this.props;
-    const timelineItems = generateOrderTimeline(order);
+    const { order, privilege } = this.props;
+    const timelineItems = generateOrderTimeline(order, privilege);
     return (
       <Section title="Timeline">
         {
