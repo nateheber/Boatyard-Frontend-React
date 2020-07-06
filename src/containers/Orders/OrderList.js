@@ -9,7 +9,7 @@ import Table from 'components/basic/Table';
 import Tab from 'components/basic/Tab';
 import { OrderHeader } from 'components/compound/SectionHeader';
 import LoadingSpinner from 'components/basic/LoadingSpinner';
-import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns } from 'store/actions/orders';
+import { GetOrders, SetDispatchedFlag, UpdateSelectedColumns, ResetPages } from 'store/actions/orders';
 import { refinedOrdersSelector, columnsSelector, selectedColumnsSelector, statusSelector, providerStatusSelector } from 'store/selectors/orders';
 //import { getCustomerName } from 'utils/order';
 import { getToken } from 'store/selectors/auth';
@@ -105,6 +105,7 @@ class OrderList extends React.Component {
   }
 
   componentWillUnmount() {
+    this.props.ResetPages();
     this.props.SetDispatchedFlag(false);
   }
 
@@ -448,6 +449,7 @@ const mapDispatchToProps = {
   GetOrders,
   SetDispatchedFlag,
   UpdateSelectedColumns,
+  ResetPages
 };
 
 export default withRouter(
