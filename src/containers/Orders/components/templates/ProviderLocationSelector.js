@@ -108,15 +108,20 @@ const MenuItemLi = styled.div`
 `;
 
 const ClearAssigneeWrapper = styled.div`
-  height: 51px;
+  height: auto;
   background-color: #F5F5F5;
   border-top: 1px solid #DBDBDB;
   border-bottom: 1px solid #DBDBDB;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
 `
+
+const DispatchedLocations = styled.div`
+  width: 100%;
+`;
 
 // const getPageCount = (perPage, total) => Math.ceil(total/perPage);
 
@@ -267,12 +272,12 @@ class ProviderLocationSelector extends React.Component {
   };
 
   filterShowingProviders = () => {
-    const { locations, dispatchedLocations } = this.state;
-    const result = locations.filter((location) => {
-      const idx = dispatchedLocations.filter(Boolean).findIndex(item => `${item.id}` === `${location.id}`);
-      return idx === -1;
-    });
-    const sortedResult = sortBy(result, ['provider_name', 'name'])
+    const { locations/*, dispatchedLocations*/ } = this.state;
+    // const result = locations.filter((location) => {
+    //   const idx = dispatchedLocations.filter(Boolean).findIndex(item => `${item.id}` === `${location.id}`);
+    //   return idx === -1;
+    // });
+    const sortedResult = sortBy(locations, ['provider_name', 'name'])
     return sortedResult;
   };
 
@@ -290,6 +295,7 @@ class ProviderLocationSelector extends React.Component {
     const { showMenu, showModal, keyword, dispatchedLocations } = this.state;
     // console.log(dispatchedLocations);
     const locations = this.filterShowingProviders();
+    const selectedName = dispatchedLocations[0] ? `${dispatchedLocations[0].provider_name} ${dispatchedLocations[0].name}` : '';
     return (
       <Wrapper ref={this.setWrapperRef}>
         <Button onClick={this.showMenu}>
@@ -300,16 +306,27 @@ class ProviderLocationSelector extends React.Component {
             <Input type="text" value={keyword} onChange={this.onChangeFilter} />
           </FitlerWrapper>
           <ClearAssigneeWrapper>
+          <DispatchedLocations>
             <ClearButton onClick={this.clearAssignees}>Clear Assignees</ClearButton>
+            </DispatchedLocations>
+            <DispatchedLocations>
+            {
+              dispatchedLocations.map(location => (
+                <div key={`location_${location.id}`} >
+                  <p>{`${location.provider_name} ${location.name}`}</p>
+                </div>
+              ))
+            }
+            </DispatchedLocations>
           </ClearAssigneeWrapper>
           <Scroller onScroll={this.onScroll}>
-            {
+            {/* {
               dispatchedLocations.map(location => (
                 <MenuItemLi key={`location_${location.id}`} >
                   <ProviderCheck checked={this.isChecked(location)} provider={location} onClick={() => this.onChangeSelection(location)} />
                 </MenuItemLi>
               ))
-            }
+            } */}
             {
               locations.map(location => (
                 <MenuItemLi key={`location_${location.id}`} >
@@ -319,7 +336,13 @@ class ProviderLocationSelector extends React.Component {
             }
           </Scroller>
         </DropdownMenu>
-        <AssignConfirmModal open={showModal} onClose={this.closeModal} onConfirm={this.submitData} assignees={dispatchedLocations} />
+        <AssignConfirmModal 
+          open={showModal} 
+          onClose={this.closeModal} 
+          onConfirm={this.submitData} 
+          assignees={dispatchedLocations} 
+          selected={dispatchedLocations.length > 0}
+          selectedName={selectedName} />
       </Wrapper>
     );
   }
