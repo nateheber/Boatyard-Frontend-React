@@ -105,7 +105,8 @@ class SelectServiceModal extends React.Component {
     return new Promise((resolve, reject) => {
       let params = {
         'service[discarded_at]': null,
-        all: true
+        all: true,
+        per_page: 100
       };
       if (val && val.trim().length > 0) {
        params['search_by_name'] = val;
