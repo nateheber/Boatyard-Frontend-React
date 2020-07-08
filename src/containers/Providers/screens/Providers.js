@@ -94,7 +94,7 @@ class Providers extends React.Component {
     {
        page: page,
       search: keyword,
-      per_page: 1,
+      per_page: 25,
       // 'provider[name]': capitalize(keyword),
       'provider[sort]': sort.direction,
       'provider[order]': sort.col
