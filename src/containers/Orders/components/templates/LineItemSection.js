@@ -86,13 +86,13 @@ class LineItemSection extends React.Component {
       provider_location_service_id: parseInt(serviceId),
       //service_id: parseInt(serviceId),
       provider_id: providerId,
-      quantity: parseInt(quantity),
+      quantity: parseFloat(quantity),
       cost: parseFloat(cost),
       comment
     } : {
       service_id: parseInt(serviceId),
       provider_id: providerId,
-      quantity: parseInt(quantity),
+      quantity: parseFloat(quantity),
       cost: parseFloat(cost),
       comment
     };
