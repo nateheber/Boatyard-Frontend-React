@@ -62,7 +62,7 @@ class NewLineItem extends React.Component {
           <Col lg={2} sm={2} xs={2} md={2} xl={2}>
             <CurrencyInput
               fixedDecimalScale
-              decimalScale={0}
+              decimalScale={2}
               value={quantity}
               onChange={this.onChangeQuantity}
               hideError
