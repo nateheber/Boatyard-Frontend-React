@@ -85,7 +85,7 @@ class ChatContent extends React.Component {
     return { recipient_type, recipient_id };
   }
 
-  getRecipientName = () => {
+  getRecipientName = (first_name=null) => {
     const { conversationId, curConversation: {included} } = this.props;
     const conversationInfo = get(included, `[conversations][${conversationId}]`);
     const recipientInfo = get(conversationInfo, 'relationships.recipient.data');
@@ -94,9 +94,14 @@ class ChatContent extends React.Component {
     const recipientType = get(recipientData, 'type');
     const profileInfo = get(recipientData, `attributes`);
     if (recipientType === 'users') {
+      if (first_name === true) {
+        const firstName = get(profileInfo, 'firstName', '') || '';
+        return `${firstName}`;
+      } else {
       const firstName = get(profileInfo, 'firstName', '') || '';
       const lastName = get(profileInfo, 'lastName', '') || '';
       return `${firstName} ${lastName}`;
+    }
     } else if (recipientType === 'providers') {
       return get(profileInfo, 'name', '');
     }
@@ -136,6 +141,7 @@ class ChatContent extends React.Component {
   render() {
     const { onBack, loading, curConversation: { messages } } = this.props;
     const recipientName = this.getRecipientName();
+    const firstName = this.getRecipientName(true);
     return (
       <React.Fragment>
         <ChatHeader>
@@ -147,7 +153,7 @@ class ChatContent extends React.Component {
         <MessageWrapper>
           <MessageBox secondary loading={loading} chatHistory={messages} />
         </MessageWrapper>
-        <ChatBox secondary onSend={this.onSend} />
+        <ChatBox secondary onSend={this.onSend} recipientInfo={firstName} />
       </React.Fragment>
     )
   }
