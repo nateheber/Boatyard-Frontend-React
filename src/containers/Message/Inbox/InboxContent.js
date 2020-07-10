@@ -98,7 +98,7 @@ class InboxContent extends React.Component {
           onBack={onBack}
         />
         <MessageBox chatHistory={messages} loading={loading} inBox/>
-        <ChatBox onSend={this.onSend} />
+        <ChatBox onSend={this.onSend} recipientInfo={this.getRecipientInfo()} />
       </Wrapper>
     );
   }

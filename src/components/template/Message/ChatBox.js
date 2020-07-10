@@ -158,11 +158,20 @@ class ChatBox extends React.Component {
     this.setState({
       text: evt.target.value
     });
-  };
+  }; 
+
+  checkFirstName = (text, name) => {
+    const updatedText = text.replace(
+      '[[first_name]]',
+      name,
+    );
+    return updatedText;
+  }
 
   onSend = () => {
-    const { onSend, token } = this.props;
+    const { onSend, token, recipientInfo } = this.props;
     const { text, origin, thumb, name } = this.state;
+    let updatedText = this.checkFirstName(text, recipientInfo);
     if (origin && thumb && name) {
       const attachmentApi = axios.create({
         baseURL: apiBaseUrl,
@@ -222,7 +231,7 @@ class ChatBox extends React.Component {
         // onSend(payload);
       })
     } else {
-      onSend({content: text});
+      onSend({content: updatedText});
     }
     this.setState({ text: '', origin: null, thumb: null, name: null, thumb64: null });
   }
@@ -267,7 +276,7 @@ class ChatBox extends React.Component {
       <Wrapper className={classNames({ secondary, third, noBorder })}>
         <InputGroup>
           <InputView>
-            <TextArea value={text} onChange={this.onChangeText} placeholder="Write reply..." />
+            <TextArea value={text} onChange={this.onChangeText} placeholder="Write ss reply..." />
             {!isEmpty(thumb64) && (
               <ImageArea>
                   <ImageContainer>
