@@ -322,28 +322,18 @@ class OrderList extends React.Component {
 
   handleExport = () => {
     const { token } = this.props;
-    const { selectedFilters, startDate, endDate } = this.state;
+    const { selectedFilters, startDate, endDate, keyword } = this.state;
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
-    let start = startDate === null ?  '2020-07-01' : moment(startDate).format('YYYY-MM-DD');
-    let end = endDate === null ? '2020-07-30' : moment(endDate).format('YYYY-MM-DD');
+    let params = [];
+    if (selectedFilters.length > 0) { params.push(`order_states=${stringFilters}`) };
+    if (startDate !== null || startDate !== '') { params.push(`start=${moment(startDate).format('YYYY-MM-DD')}`) };
+    if (endDate !== null || endDate !== '') { params.push(`stop=${moment(endDate).format('YYYY-MM-DD')}`) };
+    if(keyword !== '') { params.push(`search=${keyword}`) };
     const now = new Date();
     const myHeaders = new Headers();
     myHeaders.append('Authorization', `${token}`);
     myHeaders.append('Content-Type', 'application/json');
-    let url;
-    if (stringFilters.length === 0) {
-      if (start === null) {
-        url = `${apiBaseUrl}/reports/transactions?start=2020-06-01&stop=2020-06-30&xls=true`;
-      } else {
-        url = `${apiBaseUrl}/reports/transactions?start=${start}&stop=${end}&xls=true`;
-      }
-    } else {
-      if (start === null) {
-        url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=2020-06-01&stop=2020-06-30&xls=true`;
-      } else {
-        url = `${apiBaseUrl}/reports/transactions?order_states=${stringFilters}&start=${start}&stop=${end}&xls=true`;
-      }
-    }
+    let url = `${apiBaseUrl}/reports/transactions?${params.join('&')}&xls=true`
     console.log(url);
     fetch(url, {
       headers: myHeaders
