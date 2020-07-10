@@ -74,8 +74,10 @@ export default class OrderSummarySection extends React.Component {
             );
           } else {
             const startAt = moment(get(scheduleItem, 'attributes.specificStart'));
+            console.log(get(scheduleItem, 'attributes.specificStart'));
+            console.log(startAt.format('H'));
             let morning = true;
-            if (startAt.hours() > 11) {
+            if (startAt.hours() >= 10) {
               morning = false;
             }
             return (
