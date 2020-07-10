@@ -267,7 +267,7 @@ class NewMessage extends React.Component {
             noOptionsMessage={()=>"No Result"}
           />
         </InputWrapper>
-        <ChatBox third noBorder onSend={this.onSend} />
+        <ChatBox third noBorder onSend={this.onSend} recipientInfo={users.firstName} />
       </React.Fragment>
     )
   }

@@ -276,7 +276,7 @@ class ChatBox extends React.Component {
       <Wrapper className={classNames({ secondary, third, noBorder })}>
         <InputGroup>
           <InputView>
-            <TextArea value={text} onChange={this.onChangeText} placeholder="Write ss reply..." />
+            <TextArea value={text} onChange={this.onChangeText} placeholder="Write a reply..." />
             {!isEmpty(thumb64) && (
               <ImageArea>
                   <ImageContainer>
