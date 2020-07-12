@@ -326,8 +326,8 @@ class OrderList extends React.Component {
     let stringFilters = selectedFilters.map(filter => filter.value).join(',');
     let params = [];
     if (selectedFilters.length > 0) { params.push(`order_states=${stringFilters}`) };
-    if (startDate !== null || startDate !== '') { params.push(`start=${moment(startDate).format('YYYY-MM-DD')}`) };
-    if (endDate !== null || endDate !== '') { params.push(`stop=${moment(endDate).format('YYYY-MM-DD')}`) };
+    if (startDate !== null && startDate !== '') { params.push(`start=${moment(startDate).format('YYYY-MM-DD')}`) };
+    if (endDate !== null && endDate !== '') { params.push(`stop=${moment(endDate).format('YYYY-MM-DD')}`) };
     if(keyword !== '') { params.push(`search=${keyword}`) };
     const now = new Date();
     const myHeaders = new Headers();
