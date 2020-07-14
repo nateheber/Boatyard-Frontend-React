@@ -49,6 +49,7 @@ const getLocationAddressString = (location) => {
 export default ({ boatInfo, onEdit }) => {
   const { name, make, model, length } = boatInfo;
   const boatLocation = get(boatInfo, 'location');
+  const slip = get(boatInfo, 'slip');
   const { line1, line2 } = getLocationAddressString(boatLocation);
   return (
     <Wrapper>
@@ -76,6 +77,10 @@ export default ({ boatInfo, onEdit }) => {
         <FieldValue>{line1}</FieldValue>
         <FieldValue>{line2}</FieldValue>
       </Field>
+      {slip && <Field>
+        <Label>SLIP NUMBER</Label>
+        <FieldValue>{slip}</FieldValue>
+      </Field>}
     </Wrapper>
   );
 };
