@@ -15,7 +15,7 @@
     "evil-icons": "^1.10.1",
     "immer": "^1.8.0",
     "json-api-normalizer": "^0.4.14",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "moment": "^2.22.2",
     "prop-types": "^15.6.2",
     "query-string": "^6.2.0",
